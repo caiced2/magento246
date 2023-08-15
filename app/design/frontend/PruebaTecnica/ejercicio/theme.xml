@@ -2,3 +2,8 @@
     <title>Prueba Tecnica</title>
     <parent>Magento/luma</parent>
 </theme>
+
+<!-- Me decidi por este tema y que generalmente es el tema que trae magento por defecto, segundo a la hora de poder hacer modificaciones generalmente nos
+basamos en este tipo tema y tambien porque en mi experiencia siempre fue mejor trabajar heredando del tema luma ya que la interfas es mas amigable a la hora 
+de trabajar hacer cambios en los temas hijos
+--!>
