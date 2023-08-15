@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+ /**
+  * Copyright © Magento, Inc. All rights reserved.
+  * See COPYING.txt for license details.
+  */
+-->
+<tests xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xsi:noNamespaceSchemaLocation="urn:magento:mftf:Test/etc/testSchema.xsd">
+    <test name="PageBuilderStagingDashboardIsVisibleInCMSBlockTest" extends="PageBuilderStagingDashboardIsVisibleInCMSPageTest">
+        <annotations>
+            <features value="PageBuilder"/>
+            <stories value="Staging Dashboard - CMS Block"/>
+            <title value="PageBuilder is visible from Staging Dashboard in CMS Block"/>
+            <description value="This test is to ensure that the user can see and add a content type in PageBuilder stage for Staging Dashboard in a CMS Block."/>
+            <severity value="BLOCKER"/>
+            <useCaseId value="MC-14992"/>
+            <testCaseId value="MC-15278"/>
+            <group value="pagebuilder"/>
+            <group value="pagebuilder-ee"/>
+            <group value="pagebuilder-staging"/>
+            <group value="pagebuilder-stagingDashboard"/>
+            <group value="pagebuilder-cms-block"/>
+            <group value="pagebuilder-tab"/>
+        </annotations>
+        <before>
+            <createData entity="_emptyCmsBlock" stepKey="createCMSPage"/>
+            <actionGroup ref="NavigateToCreatedCMSBlockPageActionGroup" stepKey="navigateToCMSPage">
+                <argument name="CMSBlockPage" value="$$createCMSPage$$"/>
+            </actionGroup>
+            <actionGroup ref="AdminOpenPageBuilderFromContentPreviewOverlayActionGroup" stepKey="openPageBuilder" after="navigateToStagingSlideout">
+                <argument name="pageBuilderArea" value="{{AdminStagingSlideOutSection.cmsStagingPageBase}}"/>
+            </actionGroup>
+            <actionGroup ref="dragContentTypeToContainer" stepKey="dragRowToRootContainer" after="openPageBuilder">
+                <argument name="contentType" value="PageBuilderRowContentType"/>
+                <argument name="containerTargetIndex" value="2"/>
+                <argument name="containerTargetType" value="PageBuilderRootContainerContentType"/>
+                <argument name="pageBuilderArea" value="{{AdminStagingSlideOutSection.cmsStagingPageBase}}"/>
+            </actionGroup>
+            <actionGroup ref="exitPageBuilderFullScreen" stepKey="exitPageBuilderFullScreen" after="dragRowToRootContainer"/>
+            <actionGroup ref="openEditSlideOutForCMSBlockStagingUpdateFromViewStagingUpdate" stepKey="openEditSlideOutForCMSPagesStagingUpdateFromViewStagingUpdate"/>
+            <comment userInput="---merging to remove step---" stepKey="clickContentSectionHeader"/>
+        </before>
+        <seeElement selector="{{PageBuilderStage.snapshot}}" stepKey="seeElementPageBuilderStage"/>
+        <actionGroup ref="AdminOpenPageBuilderFromContentPreviewOverlayActionGroup" stepKey="switchToPageBuilderStage"/>
+        <remove keyForRemoval="dragRowToRootContainer"/>
+    </test>
+</tests>

@@ -1,0 +1,34 @@
+<?xml version="1.0"?>
+<!--
+/**
+ * Copyright © Magento, Inc. All rights reserved.
+ * See COPYING.txt for license details.
+ */
+-->
+<page xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="urn:magento:framework:View/Layout/etc/page_configuration.xsd">
+    <update handle="formkey"/>
+    <body>
+        <referenceBlock name="wish-list-link" remove="true"/>
+        <referenceBlock name="wishlist_sidebar" remove="true"/>
+        <referenceBlock name="head.components">
+            <block class="Magento\Framework\View\Element\Js\Components" name="multiplewishlist_page_head_components" template="Magento_MultipleWishlist::js/components.phtml"/>
+        </referenceBlock>
+        <referenceBlock name="top.links">
+            <block class="Magento\MultipleWishlist\Block\Link" name="multiple-wish-list-link" after="my-account-link">
+                <arguments>
+                    <argument name="sortOrder" xsi:type="number">60</argument>
+                </arguments>
+            </block>
+        </referenceBlock>
+        <referenceContainer name="sidebar.additional">
+            <block class="Magento\MultipleWishlist\Block\Customer\Sidebar" name="multiple-wishlist_sidebar" template="Magento_Wishlist::sidebar.phtml" ifconfig="wishlist/general/show_in_sidebar">
+                <arguments>
+                    <argument name="wishlistDataViewModel" xsi:type="object">Magento\Wishlist\ViewModel\WishlistData</argument>
+                </arguments>
+            </block>
+        </referenceContainer>
+        <referenceContainer name="before.body.end">
+            <block class="Magento\MultipleWishlist\Block\Behaviour" name="wishlist_behaviour" as="wishlist_behaviour" template="Magento_MultipleWishlist::behaviour.phtml"/>
+        </referenceContainer>
+    </body>
+</page>

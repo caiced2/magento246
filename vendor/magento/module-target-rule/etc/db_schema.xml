@@ -1,0 +1,216 @@
+<?xml version="1.0"?>
+<!--
+/**
+ * Copyright © Magento, Inc. All rights reserved.
+ * See COPYING.txt for license details.
+ */
+-->
+<schema xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:noNamespaceSchemaLocation="urn:magento:framework:Setup/Declaration/Schema/etc/schema.xsd">
+    <table name="magento_targetrule" resource="default" engine="innodb" comment="Enterprise Targetrule">
+        <column xsi:type="int" name="rule_id" unsigned="true" nullable="false" identity="true"
+                comment="Rule Id"/>
+        <column xsi:type="varchar" name="name" nullable="true" length="255" comment="Name"/>
+        <column xsi:type="date" name="from_date" comment="From"/>
+        <column xsi:type="date" name="to_date" comment="To"/>
+        <column xsi:type="smallint" name="is_active" unsigned="false" nullable="false" identity="false"
+                default="0" comment="Is Active"/>
+        <column xsi:type="text" name="conditions_serialized" nullable="false" comment="Conditions Serialized"/>
+        <column xsi:type="text" name="actions_serialized" nullable="false" comment="Actions Serialized"/>
+        <column xsi:type="int" name="positions_limit" unsigned="false" nullable="false" identity="false"
+                default="0" comment="Positions Limit"/>
+        <column xsi:type="smallint" name="apply_to" unsigned="true" nullable="false" identity="false"
+                comment="Apply To"/>
+        <column xsi:type="int" name="sort_order" unsigned="false" nullable="true" identity="false"
+                comment="Sort Order"/>
+        <column xsi:type="text" name="action_select" nullable="true" comment="Action Select"/>
+        <column xsi:type="text" name="action_select_bind" nullable="true" comment="Action Select Bind"/>
+        <constraint xsi:type="primary" referenceId="PRIMARY">
+            <column name="rule_id"/>
+        </constraint>
+        <index referenceId="MAGENTO_TARGETRULE_IS_ACTIVE" indexType="btree">
+            <column name="is_active"/>
+        </index>
+        <index referenceId="MAGENTO_TARGETRULE_APPLY_TO" indexType="btree">
+            <column name="apply_to"/>
+        </index>
+        <index referenceId="MAGENTO_TARGETRULE_SORT_ORDER" indexType="btree">
+            <column name="sort_order"/>
+        </index>
+        <index referenceId="MAGENTO_TARGETRULE_FROM_DATE_TO_DATE" indexType="btree">
+            <column name="from_date"/>
+            <column name="to_date"/>
+        </index>
+    </table>
+    <table name="magento_targetrule_customersegment" resource="default" engine="innodb"
+           comment="Enterprise Targetrule Customersegment">
+        <column xsi:type="int" name="rule_id" unsigned="true" nullable="false" identity="false"
+                comment="Rule Id"/>
+        <column xsi:type="int" name="segment_id" unsigned="true" nullable="false" identity="false"
+                comment="Segment Id"/>
+        <constraint xsi:type="primary" referenceId="PRIMARY">
+            <column name="rule_id"/>
+            <column name="segment_id"/>
+        </constraint>
+        <constraint xsi:type="foreign" referenceId="FK_C8689D7B7075ACE9DF3E95CB5CE36E91"
+                    table="magento_targetrule_customersegment" column="rule_id" referenceTable="magento_targetrule"
+                    referenceColumn="rule_id" onDelete="CASCADE"/>
+        <constraint xsi:type="foreign" referenceId="FK_B8814D55D65E69A6594EEA15177ADE79"
+                    table="magento_targetrule_customersegment" column="segment_id"
+                    referenceTable="magento_customersegment_segment" referenceColumn="segment_id" onDelete="CASCADE"/>
+        <index referenceId="MAGENTO_TARGETRULE_CUSTOMERSEGMENT_SEGMENT_ID" indexType="btree">
+            <column name="segment_id"/>
+        </index>
+    </table>
+    <table name="magento_targetrule_product" resource="default" engine="innodb" comment="Enterprise Targetrule Product">
+        <column xsi:type="int" name="rule_id" unsigned="true" nullable="false" identity="false"
+                comment="Rule Id"/>
+        <column xsi:type="int" name="product_id" unsigned="true" nullable="false" identity="false"
+                comment="Product Id"/>
+        <constraint xsi:type="primary" referenceId="PRIMARY">
+            <column name="rule_id"/>
+            <column name="product_id"/>
+        </constraint>
+        <constraint xsi:type="foreign" referenceId="MAGENTO_TARGETRULE_PRODUCT_RULE_ID_MAGENTO_TARGETRULE_RULE_ID"
+                    table="magento_targetrule_product" column="rule_id" referenceTable="magento_targetrule"
+                    referenceColumn="rule_id" onDelete="CASCADE"/>
+        <constraint xsi:type="foreign" referenceId="MAGENTO_TARGETRULE_PRD_PRD_ID_CAT_PRD_ENTT_ENTT_ID"
+                    table="magento_targetrule_product" column="product_id" referenceTable="catalog_product_entity"
+                    referenceColumn="entity_id" onDelete="CASCADE"/>
+        <index referenceId="MAGENTO_TARGETRULE_PRODUCT_PRODUCT_ID" indexType="btree">
+            <column name="product_id"/>
+        </index>
+    </table>
+    <table name="magento_targetrule_index" resource="default" engine="innodb" comment="Enterprise Targetrule Index">
+        <column xsi:type="int" name="entity_id" unsigned="true" nullable="false" identity="false"
+                comment="Entity Id"/>
+        <column xsi:type="smallint" name="store_id" unsigned="true" nullable="false" identity="false"
+                comment="Store Id"/>
+        <column xsi:type="int" name="customer_group_id" unsigned="false" nullable="false"
+                identity="false"/>
+        <column xsi:type="smallint" name="type_id" unsigned="true" nullable="false" identity="false"
+                comment="Type Id"/>
+        <column xsi:type="smallint" name="flag" unsigned="true" nullable="false" identity="false"
+                default="1" comment="Flag"/>
+        <column xsi:type="smallint" name="customer_segment_id" unsigned="false" nullable="false"
+                identity="false" default="0" comment="Customer Segment Id"/>
+        <constraint xsi:type="primary" referenceId="PRIMARY">
+            <column name="entity_id"/>
+            <column name="store_id"/>
+            <column name="customer_group_id"/>
+            <column name="type_id"/>
+            <column name="customer_segment_id"/>
+        </constraint>
+    </table>
+    <table name="magento_targetrule_index_related" resource="default" engine="innodb"
+           comment="Enterprise Targetrule Index Related">
+        <column xsi:type="int" name="entity_id" unsigned="true" nullable="false" identity="false"
+                comment="Entity Id"/>
+        <column xsi:type="smallint" name="store_id" unsigned="true" nullable="false" identity="false"
+                comment="Store Id"/>
+        <column xsi:type="int" name="customer_group_id" unsigned="false" nullable="false"
+                identity="false"/>
+        <column xsi:type="smallint" name="customer_segment_id" unsigned="true" nullable="false"
+                identity="false" default="0" comment="Customer Segment Id"/>
+        <column xsi:type="int" name="product_set_id" unsigned="true" nullable="false" identity="true"
+                comment="Product Set Id"/>
+        <constraint xsi:type="primary" referenceId="PRIMARY">
+            <column name="product_set_id"/>
+        </constraint>
+        <constraint xsi:type="unique" referenceId="UNQ_CDB499BD6E62A607DAB1EE4895AD5DF1">
+            <column name="entity_id"/>
+            <column name="store_id"/>
+            <column name="customer_group_id"/>
+            <column name="customer_segment_id"/>
+        </constraint>
+    </table>
+    <table name="magento_targetrule_index_upsell" resource="default" engine="innodb"
+           comment="Enterprise Targetrule Index Upsell">
+        <column xsi:type="int" name="entity_id" unsigned="true" nullable="false" identity="false"
+                comment="Entity Id"/>
+        <column xsi:type="smallint" name="store_id" unsigned="true" nullable="false" identity="false"
+                comment="Store Id"/>
+        <column xsi:type="int" name="customer_group_id" unsigned="false" nullable="false"
+                identity="false"/>
+        <column xsi:type="smallint" name="customer_segment_id" unsigned="true" nullable="false"
+                identity="false" default="0" comment="Customer Segment Id"/>
+        <column xsi:type="int" name="product_set_id" unsigned="true" nullable="false" identity="true"
+                comment="Product Set Id"/>
+        <constraint xsi:type="primary" referenceId="PRIMARY">
+            <column name="product_set_id"/>
+        </constraint>
+        <constraint xsi:type="unique" referenceId="UNQ_2FF9494DEBB08EA6B55B5276F0B78C45">
+            <column name="entity_id"/>
+            <column name="store_id"/>
+            <column name="customer_group_id"/>
+            <column name="customer_segment_id"/>
+        </constraint>
+    </table>
+    <table name="magento_targetrule_index_crosssell" resource="default" engine="innodb"
+           comment="Enterprise Targetrule Index Crosssell">
+        <column xsi:type="int" name="entity_id" unsigned="true" nullable="false" identity="false"
+                comment="Entity Id"/>
+        <column xsi:type="smallint" name="store_id" unsigned="true" nullable="false" identity="false"
+                comment="Store Id"/>
+        <column xsi:type="int" name="customer_group_id" unsigned="false" nullable="false"
+                identity="false"/>
+        <column xsi:type="smallint" name="customer_segment_id" unsigned="true" nullable="false"
+                identity="false" default="0" comment="Customer Segment Id"/>
+        <column xsi:type="int" name="product_set_id" unsigned="true" nullable="false" identity="true"
+                comment="Product Set Id"/>
+        <constraint xsi:type="primary" referenceId="PRIMARY">
+            <column name="product_set_id"/>
+        </constraint>
+        <constraint xsi:type="unique" referenceId="UNQ_31AF14EF81FDC2FBC907C7AFB551F407">
+            <column name="entity_id"/>
+            <column name="store_id"/>
+            <column name="customer_group_id"/>
+            <column name="customer_segment_id"/>
+        </constraint>
+    </table>
+    <table name="magento_targetrule_index_crosssell_product" resource="default" engine="innodb"
+           comment="Enterprise Targetrule Index Crosssell Products">
+        <column xsi:type="int" name="product_set_id" unsigned="true" nullable="false" identity="true"
+                comment="TargetRule Id"/>
+        <column xsi:type="int" name="product_id" unsigned="true" nullable="false" identity="false"
+                comment="Product Id"/>
+        <constraint xsi:type="foreign" referenceId="FK_9345746865FD6F97C44AAD7D03EC3058"
+                    table="magento_targetrule_index_crosssell_product" column="product_set_id"
+                    referenceTable="magento_targetrule_index_crosssell" referenceColumn="product_set_id"
+                    onDelete="CASCADE"/>
+        <constraint xsi:type="primary" referenceId="MAGENTO_TARGETRULE_IDX_CROSSSELL_PRD_PRD_SET_ID_PRD_ID">
+            <column name="product_set_id"/>
+            <column name="product_id"/>
+        </constraint>
+    </table>
+    <table name="magento_targetrule_index_related_product" resource="default" engine="innodb"
+           comment="Enterprise Targetrule Index Related Products">
+        <column xsi:type="int" name="product_set_id" unsigned="true" nullable="false" identity="true"
+                comment="TargetRule Id"/>
+        <column xsi:type="int" name="product_id" unsigned="true" nullable="false" identity="false"
+                comment="Product Id"/>
+        <constraint xsi:type="foreign" referenceId="FK_F018B7EA5426D7CD98E40E7B3081DAB9"
+                    table="magento_targetrule_index_related_product" column="product_set_id"
+                    referenceTable="magento_targetrule_index_related" referenceColumn="product_set_id"
+                    onDelete="CASCADE"/>
+        <constraint xsi:type="primary" referenceId="MAGENTO_TARGETRULE_IDX_RELATED_PRD_PRD_SET_ID_PRD_ID">
+            <column name="product_set_id"/>
+            <column name="product_id"/>
+        </constraint>
+    </table>
+    <table name="magento_targetrule_index_upsell_product" resource="default" engine="innodb"
+           comment="Enterprise Targetrule Index Upsell Products">
+        <column xsi:type="int" name="product_set_id" unsigned="true" nullable="false" identity="true"
+                comment="TargetRule Id"/>
+        <column xsi:type="int" name="product_id" unsigned="true" nullable="false" identity="false"
+                comment="Product Id"/>
+        <constraint xsi:type="foreign" referenceId="FK_9D05BD7FDEEE55E1FC4C2891966C909A"
+                    table="magento_targetrule_index_upsell_product" column="product_set_id"
+                    referenceTable="magento_targetrule_index_upsell" referenceColumn="product_set_id"
+                    onDelete="CASCADE"/>
+        <constraint xsi:type="primary" referenceId="MAGENTO_TARGETRULE_IDX_UPSELL_PRD_PRD_SET_ID_PRD_ID">
+            <column name="product_set_id"/>
+            <column name="product_id"/>
+        </constraint>
+    </table>
+</schema>

@@ -1,0 +1,60 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+ /**
+  * Copyright © Magento, Inc. All rights reserved.
+  * See COPYING.txt for license details.
+  */
+-->
+<tests xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="urn:magento:mftf:Test/etc/testSchema.xsd">
+    <test name="CheckoutTotalsSortOrderInCartTest">
+        <annotations>
+            <title value="Checkout Totals Sort Order configuration and displaying in cart"/>
+            <stories value="MAGETWO-91658: Wrong Checkout Totals Sort Order in cart"/>
+            <description value="Checkout Totals Sort Order configuration and displaying in cart"/>
+            <features value="GiftCardAccount"/>
+            <severity value="AVERAGE"/>
+            <testCaseId value="MAGETWO-94944"/>
+            <group value="GiftCardAccount"/>
+        </annotations>
+        <before>
+            <magentoCLI command="config:set {{EnableFlatRateConfigData.path}} {{EnableFlatRateConfigData.value}}" stepKey="enableFlatRate"/>
+            <createData entity="_defaultCategory" stepKey="defaultCategory"/>
+            <createData entity="SimpleProduct" stepKey="simpleProduct">
+                <requiredEntity createDataKey="defaultCategory"/>
+            </createData>
+
+            <createData entity="ApiCartRule" stepKey="cartRule"/>
+
+            <createData entity="CheckoutShippingTotalsSortOrder" stepKey="setConfigShippingTotalsSortOrder"/>
+            <actionGroup ref="CliCacheCleanActionGroup" stepKey="cleanInvalidatedCaches">
+                <argument name="tags" value="config full_page"/>
+            </actionGroup>
+        </before>
+
+        <actionGroup ref="VerifyDiscountAmountActionGroup" stepKey="verifyStorefront">
+            <argument name="productUrl" value="$$simpleProduct.custom_attributes[url_key]$$.html"/>
+            <argument name="quantity" value="1"/>
+            <argument name="expectedDiscount" value="-$61.50"/>
+        </actionGroup>
+
+        <actionGroup ref="CheckTotalsSortOrderInSummarySectionActionGroup" stepKey="checkTotalsSortOrderInSummarySection">
+            <argument name="elementName" value="Shipping (Flat Rate - Fixed)"/>
+            <argument name="positionNumber" value="3"/>
+        </actionGroup>
+
+        <after>
+            <createData entity="DefaultCheckoutTotalsSortOrder" stepKey="setDefaultTotalsSortOrder"/>
+
+            <deleteData createDataKey="cartRule" stepKey="deleteCartRule"/>
+            <deleteData createDataKey="simpleProduct" stepKey="deleteProduct"/>
+            <deleteData createDataKey="defaultCategory" stepKey="deleteCategory"/>
+
+            <actionGroup ref="CliIndexerReindexActionGroup" stepKey="reindex">
+                <argument name="indices" value=""/>
+            </actionGroup>
+            <actionGroup ref="CliCacheCleanActionGroup" stepKey="flushCache">
+                <argument name="tags" value="config full_page"/>
+            </actionGroup>
+        </after>
+    </test>
+</tests>

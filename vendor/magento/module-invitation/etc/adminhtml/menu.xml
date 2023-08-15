@@ -1,0 +1,16 @@
+<?xml version="1.0"?>
+<!--
+/**
+ * Copyright © Magento, Inc. All rights reserved.
+ * See COPYING.txt for license details.
+ */
+-->
+<config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="urn:magento:module:Magento_Backend:etc/menu.xsd">
+    <menu>
+        <add id="Magento_Invitation::customer_magento_invitation" title="Invitations" translate="title" module="Magento_Invitation" sortOrder="20" parent="Magento_Enterprise::private_sales" action="invitations/index" dependsOnModule="Magento_Invitation" dependsOnConfig="magento_invitation/general/enabled" resource="Magento_Invitation::magento_invitation"/>
+        <add id="Magento_Invitation::report_magento_invitation" title="Private Sales" translate="title" module="Magento_Invitation" sortOrder="70" parent="Magento_Reports::report" dependsOnModule="Magento_Invitation" dependsOnConfig="magento_invitation/general/enabled" resource="Magento_Invitation::report_magento_invitation"/>
+        <add id="Magento_Invitation::report_magento_invitation_general" title="Invitations" translate="title" module="Magento_Invitation" sortOrder="10" parent="Magento_Invitation::report_magento_invitation" action="invitations/report_invitation" resource="Magento_Invitation::general"/>
+        <add id="Magento_Invitation::report_magento_invitation_customer" title="Invited Customers" translate="title" module="Magento_Invitation" sortOrder="20" parent="Magento_Invitation::report_magento_invitation" action="invitations/report_invitation/customer" resource="Magento_Invitation::magento_invitation_customer"/>
+        <add id="Magento_Invitation::report_magento_invitation_order" title="Conversions" translate="title" module="Magento_Invitation" sortOrder="30" parent="Magento_Invitation::report_magento_invitation" action="invitations/report_invitation/order" resource="Magento_Invitation::order"/>
+    </menu>
+</config>

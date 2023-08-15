@@ -1,0 +1,86 @@
+<?php
+/**
+ * Copyright © Magento, Inc. All rights reserved.
+ * See COPYING.txt for license details.
+ */
+
+/** @var \Magento\VersionsCms\Block\Adminhtml\Cms\Hierarchy\Widget\Chooser $block */
+/** @var \Magento\Framework\View\Helper\SecureHtmlRenderer $secureRenderer */
+
+$chooserJsObject = $block->escapeJs($block->getId());
+?>
+<div id="tree<?= $block->escapeHtmlAttr($block->getId()) ?>" class="cms-tree tree x-tree"></div>
+<!--[if IE]>
+<script id="ie-deferred-loader" defer="defer" src="//:"></script>
+<![endif]-->
+<?php
+$nodesJson = $block->getNodesJson();
+$rootText = $block->escapeJs(__("Root"));
+$notAvailableMessage = $block->escapeJs(__('No nodes are available'));
+?>
+<?php $scriptString = <<<script
+    require(["extjs/ext-tree-checkbox", "prototype"], function() {
+        window.clickNode = function(node) {
+            $("tree-container").insert({before: node.text});
+            $("{$chooserJsObject}").value = node.id;
+            treeRoot.collapse();
+        };
+
+        window.nodes = {$nodesJson};
+
+        if (nodes.length > 0) {
+            window.tree{$chooserJsObject} = new Ext.tree
+                .TreePanel("tree{$chooserJsObject}", {
+                    animate: false,
+                    enableDD: false,
+                    containerScroll: true,
+                    rootVisible: false,
+                    lines: true
+            });
+
+            window.treeRoot{$chooserJsObject} = new Ext.tree.AsyncTreeNode({
+                text: "{$rootText}",
+                id: "root",
+                allowDrop: true,
+                allowDrag: false,
+                expanded: true,
+                cls: "cms_node_root"
+            });
+
+            tree{$chooserJsObject}.setRootNode(treeRoot{$chooserJsObject});
+
+            for (var i = 0; i < nodes.length; i++) {
+                window.cls = nodes[i].page_id ? "cms_page" : "cms_node";
+                window.node = new Ext.tree.TreeNode({
+                    id: nodes[i].node_id,
+                    text: nodes[i].label.escapeHTML(),
+                    cls: cls,
+                    expanded: nodes[i].page_exists,
+                    allowDrop: false,
+                    allowDrag: false,
+                    page_id: nodes[i].page_id
+                });
+                if (parentNode = tree{$chooserJsObject}.getNodeById(nodes[i].parent_node_id)) {
+                    parentNode.appendChild(node);
+                } else {
+                    treeRoot{$chooserJsObject}.appendChild(node);
+                }
+            }
+
+            tree{$chooserJsObject}.addListener("click", function (node, event) {
+                {$chooserJsObject}.setElementValue(node.id);
+                {$chooserJsObject}.setElementLabel(
+                    node.text.escapeHTML().replace('\'', '&#039;').replace('"', '&quot;')
+                );
+                {$chooserJsObject}.close();
+            });
+            tree{$chooserJsObject}.render();
+            treeRoot{$chooserJsObject}.expand();
+        }
+        else {
+            $("tree{$chooserJsObject}").innerHTML = "{$notAvailableMessage}";
+        }
+    });
+script;
+?>
+<?= /* @noEscape */ $secureRenderer->renderTag('script', [], $scriptString, false); ?>

@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+ /**
+  * Copyright © Magento, Inc. All rights reserved.
+  * See COPYING.txt for license details.
+  */
+-->
+<sections xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+          xsi:noNamespaceSchemaLocation="urn:magento:mftf:Page/etc/SectionObject.xsd">
+    <section name="AdminStoreSection">
+        <element name="createdStore" type="button" selector="//a[text()='{{var}}']" timeout="30" parameterized="true"/>
+        <element name="createdRole" type="button" selector="//td[contains(text(), '{{var}}')]" timeout="30" parameterized="true"/>
+        <element name="createdStoreInRolesPage" type="text" selector="//label[contains(text(), '{{storeName}}')]" parameterized="true"/>
+        <element name="createdRoleInUserPage" type="text" selector="//tr//td[contains(text(), '{{arg}}')]" parameterized="true"/>
+    </section>
+</sections>

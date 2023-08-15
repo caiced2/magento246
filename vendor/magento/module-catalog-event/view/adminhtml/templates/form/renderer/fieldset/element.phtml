@@ -1,0 +1,87 @@
+<?php
+/**
+ * Copyright © Magento, Inc. All rights reserved.
+ * See COPYING.txt for license details.
+ */
+
+use Magento\CatalogEvent\Block\Adminhtml\Form\Renderer\Fieldset\Element;
+use Magento\Framework\Data\Form\Element\Note;
+use Magento\Framework\Escaper;
+use Magento\Framework\View\Helper\SecureHtmlRenderer;
+
+/**
+ * @var Element $block
+ * @var Note $element
+ * @var Escaper $escaper
+ * @var SecureHtmlRenderer $secureRenderer
+ */
+$element = $block->getElement();
+$note = $element->getNote() ? '<div class="note">' . $element->getNote() . '</div>' : '';
+$elementBeforeLabel = $element->getExtType() == 'checkbox' || $element->getExtType() == 'radio';
+$addOn = $element->getBeforeElementHtml() || $element->getAfterElementHtml();
+$fieldId = ($element->getHtmlId())
+    ? ' id="attribute-' . $escaper->escapeHtmlAttr($element->getHtmlId()) . '-container"'
+    : '';
+$fieldClass = "field field-{$element->getId()} {$element->getCssClass()}";
+$fieldClass .= ($elementBeforeLabel) ? ' choice' : '';
+$fieldClass .= ($addOn) ? ' with-addon' : '';
+$fieldClass .= ($element->getRequired()) ? ' required' : '';
+$fieldClass .= ($note) ? ' with-note' : '';
+
+$fieldAttributes = $fieldId . ' class="admin__field ' . $escaper->escapeHtmlAttr($fieldClass) . '" '
+    . $block->getUiId('form-field', $element->getId());
+
+$block->checkFieldDisable();
+$elementToggleCode = $element->getToggleCode() ? $element->getToggleCode()
+    : 'toggleValueElements(this, this.parentNode.parentNode)';
+$fieldNameSuffix = $element->getForm()->getFieldNameSuffix();
+$isDefaultFieldAttribute = $fieldNameSuffix . '[' . $element->getName() . '][is_default]';
+?>
+<?php if (!$element->getNoDisplay()): ?>
+    <?php if ($element->getType() == 'hidden'): ?>
+        <?= $element->getElementHtml() ?>
+    <?php else: ?>
+        <div<?= /* @noEscape */ $fieldAttributes ?>>
+            <?php if ($elementBeforeLabel): ?>
+                <?= $element->getElementHtml() ?>
+                <?= $element->getLabelHtml('', $block->getScopeLabel()) ?>
+                <?= $escaper->escapeHtml($note, ['div']) ?>
+            <?php else: ?>
+                <?= $element->getLabelHtml('', $block->getScopeLabel()) ?>
+                <div class="admin__field-control">
+                    <?= ($addOn)
+                        ? '<div class="addon">' . $element->getElementHtml() . '</div>'
+                        : $element->getElementHtml()
+                    ?>
+                    <?= $escaper->escapeHtml($note, ['div']) ?>
+                </div>
+            <?php endif; ?>
+
+            <?php if ($block->canDisplayUseDefault()): ?>
+                <div class="field-service admin__control-service">
+                    <input <?= ($element->getReadonly()) ? ' disabled="disabled"' : '' ?>
+                        type="checkbox"
+                        name="<?= $escaper->escapeHtmlAttr($isDefaultFieldAttribute) ?>"
+                        class="admin__control-checkbox use-default-control"
+                        id="<?= $element->getHtmlId() ?>_default"
+                        <?= ($block->usedDefault()) ? ' checked="checked"' : '' ?>
+                        value="1"/>
+                    <label for="<?= $escaper->escapeHtmlAttr($element->getHtmlId()) ?>_default"
+                           class="admin__field-label">
+                        <span><?= $escaper->escapeHtml(__('Use Default Value')) ?></span>
+                    </label>
+                    <?php $scriptString = <<<script
+                        require(['prototype'], function () {
+                            jQuery('#{$element->getHtmlId()}_default').on('click', function(){
+                                {$elementToggleCode}
+                            });
+                        });
+script;
+                    ?>
+                    <?= /* @noEscape */ $secureRenderer->renderTag('script', [], $scriptString, false) ?>
+                </div>
+
+            <?php endif; ?>
+        </div>
+    <?php endif; ?>
+<?php endif; ?>

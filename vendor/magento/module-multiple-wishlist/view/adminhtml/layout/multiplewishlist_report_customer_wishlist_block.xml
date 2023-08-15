@@ -1,0 +1,147 @@
+<?xml version="1.0"?>
+<!--
+/**
+ * Copyright © Magento, Inc. All rights reserved.
+ * See COPYING.txt for license details.
+ */
+-->
+<page xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="urn:magento:framework:View/Layout/etc/page_configuration.xsd">
+    <body>
+        <referenceBlock name="adminhtml.block.report.customer.wishlist.container">
+            <block class="Magento\MultipleWishlist\Block\Adminhtml\Report\Customer\Wishlist\Grid" name="adminhtml.block.report.customer.wishlist.grid" as="grid">
+                <arguments>
+                    <argument name="id" xsi:type="string">gridReportWishlists</argument>
+                    <argument name="dataSource" xsi:type="object" shared="false">Magento\MultipleWishlist\Model\ResourceModel\Item\Report\Collection</argument>
+                </arguments>
+                <block class="Magento\Backend\Block\Widget\Grid\Export" name="adminhtml.block.report.customer.wishlist.grid.export" as="grid.export">
+                    <arguments>
+                        <argument name="exportTypes" xsi:type="array">
+                            <item name="csv" xsi:type="array">
+                                <item name="urlPath" xsi:type="string">*/*/exportCsv</item>
+                                <item name="label" xsi:type="string" translate="true">CSV</item>
+                            </item>
+                            <item name="excel" xsi:type="array">
+                                <item name="urlPath" xsi:type="string">*/*/exportExcel</item>
+                                <item name="label" xsi:type="string" translate="true">Excel XML</item>
+                            </item>
+                        </argument>
+                    </arguments>
+                </block>
+                <block class="Magento\Backend\Block\Widget\Grid\ColumnSet" name="adminhtml.block.report.customer.wishlist.columnSet" as="grid.columnSet">
+                    <block class="Magento\Backend\Block\Widget\Grid\Column" name="adminhtml.block.report.customer.wishlist.columnSet.added_at" as="added_at">
+                        <arguments>
+                            <argument name="header" xsi:type="string" translate="true">Added</argument>
+                            <argument name="index" xsi:type="string">added_at</argument>
+                            <argument name="type" xsi:type="string">datetime</argument>
+                            <argument name="header_css_class" xsi:type="string">col-period</argument>
+                            <argument name="column_css_class" xsi:type="string">col-period</argument>
+                        </arguments>
+                    </block>
+                    <block class="Magento\Backend\Block\Widget\Grid\Column" name="adminhtml.block.report.customer.wishlist.columnSet.customer_name" as="customer_name">
+                        <arguments>
+                            <argument name="header" xsi:type="string" translate="true">Customer</argument>
+                            <argument name="index" xsi:type="string">customer_name</argument>
+                            <argument name="filter" xsi:type="string">0</argument>
+                            <argument name="header_css_class" xsi:type="string">col-name</argument>
+                            <argument name="column_css_class" xsi:type="string">col-name</argument>
+                        </arguments>
+                    </block>
+                    <block class="Magento\Backend\Block\Widget\Grid\Column" name="adminhtml.block.report.customer.wishlist.columnSet.wishlist_name" as="wishlist_name">
+                        <arguments>
+                            <argument name="header" xsi:type="string" translate="true">Wish List</argument>
+                            <argument name="index" xsi:type="string">wishlist_name</argument>
+                            <argument name="header_css_class" xsi:type="string">col-whishlist-name</argument>
+                            <argument name="column_css_class" xsi:type="string">col-whishlist-name</argument>
+                        </arguments>
+                    </block>
+                    <block class="Magento\Backend\Block\Widget\Grid\Column" name="adminhtml.block.report.customer.wishlist.columnSet.visibility" as="visibility">
+                        <arguments>
+                            <argument name="header" xsi:type="string" translate="true">Status</argument>
+                            <argument name="type" xsi:type="string">options</argument>
+                            <argument name="index" xsi:type="string">visibility</argument>
+                            <argument name="options" xsi:type="array">
+                                <item name="public" xsi:type="array">
+                                    <item name="value" xsi:type="string">1</item>
+                                    <item name="label" xsi:type="string" translate="true">Public</item>
+                                </item>
+                                <item name="private" xsi:type="array">
+                                    <item name="value" xsi:type="string">0</item>
+                                    <item name="label" xsi:type="string" translate="true">Private</item>
+                                </item>
+                            </argument>
+                            <argument name="header_css_class" xsi:type="string">col-whishlist-status</argument>
+                            <argument name="column_css_class" xsi:type="string">col-whishlist-status</argument>
+                        </arguments>
+                    </block>
+                    <block class="Magento\Backend\Block\Widget\Grid\Column" name="adminhtml.block.report.customer.wishlist.columnSet.product_name" as="product_name">
+                        <arguments>
+                            <argument name="header" xsi:type="string" translate="true">Product</argument>
+                            <argument name="index" xsi:type="string">product_name</argument>
+                            <argument name="filter" xsi:type="string">0</argument>
+                            <argument name="sortable" xsi:type="string">0</argument>
+                            <argument name="header_css_class" xsi:type="string">col-product</argument>
+                            <argument name="column_css_class" xsi:type="string">col-product</argument>
+                        </arguments>
+                    </block>
+                    <block class="Magento\Backend\Block\Widget\Grid\Column" name="adminhtml.block.report.customer.wishlist.columnSet.product_sku" as="product_sku">
+                        <arguments>
+                            <argument name="header" xsi:type="string" translate="true">SKU</argument>
+                            <argument name="index" xsi:type="string">product_sku</argument>
+                            <argument name="filter" xsi:type="string">0</argument>
+                            <argument name="sortable" xsi:type="string">0</argument>
+                            <argument name="header_css_class" xsi:type="string">col-sku</argument>
+                            <argument name="column_css_class" xsi:type="string">col-sku</argument>
+                        </arguments>
+                    </block>
+                    <block class="Magento\Backend\Block\Widget\Grid\Column" name="adminhtml.block.report.customer.wishlist.columnSet.item_comment" as="item_comment">
+                        <arguments>
+                            <argument name="header" xsi:type="string" translate="true">Comment</argument>
+                            <argument name="index" xsi:type="string">description</argument>
+                            <argument name="header_css_class" xsi:type="string">col-comment</argument>
+                            <argument name="column_css_class" xsi:type="string">col-comment</argument>
+                        </arguments>
+                    </block>
+                    <block class="Magento\Backend\Block\Widget\Grid\Column" ifconfig="modules/CatalogInventory/active" name="adminhtml.block.report.customer.wishlist.columnSet.item_qty" as="item_qty">
+                        <arguments>
+                            <argument name="header" xsi:type="string" translate="true">Wish List Quantity</argument>
+                            <argument name="index" xsi:type="string">item_qty</argument>
+                            <argument name="type" xsi:type="string">number</argument>
+                            <argument name="header_css_class" xsi:type="string">col-whishlist-qty</argument>
+                            <argument name="column_css_class" xsi:type="string">col-whishlist-qty</argument>
+                        </arguments>
+                    </block>
+                    <block class="Magento\Backend\Block\Widget\Grid\Column" ifconfig="modules/CatalogInventory/active" name="adminhtml.block.report.customer.wishlist.columnSet.product_qty" as="product_qty">
+                        <arguments>
+                            <argument name="header" xsi:type="string" translate="true">Store Quantity</argument>
+                            <argument name="index" xsi:type="string">product_qty</argument>
+                            <argument name="type" xsi:type="string">number</argument>
+                            <argument name="header_css_class" xsi:type="string">col-available-qty</argument>
+                            <argument name="column_css_class" xsi:type="string">col-available-qty</argument>
+                        </arguments>
+                    </block>
+                    <block class="Magento\Backend\Block\Widget\Grid\Column" ifconfig="modules/CatalogInventory/active" name="adminhtml.block.report.customer.wishlist.columnSet.qty_diff" as="qty_diff">
+                        <arguments>
+                            <argument name="header" xsi:type="string" translate="true">Surplus / Deficit</argument>
+                            <argument name="index" xsi:type="string">qty_diff</argument>
+                            <argument name="type" xsi:type="string">number</argument>
+                            <argument name="header_css_class" xsi:type="string">col-qty-diff</argument>
+                            <argument name="column_css_class" xsi:type="string">col-qty-diff</argument>
+                        </arguments>
+                    </block>
+                    <block class="Magento\Backend\Block\Widget\Grid\Column" ifconfig="modules/CatalogInventory/active" name="adminhtml.block.report.customer.wishlist.columnSet.product_price" as="product_price">
+                        <arguments>
+                            <argument name="header" xsi:type="string" translate="true">Price</argument>
+                            <argument name="index" xsi:type="string">product_price</argument>
+                            <argument name="filter" xsi:type="string">0</argument>
+                            <argument name="sortable" xsi:type="string">0</argument>
+                            <argument name="type" xsi:type="string">price</argument>
+                            <argument name="renderer" xsi:type="string">Magento\Reports\Block\Adminhtml\Grid\Column\Renderer\Currency</argument>
+                            <argument name="header_css_class" xsi:type="string">col-price</argument>
+                            <argument name="column_css_class" xsi:type="string">col-price</argument>
+                        </arguments>
+                    </block>
+                </block>
+            </block>
+        </referenceBlock>
+    </body>
+</page>

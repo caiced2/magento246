@@ -1,0 +1,111 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+ /**
+  * Copyright © Magento, Inc. All rights reserved.
+  * See COPYING.txt for license details.
+  */
+-->
+
+<tests xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xsi:noNamespaceSchemaLocation="urn:magento:mftf:Test/etc/testSchema.xsd">
+    <test name="CreateCustomAddressAttributeTest">
+        <annotations>
+            <features value="CustomerCustomAttributes"/>
+            <stories value="Create Customer Address Attribute Entity"/>
+            <title value="Create custom address attribute test"/>
+            <description value="Create custom address attribute"/>
+            <severity value="MAJOR"/>
+            <testCaseId value="MC-14586"/>
+            <group value="CustomerCustomAttributes"/>
+            <group value="mtf_migrated"/>
+        </annotations>
+        <before>
+            <!-- Login as admin -->
+            <actionGroup ref="AdminLoginActionGroup" stepKey="LoginAsAdmin"/>
+
+            <!-- Create product -->
+            <createData entity="SimpleProduct2" stepKey="createProduct"/>
+
+            <!-- Create customer -->
+            <createData entity="Simple_US_Customer" stepKey="createCustomer"/>
+        </before>
+        <after>
+            <!-- Delete created attribute -->
+            <actionGroup ref="AdminDeleteCustomerAttribute" stepKey="deleteCustomerAttribute">
+                <argument name="defaultLabel" value="{{AttributeTextField.attribute_code}}"/>
+            </actionGroup>
+
+            <!-- Logout admin -->
+            <actionGroup ref="AdminLogoutActionGroup" stepKey="logout"/>
+
+            <!-- Logout customer -->
+            <actionGroup ref="StorefrontCustomerLogoutActionGroup" stepKey="customerLogoutStorefront"/>
+
+            <!-- Delete customer -->
+            <deleteData createDataKey="createCustomer" stepKey="deleteCustomer"/>
+
+            <!-- Delete product -->
+            <deleteData createDataKey="createProduct" stepKey="deleteProduct"/>
+        </after>
+
+        <!-- Create new customer address attribute -->
+        <amOnPage url="{{CustomerAddressAttributesPage.url}}" stepKey="navigateToCustomerAddressAttributesPage"/>
+        <waitForPageLoad stepKey="waitForCustomerAddressAttributePageLoad"/>
+        <actionGroup ref="AdminCreateCustomerNewAttributeWithRequiredValues" stepKey="createTextFieldAttribute">
+            <argument name="defaultLabel" value="{{AttributeTextField.frontend_label}}"/>
+            <argument name="attributeCode" value="{{AttributeTextField.attribute_code}}"/>
+            <argument name="inputType" value="{{AttributeTextField.frontend_input}}"/>
+            <argument name="sortOrder" value="10"/>
+        </actionGroup>
+
+        <!-- Login as customer -->
+        <actionGroup ref="LoginToStorefrontActionGroup" stepKey="loginToStorefrontAccount">
+            <argument name="Customer" value="$$createCustomer$$"/>
+        </actionGroup>
+
+        <!-- Go to Address Book -->
+        <actionGroup ref="StorefrontCustomerGoToSidebarMenu" stepKey="goToAddressBook">
+            <argument name="menu" value="Address Book"/>
+        </actionGroup>
+
+        <!-- Click Add New Address button -->
+        <click selector="{{AdminCustomerAddressesSection.addNewAddress}}" stepKey="clickAddNewAddressButton"/>
+        <waitForPageLoad stepKey="waitForCustomerAddressForm"/>
+
+        <!-- Fill all required address fields -->
+        <actionGroup ref="FillNewCustomerAddressRequiredFieldsActionGroup" stepKey="fillNewAddressFields">
+            <argument name="address" value="US_Address_California"/>
+        </actionGroup>
+
+        <!-- Fill new address attribute field -->
+        <fillField selector="{{StoreFrontCustomerAdvancedAttributesSection.textFieldAttribute(AttributeTextField.frontend_label)}}" userInput="{{AttributeTextField.frontend_label}}" stepKey="fillNewAddressAttribute"/>
+
+        <!-- Save new address -->
+        <actionGroup ref="AdminSaveCustomerAddressActionGroup" stepKey="saveNewCustomerAddress"/>
+
+        <!-- Add created product to shopping cart -->
+        <actionGroup ref="AddSimpleProductToCartActionGroup" stepKey="addProductToCart">
+            <argument name="product" value="$$createProduct$$"/>
+        </actionGroup>
+
+        <!-- Open checkout page -->
+        <amOnPage url="{{CheckoutCartPage.url}}" stepKey="goToCartPage"/>
+        <waitForPageLoad stepKey="waitForCartPageLoad"/>
+        <click selector="{{CheckoutCartSummarySection.proceedToCheckout}}" stepKey="clickProceedToCheckout"/>
+        <waitForPageLoad stepKey="waitForShippingPageLoad"/>
+
+        <!-- Add new shipping address -->
+        <click selector="{{CheckoutShippingSection.newAddressButton}}" stepKey="addNewAddress"/>
+
+        <!-- Fill required fields -->
+        <actionGroup ref="FillNewShippingAddressModalActionGroup" stepKey="changeAddress">
+            <argument name="address" value="US_Address_California"/>
+        </actionGroup>
+
+        <!-- Fill new address attribute field -->
+        <fillField selector="{{CheckoutShippingSection.textFieldAttribute(AttributeTextField.frontend_label)}}" userInput="{{AttributeTextField.frontend_label}}" stepKey="FillNewAttribute"/>
+
+        <!-- Save address -->
+        <click selector="{{CheckoutShippingSection.saveAddress}}" stepKey="saveNewAddress"/>
+    </test>
+</tests>

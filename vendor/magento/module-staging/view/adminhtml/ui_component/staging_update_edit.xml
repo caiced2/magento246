@@ -1,0 +1,131 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+/**
+ * Copyright © Magento, Inc. All rights reserved.
+ * See COPYING.txt for license details.
+ */
+-->
+<form xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="urn:magento:module:Magento_Ui:etc/ui_configuration.xsd">
+    <argument name="data" xsi:type="array">
+        <item name="js_config" xsi:type="array">
+            <item name="provider" xsi:type="string">staging_update_edit.staging_update_edit_data_source</item>
+        </item>
+        <item name="label" xsi:type="string" translate="true">Create New Update</item>
+        <item name="template" xsi:type="string">templates/form/collapsible</item>
+    </argument>
+    <settings>
+        <buttons>
+            <button name="back">
+                <url path="*/*/"/>
+                <class>back</class>
+                <label translate="true">Back</label>
+            </button>
+            <button name="save">
+                <url path="staging/update/save"/>
+                <class>primary</class>
+                <label translate="true">Save</label>
+            </button>
+        </buttons>
+        <namespace>staging_update_edit</namespace>
+        <dataScope>data</dataScope>
+        <deps>
+            <dep>staging_update_edit.staging_update_edit_data_source</dep>
+        </deps>
+    </settings>
+    <dataSource name="staging_update_edit_data_source">
+        <argument name="data" xsi:type="array">
+            <item name="js_config" xsi:type="array">
+                <item name="component" xsi:type="string">Magento_Ui/js/form/provider</item>
+            </item>
+        </argument>
+        <settings>
+            <submitUrl path="staging/update/save"/>
+        </settings>
+        <dataProvider class="Magento\Framework\View\Element\UiComponent\DataProvider\DataProvider" name="staging_update_edit_data_source">
+            <settings>
+                <requestFieldName>id</requestFieldName>
+                <primaryFieldName>id</primaryFieldName>
+            </settings>
+        </dataProvider>
+    </dataSource>
+    <fieldset name="general" sortOrder="10">
+        <settings>
+            <collapsible>false</collapsible>
+            <label translate="true">General</label>
+            <dataScope>general</dataScope>
+        </settings>
+        <field name="id" formElement="input">
+            <settings>
+                <dataType>text</dataType>
+                <visible>false</visible>
+                <dataScope>id</dataScope>
+            </settings>
+        </field>
+        <field name="is_campaign" formElement="checkbox">
+            <settings>
+                <visible>false</visible>
+            </settings>
+        </field>
+        <field name="name" formElement="input">
+            <settings>
+                <validation>
+                    <rule name="required-entry" xsi:type="boolean">true</rule>
+                </validation>
+                <dataType>text</dataType>
+                <label>Update Name</label>
+                <visible>true</visible>
+                <dataScope>name</dataScope>
+            </settings>
+        </field>
+        <field name="description" formElement="textarea">
+            <settings>
+                <dataType>text</dataType>
+                <label>Description</label>
+                <visible>true</visible>
+                <dataScope>description</dataScope>
+            </settings>
+        </field>
+        <field name="start_time" class="Magento\Staging\Block\Adminhtml\Update\Entity\StartTime" formElement="date">
+            <settings>
+                <validation>
+                    <rule name="required-entry" xsi:type="boolean">true</rule>
+                </validation>
+                <dataType>text</dataType>
+                <label>Start Time</label>
+                <visible>true</visible>
+                <dataScope>start_time</dataScope>
+            </settings>
+            <formElements>
+                <date>
+                    <settings>
+                        <outputDateFormat>YY-MM-DD HH:mm a</outputDateFormat>
+                        <options>
+                            <option name="dateFormat" xsi:type="string">MMM d, y</option>
+                            <option name="showsTime" xsi:type="boolean">true</option>
+                        </options>
+                    </settings>
+                </date>
+            </formElements>
+        </field>
+        <field name="end_time" formElement="date">
+            <settings>
+                <dataType>text</dataType>
+                <label>End Time</label>
+                <visible>true</visible>
+                <dataScope>end_time</dataScope>
+            </settings>
+            <formElements>
+                <date>
+                    <settings>
+                        <outputDateFormat>YY-MM-DD HH:mm a</outputDateFormat>
+                        <options>
+                            <option name="dateFormat" xsi:type="string">MMM d, y</option>
+                            <option name="showsTime" xsi:type="boolean">true</option>
+                            <option name="maxDate" xsi:type="string">+30y</option>
+                        </options>
+                    </settings>
+                </date>
+            </formElements>
+        </field>
+    </fieldset>
+</form>

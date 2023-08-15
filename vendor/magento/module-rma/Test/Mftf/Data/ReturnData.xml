@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+ /**
+  * Copyright © Magento, Inc. All rights reserved.
+  * See COPYING.txt for license details.
+  */
+-->
+
+<entities xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+          xsi:noNamespaceSchemaLocation="urn:magento:mftf:DataGenerator/etc/dataProfileSchema.xsd">
+    <entity name="SampleReturnItem" type="return_item">
+        <data key="qty_requested">1</data>
+        <data key="reason">Other</data>
+        <data key="reason_other">Sample return reason</data>
+        <data key="condition">Opened</data>
+        <data key="resolution">Refund</data>
+    </entity>
+
+    <entity name="AuthorizedProcessReturnItem" type="processing_return_item">
+        <data key="qty">1</data>
+        <data key="process_type">authorized</data>
+        <data key="status_type">authorized</data>
+    </entity>
+
+    <entity name="ReceivedProcessReturnItem" type="processing_return_item">
+        <data key="qty">1</data>
+        <data key="process_type">returned</data>
+        <data key="status_type">received</data>
+    </entity>
+
+    <entity name="ApprovedProcessReturnItem" type="processing_return_item">
+        <data key="qty">1</data>
+        <data key="process_type">approved</data>
+        <data key="status_type">approved</data>
+    </entity>
+
+    <entity name="SampleProductReturnItem" type="return_item">
+        <data key="reason">Wrong Size</data>
+        <data key="condition">Opened</data>
+        <data key="resolution">Refund</data>
+        <data key="new_attribute">Yes</data>
+        <data key="status">Pending</data>
+        <data key="qty_requested">1</data>
+        <data key="qty">1</data>
+    </entity>
+</entities>

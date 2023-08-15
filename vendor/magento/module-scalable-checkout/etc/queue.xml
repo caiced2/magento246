@@ -1,0 +1,15 @@
+<?xml version="1.0"?>
+<!--
+/**
+ * Copyright © Magento, Inc. All rights reserved.
+ * See COPYING.txt for license details.
+ */
+-->
+<!--
+@deprecated split database solution is deprecated and will be removed
+-->
+<config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="urn:magento:framework-message-queue:etc/queue.xsd">
+    <broker topic="catalog.product.removed" exchange="magento">
+        <queue name="catalog_product_removed_queue" consumer="quoteItemCleaner" consumerInstance="Magento\Framework\MessageQueue\BatchConsumer" handler="Magento\ScalableCheckout\Model\ResourceModel\Quote\Item\Consumer::processMessage" />
+    </broker>
+</config>

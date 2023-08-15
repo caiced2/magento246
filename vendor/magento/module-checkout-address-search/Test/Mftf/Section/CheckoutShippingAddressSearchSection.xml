@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+ /**
+  * Copyright © Magento, Inc. All rights reserved.
+  * See COPYING.txt for license details.
+  */
+-->
+
+<sections xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:noNamespaceSchemaLocation="urn:magento:mftf:Page/etc/SectionObject.xsd">
+    <section name="CheckoutShippingAddressSearchSection">
+        <element name="popupSelectShippingAddress" type="text" selector="aside._show div.modal-inner-wrap"/>
+        <element name="selectShippingAddressGrid" type="text" selector="aside._show div.modal-inner-wrap div.modal-content"/>
+        <element name="searchAddressField" type="input" selector="//input[@data-role='advanced-select-text']"/>
+        <element name="searchAddressButton" type="button" selector=".action.search" timeout="10"/>
+        <element name="addressesFound" type="text" selector="//div[@data-bind='text: itemsQuantity']"/>
+        <element name="firstShippingAddressItem" type="text" selector="//li[contains(@class,'admin__action-multiselect-menu-inner-item')][1]"/>
+        <element name="exactShippingAddressItem" type="text" selector="//li[contains(@class,'admin__action-multiselect-menu-inner-item')][{{var1}}]" parameterized="true"/>
+        <element name="shippingAddressItems" type="text" selector="//li[contains(@class,'admin__action-multiselect-menu-inner-item')]"/>
+        <element name="defaultAddressButton" type="text" selector="//li[contains(@class,'admin__action-multiselect-menu-inner-item') and //span[contains(text(),'{{var1}}')]]//span[text()='Default']" parameterized="true"/>
+        <element name="selectedAddressButton" type="text" selector="//li[contains(@class,'admin__action-multiselect-menu-inner-item') and //span[contains(text(),'{{var1}}')]]//span[text()='Selected']" parameterized="true"/>
+        <element name="shippingAddressItem" type="text" selector="//li[contains(@class,'admin__action-multiselect-menu-inner-item')]"/>
+        <element name="shipHereButton" type="button" selector="//li[@class='admin__action-multiselect-menu-inner-item _root' and //span[contains(text(),'{{var1}}')]]//span[contains(text(), 'Ship Here')]" parameterized="true" timeout="10"/>
+        <element name="editNewAddressButton" type="button" selector="//li[@class='admin__action-multiselect-menu-inner-item _root' and //span[contains(text(),'{{var1}}')]]//span[contains(text(), 'Edit')]" parameterized="true"/>
+        <element name="closeSelectShippingAddressModal" type="button" selector="//button[@class='action-close' and //span[text()='Close']]"/>
+        <element name="shippingAddressSearch" type="input" selector="aside[style*='z-index'] [placeholder*='Search for city']"/>
+    </section>
+</sections>

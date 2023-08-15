@@ -1,0 +1,115 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+/**
+ * Copyright © Magento, Inc. All rights reserved.
+ * See COPYING.txt for license details.
+ */
+-->
+<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema">
+    <xs:element name="config">
+        <xs:complexType>
+            <xs:choice maxOccurs="unbounded">
+                <xs:element name="attribute_type" type="attributeType" minOccurs="1" maxOccurs="unbounded" />
+                <xs:element name="attribute_group" type="attributeGroup" minOccurs="1" maxOccurs="unbounded" />
+                <xs:element name="registry">
+                    <xs:complexType>
+                        <xs:choice maxOccurs="unbounded">
+                            <xs:element name="static_attribute" type="Attribute" minOccurs="1" maxOccurs="unbounded"/>
+                            <xs:element name="custom_attribute" type="Attribute" minOccurs="0" maxOccurs="unbounded" />
+                        </xs:choice>
+                    </xs:complexType>
+                    <xs:unique name="uniqueStaticAttributeName">
+                        <xs:annotation>
+                            <xs:documentation>
+                                Static attribute name must be unique.
+                            </xs:documentation>
+                        </xs:annotation>
+                        <xs:selector xpath="static_attribute"/>
+                        <xs:field xpath="@name"/>
+                    </xs:unique>
+                    <xs:unique name="uniqueCustomAttributeName">
+                        <xs:annotation>
+                            <xs:documentation>
+                                Custom attribute name must be unique.
+                            </xs:documentation>
+                        </xs:annotation>
+                        <xs:selector xpath="custom_attribute"/>
+                        <xs:field xpath="@name"/>
+                    </xs:unique>
+                </xs:element>
+                <xs:element name="registrant">
+                    <xs:complexType>
+                        <xs:choice maxOccurs="unbounded">
+                            <xs:element name="static_attribute" type="Attribute" minOccurs="1" maxOccurs="unbounded"/>
+                            <xs:element name="custom_attribute" type="Attribute" minOccurs="0" maxOccurs="unbounded"/>
+                        </xs:choice>
+                    </xs:complexType>
+                </xs:element>
+            </xs:choice>
+        </xs:complexType>
+        <xs:unique name="uniqueAttributeTypeName">
+            <xs:annotation>
+                <xs:documentation>
+                    Attribute type name must be unique.
+                </xs:documentation>
+            </xs:annotation>
+            <xs:selector xpath="attribute_type"/>
+            <xs:field xpath="@name"/>
+        </xs:unique>
+        <xs:unique name="uniqueAttributeGroupName">
+            <xs:annotation>
+                <xs:documentation>
+                    Attribute group name must be unique.
+                </xs:documentation>
+            </xs:annotation>
+            <xs:selector xpath="attribute_group"/>
+            <xs:field xpath="@name"/>
+        </xs:unique>
+    </xs:element>
+    <xs:complexType name="attributeType">
+        <xs:annotation>
+            <xs:documentation>
+                Default type for attributes of the gift registry
+            </xs:documentation>
+        </xs:annotation>
+        <xs:sequence>
+            <xs:element name="label" type="label" minOccurs="1" maxOccurs="unbounded"/>
+        </xs:sequence>
+        <xs:attribute name="name" type="xs:string" />
+    </xs:complexType>
+    <xs:complexType name="attributeGroup">
+        <xs:annotation>
+            <xs:documentation>
+                Groups for attributes of the gift registry
+            </xs:documentation>
+        </xs:annotation>
+        <xs:sequence>
+            <xs:element name="label" type="label" minOccurs="1" maxOccurs="unbounded"/>
+        </xs:sequence>
+        <xs:attribute name="name" type="xs:string" />
+        <xs:attribute name="sort_order" type="xs:int" />
+        <xs:attribute name="visible" type="xs:boolean" />
+    </xs:complexType>
+    <xs:complexType name="Attribute">
+        <xs:annotation>
+            <xs:documentation>
+                Attribute node for the creating of gift registry
+            </xs:documentation>
+        </xs:annotation>
+        <xs:sequence>
+            <xs:element name="label" type="label" minOccurs="1" maxOccurs="unbounded"/>
+        </xs:sequence>
+        <xs:attribute name="name" type="xs:string" />
+        <xs:attribute name="type" type="xs:string" />
+        <xs:attribute name="group" type="xs:string" />
+        <xs:attribute name="visible" type="xs:boolean" />
+    </xs:complexType>
+    <xs:complexType name="label" mixed="true">
+        <xs:annotation>
+            <xs:documentation>
+                Label with translate parameter for all fields
+            </xs:documentation>
+        </xs:annotation>
+        <xs:attribute name="translate" type="xs:boolean" />
+    </xs:complexType>
+</xs:schema>

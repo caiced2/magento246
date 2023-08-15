@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+ /**
+  * Copyright © Magento, Inc. All rights reserved.
+  * See COPYING.txt for license details.
+  */
+-->
+<actionGroups xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:noNamespaceSchemaLocation="urn:magento:mftf:Test/etc/actionGroupSchema.xsd">
+    <actionGroup name="FillProductsToDisplayInformation">
+        <arguments>
+            <argument name="information" defaultValue="SimpleTargetRuleDisplayInformation"/>
+        </arguments>
+        <click selector="{{AdminTargetRuleSection.productToDisplayTab}}" stepKey="clickOnTab1"/>
+        <click selector="{{AdminTargetRuleProductsToDisplaySection.selectButton('1')}}" stepKey="clickOnAll"/>
+        <selectOption selector="{{AdminTargetRuleProductsToDisplaySection.actionAggregator}}" userInput="{{information.actionAggregator}}" stepKey="selectActionAggregator"/>
+        <click selector="{{AdminTargetRuleSection.productToDisplayTab}}" stepKey="clickOnTab2"/>
+        <click selector="{{AdminTargetRuleProductsToDisplaySection.selectButton('2')}}" stepKey="clickOnTrue"/>
+        <selectOption selector="{{AdminTargetRuleProductsToDisplaySection.actionValue}}" userInput="{{information.actionValue}}" stepKey="selectActionValue"/>
+        <click selector="{{AdminTargetRuleSection.productToDisplayTab}}" stepKey="clickOnTab3"/>
+        <click selector="{{AdminTargetRuleProductsToDisplaySection.selectCondition('1','1')}}" stepKey="clickOnPlus"/>
+        <selectOption selector="{{AdminTargetRuleProductsToDisplaySection.newAction}}" userInput="{{information.newAction}}" stepKey="selectNewAction"/>
+        <click selector="{{AdminTargetRuleSection.productToDisplayTab}}" stepKey="clickOnTab4"/>
+        <click selector="{{AdminTargetRuleProductsToDisplaySection.selectCondition('1','1')}}" stepKey="clickOnIs"/>
+        <selectOption selector="{{AdminTargetRuleProductsToDisplaySection.newActionOperator}}" userInput="{{information.newActionOperator}}" stepKey="selectNewActionOperator"/>
+    </actionGroup>
+</actionGroups>

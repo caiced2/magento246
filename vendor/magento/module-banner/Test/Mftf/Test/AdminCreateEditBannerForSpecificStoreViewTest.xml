@@ -1,0 +1,136 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+ /**
+  * Copyright © Magento, Inc. All rights reserved.
+  * See COPYING.txt for license details.
+  */
+-->
+
+<tests xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xsi:noNamespaceSchemaLocation="urn:magento:mftf:Test/etc/testSchema.xsd">
+    <test name="AdminCreateEditBannerForSpecificStoreViewTest">
+        <annotations>
+            <title value="Admin create and edit banner for specifice store view"/>
+            <description value="Admin create and edit banner for specifice store view"/>
+            <severity value="CRITICAL"/>
+            <testCaseId value="MAGETWO-86441"/>
+            <features value="MAGETWO-36659-[CMS] WYSIWYG update"/>
+            <stories value="MAGETWO-42047-Apply new WYSIWYG to Banner add/edit"/>
+            <group value="Banner"/>
+        </annotations>
+        <before>
+            <createData stepKey="createSalesRule" entity="ApiSalesRule" />
+            <createData stepKey="createSalesRuleCoupon" entity="ApiSalesRuleCoupon">
+                <requiredEntity createDataKey="createSalesRule"/>
+            </createData>
+            <createData entity="_defaultCategory" stepKey="createPreReqCategory"/>
+            <createData entity="_defaultProduct" stepKey="createPreReqProduct">
+                <requiredEntity createDataKey="createPreReqCategory"/>
+            </createData>
+            <actionGroup ref="AdminLoginActionGroup" stepKey="loginGetFromGeneralFile"/>
+            <amOnPage url="{{AdminNewWidgetPage.url}}" stepKey="amOnAdminNewWidgetPage"/>
+            <selectOption selector="{{AdminNewWidgetSection.widgetType}}" userInput="Dynamic Blocks Rotator" stepKey="setWidgetType"/>
+            <selectOption selector="{{AdminNewWidgetSection.widgetDesignTheme}}" userInput="Magento Luma" stepKey="setWidgetDesignTheme"/>
+            <click selector="{{AdminNewWidgetSection.continue}}" stepKey="clickContinue"/>
+            <grabFromCurrentUrl regex="~/theme_id/(\d+)/~" stepKey="themeId"/>
+            <createData entity="sampleBannerWidget" stepKey="createPreReqWidget">
+                <field key="theme_id">{$themeId}</field>
+            </createData>
+            <actionGroup ref="EnabledWYSIWYGActionGroup" stepKey="enableWYSIWYG"/>
+            <actionGroup ref="AdminCreateStoreViewActionGroup" stepKey="createStoreView" />
+            <magentoCron groups="index" stepKey="reindex"/>
+        </before>
+        <after>
+            <actionGroup ref="DeleteWidgetActionGroup" stepKey="deleteWidget"/>
+            <actionGroup ref="AdminDeleteStoreViewActionGroup" stepKey="deleteStoreView">
+                <argument name="customStore" value="customStore"/>
+            </actionGroup>
+            <magentoCron groups="index" stepKey="reindex"/>
+            <deleteData createDataKey="createPreReqCategory" stepKey="deleteCategory"/>
+            <deleteData createDataKey="createPreReqProduct" stepKey="deleteProduct"/>
+            <deleteData createDataKey="createSalesRuleCoupon" stepKey="deleteSalesRuleCoupon"/>
+            <deleteData createDataKey="createSalesRule" stepKey="deleteSalesRule"/>
+            <actionGroup ref="DisabledWYSIWYGActionGroup" stepKey="disableWYSIWYG"/>
+            <actionGroup ref="AdminLogoutActionGroup" stepKey="logout"/>
+        </after>
+        <!--Go to banner page and create new banner-->
+        <actionGroup ref="CreateBannerActionGroup" stepKey="createPreReqBanner">
+            <argument name="Banner" value="sampleBanner" />
+        </actionGroup>
+        <waitForPageLoad stepKey="waitForPageLoad1" />
+        <click selector="{{AdminWidgetGridSection.title(sampleBanner.name)}}" stepKey="navigateToEditBanner1" />
+        <waitForPageLoad stepKey="waitForEditPage"/>
+        <actionGroup ref="AssignRelatedCartPriceRuleToBannerActionGroup" stepKey="assignCartPriceRuleToBanner">
+            <argument name="Banner" value="sampleBanner"/>
+            <argument name="CartPriceRule" value="$$createSalesRule$$"/>
+        </actionGroup>
+
+        <!-- Go to widget page and add banner to widget -->
+        <actionGroup ref="AssignBannerToWidgetActionGroup" stepKey="createPreReqWidget">
+            <argument name="Banner" value="sampleBanner"/>
+            <argument name="Widget" value="$$createPreReqWidget$$"/>
+        </actionGroup>
+        <actionGroup ref="ClearCacheActionGroup" stepKey="clearMagentoCache"/>
+
+        <!-- apply cart rule on store front -->
+        <amOnPage url="{{StorefrontProductPage.url($$createPreReqProduct.custom_attributes[url_key]$$)}}" stepKey="openProductPage"/>
+        <waitForPageLoad stepKey="waitForPageLoad11"/>
+        <actionGroup ref="ApplyCartRuleOnStorefrontActionGroup" stepKey="applyCartRule">
+            <argument name="product" value="$$createPreReqProduct$$"/>
+            <argument name="couponCode" value="$$createSalesRuleCoupon.code$$"/>
+        </actionGroup>
+        <waitForText userInput='You used coupon code "$$createSalesRuleCoupon.code$$"' stepKey="waitForText"/>
+        <see selector="{{StorefrontMessagesSection.success}}" userInput='You used coupon code "$$createSalesRuleCoupon.code$$"'
+             stepKey="seeSuccessMessage"/>
+
+        <!-- Go to storefront banner page, assert banner content -->
+        <amOnPage url="/" stepKey="goToStoreFront1" />
+        <wait time="30" stepKey="waitForBanners"/>
+        <reloadPage stepKey="reloadPage"/>
+        <waitForText userInput="Hello World from banner!" stepKey="waitForTextOnDefaultStoreView1"/>
+        <see userInput="Hello World from banner!" stepKey="assertBannerDescriptionOnDefaultStoreView1"/>
+        <click selector="{{StorefrontBannerSection.storeViewSwitcher}}" stepKey="clickStoreViewStitcher1"/>
+        <waitForElementVisible selector="{{StorefrontBannerSection.storeViewDropdown}}" stepKey="waitForStoreViewDropdown1"/>
+        <click selector="{{StorefrontBannerSection.storeViewOption(customStore.code)}}" stepKey="selectStoreView1"/>
+        <waitForPageLoad stepKey="waitForPageLoad3"/>
+        <waitForText userInput="Hello World from banner!" stepKey="waitForTextOnCustomStoreView1"/>
+        <see userInput="Hello World from banner!" stepKey="assertBannerDescriptionOnCustomStoreView1"/>
+
+        <!-- Go back to Admin and the Edit banner-->
+        <amOnPage url="{{_ENV.MAGENTO_BACKEND_NAME}}" stepKey="navigateToAdmin"/>
+        <waitForPageLoad stepKey="waitForPageLoad4"/>
+        <amOnPage url="{{AdminDynamicBlockGridPage.url}}" stepKey="navigateToBannerGrid"/>
+        <waitForPageLoad stepKey="waitForPageLoad5"/>
+        <click selector="{{AdminWidgetGridSection.title(sampleBanner.Name)}}" stepKey="navigateToEditBanner2" />
+        <waitForPageLoad stepKey="waitForPageLoad6"/>
+        <click selector="{{AdminBannerBasicActionSection.Scope}}" stepKey="clickScopeSelector"/>
+        <waitForElementVisible selector="{{AdminBannerBasicActionSection.ScopeDropdown}}" stepKey="waitForScopeDropdown"/>
+        <click selector="{{AdminBannerBasicActionSection.ScopeOption(customStore.name)}}" stepKey="selectScope"/>
+        <waitForElementVisible selector="{{AdminBannerBasicActionSection.ScopeModal}}" stepKey="waitForScopeModal"/>
+        <click selector="{{AdminBannerBasicActionSection.ScopeModalConfirm}}" stepKey="confirmScopeModal"/>
+        <waitForPageLoad stepKey="waitForPageLoad7"/>
+        <waitForElementVisible selector="{{TinyMCESection.TinyMCE}}" stepKey="waitForTinyMCE2" />
+        <conditionalClick selector="{{AdminBannerBasicActionSection.ContentTab}}" dependentSelector="{{BannerContentSection.checkIfContentTabOpen}}" stepKey="clickIfContentTabClosed2" visible="true"/>
+        <click selector="{{BannerContentSection.UseDefaultValue}}" stepKey="unCheckUseDefaultValue"/>
+        <executeJS function="tinyMCE.get('banner_form_store_contents').setContent('Hello World from banner on custom store view!');" stepKey="executeJSFillContent2"/>
+        <waitForPageLoad stepKey="waitForPageLoad8" />
+        <click selector="{{BannerContentSection.ShowHideBtn}}" stepKey="clickToShowHideBtn2" />
+        <click selector="{{AdminBannerBasicActionSection.Save}}" stepKey="saveBanner2" />
+
+        <!-- Go to storefront banner page, assert banner content -->
+        <amOnPage url="/" stepKey="goToStoreFront2" />
+        <wait time="30" stepKey="waitForBannersAfterUpdate"/>
+        <reloadPage stepKey="reloadPageAfterUpdateBanners"/>
+        <waitForPageLoad stepKey="waitForPageLoad9"/>
+        <waitForText userInput="Hello World from banner on custom store view!" stepKey="waitForTextOnCustomStoreView2"/>
+        <see userInput="Hello World from banner on custom store view!" stepKey="assertBannerDescriptionOnCustomStoreView2"/>
+        <click selector="{{StorefrontBannerSection.storeViewSwitcher}}" stepKey="clickStoreViewStitcher2"/>
+        <waitForElementVisible selector="{{StorefrontBannerSection.storeViewDropdown}}" stepKey="waitForStoreViewDropdown2"/>
+        <click selector="{{StorefrontBannerSection.storeViewOption('default')}}" stepKey="selectStoreView2"/>
+        <wait time="30" stepKey="waitForBannersAfterUpdate2"/>
+        <reloadPage stepKey="reloadPageAfterUpdateBanners2"/>
+        <waitForPageLoad stepKey="waitForPageLoad10"/>
+        <waitForText userInput="Hello World from banner!" stepKey="waitForTextOnDefaultStoreView2"/>
+        <see userInput="Hello World from banner!" stepKey="assertBannerDescriptionOnDefaultStoreView2"/>
+    </test>
+</tests>

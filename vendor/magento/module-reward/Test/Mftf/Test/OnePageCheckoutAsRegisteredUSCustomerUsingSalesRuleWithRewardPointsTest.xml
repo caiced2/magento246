@@ -1,0 +1,142 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+ /**
+  * Copyright © Magento, Inc. All rights reserved.
+  * See COPYING.txt for license details.
+  */
+-->
+
+<tests xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xsi:noNamespaceSchemaLocation="urn:magento:mftf:Test/etc/testSchema.xsd">
+    <test name="OnePageCheckoutAsRegisteredUSCustomerUsingSalesRuleWithRewardPointsTest">
+        <annotations>
+            <features value="OnePageCheckout"/>
+            <stories value="OnePageCheckout within Offline Payment Methods"/>
+            <title value="OnePageCheckout as registered US customer using sales rule with reward points test"/>
+            <description value="Checkout as registered US customer using sales rule with reward points"/>
+            <severity value="CRITICAL"/>
+            <testCaseId value="MC-14747"/>
+            <group value="reward"/>
+            <group value="mtf_migrated"/>
+        </annotations>
+        <before>
+            <magentoCLI command="config:set checkout/options/enable_guest_checkout_login 1" stepKey="EnablingGuestCheckoutLogin"/>
+            <!-- Create Simple Product -->
+            <createData entity="SimpleProduct2" stepKey="createSimpleProduct">
+                <field key="price">560</field>
+            </createData>
+
+            <!-- Create customer -->
+            <createData entity="Simple_Customer_Without_Address" stepKey="createCustomer"/>
+
+            <!-- Create sales rule -->
+            <createData entity="ActiveSalesRuleForAllGroups" stepKey="createCartPriceRule"/>
+            <createData entity="SimpleSalesRuleCoupon" stepKey="createCouponForCartPriceRule">
+                <requiredEntity createDataKey="createCartPriceRule"/>
+            </createData>
+
+            <!-- Enable payment method -->
+            <magentoCLI command="config:set {{BankTransferEnableConfigData.path}} {{BankTransferEnableConfigData.value}}" stepKey="enableBankTransfer"/>
+
+            <!-- Enable free shipping -->
+            <createData entity="FreeShippingMethodsSettingConfig" stepKey="freeShippingMethodsSettingConfig"/>
+
+            <!-- Login as admin -->
+            <actionGroup ref="AdminLoginActionGroup" stepKey="loginAsAdmin"/>
+        </before>
+        <after>
+            <!-- Disabled payment method -->
+            <magentoCLI command="config:set {{BankTransferDisabledConfigData.path}} {{BankTransferDisabledConfigData.value}}" stepKey="disabledBankTransfer"/>
+
+            <!-- Customer and admin logout -->
+            <actionGroup ref="AdminLogoutActionGroup" stepKey="logout"/>
+            <actionGroup ref="StorefrontCustomerLogoutActionGroup" stepKey="customerLogout"/>
+
+            <!-- Delete created product -->
+            <deleteData createDataKey="createSimpleProduct" stepKey="deleteSimpleProduct"/>
+
+            <!-- Delete sales rule -->
+            <deleteData createDataKey="createCartPriceRule" stepKey="deleteCartPriceRule"/>
+
+            <!-- Delete customer -->
+            <deleteData createDataKey="createCustomer" stepKey="deleteCustomer"/>
+
+            <!-- Disable free shipping -->
+            <createData entity="DefaultShippingMethodsConfig" stepKey="defaultShippingMethodsConfig"/>
+            <createData entity="DisableFreeShippingConfig" stepKey="disableFreeShippingConfig"/>
+            <magentoCLI command="config:set checkout/options/enable_guest_checkout_login 0" stepKey="DisablingGuestCheckoutLogin"/>
+        </after>
+
+        <!-- Search and go to cart price rule page -->
+        <actionGroup ref="AdminOpenCartPriceRulesPageActionGroup" stepKey="goToCartPriceRulePage"/>
+        <actionGroup ref="AdminFilterCartPriceRuleActionGroup" stepKey="filterCartPriceRule">
+            <argument name="ruleName" value="$$createCartPriceRule.name$$"/>
+        </actionGroup>
+
+        <!-- Add reward points to created cart price rule -->
+        <click selector="{{AdminCartPriceRulesFormSection.actionsHeader}}" stepKey="clickToExpandActions"/>
+        <fillField selector="{{AdminCartPriceRulesFormSection.addRewardPoints}}" userInput="50" stepKey="fillRewardPoints"/>
+        <click selector="{{AdminCartPriceRulesFormSection.saveAndContinue}}" stepKey="clickSaveAndContinueButton"/>
+
+        <!-- Add Simple Product to cart -->
+        <amOnPage url="{{StorefrontProductPage.url($$createSimpleProduct.custom_attributes[url_key]$$)}}" stepKey="navigateToSimpleProductPage"/>
+        <waitForPageLoad stepKey="waitForSimpleProductPageLoad"/>
+        <actionGroup ref="AddToCartFromStorefrontProductPageActionGroup" stepKey="addToCartFromStorefrontProductPage">
+            <argument name="productName" value="$$createSimpleProduct.name$$"/>
+        </actionGroup>
+
+        <!-- Go to shopping cart -->
+        <actionGroup ref="ClickViewAndEditCartFromMiniCartActionGroup" stepKey="goToShoppingCartFromMinicart"/>
+        <actionGroup ref="FillShippingZipForm" stepKey="fillShippingZipForm">
+            <argument name="address" value="US_Address_CA"/>
+        </actionGroup>
+        <click selector="{{CheckoutCartSummarySection.proceedToCheckout}}" stepKey="clickProceedToCheckout"/>
+        <waitForPageLoad stepKey="waitForProceedToCheckout"/>
+
+        <!-- Login as customer on checkout page -->
+        <actionGroup ref="LoginAsCustomerOnCheckoutPageActionGroup" stepKey="customerLogin">
+            <argument name="customer" value="$$createCustomer$$"/>
+        </actionGroup>
+
+        <!-- Fill customer new shipping address -->
+        <actionGroup ref="CustomerCheckoutFillNewShippingAddressActionGroup" stepKey="fillShippingAddress">
+            <argument name="address" value="US_Address_TX"/>
+        </actionGroup>
+
+        <!-- Select Free shipping -->
+        <scrollTo selector="{{CheckoutShippingMethodsSection.next}}" stepKey="scrollToShippingRate"/>
+        <click selector="{{CheckoutShippingMethodsSection.shippingMethodFreeShipping}}" stepKey="selectShippingMethod"/>
+
+        <!-- Click next button to open payment section -->
+        <actionGroup ref="StorefrontCheckoutClickNextButtonActionGroup" stepKey="clickNext"/>
+        <comment userInput="BIC workaround" stepKey="waitForShipmentPageLoad"/>
+
+        <!-- Check order summary in checkout -->
+        <waitForElement selector="{{CheckoutPaymentSection.paymentSectionTitle}}" stepKey="waitForPaymentSectionLoaded"/>
+
+        <!-- Apply coupon -->
+        <actionGroup ref="ApplyCouponOnPaymentPageActionGroup" stepKey="applyCoupon">
+            <argument name="couponCode" value="$$createCouponForCartPriceRule.code$$"/>
+        </actionGroup>
+
+        <!-- Select payment method -->
+        <click selector="{{StorefrontCheckoutPaymentMethodsSection.bankTransfer}}" stepKey="selectBankTransferMethod"/>
+        <actionGroup ref="ClickPlaceOrderActionGroup" stepKey="clickPlaceOrderButton"/>
+
+        <!-- Check order summary in checkout -->
+        <seeElement selector="{{CheckoutSuccessMainSection.success}}" stepKey="orderIsSuccessfullyPlaced"/>
+        <grabTextFrom selector="{{CheckoutSuccessMainSection.orderNumber22}}" stepKey="grabOrderNumber"/>
+
+        <!-- Check that the mini cart is empty -->
+        <actionGroup ref="AssertMiniCartEmptyActionGroup" stepKey="assertMiniCartEmpty"/>
+
+        <!-- Assert order grand total -->
+        <amOnPage url="{{StorefrontCustomerDashboardPage.url}}" stepKey="navigateToCustomerDashboardPage"/>
+        <waitForPageLoad stepKey="waitForCustomerDashboardPageLoad"/>
+        <see selector="{{StorefrontCustomerRecentOrdersSection.orderTotal}}" userInput="$280.00" stepKey="checkOrderTotalInStorefront"/>
+
+        <!-- Assert reward in history grid -->
+        <click selector="{{StorefrontCustomerSidebarSection.sidebarTab('Reward Points')}}" stepKey="clickToOpenRewardPoints"/>
+        <see selector="{{StorefrontCustomerRewardPointsBalanceInformationSection.points}}" userInput="+50" stepKey="seeRewardPoint"/>
+    </test>
+</tests>

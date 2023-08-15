@@ -1,0 +1,191 @@
+<?xml version="1.0"?>
+<!--
+/**
+ * Copyright © Magento, Inc. All rights reserved.
+ * See COPYING.txt for license details.
+ */
+-->
+<schema xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:noNamespaceSchemaLocation="urn:magento:framework:Setup/Declaration/Schema/etc/schema.xsd">
+    <table name="magento_reward" resource="default" engine="innodb" comment="Enterprise Reward">
+        <column xsi:type="int" name="reward_id" unsigned="true" nullable="false" identity="true"
+                comment="Reward Id"/>
+        <column xsi:type="int" name="customer_id" unsigned="true" nullable="false" identity="false"
+                default="0" comment="Customer Id"/>
+        <column xsi:type="smallint" name="website_id" unsigned="true" nullable="true" identity="false"
+                comment="Website Id"/>
+        <column xsi:type="int" name="points_balance" unsigned="true" nullable="false" identity="false"
+                default="0" comment="Points Balance"/>
+        <column xsi:type="varchar" name="website_currency_code" nullable="true" length="3"
+                comment="Website Currency Code"/>
+        <constraint xsi:type="primary" referenceId="PRIMARY">
+            <column name="reward_id"/>
+        </constraint>
+        <constraint xsi:type="foreign" referenceId="MAGENTO_REWARD_CUSTOMER_ID_CUSTOMER_ENTITY_ENTITY_ID"
+                    table="magento_reward" column="customer_id" referenceTable="customer_entity"
+                    referenceColumn="entity_id" onDelete="CASCADE"/>
+        <constraint xsi:type="unique" referenceId="MAGENTO_REWARD_CUSTOMER_ID_WEBSITE_ID">
+            <column name="customer_id"/>
+            <column name="website_id"/>
+        </constraint>
+        <index referenceId="MAGENTO_REWARD_WEBSITE_ID" indexType="btree">
+            <column name="website_id"/>
+        </index>
+    </table>
+    <table name="magento_reward_history" resource="default" engine="innodb" comment="Enterprise Reward History">
+        <column xsi:type="int" name="history_id" unsigned="true" nullable="false" identity="true"
+                comment="History Id"/>
+        <column xsi:type="int" name="reward_id" unsigned="true" nullable="false" identity="false"
+                default="0" comment="Reward Id"/>
+        <column xsi:type="smallint" name="website_id" unsigned="true" nullable="false" identity="false"
+                default="0" comment="Website Id"/>
+        <column xsi:type="smallint" name="store_id" unsigned="true" nullable="true" identity="false"
+                comment="Store Id"/>
+        <column xsi:type="smallint" name="action" unsigned="false" nullable="false" identity="false"
+                default="0" comment="Action"/>
+        <column xsi:type="int" name="entity" unsigned="false" nullable="true" identity="false"
+                comment="Entity"/>
+        <column xsi:type="int" name="points_balance" unsigned="true" nullable="false" identity="false"
+                default="0" comment="Points Balance"/>
+        <column xsi:type="int" name="points_delta" unsigned="false" nullable="false" identity="false"
+                default="0" comment="Points Delta"/>
+        <column xsi:type="int" name="points_used" unsigned="false" nullable="false" identity="false"
+                default="0" comment="Points Used"/>
+        <column xsi:type="int" name="points_voided" unsigned="true" nullable="false" identity="false"
+                default="0" comment="Points Voided"/>
+        <column xsi:type="decimal" name="currency_amount" scale="4" precision="20" unsigned="false" nullable="false"
+                default="0" comment="Currency Amount"/>
+        <column xsi:type="decimal" name="currency_delta" scale="4" precision="20" unsigned="false" nullable="false"
+                default="0" comment="Currency Delta"/>
+        <column xsi:type="varchar" name="base_currency_code" nullable="false" length="5" comment="Base Currency Code"/>
+        <column xsi:type="text" name="additional_data" nullable="false" comment="Additional Data"/>
+        <column xsi:type="text" name="comment" nullable="true" comment="Comment"/>
+        <column xsi:type="timestamp" name="created_at" on_update="false" nullable="false" default="CURRENT_TIMESTAMP"
+                comment="Created At"/>
+        <column xsi:type="timestamp" name="expired_at_static" on_update="false" nullable="true"
+                comment="Expired At Static"/>
+        <column xsi:type="timestamp" name="expired_at_dynamic" on_update="false" nullable="true"
+                comment="Expired At Dynamic"/>
+        <column xsi:type="smallint" name="is_expired" unsigned="false" nullable="false" identity="false"
+                default="0" comment="Is Expired"/>
+        <column xsi:type="int" name="is_duplicate_of" unsigned="true" nullable="true" identity="false"
+                comment="Is Duplicate Of"/>
+        <column xsi:type="smallint" name="notification_sent" unsigned="false" nullable="false"
+                identity="false" default="0" comment="Notification Sent"/>
+        <constraint xsi:type="primary" referenceId="PRIMARY">
+            <column name="history_id"/>
+        </constraint>
+        <constraint xsi:type="foreign" referenceId="MAGENTO_REWARD_HISTORY_REWARD_ID_MAGENTO_REWARD_REWARD_ID"
+                    table="magento_reward_history" column="reward_id" referenceTable="magento_reward"
+                    referenceColumn="reward_id" onDelete="CASCADE"/>
+        <constraint xsi:type="foreign" referenceId="MAGENTO_REWARD_HISTORY_STORE_ID_STORE_STORE_ID"
+                    table="magento_reward_history" column="store_id" referenceTable="store" referenceColumn="store_id"
+                    onDelete="SET NULL"/>
+        <constraint xsi:type="foreign" referenceId="MAGENTO_REWARD_HISTORY_WEBSITE_ID_STORE_WEBSITE_WEBSITE_ID"
+                    table="magento_reward_history" column="website_id" referenceTable="store_website"
+                    referenceColumn="website_id" onDelete="CASCADE"/>
+        <index referenceId="MAGENTO_REWARD_HISTORY_REWARD_ID" indexType="btree">
+            <column name="reward_id"/>
+        </index>
+        <index referenceId="MAGENTO_REWARD_HISTORY_WEBSITE_ID" indexType="btree">
+            <column name="website_id"/>
+        </index>
+        <index referenceId="MAGENTO_REWARD_HISTORY_STORE_ID" indexType="btree">
+            <column name="store_id"/>
+        </index>
+        <index referenceId="MAGENTO_REWARD_HISTORY_ENTITY" indexType="btree">
+            <column name="entity"/>
+        </index>
+    </table>
+    <table name="magento_reward_rate" resource="default" engine="innodb" comment="Enterprise Reward Rate">
+        <column xsi:type="int" name="rate_id" unsigned="true" nullable="false" identity="true"
+                comment="Rate Id"/>
+        <column xsi:type="smallint" name="website_id" unsigned="true" nullable="false" identity="false"
+                default="0" comment="Website Id"/>
+        <column xsi:type="int" name="customer_group_id" unsigned="false" nullable="true" identity="false"/>
+        <column xsi:type="smallint" name="direction" unsigned="false" nullable="false" identity="false"
+                default="1" comment="Direction"/>
+        <column xsi:type="int" name="points" unsigned="false" nullable="false" identity="false" default="0"
+                comment="Points"/>
+        <column xsi:type="decimal" name="currency_amount" scale="4" precision="20" unsigned="false" nullable="false"
+                default="0" comment="Currency Amount"/>
+        <constraint xsi:type="primary" referenceId="PRIMARY">
+            <column name="rate_id"/>
+        </constraint>
+        <constraint xsi:type="foreign" referenceId="MAGENTO_REWARD_RATE_WEBSITE_ID_STORE_WEBSITE_WEBSITE_ID"
+                    table="magento_reward_rate" column="website_id" referenceTable="store_website"
+                    referenceColumn="website_id" onDelete="CASCADE"/>
+        <constraint xsi:type="unique" referenceId="MAGENTO_REWARD_RATE_WEBSITE_ID_CUSTOMER_GROUP_ID_DIRECTION">
+            <column name="website_id"/>
+            <column name="customer_group_id"/>
+            <column name="direction"/>
+        </constraint>
+        <index referenceId="MAGENTO_REWARD_RATE_CUSTOMER_GROUP_ID" indexType="btree">
+            <column name="customer_group_id"/>
+        </index>
+    </table>
+    <table name="magento_reward_salesrule" resource="default" engine="innodb"
+           comment="Enterprise Reward Reward Salesrule">
+        <column xsi:type="int" name="rule_id" unsigned="true" nullable="false" identity="false" default="0"
+                comment="Rule Id"/>
+        <column xsi:type="int" name="points_delta" unsigned="true" nullable="false" identity="false"
+                default="0" comment="Points Delta"/>
+        <constraint xsi:type="primary" referenceId="MAGENTO_REWARD_SALESRULE_RULE_ID">
+            <column name="rule_id"/>
+        </constraint>
+    </table>
+    <table name="quote" resource="checkout" comment="Sales Flat Quote">
+        <column xsi:type="int" name="use_reward_points" unsigned="false" nullable="true" identity="false"
+                comment="Use Reward Points"/>
+        <column xsi:type="int" name="reward_points_balance" unsigned="false" nullable="true"
+                identity="false" comment="Reward Points Balance"/>
+        <column xsi:type="decimal" name="base_reward_currency_amount" scale="4" precision="20" unsigned="false"
+                nullable="true" comment="Base Reward Currency Amount"/>
+        <column xsi:type="decimal" name="reward_currency_amount" scale="4" precision="20" unsigned="false"
+                nullable="true" comment="Reward Currency Amount"/>
+    </table>
+    <table name="quote_address" resource="checkout" comment="Sales Flat Quote Address">
+        <column xsi:type="int" name="reward_points_balance" unsigned="false" nullable="true"
+                identity="false" comment="Reward Points Balance"/>
+        <column xsi:type="decimal" name="base_reward_currency_amount" scale="4" precision="20" unsigned="false"
+                nullable="true" comment="Base Reward Currency Amount"/>
+        <column xsi:type="decimal" name="reward_currency_amount" scale="4" precision="20" unsigned="false"
+                nullable="true" comment="Reward Currency Amount"/>
+    </table>
+    <table name="sales_order" resource="sales" comment="Sales Flat Order">
+        <column xsi:type="int" name="reward_points_balance" unsigned="false" nullable="true"
+                identity="false" comment="Reward Points Balance"/>
+        <column xsi:type="decimal" name="base_reward_currency_amount" scale="4" precision="20" unsigned="false"
+                nullable="true" comment="Base Reward Currency Amount"/>
+        <column xsi:type="decimal" name="reward_currency_amount" scale="4" precision="20" unsigned="false"
+                nullable="true" comment="Reward Currency Amount"/>
+        <column xsi:type="decimal" name="base_rwrd_crrncy_amt_invoiced" scale="4" precision="20" unsigned="false"
+                nullable="true" comment="Base Rwrd Crrncy Amt Invoiced"/>
+        <column xsi:type="decimal" name="rwrd_currency_amount_invoiced" scale="4" precision="20" unsigned="false"
+                nullable="true" comment="Rwrd Currency Amount Invoiced"/>
+        <column xsi:type="decimal" name="base_rwrd_crrncy_amnt_refnded" scale="4" precision="20" unsigned="false"
+                nullable="true" comment="Base Rwrd Crrncy Amnt Refnded"/>
+        <column xsi:type="decimal" name="rwrd_crrncy_amnt_refunded" scale="4" precision="20" unsigned="false"
+                nullable="true" comment="Rwrd Crrncy Amnt Refunded"/>
+        <column xsi:type="int" name="reward_points_balance_refund" unsigned="false" nullable="true"
+                identity="false" comment="Reward Points Balance Refund"/>
+    </table>
+    <table name="sales_invoice" resource="sales" comment="Sales Flat Invoice">
+        <column xsi:type="decimal" name="base_reward_currency_amount" scale="4" precision="20" unsigned="false"
+                nullable="true" comment="Base Reward Currency Amount"/>
+        <column xsi:type="decimal" name="reward_currency_amount" scale="4" precision="20" unsigned="false"
+                nullable="true" comment="Reward Currency Amount"/>
+        <column xsi:type="int" name="reward_points_balance" unsigned="false" nullable="true"
+                identity="false" comment="Reward Points Balance"/>
+    </table>
+    <table name="sales_creditmemo" resource="sales" comment="Sales Flat Creditmemo">
+        <column xsi:type="decimal" name="base_reward_currency_amount" scale="4" precision="20" unsigned="false"
+                nullable="true" comment="Base Reward Currency Amount"/>
+        <column xsi:type="decimal" name="reward_currency_amount" scale="4" precision="20" unsigned="false"
+                nullable="true" comment="Reward Currency Amount"/>
+        <column xsi:type="int" name="reward_points_balance" unsigned="false" nullable="true"
+                identity="false" comment="Reward Points Balance"/>
+        <column xsi:type="int" name="reward_points_balance_refund" unsigned="false" nullable="true"
+                identity="false" comment="Reward Points Balance Refund"/>
+    </table>
+</schema>

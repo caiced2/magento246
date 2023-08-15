@@ -1,0 +1,87 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+ /**
+  * Copyright © Magento, Inc. All rights reserved.
+  * See COPYING.txt for license details.
+  */
+-->
+
+<tests xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:noNamespaceSchemaLocation="urn:magento:mftf:Test/etc/testSchema.xsd">
+      <test name="AdminPermanentUpdateWithStartDateInRangeAlreadyExistsTest">
+        <annotations>
+            <features value="Staging"/>
+            <stories value="Staging updates"/>
+            <title value="Permanent Update with start date in range already exists"/>
+            <description value="The purpose of this end-to-end scenario is testing of business use case 'Create Single Update for products' on backend, preview mode and front-end."/>
+            <severity value="BLOCKER"/>
+            <testCaseId value="MAGETWO-55015"/>
+            <group value="staging"/>
+        </annotations>
+        <before>
+            <actionGroup ref="AdminLoginActionGroup" stepKey="loginAsAdmin"/>
+            <actionGroup ref="AdminCreateWebsiteActionGroup" stepKey="createWebsite">
+                <argument name="newWebsiteName" value="{{customWebsite.name}}"/>
+                <argument name="websiteCode" value="{{customWebsite.code}}"/>
+            </actionGroup>
+            <actionGroup ref="AdminCreateNewStoreGroupActionGroup" stepKey="createNewStore">
+                <argument name="website" value="{{customWebsite.name}}"/>
+                <argument name="storeGroupName" value="{{customStoreGroup.name}}"/>
+                <argument name="storeGroupCode" value="{{customStoreGroup.code}}"/>
+            </actionGroup>
+            <actionGroup ref="AdminCreateStoreViewActionGroup" stepKey="createCustomStoreView">
+                <argument name="StoreGroup" value="customStoreGroup"/>
+                <argument name="customStore" value="customStore"/>
+            </actionGroup>
+            <magentoCron groups="index" stepKey="reindex"/>
+            <createData entity="_defaultCategory" stepKey="createCategory"/>
+            <createData entity="SimpleProduct" stepKey="createProduct">
+                <requiredEntity createDataKey="createCategory"/>
+                <field key="price">10</field>
+            </createData>
+        </before>
+        <after>
+            <deleteData createDataKey="createProduct" stepKey="deleteProduct"/>
+            <deleteData createDataKey="createCategory" stepKey="deleteCategory"/>
+            <actionGroup ref="AdminDeleteWebsiteActionGroup" stepKey="deleteWebsite">
+                <argument name="websiteName" value="{{customWebsite.name}}"/>
+            </actionGroup>
+            <magentoCron groups="index" stepKey="reindex"/>
+            <actionGroup ref="AdminClearFiltersActionGroup" stepKey="clearProductFilters"/>
+            <actionGroup ref="AdminLogoutActionGroup" stepKey="logout"/>
+        </after>
+        <!-- 1. Login to Magento backend -->
+        <!-- 2. Navigate to menu Products->Catalog -->
+        <!-- 3. Click on "Edit" link for product with name   P2ProductName -->
+          <actionGroup ref="SearchForProductOnBackendActionGroup" stepKey="filterProduct">
+              <argument name="product" value="$$createProduct$$"/>
+          </actionGroup>
+        <click selector="{{AdminProductGridSection.productGridNameProduct('$$createProduct.name$$')}}" stepKey="openProductForEdit"/>
+        <seeElement selector="{{AdminStagingSlideOutSection.scheduledChanges}}" stepKey="seeBlockSheduledChanges"/>
+        <dontSeeElement selector="{{AdminStagingSlideOutSection.contentBlock}}" stepKey="dontSeeContentBlock"/>
+        <!-- 4. Click on "Schedule New Update" button -->
+        <!-- 5. On Slide panel change Store view to  P0StoreViewCode and fill New update with data -->
+        <!-- 6. Click on "Save" button -->
+        <click selector="{{AdminStagingSlideOutSection.scheduleNewUpdateBtn}}" stepKey="clickButtonSheduleNewUpdate"/>
+        <click selector="{{AdminStagingSlideOutSection.changeStoreButton}}" stepKey="clickStoreSwitcher"/>
+        <click selector="{{AdminStagingSlideOutSection.selectStoreView(customStore.name)}}" stepKey="clickStoreView"/>
+        <waitForElementVisible selector="{{AdminConfirmationModalSection.ok}}" stepKey="waitForPopupWindowAppears"/>
+        <click selector="{{AdminConfirmationModalSection.ok}}" stepKey="acceptMessage"/>
+        <generateDate date="+1 day" format="m/j/Y g:i A" stepKey="generateStartDate"/>
+        <generateDate date="+3 day" format="m/j/Y g:i A" stepKey="generateEndDate"/>
+        <actionGroup ref="FillScheduleUpdateWithCheckEndActionGroup" stepKey="fillScheduleUpdate">
+            <argument name="staging" value="S5UpdateNameStaging"/>
+            <argument name="timeStart" value="{$generateStartDate}"/>
+            <argument name="timeEnd" value="{$generateEndDate}"/>
+            <argument name="productPrice" value="14"/>
+        </actionGroup>
+        <!-- 7. Click on "Schedule New Update" button -->
+        <!-- 8. On Slide panel fill new update with data -->
+        <actionGroup ref="FillScheduleUpdateRemovePriceActionGroup" stepKey="fillWrongScheduleUpdate">
+            <argument name="staging" value="S8UpdateNameStaging"/>
+            <argument name="timeStart" value="{$generateStartDate}"/>
+        </actionGroup>
+        <!-- 9. Click on "Save" button-->
+        <see selector="{{AdminStagingSlideOutSection.scheduleErrorMessage}}" userInput="error: : Future Update already exists in this time range. Set a different range and try again." stepKey="seeMessageError"/>
+      </test>
+</tests>

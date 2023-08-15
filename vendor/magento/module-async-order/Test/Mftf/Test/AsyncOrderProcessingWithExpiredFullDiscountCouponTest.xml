@@ -1,0 +1,178 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+ /**
+  * Copyright © Magento, Inc. All rights reserved.
+  * See COPYING.txt for license details.
+  */
+-->
+<tests xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xsi:noNamespaceSchemaLocation="urn:magento:mftf:Test/etc/testSchema.xsd">
+    <test name="AsyncOrderProcessingWithExpiredFullDiscountCouponTest">
+        <annotations>
+            <features value="Checkout"/>
+            <stories value="Checkout via Guest Async Checkout"/>
+            <title value="Received order should be rejected if coupon code is expired"/>
+            <description value="Order placed asynchronously should be rejected if coupon code used during checkout is became expired on time of order processing"/>
+            <severity value="CRITICAL"/>
+            <testCaseId value="MC-42953"/>
+            <group value="checkout"/>
+            <group value="async_checkout"/>
+        </annotations>
+        <before>
+            <comment userInput="BIC workaround" stepKey="enableAsyncCheckout"/>
+
+            <!-- Create Product and Category for Order Placement -->
+            <createData entity="_defaultCategory" stepKey="createCategory"/>
+            <createData entity="ApiSimpleProduct" stepKey="createProduct">
+                <requiredEntity createDataKey="createCategory"/>
+            </createData>
+
+            <!-- Enable Free Shipping -->
+            <createData entity="PaymentMethodsSettingConfig" stepKey="paymentMethodsSettingConfig"/>
+            <createData entity="FreeShippingMethodsSettingConfig" stepKey="freeShippingMethodsSettingConfig"/>
+
+            <!-- Login to Admin -->
+            <actionGroup ref="AdminLoginActionGroup" stepKey="loginAsAdmin"/>
+        </before>
+        <after>
+            <createData entity="DefaultShippingMethodsConfig" stepKey="defaultShippingMethodsConfig"/>
+            <createData entity="DisableFreeShippingConfig" stepKey="disableFreeShippingConfig"/>
+            <deleteData createDataKey="createCategory" stepKey="deleteCategory"/>
+            <deleteData createDataKey="createProduct" stepKey="deleteProduct"/>
+            <comment userInput="BIC workaround" stepKey="disableAsyncCheckout"/>
+            <actionGroup ref="DeleteCustomerByEmailActionGroup" stepKey="deleteCustomer">
+                <argument name="email" value="{{CustomerEntityOne.email}}"/>
+            </actionGroup>
+            <actionGroup ref="ResetAdminDataGridToDefaultViewActionGroup" stepKey="resetGrid"/>
+            <actionGroup ref="AdminDeleteCartPriceRuleActionGroup" stepKey="deleteCartPriceRule">
+                <argument name="ruleName" value="ApiSalesRule"/>
+            </actionGroup>
+            <actionGroup ref="AdminLogoutActionGroup" stepKey="adminLogout"/>
+        </after>
+
+        <actionGroup ref="AdminOpenCartPriceRulesPageActionGroup" stepKey="amOnCartPriceList"/>
+
+        <!-- Add a New Rule with Coupon Code which can be Applied Only Once -->
+        <click selector="{{AdminCartPriceRulesSection.addNewRuleButton}}" stepKey="clickAddNewRule"/>
+        <fillField selector="{{AdminCartPriceRulesFormSection.ruleName}}" userInput="{{ApiSalesRule.name}}" stepKey="fillRuleName"/>
+        <selectOption selector="{{AdminCartPriceRulesFormSection.websites}}" userInput="Main Website" stepKey="selectWebsite"/>
+        <actionGroup ref="SelectNotLoggedInCustomerGroupActionGroup" stepKey="chooseNotLoggedInCustomerGroup"/>
+        <selectOption selector="{{AdminCartPriceRulesFormSection.coupon}}" userInput="Specific Coupon" stepKey="selectCouponType"/>
+        <fillField selector="{{AdminCartPriceRulesFormSection.couponCode}}" userInput="{{_defaultCoupon.code}}" stepKey="fillCouponCode"/>
+        <fillField selector="{{AdminCartPriceRulesFormSection.userPerCoupon}}" userInput="1" stepKey="fillUserPerCoupon"/>
+        <click selector="{{AdminCartPriceRulesFormSection.actionsHeader}}" stepKey="clickToExpandActions"/>
+        <selectOption selector="{{AdminCartPriceRulesFormSection.apply}}" userInput="Percent of product price discount" stepKey="selectActionType"/>
+        <fillField selector="{{AdminCartPriceRulesFormSection.discountAmount}}" userInput="100" stepKey="fillDiscountAmount"/>
+        <click selector="{{AdminCartPriceRulesFormSection.save}}" stepKey="clickSaveButton"/>
+        <see selector="{{AdminCartPriceRulesSection.messages}}" userInput="You saved the rule." stepKey="seeSuccessMessage"/>
+
+        <!-- Proceed to Store Front and Place an Order with Free Shipping Using Created Coupon -->
+        <!-- Add Product to Card -->
+        <actionGroup ref="AddSimpleProductToCartActionGroup" stepKey="AddProductToCard">
+            <argument name="product" value="$$createProduct$$"/>
+        </actionGroup>
+
+        <!-- Proceed to Checkout -->
+        <actionGroup ref="StorefrontClickOnMiniCartActionGroup" stepKey="clickToOpenCard"/>
+        <click selector="{{StorefrontMinicartSection.goToCheckout}}" stepKey="clickToProceedToCheckout"/>
+        <waitForPageLoad stepKey="waitForTheFormIsOpened"/>
+
+        <!-- Fill Shipping Form -->
+        <actionGroup ref="ShipmentFormFreeShippingActionGroup" stepKey="shipmentFormFreeShippingActionGroup"/>
+
+        <click selector="{{DiscountSection.DiscountTab}}" stepKey="clickToAddDiscount"/>
+        <fillField selector="{{DiscountSection.DiscountInput}}" userInput="{{_defaultCoupon.code}}" stepKey="TypeDiscountCode"/>
+        <click selector="{{DiscountSection.ApplyCodeBtn}}" stepKey="clickToApplyDiscount"/>
+        <waitForPageLoad stepKey="WaitForDiscountToBeAdded"/>
+
+        <!-- Place Order -->
+        <comment userInput="Comment is added to preserve the step key for backward compatibility" stepKey="waitForPlaceOrderButton"/>
+        <actionGroup ref="ClickPlaceOrderActionGroup" stepKey="clickPlaceOrder"/>
+        <grabTextFrom selector="{{CheckoutSuccessMainSection.orderNumber}}" stepKey="grabOrderNumber"/>
+
+        <!-- Proceed to Store Front and Place an Order with Free Shipping Using Created Coupon -->
+        <!-- Add Product to Cart -->
+        <actionGroup ref="AddSimpleProductToCartActionGroup" stepKey="AddProductToCard1">
+            <argument name="product" value="$$createProduct$$"/>
+        </actionGroup>
+
+        <!-- Proceed to Checkout -->
+        <actionGroup ref="StorefrontClickOnMiniCartActionGroup" stepKey="clickToOpenCard1"/>
+        <click selector="{{StorefrontMinicartSection.goToCheckout}}" stepKey="clickToProceedToCheckout1"/>
+        <waitForPageLoad stepKey="waitForTheFormIsOpened1"/>
+
+        <!-- Fill Shipping Form -->
+        <actionGroup ref="ShipmentFormFreeShippingActionGroup" stepKey="shipmentFormFreeShippingActionGroup1"/>
+
+        <click selector="{{DiscountSection.DiscountTab}}" stepKey="clickToAddDiscount1"/>
+        <fillField selector="{{DiscountSection.DiscountInput}}" userInput="{{_defaultCoupon.code}}" stepKey="TypeDiscountCode1"/>
+        <click selector="{{DiscountSection.ApplyCodeBtn}}" stepKey="clickToApplyDiscount1"/>
+        <waitForPageLoad stepKey="WaitForDiscountToBeAdded1"/>
+
+        <!-- Place Order -->
+        <comment userInput="Comment is added to preserve the step key for backward compatibility" stepKey="waitForPlaceOrderButton1"/>
+        <actionGroup ref="ClickPlaceOrderActionGroup" stepKey="clickPlaceOrder1"/>
+        <grabTextFrom selector="{{CheckoutSuccessMainSection.orderNumber}}" stepKey="grabOrderNumber1"/>
+
+        <!-- Create Customer -->
+        <actionGroup ref="StorefrontRegisterCustomerFromOrderSuccessPage" stepKey="createCustomerAfterPlaceOrder">
+            <argument name="customer" value="CustomerEntityOne"/>
+        </actionGroup>
+
+        <!-- Verify Customer -->
+        <actionGroup ref="AssertMessageCustomerCreateAccountActionGroup" stepKey="seeSuccessMessage1">
+            <argument name="messageType" value="success"/>
+            <argument name="message" value="Thank you for registering with Main Website Store."/>
+        </actionGroup>
+
+        <!-- Go to My Account > My Orders Page -->
+        <actionGroup ref="StorefrontOpenMyAccountPageActionGroup" stepKey="onMyAccount"/>
+        <click selector="{{StorefrontCustomerSidebarSection.sidebarTab('My Orders')}}" stepKey="clickOnMyOrders"/>
+        <waitForPageLoad stepKey="waitForOrdersLoad"/>
+
+        <!-- Check Order Status is Received and Reorder Action is Not Available -->
+        <actionGroup ref="AssertReceivedOrderInGridActionGroup" stepKey="checkReorderButton">
+            <argument name="orderId" value="$grabOrderNumber1"/>
+        </actionGroup>
+
+        <!-- Trigger Async Place Order Consumer to Process the First Order  -->
+        <actionGroup ref="CliConsumerStartActionGroup" stepKey="processFirstOrder">
+            <argument name="consumerName" value="{{AsyncPlaceOrderConsumerData.consumerName}}"/>
+            <argument name="maxMessages" value="{{AsyncPlaceOrderConsumerData.messageLimit}}"/>
+        </actionGroup>
+
+        <!-- Trigger Coupon Codes Consumer  -->
+        <actionGroup ref="CliConsumerStartActionGroup" stepKey="processCouponCode">
+            <argument name="consumerName" value="sales.rule.update.coupon.usage"/>
+            <argument name="maxMessages" value="{{AsyncPlaceOrderConsumerData.messageLimit}}"/>
+        </actionGroup>
+
+        <!-- Wait 30s for Order Processing-->
+        <wait time="30" stepKey="conditionalWait"/>
+
+        <!-- Trigger Async Place Order Consumer to Process the Second Order  -->
+        <actionGroup ref="CliConsumerStartActionGroup" stepKey="processSecondOrder">
+            <argument name="consumerName" value="{{AsyncPlaceOrderConsumerData.consumerName}}"/>
+            <argument name="maxMessages" value="{{AsyncPlaceOrderConsumerData.messageLimit}}"/>
+        </actionGroup>
+
+        <!-- Wait 30s for Order Processing-->
+        <wait time="30" stepKey="conditionalWait1"/>
+
+        <!-- Go to My Account > My Orders Page -->
+        <actionGroup ref="StorefrontOpenMyAccountPageActionGroup" stepKey="onMyAccountAgain"/>
+        <click selector="{{StorefrontCustomerSidebarSection.sidebarTab('My Orders')}}" stepKey="clickOnMyOrdersAgain"/>
+        <waitForPageLoad stepKey="waitForOrdersLoadAgain"/>
+
+        <!-- Check Order Status is Rejected -->
+        <actionGroup ref="AssertRejectedOrderInGridActionGroup" stepKey="checkReorderButtonTwo">
+            <argument name="orderId" value="{$grabOrderNumber1}"/>
+        </actionGroup>
+
+        <!--Assert Order is In Orders Grid -->
+        <actionGroup ref="AdminOrderFilterByOrderIdAndStatusActionGroup" stepKey="seeFirstOrder">
+            <argument name="orderId" value="$grabOrderNumber1"/>
+            <argument name="orderStatus" value="Rejected"/>
+        </actionGroup>
+    </test>
+</tests>

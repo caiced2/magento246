@@ -1,0 +1,125 @@
+<?xml version="1.0"?>
+<!--
+/**
+ * Copyright © Magento, Inc. All rights reserved.
+ * See COPYING.txt for license details.
+ */
+-->
+<schema xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:noNamespaceSchemaLocation="urn:magento:framework:Setup/Declaration/Schema/etc/schema.xsd">
+    <table name="magento_reminder_rule" resource="default" engine="innodb" comment="Enterprise Reminder Rule">
+        <column xsi:type="int" name="rule_id" unsigned="true" nullable="false" identity="true"
+                comment="Rule Id"/>
+        <column xsi:type="varchar" name="name" nullable="true" length="255" comment="Name"/>
+        <column xsi:type="text" name="description" nullable="true" comment="Description"/>
+        <column xsi:type="mediumtext" name="conditions_serialized" nullable="false" comment="Conditions Serialized"/>
+        <column xsi:type="mediumtext" name="condition_sql" nullable="true" comment="Condition Sql"/>
+        <column xsi:type="smallint" name="is_active" unsigned="true" nullable="false" identity="false"
+                default="0" comment="Is Active"/>
+        <column xsi:type="int" name="salesrule_id" unsigned="true" nullable="true" identity="false"
+                comment="Salesrule Id"/>
+        <column xsi:type="varchar" name="schedule" nullable="true" length="255" comment="Schedule"/>
+        <column xsi:type="varchar" name="default_label" nullable="true" length="255" comment="Default Label"/>
+        <column xsi:type="text" name="default_description" nullable="true" comment="Default Description"/>
+        <column xsi:type="datetime" name="from_date" onCreate="migrateDataFrom(from_date)" on_update="false"
+                nullable="true" comment="Active From"/>
+        <column xsi:type="datetime" name="to_date" onCreate="migrateDataFrom(to_date)" on_update="false" nullable="true"
+                comment="Active To"/>
+        <constraint xsi:type="primary" referenceId="PRIMARY">
+            <column name="rule_id"/>
+        </constraint>
+        <constraint xsi:type="foreign" referenceId="MAGENTO_REMINDER_RULE_SALESRULE_ID_SALESRULE_RULE_ID"
+                    table="magento_reminder_rule" column="salesrule_id" referenceTable="salesrule"
+                    referenceColumn="rule_id" onDelete="SET NULL"/>
+        <index referenceId="MAGENTO_REMINDER_RULE_SALESRULE_ID" indexType="btree">
+            <column name="salesrule_id"/>
+        </index>
+    </table>
+    <table name="magento_reminder_rule_website" resource="default" engine="innodb"
+           comment="Enterprise Reminder Rule Website">
+        <column xsi:type="int" name="rule_id" unsigned="true" nullable="false" identity="false"
+                comment="Rule Id"/>
+        <column xsi:type="smallint" name="website_id" unsigned="true" nullable="false" identity="false"
+                comment="Website Id"/>
+        <constraint xsi:type="primary" referenceId="PRIMARY">
+            <column name="rule_id"/>
+            <column name="website_id"/>
+        </constraint>
+        <constraint xsi:type="foreign" referenceId="MAGENTO_REMINDER_RULE_WS_RULE_ID_MAGENTO_REMINDER_RULE_RULE_ID"
+                    table="magento_reminder_rule_website" column="rule_id" referenceTable="magento_reminder_rule"
+                    referenceColumn="rule_id" onDelete="CASCADE"/>
+        <constraint xsi:type="foreign" referenceId="MAGENTO_REMINDER_RULE_WS_WS_ID_STORE_WS_WS_ID"
+                    table="magento_reminder_rule_website" column="website_id" referenceTable="store_website"
+                    referenceColumn="website_id" onDelete="CASCADE"/>
+        <index referenceId="MAGENTO_REMINDER_RULE_WEBSITE_WEBSITE_ID" indexType="btree">
+            <column name="website_id"/>
+        </index>
+    </table>
+    <table name="magento_reminder_template" resource="default" engine="innodb" comment="Enterprise Reminder Template">
+        <column xsi:type="int" name="rule_id" unsigned="true" nullable="false" identity="false"
+                comment="Rule Id"/>
+        <column xsi:type="smallint" name="store_id" unsigned="false" nullable="false" identity="false"
+                comment="Store Id"/>
+        <column xsi:type="int" name="template_id" unsigned="true" nullable="true" identity="false"
+                comment="Template ID"/>
+        <column xsi:type="varchar" name="label" nullable="true" length="255" comment="Label"/>
+        <column xsi:type="text" name="description" nullable="true" comment="Description"/>
+        <constraint xsi:type="primary" referenceId="PRIMARY">
+            <column name="rule_id"/>
+            <column name="store_id"/>
+        </constraint>
+        <constraint xsi:type="foreign" referenceId="MAGENTO_REMINDER_TEMPLATE_TEMPLATE_ID_EMAIL_TEMPLATE_TEMPLATE_ID"
+                    table="magento_reminder_template" column="template_id" referenceTable="email_template"
+                    referenceColumn="template_id" onDelete="SET NULL"/>
+        <constraint xsi:type="foreign" referenceId="MAGENTO_REMINDER_TEMPLATE_RULE_ID_MAGENTO_REMINDER_RULE_RULE_ID"
+                    table="magento_reminder_template" column="rule_id" referenceTable="magento_reminder_rule"
+                    referenceColumn="rule_id" onDelete="CASCADE"/>
+        <index referenceId="MAGENTO_REMINDER_TEMPLATE_TEMPLATE_ID" indexType="btree">
+            <column name="template_id"/>
+        </index>
+    </table>
+    <table name="magento_reminder_rule_coupon" resource="default" engine="innodb"
+           comment="Enterprise Reminder Rule Coupon">
+        <column xsi:type="int" name="rule_id" unsigned="true" nullable="false" identity="false"
+                comment="Rule Id"/>
+        <column xsi:type="int" name="coupon_id" unsigned="true" nullable="true" identity="false"
+                comment="Coupon Id"/>
+        <column xsi:type="int" name="customer_id" unsigned="true" nullable="false" identity="false"
+                comment="Customer Id"/>
+        <column xsi:type="timestamp" name="associated_at" on_update="true" nullable="false" default="CURRENT_TIMESTAMP"
+                comment="Associated At"/>
+        <column xsi:type="smallint" name="emails_failed" unsigned="true" nullable="false" identity="false"
+                default="0" comment="Emails Failed"/>
+        <column xsi:type="smallint" name="is_active" unsigned="true" nullable="false" identity="false"
+                default="1" comment="Is Active"/>
+        <constraint xsi:type="primary" referenceId="PRIMARY">
+            <column name="rule_id"/>
+            <column name="customer_id"/>
+        </constraint>
+        <constraint xsi:type="foreign" referenceId="FK_FA39D6431E86747002D2933B525577A3" table="magento_reminder_rule_coupon"
+                    column="rule_id" referenceTable="magento_reminder_rule" referenceColumn="rule_id"
+                    onDelete="CASCADE"/>
+    </table>
+    <table name="magento_reminder_rule_log" resource="default" engine="innodb" comment="Enterprise Reminder Rule Log">
+        <column xsi:type="int" name="log_id" unsigned="true" nullable="false" identity="true"
+                comment="Log Id"/>
+        <column xsi:type="int" name="rule_id" unsigned="true" nullable="false" identity="false"
+                comment="Rule Id"/>
+        <column xsi:type="int" name="customer_id" unsigned="true" nullable="false" identity="false"
+                comment="Customer Id"/>
+        <column xsi:type="timestamp" name="sent_at" on_update="true" nullable="false" default="CURRENT_TIMESTAMP"
+                comment="Sent At"/>
+        <constraint xsi:type="primary" referenceId="PRIMARY">
+            <column name="log_id"/>
+        </constraint>
+        <constraint xsi:type="foreign" referenceId="MAGENTO_REMINDER_RULE_LOG_RULE_ID_MAGENTO_REMINDER_RULE_RULE_ID"
+                    table="magento_reminder_rule_log" column="rule_id" referenceTable="magento_reminder_rule"
+                    referenceColumn="rule_id" onDelete="CASCADE"/>
+        <index referenceId="MAGENTO_REMINDER_RULE_LOG_RULE_ID" indexType="btree">
+            <column name="rule_id"/>
+        </index>
+        <index referenceId="MAGENTO_REMINDER_RULE_LOG_CUSTOMER_ID" indexType="btree">
+            <column name="customer_id"/>
+        </index>
+    </table>
+</schema>

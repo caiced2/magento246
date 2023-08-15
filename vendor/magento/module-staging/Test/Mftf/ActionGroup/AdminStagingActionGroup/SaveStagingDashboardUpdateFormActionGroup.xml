@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+ /**
+  * Copyright © Magento, Inc. All rights reserved.
+  * See COPYING.txt for license details.
+  */
+-->
+<actionGroups xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:noNamespaceSchemaLocation="urn:magento:mftf:Test/etc/actionGroupSchema.xsd">
+    <actionGroup name="saveStagingDashboardUpdateForm">
+        <arguments>
+            <argument name="updateName" defaultValue="UpdateWithoutEnd"/>
+        </arguments>
+        <scrollToTopOfPage stepKey="scrollTopPageStagingUpdate"/>
+        <waitForElementVisible selector="{{AdminStagingDashboardUpdateFormActionSection.saveButton}}" stepKey="waitForSaveButton"/>
+        <click selector="{{AdminStagingDashboardUpdateFormActionSection.saveButton}}" stepKey="clickSaveStagingUpdate"/>
+        <waitForPageLoad stepKey="waitForStagingUpdateToSave"/>
+        <see selector="{{AdminStagingDashboardMessagesSection.successMessage}}" userInput="You saved the &quot;{{updateName}}&quot; update." stepKey="seeSaveConfirmation"/>
+    </actionGroup>
+</actionGroups>

@@ -1,0 +1,41 @@
+<!--
+/**
+ * Copyright © Magento, Inc. All rights reserved.
+ * See COPYING.txt for license details.
+ */
+-->
+<!--@subject {{trans "%store_name  - Scheduled Import Failed" store_name=$store.frontend_name}} @-->
+<!--@vars {
+"var store.frontend_name":"Store Name",
+"var trace":"Backtrace",
+"var dateAndTime":"Date & Time",
+"var entity":"Entity Type",
+"var fileName":"File Name",
+"var operationName":"Operation Name"
+} @-->
+
+
+<h1>{{trans "%operation_name - Scheduled Import Failed" operation_name=$operationName}}</h1>
+
+<ul>
+    <li>
+        <strong>{{trans "Operation name:"}}</strong><br />
+        {{var operationName}}
+    </li>
+    <li>
+        <strong>{{trans "Entity type:"}}</strong><br />
+        {{var entity}}
+    </li>
+    <li>
+        <strong>{{trans "File history path:"}}</strong><br />
+        {{var fileName}}
+    </li>
+    <li>
+        <strong>{{trans "Date & Time:"}}</strong><br />
+        {{var dateAndTime}}
+    </li>
+    <li>
+        <strong>{{trans "Log trace:"}}</strong><br />
+        {{var trace}}
+    </li>
+</ul>

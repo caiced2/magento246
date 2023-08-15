@@ -1,0 +1,98 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+/**
+ * Copyright © Magento, Inc. All rights reserved.
+ * See COPYING.txt for license details.
+ */
+-->
+<listing xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="urn:magento:module:Magento_Ui:etc/ui_configuration.xsd">
+    <argument name="data" xsi:type="array">
+        <item name="js_config" xsi:type="array">
+            <item name="provider" xsi:type="string">banner_catalog_rule_listing.banner_catalog_rule_listing_data_source</item>
+        </item>
+    </argument>
+    <settings>
+        <spinner>banner_catalog_rule_listing_columns</spinner>
+        <deps>
+            <dep>banner_catalog_rule_listing.banner_catalog_rule_listing_data_source</dep>
+        </deps>
+    </settings>
+    <dataSource name="banner_catalog_rule_listing_data_source" component="Magento_Ui/js/grid/provider">
+        <settings>
+            <storageConfig>
+                <param name="indexField" xsi:type="string">rule_id</param>
+            </storageConfig>
+            <updateUrl path="mui/index/render"/>
+        </settings>
+        <aclResource>Magento_Banner::magento_banner</aclResource>
+        <dataProvider class="Magento\Banner\Ui\DataProvider\Banner\CatalogRule\DataProvider" name="banner_catalog_rule_listing_data_source">
+            <settings>
+                <requestFieldName>rule_id</requestFieldName>
+                <primaryFieldName>rule_id</primaryFieldName>
+            </settings>
+        </dataProvider>
+    </dataSource>
+    <listingToolbar name="listing_top">
+        <filterSearch name="name"/>
+        <paging name="listing_paging"/>
+        <filters name="listing_filters"/>
+    </listingToolbar>
+    <columns name="banner_catalog_rule_listing_columns">
+        <selectionsColumn name="ids">
+            <settings>
+                <indexField>rule_id</indexField>
+                <preserveSelectionsOnFilter>true</preserveSelectionsOnFilter>
+            </settings>
+        </selectionsColumn>
+        <column name="rule_id">
+            <settings>
+                <label translate="true">ID</label>
+                <sorting>asc</sorting>
+                <filter>textRange</filter>
+            </settings>
+        </column>
+        <column name="name">
+            <settings>
+                <label translate="true">Name</label>
+                <filter>text</filter>
+            </settings>
+        </column>
+        <column name="from_date">
+            <settings>
+                <label translate="true">Start Date</label>
+                <dataType>date</dataType>
+                <filter>dateRange</filter>
+            </settings>
+        </column>
+        <column name="to_date">
+            <settings>
+                <label translate="true">End Date</label>
+                <dataType>date</dataType>
+                <filter>dateRange</filter>
+            </settings>
+        </column>
+        <column name="is_active" component="Magento_Ui/js/grid/columns/select">
+            <settings>
+                <filter>select</filter>
+                <label translate="true">Status</label>
+                <dataType>select</dataType>
+                <options>
+                    <option name="0" xsi:type="array">
+                        <item name="value" xsi:type="number">0</item>
+                        <item name="label" xsi:type="string" translate="true">Inactive</item>
+                    </option>
+                    <option name="1" xsi:type="array">
+                        <item name="value" xsi:type="number">1</item>
+                        <item name="label" xsi:type="string" translate="true">Active</item>
+                    </option>
+                </options>
+            </settings>
+        </column>
+        <column name="is_active_label" class="Magento\Banner\Ui\Component\Listing\Columns\StatusText" sortOrder="51">
+        <settings>
+            <label translate="true">Status Label</label>
+            <visible>false</visible>
+        </settings>
+    </column>
+    </columns>
+</listing>

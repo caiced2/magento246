@@ -1,0 +1,66 @@
+<?xml version="1.0"?>
+<!--
+/**
+ * Copyright © Magento, Inc. All rights reserved.
+ * See COPYING.txt for license details.
+ */
+-->
+<page xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="urn:magento:framework:View/Layout/etc/page_configuration.xsd">
+    <body>
+        <referenceContainer name="checkout.cart.form.before">
+            <block class="Magento\Reward\Block\Tooltip\Checkout" name="reward.tooltip.checkout" template="Magento_Reward::tooltip.phtml">
+                <arguments>
+                    <argument name="reward_type" xsi:type="string">Magento\Reward\Model\Action\OrderExtra</argument>
+                </arguments>
+                <action method="setWrapperClass">
+                    <argument name="class" xsi:type="string">reward-checkout</argument>
+                </action>
+                <action method="setRewardMessage">
+                    <argument translate="true" name="message" xsi:type="string">Check out now and earn %1 for this order.</argument>
+                </action>
+                <action method="setIsGuestNote">
+                    <argument name="value" xsi:type="string">1</argument>
+                </action>
+            </block>
+        </referenceContainer>
+        <referenceContainer name="checkout.cart.form.before">
+            <block class="Magento\Reward\Block\Tooltip\Checkout" name="reward.tooltip.checkout.salesrule" template="Magento_Reward::tooltip.phtml">
+                <arguments>
+                    <argument name="reward_type" xsi:type="string">Magento\Reward\Model\Action\Salesrule</argument>
+                </arguments>
+                <action method="setWrapperClass">
+                    <argument name="class" xsi:type="string">reward-checkout</argument>
+                </action>
+                <action method="setRewardMessage">
+                    <argument translate="true" name="message" xsi:type="string">Check out now and earn %1 for this order.</argument>
+                </action>
+                <action method="setIsGuestNote">
+                    <argument name="value" xsi:type="string">1</argument>
+                </action>
+            </block>
+        </referenceContainer>
+        <referenceBlock name="checkout.cart.totals">
+            <arguments>
+                <argument name="jsLayout" xsi:type="array">
+                    <item name="components" xsi:type="array">
+                        <item name="block-totals" xsi:type="array">
+                            <item name="children" xsi:type="array">
+                                <item name="before_grandtotal" xsi:type="array">
+                                    <item name="children" xsi:type="array">
+                                        <item name="reward" xsi:type="array">
+                                            <item name="component"  xsi:type="string">Magento_Reward/js/view/cart/reward</item>
+                                            <item name="config" xsi:type="array">
+                                                <item name="template" xsi:type="string">Magento_Reward/cart/reward</item>
+                                                <item name="title" xsi:type="string">Reward points</item>
+                                            </item>
+                                        </item>
+                                    </item>
+                                </item>
+                            </item>
+                        </item>
+                    </item>
+                </argument>
+            </arguments>
+        </referenceBlock>
+    </body>
+</page>

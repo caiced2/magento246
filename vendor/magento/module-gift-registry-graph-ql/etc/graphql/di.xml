@@ -1,0 +1,37 @@
+<?xml version="1.0"?>
+<!--
+/**
+ * Copyright © Magento, Inc. All rights reserved.
+ * See COPYING.txt for license details.
+ */
+-->
+<config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:noNamespaceSchemaLocation="urn:magento:framework:ObjectManager/etc/config.xsd">
+    <type name="Magento\Framework\GraphQl\Schema\Type\Enum\DefaultDataMapper">
+        <arguments>
+            <argument name="map" xsi:type="array">
+                <item name="GiftRegistryPrivacySettings" xsi:type="array">
+                    <item name="private" xsi:type="string">0</item>
+                    <item name="public" xsi:type="string">1</item>
+                </item>
+                <item name="GiftRegistryStatus" xsi:type="array">
+                    <item name="inactive" xsi:type="string">0</item>
+                    <item name="active" xsi:type="string">1</item>
+                </item>
+                <item name="GiftRegistryDynamicAttributeGroup" xsi:type="array">
+                    <item name="event_information" xsi:type="string">event_information</item>
+                    <item name="privacy_settings" xsi:type="string">privacy</item>
+                    <item name="general_information" xsi:type="string">general_information</item>
+                    <item name="registrant" xsi:type="string">registrant</item>
+                    <item name="detailed_information" xsi:type="string">registry</item>
+                    <item name="shipping_address" xsi:type="string">shipping</item>
+                </item>
+                <item name="GiftRegistryItemsUserErrorType" xsi:type="array">
+                    <item name="out_of_stock" xsi:type="string">OUT_OF_STOCK</item>
+                    <item name="not_found" xsi:type="string">NOT_FOUND</item>
+                    <item name="undefined" xsi:type="string">UNDEFINED</item>
+                </item>
+            </argument>
+        </arguments>
+    </type>
+</config>

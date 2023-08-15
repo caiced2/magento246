@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+ /**
+  * Copyright © Magento, Inc. All rights reserved.
+  * See COPYING.txt for license details.
+  */
+-->
+<actionGroups xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:noNamespaceSchemaLocation="urn:magento:mftf:Test/etc/actionGroupSchema.xsd">
+    <actionGroup name="StorefrontVerifyReturnItemInformationActionGroup">
+        <arguments>
+            <argument name="product"/>
+            <argument name="attribute"/>
+            <argument name="item"/>
+        </arguments>
+        <see selector="{{StorefrontCustomerReturnViewSection.returnItemCell('Product Name')}}" userInput="{{product.name}}" stepKey="seeProductName"/>
+        <see selector="{{StorefrontCustomerReturnViewSection.returnItemCell('SKU')}}" userInput="{{product.sku}}" stepKey="seeSku"/>
+        <see selector="{{StorefrontCustomerReturnViewSection.returnItemCell('Condition')}}" userInput="{{item.condition}}" stepKey="seeCondition"/>
+        <see selector="{{StorefrontCustomerReturnViewSection.returnItemCell('Resolution')}}" userInput="{{item.resolution}}" stepKey="seeResolution"/>
+        <see selector="{{StorefrontCustomerReturnViewSection.returnItemCell('Request Qty')}}" userInput="{{item.qty_requested}}" stepKey="seeRequestQty"/>
+        <see selector="{{StorefrontCustomerReturnViewSection.returnItemCell('Qty')}}" userInput="{{item.qty}}" stepKey="seeQty"/>
+        <see selector="{{StorefrontCustomerReturnViewSection.returnItemCell('Status')}}" userInput="{{item.status}}" stepKey="seeStatus"/>
+        <click selector="{{StorefrontCustomerReturnViewSection.showDetails}}" stepKey="clickShowDetails"/>
+        <see selector="{{StorefrontCustomerReturnViewSection.questions}}" userInput="{{attribute.frontend_label[0]}}" stepKey="seeQuestions"/>
+        <see selector="{{StorefrontCustomerReturnViewSection.answers}}" userInput="{{item.new_attribute}}" stepKey="seeAnswers"/>
+    </actionGroup>
+</actionGroups>

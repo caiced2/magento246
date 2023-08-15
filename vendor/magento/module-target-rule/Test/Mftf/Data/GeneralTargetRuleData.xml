@@ -1,0 +1,118 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+ /**
+  * Copyright © Magento, Inc. All rights reserved.
+  * See COPYING.txt for license details.
+  */
+-->
+<entities xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="urn:magento:mftf:DataGenerator/etc/dataProfileSchema.xsd">
+    <entity name="SimpleTargetRuleGeneralInformation" type="target_rule">
+        <data key="ruleName" unique="suffix">product_rule_</data>
+        <data key="status">1</data>
+        <data key="applyTo">1</data>
+    </entity>
+    <entity name="TargetRuleRelatedProductsWithPlaceholders" type="target_rule">
+        <data key="ruleName" unique="suffix">TargetRuleRelatedProducts</data>
+        <data key="status">Active</data>
+        <data key="applyTo">Related Products</data>
+        <data key="use_customer_segment">All</data>
+        <data key="conditions_serialized">Category|is|%category_1%</data>
+        <data key="actions_serialized">Category|is|Constant Value|%category_2%|Category|is|the Child of the Matched Product Categories</data>
+    </entity>
+    <entity name="TargetRuleUpSellsWithPlaceholders" type="target_rule">
+        <data key="ruleName" unique="suffix">TargetRuleUpSells</data>
+        <data key="status">Active</data>
+        <data key="applyTo">Up-sells</data>
+        <data key="use_customer_segment">All</data>
+        <data key="conditions_serialized">Category|is|%category_1%</data>
+        <data key="actions_serialized">Category|is|Constant Value|%category_2%|Category|is|the Same as Matched Product Categories</data>
+    </entity>
+    <entity name="TargetRuleCrossSellsWithPlaceholders" type="target_rule">
+        <data key="ruleName" unique="suffix">TargetRuleCrossSells</data>
+        <data key="status">Active</data>
+        <data key="applyTo">Cross-sells</data>
+        <data key="use_customer_segment">All</data>
+        <data key="conditions_serialized">Category|is|%category_1%|Attribute Set|is|Default</data>
+        <data key="actions_serialized">Category|is|Constant Value|%category_2%|Price (percentage)|equal to|100</data>
+    </entity>
+    <entity name="TargetRuleRelatedProducts" type="target_rule">
+        <data key="ruleName" unique="suffix">TargetRuleRelatedProducts</data>
+        <data key="status">Active</data>
+        <data key="applyTo">Related Products</data>
+        <data key="use_customer_segment">All</data>
+        <data key="conditions_serialized">Category|is|2</data>
+        <data key="actions_serialized">the Child of the Matched Product Categories</data>
+    </entity>
+    <entity name="RelatedTargetRuleUpdatedAsCrossSells" type="target_rule">
+        <data key="ruleName" unique="suffix">RelatedTargetRuleUpdatedAsCrossSells</data>
+        <data key="status">Active</data>
+        <data key="applyTo">Cross-sells</data>
+        <data key="use_customer_segment">All</data>
+        <data key="conditions_serialized">Category|is|category_1</data>
+        <data key="actions_serialized">Category|is|Constant Value|category_2</data>
+    </entity>
+    <entity name="TargetRuleUpSells" type="target_rule">
+        <data key="ruleName" unique="suffix">TargetRuleUpSells</data>
+        <data key="status">Active</data>
+        <data key="applyTo">Up-sells</data>
+        <data key="use_customer_segment">All</data>
+        <data key="actions_serialized">the Same as Matched Product Categories</data>
+    </entity>
+    <entity name="TargetRuleRelatedProductsCategorySameAsMatchedProductCategories" type="target_rule">
+        <data key="ruleName" unique="suffix">TargetRuleRelatedProductsCategorySameAsMatchedProductCategories</data>
+        <data key="status">Active</data>
+        <data key="applyTo">Related Products</data>
+        <data key="use_customer_segment">All</data>
+        <data key="conditions_serialized">Category|is|1</data>
+        <data key="actions_serialized">Category|is|the Same as Matched Product Categories</data>
+    </entity>
+    <entity name="TargetRuleRelatedProductsWithAttributeConditions" type="target_rule">
+        <data key="ruleName" unique="suffix">TargetRuleRelatedProductsWithAttributeConditions</data>
+        <data key="status">Active</data>
+        <data key="applyTo">Related Products</data>
+        <data key="use_customer_segment">All</data>
+        <data key="conditions_serialized">Product Name|contains|Matching</data>
+        <data key="actions_serialized">Product Name|contains|Constant Value|Displayed</data>
+    </entity>
+    <entity name="UpSellsTargetRuleUpdatedAsRelated" type="target_rule">
+        <data key="ruleName" unique="suffix">UpSellsTargetRuleUpdatedAsRelated</data>
+        <data key="status">Active</data>
+        <data key="applyTo">Related Products</data>
+        <data key="use_customer_segment">All</data>
+        <data key="conditions_serialized">Attribute Set|is|Default|Category|is|category_1</data>
+        <data key="actions_serialized">Attribute Set|is|Matched Product Attribute Set|Category|is|Constant Value|category_2</data>
+    </entity>
+    <entity name="TargetRuleCrossSells" type="target_rule">
+        <data key="ruleName" unique="suffix">TargetRuleCrossSells</data>
+        <data key="status">Active</data>
+        <data key="applyTo">Cross-sells</data>
+        <data key="use_customer_segment">All</data>
+        <data key="conditions_serialized">Attribute Set|is|Default</data>
+        <data key="actions_serialized">Price (percentage)|equal to|100</data>
+    </entity>
+    <entity name="CrossSellsTargetRuleUpdatedToRelatedProducts" type="target_rule">
+        <data key="ruleName" unique="suffix">CrossSellsTargetRuleUpdatedToRelatedProducts</data>
+        <data key="status">Active</data>
+        <data key="applyTo">Related Products</data>
+        <data key="use_customer_segment">All</data>
+        <data key="conditions_serialized">Category|is|category_1</data>
+        <data key="actions_serialized">Category|is|Constant Value|category_2</data>
+    </entity>
+    <entity name="CrossSellsTargetRuleUpdatedToInactive" type="target_rule">
+        <data key="ruleName" unique="suffix">CrossSellsTargetRuleUpdatedToInactive</data>
+        <data key="status">Inactive</data>
+        <data key="applyTo">Cross-sells</data>
+        <data key="use_customer_segment">Specified</data>
+        <data key="customer_segment_ids">CustomerSegmentId</data>
+        <data key="conditions_serialized">Category|is|category_1</data>
+        <data key="actions_serialized">Category|is|Constant Value|category_2</data>
+    </entity>
+    <entity name="UpSellsTargetRuleUpdatedToUpSellsInactive" type="target_rule">
+        <data key="ruleName" unique="suffix">UpSellsTargetRuleUpdatedToUpSellsInactive</data>
+        <data key="status">Inactive</data>
+        <data key="applyTo">Up-sells</data>
+        <data key="use_customer_segment">All</data>
+        <data key="conditions_serialized">Category|is|category_1</data>
+        <data key="actions_serialized">Category|is|Constant Value|category_2</data>
+    </entity>
+</entities>

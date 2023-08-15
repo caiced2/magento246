@@ -1,0 +1,15 @@
+<?xml version="1.0"?>
+<!--
+/**
+ * Copyright © Magento, Inc. All rights reserved.
+ * See COPYING.txt for license details.
+ */
+-->
+<schema xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:noNamespaceSchemaLocation="urn:magento:framework:Setup/Declaration/Schema/etc/schema.xsd">
+    <table name="magento_banner" resource="default" comment="Enterprise Banner">
+        <column xsi:type="smallint" name="is_ga_enabled" nullable="false" unsigned="true" default="0"
+                comment="Is Google Analytics enabled"/>
+        <column xsi:type="text" name="ga_creative" nullable="true" comment="Google Analytics code"/>
+    </table>
+</schema>

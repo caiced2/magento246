@@ -1,0 +1,16 @@
+{
+    "magento_banner_customersegment": {
+        "column": {
+            "banner_id": true,
+            "segment_id": true
+        },
+        "index": {
+            "MAGENTO_BANNER_CUSTOMERSEGMENT_SEGMENT_ID": true
+        },
+        "constraint": {
+            "PRIMARY": true,
+            "MAGENTO_BANNER_CSTRSEGMENT_BANNER_ID_MAGENTO_BANNER_BANNER_ID": true,
+            "FK_5649B8A073C66134C719D8BA64821337": true
+        }
+    }
+}

@@ -1,0 +1,59 @@
+# Copyright © Magento, Inc. All rights reserved.
+# See COPYING.txt for license details.
+
+type Mutation {
+    applyStoreCreditToCart(input: ApplyStoreCreditToCartInput! @doc(description: "An input object that specifies the cart ID.")): ApplyStoreCreditToCartOutput @resolver(class: "\\Magento\\CustomerBalanceGraphQl\\Model\\Resolver\\ApplyStoreCreditToCart") @doc(description: "Apply store credit to the specified cart.")
+    removeStoreCreditFromCart(input: RemoveStoreCreditFromCartInput! @doc(description: "An input object that specifies the cart ID.")): RemoveStoreCreditFromCartOutput @resolver(class: "\\Magento\\CustomerBalanceGraphQl\\Model\\Resolver\\RemoveStoreCreditFromCart") @doc(description: "Remove store credit that has been applied to the specified cart.")
+}
+
+input ApplyStoreCreditToCartInput @doc(description: "Defines the input required to run the `applyStoreCreditToCart` mutation.") {
+    cart_id: String! @doc(description: "The unique ID that identifies the customer's cart.")
+}
+
+type ApplyStoreCreditToCartOutput @doc(description: "Defines the possible output for the `applyStoreCreditToCart` mutation.") {
+    cart: Cart! @doc(description: "The contents of the specified shopping cart.")
+}
+
+input RemoveStoreCreditFromCartInput @doc(description: "Defines the input required to run the `removeStoreCreditFromCart` mutation.") {
+    cart_id: String! @doc(description: "The unique ID that identifies the customer's cart.")
+}
+
+type RemoveStoreCreditFromCartOutput @doc(description: "Defines the possible output for the `removeStoreCreditFromCart` mutation.") {
+    cart: Cart! @doc(description: "The contents of the specified shopping cart.")
+}
+
+type Cart {
+    applied_store_credit: AppliedStoreCredit  @resolver(class: "\\Magento\\CustomerBalanceGraphQl\\Model\\Resolver\\GetAppliedStoreCreditFromCart") @doc(description: "Store credit information applied to the cart.")
+}
+
+type Customer {
+    store_credit: CustomerStoreCredit @resolver(class: "\\Magento\\CustomerBalanceGraphQl\\Model\\Resolver\\GetCustomerStoreCredit") @doc(description: "Store credit information applied for the logged in customer.")
+}
+
+type AppliedStoreCredit @doc(description: "Contains the applied and current balances.") {
+    enabled: Boolean @doc(description: "Indicates whether store credits are enabled. If the feature is disabled, then the current balance will not be returned.")
+    current_balance: Money @doc(description: "The current balance remaining on store credit.")
+    applied_balance: Money @doc(description: "The applied store credit balance to the current cart.")
+}
+
+type CustomerStoreCredit @doc(description: "Contains store credit information with balance and history.") {
+    enabled: Boolean @doc(description: "Indicates whether store credits are enabled. If the feature is disabled, then the balance will not be returned.")
+    current_balance: Money @doc(description: "The current balance of store credit.")
+    balance_history(
+        pageSize: Int = 20 @doc(description: "The maximum number of results to return at once. The default is 20."),
+        currentPage: Int = 1 @doc(description: "The page of results to return. This value is optional. The default is 1."),
+    ): CustomerStoreCreditHistory @resolver(class: "\\Magento\\CustomerBalanceGraphQl\\Model\\Resolver\\GetCustomerStoreCreditHistory") @doc(description: "Contains the customer's store credit balance history. If the history or store credit feature is disabled, then a null value will be returned.")
+}
+
+type CustomerStoreCreditHistory @doc(description: "Lists changes to the amount of store credit available to the customer.") {
+    items: [CustomerStoreCreditHistoryItem] @doc(description: "An array containing information about changes to the store credit available to the customer.")
+    page_info: SearchResultPageInfo @doc(description: "Metadata for pagination rendering.")
+    total_count: Int @doc(description: "The number of items returned.")
+}
+
+type CustomerStoreCreditHistoryItem @doc(description: "Contains store credit history information.") {
+    action: String @doc(description: "The action that was made on the store credit.")
+    balance_change: Money @doc(description: "The amount added to or subtracted from the store credit as a result of this action.")
+    actual_balance: Money @doc(description: "The store credit available to the customer as a result of this action. ")
+    date_time_changed: String @doc(description: "The date and time when the store credit change was made.")
+}

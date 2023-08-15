@@ -1,0 +1,71 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+ /**
+  * Copyright © Magento, Inc. All rights reserved.
+  * See COPYING.txt for license details.
+  */
+-->
+<tests xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xsi:noNamespaceSchemaLocation="urn:magento:mftf:Test/etc/testSchema.xsd">
+    <test  name="PageBuilderDynamicBlockAddContentDirectlyToStageTest" extends="PageBuilderCMSPageAddContentDirectlyToStageTest">
+        <annotations>
+            <features value="PageBuilder"/>
+            <stories value="Dynamic Block"/>
+            <title value="Verify Can Only Add Expected Content Types to Dynamic Block Stage Directly"/>
+            <description value="Verify user can add Row, Columns, Tabs, HTML Code, Blocks, and Dynamic Blocks to Dynamic Block stage directly. Verify user cannot add any other content type to stage directly stage directly"/>
+            <severity value="BLOCKER"/>
+            <group value="pagebuilder"/>
+            <group value="pagebuilder-ee"/>
+            <group value="pagebuilder-stage"/>
+            <group value="pagebuilder-dynamic-block"/>
+        </annotations>
+        <before>
+            <createData entity="_defaultDynamicBlock" stepKey="createDynamicBlock" after="loginAsAdmin"/>
+            <actionGroup ref="NavigateToCreatedDynamicBlockActionGroup" stepKey="navigateToCreatedCMSPage">
+                <argument name="Banner" value="$$createDynamicBlock$$"/>
+            </actionGroup>
+            <actionGroup ref="removeContentTypeFromStageByIndex" stepKey="removeHTMLContentType" after="openPageBuilderFullScreen">
+                <argument name="contentType" value="PageBuilderHtmlContentType"/>
+                <argument name="contentTypeNumber" value="1"/>
+            </actionGroup>
+            <actionGroup ref="confirmRemovalModal" stepKey="openPageBuilderForDescription" after="removeHTMLContentType"/>
+        </before>
+        <after>
+            <actionGroup ref="DeleteBannerActionGroup" stepKey="deleteDynamicBlock" before="logout">
+                <argument name="bannerName" value="$$createDynamicBlock.name$$"/>
+            </actionGroup>
+        </after>
+        <!-- Save CMS Block and Verify Expected Content Types on Stage -->
+        <actionGroup ref="SaveDynamicBlockActionGroup" stepKey="saveAndContinueEditCmsPage"/>
+        <actionGroup ref="NavigateToCreatedDynamicBlockActionGroup" stepKey="navigateToCreatedDynamicBlock" after="saveAndContinueEditCmsPage">
+            <argument name="Banner" value="$$createDynamicBlock$$"/>
+        </actionGroup>
+        <actionGroup ref="AdminOpenPageBuilderFromContentPreviewOverlayActionGroup" stepKey="switchToPageBuilderStage"/>
+        <!-- Navigate and insert DynamicBlock to CMS Page -->
+        <actionGroup ref="NavigateToCreatedCMSPageActionGroup" stepKey="navigateToCreatedCMSPageForDynamicBlock" after="dontSeeProductsStageAfterSave">
+            <argument name="CMSPage" value="$$createCMSPage$$"/>
+        </actionGroup>
+        <actionGroup ref="AdminOpenPageBuilderFromContentPreviewOverlayActionGroup" stepKey="openPageBuilderFullScreenDynamicBlock" after="navigateToCreatedCMSPageForDynamicBlock"/>
+        <actionGroup ref="expandPageBuilderPanelMenuSection" stepKey="expandMenuSectionContentDynamicBlock" after="openPageBuilderFullScreenDynamicBlock">
+            <argument name="contentType" value="PageBuilderDynamicBlockContentType"/>
+        </actionGroup>
+        <actionGroup ref="dragContentTypeToContainer" stepKey="dragDynamicBlockIntoContainerDynamicBlock" after="expandMenuSectionContentDynamicBlock">
+            <argument name="contentType" value="PageBuilderDynamicBlockContentType"/>
+            <argument name="containerTargetType" value="PageBuilderRootContainerContentType"/>
+        </actionGroup>
+        <actionGroup ref="openPageBuilderEditPanel" stepKey="openEditAfterDrop" after="dragDynamicBlockIntoContainerDynamicBlock">
+            <argument name="contentType" value="PageBuilderDynamicBlockContentType"/>
+        </actionGroup>
+        <actionGroup ref="searchAndSelectDynamicBlockInGrid" stepKey="searchDynamicBlockInGrid" after="openEditAfterDrop">
+            <argument name="block" value="$$createDynamicBlock$$"/>
+        </actionGroup>
+        <actionGroup ref="saveEditPanelSettings" stepKey="saveEditPanelSettingsDynamicBlock" after="searchDynamicBlockInGrid"/>
+        <actionGroup ref="exitPageBuilderFullScreen" stepKey="exitPageBuilderFullScreenDynamicBlock"  after="saveEditPanelSettingsDynamicBlock"/>
+        <actionGroup ref="SaveAndContinueEditCmsPageActionGroup" stepKey="saveAndContinueEditCmsPageDynamicBlock" after="exitPageBuilderFullScreenDynamicBlock"/>
+        <!-- Verify Expected Content Types on Storefront -->
+        <assertEquals stepKey="assertDynamicBlockStorefront">
+            <expectedResult type="int">2</expectedResult>
+            <actualResult type="variable">numberOfDynamicBlockContentTypesStorefront</actualResult>
+        </assertEquals>
+    </test>
+</tests>

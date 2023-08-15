@@ -1,0 +1,3 @@
+# WishlistGiftCard
+
+**WishlistGiftCard** provides the needed provider for adding a gift card product type to wish list.

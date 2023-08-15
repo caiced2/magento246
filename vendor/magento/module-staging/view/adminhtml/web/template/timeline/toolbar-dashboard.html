@@ -1,0 +1,36 @@
+<!--
+/**
+ * Copyright © Magento, Inc. All rights reserved.
+ * See COPYING.txt for license details.
+ */
+-->
+<div class="admin__data-grid-header" afterRender="$data.setToolbarNode">
+    <div class="admin__data-grid-header-row">
+        <div class="admin__data-grid-actions-wrap">
+            <scope args="columnsProvider" render="viewSwitcherTmpl"></scope>
+            <each args="getRegion('dataGridActions')" render=""></each>
+        </div>
+        <scope args="requestChild('fulltext')" render=""></scope>
+        <scope args="requestChild('listing_filters')" render=""></scope>
+        <div ko-scope="updateTypes" class="timeline-legend">
+            <each args="data: updateTypesMap, as: 'updateType'">
+                <span class="admin__control-support-text timeline-legend-item"
+                      css="updateType.className"
+                      text="updateType.label"></span>
+            </each>
+        </div>
+    </div>
+    <div class="admin__data-grid-header-row row row-gutter">
+        <div class="col-xs-2" if="hasChild('listing_massaction')" ko-scope="requestChild('listing_massaction')" render=""></div>
+        <div css="
+            'col-xs-10': hasChild('listing_massaction'),
+            'col-xs-12': !hasChild('listing_massaction')">
+            <div class="row" ko-scope="requestChild('listing_paging')">
+                <div class="col-xs-6" render="totalTmpl"></div>
+                <div class="col-xs-6" render=""></div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<render args="stickyTmpl" if="$data.sticky"></render>

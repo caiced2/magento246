@@ -1,0 +1,138 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+ /**
+  * Copyright © Magento, Inc. All rights reserved.
+  * See COPYING.txt for license details.
+  */
+-->
+<tests xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xsi:noNamespaceSchemaLocation="urn:magento:mftf:Test/etc/testSchema.xsd">
+    <test name="DynamicBlockNestedDynamicBlockInsideCMSBlockTest">
+        <annotations>
+            <features value="PageBuilder"/>
+            <stories value="Dynamic Block"/>
+            <title value="Nested Dynamic Block in CMS Block on CMS Page"/>
+            <description value="Given a CMS Block that has nested Dynamic Block, when the CMS Block is added to a CMS
+            Page, then an overlay message is rendered in admin on the CMS Page stage rather than rendering the CMS
+            Block's content. On the storefront, all of the CMS Block's and Dynamic Block's contents are rendered
+            successfully."/>
+            <severity value="BLOCKER"/>
+            <testCaseId value="PB-905"/>
+            <group value="pagebuilder"/>
+            <group value="pagebuilder-ee"/>
+            <group value="pagebuilder-block"/>
+            <group value="pagebuilder-dynamic-block"/>
+        </annotations>
+
+        <before>
+            <!-- Create CMS Page, CMS Block, Dynamic Block -->
+            <createData entity="_emptyCmsPage" stepKey="createCMSPage"/>
+            <createData entity="_emptyCmsBlock" stepKey="createCMSBlock"/>
+            <createData entity="_defaultDynamicBlock" stepKey="createDynamicBlock"/>
+
+            <!-- Add Heading to Row on Dynamic Block -->
+            <actionGroup ref="AdminLoginActionGroup" stepKey="loginAsAdmin"/>
+            <actionGroup ref="NavigateToCreatedDynamicBlockActionGroup" stepKey="navigateToCreatedDynamicBlockPage">
+                <argument name="Banner" value="$$createDynamicBlock$$"/>
+            </actionGroup>
+            <actionGroup ref="AdminOpenPageBuilderFromContentPreviewOverlayActionGroup" stepKey="openPageBuilderFullScreen"/>
+            <actionGroup ref="removeContentTypeFromStageByIndex" stepKey="removeHTMLContentType">
+                <argument name="contentType" value="PageBuilderHtmlContentType"/>
+                <argument name="contentTypeNumber" value="1"/>
+            </actionGroup>
+            <actionGroup ref="confirmRemovalModal" stepKey="confirmRemovalModal"/>
+            <actionGroup ref="dragContentTypeToContainer" stepKey="dragRowIntoStage">
+                <argument name="contentType" value="PageBuilderRowContentType"/>
+                <argument name="containerTargetType" value="PageBuilderRootContainerContentType"/>
+            </actionGroup>
+            <actionGroup ref="expandPageBuilderPanelMenuSection" stepKey="expandPageBuilderPanelMenuSection">
+                <argument name="contentType" value="PageBuilderHeadingContentType"/>
+            </actionGroup>
+            <actionGroup ref="dragContentTypeToContainer" stepKey="dragHeadingIntoRow">
+                <argument name="contentType" value="PageBuilderHeadingContentType"/>
+                <argument name="containerTargetType" value="PageBuilderRowContentType"/>
+            </actionGroup>
+            <actionGroup ref="enterHeadingOnStage" stepKey="enterHeadingOnStage">
+                <argument name="headingText" value="{{PageBuilderHeadingText_DynamicBlock.value}}"/>
+                <argument name="headingType" value="PageBuilderHeadingTypeProperty_H1"/>
+            </actionGroup>
+            <actionGroup ref="clickOutsideLiveEditHeading" stepKey="clickOutsideLiveEditHeading">
+                <argument name="index" value="1"/>
+            </actionGroup>
+            <actionGroup ref="exitPageBuilderFullScreen" stepKey="exitPageBuilderFullScreen"/>
+            <actionGroup ref="SaveAndContinueDynamicBlockActionGroup" stepKey="saveDynamicBlock"/>
+        </before>
+
+        <after>
+            <!-- Delete Data -->
+            <deleteData createDataKey="createCMSBlock" stepKey="deleteCMSBlock"/>
+            <deleteData createDataKey="createCMSPage" stepKey="deleteCreatedCMSPage"/>
+            <actionGroup ref="DeleteBannerActionGroup" stepKey="deleteCreatedDynamicBlock">
+                <argument name="bannerName" value="$$createDynamicBlock.name$$"/>
+            </actionGroup>
+            <actionGroup ref="AdminLogoutActionGroup" stepKey="logout"/>
+        </after>
+
+        <!-- Add Dynamic Block to CMS Block -->
+        <actionGroup ref="NavigateToCreatedCMSBlockPageActionGroup" stepKey="navigateToCreatedCMSBlock">
+            <argument name="CMSBlockPage" value="$$createCMSBlock$$"/>
+        </actionGroup>
+        <actionGroup ref="AdminOpenPageBuilderFromContentPreviewOverlayActionGroup" stepKey="switchToPageBuilderStage"/>
+        <actionGroup ref="expandPageBuilderPanelMenuSection" stepKey="expandPanelMenuContent">
+            <argument name="contentType" value="PageBuilderDynamicBlockContentType"/>
+        </actionGroup>
+        <actionGroup ref="dragContentTypeToContainer" stepKey="dragDynamicBlockToStage">
+            <argument name="contentType" value="PageBuilderDynamicBlockContentType"/>
+            <argument name="containerTargetType" value="PageBuilderRootContainerContentType"/>
+        </actionGroup>
+        <actionGroup ref="openPageBuilderEditPanel" stepKey="openEditDynamicBlock">
+            <argument name="contentType" value="PageBuilderDynamicBlockContentType"/>
+        </actionGroup>
+        <actionGroup ref="searchAndSelectDynamicBlockInGrid" stepKey="searchDynamicBlockInGrid">
+            <argument name="block" value="$$createDynamicBlock$$"/>
+        </actionGroup>
+        <actionGroup ref="saveEditPanelSettingsFullScreen" stepKey="saveEditForm"/>
+
+        <!-- Verify Dynamic Block Content on CMS Block Stage -->
+        <seeNumberOfElements selector="{{DynamicBlockOnStage.all}}" userInput="1" stepKey="seeDynamicBlockInCMSBlock"/>
+        <seeElement selector="{{HeadingOnStage.headingText(PageBuilderHeadingTypeProperty_H1.value, PageBuilderHeadingText_DynamicBlock.value, '1')}}" stepKey="waitForHeadingTextCMSBlockStage"/>
+
+        <!-- Save CMS Block -->
+        <actionGroup ref="exitPageBuilderFullScreen" stepKey="exitPageBuilderFullScreenBlock"/>
+        <actionGroup ref="SaveCMSBlockActionGroup" stepKey="saveCMSBlock"/>
+
+        <!-- Add Block to CMS Page -->
+        <actionGroup ref="NavigateToCreatedCMSPageActionGroup" stepKey="navigateToCreatedCMSPage">
+            <argument name="CMSPage" value="$$createCMSPage$$"/>
+        </actionGroup>
+        <actionGroup ref="switchToPageBuilderStage" stepKey="switchToPageBuilderStageCMSPage"/>
+        <actionGroup ref="expandPageBuilderPanelMenuSection" stepKey="expandMenuSectionAddContent">
+            <argument name="contentType" value="PageBuilderBlockContentType"/>
+        </actionGroup>
+        <actionGroup ref="dragContentTypeToContainer" stepKey="dragBlockIntoStage">
+            <argument name="contentType" value="PageBuilderBlockContentType"/>
+            <argument name="containerTargetType" value="PageBuilderRootContainerContentType"/>
+        </actionGroup>
+        <actionGroup ref="openPageBuilderEditPanel" stepKey="openEditAfterDrop">
+            <argument name="contentType" value="PageBuilderBlockContentType"/>
+        </actionGroup>
+        <actionGroup ref="searchBlockInGrid" stepKey="searchAndSelectBlockInGrid">
+            <argument name="block" value="$createCMSBlock$"/>
+        </actionGroup>
+        <actionGroup ref="saveEditPanelSettings" stepKey="saveEditPanelSettingsOnStage"/>
+        <actionGroup ref="exitPageBuilderFullScreen" stepKey="exitPageBuilderFullScreenCMSPage"/>
+
+        <!-- Validate Cannot See Block Content on CMS Page Stage -->
+        <dontSeeElementInDOM selector="{{HeadingOnStage.headingText(PageBuilderHeadingTypeProperty_H1.value, PageBuilderHeadingText_DynamicBlock.value, '1')}}" stepKey="dontSeeHeadingOfDynamicBlockOnStage"/>
+        <seeElement selector="{{DynamicBlockOnStage.nestedPlaceholderText('1', $$createDynamicBlock.name$$)}}" stepKey="seeNestedDynamicBlockPlaceHolderNameCMSPageStage"/>
+
+        <!-- Save CMS Page -->
+        <actionGroup ref="SaveAndContinueEditCmsPageActionGroup" stepKey="saveAndContinueEditCmsPage"/>
+
+        <!-- Validate Block Content on Storefront -->
+        <actionGroup ref="NavigateToStorefrontForCreatedPageActionGroup" stepKey="navigateToStorefront">
+            <argument name="page" value="$$createCMSPage.identifier$$"/>
+        </actionGroup>
+        <seeElement selector="{{HeadingOnStorefront.headingText(PageBuilderHeadingTypeProperty_H1.value, PageBuilderHeadingText_DynamicBlock.value, '1')}}" stepKey="seeHeadingOfDynamicBlockOnStorefront"/>
+    </test>
+</tests>

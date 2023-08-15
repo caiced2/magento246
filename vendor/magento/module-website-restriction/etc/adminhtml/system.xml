@@ -1,0 +1,40 @@
+<?xml version="1.0"?>
+<!--
+/**
+ * Copyright © Magento, Inc. All rights reserved.
+ * See COPYING.txt for license details.
+ */
+-->
+<config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="urn:magento:module:Magento_Config:etc/system_file.xsd">
+    <system>
+        <section id="general">
+            <group id="restriction" sortOrder="50" showInDefault="1" showInWebsite="1" showInStore="1">
+                <label>Website Restrictions</label>
+                <field id="is_active" translate="label" sortOrder="10" type="select" showInDefault="1" showInWebsite="1" showInStore="0">
+                    <label>Access Restriction</label>
+                    <source_model>Magento\Config\Model\Config\Source\Yesno</source_model>
+                    <backend_model>Magento\WebsiteRestriction\Model\System\Config\Backend\Active</backend_model>
+                </field>
+                <field id="mode" translate="label" sortOrder="20" type="select" showInDefault="1" showInWebsite="1" showInStore="0">
+                    <label>Restriction Mode</label>
+                    <source_model>Magento\WebsiteRestriction\Model\System\Config\Source\Modes</source_model>
+                    <backend_model>Magento\WebsiteRestriction\Model\System\Config\Backend\Active</backend_model>
+                </field>
+                <field id="http_redirect" translate="label comment" sortOrder="30" type="select" showInDefault="1" showInWebsite="1" showInStore="1">
+                    <label>Startup Page</label>
+                    <comment>Applicable only if restriction mode is set to "Private Sales".</comment>
+                    <source_model>Magento\WebsiteRestriction\Model\System\Config\Source\Redirect</source_model>
+                </field>
+                <field id="cms_page" translate="label" sortOrder="40" type="select" showInDefault="1" showInWebsite="1" showInStore="1">
+                    <label>Landing Page</label>
+                    <source_model>Magento\Cms\Model\Config\Source\Page</source_model>
+                </field>
+                <field id="http_status" translate="label comment" sortOrder="50" type="select" showInDefault="1" showInWebsite="1" showInStore="0">
+                    <label>HTTP Response</label>
+                    <comment>Applicable only if restriction mode is set to "Website Closed". The landing page is rendered as raw HTML.</comment>
+                    <source_model>Magento\WebsiteRestriction\Model\System\Config\Source\Http</source_model>
+                </field>
+            </group>
+        </section>
+    </system>
+</config>

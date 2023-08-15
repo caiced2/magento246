@@ -1,0 +1,22 @@
+<?xml version="1.0"?>
+<!--
+/**
+ * Copyright © Magento, Inc. All rights reserved.
+ * See COPYING.txt for license details.
+ */
+-->
+<config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="urn:magento:module:Magento_Analytics:etc/reports.xsd">
+    <report name="pagebuilder_dynamicblock" connection="default">
+        <source name="magento_banner_content">
+            <attribute name="banner_content" alias="content"/>
+            <link-source name="magento_banner">
+                <using glue="and">
+                    <condition attribute="banner_id" operator="eq" type="identifier">banner_id</condition>
+                </using>
+            </link-source>
+            <filter glue="and">
+                <condition attribute="store_id" operator="in">0,1</condition>
+            </filter>
+        </source>
+    </report>
+</config>

@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+ /**
+  * Copyright © Magento, Inc. All rights reserved.
+  * See COPYING.txt for license details.
+  */
+-->
+
+<actionGroups xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+              xsi:noNamespaceSchemaLocation="urn:magento:mftf:Test/etc/actionGroupSchema.xsd">
+    <actionGroup name="AdminDeleteAllScheduledImportsExportsActionGroup">
+        <annotations>
+            <description>Deletes all scheduled imports and exports in the grid in admin on the System > Data Transfer > Scheduled Import/Export page.</description>
+        </annotations>
+        <waitForElementVisible selector="{{AdminLegacyDataGridFilterSection.clear}}" stepKey="waitForResetFilters"/>
+        <click selector="{{AdminLegacyDataGridFilterSection.clear}}" stepKey="clickResetFilters"/>
+        <waitForPageLoad stepKey="waitForFilterReset"/>
+        <waitForElementVisible selector="{{AdminScheduledImportsExportsSection.massActionDropDown}}" stepKey="waitForMassActionDropDown"/>
+        <selectOption userInput="Select All" selector="{{AdminScheduledImportsExportsSection.massActionDropDown}}" stepKey="selectAll"/>
+        <selectOption userInput="Delete" selector="{{AdminScheduledImportsExportsSection.actionsDropDown}}" stepKey="selectDelete"/>
+        <waitForElementVisible selector="{{AdminScheduledImportsExportsSection.submitButton}}" stepKey="waitForSubmitButton"/>
+        <click selector="{{AdminScheduledImportsExportsSection.submitButton}}" stepKey="clickSubmitButton"/>
+        <waitForElementVisible selector="{{AdminMainActionsSection.confirmDelete}}" stepKey="waitForConfirmDelete"/>
+        <click selector="{{AdminMainActionsSection.confirmDelete}}" stepKey="clickConfirmDelete"/>
+        <waitForPageLoad stepKey="waitForGridLoad"/>
+        <waitForText userInput="You deleted a total of" selector="{{AdminMessagesSection.success}}" stepKey="waitForSuccessMessage"/>
+        <waitForText userInput="We couldn't find any records." selector="{{AdminDataGridTableSection.dataGridEmpty}}" stepKey="seeEmptyGrid"/>
+    </actionGroup>
+</actionGroups>

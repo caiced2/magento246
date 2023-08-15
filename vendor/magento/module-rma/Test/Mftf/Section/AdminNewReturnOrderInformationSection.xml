@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+ /**
+  * Copyright © Magento, Inc. All rights reserved.
+  * See COPYING.txt for license details.
+  */
+-->
+
+<sections xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:noNamespaceSchemaLocation="urn:magento:mftf:Page/etc/SectionObject.xsd">
+    <section name="AdminNewReturnOrderInformationSection">
+        <element name="orderId" type="text" selector="#rma_info_tabs_general_section_content > section:nth-child(1) table tr:nth-child(1) > td > a" timeout="30" />
+        <element name="customerName" type="text" selector="#rma_info_tabs_general_section_content > section:nth-child(1) table tr:nth-child(2) > td > a" timeout="30" />
+        <element name="guestName" type="text" selector="#rma_info_tabs_general_section_content > section:nth-child(1) table tr:nth-child(2) > td" timeout="30" />
+        <element name="emailAddress" type="text" selector="#rma_info_tabs_general_section_content > section:nth-child(1) table tr:nth-child(3) > td > a" timeout="30" />
+        <element name="contactEmailAddress" type="input" selector="#rma_info_tabs_general_section_content > section:nth-child(1) table tr:nth-child(4) > td" timeout="30" />
+        <element name="searchOrder" type="input" selector="#magento_rma_rma_create_order_grid_filter_real_order_id"/>
+        <element name="searchButton" type="input" selector="//div[@class='admin__filter-actions']//span[contains(text(),'Search')]"/>
+        <element name="firstRow" type="textarea" selector="(//*[@id='magento_rma_rma_create_order_grid_table']/tbody/tr)[1]"/>
+        <element name="addNewReturns" type="button" selector="#add"/>
+    </section>
+</sections>

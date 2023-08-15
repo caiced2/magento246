@@ -1,0 +1,148 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+ /**
+  * Copyright © Magento, Inc. All rights reserved.
+  * See COPYING.txt for license details.
+  */
+-->
+
+<tests xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xsi:noNamespaceSchemaLocation="urn:magento:mftf:Test/etc/testSchema.xsd">
+    <test name="GiftWrappingCanBeDisabledForSpecificProductTest" deprecated="StorefrontGiftWrappingCanBeDisabledForSpecificProductTest">
+        <annotations>
+            <features value="GiftWrapping"/>
+            <stories value="No gift wrapping"/>
+            <title value="DEPRECATED. Verify that Gift Wrapping can be disabled for specific product"/>
+            <description value="Verify that Gift Wrapping can be disabled for specific product"/>
+            <severity value="CRITICAL"/>
+            <testCaseId value="MAGETWO-46905"/>
+            <group value="giftWrapping"/>
+            <skip>
+                <issueId value="DEPRECATED">Use StorefrontGiftWrappingCanBeDisabledForSpecificProductTest instead</issueId>
+            </skip>
+            <group value="pr_exclude"/>
+        </annotations>
+
+        <before>
+            <!--  Simple1 product1 is created-->
+
+            <createData entity="_defaultCategory" stepKey="createCategory"/>
+            <createData entity="_defaultProduct" stepKey="createProduct1">
+                <requiredEntity createDataKey="createCategory"/>
+            </createData>
+
+            <!--  Simple1 product2 is created-->
+
+            <createData entity="_defaultProduct" stepKey="createProduct2">
+                <requiredEntity createDataKey="createCategory"/>
+            </createData>
+
+            <!-- Login to Admin -->
+
+            <actionGroup ref="AdminLoginActionGroup" stepKey="loginAsAdmin1"/>
+
+            <!-- Open Product1 Grid, Filter product and open -->
+
+            <amOnPage url="{{AdminProductIndexPage.url}}" stepKey="amOnProductGridPage"/>
+            <waitForPageLoad time="30" stepKey="waitForPageLoad"/>
+
+            <actionGroup ref="FilterProductGridBySkuActionGroup" stepKey="filterGroupedProductOptions">
+                <argument name="product" value="_defaultProduct"/>
+            </actionGroup>
+            <click selector="{{AdminProductGridSection.productGridNameProduct('$$createProduct1.name$$')}}" stepKey="openProductForEdit"/>
+
+             <!--Open tab Gift Wrapping-->
+
+            <conditionalClick selector="{{AdminProductGiftOptionsSection.giftOptions}}" dependentSelector="{{AdminProductGiftOptionsSection.isGiftOptionsTabClosed}}" visible="true" stepKey="clickIfContentTabCloses"/>
+            <checkOption selector="{{AdminProductGiftOptionsSection.useConfigSettingsMessage}}" stepKey="checkUseDefaultOptionTitle1"/>
+            <checkOption selector="{{AdminProductGiftOptionsSection.useConfigSettingsAvaible}}" stepKey="checkUseDefaultOptionTitle3"/>
+
+            <!--Save product-->
+
+            <actionGroup ref="SaveProductFormActionGroup" stepKey="saveProduct"/>
+
+            <!-- Open Product2 Grid, Filter product and open -->
+
+            <amOnPage url="{{AdminProductIndexPage.url}}" stepKey="amOnProductGridPage1"/>
+            <waitForPageLoad time="30" stepKey="waitForPageLoad2"/>
+            <click selector="{{AdminProductGridSection.productGridNameProduct('$$createProduct2.name$$')}}" stepKey="openProductForEdit1"/>
+
+            <!--Open tab Gift Wrapping-->
+
+            <conditionalClick selector="{{AdminProductGiftOptionsSection.giftOptions}}" dependentSelector="{{AdminProductGiftOptionsSection.isGiftOptionsTabClosed}}" visible="true" stepKey="clickIfContentTabCloses1"/>
+            <checkOption selector="{{AdminProductGiftOptionsSection.useConfigSettingsMessage}}" stepKey="checkUseDefaultOptionTitle2"/>
+
+            <!--Save product-->
+
+            <actionGroup ref="SaveProductFormActionGroup" stepKey="saveProduct1"/>
+
+            <!-- Create Gift Wrapping -->
+
+            <actionGroup ref="AdminGiftWrappingNewActionGroup" stepKey="createGiftWrapping">
+                <argument name="giftWrappingDesign" value="Test Design"/>
+                <argument name="giftWrappingWebsite" value="Main Website"/>
+                <argument name="giftWrappingPrice" value="36.5"/>
+            </actionGroup>
+            <waitForElementVisible selector="{{AdminMessagesSection.success}}" stepKey="giftWrappingMessage"/>
+            <see selector="{{AdminGiftWrappingGridSection.giftWrappingDesignColumn('1')}}" userInput="Test Design" stepKey="seeGiftWrappingColumnDesign"/>
+            <see selector="{{AdminGiftWrappingGridSection.giftWrappingWebsiteColumn('1')}}" userInput="Main Website" stepKey="seeGiftWrappingColumnWebsite"/>
+            <see selector="{{AdminGiftWrappingGridSection.giftWrappingPriceColumn('1')}}" userInput="36.5" stepKey="seeGiftWrappingColumnPrice"/>
+
+            <!-- Gift Options are configured -->
+
+            <amOnPage url="{{AdminSystemConfigSalesGiftOptionsPage.url}}" stepKey="amOnAdminSystemConfigGiftOptionsSection"/>
+            <waitForPageLoad time="30" stepKey="waitForPageLoad7"/>
+
+            <uncheckOption selector="{{AdminSystemConfigGiftOptionSection.allowGiftMessagesOnOrderLevelCheckbox}}" stepKey="uncheckGiftMessagesOnOrderLevel"/>
+            <uncheckOption selector="{{AdminSystemConfigGiftOptionSection.allowGiftMessagesForOrderItemsCheckbox}}" stepKey="uncheckGiftMessagesForOrderItemsCheckbox"/>
+            <selectOption selector="{{AdminSystemConfigGiftOptionSection.allowGiftMessagesOnOrderLevel}}" userInput="No" stepKey="selectGiftMessagesOnOrderLevel"/>
+            <selectOption selector="{{AdminSystemConfigGiftOptionSection.allowGiftMessagesForOrderItems}}" userInput="No" stepKey="selectGiftMessagesForOrderItems"/>
+            <selectOption selector="{{AdminGiftWrappingGridSection.allowGiftWrappingOnOrderLevel}}" userInput="No" stepKey="selectGiftWrappingOnOrderLevel"/>
+            <selectOption selector="{{AdminGiftWrappingGridSection.allowGiftWrappingForOrderItems}}" userInput="Yes" stepKey="selectGiftWrappingForOrderItems"/>
+            <selectOption selector="{{AdminSystemConfigGiftOptionSection.allowPrintedCard}}" userInput="No" stepKey="selectPrintedCard"/>
+            <selectOption selector="{{AdminSystemConfigGiftOptionSection.allowGiftReceipt}}" userInput="No" stepKey="selectGiftReceipt"/>
+            <clearField selector="{{AdminSystemConfigGiftOptionSection.defaultPriceForPrintedCard}}" stepKey="resetToDefaultPricePrintedCard"/>
+            <click selector="{{StoreConfigSection.Save}}" stepKey="saveConfigButton"/>
+        </before>
+
+        <after>
+            <deleteData createDataKey="createProduct1" stepKey="deleteProduct"/>
+            <deleteData createDataKey="createProduct2" stepKey="deleteProduct1"/>
+            <deleteData createDataKey="createCategory" stepKey="deleteCategory"/>
+            <actionGroup ref="AdminDeleteGiftWrappingActionGroup" stepKey="deleteGiftWrapping">
+                <argument name="giftWrappingDesign" value="Test Design"/>
+            </actionGroup>
+            <actionGroup ref="AdminLogoutActionGroup" stepKey="logoutAdminUserAfterTest"/>
+        </after>
+
+        <!-- Go to Home Page -->
+
+        <amOnPage url="{{StorefrontHomePage.url}}" stepKey="amOnHomePage"/>
+        <waitForPageLoad stepKey="homeWaitForPageLoad"/>
+
+        <!-- Go to Simple Product1 Page -->
+
+        <amOnPage url="{{StorefrontHomePage.url}}$$createProduct1.custom_attributes[url_key]$$.html" stepKey="amOnProduct1Page"/>
+        <waitForPageLoad time="30" stepKey="waitForPageLoad4"/>
+        <actionGroup ref="StorefrontAddProductToCartActionGroup" stepKey="addToCartFromStorefrontProductPage">
+            <argument name="product" value="$$createProduct1$$"/>
+            <argument name="productCount" value="1"/>
+        </actionGroup>
+
+        <!-- Go to Simple Product2 Page -->
+
+        <amOnPage url="{{StorefrontHomePage.url}}$$createProduct2.custom_attributes[url_key]$$.html" stepKey="amOnProduct2Page"/>
+        <waitForPageLoad time="30" stepKey="waitForPageLoad5"/>
+        <actionGroup ref="StorefrontAddProductToCartActionGroup" stepKey="addToCartFromStorefrontProductPage1">
+            <argument name="product" value="$$createProduct2$$"/>
+            <argument name="productCount" value="2"/>
+        </actionGroup>
+
+        <!-- Open the Cart from Minicart-->
+
+        <actionGroup ref="StorefrontOpenCartFromMinicartActionGroup" stepKey="openCart"/>
+        <waitForText selector="{{CheckoutCartGiftWrappingSection.cartItemGiftOption('$$createProduct1.name$$','Gift options')}}" userInput="Gift options" time="30" stepKey="seeGiftOptionPresent"/>
+        <dontSee selector="{{CheckoutCartGiftWrappingSection.cartItemGiftOption('$$createProduct2.name$$','Gift options')}}" userInput="Gift options" stepKey="seeGiftOptionNotPresent"/>
+    </test>
+
+</tests>

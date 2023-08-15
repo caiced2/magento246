@@ -1,0 +1,44 @@
+<?php
+/**
+ * Copyright © Magento, Inc. All rights reserved.
+ * See COPYING.txt for license details.
+ */
+
+// phpcs:disable Magento2.Templates.ThisInTemplate
+// phpcs:disable Magento2.Files.LineLength.MaxExceeded
+
+/** @var $block \Magento\GiftRegistry\Block\Search\Advanced */
+/** @var \Magento\GiftRegistry\ViewModel\Address\RegionProvider $regionProvider */
+$regionProvider = $block->getRegionProvider();
+?>
+
+<?php foreach ($block->getAttributes() as $code => $attribute):?>
+    <div class="field">
+        <label for="<?= $block->escapeHtmlAttr($block->getFieldIdPrefix() . $code) ?>" class="label">
+            <span><?= $block->escapeHtml($attribute['label']) ?></span>
+        </label>
+        <div class="control">
+            <?= /* @noEscape */ $block->renderField($code) ?>
+        </div>
+    </div>
+<?php endforeach; ?>
+
+<?php if ($block->getRegionJsVisible()):?>
+    <?php $regionInputId = $block->escapeJs($block->getFieldIdPrefix() . $block->getElementRegionText()); ?>
+    <?php $optionalRegionAllowed = $block->getConfig('general/region/display_all') ? 'true' : 'false'; ?>
+<script type="text/x-magento-init">
+    {
+        "#<?= $block->escapeJs($block->getFieldIdPrefix() . $block->getElementCountry()) ?>": {
+            "directoryRegionUpdater": {
+                "optionalRegionAllowed": <?= /* @noEscape */ $optionalRegionAllowed ?>,
+                "regionListId": "#<?= $block->escapeJs($block->getFieldIdPrefix() . $block->getElementRegion()) ?>",
+                "regionInputId": "#<?= /* @noEscape */ $regionInputId ?>",
+                "regionJson": <?= /* @noEscape */ $regionProvider->getRegionJson() ?>,
+                "isRegionRequired": false,
+                "isZipRequired": false,
+                "isCountryRequired": false
+            }
+        }
+    }
+</script>
+<?php endif; ?>

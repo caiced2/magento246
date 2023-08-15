@@ -1,0 +1,63 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+ /**
+  * Copyright © Magento, Inc. All rights reserved.
+  * See COPYING.txt for license details.
+  */
+-->
+
+<actionGroups xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:noNamespaceSchemaLocation="urn:magento:mftf:Test/etc/actionGroupSchema.xsd">
+    <!-- Creates a staging update for a catalog price rule -->
+    <!-- Assumes that you are already on the catalog price rule page -->
+    <actionGroup name="CreateCatalogRuleStagingUpdateActionGroup">
+        <arguments>
+            <argument name="stagingUpdate" defaultValue="_defaultStaging"/>
+            <argument name="endDate" defaultValue="" type="string"/>
+        </arguments>
+        <click stepKey="clickViewEdit" selector="{{ScheduleUpdateSection.scheduleUpdate}}"/>
+
+        <!-- Fill out the staging update details -->
+        <waitForElementVisible stepKey="waitElementVisible" selector="{{AdminStagingSlideOutSection.updateName}}"/>
+        <fillField stepKey="fillName" selector="{{AdminStagingSlideOutSection.updateName}}" userInput="{{stagingUpdate.name}}"/>
+        <fillField stepKey="fillDescription" selector="{{AdminStagingSlideOutSection.updateDescription}}" userInput="{{stagingUpdate.description}}"/>
+
+        <!-- Check to see if it is close to the new minute. If so, wait a few seconds -->
+        <executeJS stepKey="needWait" function="
+                var today = new Date();
+                var sec = today.getSeconds();
+                return sec > 50 ? (61-sec) : 0;"/>
+        <wait stepKey="conditionalWait" time="$needWait"/>
+
+        <!-- Build the date in the correct format -->
+        <generateDate stepKey="generateDate" date="+1 minute" format="m/d/Y g:i A"/>
+        <executeJS stepKey="numSecondsLeft" function="
+                var today = new Date();
+                var sec = today.getSeconds();
+                return 60 - sec;"/>
+        <executeJS stepKey="getStartingTime" function="return Math.floor(new Date() / 1000);"/>
+        <fillField stepKey="fillStartDate" selector="{{AdminStagingSlideOutSection.startDate}}" userInput="{$generateDate}"/>
+        <fillField stepKey="fillEndDate" selector="{{AdminStagingSlideOutSection.endDate}}" userInput="{{endDate}}"/>
+
+        <!-- Save the update details -->
+        <click stepKey="selectActive" selector="{{AdminCatalogPriceRuleStagingSection.isActive}}"/>
+        <scrollToTopOfPage stepKey="scrollToTop"/>
+        <click stepKey="clickSave" selector="{{AdminStagingSlideOutSection.save}}"/>
+
+        <!-- Save the price rule -->
+        <click stepKey="saveProduct" selector="{{AdminNewCatalogPriceRule.save}}"/>
+        <seeElement stepKey="assertSuccess" selector="{{AdminProductMessagesSection.successMessage}}"/>
+
+        <!-- Check to see if we have waited the require time yet. If not, wait the rest of the time -->
+        <executeJS stepKey="getEndingTime" function="return Math.floor(new Date() / 1000);"/>
+        <executeJS stepKey="getTimeToWait" function="
+                var timePassed = {$getEndingTime} - {$getStartingTime};
+                var timeLeft = {$numSecondsLeft} - timePassed;
+                return timeLeft > 0 ? timeLeft : 0;"/>
+        <wait stepKey="conditionalWait2" time="$getTimeToWait"/>
+
+        <magentoCLI stepKey="runCronStaging" command="cron:run --group=staging"/>
+        <magentoCLI stepKey="runCronStagingTwice" command="cron:run --group=staging"/>
+        <magentoCLI command="indexer:reindex" stepKey="runCronIndex"/>
+    </actionGroup>
+</actionGroups>

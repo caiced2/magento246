@@ -1,0 +1,103 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+ /**
+  * Copyright © Magento, Inc. All rights reserved.
+  * See COPYING.txt for license details.
+  */
+-->
+<tests xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xsi:noNamespaceSchemaLocation="urn:magento:mftf:Test/etc/testSchema.xsd">
+    <test name="UnprocessedAsyncOrderIsNotDisplayedInAdminOrdersGridTest">
+        <annotations>
+            <features value="Checkout"/>
+            <stories value="Guest checkout of Order "/>
+            <title value="Admin should redirect to Sales Order grid on view of unprocessed Order"/>
+            <description value="Should redirect to Sales Order grid on attempt to view unprocessed Order"/>
+            <severity value="AVERAGE"/>
+            <testCaseId value="MC-43254"/>
+            <group value="checkout"/>
+            <group value="async_checkout"/>
+        </annotations>
+        <before>
+            <comment userInput="BIC workaround" stepKey="enableAsyncCheckout"/>
+
+            <!-- Create Product and Category for Order placement -->
+            <createData entity="_defaultCategory" stepKey="createCategory"/>
+            <createData entity="ApiSimpleProduct" stepKey="createProduct">
+                <requiredEntity createDataKey="createCategory"/>
+            </createData>
+        </before>
+        <after>
+            <actionGroup ref="AdminLogoutActionGroup" stepKey="adminLogout"/>
+            <deleteData createDataKey="createCategory" stepKey="deleteCategory"/>
+            <deleteData createDataKey="createProduct" stepKey="deleteProduct"/>
+            <comment userInput="BIC workaround" stepKey="disableAsyncCheckout"/>
+        </after>
+
+        <!-- Guest Checkout Process-->
+        <amOnPage url="{{StorefrontCategoryPage.url($$createCategory.custom_attributes[url_key]$$)}}" stepKey="onCategoryPage"/>
+        <waitForPageLoad stepKey="waitForPageLoad"/>
+        <actionGroup ref="StorefrontHoverProductOnCategoryPageActionGroup" stepKey="hoverProduct"/>
+        <actionGroup ref="StorefrontClickAddToCartButtonActionGroup" stepKey="addToCart"/>
+        <waitForElementVisible selector="{{StorefrontCategoryMainSection.SuccessMsg}}" time="30" stepKey="waitForProductAdded"/>
+        <see selector="{{StorefrontCategoryMainSection.SuccessMsg}}" userInput="You added $$createProduct.name$$ to your shopping cart." stepKey="seeAddedToCartMessage"/>
+        <see selector="{{StorefrontMinicartSection.quantity}}" userInput="1" stepKey="seeCartQuantity"/>
+        <actionGroup ref="GoToCheckoutFromMinicartActionGroup" stepKey="customerGoToCheckoutFromMinicart"/>
+
+        <!-- Enter shipping Information  -->
+        <actionGroup ref="GuestCheckoutFillingShippingSectionActionGroup" stepKey="guestCheckoutFillingShippingSection">
+            <argument name="customerVar" value="CustomerEntityOne"/>
+            <argument name="customerAddressVar" value="CustomerAddressSimple"/>
+        </actionGroup>
+        <actionGroup ref="CheckoutSelectCheckMoneyOrderPaymentActionGroup" stepKey="guestSelectCheckMoneyOrderPayment"/>
+        <actionGroup ref="CheckBillingAddressInCheckoutActionGroup" stepKey="guestSeeAddress">
+            <argument name="customerVar" value="CustomerEntityOne"/>
+            <argument name="customerAddressVar" value="CustomerAddressSimple"/>
+        </actionGroup>
+
+        <!-- Place Order -->
+        <actionGroup ref="CheckoutPlaceOrderActionGroup" stepKey="guestPlaceOrder">
+            <argument name="orderNumberMessage" value="CONST.successGuestCheckoutOrderNumberMessage"/>
+            <argument name="emailYouMessage" value="CONST.successCheckoutEmailYouMessage"/>
+        </actionGroup>
+
+        <!-- Get Order id -->
+        <grabTextFrom selector="{{CheckoutSuccessMainSection.orderNumber}}" stepKey="grabOrderNumber"/>
+
+        <!-- Login into admin-->
+        <actionGroup ref="AdminLoginActionGroup" stepKey="loginAsAdmin"/>
+
+        <!-- Check that Order is Absent in admin Orders Grid -->
+        <amOnPage url="{{AdminOrdersPage.url}}" stepKey="onOrdersPage"/>
+        <waitForLoadingMaskToDisappear stepKey="waitForLoadingMaskToDisappearOnOrdersPage"/>
+        <actionGroup ref="ClearFiltersAdminDataGridActionGroup" stepKey="clearGridFilter"/>
+        <fillField selector="{{AdminOrdersGridSection.search}}" userInput="{$grabOrderNumber}" stepKey="fillOrderNum"/>
+        <click selector="{{AdminOrdersGridSection.submitSearch}}" stepKey="submitSearchOrderNum"/>
+        <waitForLoadingMaskToDisappear stepKey="waitForLoadingMaskToDisappearOnSearch"/>
+        <see selector="{{AdminDataGridTableSection.dataGridEmpty}}" userInput="We couldn't find any records." stepKey="assertDataGridEmptyMessage"/>
+        <click selector="{{AdminProductAttributeGridSection.ResetFilter}}" stepKey="clearExistingFilters"/>
+
+        <!-- Assert Redirect on view of unprocessed order through direct URL -->
+        <amOnPage url="{{AdminOrderPage.url({$grabOrderNumber})}}" stepKey="navigateToOrderPage"/>
+        <seeInCurrentUrl url="{{AdminOrdersPage.url}}" stepKey="seeAdminIsRedirectedToOrdersGridPage"/>
+
+        <!-- Trigger Async Place Order Consumer to Process the Order  -->
+        <actionGroup ref="CliConsumerStartActionGroup" stepKey="processOrder">
+            <argument name="consumerName" value="{{AsyncPlaceOrderConsumerData.consumerName}}"/>
+            <argument name="maxMessages" value="{{AsyncPlaceOrderConsumerData.messageLimit}}"/>
+        </actionGroup>
+
+        <!-- Wait 30s for Order Processing-->
+        <wait time="30" stepKey="conditionalWait"/>
+
+        <!--Assert Order is In Orders Grid -->
+        <actionGroup ref="AdminOrderFilterByOrderIdAndStatusActionGroup" stepKey="seeFirstOrder">
+            <argument name="orderId" value="$grabOrderNumber"/>
+            <argument name="orderStatus" value="Pending"/>
+        </actionGroup>
+
+        <amOnPage url="{{AdminOrderPage.url({$grabOrderNumber})}}" stepKey="navigateToOrderPage1"/>
+        <seeInCurrentUrl url="{{AdminOrderDetailsPage.url}}" stepKey="seeViewOrderPage" after="navigateToOrderPage1"/>
+        <see selector="{{AdminOrderDetailsInformationSection.orderStatus}}" userInput="Pending" stepKey="seeOrderPendingStatus" after="seeViewOrderPage"/>
+    </test>
+</tests>

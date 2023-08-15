@@ -1,0 +1,21 @@
+<?xml version="1.0"?>
+<!--
+/**
+ * Copyright © Magento, Inc. All rights reserved.
+ * See COPYING.txt for license details.
+ */
+-->
+<config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="urn:magento:framework:Event/etc/events.xsd">
+    <event name="salesrule_rule_get_coupon_types">
+        <observer name="magento_reminder" instance="Magento\Reminder\Observer\GetCouponTypesObserver" />
+    </event>
+    <event name="adminhtml_promo_quote_edit_tab_main_prepare_form">
+        <observer name="magento_reminder" instance="Magento\Reminder\Observer\AddUseAutoGenerationNoticeObserver" />
+    </event>
+    <event name="salesrule_rule_save_after">
+        <observer name="magento_reminder" instance="Magento\Reminder\Observer\DetachUnsupportedSalesRuleObserver" />
+    </event>
+    <event name="adminhtml_block_promo_widget_chooser_prepare_collection">
+        <observer name="magento_reminder" instance="Magento\Reminder\Observer\AddSalesRuleFilterObserver" />
+    </event>
+</config>

@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+ /**
+  * Copyright © Magento, Inc. All rights reserved.
+  * See COPYING.txt for license details.
+  */
+-->
+<actionGroups xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:noNamespaceSchemaLocation="urn:magento:mftf:Test/etc/actionGroupSchema.xsd">
+    <actionGroup name="MoveToAnotherUpdateActionGroup" extends="RemoveFromUpdateActionGroup">
+        <arguments>
+            <argument name="toStaging"/>
+        </arguments>
+        <click selector="{{AdminRemoveFromUpdateSection.moveToAnotherUpdate}}" stepKey="clickMoveToAnotherUpdate"/>
+        <fillField selector="{{AdminRemoveFromUpdateSection.searchStagingName}}" userInput="{{fromStaging.updateName}}" stepKey="fillSearchStagingName"/>
+        <click selector="{{AdminRemoveFromUpdateSection.submitSearch}}" stepKey="clickSubmitSearchForDisabled"/>
+        <grabAttributeFrom selector="{{AdminRemoveFromUpdateSection.selectButtonAreDisabled(fromStaging.updateName)}}" userInput="_disabled" stepKey="grabAttributeFrom"/>
+        <fillField selector="{{AdminRemoveFromUpdateSection.searchStagingName}}" userInput="{{toStaging.updateName}}" stepKey="fillSearchAnotherStagingName"/>
+        <click selector="{{AdminRemoveFromUpdateSection.submitSearch}}" stepKey="clickSubmitSearch"/>
+        <seeElement selector="{{AdminRemoveFromUpdateSection.updateName(toStaging.updateName)}}" stepKey="seeAnotherUpdateName"/>
+        <click selector="{{AdminRemoveFromUpdateSection.selectMoveToAnotherUpdate(toStaging.updateName)}}" stepKey="clickSelectAssignToExistingUpdate"/>
+        <see selector="{{AdminRemoveFromUpdateSection.selectedUpdateName}}" userInput="{{toStaging.updateName}}" stepKey="seeSelectedUpdate"/>
+        <click selector="{{AdminRemoveFromUpdateSection.done}}" stepKey="clickDone"/>
+        <dontSeeElement selector="{{AdminRemoveFromUpdateSection.title}}" stepKey="panelIsClosed"/>
+        <dontSeeElement selector="{{AdminScheduledChangesSection.scheduleDetails(fromStaging.updateName)}}" stepKey="dontSeePreviousUpdate"/>
+        <see selector="{{AdminScheduledChangesSection.scheduleDetails(toStaging.updateName)}}" userInput="{{toStaging.updateName}}" stepKey="seeUpdateName"/>
+        <see selector="{{AdminScheduledChangesSection.scheduleDetails(toStaging.updateDescription)}}" userInput="{{toStaging.updateDescription}}" stepKey="seeUpdateDescription"/>
+        <see selector="{{AdminScheduledChangesSection.scheduleViewEdit(toStaging.updateName)}}" userInput="View/Edit" stepKey="seeUpdateViewAneEdit"/>
+        <see selector="{{AdminScheduledChangesSection.scheduleActions(toStaging.updateName, 'Preview')}}" userInput="Preview" stepKey="seeUpdatePreview"/>
+    </actionGroup>
+</actionGroups>

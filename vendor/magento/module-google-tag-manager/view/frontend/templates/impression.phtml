@@ -1,0 +1,56 @@
+<?php
+/**
+ * Copyright © Magento, Inc. All rights reserved.
+ * See COPYING.txt for license details.
+ */
+?>
+<?php
+/** @var \Magento\Framework\View\Helper\SecureHtmlRenderer $secureRenderer */
+
+/** @var \Magento\GoogleTagManager\Block\ListJson $block */
+$productCollection = $block->getLoadedProductCollection();
+$block->checkCartItems();
+?>
+
+<?php if ($productCollection && count($productCollection) > 0) { ?>
+    <?php
+    $listPosition = 0;
+    if (is_object($productCollection) && $productCollection->getCurPage() > 0) {
+        $position = ($productCollection->getCurPage() - 1) * $productCollection->getPageSize() + 1;
+    } else {
+        $position = 1;
+    }
+
+    $blockName = $block->escapeJs($block->getBlockName());
+
+    $scriptString = <<<script
+        var staticImpressions = staticImpressions || {};
+        staticImpressions['{$blockName}'] = [
+script;
+
+    foreach ($productCollection as $product) {
+        $productSku = $block->escapeJs($product->getSku());
+        $productTypeId = $block->escapeJs($product->getTypeId());
+        $productName = $block->escapeJs($product->getName());
+        $categoryName = $block->escapeJs($block->getCurrentCategoryName());
+        $listName = $block->escapeJs($block->getCurrentListName());
+
+        $scriptString .= <<<script
+            {
+                "id": "{$productSku}",
+                "type": "{$productTypeId}",
+                "name": "{$productName}",
+                "category": "{$categoryName}",
+                "list": "{$listName}",
+                "position": "{$position}",
+                "listPosition": "{$listPosition}"
+            },
+script;
+        $position++;
+        $listPosition++;
+    }
+    $scriptString .= '];';
+    ?>
+    <?= /* @noEscape */ $secureRenderer->renderTag('script', [], $scriptString, false); ?>
+    <?php
+}

@@ -1,0 +1,15 @@
+<?xml version="1.0"?>
+<!--
+/**
+ * Copyright © Magento, Inc. All rights reserved.
+ * See COPYING.txt for license details.
+ */
+-->
+<schema xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:noNamespaceSchemaLocation="urn:magento:framework:Setup/Declaration/Schema/etc/schema.xsd">
+    <table name="magento_reward_salesrule" resource="default" comment="Enterprise Reward Reward Salesrule">
+        <constraint xsi:type="foreign" referenceId="MAGENTO_REWARD_SALESRULE_RULE_ID_SALESRULE_ROW_ID"
+                    table="magento_reward_salesrule" column="rule_id" referenceTable="salesrule"
+                    referenceColumn="row_id" onDelete="CASCADE"/>
+    </table>
+</schema>

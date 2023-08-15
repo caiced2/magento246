@@ -1,0 +1,83 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+ /**
+  * Copyright © Magento, Inc. All rights reserved.
+  * See COPYING.txt for license details.
+  */
+-->
+
+<tests xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xsi:noNamespaceSchemaLocation="urn:magento:mftf:Test/etc/testSchema.xsd">
+    <test name="StorefrontCustomerCheckoutWithTwoAddressesAndEnabledAddressSearchWithNotReachedLimitTest">
+        <annotations>
+            <features value="Checkout with search address enabled"/>
+            <stories value="MC-5681: Implement handling of large number of addresses on Onepage Checkout"/>
+            <title value="One Page Checkout with Customer Addresses Search - Specified limit is not reached"/>
+            <description value="One Page Checkout with Customer Addresses Search - Specified limit is not reached"/>
+            <severity value="CRITICAL"/>
+            <testCaseId value="MC-28425"/>
+            <group value="checkout"/>
+        </annotations>
+        <before>
+            <createData entity="SimpleSubCategory" stepKey="createSimpleCategory"/>
+            <createData entity="SimpleProduct" stepKey="createSimpleProduct">
+                <requiredEntity createDataKey="createSimpleCategory"/>
+            </createData>
+            <createData entity="Simple_US_Customer_Two_Addresses" stepKey="createSimpleUsCustomer"/>
+            <magentoCLI command="config:set {{EnableCustomerAddressSearch.path}} {{EnableCustomerAddressSearch.value}}" stepKey="enableCustomerAddressSearch"/>
+            <magentoCLI command="config:set {{AddressSearchLimitThree.path}} {{AddressSearchLimitThree.value}}" stepKey="setAddressSearchLimitThree"/>
+        </before>
+        <after>
+            <actionGroup ref="StorefrontCustomerLogoutActionGroup" stepKey="logoutFromStorefront"/>
+            <deleteData createDataKey="createSimpleProduct" stepKey="deleteProduct"/>
+            <deleteData createDataKey="createSimpleCategory" stepKey="deleteCategory"/>
+            <deleteData createDataKey="createSimpleUsCustomer" stepKey="deleteCustomer"/>
+            <magentoCLI command="config:set {{DisableCustomerAddressSearch.path}} {{DisableCustomerAddressSearch.value}}" stepKey="disableCustomerAddressSearch"/>
+            <magentoCLI command="config:set {{DefaultAddressSearchLimit.path}} {{DefaultAddressSearchLimit.value}}" stepKey="setAddressSearchLimitTen"/>
+            <!--Clear filters-->
+            <actionGroup ref="AdminOpenCustomersGridActionGroup" stepKey="navigateToCustomerIndexPage"/>
+            <actionGroup ref="ClearFiltersAdminDataGridActionGroup"  stepKey="clearExistingCustomerFilters"/>
+        </after>
+        <!--Login to storefront-->
+        <actionGroup ref="LoginToStorefrontActionGroup" stepKey="customerLogin">
+            <argument name="Customer" value="$createSimpleUsCustomer$" />
+        </actionGroup>
+        <!--Add Simple Product to shopping cart and proceed to checkout-->
+        <actionGroup ref="StorefrontOpenProductPageActionGroup" stepKey="goToStorefrontProductPage">
+            <argument name="productUrl" value="$createSimpleProduct.custom_attributes[url_key]$"/>
+        </actionGroup>
+        <actionGroup ref="AddToCartFromStorefrontProductPageActionGroup" stepKey="addProductToCart">
+            <argument name="productName" value="$createSimpleProduct.name$"/>
+        </actionGroup>
+        <actionGroup ref="GoToCheckoutFromMinicartActionGroup" stepKey="goToCheckoutFromMinicart" />
+        <!--Verify default address data-->
+        <actionGroup ref="CheckSelectedShippingAddressInCheckoutActionGroup" stepKey="checkDefaultShippingAddressSelected">
+            <argument name="customerVar" value="$createSimpleUsCustomer$" />
+            <argument name="customerAddressVar" value="US_Address_TX" />
+        </actionGroup>
+        <!--Click on *Ship here* button for second address-->
+        <click selector="{{CheckoutShippingMethodsSection.shipHereButton}}" stepKey="changeShippingAddress"/>
+        <waitForElementNotVisible selector="{{CheckoutShippingMethodsSection.shippingMethodLoader}}" time="30" stepKey="waitForShippingMethodLoaderNotVisible"/>
+        <waitForElementVisible selector="{{CheckoutShippingMethodsSection.firstShippingMethod}}" time="30" stepKey="waitForShippingMethodRadioToBeVisible"/>
+        <!--Select first shipping method-->
+        <actionGroup ref="CheckoutSelectFlatRateShippingMethodActionGroup" stepKey="selectFlatRateShippingMethod"/>
+        <actionGroup ref="StorefrontCheckoutForwardFromShippingStepActionGroup" stepKey="clickNextButton"/>
+        <!--Review & Payments step of checkout is opened-->
+        <!-- Checkout select Check/Money Order payment -->
+        <actionGroup ref="CheckoutSelectCheckMoneyOrderPaymentActionGroup" stepKey="selectCheckMoneyPayment"/>
+        <!--Address B is displayed as billing address for selected payment method-->
+        <actionGroup ref="CheckBillingAddressInCheckoutActionGroup" stepKey="checkFirstBillingAddressOnBillingPage">
+            <argument name="customerVar" value="$createSimpleUsCustomer$" />
+            <argument name="customerAddressVar" value="US_Address_TX" />
+        </actionGroup>
+        <!--Click "My billing and shipping address are the same" checkbox-->
+        <click selector="{{CheckoutBillingAddressSection.billingAndShippingAddressAreTheSameOnPaymentMethod('checkmo')}}" stepKey="clickBillingAndShippingAddressAreTheSameButton"/>
+        <!--Check that billing address has changed to Address *A*-->
+        <actionGroup ref="CheckShipToInformationInCheckoutActionGroup" stepKey="validateCustomerAndAddressDetails">
+            <argument name="customerVar" value="$createSimpleUsCustomer$" />
+            <argument name="customerAddressVar" value="US_Address_NY_Not_Default_Address" />
+        </actionGroup>
+        <!-- Place order -->
+        <actionGroup ref="ClickPlaceOrderActionGroup" stepKey="clickPlaceOrderButton" />
+    </test>
+</tests>

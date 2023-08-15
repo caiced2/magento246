@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+ /**
+  * Copyright © Magento, Inc. All rights reserved.
+  * See COPYING.txt for license details.
+  */
+-->
+
+<sections xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+          xsi:noNamespaceSchemaLocation="urn:magento:mftf:Page/etc/SectionObject.xsd">
+    <section name="AdminAllGiftRegistryPageSection">
+        <element name="addGiftRegistryType" type="button" selector="#add"/>
+        <element name="filterByCode" type="text" selector="#giftregistryGrid_filter_code"/>
+        <element name="searchButton" type="button" selector="//div[@class='admin__filter-actions']//span[text()='Search']"/>
+        <element name="reset" type="button" selector="//span[text()='Reset Filter']"/>
+        <element name="firstGiftRegistry" type="text" selector="//*[@id='giftregistryGrid_table']/tbody/tr[1]/td[contains(@class,'col-code')]"/>
+    </section>
+</sections>

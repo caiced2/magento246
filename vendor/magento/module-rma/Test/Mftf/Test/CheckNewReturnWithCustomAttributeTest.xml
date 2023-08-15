@@ -1,0 +1,129 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+ /**
+  * Copyright © Magento, Inc. All rights reserved.
+  * See COPYING.txt for license details.
+  */
+-->
+<tests xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="urn:magento:mftf:Test/etc/testSchema.xsd">
+    <test name="CheckNewReturnWithCustomAttributeTest">
+        <annotations>
+            <title value="Checking 'Create New Return' layout when add not required dropdown attribute"/>
+            <stories value="Create returns"/>
+            <description value="Checking 'Create New Return' layout when add not required dropdown attribute"/>
+            <features value="Rma"/>
+            <severity value="MAJOR"/>
+            <testCaseId value="MAGETWO-94832"/>
+            <useCaseId value="MAGETWO-91672"/>
+            <group value="Rma"/>
+        </annotations>
+
+        <before>
+            <createData entity="EnableRmaOnStorefront" stepKey="enableRmaOnStorefront"/>
+
+            <createData entity="_defaultCategory" stepKey="defaultCategory"/>
+            <createData entity="SimpleProduct" stepKey="simpleProduct">
+                <requiredEntity createDataKey="defaultCategory"/>
+            </createData>
+
+            <createData entity="Simple_US_Customer" stepKey="customer"/>
+
+            <actionGroup ref="AdminLoginActionGroup" stepKey="loginAsAdmin"/>
+
+            <actionGroup ref="CreateNewReturnAttribute" stepKey="createNewReturnAttribute"/>
+        </before>
+
+        <after>
+            <actionGroup ref="DeleteReturnAttribute" stepKey="deleteReturnAttribute"/>
+
+            <actionGroup ref="AdminLogoutActionGroup" stepKey="logout"/>
+
+            <deleteData createDataKey="simpleProduct" stepKey="deleteProduct"/>
+            <deleteData createDataKey="defaultCategory" stepKey="deleteCategory"/>
+            <deleteData createDataKey="customer" stepKey="deleteCustomer"/>
+
+            <createData entity="DisableRmaOnStorefront" stepKey="disableRmaOnStorefront"/>
+        </after>
+
+        <!--Create new customer order-->
+        <actionGroup ref="NavigateToNewOrderPageExistingCustomerActionGroup" stepKey="navigateToNewOrderWithExistingCustomer">
+            <argument name="customer" value="$$customer$$"/>
+        </actionGroup>
+
+        <!-- Choose default group -->
+        <click selector="{{AdminOrderFormAccountSection.group}}" stepKey="clickGroupSection"/>
+        <click selector="{{AdminOrderFormAccountSection.defaultGeneral}}" stepKey="clickGroupSectionGeneral"/>
+        <waitForPageLoad stepKey="waitForOrderPageLoad" time="30"/>
+
+        <!--Add product to order-->
+        <actionGroup ref="AddSimpleProductToOrderActionGroup" stepKey="addSimpleProductToOrder">
+            <argument name="product" value="$$simpleProduct$$"/>
+        </actionGroup>
+
+        <!--Select FlatRate shipping method-->
+        <actionGroup ref="OrderSelectFlatRateShippingActionGroup" stepKey="orderSelectFlatRateShippingMethod"/>
+
+        <!--Submit order-->
+        <actionGroup ref="AdminOrderClickSubmitOrderActionGroup" stepKey="submitOrder"/>
+
+        <grabTextFrom selector="|Order # (\d+)|" stepKey="grabOrderNumber"/>
+        <grabFromCurrentUrl regex="~/order_id/(\d+)/~" stepKey="grabOrderId"/>
+
+        <!--Verify order information-->
+        <actionGroup ref="VerifyCreatedOrderInformationActionGroup" stepKey="verifyCreatedOrderInformation"/>
+
+        <!--Go to invoice page into the order-->
+        <actionGroup ref="GoToInvoiceIntoOrderActionGroup" stepKey="goToInvoiceIntoOrderPage"/>
+
+        <!--Verify basic invoice information-->
+        <actionGroup ref="VerifyBasicInvoiceInformationActionGroup" stepKey="verifyBasicInvoiceInformation">
+            <argument name="customer" value="$$customer$$"/>
+            <argument name="shippingAddress" value="US_Address_TX"/>
+            <argument name="billingAddress" value="US_Address_TX"/>
+        </actionGroup>
+
+        <!--Verify items into invoice-->
+        <actionGroup ref="SeeProductInInvoiceItemsActionGroup" stepKey="seeProductInInvoiceItems">
+            <argument name="product" value="$$simpleProduct$$"/>
+        </actionGroup>
+
+        <!--Submit creating invoice into the order-->
+        <actionGroup ref="SubmitInvoiceActionGroup" stepKey="submitInvoiceIntoOrder"/>
+
+        <!--Go to shipment page into the order-->
+        <actionGroup ref="GoToShipmentIntoOrderActionGroup" stepKey="goToShipmentIntoOrder"/>
+
+        <!--Verify basic shipment information-->
+        <actionGroup ref="VerifyBasicShipmentInformationActionGroup" stepKey="verifyBasicShipmentInformation">
+            <argument name="customer" value="$$customer$$"/>
+            <argument name="shippingAddress" value="US_Address_TX"/>
+            <argument name="billingAddress" value="US_Address_TX"/>
+        </actionGroup>
+
+        <!--Verify items into shipment-->
+        <actionGroup ref="SeeProductInShipmentItemsActionGroup" stepKey="seeProductInShipmentItems">
+            <argument name="product" value="$$simpleProduct$$"/>
+        </actionGroup>
+
+        <!--Submit creating shipment into the order-->
+        <actionGroup ref="SubmitShipmentIntoOrderActionGroup" stepKey="submitShipmentIntoOrder"/>
+
+        <!--Verify that order status is Complete-->
+        <see selector="{{AdminOrderDetailsInformationSection.orderStatus}}" userInput="Complete" stepKey="seeOrderComplete"/>
+
+        <!--Log in to Storefront as Customer-->
+        <actionGroup ref="LoginToStorefrontActionGroup" stepKey="signUpNewUser">
+            <argument name="Customer" value="$$customer$$"/>
+        </actionGroup>
+
+        <!--Customer on Return page-->
+        <amOnPage url="{{StorefrontCustomerReturnPage.url({$grabOrderId})}}" stepKey="amOnCustomerOrderPage"/>
+        <waitForPageLoad stepKey="waitForPageLoad"/>
+
+        <!--Verify custom return attribute is displayed-->
+        <actionGroup ref="VerifyDropdownReturnAttributeOnStorefront" stepKey="verifyDropdownReturnAttributeOnStorefront">
+            <argument name="customer" value="$$customer$$"/>
+            <argument name="orderId" value="$grabOrderNumber"/>
+        </actionGroup>
+    </test>
+</tests>

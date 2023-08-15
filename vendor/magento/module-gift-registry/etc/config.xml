@@ -1,0 +1,30 @@
+<?xml version="1.0"?>
+<!--
+/**
+ * Copyright © Magento, Inc. All rights reserved.
+ * See COPYING.txt for license details.
+ */
+-->
+<config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="urn:magento:module:Magento_Store:etc/config.xsd">
+    <default>
+        <magento_giftregistry>
+            <general>
+                <enabled>1</enabled>
+                <max_registrant>5</max_registrant>
+            </general>
+            <owner_email>
+                <identity>general</identity>
+                <template>magento_giftregistry_owner_email_template</template>
+            </owner_email>
+            <sharing_email>
+                <identity>general</identity>
+                <template>magento_giftregistry_sharing_email_template</template>
+                <send_limit>3</send_limit>
+            </sharing_email>
+            <update_email>
+                <identity>general</identity>
+                <template>magento_giftregistry_update_email_template</template>
+            </update_email>
+        </magento_giftregistry>
+    </default>
+</config>

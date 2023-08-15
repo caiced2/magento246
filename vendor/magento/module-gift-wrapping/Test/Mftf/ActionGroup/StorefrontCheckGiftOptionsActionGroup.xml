@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+ /**
+  * Copyright © Magento, Inc. All rights reserved.
+  * See COPYING.txt for license details.
+  */
+-->
+
+<actionGroups xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+              xsi:noNamespaceSchemaLocation="urn:magento:mftf:Test/etc/actionGroupSchema.xsd">
+    <actionGroup name="StorefrontCheckGiftOptionsActionGroup">
+        <arguments>
+            <argument name="orderNumber" type="string"/>
+            <argument name="productName" type="string"/>
+            <argument name="expectedGiftMessage" type="string" defaultValue="Gift message for the item"/>
+            <argument name="expectedGiftWrapping" type="string" defaultValue="Test Design"/>
+        </arguments>
+        <!-- Open created order on the Storefront -->
+        <amOnPage url="{{StorefrontCustomerOrdersHistoryPage.url}}" stepKey="openOrdersHistoryPage"/>
+        <waitForElementVisible selector="{{StorefrontCheckoutCartGiftSection.viewOrder(orderNumber)}}" stepKey="waitForViewOrderLinkVisible"/>
+        <click selector="{{StorefrontCheckoutCartGiftSection.viewOrder(orderNumber)}}" stepKey="clickToViewOrder"/>
+        <waitForPageLoad stepKey="waitToLoadViewOrderPage"/>
+        <click selector="{{StorefrontOrderGiftSection.giftMessageLink}}" stepKey="clickToMessageButtonFirst"/>
+        <waitForPageLoad stepKey="waitToLoadMessagePage"/>
+        <grabTextFrom selector="{{StorefrontOrderGiftSection.giftMessage}}" stepKey="actualGiftMessage"/>
+        <assertEquals stepKey="checkGiftMessage">
+            <expectedResult type="string">{{expectedGiftMessage}}</expectedResult>
+            <actualResult type="variable">actualGiftMessage</actualResult>
+        </assertEquals>
+        <grabTextFrom selector="{{StorefrontOrderGiftWrappingSection.giftWrapping(productName)}}" stepKey="actualGiftWrapping"/>
+        <assertStringContainsString stepKey="checkGiftWrapping">
+            <expectedResult type="string">{{expectedGiftWrapping}}</expectedResult>
+            <actualResult type="variable">actualGiftWrapping</actualResult>
+        </assertStringContainsString>
+    </actionGroup>
+</actionGroups>

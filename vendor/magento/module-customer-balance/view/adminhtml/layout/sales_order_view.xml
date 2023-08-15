@@ -1,0 +1,38 @@
+<?xml version="1.0"?>
+<!--
+/**
+ * Copyright © Magento, Inc. All rights reserved.
+ * See COPYING.txt for license details.
+ */
+-->
+<page xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="urn:magento:framework:View/Layout/etc/page_configuration.xsd">
+    <body>
+        <referenceBlock name="order_totals">
+            <block class="Magento\Sales\Block\Adminhtml\Order\Totals\Item" name="customerbalance" template="Magento_CustomerBalance::sales/order/totals/customerbalance.phtml">
+                <action method="setSourceField">
+                    <argument name="value" xsi:type="string">customer_balance_amount</argument>
+                </action>
+                <action method="setLabel">
+                    <argument name="value" translate="true" xsi:type="string">Store Credit</argument>
+                </action>
+            </block>
+            <block class="Magento\Sales\Block\Adminhtml\Order\Totals\Item" name="customerbalance_refunded" template="Magento_Sales::order/totals/item.phtml">
+                <action method="setSourceField">
+                    <argument name="value" xsi:type="string">customer_bal_total_refunded</argument>
+                </action>
+                <action method="setLabel">
+                    <argument name="value" xsi:type="string">Refunded to Store Credit</argument>
+                </action>
+                <action method="setDisplayArea">
+                    <argument name="value" xsi:type="string">footer</argument>
+                </action>
+                <action method="setStrong">
+                    <argument name="flag" xsi:type="string">true</argument>
+                </action>
+                <action method="setHtmlClass">
+                    <argument name="class" xsi:type="string">emph</argument>
+                </action>
+            </block>
+        </referenceBlock>
+    </body>
+</page>

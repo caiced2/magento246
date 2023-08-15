@@ -1,0 +1,71 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+ /**
+  * Copyright © Magento, Inc. All rights reserved.
+  * See COPYING.txt for license details.
+  */
+-->
+<tests xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="urn:magento:mftf:Test/etc/testSchema.xsd">
+    <test name="StorefrontQuickCheckoutStoreWithAllowedCountriesTest">
+        <annotations>
+            <features value="MagentoQuickCheckout"/>
+            <stories value="Quick checkout in a store with some specific allowed countries"/>
+            <title value="Quick checkout with allowed countries"/>
+            <description value="Quick checkout with a store that can only sell in some allowed countries"/>
+            <severity value="CRITICAL"/>
+            <testCaseId value="quick-checkout-store-with-allowed-countries"/>
+            <group value="quick-checkout"/>
+        </annotations>
+        <before>
+            <magentoCLI command="config:set {{EnableFreeShippingConfigData.path}} {{EnableFreeShippingConfigData.value}}" stepKey="enableFreeShipping"/>
+            <!-- Configure Allowed Countries -->
+            <magentoCLI command="config:set --scope={{SetAllowedCountryUsConfig.scope}} --scope-code={{SetAllowedCountryUsConfig.scope_code}} {{SetAllowedCountryUsConfig.path}} {{SetAllowedCountryUsConfig.value}}" stepKey="setAllowedCountryUs"/>
+            <magentoCLI command="config:set {{SetAllowedCountryUsConfig.path}} ''" stepKey="unselectAllCountriesFromAllowedCounties"/>
+            <!-- Login -->
+            <actionGroup ref="AdminLoginActionGroup" stepKey="login"/>
+            <!-- Enable Quick Checkout -->
+            <actionGroup ref="AdminConfigureQuickCheckoutActionGroup" stepKey="configurePaymentMethod">
+                <argument name="methodAction" value="authorize_capture"/>
+            </actionGroup>
+            <!-- Create Product -->
+            <createData entity="_defaultCategory" stepKey="createCategory"/>
+            <createData entity="_defaultProduct" stepKey="createProduct">
+                <requiredEntity createDataKey="createCategory"/>
+            </createData>
+        </before>
+        <after>
+            <magentoCLI command="config:set {{DisableFreeShippingMethod.path}} {{DisableFreeShippingMethod.value}}" stepKey="disableFreeShipping"/>
+            <!-- Restore Config -->
+            <createData entity="DisableAdminAccountAllowCountry" stepKey="setDefaultValueForAllowCountries"/>
+            <createData entity="SetAdminAccountAllowCountryToDefaultForDefaultWebsite" stepKey="setDefaultValueForAllowCountriesForDefaultWebsites"/>
+            <!-- Disable Extension -->
+            <actionGroup ref="AdminDisableQuickCheckoutActionGroup" stepKey="disablePaymentMethod"/>
+            <!-- Delete product -->
+            <deleteData createDataKey="createCategory" stepKey="deleteCategory"/>
+            <deleteData createDataKey="createProduct" stepKey="deleteProduct"/>
+            <!-- Logout -->
+            <actionGroup ref="AdminLogoutActionGroup" stepKey="logoutFromAdmin"/>
+        </after>
+        <!-- Navigate to storefront as a guest -->
+        <amOnPage stepKey="navigateToCategoryPage" url="{{StorefrontCategoryPage.url($$createCategory.name$$)}}"/>
+        <actionGroup ref="StorefrontAddProductToCartFromCategoryActionGroup" stepKey="addProductToCart">
+            <argument name="productName" value="$$createProduct.name$$"/>
+        </actionGroup>
+        <actionGroup ref="GoToCheckoutFromMinicartActionGroup" stepKey="goToCheckoutFromMinicart"/>
+        <actionGroup ref="LoginWithEmailAddressAndOtpActionGroup" stepKey="loginWithEmailAddressAndOtp">
+            <argument name="customer" value="BoltCustomerWithDefaultCanadianAddress"/>
+        </actionGroup>
+
+        <waitForElement selector="{{CheckoutPaymentSection.paymentSectionTitle}}" stepKey="waitForPaymentSectionTitle"/>
+
+        <!-- Ensure US default address -->
+        <actionGroup ref="OpenStoreFrontCheckoutShippingPageActionGroup" stepKey="openStoreFrontCheckoutShippingPageActionGroup"/>
+        <waitForElementVisible selector="{{CheckoutShippingSection.selectedShippingAddress}}" stepKey="seeSelectedDefaultAddress"/>
+        <grabTextFrom selector="{{CheckoutShippingSection.selectedShippingAddress}}" stepKey="grabDefaultAddress"/>
+        <dontSeeElementInDOM selector="{{CheckoutShippingSection.secondShippingAddress}}" stepKey="dontSeeSecondAddress"/>
+        <assertStringContainsString stepKey="assertDefaultAddressIsUnitedStates">
+            <expectedResult type="string">United States</expectedResult>
+            <actualResult type="variable">grabDefaultAddress</actualResult>
+        </assertStringContainsString>
+    </test>
+</tests>

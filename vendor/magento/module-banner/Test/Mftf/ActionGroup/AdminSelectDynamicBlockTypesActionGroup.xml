@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+ /**
+  * Copyright © Magento, Inc. All rights reserved.
+  * See COPYING.txt for license details.
+  */
+-->
+
+<actionGroups xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:noNamespaceSchemaLocation="urn:magento:mftf:Test/etc/actionGroupSchema.xsd">
+    <actionGroup name="AdminSelectDynamicBlockTypeActionGroup">
+        <annotations>
+            <description>Selects the specified Dynamic Block Type on the New/Edit Dynamic Block Page</description>
+        </annotations>
+        <arguments>
+            <argument name="type" defaultValue="{{sampleBanner.Type}}" type="string"/>
+        </arguments>
+        <waitForElementVisible selector="{{AdminBannerBasicActionSection.type}}" stepKey="waitForTypeDropdown"/>
+        <click selector="{{AdminBannerBasicActionSection.type}}" stepKey="openTypeDropdown"/>
+        <click selector="{{AdminBannerBasicActionSection.OptionType(type)}}" stepKey="clickTypeCheckbox"/>
+        <click selector="{{AdminBannerBasicActionSection.activeDoneButton}}" stepKey="clickDone"/>
+        <waitForElementNotVisible selector="{{AdminBannerBasicActionSection.activeDoneButton}}" stepKey="waitForTypeDropdownClosed"/>
+    </actionGroup>
+</actionGroups>

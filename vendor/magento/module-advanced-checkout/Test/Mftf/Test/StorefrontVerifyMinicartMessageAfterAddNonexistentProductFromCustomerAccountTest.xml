@@ -1,0 +1,87 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+/**
+ * Copyright © Magento, Inc. All rights reserved.
+ * See COPYING.txt for license details.
+ */
+-->
+
+<tests xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xsi:noNamespaceSchemaLocation="urn:magento:mftf:Test/etc/testSchema.xsd">
+    <test name="StorefrontVerifyMinicartMessageAfterAddNonexistentProductFromCustomerAccountTest">
+        <annotations>
+            <features value="AdvancedCheckout"/>
+            <stories value="Add Product By SKU"/>
+            <title value="Check Mini Cart empty message"/>
+            <description value="Check Mini Cart message after adding nonexistent Products by SKU from Customer account"/>
+            <severity value="AVERAGE"/>
+            <testCaseId value="MC-38457"/>
+            <useCaseId value="MC-35783"/>
+            <group value="catalog"/>
+            <group value="checkout"/>
+            <group value="advancedCheckout"/>
+        </annotations>
+        <before>
+            <!-- Create customer -->
+            <createData entity="Simple_US_Customer" stepKey="createCustomer"/>
+        </before>
+        <after>
+            <!-- Logout from Storefront -->
+            <actionGroup ref="StorefrontCustomerLogoutActionGroup" stepKey="logoutCustomer"/>
+
+            <!-- Delete customer -->
+            <deleteData createDataKey="createCustomer" stepKey="deleteCustomer"/>
+        </after>
+
+        <!-- Login to Storefront -->
+        <actionGroup ref="LoginToStorefrontActionGroup" stepKey="loginAsCustomer">
+            <argument name="Customer" value="$createCustomer$"/>
+        </actionGroup>
+
+        <!-- Open My Account > Order by SKU -->
+        <actionGroup ref="StorefrontOpenMyAccountPageActionGroup" stepKey="goToMyAccountPage"/>
+        <actionGroup ref="StorefrontCustomerGoToSidebarMenu" stepKey="goToSidebarMenu">
+            <argument name="menu" value="Order by SKU"/>
+        </actionGroup>
+
+        <!-- Fill first product data -->
+        <actionGroup ref="FillProductSkuAndQtyActionGroup" stepKey="fillProductQtyAndSkuForOrderFirstProduct">
+            <argument name="sku" value="{{NonexistentProduct.sku}}"/>
+            <argument name="quantity" value="{{NonexistentProduct.qty}}"/>
+            <argument name="index" value="0"/>
+        </actionGroup>
+
+        <!-- Add new row -->
+        <click selector="{{StorefrontCustomerOrderBySkuSection.newRow}}" stepKey="addNewRow"/>
+
+        <!-- Fill second product data -->
+        <actionGroup ref="FillProductSkuAndQtyActionGroup" stepKey="fillProductQtyAndSkuForOrderSecondProduct">
+            <argument name="sku" value="{{SecondNonexistentProduct.sku}}"/>
+            <argument name="quantity" value="{{SecondNonexistentProduct.qty}}"/>
+            <argument name="index" value="1"/>
+        </actionGroup>
+
+        <!-- Add products to cart and verify Mini Cart message -->
+        <waitForElementClickable selector="{{StorefrontCustomerOrderBySkuSection.addToCart}}" stepKey="waitForAddToCart"/>
+        <click selector="{{StorefrontCustomerOrderBySkuSection.addToCart}}" stepKey="clickAddToCart"/>
+        <waitForPageLoad stepKey="waitForCartPageLoad"/>
+        <actionGroup ref="StorefrontClickOnMiniCartActionGroup" stepKey="openMiniCart"/>
+        <actionGroup ref="StorefrontAssertMiniCartMessageAfterAddNonexistentProductActionGroup" stepKey="verifyEmptyCartMessage">
+            <argument name="invalidItems" value="2"/>
+        </actionGroup>
+
+        <!-- Click remove button for the first product and verify Mini Cart message -->
+        <actionGroup ref="StorefrontRemoveFailedProductFromCartBySkuActionGroup" stepKey="removeFirstProduct">
+            <argument name="productSku" value="{{NonexistentProduct.sku}}"/>
+        </actionGroup>
+        <actionGroup ref="StorefrontClickOnMiniCartActionGroup" stepKey="openMiniCartSecondTime"/>
+        <actionGroup ref="StorefrontAssertMiniCartMessageAfterAddNonexistentProductActionGroup" stepKey="verifyEmptyCartMessageSecondTime"/>
+
+        <!-- Click remove button for the second product and verify Mini Cart message -->
+        <actionGroup ref="StorefrontRemoveFailedProductFromCartBySkuActionGroup" stepKey="removeSecondProduct">
+            <argument name="productSku" value="{{SecondNonexistentProduct.sku}}"/>
+        </actionGroup>
+        <actionGroup ref="StorefrontClickOnMiniCartActionGroup" stepKey="openMiniCartThirdTime"/>
+        <dontSeeElement selector="{{StorefrontMinicartSection.emptyCartMessageContent}}" stepKey="dontSeeEmptyCartMessage"/>
+    </test>
+</tests>

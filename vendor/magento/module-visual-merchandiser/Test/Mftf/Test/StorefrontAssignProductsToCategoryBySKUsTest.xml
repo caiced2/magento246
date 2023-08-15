@@ -1,0 +1,100 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+ /**
+  * Copyright © Magento, Inc. All rights reserved.
+  * See COPYING.txt for license details.
+  */
+-->
+
+<tests xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:noNamespaceSchemaLocation="urn:magento:mftf:Test/etc/testSchema.xsd">
+    <test name="StorefrontAssignProductsToCategoryBySKUsTest">
+        <annotations>
+            <features value="VisualMerchandiser"/>
+            <stories value="Assign/Unassign products to/from a category"/>
+            <title value="Admin should be able to assign products to category by SKU"/>
+            <description value="Admin should be able to mass assign products to category by SKU"/>
+            <severity value="CRITICAL"/>
+            <testCaseId value="MC-172"/>
+            <useCaseId value="MAGETWO-42588"/>
+            <group value="catalog"/>
+            <group value="visualMerchandiser"/>
+        </annotations>
+
+        <before>
+            <createData entity="_defaultCategory" stepKey="category"/>
+            <createData entity="ApiSimpleProduct" stepKey="productInCategory">
+                <requiredEntity createDataKey="category"/>
+            </createData>
+            <createData entity="SimpleProduct2" stepKey="productNotInCategory"/>
+            <actionGroup ref="CliIndexerReindexActionGroup" stepKey="reindex">
+                <argument name="indices" value="catalog_category_product catalogsearch_fulltext"/>
+            </actionGroup>
+            <actionGroup ref="AdminLoginActionGroup" stepKey="loginToAdmin"/>
+        </before>
+
+        <after>
+            <deleteData createDataKey="productInCategory" stepKey="deleteProduct1"/>
+            <deleteData createDataKey="productNotInCategory" stepKey="deleteProduct2"/>
+            <deleteData createDataKey="category" stepKey="deleteCategory"/>
+            <actionGroup ref="AdminLogoutActionGroup" stepKey="logoutFromAdmin"/>
+        </after>
+
+        <!-- Go to admin category page -->
+        <actionGroup ref="GoToAdminCategoryPageByIdActionGroup" stepKey="goToAdminCategoryPage">
+            <argument name="id" value="$category.id$"/>
+        </actionGroup>
+
+        <!-- Go to add products by Sku -->
+        <actionGroup ref="AdminCategoryPageOpenProductsInCategorySectionActionGroup" stepKey="openProductsInCategorySection"/>
+        <actionGroup ref="AdminProductsInCategoryStartAddingProductsActionGroup" stepKey="openAddProductsPopup"/>
+        <actionGroup ref="AdminProductsInCategoryAddProductsOpenAddBySKUTabActionGroup" stepKey="openAddProductBySKUTab"/>
+
+        <!-- Enter product SKUs -->
+        <actionGroup ref="AdminProductsInCategoryAddProductBySKUAddSKUActionGroup" stepKey="addFirstProductSKU">
+            <argument name="sku" value="$productInCategory.sku$"/>
+        </actionGroup>
+        <actionGroup ref="AdminProductsInCategoryAddProductBySKUAddSKUActionGroup" stepKey="addSecondProductSKU">
+            <argument name="sku" value="$productNotInCategory.sku$"/>
+        </actionGroup>
+        <actionGroup ref="AdminProductsInCategoryAddProductBySKUAddSKUActionGroup" stepKey="addInvalidProductSKU">
+            <argument name="sku" value="Invalid Sku"/>
+        </actionGroup>
+
+        <!-- Assign and assert messages-->
+        <actionGroup ref="AdminProductsInCategoryAddProductsBySKUAssignActionGroup" stepKey="clickAssignButton"/>
+        <actionGroup ref="AssertAdminProductsInCategoryAddProductsBySKUAssignMessageActionGroup" stepKey="checkSuccessMessage">
+            <argument name="message" value="2 {{AssignMessages.SkuProcessed}}"/>
+        </actionGroup>
+        <actionGroup ref="AssertAdminProductsInCategoryAddProductsBySKUAssignMessageActionGroup" stepKey="checkErrorMessage">
+            <argument name="message" value="{{AssignMessages.SkuInvalid}} Invalid Sku"/>
+            <argument name="messageType" value="error"/>
+        </actionGroup>
+
+        <actionGroup ref="AdminProductsInCategoryAddProductsModalSaveAndCloseActionGroup" stepKey="clickSaveAndClose"/>
+        <!-- See products in category product grid -->
+        <actionGroup ref="SwitchToGridModeProductInCategoryActionGroup" stepKey="switchToGrid"/>
+        <actionGroup ref="SeeProductInProductCategoryGridForCurrentCategoryActionGroup" stepKey="seeProduct1">
+            <argument name="product" value="$productInCategory$"/>
+        </actionGroup>
+        <actionGroup ref="SeeProductInProductCategoryGridForCurrentCategoryActionGroup" stepKey="seeProduct2">
+            <argument name="product" value="$productNotInCategory$"/>
+        </actionGroup>
+        <!-- Save category and assert success message -->
+        <actionGroup ref="AdminSaveCategoryFormActionGroup" stepKey="saveCategoryWithProducts"/>
+        <!-- Go to storefront category page -->
+        <actionGroup ref="StorefrontNavigateCategoryPageActionGroup" stepKey="openCategoryPageOnFrontend">
+            <argument name="category" value="$category$"/>
+        </actionGroup>
+        <!-- Assert product1 in storefront category page -->
+        <actionGroup ref="AssertStorefrontCategorySimpleProductShownActionGroup" stepKey="checkProductInCategoryAssignedToCategory">
+            <argument name="productName" value="$productInCategory.name$"/>
+            <argument name="productPrice" value="$productInCategory.price$"/>
+        </actionGroup>
+        <!-- Assert product2 in storefront category page -->
+        <actionGroup ref="AssertStorefrontCategorySimpleProductShownActionGroup" stepKey="checkProductNotInCategoryAssignedToCategory">
+            <argument name="productName" value="$productNotInCategory.name$"/>
+            <argument name="productPrice" value="$productNotInCategory.price$"/>
+        </actionGroup>
+    </test>
+</tests>

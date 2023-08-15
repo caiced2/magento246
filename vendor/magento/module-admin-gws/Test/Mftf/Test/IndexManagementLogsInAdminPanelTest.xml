@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+ /**
+  * Copyright © Magento, Inc. All rights reserved.
+  * See COPYING.txt for license details.
+  */
+-->
+
+<tests xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xsi:noNamespaceSchemaLocation="urn:magento:mftf:Test/etc/testSchema.xsd">
+    <test name="IndexManagementLogsInAdminPanelTest">
+        <annotations>
+            <features value="AdminGws"/>
+            <stories value="Log of actions in the Admin panel"/>
+            <title value="Index Management action logs in Admin panel"/>
+            <description value="Index Management action logs in Admin panel"/>
+            <severity value="MAJOR"/>
+            <testCaseId value="MAGETWO-96047"/>
+            <useCaseId value="MAGETWO-95828"/>
+            <group value="AdminGws"/>
+        </annotations>
+        <before>
+            <actionGroup ref="AdminLoginActionGroup" stepKey="loginAsAdmin"/>
+        </before>
+        <after>
+            <actionGroup ref="AdminLogoutActionGroup" stepKey="logout"/>
+        </after>
+
+        <!-- Change indexer mode -->
+        <actionGroup ref="UpdateIndexerOnSaveActionGroup" stepKey="resetIndexerBackToOriginalState">
+            <argument name="indexerName" value="catalogsearch_fulltext"/>
+        </actionGroup>
+
+        <!-- Check logging -->
+        <amOnPage url="{{AdminActionLogReportPage.url}}" stepKey="goActionLogReportPage"/>
+        <waitForPageLoad stepKey="waitForLogPageLoad" />
+        <generateDate stepKey="generateStartDate" date="-0 day" format="m/d/Y"/>
+        <generateDate stepKey="generateEndDate" date="+1 day" format="m/d/Y"/>
+        <fillField selector="{{AdminActionLogReportGridSection.dateFrom}}" userInput="$generateStartDate" stepKey="enterFromDate"/>
+        <fillField selector="{{AdminActionLogReportGridSection.dateTo}}" userInput="$generateEndDate" stepKey="enterToDate"/>
+        <click selector="{{AdminActionLogReportGridSection.search}}" stepKey="search"/>
+
+        <dontSee userInput="We couldn't find any records." stepKey="dontSeeMessage"/>
+        <see selector="{{AdminActionLogReportGridSection.actionGroup}}" userInput="Index Management" stepKey="seeActionGroup"/>
+        <see selector="{{AdminActionLogReportGridSection.user}}" userInput="admin"  stepKey="seeUser"/>
+        <see selector="{{AdminActionLogReportGridSection.action}}" userInput="Save"  stepKey="seeAction"/>
+    </test>
+</tests>

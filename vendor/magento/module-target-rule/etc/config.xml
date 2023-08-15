@@ -1,0 +1,24 @@
+<?xml version="1.0"?>
+<!--
+/**
+ * Copyright © Magento, Inc. All rights reserved.
+ * See COPYING.txt for license details.
+ */
+-->
+<config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="urn:magento:module:Magento_Store:etc/config.xsd">
+    <default>
+        <catalog>
+            <magento_targetrule>
+                <related_position_limit>6</related_position_limit>
+                <related_position_behavior>0</related_position_behavior>
+                <related_rotation_mode>0</related_rotation_mode>
+                <crosssell_position_limit>5</crosssell_position_limit>
+                <crosssell_position_behavior>0</crosssell_position_behavior>
+                <crosssell_rotation_mode>0</crosssell_rotation_mode>
+                <upsell_position_limit>8</upsell_position_limit>
+                <upsell_position_behavior>0</upsell_position_behavior>
+                <upsell_rotation_mode>0</upsell_rotation_mode>
+            </magento_targetrule>
+        </catalog>
+    </default>
+</config>

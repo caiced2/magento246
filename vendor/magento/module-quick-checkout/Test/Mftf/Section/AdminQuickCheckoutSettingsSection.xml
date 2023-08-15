@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+ /**
+  * Copyright © Magento, Inc. All rights reserved.
+  * See COPYING.txt for license details.
+  */
+-->
+<sections xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="urn:magento:mftf:Page/etc/SectionObject.xsd">
+    <section name="AdminQuickCheckoutSettingsSection">
+        <element name="quickCheckoutTab" selector="#checkout_quick_checkout-head" timeout="30" type="button"/>
+        <element name="quickCheckoutTabOpen" selector="#checkout_quick_checkout-head.open" timeout="30" type="button"/>
+        <element name="publishableKey" selector="#checkout_quick_checkout_credentials_publishable_key" timeout="30" type="button"/>
+        <element name="signingSecret" selector="#checkout_quick_checkout_credentials_signing_secret" timeout="30" type="button"/>
+        <element name="apiKey" selector="#checkout_quick_checkout_credentials_api_key" timeout="30" type="button"/>
+        <element name="active" selector="#checkout_quick_checkout_general_active" timeout="30" type="button"/>
+        <element name="method" selector="#checkout_quick_checkout_general_method" timeout="30" type="button"/>
+        <element name="paymentAction" selector="#checkout_quick_checkout_settings_payment_action" timeout="30" type="button"/>
+        <element name="nextStageAfterLogin" selector="#checkout_quick_checkout_settings_next_stage_after_login" timeout="30" type="button"/>
+        <element name="accountCredentials" selector="#checkout_quick_checkout_credentials-link" timeout="30" type="button"/>
+        <element name="validateCredentials" selector="#checkout_quick_checkout_credentials_validate_credentials" timeout="30" type="button"/>
+        <element name="validateCredentialsResult" selector="#checkout_quick_checkout_credentials_validate_credentials_result" timeout="30" type="text"/>
+        <element name="autoLoginEnabled" selector="#checkout_quick_checkout_settings_enable_auto_login" timeout="30" type="button"/>
+        <element name="autoLoginNetwork" selector="#checkout_quick_checkout_settings_auto_login_network" timeout="30" type="button"/>
+    </section>
+</sections>

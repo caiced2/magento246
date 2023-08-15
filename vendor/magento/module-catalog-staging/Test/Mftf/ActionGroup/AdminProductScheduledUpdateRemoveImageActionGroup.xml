@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+ /**
+  * Copyright © Magento, Inc. All rights reserved.
+  * See COPYING.txt for license details.
+  */
+-->
+
+<actionGroups xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+              xsi:noNamespaceSchemaLocation="urn:magento:mftf:Test/etc/actionGroupSchema.xsd">
+    <actionGroup name="AdminProductScheduledUpdateRemoveImageActionGroup">
+        <annotations>
+            <description>Remove image from product scheduled update.</description>
+        </annotations>
+        <arguments>
+            <argument name="image" defaultValue="ProductImage"/>
+        </arguments>
+        <conditionalClick selector="{{AdminProductScheduledUpdateImagesSection.productImagesToggle}}" dependentSelector="{{AdminProductScheduledUpdateImagesSection.imageFile(image.fileName)}}" visible="false" stepKey="expandImages"/>
+        <waitForElementVisible selector="{{AdminProductScheduledUpdateImagesSection.imageFile(image.fileName)}}" stepKey="seeProductImageName"/>
+        <click selector="{{AdminProductScheduledUpdateImagesSection.removeByFilename(image.fileName)}}" stepKey="waitForThumbnail"/>
+    </actionGroup>
+</actionGroups>

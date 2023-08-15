@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+ /**
+  * Copyright © Magento, Inc. All rights reserved.
+  * See COPYING.txt for license details.
+  */
+-->
+<actionGroups xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:noNamespaceSchemaLocation="urn:magento:mftf:Test/etc/actionGroupSchema.xsd">
+    <actionGroup name="ScheduleUpdate">
+        <arguments>
+            <argument name="ruleName" type="string"/>
+        </arguments>
+        <waitForPageLoad stepKey="waitForPageLoad"/>
+        <click selector="{{AdminContentStagingDashboardSection.timeLineGrid}}" stepKey="unfocus"/>
+        <click selector="{{ScheduleUpdateSection.update(ruleName)}}" stepKey="ClickOnRule"/>
+        <waitForElementVisible selector="{{ScheduleUpdateSection.edit}}" stepKey="waitForVisible"/>
+        <click selector="{{ScheduleUpdateSection.edit}}" stepKey="ClickToEditTheRule"/>
+        <waitForPageLoad stepKey="WaitForPageOpened2"/>
+        <waitForLoadingMaskToDisappear stepKey="waitForLoadingMask"/>
+        <click selector="{{ScheduleUpdateSection.endTime}}" stepKey="ClickToSetEndDate"/>
+        <click selector="{{ScheduleUpdateSection.year}}" stepKey="ClickToSetYear"/>
+        <click selector="{{ScheduleUpdateSection.yearValue(ScheduleData.newYear)}}" stepKey="ClickToSetValue"/>
+        <click selector="{{ScheduleUpdateSection.close}}" stepKey="clickToClose1"/>
+        <click selector="{{MarketingSection.saveRule}}" stepKey="clickToSave"/>
+    </actionGroup>
+</actionGroups>

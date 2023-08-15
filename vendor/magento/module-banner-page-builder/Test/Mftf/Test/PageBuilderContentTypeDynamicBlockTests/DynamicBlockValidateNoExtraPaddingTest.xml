@@ -1,0 +1,182 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+ /**
+  * Copyright © Magento, Inc. All rights reserved.
+  * See COPYING.txt for license details.
+  */
+-->
+<tests xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="urn:magento:mftf:Test/etc/testSchema.xsd">
+    <test name="DynamicBlockValidateNoExtraPaddingTest">
+        <annotations>
+            <features value="PageBuilder"/>
+            <stories value="Dynamic Block"/>
+            <title value="Validate No Extra Padding on Dynamic Block"/>
+            <description value="Verify that there is no extra padding on dynamic block."/>
+            <severity value="MAJOR"/>
+            <testCaseId value="MC-14908"/>
+            <useCaseId value="MC-5413"/>
+            <group value="pagebuilder"/>
+            <group value="pagebuilder-dynamic-block"/>
+        </annotations>
+        <before>
+            <createData entity="_defaultDynamicBlock" stepKey="createDynamicBlock"/>
+            <createData entity="_emptyCmsPage" stepKey="createCMSPage"/>
+            <actionGroup ref="AdminLoginActionGroup" stepKey="loginAsAdmin"/>
+        </before>
+        <after>
+            <deleteData createDataKey="createCMSPage" stepKey="deletePreReqCMSPage"/>
+            <actionGroup ref="DeleteBannerActionGroup" stepKey="deleteDynamicBlock">
+                <argument name="bannerName" value="$$createDynamicBlock.name$$"/>
+            </actionGroup>
+            <actionGroup ref="AdminLogoutActionGroup" stepKey="logout"/>
+        </after>
+        <actionGroup ref="NavigateToCreatedDynamicBlockActionGroup" stepKey="navigateToCreatedDynamicBlock">
+            <argument name="Banner" value="$$createDynamicBlock$$"/>
+        </actionGroup>
+        <!-- Delete HTML Code -->
+        <comment userInput="Delete HTML Code" stepKey="commentDeleteHTMLCodeDynamicBlock"/>
+        <actionGroup ref="switchToPageBuilderStage" stepKey="switchToPageBuilderStage"/>
+        <actionGroup ref="dragContentTypeToStage" stepKey="dragRowToRootContainer">
+            <argument name="contentType" value="PageBuilderRowContentType"/>
+            <argument name="containerTargetType" value="PageBuilderRootContainerContentType"/>
+        </actionGroup>
+        <actionGroup ref="removeContentTypeFromStage" stepKey="removeHTMLFromDynamicBlock">
+            <argument name="contentType" value="PageBuilderHtmlContentType"/>
+            <argument name="offsetYCoordinate" value="10"/>
+        </actionGroup>
+        <!-- Set Dynamic Block Row Margins and Padding to 0 -->
+        <comment userInput="Set Dynamic Block Row Margins and Padding to 0" stepKey="commentSetDynamicBlockRowMarginsAndPaddingToZero"/>
+        <actionGroup ref="openPageBuilderEditPanel" stepKey="openDynamicBlockRowEditMenu">
+            <argument name="contentType" value="PageBuilderRowContentType"/>
+        </actionGroup>
+        <actionGroup ref="fillSlideOutPanelFieldGeneral" stepKey="enterMinimumHeightProperty">
+            <argument name="property" value="PageBuilderMinHeightProperty_300px"/>
+        </actionGroup>
+        <actionGroup ref="fillSlideOutPanelFieldMargins" stepKey="enterDynamicBlockRowMargins">
+            <argument name="property" value="PageBuilderMarginsPropertyDefault"/>
+        </actionGroup>
+        <actionGroup ref="fillSlideOutPanelFieldPadding" stepKey="enterDynamicBlockRowPadding">
+            <argument name="property" value="PageBuilderPaddingPropertyDefault"/>
+        </actionGroup>
+        <actionGroup ref="saveEditPanelSettingsFullScreen" stepKey="saveDynamicBlockRowEditPanelSettings"/>
+        <actionGroup ref="exitPageBuilderFullScreen" stepKey="exitPageBuilderFullScreen"/>
+        <actionGroup ref="SaveDynamicBlockActionGroup" stepKey="saveDynamicBlock"/>
+        <!-- Go to created CMS page and choose Dynamic Block -->
+        <actionGroup ref="NavigateToCreatedCMSPageActionGroup" stepKey="navigateToCreatedCMSPage">
+            <argument name="CMSPage" value="$$createCMSPage$$"/>
+        </actionGroup>
+        <actionGroup ref="switchToPageBuilderStage" stepKey="switchToPageBuilderStage2"/>
+        <actionGroup ref="dragContentTypeToStage" stepKey="dragRowToRootContainer2">
+            <argument name="contentType" value="PageBuilderRowContentType"/>
+            <argument name="containerTargetType" value="PageBuilderRootContainerContentType"/>
+        </actionGroup>
+        <!-- Set Row Margins and Padding to 0 -->
+        <comment userInput="Set Row Margins and Padding to 0" stepKey="commentSetRowMarginsAndPaddingToZero"/>
+        <actionGroup ref="openPageBuilderEditPanel" stepKey="openRowEditMenuOnStage">
+            <argument name="contentType" value="PageBuilderRowContentType"/>
+        </actionGroup>
+        <actionGroup ref="fillSlideOutPanelFieldMargins" stepKey="enterRowMargins">
+            <argument name="property" value="PageBuilderMarginsPropertyDefault"/>
+        </actionGroup>
+        <actionGroup ref="fillSlideOutPanelFieldPadding" stepKey="enterRowPadding">
+            <argument name="property" value="PageBuilderPaddingPropertyDefault"/>
+        </actionGroup>
+        <actionGroup ref="saveEditPanelSettings" stepKey="saveRowEditPanelSettings"/>
+        <actionGroup ref="expandPageBuilderPanelMenuSection" stepKey="expandMenuSectionAddContent">
+            <argument name="contentType" value="PageBuilderDynamicBlockContentType"/>
+        </actionGroup>
+        <actionGroup ref="dragContentTypeToStage" stepKey="dragBlockIntoStage">
+            <argument name="contentType" value="PageBuilderDynamicBlockContentType"/>
+        </actionGroup>
+        <actionGroup ref="openPageBuilderEditPanel" stepKey="openEditMenuOnStageAfterDrop">
+            <argument name="contentType" value="PageBuilderDynamicBlockContentType"/>
+        </actionGroup>
+        <actionGroup ref="searchAndSelectDynamicBlockInGrid" stepKey="searchBlockInGrid">
+            <argument name="block" value="$$createDynamicBlock$$"/>
+        </actionGroup>
+        <actionGroup ref="expandConfigurationSection" stepKey="expandConfigurationSection"/>
+        <!-- Set Dynamic Block Margins and Padding to 0 -->
+        <comment userInput="Set Dynamic Block Margins and Padding to 0" stepKey="commentSetDynamicBlockMarginsAndPaddingToZero"/>
+        <actionGroup ref="fillSlideOutPanelFieldMargins" stepKey="enterDynamicBlockMargins">
+            <argument name="property" value="PageBuilderMarginsPropertyDefault"/>
+        </actionGroup>
+        <actionGroup ref="fillSlideOutPanelFieldPadding" stepKey="enterDynamicBlockPadding">
+            <argument name="property" value="PageBuilderPaddingPropertyDefault"/>
+        </actionGroup>
+        <actionGroup ref="saveEditPanelSettings" stepKey="saveDynamicBlockEditPanelSettings"/>
+        <!-- Validate Stage -->
+        <comment userInput="Validate Stage" stepKey="commentValidateStage"/>
+        <!-- Validate Position Of Top Of Row Is The Same As Top Of Dynamic Block -->
+        <comment userInput="Validate Position Of Top Of Row Is The Same As Top Of Dynamic Block" stepKey="commentValidateTopPositionIsSameStage"/>
+        <executeJS function="return document.evaluate(`{{RowOnStorefront.base('1')}}`, document.body).iterateNext().getBoundingClientRect().top" stepKey="getTopPositionOfDynamicBlockStage"/>
+        <executeJS function="return document.evaluate(`{{RowOnStage.base('1')}}`, document.body).iterateNext().getBoundingClientRect().top-{{PageBuilderRowAffordanceWidth.top}}" stepKey="getTopPositionOfRowStage"/>
+        <assertEquals stepKey="checkTopPositionIsSameStage">
+            <expectedResult type="variable">getTopPositionOfDynamicBlockStage</expectedResult>
+            <actualResult type="variable">getTopPositionOfRowStage</actualResult>
+        </assertEquals>
+        <!-- Validate Position Of Bottom Of Row Is The Same As Bottom Of Dynamic Block -->
+        <comment userInput="Validate Position Of Bottom Of Row Is The Same As Bottom Of Dynamic Block" stepKey="commentValidateBottomPositionIsSameStage"/>
+        <executeJS function="return document.evaluate(`{{RowOnStorefront.base('1')}}`, document.body).iterateNext().getBoundingClientRect().bottom" stepKey="getBottomPositionOfDynamicBlockStage"/>
+        <executeJS function="return document.evaluate(`{{RowOnStage.base('1')}}`, document.body).iterateNext().getBoundingClientRect().bottom+{{PageBuilderRowAffordanceWidth.top}}" stepKey="getBottomPositionOfRowStage"/>
+        <assertEquals stepKey="checkBottomPositionIsSameStage">
+            <expectedResult type="variable">getBottomPositionOfDynamicBlockStage</expectedResult>
+            <actualResult type="variable">getBottomPositionOfRowStage</actualResult>
+        </assertEquals>
+        <!-- Validate Position Of Left Of Row Is The Same As Left Of Dynamic Block -->
+        <comment userInput="Validate Position Of Left Of Row Is The Same As Left Of Dynamic Block" stepKey="commentValidateLeftPositionIsSameStage"/>
+        <executeJS function="return document.evaluate(`{{RowOnStorefront.base('1')}}`, document.body).iterateNext().getBoundingClientRect().left" stepKey="getLeftPositionOfDynamicBlockStage"/>
+        <executeJS function="return document.evaluate(`{{RowOnStage.base('1')}}`, document.body).iterateNext().getBoundingClientRect().left-{{PageBuilderRowAffordanceWidth.left}}" stepKey="getLeftPositionOfRowStage"/>
+        <assertEquals stepKey="checkLeftPositionIsSameStage">
+            <expectedResult type="variable">getLeftPositionOfDynamicBlockStage</expectedResult>
+            <actualResult type="variable">getLeftPositionOfRowStage</actualResult>
+        </assertEquals>
+        <!-- Validate Position Of Right Of Row Is The Same As Right Of Dynamic Block -->
+        <comment userInput="Validate Position Of Right Of Row Is The Same As Right Of Dynamic Block" stepKey="commentValidateRightPositionIsSameStage"/>
+        <executeJS function="return document.evaluate(`{{RowOnStorefront.base('1')}}`, document.body).iterateNext().getBoundingClientRect().right" stepKey="getRightPositionOfDynamicBlockStage"/>
+        <executeJS function="return document.evaluate(`{{RowOnStage.base('1')}}`, document.body).iterateNext().getBoundingClientRect().right+{{PageBuilderRowAffordanceWidth.left}}" stepKey="getRightPositionOfRowStage"/>
+        <assertEquals stepKey="checkRightPositionIsSameStage">
+            <expectedResult type="variable">getRightPositionOfDynamicBlockStage</expectedResult>
+            <actualResult type="variable">getRightPositionOfRowStage</actualResult>
+        </assertEquals>
+        <actionGroup ref="exitPageBuilderFullScreen" stepKey="exitPageBuilderFullScreen2"/>
+        <actionGroup ref="SaveAndContinueEditCmsPageActionGroup" stepKey="saveAndContinueEditCmsPage1"/>
+        <!-- Validate Storefront -->
+        <comment userInput="Validate Storefront" stepKey="commentValidateStorefront"/>
+        <actionGroup ref="NavigateToStorefrontForCreatedPageActionGroup" stepKey="navigateToStoreFront">
+            <argument name="page" value="$$createCMSPage.identifier$$"/>
+        </actionGroup>
+        <waitForElementVisible selector="{{DynamicBlockOnStorefront.base('1')}}" stepKey="waitForContentTypeShownStorefront1"/>
+        <!-- Validate Position Of Top Of Row Is The Same As Top Of Dynamic Block -->
+        <comment userInput="Validate Position Of Top Of Row Is The Same As Top Of Dynamic Block" stepKey="commentValidateTopPositionIsSame"/>
+        <executeJS function="return document.evaluate(`{{RowOnStorefront.base('2')}}`, document.body).iterateNext().getBoundingClientRect().top" stepKey="getTopPositionOfDynamicBlock"/>
+        <executeJS function="return document.evaluate(`{{RowOnStorefront.base('1')}}`, document.body).iterateNext().getBoundingClientRect().top" stepKey="getTopPositionOfRow"/>
+        <assertEquals stepKey="checkTopPositionIsSame">
+            <expectedResult type="variable">getTopPositionOfDynamicBlock</expectedResult>
+            <actualResult type="variable">getTopPositionOfRow</actualResult>
+        </assertEquals>
+        <!-- Validate Position Of Bottom Of Row Is The Same As Bottom Of Dynamic Block -->
+        <comment userInput="Validate Position Of Bottom Of Row Is The Same As Bottom Of Dynamic Block" stepKey="commentValidateBottomPositionIsSame"/>
+        <executeJS function="return document.evaluate(`{{RowOnStorefront.base('2')}}`, document.body).iterateNext().getBoundingClientRect().bottom" stepKey="getBottomPositionOfDynamicBlock"/>
+        <executeJS function="return document.evaluate(`{{RowOnStorefront.base('1')}}`, document.body).iterateNext().getBoundingClientRect().bottom" stepKey="getBottomPositionOfRow"/>
+        <assertEquals stepKey="checkBottomPositionIsSame">
+            <expectedResult type="variable">getBottomPositionOfDynamicBlock</expectedResult>
+            <actualResult type="variable">getBottomPositionOfRow</actualResult>
+        </assertEquals>
+        <!-- Validate Position Of Left Of Row Is The Same As Left Of Dynamic Block -->
+        <comment userInput="Validate Position Of Left Of Row Is The Same As Left Of Dynamic Block" stepKey="commentValidateLeftPositionIsSame"/>
+        <executeJS function="return document.evaluate(`{{RowOnStorefront.base('2')}}`, document.body).iterateNext().getBoundingClientRect().left" stepKey="getLeftPositionOfDynamicBlock"/>
+        <executeJS function="return document.evaluate(`{{RowOnStorefront.base('1')}}`, document.body).iterateNext().getBoundingClientRect().left" stepKey="getLeftPositionOfRow"/>
+        <assertEquals stepKey="checkLeftPositionIsSame">
+            <expectedResult type="variable">getLeftPositionOfDynamicBlock</expectedResult>
+            <actualResult type="variable">getLeftPositionOfRow</actualResult>
+        </assertEquals>
+        <!-- Validate Position Of Right Of Row Is The Same As Right Of Dynamic Block -->
+        <comment userInput="Validate Position Of Right Of Row Is The Same As Right Of Dynamic Block" stepKey="commentValidateRightPositionIsSame"/>
+        <executeJS function="return document.evaluate(`{{RowOnStorefront.base('2')}}`, document.body).iterateNext().getBoundingClientRect().right" stepKey="getRightPositionOfDynamicBlock"/>
+        <executeJS function="return document.evaluate(`{{RowOnStorefront.base('1')}}`, document.body).iterateNext().getBoundingClientRect().right" stepKey="getRightPositionOfRow"/>
+        <assertEquals stepKey="checkRightPositionIsSame">
+            <expectedResult type="variable">getRightPositionOfDynamicBlock</expectedResult>
+            <actualResult type="variable">getRightPositionOfRow</actualResult>
+        </assertEquals>
+    </test>
+</tests>

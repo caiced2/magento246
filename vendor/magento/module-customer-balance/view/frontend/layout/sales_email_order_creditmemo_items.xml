@@ -1,0 +1,19 @@
+<?xml version="1.0"?>
+<!--
+/**
+ * Copyright © Magento, Inc. All rights reserved.
+ * See COPYING.txt for license details.
+ */
+-->
+<page xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="urn:magento:framework:View/Layout/etc/page_configuration.xsd">
+    <body>
+        <referenceBlock name="creditmemo_totals">
+            <block class="Magento\CustomerBalance\Block\Sales\Order\Customerbalance" name="customerbalance" template="Magento_CustomerBalance::order/customerbalance.phtml" cacheable="false"/>
+            <block class="Magento\CustomerBalance\Block\Sales\Order\Customerbalance" name="customerbalance_total_refunded" template="Magento_CustomerBalance::order/customerbalance_refunded.phtml" after="-" cacheable="false">
+                <action method="setAfterTotal">
+                    <argument name="value" xsi:type="string">grand_total</argument>
+                </action>
+            </block>
+        </referenceBlock>
+    </body>
+</page>

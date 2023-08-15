@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+ /**
+  * Copyright © Magento, Inc. All rights reserved.
+  * See COPYING.txt for license details.
+  */
+-->
+<actionGroups xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:noNamespaceSchemaLocation="urn:magento:mftf:Test/etc/actionGroupSchema.xsd">
+    <actionGroup name="AdminCreateCustomerCustomAttribute">
+        <arguments>
+            <argument name="customerAttribute" defaultValue="AttributeTextFieldData"/>
+        </arguments>
+        <amOnPage url="{{CustomerAttributesPage.url}}" stepKey="navigateToCustomerAddress"/>
+        <waitForPageLoad stepKey="waitForCustomerAttributePageLoaded"/>
+        <click selector="{{CustomerAccountSection.newAttribute}}" stepKey="clickToCreateAttribute"/>
+        <waitForPageLoad stepKey="waitForNewAttributePageLoaded"/>
+        <fillField selector="{{CustomerAccountSection.label}}" userInput="{{customerAttribute.label}}" stepKey="TypeDefaultLabel"/>
+        <fillField selector="{{CustomerAccountSection.code}}" userInput="{{customerAttribute.code}}" stepKey="TypeAttributeCode"/>
+        <selectOption selector="{{CustomerAccountSection.inputType}}" userInput="{{customerAttribute.inputType}}" stepKey="selectInputType"/>
+        <selectOption selector="{{CustomerAccountSection.usedInGrid}}" userInput="{{customerAttribute.is_used_in_grid}}" stepKey="selectUseInGridOption"/>
+        <selectOption selector="{{CustomerAccountSection.usedForSegment}}" userInput="{{customerAttribute.is_used_for_customer_segment}}" stepKey="selectAttributeUseInCustomerSegment"/>
+        <selectOption selector="{{CustomerAccountSection.showInSF}}" userInput="{{customerAttribute.is_visible}}" stepKey="selectAttributeVisibleInStorefront"/>
+        <fillField selector="{{CustomerAccountSection.sortOrder}}" userInput="{{customerAttribute.sortOrder}}" stepKey="TypeSortOrder"/>
+        <selectOption selector="{{CustomerAccountSection.selectFormToUse}}" parameterArray="['{{customerAttribute.used_in_forms[0]}}', '{{customerAttribute.used_in_forms[1]}}', '{{customerAttribute.used_in_forms[2]}}']" stepKey="selectForms"/>
+        <click selector="{{CustomerAccountSection.save}}" stepKey="saveAttribute"/>
+        <waitForPageLoad stepKey="WaitForAttributeSaved"/>
+    </actionGroup>
+</actionGroups>

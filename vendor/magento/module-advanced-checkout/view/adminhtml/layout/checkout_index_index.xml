@@ -1,0 +1,34 @@
+<?xml version="1.0"?>
+<!--
+/**
+ * Copyright © Magento, Inc. All rights reserved.
+ * See COPYING.txt for license details.
+ */
+-->
+<page xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="urn:magento:framework:View/Layout/etc/page_configuration.xsd">
+    <update handle="adminhtml_sku_errors_block"/>
+    <update handle="sales_order_create_item_price"/>
+    <body>
+        <referenceContainer name="page.main.actions">
+            <block class="Magento\Backend\Block\Store\Switcher" name="checkout.store.switcher"/>
+        </referenceContainer>
+        <referenceContainer name="content">
+            <block class="Magento\Catalog\Block\Adminhtml\Product\Composite\Configure" name="configure.popup"/>
+            <block class="Magento\AdvancedCheckout\Block\Adminhtml\Manage" name="ID" template="Magento_AdvancedCheckout::manage.phtml">
+                <block class="Magento\AdvancedCheckout\Block\Adminhtml\Manage\Messages" name="checkout.message"/>
+                <block class="Magento\AdvancedCheckout\Block\Adminhtml\Manage\Items" name="checkout.items" template="Magento_AdvancedCheckout::manage/items.phtml"/>
+                <block class="Magento\AdvancedCheckout\Block\Adminhtml\Manage\Accordion\Sku\Errors" name="errors"/>
+                <block class="Magento\AdvancedCheckout\Block\Adminhtml\Manage\Accordion" name="checkout.accordion">
+                    <block class="Magento\AdvancedCheckout\Block\Adminhtml\Manage\Accordion\Products" name="products"/>
+                    <block class="Magento\AdvancedCheckout\Block\Adminhtml\Manage\Accordion\Sku" name="sku.accordion"/>
+                    <block class="Magento\AdvancedCheckout\Block\Adminhtml\Manage\Accordion\Wishlist" name="wishlist"/>
+                    <block class="Magento\AdvancedCheckout\Block\Adminhtml\Manage\Accordion\Compared" name="compared"/>
+                    <block class="Magento\AdvancedCheckout\Block\Adminhtml\Manage\Accordion\Rcompared" name="rcompared"/>
+                    <block class="Magento\AdvancedCheckout\Block\Adminhtml\Manage\Accordion\Rviewed" name="rviewed"/>
+                    <block class="Magento\AdvancedCheckout\Block\Adminhtml\Manage\Accordion\Ordered" name="ordered"/>
+                </block>
+                <block class="Magento\AdvancedCheckout\Block\Adminhtml\Manage\Form\Coupon" template="Magento_AdvancedCheckout::form/coupon.phtml" name="checkout.form_coupon"/>
+            </block>
+        </referenceContainer>
+    </body>
+</page>

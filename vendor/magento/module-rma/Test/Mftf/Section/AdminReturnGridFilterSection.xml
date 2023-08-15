@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+ /**
+  * Copyright © Magento, Inc. All rights reserved.
+  * See COPYING.txt for license details.
+  */
+-->
+
+<sections xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:noNamespaceSchemaLocation="urn:magento:mftf:Page/etc/SectionObject.xsd">
+    <section name="AdminReturnGridFilterSection">
+        <element name="search" type="button" selector="#rmaGrid .admin__filter-actions [data-action='grid-filter-apply']" timeout="30"/>
+        <element name="resetFilter" type="button" selector="#rmaGrid .admin__filter-actions [data-action='grid-filter-reset']" timeout="30"/>
+        <element name="orderIdFilter" type="input" selector="#rmaGrid_table #rmaGrid_filter_order_increment_id"/>
+        <element name="returnIdFilter" type="input" selector="#rmaGrid_table #rmaGrid_filter_increment_id" timeout="10"/>
+    </section>
+</sections>

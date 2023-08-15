@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+ /**
+  * Copyright © Magento, Inc. All rights reserved.
+  * See COPYING.txt for license details.
+  */
+-->
+<actionGroups xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+              xsi:noNamespaceSchemaLocation="urn:magento:mftf:Test/etc/actionGroupSchema.xsd">
+    <actionGroup name="AdminSalesRuleStagingSelectWebsitesActionGroup">
+        <annotations>
+            <description>Assign cart price rule scheduled update to provided websites.</description>
+        </annotations>
+        <arguments>
+            <argument name="websites" type="string" defaultValue="{{_defaultWebsite.name}}"/>
+        </arguments>
+        <conditionalClick selector="{{AdminSalesRuleStagingSlideOutSection.tab('Rule Information')}}" dependentSelector="{{AdminSalesRuleStagingSlideOutSection.websites}}" visible="false" stepKey="expandRuleInformationTab"/>
+        <selectOption selector="{{AdminSalesRuleStagingSlideOutSection.websites}}" parameterArray="[{{websites}}]" stepKey="selectWebsites"/>
+    </actionGroup>
+</actionGroups>

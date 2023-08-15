@@ -1,0 +1,52 @@
+<?xml version="1.0"?>
+<!--
+/**
+ * Copyright © Magento, Inc. All rights reserved.
+ * See COPYING.txt for license details.
+ */
+-->
+<config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="urn:magento:framework:ObjectManager/etc/config.xsd">
+    <preference for="Magento\RewardGraphQl\Model\Formatter\Customer\FormatterInterface" type="Magento\RewardGraphQl\Model\Formatter\Customer\CompositeFormatter" />
+    <type name="Magento\Framework\GraphQl\Schema\Type\Enum\DefaultDataMapper">
+        <arguments>
+            <argument name="map" xsi:type="array">
+                <item name="RewardPointsSubscriptionStatusesEnum" xsi:type="array">
+                    <item name="subscribed" xsi:type="string">1</item>
+                    <item name="not_subscribed" xsi:type="string">0</item>
+                </item>
+            </argument>
+        </arguments>
+    </type>
+    <type name="Magento\RewardGraphQl\Model\Formatter\Customer\CompositeFormatter">
+        <arguments>
+            <argument name="formatters" xsi:type="array">
+                <item name="balance" xsi:type="object">Magento\RewardGraphQl\Model\Formatter\Customer\Balance</item>
+                <item name="exchange_rates" xsi:type="object">Magento\RewardGraphQl\Model\Formatter\Customer\ExchangeRates</item>
+                <item name="subscription_status" xsi:type="object">Magento\RewardGraphQl\Model\Formatter\Customer\SubscriptionStatuses</item>
+                <item name="balance_history" xsi:type="object">Magento\RewardGraphQl\Model\Formatter\Customer\BalanceHistory</item>
+            </argument>
+        </arguments>
+    </type>
+    <type name="Magento\StoreGraphQl\Model\Resolver\Store\StoreConfigDataProvider">
+        <arguments>
+            <argument name="extendedConfigData" xsi:type="array">
+                <item name="magento_reward_general_is_enabled" xsi:type="string">magento_reward/general/is_enabled</item>
+                <item name="magento_reward_general_is_enabled_on_front" xsi:type="string">magento_reward/general/is_enabled_on_front</item>
+                <item name="magento_reward_general_publish_history" xsi:type="string">magento_reward/general/publish_history</item>
+                <item name="magento_reward_general_min_points_balance" xsi:type="string">magento_reward/general/min_points_balance</item>
+                <item name="magento_reward_points_order" xsi:type="string">magento_reward/points/order</item>
+                <item name="magento_reward_points_register" xsi:type="string">magento_reward/points/register</item>
+                <item name="magento_reward_points_newsletter" xsi:type="string">magento_reward/points/newsletter</item>
+                <item name="magento_reward_points_invitation_customer" xsi:type="string">magento_reward/points/invitation_customer</item>
+                <item name="magento_reward_points_invitation_customer_limit" xsi:type="string">magento_reward/points/invitation_customer_limit</item>
+                <item name="magento_reward_points_invitation_order" xsi:type="string">magento_reward/points/invitation_order</item>
+                <item name="magento_reward_points_invitation_order_limit" xsi:type="string">magento_reward/points/invitation_order_limit</item>
+                <item name="magento_reward_points_review" xsi:type="string">magento_reward/points/review</item>
+                <item name="magento_reward_points_review_limit" xsi:type="string">magento_reward/points/review_limit</item>
+            </argument>
+        </arguments>
+    </type>
+    <type name="Magento\Quote\Model\Quote\TotalsCollector">
+        <plugin name="reset_quote_reward_points_amount_plugin" type="Magento\RewardGraphQl\Plugin\Quote\Model\Quote\TotalsCollector\ResetQuoteRewardPointsAmountPlugin" />
+    </type>
+</config>

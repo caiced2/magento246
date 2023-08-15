@@ -1,0 +1,96 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+ /**
+  * Copyright © Magento, Inc. All rights reserved.
+  * See COPYING.txt for license details.
+  */
+-->
+
+<tests xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xsi:noNamespaceSchemaLocation="urn:magento:mftf:Test/etc/testSchema.xsd">
+    <test name="AdminCreateTextAreaTypeCustomCustomerAttributeTest">
+        <annotations>
+            <group value="Customer Custom Attribute"/>
+            <stories value="Create Customer Custom Attribute"/>
+            <title value="Create text area type custom customer attribute"/>
+            <description value="Create text area type custom customer attribute and verify in attribute grid,customer segment, customer registration form and default value on registration"/>
+            <severity value="MAJOR"/>
+            <testCaseId value="MC-14581"/>
+            <group value="mtf_migrated"/>
+        </annotations>
+
+        <before>
+            <!--Login as admin-->
+            <actionGroup ref="AdminLoginActionGroup" stepKey="LoginAsAdmin"/>
+        </before>
+        <after>
+            <!--Delete customer attributes -->
+            <amOnPage url="{{CustomerAttributesPage.url}}" stepKey="navigateToCustomerAttributePage"/>
+            <actionGroup ref="DeleteCustomerAttribute" stepKey="adminDeleteFileAttribute">
+                <argument name="defaultLabel" value="{{AttributeTextAreaData.label}}"/>
+            </actionGroup>
+            <!-- Navigate to Customers -> Segments -> filter created segment and delete the segment -->
+            <actionGroup ref="FindAndDeleteCustomerSegmentActionGroup" stepKey="deleteSegment">
+                <argument name="segmentName" value="{{CustomerSegmentDefault.name}}"/>
+            </actionGroup>
+            <magentoCron groups="index" stepKey="reindex"/>
+            <!--Log out-->
+            <actionGroup ref="AdminLogoutActionGroup" stepKey="logOut"/>
+        </after>
+
+        <!-- Create Text Area Customer Custom Attribute -->
+        <actionGroup ref="AdminCreateCustomerCustomAttributeWithValueRequired" stepKey="createTextAreaCustomAttribute">
+            <argument name="customerAttribute" value="AttributeTextAreaData"/>
+        </actionGroup>
+        <magentoCron groups="index" stepKey="reindex"/>
+
+        <!-- Navigate to Stores -> Customers ->Filter the created attribute -->
+        <amOnPage url="{{CustomerAttributesPage.url}}" stepKey="navigateToCustomerAttributes"/>
+        <waitForPageLoad stepKey="waitForAttributePageLoad"/>
+        <click selector="{{CustomerAccountSection.reset}}" stepKey="clickResetFilter"/>
+        <waitForElementVisible selector="{{AdminCustomerAttributeSection.searchDefaultLabel}}" stepKey="waitForDefaultLabelToVisible"/>
+        <fillField selector="{{AdminCustomerAttributeSection.searchDefaultLabel}}" userInput="{{AttributeTextAreaData.label}}" stepKey="TypeAttributeLabel"/>
+        <click selector="{{CustomerAccountSection.search}}" stepKey="clickToSearchButton"/>
+        <waitForPageLoad stepKey="waitForResult"/>
+
+        <!-- Assert created attribute in Customer Attribute grid -->
+        <see selector="{{CustomerAccountSection.firstRowInGrid}}" userInput="{{AttributeTextAreaData.label}}" stepKey="seeAttributeLabelInGrid"/>
+        <see selector="{{CustomerAccountSection.firstRowInGrid}}" userInput="{{AttributeTextAreaData.code}}" stepKey="seeAttributeCodeInGrid"/>
+
+        <!--Navigate to CUSTOMERS -> Segment > Click 'Add Segment' button-->
+        <actionGroup ref="CreateCustomerSegmentWithContinueEditActionGroup" stepKey="createCustomerSegment">
+            <argument name="customerSegment" value="CustomerSegmentDefault"/>
+        </actionGroup>
+
+        <!-- Assert created custom attribute in Customer Segment -->
+        <click selector="{{AdminCustomerSegmentEditSection.conditionsTab}}" stepKey="clickToConditionsTab"/>
+        <waitForLoadingMaskToDisappear stepKey="waitForLoadingMaskToDisappear"/>
+        <waitForElementVisible selector="{{AdminCustomerSegmentConditionsEditSection.addCondition}}" stepKey="waitForAddCondition"/>
+        <click selector="{{AdminCustomerSegmentConditionsEditSection.addCondition}}" stepKey="clickToAddCondition" />
+        <grabMultiple selector="{{AdminCustomerSegmentConditionsEditSection.conditionOptions}}" stepKey="grabConditionOptions" />
+        <assertContains stepKey="assertCustomerSegmentInOptions">
+            <actualResult type="variable">grabConditionOptions</actualResult>
+            <expectedResult type="string">{{AttributeTextAreaData.label}}</expectedResult>
+        </assertContains>
+
+        <!-- Navigate to Customers -> All Customers -> click on 'AddNewCustomer' button -> open customer edit page -->
+        <amOnPage url="{{AdminCustomerPage.url}}" stepKey="goToCustomersPage"/>
+        <click stepKey="addNewCustomer" selector="{{AdminCustomerGridMainActionsSection.addNewCustomer}}"/>
+        <waitForPageLoad stepKey="waitForCustomerPageToLoad"/>
+
+        <!-- Assert Attribute is not visible in customer edit page -->
+        <dontSeeElement selector="{{AdminProductFormSection.attributeLabelByText(AttributeTextAreaData.label)}}" stepKey="dontSeeAttributeLabel"/>
+
+        <!-- Navigate to storefront and select create an account-->
+        <amOnPage url="{{StorefrontHomePage.url}}" stepKey="amOnStorefrontPage"/>
+        <waitForPageLoad stepKey="waitForNavigateToCustomersPageLoad"/>
+        <click stepKey="clickOnCreateAccountLink" selector="{{StorefrontPanelHeaderSection.createAnAccountLink}}"/>
+        <waitForPageLoad stepKey="waitForPageToLoad"/>
+
+        <!-- Assert customer custom attribute is visible in registration form -->
+        <seeElement selector="{{StorefrontCustomerCustomAttributeSection.attributeLabel(AttributeTextAreaData.label)}}" stepKey="seeAttributeInCustomerRegistration"/>
+
+        <!-- Assert customer custom attribute default value is present in registration form -->
+        <see selector="{{StorefrontCustomerCustomAttributeSection.defaultAttributeValue(AttributeTextAreaData.code)}}" userInput="Default Value" stepKey="seeAttributeDefaultValue"/>
+    </test>
+</tests>

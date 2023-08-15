@@ -1,0 +1,70 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+/**
+ * Copyright © Magento, Inc. All rights reserved.
+ * See COPYING.txt for license details.
+ */
+-->
+
+<tests xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xsi:noNamespaceSchemaLocation="urn:magento:mftf:Test/etc/testSchema.xsd">
+    <test name="AddSimpleProductWithCustomOptionsByCompoundSkuFromCustomerAccountTest">
+        <annotations>
+            <features value="AdvancedCheckout"/>
+            <stories value="Add Product By SKU"/>
+            <title value="Add simple product  with custom options by compound sku from customer account test"/>
+            <description value="Add simple product with custom options by compound sku from customer account"/>
+            <severity value="CRITICAL"/>
+            <testCaseId value="MC-14032"/>
+            <group value="AdvancedCheckout"/>
+            <group value="mtf_migrated"/>
+        </annotations>
+        <before>
+            <!-- Create customer -->
+            <createData entity="Simple_US_Customer" stepKey="createCustomer"/>
+
+            <!-- Create product -->
+            <createData entity="_defaultCategory" stepKey="createCategory"/>
+            <createData entity="_defaultProduct" stepKey="createSimpleProduct">
+                <requiredEntity createDataKey="createCategory"/>
+            </createData>
+            <updateData createDataKey="createSimpleProduct" entity="productWithDropdownOption" stepKey="updateProductWithCustomOption"/>
+        </before>
+        <after>
+            <!-- Delete customer -->
+            <deleteData createDataKey="createCustomer" stepKey="deleteCustomer"/>
+
+            <!-- Delete product -->
+            <deleteData createDataKey="createSimpleProduct" stepKey="deleteSimpleProduct"/>
+
+            <!-- Delete category -->
+            <deleteData createDataKey="createCategory" stepKey="deleteCategory"/>
+        </after>
+
+        <!-- Login to Frontend -->
+        <actionGroup ref="LoginToStorefrontActionGroup" stepKey="loginAsCustomer">
+            <argument name="Customer" value="$$createCustomer$$"/>
+        </actionGroup>
+
+        <!-- Open My Account > Order by SKU -->
+        <amOnPage stepKey="goToMyAccountPage" url="{{StorefrontCustomerDashboardPage.url}}"/>
+        <waitForPageLoad stepKey="waitForPageLoad"/>
+        <actionGroup ref="StorefrontCustomerGoToSidebarMenu" stepKey="goToSidebarMenu">
+            <argument name="menu" value="Order by SKU"/>
+        </actionGroup>
+
+        <!-- Fill data according dataset -->
+        <actionGroup ref="FillProductSkuAndQtyActionGroup" stepKey="fillProductQtyAndSkuForOrderProduct">
+            <argument name="sku" value="$$createSimpleProduct.sku$$-{{ProductOptionValueWithSkuDropdown1.sku}}"/>
+            <argument name="quantity" value="{{ApiSimpleSingleQty.quantity}}"/>
+            <argument name="index" value="0"/>
+        </actionGroup>
+
+        <!-- Add product to cart -->
+        <actionGroup ref="AddProductToCartBySkuFromMyAccountActionGroup" stepKey="addProductToCartBySku"/>
+
+        <!-- Assert product present in shopping cart -->
+        <seeElement selector="{{CheckoutCartProductSection.ProductLinkByName($$createSimpleProduct.name$$)}}" stepKey="assertProductName"/>
+        <see userInput="$133.00" selector="{{CheckoutCartProductSection.ProductPriceByName($$createSimpleProduct.name$$)}}" stepKey="assertProductPrice"/>
+    </test>
+</tests>

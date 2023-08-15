@@ -1,0 +1,115 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+ /**
+  * Copyright © Magento, Inc. All rights reserved.
+  * See COPYING.txt for license details.
+  */
+-->
+
+<tests xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xsi:noNamespaceSchemaLocation="urn:magento:mftf:Test/etc/testSchema.xsd">
+    <test name="AdminAwsS3ScheduleImportSimpleProductsWithImagesTest" extends="AdminScheduleImportSimpleProductsWithImagesTest">
+        <annotations>
+            <features value="ScheduledImportExport"/>
+            <stories value="Import Products"/>
+            <title value="S3 - Schedule Import for Simple Product with Images"/>
+            <description value="Schedules an import of a .csv file containing a simple product with linked images.
+            Verifies that the product and images are imported successfully."/>
+            <severity value="MAJOR"/>
+            <group value="importExport"/>
+            <group value="scheduledImportExport"/>
+            <group value="remote_storage_aws_s3"/>
+            <group value="skip_in_cloud_native_s3"/>
+            <group value="remote_storage_disabled"/>
+        </annotations>
+
+        <before>
+            <!-- Locally Copy Import Files to Unique Media Import Directory -->
+            <helper class="Magento\Catalog\Test\Mftf\Helper\LocalFileAssertions" method="createDirectory" stepKey="createDirectoryForImportFiles" after="createCustomer">
+                <argument name="path">pub/media/import/{{ScheduleImportProduct_Simple.name}}</argument>
+            </helper>
+            <helper class="Magento\Catalog\Test\Mftf\Helper\LocalFileAssertions" method="copy" stepKey="copyImportFile" after="createDirectoryForImportFiles">
+                <argument name="source">dev/tests/acceptance/tests/_data/{{ScheduleImportProduct_Simple.fileName}}</argument>
+                <argument name="destination">pub/media/import/{{ScheduleImportProduct_Simple.name}}/{{ScheduleImportProduct_Simple.fileName}}</argument>
+            </helper>
+            <remove keyForRemoval="createDirectoryForImportImages"/>
+            <helper class="Magento\Catalog\Test\Mftf\Helper\LocalFileAssertions" method="copy" stepKey="copyProductBaseImage">
+                <argument name="source">dev/tests/acceptance/tests/_data/{{ScheduleImportProduct_Simple.baseImage}}</argument>
+                <argument name="destination">pub/media/import/{{ScheduleImportProduct_Simple.name}}/{{ScheduleImportProduct_Simple.baseImage}}</argument>
+            </helper>
+            <helper class="Magento\Catalog\Test\Mftf\Helper\LocalFileAssertions" method="copy" stepKey="copyProductSmallImage">
+                <argument name="source">dev/tests/acceptance/tests/_data/{{ScheduleImportProduct_Simple.smallImage}}</argument>
+                <argument name="destination">pub/media/import/{{ScheduleImportProduct_Simple.name}}/{{ScheduleImportProduct_Simple.smallImage}}</argument>
+            </helper>
+            <helper class="Magento\Catalog\Test\Mftf\Helper\LocalFileAssertions" method="copy" stepKey="copyProductThumbnailImage">
+                <argument name="source">dev/tests/acceptance/tests/_data/{{ScheduleImportProduct_Simple.thumbnailImage}}</argument>
+                <argument name="destination">pub/media/import/{{ScheduleImportProduct_Simple.name}}/{{ScheduleImportProduct_Simple.thumbnailImage}}</argument>
+            </helper>
+
+            <!-- Enable AWS S3 Remote Storage & Sync -->
+            <magentoCLI command="setup:config:set {{RemoteStorageAwsS3ConfigData.enable_options}}" stepKey="enableRemoteStorage" after="copyProductThumbnailImage"/>
+            <magentoCLI command="remote-storage:sync" timeout="120" stepKey="syncRemoteStorage" after="enableRemoteStorage"/>
+        </before>
+
+        <after>
+            <!-- Delete S3 Data -->
+            <remove keyForRemoval="deleteProductImageDirectory"/>
+            <helper class="Magento\AwsS3\Test\Mftf\Helper\S3FileAssertions" method="deleteDirectory" stepKey="deleteImportFilesDirectoryS3" after="deleteCustomer">
+                <argument name="path">media/import/{{ScheduleImportProduct_Simple.name}}</argument>
+            </helper>
+            <helper class="Magento\AwsS3\Test\Mftf\Helper\S3FileAssertions" method="assertDirectoryEmpty" stepKey="assertImportHistoryFileDeleted">
+                <argument name="path">import_export/import_export/history/{$currentYear}/{$currentMonth}/</argument>
+                <argument name="message">import_export/import_export/history/{$currentYear}/{$currentMonth}/ is not empty.</argument>
+            </helper>
+            <actionGroup ref="CliCacheFlushActionGroup" stepKey="flushCache" after="assertImportHistoryFileDeleted">
+                <argument name="tags" value=""/>
+            </actionGroup>
+
+            <!-- Disable AWS S3 Remote Storage & Delete Local Data -->
+            <magentoCLI command="setup:config:set {{RemoteStorageAwsS3ConfigData.disable_options}}" stepKey="disableRemoteStorage" after="logoutFromAdmin"/>
+            <helper class="Magento\Catalog\Test\Mftf\Helper\LocalFileAssertions" method="deleteDirectory" stepKey="deleteImportFilesDirectoryLocal" after="disableRemoteStorage">
+                <argument name="path">pub/media/import/{{ScheduleImportProduct_Simple.name}}</argument>
+            </helper>
+        </after>
+
+        <!-- Create Scheduled Import for Simple Product -->
+        <actionGroup ref="AdminFillScheduledImportFormActionGroup" stepKey="fillScheduledImportForm">
+            <argument name="name" value="{{ScheduleImportProduct_Simple.importName}}"/>
+            <argument name="serverType" value="Remote Storage"/>
+            <argument name="fileDirectory" value="media/import/{{ScheduleImportProduct_Simple.name}}"/>
+            <argument name="fileName" value="{{ScheduleImportProduct_Simple.fileName}}"/>
+            <argument name="imagesFileDirectory" value="media/import/{{ScheduleImportProduct_Simple.name}}"/>
+        </actionGroup>
+
+        <!-- Admin: Verify Tmp Import & Import History Files -->
+        <helper class="Magento\AwsS3\Test\Mftf\Helper\S3FileAssertions" method="assertFileExists" stepKey="assertImportHistoryFileExists">
+            <argument name="filePath">import_export/import_export/history/{$currentYear}/{$currentMonth}/{$currentDay}/{$currentHour}-{$currentMinute}_import_catalog_product.csv</argument>
+            <argument name="message">import_export/import_export/history/{$currentYear}/{$currentMonth}/{$currentDay}/{$currentHour}-{$currentMinute}_import_catalog_product.csv does not exist.</argument>
+        </helper>
+        <helper class="Magento\AwsS3\Test\Mftf\Helper\S3FileAssertions" method="assertFileContainsString" stepKey="assertImportHistoryFileContainsExpectedText">
+            <argument name="filePath">import_export/import_export/history/{$currentYear}/{$currentMonth}/{$currentDay}/{$currentHour}-{$currentMinute}_import_catalog_product.csv</argument>
+            <argument name="text">{$tmpImportedFileName}</argument>
+            <argument name="message">import_export/import_export/history/{$currentYear}/{$currentMonth}/{$currentDay}/{$currentHour}-{$currentMinute}_import_catalog_product.csv does not contain string "{$tmpImportedFileName}.csv".</argument>
+        </helper>
+        <helper class="Magento\AwsS3\Test\Mftf\Helper\S3FileAssertions" method="assertFileExists" stepKey="assertTmpImportFileExists">
+            <argument name="filePath">import_export/tmp/{$tmpImportedFileName}</argument>
+            <argument name="message">import_export/tmp/{$tmpImportedFileName} does not exist.</argument>
+        </helper>
+        <helper class="Magento\AwsS3\Test\Mftf\Helper\S3FileAssertions" method="assertFileContainsString" stepKey="assertTmpImportFileContainsExpectedText">
+            <argument name="filePath">import_export/tmp/{$tmpImportedFileName}</argument>
+            <argument name="text">{{ScheduleImportProduct_Simple.name}}</argument>
+            <argument name="message">import_export/tmp/{$tmpImportedFileName} does not contain string "{{ScheduleImportProduct_Simple.name}}".</argument>
+        </helper>
+
+        <!-- Admin: Download Import History File & Verify Content -->
+        <helper class="Magento\AwsS3\Test\Mftf\Helper\S3FileAssertions" method="assertFileExists" stepKey="assertDownloadedImportHistoryFileExists">
+            <argument name="filePath">import_export/import_history/{$importedFileName}</argument>
+            <argument name="message">import_export/import_history/{$importedFileName} does not exist.</argument>
+        </helper>
+        <helper class="Magento\AwsS3\Test\Mftf\Helper\S3FileAssertions" method="assertFileContainsString" stepKey="assertDownloadedImportHistoryFileContainsExpectedText">
+            <argument name="filePath">import_export/import_history/{$importedFileName}</argument>
+            <argument name="text">{{ScheduleImportProduct_Simple.name}}</argument>
+            <argument name="message">import_export/import_history/{$importedFileName} does not contain string "{{ScheduleImportProduct_Simple.name}}".</argument>
+        </helper>
+    </test>
+</tests>

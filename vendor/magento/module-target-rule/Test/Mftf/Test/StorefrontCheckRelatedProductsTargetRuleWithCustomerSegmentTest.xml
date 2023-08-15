@@ -1,0 +1,104 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+ /**
+  * Copyright © Magento, Inc. All rights reserved.
+  * See COPYING.txt for license details.
+  */
+-->
+<tests xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xsi:noNamespaceSchemaLocation="urn:magento:mftf:Test/etc/testSchema.xsd">
+    <test name="StorefrontCheckRelatedProductsTargetRuleWithCustomerSegmentTest">
+        <annotations>
+            <features value="TargetRule"/>
+            <stories value="Verify Target Rule"/>
+            <title value="Checking display Related Products based on Target Rule with Customer Segment"/>
+            <description value="The customer which matched segment should be able to see Related Products based on Target Rule"/>
+            <severity value="CRITICAL"/>
+            <testCaseId value="MC-41055"/>
+            <useCaseId value="MC-40999"/>
+            <group value="targetRule"/>
+            <group value="cloud_smoke"/>
+        </annotations>
+        <before>
+            <!-- Create products -->
+            <createData entity="SimpleProduct2" stepKey="createFirstSimpleProduct"/>
+            <createData entity="SimpleProduct2" stepKey="createSecondSimpleProduct"/>
+            <!-- Create Customer -->
+            <createData entity="Retailer_Customer" stepKey="createCustomer"/>
+            <!-- Login to Admin page -->
+            <actionGroup ref="AdminLoginActionGroup" stepKey="loginAsAdmin"/>
+            <!-- Set SKU Product Attribute to enable for Promo Rule Conditions -->
+            <actionGroup ref="NavigateToEditProductAttributeActionGroup" stepKey="navigateToSkuProductAttribute">
+                <argument name="ProductAttribute" value="sku"/>
+            </actionGroup>
+            <actionGroup ref="ChangeUseForPromoRuleConditionsProductAttributeActionGroup" stepKey="changeUseForPromoRuleConditionsToYes">
+                <argument name="option" value="Yes"/>
+            </actionGroup>
+            <!-- Create Customer Segment -->
+            <actionGroup ref="CreateCustomerSegmentWithContinueEditActionGroup" stepKey="createCustomerSegment">
+                <argument name="customerSegment" value="CustomerSegmentForRegistered"/>
+            </actionGroup>
+            <actionGroup ref="SetCustomerGroupConditionActionGroup" stepKey="setCustomerGroupConditionToSegment">
+                <argument name="groupName" value="Retailer"/>
+            </actionGroup>
+            <!-- Run Customer Segment consumer -->
+            <actionGroup ref="CliConsumerStartActionGroup" stepKey="startCustomerSegmentConsumer">
+                <argument name="consumerName" value="{{AdminCustomerSegmentConsumerData.consumerName}}"/>
+                <argument name="maxMessages" value="{{AdminCustomerSegmentConsumerData.messageLimit}}"/>
+            </actionGroup>
+        </before>
+        <after>
+            <!-- Delete entities -->
+            <deleteData createDataKey="createFirstSimpleProduct" stepKey="deleteFirstSimpleProduct"/>
+            <deleteData createDataKey="createSecondSimpleProduct" stepKey="deleteSecondSimpleProduct"/>
+            <deleteData createDataKey="createCustomer" stepKey="deleteCustomer"/>
+            <!--Set SKU Product Attribute to disable for Promo Rule Conditions-->
+            <actionGroup ref="NavigateToEditProductAttributeActionGroup" stepKey="navigateToSkuProductAttribute">
+                <argument name="ProductAttribute" value="sku"/>
+            </actionGroup>
+            <actionGroup ref="ChangeUseForPromoRuleConditionsProductAttributeActionGroup" stepKey="changeUseForPromoRuleConditionsToNo">
+                <argument name="option" value="No"/>
+            </actionGroup>
+            <actionGroup ref="ClearFiltersAdminDataGridActionGroup" stepKey="clearProductAttributeGridFilters"/>
+            <!-- Delete Customer Segment -->
+            <actionGroup ref="FindAndDeleteCustomerSegmentActionGroup" stepKey="deleteCustomerSegment">
+                <argument name="segmentName" value="{{CustomerSegmentForRegistered.name}}"/>
+            </actionGroup>
+            <!-- Delete Target Rule -->
+            <actionGroup ref="DeleteTargetRuleByNameActionGroup" stepKey="deleteTargetRule">
+                <argument name="ruleName" value="SimpleTargetRuleGeneralInformation.ruleName"/>
+            </actionGroup>
+            <actionGroup ref="ClearFiltersAdminDataGridActionGroup" stepKey="clearTargetRuleGridFilters"/>
+            <magentoCron groups="index" stepKey="reindex"/>
+            <!-- Logout from Admin page -->
+            <actionGroup ref="AdminLogoutActionGroup" stepKey="logoutFromAdmin"/>
+        </after>
+
+        <!-- Create Related Products Rule -->
+        <actionGroup ref="GoToTargetRulePage" stepKey="goToTargetRulePage"/>
+        <actionGroup ref="ClickAddNewTargetRule" stepKey="clickOnAddRuleButton"/>
+        <actionGroup ref="FillGeneralRuleInformation" stepKey="fillGeneralRuleFields"/>
+        <actionGroup ref="AdminSelectCustomerSegmentForTargetRuleActionGroup" stepKey="selectCustomerSegment">
+            <argument name="customerSegmentName" value="{{CustomerSegmentForRegistered.name}}"/>
+        </actionGroup>
+        <actionGroup ref="AdminSetProductsToDisplayTargetRuleConditionActionGroup" stepKey="setProductsToDisplayCondition">
+            <argument name="attributeName" value="SKU"/>
+            <argument name="attributeValue" value="$createFirstSimpleProduct.sku$"/>
+        </actionGroup>
+        <actionGroup ref="SaveTargetRule" stepKey="save"/>
+
+        <!-- Login to Storefront as created Customer -->
+        <actionGroup ref="LoginToStorefrontActionGroup" stepKey="loginAsCustomer">
+            <argument name="Customer" value="$createCustomer$"/>
+        </actionGroup>
+
+        <!-- Go to Second Product page -->
+        <amOnPage url="{{StorefrontProductPage.url($createSecondSimpleProduct.custom_attributes[url_key]$)}}" stepKey="goToSecondProductPage"/>
+        <waitForPageLoad stepKey="waitForProductPageLoad"/>
+
+        <!-- Assert first product displayed in the Related Products section -->
+        <actionGroup ref="StorefrontAssertRelatedProductOnProductPageActionGroup" stepKey="assertRelatedProduct">
+            <argument name="productName" value="$createFirstSimpleProduct.name$"/>
+        </actionGroup>
+    </test>
+</tests>

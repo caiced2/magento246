@@ -1,0 +1,29 @@
+<?xml version="1.0"?>
+<!--
+/**
+ * Copyright © Magento, Inc. All rights reserved.
+ * See COPYING.txt for license details.
+ */
+-->
+<page xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="urn:magento:framework:View/Layout/etc/page_configuration.xsd">
+    <body>
+        <attribute name="class" value="page-product-giftcard"/>
+        <move element="product.price.final" destination="product.info.form.options" before="product.info.giftcard"/>
+        <referenceBlock name="product.price.final">
+            <arguments>
+                <argument name="render_form" xsi:type="string">1</argument>
+            </arguments>
+        </referenceBlock>
+        <referenceContainer name="product.info.type">
+            <block class="Magento\GiftCard\Block\Catalog\Product\View\Type\Giftcard" name="product.info.type.giftcard" as="product.info.giftcard" template="Magento_GiftCard::product/view/type/default.phtml"/>
+        </referenceContainer>
+        <referenceBlock name="product.info.form.options">
+            <block class="Magento\GiftCard\Block\Catalog\Product\View\Type\Giftcard" name="product.info.giftcard" as="product_type_data" template="Magento_GiftCard::product/view/type/giftcard.phtml" before="-">
+                <block class="Magento\CatalogInventory\Block\Stockqty\DefaultStockqty" name="product.info.giftcard.extra" as="product_type_data_extra" template="Magento_CatalogInventory::stockqty/default.phtml"/>
+            </block>
+        </referenceBlock>
+        <referenceBlock name="head.components">
+            <block class="Magento\Framework\View\Element\Js\Components" name="giftcard_page_head_components" template="Magento_GiftCard::js/components.phtml"/>
+        </referenceBlock>
+    </body>
+</page>

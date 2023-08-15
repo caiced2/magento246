@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+ /**
+  * Copyright © Magento, Inc. All rights reserved.
+  * See COPYING.txt for license details.
+  */
+-->
+
+<actionGroups xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+              xsi:noNamespaceSchemaLocation="urn:magento:mftf:Test/etc/actionGroupSchema.xsd">
+    <actionGroup name="AdminFillPermanentUpdateAndCategoryNameActionGroup" extends="AdminFillPermanentUpdateActionGroup">
+        <annotations>
+            <description>If necessary, click on the "Schedule New Update" button and fill in the data and category name for permanent update</description>
+        </annotations>
+        <arguments>
+            <argument name="updateName" type="string"/>
+        </arguments>
+        <!-- Replacement action. The action will be performed only if necessary. -->
+        <conditionalClick selector="{{AdminProductScheduleUpdateSection.scheduleNewUpdateBtn}}" dependentSelector="{{AdminStagingSlideOutSection.updateName}}" visible="false" stepKey="scheduleNewUpdateBtn"/>
+        <!--Fill category update name-->
+        <fillField selector="{{AdminCatalogStagingSlideOutSection.categoryName}}" userInput="{{updateName}}" after="fillStartDate" stepKey="fillNewCategoryName"/>
+    </actionGroup>
+</actionGroups>

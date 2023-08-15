@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+ /**
+  * Copyright © Magento, Inc. All rights reserved.
+  * See COPYING.txt for license details.
+  */
+-->
+
+<sections xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+          xsi:noNamespaceSchemaLocation="urn:magento:mftf:Page/etc/SectionObject.xsd">
+    <section name="CheckoutBillingNewAddressSection">
+        <element name="firstName" type="input" selector=".billing-address-form input[name=firstname]"/>
+        <element name="lastName" type="input" selector=".billing-address-form input[name=lastname]"/>
+        <element name="company" type="input" selector=".billing-address-form input[name=company]"/>
+        <element name="street" type="input" selector=".billing-address-form input[name='street[0]']"/>
+        <element name="street2" type="input" selector=".billing-address-form input[name='street[1]']"/>
+        <element name="city" type="input" selector=".billing-address-form input[name=city]"/>
+        <element name="region" type="select" selector=".billing-address-form select[name=region_id]"/>
+        <element name="postcode" type="input" selector=".billing-address-form input[name=postcode]"/>
+        <element name="country" type="select" selector=".billing-address-form select[name=country_id]"/>
+        <element name="state" type="select" selector=".billing-address-form select[name=region_id]"/>
+        <element name="telephone" type="input" selector=".billing-address-form input[name=telephone]"/>
+    </section>
+</sections>

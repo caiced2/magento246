@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+ /**
+  * Copyright © Magento, Inc. All rights reserved.
+  * See COPYING.txt for license details.
+  */
+-->
+<entities xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:noNamespaceSchemaLocation="urn:magento:mftf:DataGenerator/etc/dataProfileSchema.xsd">
+    <entity name="CustomAttributeGiftCardType" type="custom_attribute">
+        <data key="attribute_code">giftcard_type</data>
+        <data key="value">1</data>
+        <data key="valueText">Physical</data>
+    </entity>
+    <entity name="CustomAttributeAllowOpenAmount" type="custom_attribute">
+        <data key="attribute_code">allow_open_amount</data>
+        <data key="value">1</data>
+        <data key="valueText">Yes</data>
+    </entity>
+    <entity name="CustomAttributeOpenAmountMin1" type="custom_attribute">
+        <data key="attribute_code">open_amount_min</data>
+        <data key="value">1.00</data>
+    </entity>
+    <entity name="CustomAttributeOpenAmountMax100" type="custom_attribute">
+        <data key="attribute_code">open_amount_max</data>
+        <data key="value">100.00</data>
+    </entity>
+    <entity name="OpenAmount10" type="custom_attribute">
+        <data key="attribute_code">open_amount_min</data>
+        <data key="value">10</data>
+    </entity>
+    <entity name="OpenAmount20" type="custom_attribute">
+        <data key="attribute_code">open_amount_max</data>
+        <data key="value">20</data>
+    </entity>
+    <entity name="OpenAmount150" type="custom_attribute">
+        <data key="attribute_code">open_amount_max</data>
+        <data key="value">150</data>
+    </entity>
+</entities>

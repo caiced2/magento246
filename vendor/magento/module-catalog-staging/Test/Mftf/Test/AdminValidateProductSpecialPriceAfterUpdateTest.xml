@@ -1,0 +1,100 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+ /**
+  * Copyright © Magento, Inc. All rights reserved.
+  * See COPYING.txt for license details.
+  */
+-->
+
+<tests xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xsi:noNamespaceSchemaLocation="urn:magento:mftf:Test/etc/testSchema.xsd">
+    <test name="AdminValidateProductSpecialPriceAfterUpdateTest">
+        <annotations>
+            <stories value="Validate special price"/>
+            <title value="Validate product special price after update"/>
+            <description value="Check product special price after schedule update is active"/>
+            <severity value="CRITICAL"/>
+            <testCaseId value="MC-14748"/>
+            <group value="CatalogStaging"/>
+            <group value="mtf_migrated"/>
+        </annotations>
+        <before>
+            <!--  Create at least two simple products with special price -->
+            <actionGroup ref="AdminLoginActionGroup" stepKey="loginAsAdmin"/>
+            <createData entity="_defaultCategory" stepKey="createCategory"/>
+            <!-- Create first simple product and add special price  -->
+            <createData entity="SimpleProductWithSpecialPrice" stepKey="createFirstSimpleProduct">
+                <requiredEntity createDataKey="createCategory"/>
+            </createData>
+            <amOnPage url="{{AdminProductEditPage.url($createFirstSimpleProduct.id$)}}" stepKey="visitAdminProductPage"/>
+            <waitForPageLoad stepKey="waitForProductPage"/>
+            <actionGroup ref="AddSpecialPriceToProductActionGroup" stepKey="addSpecialPrice">
+                <argument name="price" value="{{SimpleProductWithSpecialPrice.special_price}}"/>
+            </actionGroup>
+            <waitForElementVisible selector="{{AdminProductFormAdvancedPricingSection.save}}" stepKey="waitForSaveButton"/>
+            <click selector="{{AdminProductFormAdvancedPricingSection.save}}" stepKey="clickSaveButton"/>
+            <waitForPageLoad stepKey="waitForProductSave"/>
+            <see selector="{{AdminProductMessagesSection.successMessage}}" userInput="You saved the product." stepKey="seeSaveProductSuccess"/>
+            <!-- Create second simple product and add special price  -->
+            <createData entity="SimpleProductWithSpecialPriceSecond" stepKey="createSecondSimpleProduct">
+                <requiredEntity createDataKey="createCategory"/>
+            </createData>
+            <amOnPage url="{{AdminProductEditPage.url($createSecondSimpleProduct.id$)}}" stepKey="visitAdminSecondProductPage"/>
+            <waitForPageLoad stepKey="waitForSecondProductPage"/>
+            <actionGroup ref="AddSpecialPriceToProductActionGroup" stepKey="addSecondSpecialPrice">
+                <argument name="price" value="{{SimpleProductWithSpecialPriceSecond.special_price}}"/>
+            </actionGroup>
+            <waitForElementVisible selector="{{AdminProductFormAdvancedPricingSection.save}}" stepKey="waitForSaveButton2"/>
+            <click selector="{{AdminProductFormAdvancedPricingSection.save}}" stepKey="clickSaveButton2"/>
+            <waitForPageLoad stepKey="waitForProductSave2"/>
+            <see selector="{{AdminProductMessagesSection.successMessage}}" userInput="You saved the product." stepKey="seeSaveProductSuccess2"/>
+        </before>
+        <after>
+            <deleteData createDataKey="createCategory" stepKey="deleteCategory"/>
+            <deleteData createDataKey="createFirstSimpleProduct" stepKey="deleteFirstSimpleProduct"/>
+            <deleteData createDataKey="createSecondSimpleProduct" stepKey="deleteSecondSimpleProduct"/>
+            <actionGroup ref="AdminClearFiltersStagingDashboardActionGroup" stepKey="clearFilter"/>
+            <actionGroup ref="AdminLogoutActionGroup" stepKey="logout"/>
+        </after>
+
+        <!-- Create a scheduled update for the second product -->
+        <amOnPage url="{{AdminProductEditPage.url($createSecondSimpleProduct.id$)}}" stepKey="visitAdminProductPage"/>
+        <waitForPageLoad stepKey="waitForProductPageLoad"/>
+        <actionGroup ref="AdminFillPermanentUpdateActionGroup" stepKey="fillStagingUpdate">
+            <argument name="stage" value="UpdateDatePlusTwoMinutes"/>
+        </actionGroup>
+
+        <!-- In the staging product form, set a special price for this product different than the one from preConditions -->
+        <click selector="{{AdminProductScheduleUpdateSection.advancedPricing}}" stepKey="clickAdvancedPricingLinkInUpdate"/>
+        <waitForPageLoad stepKey="waitForProductAdvancedPricingModal"/>
+        <waitForElementVisible selector="{{AdminProductFormAdvancedPricingSection.specialPrice}}" stepKey="waitSpecialPriceInUpdate"/>
+        <fillField userInput="75.00" selector="{{AdminProductFormAdvancedPricingSection.specialPrice}}" stepKey="fillSpecialPriceInUpdate"/>
+        <click selector="{{AdminProductScheduleUpdateSection.doneButton}}" stepKey="clickDoneInUpdate"/>
+        <waitForPageLoad stepKey="waitForProductAdvancedPricingModalGone"/>
+        <waitForElementNotVisible selector="{{AdminProductFormAdvancedPricingSection.specialPrice}}" stepKey="waitForCloseModalWindowInUpdate"/>
+        <waitForElementVisible selector="{{AdminProductScheduleUpdateSection.save}}" stepKey="waitForSaveButton"/>
+        <click selector="{{AdminProductScheduleUpdateSection.save}}" stepKey="clickOnSave"/>
+        <waitForPageLoad stepKey="waitForScheduleUpdateSave"/>
+        <waitForElementNotVisible selector="{{AdminProductScheduleUpdateSection.save}}" stepKey="waitForSaveButtonGone"/>
+        <see selector="{{AdminScheduledChangesSection.scheduleDetails(UpdateDatePlusTwoMinutes.updateName)}}" userInput="{{UpdateDatePlusTwoMinutes.updateName}}" stepKey="seeUpdateName"/>
+        <see selector="{{AdminScheduledChangesSection.scheduleDetails(UpdateDatePlusTwoMinutes.updateDescription)}}" userInput="{{UpdateDatePlusTwoMinutes.updateDescription}}" stepKey="seeDescription"/>
+
+        <!-- Run cron three times to force update and wait 2 minutes -->
+        <magentoCLI command="cron:run" stepKey="runCron1"/>
+        <wait time="60" stepKey="waitOneMinute"/>
+        <magentoCLI command="cron:run" stepKey="runCron2"/>
+        <wait time="60" stepKey="waitSecondMinute"/>
+        <magentoCLI command="cron:run" stepKey="runCron3"/>
+        <reloadPage stepKey="refreshPage"/>
+
+        <!-- Go to storefront and perform assertions for price for all the products -->
+        <actionGroup ref="StorefrontAssertProductSpecialPriceOnProductPageActionGroup" stepKey="checkFirstProduct">
+            <argument name="product" value="$createFirstSimpleProduct$"/>
+            <argument name="specialPrice" value="$90.00"/>
+        </actionGroup>
+        <actionGroup ref="StorefrontAssertProductSpecialPriceOnProductPageActionGroup" stepKey="checkSecondProduct">
+            <argument name="product" value="$createSecondSimpleProduct$"/>
+            <argument name="specialPrice" value="$75.00"/>
+        </actionGroup>
+    </test>
+</tests>

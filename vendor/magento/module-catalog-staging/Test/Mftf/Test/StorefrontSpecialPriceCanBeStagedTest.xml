@@ -1,0 +1,87 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+ /**
+  * Copyright © Magento, Inc. All rights reserved.
+  * See COPYING.txt for license details.
+  */
+-->
+
+<tests xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xsi:noNamespaceSchemaLocation="urn:magento:mftf:Test/etc/testSchema.xsd">
+    <test name="StorefrontSpecialPriceCanBeStagedTest">
+        <annotations>
+            <features value="CatalogStaging"/>
+            <stories value="Special Price can be staged"/>
+            <title value="Special Price can be staged"/>
+            <description value="Special price is applied to product by Schedule Update"/>
+            <severity value="CRITICAL"/>
+            <testCaseId value="MC-14898"/>
+            <group value="catalog_staging"/>
+        </annotations>
+        <before>
+            <createData entity="SimpleProduct2" stepKey="createSimpleProduct"/>
+            <actionGroup ref="AdminLoginActionGroup" stepKey="loginAsAdmin"/>
+        </before>
+        <after>
+            <actionGroup ref="AdminLogoutActionGroup" stepKey="logout"/>
+            <deleteData createDataKey="createSimpleProduct" stepKey="deleteSimpleProduct"/>
+        </after>
+
+        <!-- Open edit page of the simple product -->
+        <amOnPage url="{{AdminProductEditPage.url($$createSimpleProduct.id$$)}}" stepKey="openEditProductPage"/>
+
+        <!-- Create the new staging update -->
+        <click selector="{{AdminStagingSlideOutSection.scheduleNewUpdateBtn}}" stepKey="clickNewUpdate"/>
+
+        <!--Click *Advanced Pricing* button, Fill special price field and click *Done*-->
+        <click selector="{{AdminCatalogStagingSlideOutSection.advancedPricingLink}}" stepKey="clickAdvancedPricingLink"/>
+        <waitForLoadingMaskToDisappear stepKey="waitForLoadingMask"/>
+        <fillField selector="{{AdminProductFormAdvancedPricingSection.specialPrice}}" userInput="77.00" stepKey="fillProductPrice"/>
+        <click selector="{{AdminSlideOutDialogSection.doneButton}}" stepKey="clickAdvancedPricingDoneButton"/>
+
+        <generateDate date="+2 minute" format="m/d/Y g:i A" stepKey="generateStartDate"/>
+        <generateDate date="+3 minute" format="m/d/Y g:i A" stepKey="generateEndDate"/>
+        <generateDate date="now" format="s" stepKey="seconds"/>
+        <generateDate date="+2 minute" format="U" stepKey="generateStartDateTS"/>
+        <generateDate date="+3 minute" format="U" stepKey="generateEndDateTS"/>
+        <actionGroup ref="FillScheduleUpdateHeaderForProductActionGroup" stepKey="fillScheduleUpdateHeader">
+            <argument name="staging" value="S5UpdateNameStaging"/>
+            <argument name="timeStart" value="{$generateStartDate}"/>
+            <argument name="timeEnd" value="{$generateEndDate}"/>
+        </actionGroup>
+
+        <!--Save Update and check the Update is appears in "Scheduled Changes" grid-->
+        <actionGroup ref="SaveScheduleUpdateForProductActionGroup" stepKey="saveScheduleUpdateForProduct">
+            <argument name="staging" value="S5UpdateNameStaging"/>
+        </actionGroup>
+
+        <!--Click *Preview* and check product with applied special price-->
+        <actionGroup ref="PreviewProductStagingUpdateSpecialPrice" stepKey="checkPreviewProductSpecialPrice">
+            <argument name="staging" value="S5UpdateNameStaging"/>
+            <argument name="productPrice" value="$77.00"/>
+        </actionGroup>
+
+        <!-- Wait until update is applied-->
+        <generateDate date="now" format="U" stepKey="nowDateTS1"/>
+        <executeJS function="return ({$generateStartDateTS} - {$seconds} - {$nowDateTS1} + 5) > 0 ? ({$generateStartDateTS} - {$seconds} - {$nowDateTS1} + 5) : 0;" stepKey="calcWaitPeriod1"/>
+        <wait time="$calcWaitPeriod1" stepKey="wait1"/>
+        <!--Run cron to update to be applied-->
+        <magentoCLI command="cron:run --group=staging" stepKey="runCron"/>
+        <magentoCLI command="cron:run --group=staging" stepKey="runCron2"/>
+        <!--Check changes on frontend-->
+        <amOnPage url="{{StorefrontProductPage.url($$createSimpleProduct.custom_attributes[url_key]$$)}}" stepKey="goToCreatedProductPage"/>
+        <see selector="{{StorefrontProductInfoMainSection.specialPrice}}" userInput="$77.00" stepKey="seeProductPrice2"/>
+
+        <!-- Wait until update is rolled back-->
+        <generateDate date="now" format="U" stepKey="nowDateTS2"/>
+        <executeJS function="return ({$generateEndDateTS} - {$seconds} - {$nowDateTS2} + 5) > 0 ? ({$generateEndDateTS} - {$seconds} - {$nowDateTS2} + 5) : 0;" stepKey="calcWaitPeriod2"/>
+        <wait time="$calcWaitPeriod2" stepKey="wait2"/>
+        <!--Run cron to update to be applied-->
+        <magentoCLI command="cron:run --group=staging" stepKey="runCron3"/>
+        <magentoCLI command="cron:run --group=staging" stepKey="runCron4"/>
+        <!--Check changes on frontend-->
+        <amOnPage url="{{StorefrontProductPage.url($$createSimpleProduct.custom_attributes[url_key]$$)}}" stepKey="goToCreatedProductPage2"/>
+        <dontSee selector="{{StorefrontProductInfoMainSection.specialPrice}}" userInput="$77.00" stepKey="dontSeeProductSpecialPrice"/>
+        <see selector="{{StorefrontProductInfoMainSection.productPrice}}" userInput="$$$createSimpleProduct.price$$" stepKey="checkProductPrice2"/>
+    </test>
+</tests>

@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+ /**
+  * Copyright © Magento, Inc. All rights reserved.
+  * See COPYING.txt for license details.
+  */
+-->
+
+<tests xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xsi:noNamespaceSchemaLocation="urn:magento:mftf:Test/etc/testSchema.xsd">
+    <test name="StorefrontAssertCalendarButtonNearDateFieldCustomerAttributeTest">
+        <annotations>
+            <features value="CustomAttributeManagement"/>
+            <stories value="Unexpected displaying of a 'Date' customer attribute on the Storefront"/>
+            <title value="Check calendar button near 'Date' field."/>
+            <description value="Assert calendar button near 'Date' field customer attribute on customer create page."/>
+            <severity value="AVERAGE"/>
+            <testCaseId value="MC-39117"/>
+            <useCaseId value="MC-37635"/>
+            <group value="Customer"/>
+        </annotations>
+        <before>
+            <actionGroup ref="AdminLoginActionGroup" stepKey="LoginAsAdmin"/>
+            <actionGroup ref="AdminCreateCustomerCustomAttribute" stepKey="createCustomerAttributeDate">
+                <argument name="customerAttribute" value="AttributeDateData"/>
+            </actionGroup>
+            <magentoCron groups="index" stepKey="reindex"/>
+        </before>
+        <after>
+            <actionGroup ref="AdminDeleteCustomerCustomAttributeActionGroup" stepKey="deleteAttribute">
+                <argument name="attributeLabel" value="{{AttributeDateData.label}}"/>
+            </actionGroup>
+            <magentoCron groups="index" stepKey="reindex"/>
+            <actionGroup ref="AdminLogoutActionGroup" stepKey="logoutFromAdmin"/>
+        </after>
+
+        <actionGroup ref="StorefrontOpenCustomerAccountCreatePageActionGroup" stepKey="openCreateAccountPage"/>
+        <actionGroup ref="StorefrontAssertCalendarButtonNearDateFieldActionGroup" stepKey="assertCalendarButton">
+            <argument name="attributeCode" value="{{AttributeDateData.code}}"/>
+        </actionGroup>
+    </test>
+</tests>

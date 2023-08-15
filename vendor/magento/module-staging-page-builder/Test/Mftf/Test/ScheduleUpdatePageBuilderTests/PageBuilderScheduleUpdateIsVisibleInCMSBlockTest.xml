@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+ /**
+  * Copyright © Magento, Inc. All rights reserved.
+  * See COPYING.txt for license details.
+  */
+-->
+<tests xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:noNamespaceSchemaLocation="urn:magento:mftf:Test/etc/testSchema.xsd">
+    <test name="PageBuilderScheduleUpdateIsVisibleInCMSBlockTest" extends="PageBuilderScheduleUpdateIsVisibleInCMSPageTest">
+        <annotations>
+            <features value="PageBuilder"/>
+            <stories value="Schedule Update - CMS Block"/>
+            <title value="PageBuilder is visible from Schedule Update in CMS Block"/>
+            <description value="This test is to ensure that the user can see and add a content type in PageBuilder stage for Schedule Update in a CMS Block."/>
+            <severity value="BLOCKER"/>
+            <useCaseId value="MC-5773"/>
+            <testCaseId value="MC-14906"/>
+            <group value="pagebuilder"/>
+            <group value="pagebuilder-ee"/>
+            <group value="pagebuilder-staging"/>
+            <group value="pagebuilder-cms-block"/>
+            <group value="pagebuilder-tab"/>
+        </annotations>
+        <before>
+            <createData entity="_emptyCmsBlock" stepKey="createCMSPage"/>
+            <actionGroup ref="NavigateToCreatedCMSBlockPageActionGroup" stepKey="navigateToCMSPage">
+                <argument name="CMSBlockPage" value="$$createCMSPage$$"/>
+            </actionGroup>
+            <actionGroup ref="AdminOpenPageBuilderFromContentPreviewOverlayActionGroup" stepKey="switchToPageBuilderStage">
+                <argument name="pageBuilderArea" value="{{AdminStagingSlideOutSection.cmsStagingPageBase}}"/>
+            </actionGroup>
+            <actionGroup ref="dragContentTypeToContainer" stepKey="dragRowToRootContainer">
+                <argument name="contentType" value="PageBuilderRowContentType"/>
+                <argument name="containerTargetIndex" value="2"/>
+                <argument name="containerTargetType" value="PageBuilderRootContainerContentType"/>
+                <argument name="pageBuilderArea" value="{{AdminStagingSlideOutSection.cmsStagingPageBase}}"/>
+            </actionGroup>
+        </before>
+        <seeElement selector="{{PageBuilderStage.stageWrapper}}" stepKey="seeElementPageBuilderStage"/>
+        <actionGroup ref="dragContentTypeToContainer" stepKey="dragTabsContentTypeToStage">
+            <argument name="contentType" value="PageBuilderTabsContentType"/>
+            <argument name="containerTargetIndex" value="1"/>
+            <argument name="pageBuilderArea" value="{{AdminStagingSlideOutSection.cmsStagingPageBase}}"/>
+        </actionGroup>
+    </test>
+</tests>

@@ -1,0 +1,30 @@
+<?xml version="1.0"?>
+<!--
+/**
+ * Copyright © Magento, Inc. All rights reserved.
+ * See COPYING.txt for license details.
+ */
+-->
+<config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="urn:magento:module:Magento_Sales:etc/sales.xsd">
+    <section name="quote">
+        <group name="totals">
+            <item name="giftwrapping" instance="Magento\GiftWrapping\Model\Total\Quote\Giftwrapping" sort_order="190">
+                <renderer name="frontend" instance="Magento\GiftWrapping\Block\Checkout\Totals"/>
+            </item>
+            <item name="pretax_giftwrapping" instance="Magento\GiftWrapping\Model\Total\Quote\Tax\Giftwrapping" sort_order="425"/>
+            <item name="tax_giftwrapping" instance="Magento\GiftWrapping\Model\Total\Quote\Tax\GiftwrappingAfterTax" sort_order="475"/>
+        </group>
+    </section>
+    <section name="order_invoice">
+        <group name="totals">
+            <item name="giftwrapping" instance="Magento\GiftWrapping\Model\Total\Invoice\Giftwrapping" sort_order="400"/>
+            <item name="tax_giftwrapping" instance="Magento\GiftWrapping\Model\Total\Invoice\Tax\Giftwrapping" sort_order="300"/>
+        </group>
+    </section>
+    <section name="order_creditmemo">
+        <group name="totals">
+            <item name="giftwrapping" instance="Magento\GiftWrapping\Model\Total\Creditmemo\Giftwrapping" sort_order="450"/>
+            <item name="tax_giftwrapping" instance="Magento\GiftWrapping\Model\Total\Creditmemo\Tax\Giftwrapping" sort_order="350"/>
+        </group>
+    </section>
+</config>

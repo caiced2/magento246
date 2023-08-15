@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+/**
+   * Copyright © Magento, Inc. All rights reserved.
+   * See COPYING.txt for license details.
+   */
+-->
+<sections xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:noNamespaceSchemaLocation="urn:magento:mftf:Page/etc/SectionObject.xsd">
+    <section name="AdminScheduledChangesSection">
+        <element name="scheduleStartDate" type="text" selector="//tr['schedule-start']//time[text()='{{var1}}']" parameterized="true"/>
+        <element name="scheduleEndDate" type="text" selector="//tr['schedule-end']//time[text()='{{var1}}']" parameterized="true"/>
+        <element name="scheduleStartTime" type="text" selector="//tr['schedule-start']//td['schedule-time']//time[text()='{{var1}}']" parameterized="true"/>
+        <element name="scheduleEndTime" type="text" selector="//tr['schedule-end']//td['schedule-time']//time[text()='{{var1}}']" parameterized="true"/>
+        <element name="scheduleLabel" type="text" selector="//tr['schedule-start']//td[text()='{{dateOrTime}}']" parameterized="true"/>
+        <element name="scheduleDetails" type="text" selector="//tr['schedule-start']//div[text()='{{scheduleName}}']" parameterized="true"/>
+        <element name="scheduleActions" type="button" selector="//tbody['schedule-item']//td['schedule-details']//div[text()='{{var1}}']/parent::div/parent::td/parent::tr/td['schedule-actions']//a[text()='{{var2}}']" parameterized="true" timeout="20"/>
+        <element name="scheduleViewEdit" type="button" selector="//tbody['schedule-item']//td['schedule-details']//div[text()='{{var1}}']/parent::div/parent::td/parent::tr/td['schedule-actions']//a[text()='View/Edit']" parameterized="true" timeout="20"/>
+        <element name="scheduleName" type="text" selector="//strong[text()='{{name}}']" parameterized="true"/>
+        <element name="viewEditButton" type="button" selector="//span[text()='View/Edit']"/>
+        <element name="scheduleStartDateByIndex" type="text" selector=".schedule-table>.schedule-item:nth-child({{index}})> tr.schedule-start > td.schedule-date > time" parameterized="true"/>
+        <element name="scheduleStartTimeByIndex" type="text" selector=".schedule-table>.schedule-item:nth-child({{index}})> tr.schedule-start > td.schedule-time > time" parameterized="true"/>
+        <element name="scheduleEndDateByIndex" type="text" selector=".schedule-table>.schedule-item:nth-child({{index}})> tr.schedule-end > td.schedule-date > time" parameterized="true"/>
+        <element name="scheduleEndTimeByIndex" type="text" selector=".schedule-table>.schedule-item:nth-child({{index}})> tr.schedule-end > td.schedule-time > time" parameterized="true"/>
+        <element name="scheduleNameByIndex" type="text" selector=".schedule-table>.schedule-item:nth-child({{index}})>  tr.schedule-start > td.schedule-details>div.schedule-name" parameterized="true"/>
+        <element name="scheduleItemName" type="text" selector=".schedule-table>.schedule-item>  tr.schedule-start > td.schedule-details>div.schedule-name"/>
+        <element name="scheduleDescriptionByIndex" type="text" selector=".schedule-table>.schedule-item:nth-child({{index}})>  tr.schedule-start > td.schedule-details>div.limited-text" parameterized="true"/>
+        <element name="scheduleItemDescription" type="text" selector=".schedule-table>.schedule-item>  tr.schedule-start > td.schedule-details>div.limited-text"/>
+    </section>
+</sections>

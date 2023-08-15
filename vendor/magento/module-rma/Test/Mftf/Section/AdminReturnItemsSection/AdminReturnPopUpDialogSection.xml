@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+ /**
+  * Copyright © Magento, Inc. All rights reserved.
+  * See COPYING.txt for license details.
+  */
+-->
+<sections xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:noNamespaceSchemaLocation="urn:magento:mftf:Page/etc/SectionObject.xsd">
+    <section name="AdminReturnPopUpDialogSection">
+        <element name="rmaReasonContent" type="text" selector="#rma_reason_content"/>
+        <element name="customAttribute" type="select" selector="aside[role='dialog'] .field-{{attributeCode}} .admin__field-control {{fieldType}}" parameterized="true"/>
+        <element name="okButton" type="button" selector="//footer[@class='modal-footer']/button"/>
+        <element name="acceptButton" type="button" selector="aside[role='dialog'] button.action-primary" timeout="30"/>
+    </section>
+</sections>

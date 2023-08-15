@@ -1,0 +1,83 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+ /**
+  * Copyright © Magento, Inc. All rights reserved.
+  * See COPYING.txt for license details.
+  */
+-->
+
+<tests xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xsi:noNamespaceSchemaLocation="urn:magento:mftf:Test/etc/testSchema.xsd">
+    <test name="AdminCheckTierPriceConditionOnCategoryPageTest">
+        <annotations>
+            <features value="VisualMerchandiser"/>
+            <stories value="Tier price"/>
+            <group value="VisualMerchandiser"/>
+            <title value="Tier price conditions on category page with Fixed Price"/>
+            <description value="Tier price conditions on category page with Fixed Price"/>
+            <severity value="MAJOR"/>
+            <testCaseId value="MC-12418"/>
+            <useCaseId value="MAGETWO-96129"/>
+        </annotations>
+        <before>
+            <!-- Create a new category -->
+            <createData entity="ApiCategory" stepKey="createCategory"/>
+            <!-- Create product -->
+            <createData entity="SimpleProduct2" stepKey="createSimpleProduct"/>
+            <!-- Add Tier Price to Visible Attributes for Category Rules -->
+            <magentoCLI command="config:set visualmerchandiser/options/smart_attributes tier_price" stepKey="setTierPriceToVisibleAttributesForCategoryRules"/>
+            <!-- Flush cache -->
+            <actionGroup ref="CliCacheFlushActionGroup" stepKey="flushCache">
+                <argument name="tags" value="config"/>
+            </actionGroup>
+            <actionGroup ref="AdminLoginActionGroup" stepKey="loginAsAdmin"/>
+        </before>
+        <after>
+            <actionGroup ref="AdminLogoutActionGroup" stepKey="logOut"/>
+            <deleteData createDataKey="createSimpleProduct" stepKey="deleteSimpleProduct"/>
+            <deleteData createDataKey="createCategory" stepKey="deleteCategory"/>
+            <!-- Revert default Visible Attributes for Category Rules -->
+            <magentoCLI command="config:set visualmerchandiser/options/smart_attributes name,sku,price,quantity_and_stock_status,color" stepKey="setTierPriceToVisibleAttributesForCategoryRules"/>
+            <!-- Flush cache -->
+            <actionGroup ref="CliCacheFlushActionGroup" stepKey="flushCache">
+                <argument name="tags" value="config"/>
+            </actionGroup>
+        </after>
+        <!--Set tier price to product-->
+        <amOnPage url="{{AdminProductEditPage.url($$createSimpleProduct.id$$)}}" stepKey="goToAdminProductPage"/>
+        <waitForPageLoad stepKey="waitForProductPageLoad"/>
+        <actionGroup ref="ProductSetAdvancedTierFixedPricingActionGroup" stepKey="addTierPriceProduct">
+            <argument name="website" value="{{tierPriceOnDefault.website_0}}"/>
+            <argument name="group" value="{{tierPriceOnDefault.customer_group_0}}"/>
+            <argument name="price" value="Fixed"/>
+            <argument name="amount" value="10"/>
+        </actionGroup>
+        <!-- Add the created product in this category -->
+        <amOnPage url="{{AdminProductEditPage.url($$createSimpleProduct.id$$)}}" stepKey="goToProductEditPage"/>
+        <waitForPageLoad stepKey="waitForProductEditPageLoad"/>
+        <actionGroup ref="AdminAssignCategoryToProductAndSaveActionGroup" stepKey="assignProduct">
+            <argument name="categoryName" value="$$createCategory.name$$"/>
+        </actionGroup>
+        <!--Go to category page and enable match products by rule-->
+        <amOnPage url="{{AdminCategoryEditPage.url($$createCategory.id$$)}}" stepKey="goToCreatedCategoryPage1"/>
+        <waitForPageLoad stepKey="waitForCategoryEditPageLoad1"/>
+        <actionGroup ref="OpenProductsInCategorySectionActionGroup" stepKey="OpenProductsInCategorySection"/>
+        <actionGroup ref="EnableMatchProductsByRuleActionGroup" stepKey="EnableMatchProductsByRule"/>
+        <!--Add condition-->
+        <actionGroup ref="AdminAddSmartCategoryConditionActionGroup" stepKey="createCondition">
+            <argument name="condition" value="SmartCategoryConditionTierPrice"/>
+        </actionGroup>
+        <!--Save Category-->
+        <click selector="{{AdminCategoryMainActionsSection.SaveButton}}" stepKey="saveCategory"/>
+        <waitForPageLoad stepKey="waitForCategoryPageSave"/>
+        <!--Assert Product in category page, in Products in Category section-->
+        <amOnPage url="{{AdminCategoryPage.url}}" stepKey="goToCreatedCategoryPage2"/>
+        <waitForPageLoad stepKey="waitForCategoryEditPageLoad2"/>
+        <reloadPage stepKey="refreshPage"/>
+        <waitForPageLoad stepKey="waitForCategoryEditPageLoad3"/>
+        <actionGroup ref="SeeProductInProductCategoryGridActionGroup" stepKey="seeSimpleProductInCategoryGrid">
+            <argument name="product" value="$$createSimpleProduct$$"/>
+            <argument name="categoryEntity" value="$$createCategory$$"/>
+        </actionGroup>
+    </test>
+</tests>

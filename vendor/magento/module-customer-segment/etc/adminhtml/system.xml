@@ -1,0 +1,29 @@
+<?xml version="1.0"?>
+<!--
+/**
+ * Copyright © Magento, Inc. All rights reserved.
+ * See COPYING.txt for license details.
+ */
+-->
+<config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="urn:magento:module:Magento_Config:etc/system_file.xsd">
+    <system>
+        <section id="customer" translate="label">
+            <group id="magento_customersegment" translate="label" showInDefault="1" showInWebsite="0" showInStore="0" sortOrder="100">
+                <label>Customer Segments</label>
+                <field id="is_enabled" translate="label" type="select" sortOrder="5" showInDefault="1" showInWebsite="0" showInStore="0">
+                    <label>Enable Customer Segment Functionality</label>
+                    <source_model>Magento\Config\Model\Config\Source\Yesno</source_model>
+                    <backend_model>Magento\Config\Model\Config\Backend\Cache</backend_model>
+                </field>
+                <field id="real_time_check_if_customer_is_matched_by_segment" translate="label comment" type="select" sortOrder="10" showInDefault="1" showInWebsite="0" showInStore="0">
+                    <label>Real-time Check if Customer is Matched by Segment</label>
+                    <source_model>Magento\Config\Model\Config\Source\Yesno</source_model>
+                    <comment>Real-time check works with split database and when there are no registered customers, but it impacts performance.</comment>
+                    <depends>
+                        <field id="customer/magento_customersegment/is_enabled">1</field>
+                    </depends>
+                </field>
+            </group>
+        </section>
+    </system>
+</config>

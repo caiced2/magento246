@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+ /**
+  * Copyright © Magento, Inc. All rights reserved.
+  * See COPYING.txt for license details.
+  */
+-->
+<sections xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:noNamespaceSchemaLocation="urn:magento:mftf:Page/etc/SectionObject.xsd">
+    <section name="AdminSlideOutDialogSection">
+        <element name="previewButton" type="button" selector="//*[contains(@class, 'modal-slide') and contains(@class, '_show')]//*[contains(@class, 'page-actions')]//button[normalize-space(.)='Preview']" timeout="30"/>
+    </section>
+</sections>

@@ -1,0 +1,68 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+ /**
+  * Copyright © Magento, Inc. All rights reserved.
+  * See COPYING.txt for license details.
+  */
+-->
+
+<tests xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xsi:noNamespaceSchemaLocation="urn:magento:mftf:Test/etc/testSchema.xsd">
+    <test name="AdminFindCustomerByNumberOfOrdersTest">
+        <annotations>
+            <features value="CustomerSegment"/>
+            <stories value="MAGETWO-91644: In a multi-site setup, customers are not matched in Customer Segments based on Number of Orders"/>
+            <title value="Finding customers in Customer Segments based on Number of Orders = 0"/>
+            <description value="Verify that there is matched customer in Customer Segments based on Number of Orders = 0"/>
+            <severity value="MAJOR"/>
+            <testCaseId value="MAGETWO-95095"/>
+            <group value="CustomerSegment"/>
+        </annotations>
+        <before>
+            <!--Login as admin-->
+            <actionGroup ref="AdminLoginActionGroup" stepKey="loginAsAdmin"/>
+            <!--Create Customer-->
+            <createData entity="Simple_US_CA_Customer" stepKey="createCustomer"/>
+        </before>
+        <after>
+            <actionGroup ref="FindAndDeleteCustomerSegmentActionGroup" stepKey="deleteCustomerSegment">
+                <argument name="segmentName" value="{{CustomerSegmentForNoorders.name}}"/>
+            </actionGroup>
+            <magentoCron groups="index" stepKey="reindex"/>
+            <actionGroup ref="AdminLogoutActionGroup" stepKey="logout"/>
+            <deleteData createDataKey="createCustomer" stepKey="deleteCustomer"/>
+        </after>
+
+        <!--Create new Segment -->
+        <actionGroup ref="CreateCustomerSegmentActionGroup" stepKey="createNewSegment">
+            <argument name="customerSegment" value="CustomerSegmentForNoorders"/>
+        </actionGroup>
+        <actionGroup ref="CliConsumerStartActionGroup" stepKey="startMessageQueue">
+            <argument name="consumerName" value="{{AdminCustomerSegmentConsumerData.consumerName}}"/>
+            <argument name="maxMessages" value="{{AdminCustomerSegmentConsumerData.messageLimit}}"/>
+        </actionGroup>
+        <reloadPage stepKey="refreshPage"/>
+        <waitForPageLoad stepKey="waitForPageLoaded"/>
+        <!--Search and open new Segment-->
+        <actionGroup ref="FindAndOpenCustomerSegmentActionGroup" stepKey="clickToEditSegment">
+            <argument name="segmentName" value="{{CustomerSegmentForNoorders.name}}"/>
+        </actionGroup>
+        <!--Add New Condition-->
+        <actionGroup ref="EditConditionsInCustomerSegmentActionGroup" stepKey="editCondition">
+            <argument name="conditionData" value="CustomerSegmentGroupConditionsData"/>
+        </actionGroup>
+        <actionGroup ref="CliConsumerStartActionGroup" stepKey="startMessageQueue2">
+            <argument name="consumerName" value="{{AdminCustomerSegmentConsumerData.consumerName}}"/>
+            <argument name="maxMessages" value="{{AdminCustomerSegmentConsumerData.messageLimit}}"/>
+        </actionGroup>
+        <reloadPage stepKey="refreshPage2"/>
+        <waitForPageLoad stepKey="waitForPageLoaded2"/>
+        <actionGroup ref="FindAndOpenCustomerSegmentActionGroup" stepKey="clickToEditSegmentAgain">
+            <argument name="segmentName" value="{{CustomerSegmentForNoorders.name}}"/>
+        </actionGroup>
+        <!-- Verify customer is between Matched Customers -->
+        <actionGroup ref="VerifyCustomerBetweenMatchedCustomersActionGroup" stepKey="checkCustomerIsBetweenMatchedCustomers">
+            <argument name="emailValue" value="$$createCustomer.email$$"/>
+        </actionGroup>
+    </test>
+</tests>

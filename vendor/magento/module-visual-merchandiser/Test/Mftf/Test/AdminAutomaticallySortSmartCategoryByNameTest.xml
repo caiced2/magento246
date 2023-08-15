@@ -1,0 +1,105 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+ /**
+  * Copyright © Magento, Inc. All rights reserved.
+  * See COPYING.txt for license details.
+  */
+-->
+
+<tests xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xsi:noNamespaceSchemaLocation="urn:magento:mftf:Test/etc/testSchema.xsd">
+    <test name="AdminAutomaticallySortSmartCategoryByNameTest">
+        <annotations>
+            <features value="VisualMerchandiser"/>
+            <stories value="Smart Categories"/>
+            <title value="Merchant should be able to automatically sort smart category by name"/>
+            <description value="Merchant should be able to automatically sort smart category by name"/>
+            <severity value="CRITICAL"/>
+            <testCaseId value="MC-3290"/>
+            <group value="visualMerchandiser"/>
+        </annotations>
+        <before>
+            <!-- Step 1. Login As Admin -->
+            <actionGroup ref="AdminLoginActionGroup" stepKey="loginAsAdmin"/>
+            <!-- Delete all preexisting products -->
+            <comment userInput="Delete all preexisting products" stepKey="deleteAllPreexistingProducts"/>
+            <actionGroup ref="AdminOpenProductIndexPageActionGroup" stepKey="openProductIndexPage"/>
+            <actionGroup ref="ClearFiltersAdminDataGridActionGroup" stepKey="clearGridFilter"/>
+            <actionGroup ref="AdminDataGridSelectPerPageActionGroup" stepKey="selectNumberOfProductsPerPage">
+                <argument name="perPage" value="100"/>
+            </actionGroup>
+            <actionGroup ref="DeleteProductsIfTheyExistActionGroup" stepKey="deleteAllProducts"/>
+            <see selector="{{AdminDataGridTableSection.dataGridEmpty}}" userInput="We couldn't find any records." stepKey="assertDataGridEmptyMessage"/>
+            <actionGroup ref="AdminDataGridSelectPerPageActionGroup" stepKey="setNumberOfProductsPerPageToDefault">
+                <argument name="perPage" value="20"/>
+            </actionGroup>
+            <!--
+            Preconditions:
+            Create any Category, create three Products Shoes for man, Shirt, Cap with prices 34$, 200$, 300$
+            -->
+            <createData entity="_defaultCategory" stepKey="createCategory"/>
+            <createData entity="SimpleProduct2" stepKey="createShoesProduct">
+                <field key="price">34</field>
+                <field key="name">Shoes for man</field>
+            </createData>
+            <createData entity="SimpleProduct2" stepKey="createShirtProduct">
+                <field key="price">200</field>
+                <field key="name">Shirt</field>
+            </createData>
+            <createData entity="SimpleProduct2" stepKey="createCapProduct">
+                <field key="price">300</field>
+                <field key="name">Cap</field>
+            </createData>
+        </before>
+        <after>
+            <deleteData createDataKey="createShoesProduct" stepKey="deleteShoesProduct"/>
+            <deleteData createDataKey="createShirtProduct" stepKey="deleteShirtProduct"/>
+            <deleteData createDataKey="createCapProduct" stepKey="deleteCapProduct"/>
+            <deleteData createDataKey="createCategory" stepKey="deleteCategory"/>
+            <actionGroup ref="AdminLogoutActionGroup" stepKey="logout"/>
+        </after>
+        <!-- Step 2. Navigate to Categories Page -->
+        <!-- Step 3. Select created Category -->
+        <actionGroup ref="OpenCategoryFromCategoryTreeActionGroup" stepKey="getCategoryId">
+            <argument name="category" value="$$createCategory.name$$"/>
+        </actionGroup>
+        <!-- Step 4. Navigate to Products in Category selector and click on selector -->
+        <actionGroup ref="OpenProductsInCategorySectionActionGroup" stepKey="openProductsInCategorySectionBeforeSort"/>
+        <!-- Step 5. Assert Grid Products in Products in Category section -->
+        <actionGroup ref="AdminAssertProductsGridIsEmptyActionGroup" stepKey="gridIsEmpty"/>
+        <!-- Step 6. Match products by rule set to Yes -->
+        <actionGroup ref="EnableMatchProductsByRuleActionGroup" stepKey="enableMatchProductsByRule"/>
+        <!-- Step 7. Create Condition for matching to Category and sort products by descending -->
+        <actionGroup ref="AdminSortingProductsInCategoryPageActionGroup" stepKey="automaticSortingByPrice"/>
+        <!-- Step 8. Create Condition for matching to Category -->
+        <actionGroup ref="AdminAddSmartCategoryConditionActionGroup" stepKey="createCondition"/>
+        <!-- Step 9. Click Save Button on Category Page -->
+        <actionGroup ref="AdminSaveCategoryFormActionGroup" stepKey="clickSaveButton"/>
+        <!-- Step 10. Navigate to Products in Category selector in Admin-->
+        <actionGroup ref="OpenProductsInCategorySectionActionGroup" stepKey="openProductsInCategorySectionAfterSort"/>
+        <!-- Step 11. In Admin assert that product don't see in Category Page-->
+        <actionGroup ref="AdminCheckProductIsMissingInCategoryProductsGridActionGroup" stepKey="dontSeeProducts">
+            <argument name="productName" value="$$createShoesProduct.name$$"/>
+        </actionGroup>
+        <!-- Step 12-13. Assert products in Admin in Category Page grid are in valid sequence -->
+        <seeElement selector="//table[@id='catalog_category_products_table']//td[contains(text(),'$$createCapProduct.name$$')]//following::td[contains(text(),'$$createShirtProduct.name$$')]" stepKey="checkAdminProductsInGrid"/>
+        <!-- Step 14. Check storefront category page for products -->
+        <!-- Step 15. Assert that product don't see correct on Storefront -->
+        <actionGroup ref="StorefrontNavigateCategoryPageActionGroup" stepKey="navigateToStorefrontCategoryPage">
+            <argument name="category" value="$$createCategory$$"/>
+        </actionGroup>
+        <actionGroup ref="StorefrontCheckProductIsMissingInCategoryProductsPageActionGroup" stepKey="dontSeeStorefrontProduct">
+            <argument name="productName" value="$$createShoesProduct.name$$"/>
+        </actionGroup>
+        <!-- Step 16. Assert first position of product on Storefront in Category Page-->
+        <actionGroup ref="StorefrontCheckProductPositionActionGroup" stepKey="checkPositionStorefrontProduct">
+            <argument name="productName" value="$$createShirtProduct.name$$"/>
+            <argument name="position" value="2"/>
+        </actionGroup>
+        <!-- Step 17. Assert second position of product on Storefront in Category Page-->
+        <actionGroup ref="StorefrontCheckProductPositionActionGroup" stepKey="checkPositionStorefrontProductsInSort">
+            <argument name="productName" value="$$createCapProduct.name$$"/>
+            <argument name="position" value="1"/>
+        </actionGroup>
+    </test>
+</tests>

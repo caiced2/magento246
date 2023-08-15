@@ -1,0 +1,85 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+ /**
+  * Copyright © Magento, Inc. All rights reserved.
+  * See COPYING.txt for license details.
+  */
+-->
+
+<tests xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xsi:noNamespaceSchemaLocation="urn:magento:mftf:Test/etc/testSchema.xsd">
+    <test name="RestrictedUserRoleProductAttributeTest">
+        <annotations>
+            <features value="AdminGws"/>
+            <stories value="Restrict users"/>
+            <title value="Admin with restricted access to Product attributes should not be able to add an attribute"/>
+            <description value="Admin with restricted attribute access should not be able to add attribute from Product Edit Page "/>
+            <severity value="MAJOR"/>
+            <testCaseId value="MAGETWO-92777"/>
+            <group value="userRole"/>
+            <group value="pr_exclude"/>
+        </annotations>
+        <before>
+            <createData entity="adminProductInWebsiteRole" stepKey="userRoleLimitedProductAttribute"/>
+            <createData entity="SimpleSubCategory" stepKey="createCategory"/>
+            <createData entity="SimpleProduct" stepKey="createSimpleProduct">
+                <requiredEntity createDataKey="createCategory"/>
+            </createData>
+            <createData entity="restrictedWebUser" stepKey="userRestrictedProductAttributeAccess"/>
+        </before>
+        <after>
+            <deleteData createDataKey="createSimpleProduct" stepKey="deleteProduct"/>
+            <deleteData createDataKey="createCategory" stepKey="deleteCategory"/>
+            <actionGroup ref="AdminLoginActionGroup" stepKey="loginAsAdminWithAllAccess"/>
+            <actionGroup ref="AdminDeleteUserRoleActionGroup" stepKey="deleteRestrictedRole">
+                <argument name="roleName" value="$$userRoleLimitedProductAttribute.rolename$$"/>
+            </actionGroup>
+            <actionGroup ref="ClearFiltersAdminDataGridActionGroup" stepKey="resetRoleFilters"/>
+            <actionGroup ref="AdminLogoutActionGroup" stepKey="amOnLogoutPage"/>
+        </after>
+        <actionGroup ref="AdminLoginActionGroup" stepKey="loginAsAdmin"/>
+
+        <!--Search for the restrictedUser and assign the above role -->
+        <amOnPage url="{{AdminUsersPage.url}}" stepKey="amOnAdminUsersPage"/>
+        <fillField stepKey="fillUsernameSearch" selector="{{AdminUserGridSection.usernameFilterTextField}}" userInput="$$userRestrictedProductAttributeAccess.username$$"/>
+        <click stepKey="clickSearchButton" selector="{{AdminUserGridSection.searchButton}}"/>
+        <waitForPageLoad stepKey="wait1" time="10"/>
+        <see stepKey="seeFoundUsername" selector="{{AdminUserGridSection.usernameInFirstRow}}" userInput="$$userRestrictedProductAttributeAccess.username$$"/>
+        <click stepKey="clickFoundUsername" selector="{{AdminUserGridSection.searchResultFirstRow}}"/>
+        <waitForPageLoad stepKey="wait2" time="30"/>
+        <seeInField stepKey="seeUsernameInField" selector="{{AdminEditUserSection.usernameTextField}}" userInput="$$userRestrictedProductAttributeAccess.username$$"/>
+        <fillField stepKey="fillCurrentPassword" selector="{{AdminEditUserSection.currentPasswordField}}" userInput="{{_ENV.MAGENTO_ADMIN_PASSWORD}}"/>
+        <scrollToTopOfPage stepKey="scrollToTopOfPage" />
+        <click stepKey="clickUserRoleTab" selector="{{AdminEditUserSection.userRoleTab}}"/>
+
+        <fillField selector="{{AdminEditUserSection.roleNameFilterTextField}}" userInput="$$userRoleLimitedProductAttribute.rolename$$" stepKey="fillRoleNameSearch"/>
+        <click stepKey="clickSearchButtonUserRole" selector="{{AdminEditUserSection.searchButton}}"/>
+        <waitForPageLoad stepKey="wait3" time="10"/>
+        <see stepKey="seeFoundRoleName" selector="{{AdminEditUserSection.roleNameInFirstRow}}" userInput="$$userRoleLimitedProductAttribute.rolename$$"/>
+        <click stepKey="clickFoundRoleName" selector="{{AdminEditUserSection.searchResultFirstRow}}"/>
+        <click stepKey="clickSaveButton" selector="{{AdminEditUserSection.saveButton}}"/>
+        <waitForPageLoad stepKey="wait4" time="10"/>
+        <see stepKey="saveUserSuccessMessage" selector="{{AdminUserGridSection.successMessage}}" userInput="You saved the user."/>
+        <actionGroup ref="AdminLogoutActionGroup" stepKey="amOnLogoutPage2"/>
+        <waitForPageLoad stepKey="wait5" time="10"/>
+
+        <!--login as restricted user-->
+        <amOnPage stepKey="amOnAdminLoginPage" url="{{AdminLoginPage.url}}"/>
+        <fillField selector="{{AdminLoginFormSection.username}}" userInput="$$userRestrictedProductAttributeAccess.username$$" stepKey="fillUsername" />
+        <fillField selector="{{AdminLoginFormSection.password}}" userInput="$$userRestrictedProductAttributeAccess.password$$" stepKey="fillPassword"/>
+        <click selector="{{AdminLoginFormSection.signIn}}" stepKey="clickOnSignIn2" />
+
+        <!--Search for the product-->
+        <actionGroup ref="SearchForProductOnBackendActionGroup" stepKey="searchForProduct">
+            <argument name="product" value="$$createSimpleProduct$$"/>
+        </actionGroup>
+        <actionGroup ref="OpenEditProductOnBackendActionGroup" stepKey="openEditProduct">
+            <argument name="product" value="$$createSimpleProduct$$"/>
+        </actionGroup>
+
+        <!--Verify that the Add attribute button is not visible on the product Edit Page-->
+        <dontSeeElementInDOM selector="{{AdminProductFormSection.addAttributeBtn}}" stepKey="dontSeeAddAttributeBtn"/>
+        <actionGroup ref="AdminLogoutActionGroup" stepKey="amOnLogoutPage3"/>
+        <waitForPageLoad stepKey="WaitForLoginPageToLoad" time="10"/>
+    </test>
+</tests>

@@ -1,0 +1,22 @@
+<?xml version="1.0"?>
+<!--
+/**
+ * Copyright © Magento, Inc. All rights reserved.
+ * See COPYING.txt for license details.
+ */
+-->
+<page xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="urn:magento:framework:View/Layout/etc/page_configuration.xsd">
+    <body>
+        <referenceBlock name="product.info">
+            <block class="Magento\GiftRegistry\Block\Product\View" name="giftregistry.product.view.customize.button">
+                <action method="setGiftRegistryTemplate">
+                    <argument name="blockName" xsi:type="string">product.info.addtocart.additional</argument>
+                    <argument name="template" xsi:type="string">Magento_GiftRegistry::product/addtocart.phtml</argument>
+                </action>
+                <action method="setGiftRegistryUrl">
+                    <argument name="blockName" xsi:type="string">product.info.addtocart.additional</argument>
+                </action>
+            </block>
+        </referenceBlock>
+    </body>
+</page>

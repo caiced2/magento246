@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+ /**
+  * Copyright © Magento, Inc. All rights reserved.
+  * See COPYING.txt for license details.
+  */
+-->
+
+<sections xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:noNamespaceSchemaLocation="urn:magento:mftf:Page/etc/SectionObject.xsd">
+    <section name="AdminCategoryProductsTileSection">
+        <element name="tileList" type="block" selector="#tab_tile #catalog_category_merchandiser_list"/>
+        <element name="totalCount" type="text" selector="//span[contains(@data-ui-id, 'tile-total-count')]"/>
+        <element name="nextPage" type="button" selector="#tab_tile .action-next" timeout="30"/>
+        <element name="previousPage" type="button" selector="#tab_tile .action-previous" timeout="30"/>
+        <element name="nThTile" type="block" selector=".product_tile:nth-of-type({{n}})" parameterized="true"/>
+        <element name="nThIconGripper" type="button" selector=".product_tile:nth-of-type({{n}}) .icon-gripper>span" parameterized="true"/>
+        <element name="nThRemoveByX" type="button" selector=".product_tile:nth-of-type({{n}}) .remove-product.icon-close-mage" parameterized="true" timeout="30"/>
+        <element name="nThProductInfo" type="text" selector=".product_tile:nth-of-type({{n}}) .info-block" parameterized="true"/>
+        <element name="nThPositionInput" type="input" selector=".product_tile:nth-of-type({{n}}) input" parameterized="true"/>
+        <element name="nThProductName" type="text" selector=".product_tile:nth-of-type({{index}}) .info-block > span:first-child" parameterized="true"/>
+        <element name="productInfo" type="text" selector="#tab_tile #catalog_category_merchandiser_list>li .info-block span"/>
+        <element name="productInfoPrice" type="text" selector=".product_tile:nth-of-type({{n}}) .price" parameterized="true"/>
+        <element name="productInfoStock" type="text" selector="//*[@id='catalog_category_merchandiser_list']/li[{{n}}]//*[contains(text(),'Stock')]" parameterized="true"/>
+        <element name="productName" type="text" selector="#catalog_category_merchandiser_list li.product_tile .info-block > span:nth-of-type(1)"/>
+        <element name="productByPosition" type="text" selector="#catalog_category_merchandiser_list > li:nth-of-type({{position}}) > div.info-block > span:nth-of-type(1)" parameterized="true"/>
+    </section>
+</sections>

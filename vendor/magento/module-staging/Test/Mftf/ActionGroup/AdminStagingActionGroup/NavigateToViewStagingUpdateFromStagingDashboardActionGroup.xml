@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+ /**
+  * Copyright © Magento, Inc. All rights reserved.
+  * See COPYING.txt for license details.
+  */
+-->
+<actionGroups xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:noNamespaceSchemaLocation="urn:magento:mftf:Test/etc/actionGroupSchema.xsd">
+    <actionGroup name="navigateToViewStagingUpdateFromStagingDashboard">
+        <arguments>
+            <argument name="update"/>
+        </arguments>
+        <amOnPage url="{{AdminStagingDashboardPage.url}}" stepKey="amOnStagingDashboardPage"/>
+        <waitForPageLoad stepKey="waitForPageLoad"/>
+        <conditionalClick selector="{{AdminDataGridHeaderSection.clearFilters}}" dependentSelector="{{AdminDataGridHeaderSection.clearFilters}}" visible="true" stepKey="clearExistingOrderFilters"/>
+        <waitForPageLoad stepKey="waitForFiltersCleared"/>
+        <selectOption selector="{{AdminContentStagingDashboardSection.stagingViewTypeSelect}}" userInput="Timeline" stepKey="selectTimelineGrid"/>
+        <waitForElementVisible selector="{{AdminContentStagingDashboardSection.timeLineGrid}}" stepKey="waitForTimelineGrid"/>
+        <fillField selector="{{AdminAssignToExistingUpdateSection.searchStagingName}}" userInput="{{update.updateName}}" stepKey="fillSearchStagingName"/>
+        <click selector="{{AdminAssignToExistingUpdateSection.submitSearch}}" stepKey="clickSubmitSearch"/>
+        <waitForPageLoad stepKey="waitForSearch"/>
+        <click selector="{{AdminContentStagingDashboardSection.timeLineEvent}}" stepKey="clickTimelineEvent"/>
+        <waitForPageLoad time="30" stepKey="waitForPageLoad2"/>
+        <click selector="{{AdminContentStagingDashboardSection.stagingEventsActions(update.updateName, 'View/Edit')}}" stepKey="clickEditLink"/>
+        <waitForPageLoad time="30" stepKey="waitForPageLoad3"/>
+        <seeInTitle userInput="{{update.updateName}}" stepKey="confirmOnEditPage"/>
+    </actionGroup>
+</actionGroups>

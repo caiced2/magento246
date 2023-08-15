@@ -1,0 +1,32 @@
+{
+    "name": "magento/module-re-captcha-gift-card",
+    "description": "Google reCAPTCHA integration for Magento2 Gift Cards",
+    "type": "magento2-module",
+    "license": "OSL-3.0",
+    "version": "1.0.1",
+    "require": {
+        "php": "~8.1.0||~8.2.0",
+        "magento/framework": "*",
+        "magento/module-checkout": "*",
+        "magento/module-gift-card-account": "*",
+        "magento/module-gift-card-account-graph-ql": "*",
+        "magento/module-customer": "*",
+        "magento/module-re-captcha-ui": "*",
+        "magento/module-re-captcha-frontend-ui": "*",
+        "magento/module-re-captcha-admin-ui": "*",
+        "magento/module-re-captcha-validation-api": "*",
+        "magento/module-re-captcha-webapi-api": "*",
+        "magento/module-re-captcha-webapi-ui": "*",
+        "magento/module-re-captcha-webapi-rest": "*",
+        "magento/module-re-captcha-webapi-graph-ql": "*"
+    },
+    "autoload": {
+        "files": [
+            "registration.php"
+        ],
+        "psr-4": {
+            "Magento\\ReCaptchaGiftCard\\": ""
+        }
+    }
+}
+

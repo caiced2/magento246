@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+ /**
+  * Copyright © Magento, Inc. All rights reserved.
+  * See COPYING.txt for license details.
+  */
+-->
+
+<tests xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xsi:noNamespaceSchemaLocation="urn:magento:mftf:Test/etc/testSchema.xsd">
+    <test name="AdminCreateGiftWrappingForMainWebsiteTest">
+        <annotations>
+            <features value="GiftWrapping"/>
+            <stories value="Gift Wrapping"/>
+            <title value="Create Gift Wrapping for Main Website"/>
+            <description value="Admin should be able to create Gift Wrapping for Main Website"/>
+            <severity value="CRITICAL"/>
+            <testCaseId value="MAGETWO-46896"/>
+            <group value="giftWrapping"/>
+        </annotations>
+        <after>
+            <!-- Delete Gift Wrapping from preconditions -->
+            <actionGroup ref="AdminDeleteGiftWrappingActionGroup" stepKey="deleteGiftWrapping">
+                <argument name="giftWrappingDesign" value="Test Design"/>
+            </actionGroup>
+            <actionGroup ref="AdminLogoutActionGroup" stepKey="logoutFromAdminPanel"/>
+        </after>
+        <!-- 1. Log in to Admin -->
+        <actionGroup ref="AdminLoginActionGroup" stepKey="loginAsAdmin"/>
+        <!-- 2. Create new Gift Wrapping -->
+        <actionGroup ref="AdminGiftWrappingNewActionGroup" stepKey="createGiftWrapping">
+            <argument name="giftWrappingDesign" value="Test Design"/>
+            <argument name="giftWrappingWebsite" value="Main Website"/>
+            <argument name="giftWrappingPrice" value="36.5"/>
+        </actionGroup>
+        <!-- 3. Verify gift wrapping is successfully created -->
+        <see selector="{{AdminMessagesSection.success}}" userInput="You saved the gift wrapping." stepKey="seeSuccessMessage"/>
+        <fillField selector="{{AdminGiftWrappingGridSection.giftWrappingFilterDesign}}" userInput="Test Design" stepKey="fillGiftWrapDesignField"/>
+        <click selector="{{AdminGiftWrappingGridSection.applyFilterButton}}" stepKey="clickApplyFilterButton"/>
+        <see selector="{{AdminGiftWrappingGridSection.giftWrappingDesignColumn('1')}}" userInput="Test Design" stepKey="assertGiftWrapDesignColumnInGrid"/>
+        <see selector="{{AdminGiftWrappingGridSection.giftWrappingWebsiteColumn('1')}}" userInput="Main Website" stepKey="assertWebsitesColumnInGrid"/>
+        <see selector="{{AdminGiftWrappingGridSection.giftWrappingPriceColumn('1')}}" userInput="36.5" stepKey="assertPriceColumnInGrid"/>
+    </test>
+</tests>

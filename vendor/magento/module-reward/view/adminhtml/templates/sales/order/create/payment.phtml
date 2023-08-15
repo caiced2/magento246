@@ -1,0 +1,37 @@
+<?php
+/**
+ * Copyright © Magento, Inc. All rights reserved.
+ * See COPYING.txt for license details.
+ */
+/**
+ * @var \Magento\Reward\Block\Adminhtml\Sales\Order\Create\Payment $block
+ * @var \Magento\Framework\View\Helper\SecureHtmlRenderer $secureRenderer
+ */
+?>
+<?php if ($block->canUseRewardPoints()):?>
+    <div class="admin__field admin__field-option">
+        <input id="p_method_use_reward_points"
+               class="admin__control-checkbox"
+               value="1"
+               name="payment[use_reward_points]"
+               type="checkbox"
+               <?php if ($block->useRewardPoints()): ?>checked="checked"<?php endif; ?> />
+        <label class="admin__field-label" for="p_method_use_reward_points">
+            <?= $block->escapeHtml($block->getUseLabel(), ['span']); ?>
+        </label>
+    <?php $scriptString = <<<script
+            require(['jquery', 'domReady!'], function($) {
+                var toggleUseRewardPoints = function () {
+                    var checked = $(this).is(':checked') ? 1 : 0;
+                    var data = {};
+                    data['payment[use_reward_points]'] = checked;
+                    order.loadArea(['totals', 'billing_method'], true, data);
+                };
+                var refundRewardPointsEnable = $('#p_method_use_reward_points');
+                refundRewardPointsEnable.change(toggleUseRewardPoints);
+            });
+script;
+    ?>
+        <?= /* @noEscape */ $secureRenderer->renderTag('script', [], $scriptString, false); ?>
+    </div>
+<?php endif; ?>

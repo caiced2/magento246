@@ -1,0 +1,8 @@
+{
+    "magento_banner": {
+        "column": {
+            "is_ga_enabled": true,
+            "ga_creative": true
+        }
+    }
+}

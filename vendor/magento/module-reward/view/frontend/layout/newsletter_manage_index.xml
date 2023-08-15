@@ -1,0 +1,24 @@
+<?xml version="1.0"?>
+<!--
+/**
+ * Copyright © Magento, Inc. All rights reserved.
+ * See COPYING.txt for license details.
+ */
+-->
+<page xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="urn:magento:framework:View/Layout/etc/page_configuration.xsd">
+    <body>
+        <referenceContainer name="customer.newsletter.form.before">
+            <block class="Magento\Reward\Block\Tooltip" name="reward.tooltip.newsletter" template="Magento_Reward::tooltip.phtml" cacheable="false">
+                <arguments>
+                    <argument name="reward_type" xsi:type="string">Magento\Reward\Model\Action\Newsletter</argument>
+                </arguments>
+                <action method="setWrapperClass">
+                    <argument name="class" xsi:type="string">reward-newsletter</argument>
+                </action>
+                <action method="setRewardMessage">
+                    <argument translate="true" name="message" xsi:type="string">Subscribe to our newsletter now and earn %1.</argument>
+                </action>
+            </block>
+        </referenceContainer>
+    </body>
+</page>

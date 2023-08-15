@@ -1,0 +1,21 @@
+<?xml version="1.0"?>
+<!--
+/**
+ * Copyright © Magento, Inc. All rights reserved.
+ * See COPYING.txt for license details.
+ */
+-->
+<config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="urn:magento:framework:Event/etc/events.xsd">
+    <event name="cms_page_save_before">
+        <observer name="magento_versionscms" instance="Magento\VersionsCms\Observer\Backend\CmsPageSaveBeforeObserver" />
+    </event>
+    <event name="cms_page_save_after">
+        <observer name="magento_versionscms" instance="Magento\VersionsCms\Observer\Backend\CmsPageSaveAfterObserver" />
+    </event>
+    <event name="website_delete_after">
+        <observer name="magento_versionscms" instance="Magento\VersionsCms\Observer\Backend\DeleteWebsiteObserver" />
+    </event>
+    <event name="store_delete_after">
+        <observer name="magento_versionscms" instance="Magento\VersionsCms\Observer\Backend\DeleteStoreObserver" />
+    </event>
+</config>

@@ -1,0 +1,134 @@
+<?xml version="1.0"?>
+<!--
+/**
+ * Copyright © Magento, Inc. All rights reserved.
+ * See COPYING.txt for license details.
+ */
+-->
+<page xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="urn:magento:framework:View/Layout/etc/page_configuration.xsd">
+    <body>
+        <referenceContainer name="page.main.actions">
+            <block class="Magento\Backend\Block\Store\Switcher" name="adminhtml.report.grid.customersegment.detail.store_switcher" as="store_switcher">
+                <arguments>
+                    <argument name="use_confirm" xsi:type="string">0</argument>
+                    <argument name="switch_websites" xsi:type="string">1</argument>
+                    <argument name="switch_store_groups" xsi:type="string">0</argument>
+                    <argument name="switch_store_views" xsi:type="string">0</argument>
+                    <argument name="default_selection_name" xsi:type="string" translate="true">All Websites</argument>
+                </arguments>
+            </block>
+        </referenceContainer>
+        <referenceBlock name="report.customersegment.detail.grid.container">
+            <block class="Magento\CustomerSegment\Block\Adminhtml\Report\Customer\Segment\Detail\Grid" name="report.customersegment.detail.grid" as="grid">
+                <arguments>
+                    <argument name="id" xsi:type="string">segmentGrid</argument>
+                    <argument name="dataSource" xsi:type="object" shared="false">Magento\CustomerSegment\Model\ResourceModel\Segment\Report\Detail\Collection</argument>
+                    <argument name="use_ajax" xsi:type="string">1</argument>
+                    <argument name="grid_url" xsi:type="url" path="*/*/customerGrid">
+                        <param name="_current">1</param>
+                    </argument>
+                </arguments>
+                <block class="Magento\Backend\Block\Widget\Grid\Export" name="report.customersegment.detail.grid.export" as="grid.export">
+                    <arguments>
+                        <argument name="exportTypes" xsi:type="array">
+                            <item name="csv" xsi:type="array">
+                                <item name="urlPath" xsi:type="string">*/*/exportCsv</item>
+                                <item name="label" xsi:type="string" translate="true">CSV</item>
+                            </item>
+                            <item name="excel" xsi:type="array">
+                                <item name="urlPath" xsi:type="string">*/*/exportExcel</item>
+                                <item name="label" xsi:type="string" translate="true">Excel XML</item>
+                            </item>
+                        </argument>
+                    </arguments>
+                </block>
+                <block class="Magento\Backend\Block\Widget\Grid\ColumnSet" as="grid.columnSet" name="customersegment.detail.grid.columnSet">
+                    <arguments>
+                        <argument name="id" xsi:type="string">segmentGrid</argument>
+                        <argument name="rowUrl" xsi:type="array">
+                            <item name="generatorClass" xsi:type="string">Magento\CustomerSegment\Model\Segment\Report\Detail\Row\UrlGenerator</item>
+                        </argument>
+                    </arguments>
+                    <block class="Magento\Backend\Block\Widget\Grid\Column" as="grid_entity_id" name="customersegment.detail.grid.columnSet.entityId">
+                        <arguments>
+                            <argument name="header" xsi:type="string" translate="true">ID</argument>
+                            <argument name="index" xsi:type="string">entity_id</argument>
+                            <argument name="type" xsi:type="string">number</argument>
+                            <argument name="header_css_class" xsi:type="string">col-id</argument>
+                            <argument name="column_css_class" xsi:type="string">col-id</argument>
+                        </arguments>
+                    </block>
+                    <block class="Magento\Backend\Block\Widget\Grid\Column" as="grid_name" name="customersegment.detail.grid.columnSet.name">
+                        <arguments>
+                            <argument name="header" xsi:type="string" translate="true">Name</argument>
+                            <argument name="index" xsi:type="string">name</argument>
+                            <argument name="header_css_class" xsi:type="string">col-name</argument>
+                            <argument name="column_css_class" xsi:type="string">col-name</argument>
+                        </arguments>
+                    </block>
+                    <block class="Magento\Backend\Block\Widget\Grid\Column" as="grid_email" name="customersegment.detail.grid.columnSet.email">
+                        <arguments>
+                            <argument name="header" xsi:type="string" translate="true">Email</argument>
+                            <argument name="index" xsi:type="string">email</argument>
+                            <argument name="header_css_class" xsi:type="string">col-mail</argument>
+                            <argument name="column_css_class" xsi:type="string">col-mail</argument>
+                        </arguments>
+                    </block>
+                    <block class="Magento\Backend\Block\Widget\Grid\Column\Multistore" as="grid_group" name="customersegment.detail.grid.columnSet.group">
+                        <arguments>
+                            <argument name="header" xsi:type="string" translate="true">Group</argument>
+                            <argument name="index" xsi:type="string">group_id</argument>
+                            <argument name="type" xsi:type="string">options</argument>
+                            <argument name="options" xsi:type="options" model="Magento\CustomerSegment\Model\ResourceModel\Segment\Report\Detail\Group\Option"/>
+                            <argument name="header_css_class" xsi:type="string">col-group</argument>
+                            <argument name="column_css_class" xsi:type="string">col-group</argument>
+                        </arguments>
+                    </block>
+                    <block class="Magento\Backend\Block\Widget\Grid\Column" as="grid_telephone" name="customersegment.detail.grid.columnSet.telephone">
+                        <arguments>
+                            <argument name="header" xsi:type="string" translate="true">Phone</argument>
+                            <argument name="index" xsi:type="string">billing_telephone</argument>
+                            <argument name="header_css_class" xsi:type="string">col-phone</argument>
+                            <argument name="column_css_class" xsi:type="string">col-phone</argument>
+                        </arguments>
+                    </block>
+                    <block class="Magento\Backend\Block\Widget\Grid\Column" as="grid_billing_postcode" name="customersegment.detail.grid.columnSet.billingPostcode">
+                        <arguments>
+                            <argument name="header" xsi:type="string" translate="true">ZIP</argument>
+                            <argument name="index" xsi:type="string">billing_postcode</argument>
+                            <argument name="header_css_class" xsi:type="string">col-zip</argument>
+                            <argument name="column_css_class" xsi:type="string">col-zip</argument>
+                        </arguments>
+                    </block>
+                    <block class="Magento\Backend\Block\Widget\Grid\Column" as="grid_billing_country_id" name="customersegment.detail.grid.columnSet.billingCountryId">
+                        <arguments>
+                            <argument name="header" xsi:type="string" translate="true">Country</argument>
+                            <argument name="index" xsi:type="string">billing_country_id</argument>
+                            <argument name="type" xsi:type="string">country</argument>
+                            <argument name="header_css_class" xsi:type="string">col-country</argument>
+                            <argument name="column_css_class" xsi:type="string">col-country</argument>
+                        </arguments>
+                    </block>
+                    <block class="Magento\Backend\Block\Widget\Grid\Column" as="grid_billing_region" name="customersegment.detail.grid.columnSet.billingRegion">
+                        <arguments>
+                            <argument name="header" xsi:type="string" translate="true">State/Province</argument>
+                            <argument name="index" xsi:type="string">billing_region</argument>
+                            <argument name="header_css_class" xsi:type="string">col-state</argument>
+                            <argument name="column_css_class" xsi:type="string">col-state</argument>
+                        </arguments>
+                    </block>
+                    <block class="Magento\Backend\Block\Widget\Grid\Column" as="grid_customer_since" name="customersegment.detail.grid.columnSet.customerSince">
+                        <arguments>
+                            <argument name="header" xsi:type="string" translate="true">Customer Since</argument>
+                            <argument name="index" xsi:type="string">created_at</argument>
+                            <argument name="type" xsi:type="string">datetime</argument>
+                            <argument name="gmtoffset" xsi:type="string">1</argument>
+                            <argument name="header_css_class" xsi:type="string">col-period</argument>
+                            <argument name="column_css_class" xsi:type="string">col-period</argument>
+                        </arguments>
+                    </block>
+                </block>
+            </block>
+        </referenceBlock>
+    </body>
+</page>

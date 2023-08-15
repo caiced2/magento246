@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+ /**
+  * Copyright © Magento, Inc. All rights reserved.
+  * See COPYING.txt for license details.
+  */
+-->
+<sections xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+          xsi:noNamespaceSchemaLocation="urn:magento:mftf:Page/etc/SectionObject.xsd">
+    <section name="StorefrontGiftCardPageSection">
+        <element name="giftCardCodeInput" type="input" selector="#giftcard-code"/>
+        <element name="redeemGiftCardButton" type="button" selector="button[value='Redeem Gift Card']"/>
+        <element name="checkStatusAndBalanceButton" type="button" selector="#gca_balance_button"/>
+        <element name="errorMessage" type="text" selector="#giftcard-balance-lookup .message.error"/>
+        <element name="giftCardNumber" type="text" selector=".giftcard.info .giftcard.number"/>
+        <element name="currentBalance" type="text" selector=".giftcard.info .price"/>
+    </section>
+</sections>

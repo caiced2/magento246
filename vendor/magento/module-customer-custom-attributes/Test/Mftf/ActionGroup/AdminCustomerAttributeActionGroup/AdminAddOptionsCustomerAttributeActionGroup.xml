@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+ /**
+  * Copyright © Magento, Inc. All rights reserved.
+  * See COPYING.txt for license details.
+  */
+-->
+<actionGroups xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:noNamespaceSchemaLocation="urn:magento:mftf:Test/etc/actionGroupSchema.xsd">
+    <actionGroup name="AdminAddOptionsCustomerAttribute" extends="AdminCreateCustomerNewAttribute">
+        <arguments>
+            <argument name="firstOption" type="string"/>
+            <argument name="secondOption" type="string"/>
+        </arguments>
+        <!--Go to Manage Label / Options -->
+        <scrollTo selector="{{AdminCustomerAddressAttributeSection.pageHeader}}" stepKey="scrollToPageTitle" after="selectFormsToUse"/>
+        <waitForElementVisible selector="{{AdminCustomerAddressAttributeSection.options}}" stepKey="waitForOptionsBeVisible" after="scrollToPageTitle"/>
+        <click stepKey="clickToOptionsItem" selector="{{AdminCustomerAddressAttributeSection.options}}" after="waitForOptionsBeVisible"/>
+        <waitForPageLoad stepKey="waitForOptionsPageOpened" after="clickToOptionsItem"/>
+        <click stepKey="clickToAddOptions" selector="{{AdminCustomerAddressAttributeSection.addOptionsButton}}" after="waitForOptionsPageOpened"/>
+        <waitForElementVisible selector="{{AdminCustomerAddressAttributeSection.addOptionsField('0')}}" stepKey="waitForFirstOptionsBeVisible" after="clickToAddOptions"/>
+        <fillField stepKey="fillFirstOptionsName" userInput="{{firstOption}}" selector="{{AdminCustomerAddressAttributeSection.addOptionsField('0')}}" after="waitForFirstOptionsBeVisible"/>
+
+        <click stepKey="clickToAddSecondOptions" selector="{{AdminCustomerAddressAttributeSection.addOptionsButton}}" after="fillFirstOptionsName"/>
+        <waitForElementVisible selector="{{AdminCustomerAddressAttributeSection.addOptionsField('1')}}" stepKey="waitForSecondOptionsBeVisible" after="clickToAddSecondOptions"/>
+        <fillField stepKey="fillSecondOptionsName" userInput="{{secondOption}}" selector="{{AdminCustomerAddressAttributeSection.addOptionsField('1')}}" after="waitForSecondOptionsBeVisible"/>
+    </actionGroup>
+</actionGroups>

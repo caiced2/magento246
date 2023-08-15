@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+ /**
+  * Copyright © Magento, Inc. All rights reserved.
+  * See COPYING.txt for license details.
+  */
+-->
+
+<entities xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:noNamespaceSchemaLocation="urn:magento:mftf:DataGenerator/etc/dataProfileSchema.xsd">
+    <entity name="GiftRegistry" type="giftRegistry">
+        <data key="code" unique="suffix">c</data>
+        <data key="label">label</data>
+    </entity>
+    <entity name="GiftRegistryBirthday" type="giftRegistry">
+        <data key="type">Birthday</data>
+        <data key="title" unique="suffix">Event Title </data>
+        <data key="message" unique="suffix">Event Message </data>
+        <data key="is_public">Public</data>
+        <data key="is_active">Active</data>
+    </entity>
+    <entity name="GiftRegistryAttributeSelectInputType" type="attribute">
+        <data key="code">code</data>
+        <data key="input_type">Select</data>
+        <data key="attribute_group">Event Information</data>
+        <data key="label">Label</data>
+        <data key="option_code">option_code</data>
+        <data key="option_label">option_label</data>
+    </entity>
+    <entity name="GiftRegistryAttributeRoleInputType" type="attribute">
+        <data key="input_type">Role</data>
+        <data key="label">Label</data>
+        <data key="option_code">option_code</data>
+        <data key="option_label">option_label</data>
+        <data key="option_edit">option_edit</data>
+    </entity>
+</entities>

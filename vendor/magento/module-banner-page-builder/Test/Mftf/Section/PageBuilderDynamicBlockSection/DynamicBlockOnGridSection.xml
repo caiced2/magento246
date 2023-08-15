@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+ /**
+  * Copyright © Magento, Inc. All rights reserved.
+  * See COPYING.txt for license details.
+  */
+-->
+<sections xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:noNamespaceSchemaLocation="urn:magento:mftf:Page/etc/SectionObject.xsd">
+    <section name="DynamicBlockOnGrid">
+        <element name="searchBox" type="text" selector="//input[contains(@class,'data-grid-search-control')]"/>
+        <element name="searchBtn" type="text" selector=".action-submit"/>
+        <element name="cancelButton" type="text" selector="aside.pagebuilder_dynamic_block_form_pagebuilder_dynamic_block_form_modal._show button[data-role=closeBtn]"/>
+        <element name="selectBtn" type="text" selector="//div[text()='{{arg}}']/parent::td/parent::tr//button[text()='Select']" parameterized="true"/>
+        <element name="emptyGrid" type="text" selector="//div[contains(@class, 'pagebuilder_dynamic_block_form_pagebuilder_dynamic_block_form_modal_pagebuilder_dynamic_block_select_grid')]//table//td"/>
+        <element name="status" type="text" selector="//div[text()='{{arg1}}']/parent::td//following-sibling::td//*[text()='{{arg2}}']" parameterized="true"/>
+        <element name="column" type="text" selector="//table[contains(@class,'data-grid')]//span[contains(., '{{columnName}}')]" parameterized="true"/>
+        <element name="rowData" type="text" selector="//div[text()='{{dynamicBlockName}}']/parent::td//following-sibling::td//*[contains(.,'{{columnText}}')]" parameterized="true"/>
+    </section>
+</sections>

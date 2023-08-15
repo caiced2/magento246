@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+ /**
+  * Copyright © Magento, Inc. All rights reserved.
+  * See COPYING.txt for license details.
+  */
+-->
+<actionGroups xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:noNamespaceSchemaLocation="urn:magento:mftf:Test/etc/actionGroupSchema.xsd">
+    <actionGroup name="verifyProductUpdateFormSpecificStoreViewPriceScopeWebsite" extends="verifyDefaultProductUpdateForm">
+        <arguments>
+            <argument name="storeView" type="string" defaultValue="Default Store View"/>
+        </arguments>
+        <see selector="{{AdminProductFormActionSection.changeStoreButton}}" userInput="{{storeView}}" stepKey="seeStoreScope"/>
+
+        <seeCheckboxIsChecked selector="{{AdminProductFormSection.productStatusUseDefault}}" stepKey="seeEnableProductUseDefaultChecked"/>
+        <seeElement selector="{{AdminProductFormSection.productStatusDisabled}}" stepKey="seeProductStatusDisabled"/>
+
+        <seeCheckboxIsChecked selector="{{AdminProductFormSection.productNameUseDefault}}" stepKey="seeProductNameUseDefaultChecked"/>
+        <seeElement selector="{{AdminProductFormSection.productNameDisabled}}" stepKey="seeProductNameDisabled"/>
+
+        <seeCheckboxIsChecked selector="{{AdminProductFormSection.productPriceUseDefault}}" stepKey="seePriceUseDefaultChecked"/>
+        <seeElement selector="{{AdminProductFormSection.productPriceDisabled}}" stepKey="seeProductPriceDisabled"/>
+
+        <seeCheckboxIsChecked selector="{{AdminProductFormSection.productTaxClassUseDefault}}" stepKey="seeTaxClassUseDefaultChecked"/>
+        <seeElement selector="{{AdminProductFormSection.productTaxClassDisabled}}" stepKey="seeProductTaxClassDisabled"/>
+
+        <seeElement selector="{{AdminProductFormSection.visibilityDisabled}}" stepKey="seeProductVisibilityDisabled"/>
+    </actionGroup>
+</actionGroups>

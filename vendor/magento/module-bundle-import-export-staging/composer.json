@@ -1,0 +1,29 @@
+{
+    "name": "magento/module-bundle-import-export-staging",
+    "description": "N/A",
+    "type": "magento2-module",
+    "license": [
+        "proprietary"
+    ],
+    "config": {
+        "sort-packages": true
+    },
+    "version": "100.4.3",
+    "require": {
+        "magento/framework": "103.0.*",
+        "magento/module-bundle": "101.0.*",
+        "php": "~8.1.0||~8.2.0"
+    },
+    "suggest": {
+        "magento/module-bundle-import-export": "100.4.*"
+    },
+    "autoload": {
+        "files": [
+            "registration.php"
+        ],
+        "psr-4": {
+            "Magento\\BundleImportExportStaging\\": ""
+        }
+    }
+}
+

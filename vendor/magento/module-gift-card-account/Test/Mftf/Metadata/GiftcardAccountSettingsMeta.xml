@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+ /**
+  * Copyright © Magento, Inc. All rights reserved.
+  * See COPYING.txt for license details.
+  */
+-->
+
+<operations xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:noNamespaceSchemaLocation="urn:magento:mftf:DataGenerator/etc/dataOperation.xsd">
+    <operation name="CreateGiftCardAccountSetting" dataType="giftcart_config_state" type="create" auth="adminFormKey" url="/admin/system_config/save/section/giftcard/" method="POST">
+        <object key="groups" dataType="giftcart_config_state">
+            <object key="general" dataType="giftcart_config_state">
+                <object key="fields" dataType="giftcart_config_state">
+                    <object key="lifetime" dataType="lifetime">
+                        <field key="value">integer</field>
+                    </object>
+                    <object key="order_item_status" dataType="order_item_status">
+                        <field key="value">string</field>
+                    </object>
+                </object>
+            </object>
+        </object>
+    </operation>
+</operations>

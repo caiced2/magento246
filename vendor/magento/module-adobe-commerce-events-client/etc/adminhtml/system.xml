@@ -1,0 +1,48 @@
+<?xml version="1.0"?>
+<!--
+/**
+ * Copyright © Magento, Inc. All rights reserved.
+ * See COPYING.txt for license details.
+ */
+-->
+<config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="urn:magento:module:Magento_Config:etc/system_file.xsd">
+    <system>
+        <section id="adobe_io_events">
+            <group id="eventing" translate="label" type="text" sortOrder="16" showInDefault="1">
+                <label>Commerce events</label>
+                <field id="enabled" translate="label" type="select" sortOrder="10" showInDefault="1" canRestore="1">
+                    <label>Enabled</label>
+                    <source_model>Magento\Config\Model\Config\Source\Yesno</source_model>
+                </field>
+                <field id="merchant_id" translate="label" type="text" sortOrder="30" showInDefault="1">
+                    <label>Merchant ID</label>
+                    <validate>required-entry validate-data</validate>
+                    <depends>
+                        <field id="enabled">1</field>
+                    </depends>
+                </field>
+                <field id="env_id" translate="label" type="text" sortOrder="40" showInDefault="1">
+                    <label>Environment ID</label>
+                    <validate>required-entry validate-data</validate>
+                    <depends>
+                        <field id="enabled">1</field>
+                    </depends>
+                </field>
+                <field id="max_retries" translate="label" type="text" sortOrder="50" showInDefault="1" canRestore="1">
+                    <label>Maximum retries to send events</label>
+                    <validate>required-entry validate-no-empty validate-digits</validate>
+                    <depends>
+                        <field id="enabled">1</field>
+                    </depends>
+                </field>
+                <field id="event_retention" translate="label" type="text" sortOrder="60" showInDefault="1" canRestore="1">
+                    <label>Event retention time (in days)</label>
+                    <validate>required-entry validate-no-empty validate-digits</validate>
+                    <depends>
+                        <field id="enabled">1</field>
+                    </depends>
+                </field>
+            </group>
+        </section>
+    </system>
+</config>

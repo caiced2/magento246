@@ -1,0 +1,73 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+ /**
+  * Copyright © Magento, Inc. All rights reserved.
+  * See COPYING.txt for license details.
+  */
+-->
+
+<tests xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xsi:noNamespaceSchemaLocation="urn:magento:mftf:Test/etc/testSchema.xsd">
+    <test name="GuestCheckoutWithCustomerAddressAttributeTest">
+        <annotations>
+            <features value="Guest Checkout"/>
+            <stories value="Custom dropdown customer address attribute option id showing on guest checkout"/>
+            <title value="Custom dropdown customer address attribute option id showing on guest checkout"/>
+            <description value="Checking drop down values"/>
+            <severity value="MAJOR"/>
+            <testCaseId value="MC-28893"/>
+            <group value="customer address attribute"/>
+        </annotations>
+        <before>
+            <actionGroup ref="AdminLoginActionGroup" stepKey="loginAsAdminForCustomAddressAttribute"/>
+            <!--Create product-->
+            <createData stepKey="category" entity="SimpleSubCategory"/>
+            <createData stepKey="product" entity="SimpleProduct">
+                <requiredEntity createDataKey="category"/>
+            </createData>
+            <magentoCLI command="config:set {{EnableFlatRateConfigData.path}} {{EnableFlatRateConfigData.value}}" stepKey="enableFlatRate"/>
+        </before>
+        <after>
+           <magentoCLI command="config:set {{EnableFlatRateConfigData.path}} {{EnableFlatRateConfigData.value}}" stepKey="enableFlatRate"/>
+            <actionGroup ref="AdminDeleteCustomerAttribute" stepKey="adminDeleteFirstCustomerAttribute">
+                <argument name="defaultLabel" value="{{AttributeDropdownData.label}}"/>
+            </actionGroup>
+            <deleteData stepKey="deleteCategory" createDataKey="category"/>
+            <deleteData stepKey="deleteProduct" createDataKey="product"/>
+            <actionGroup ref="AdminLogoutActionGroup" stepKey="logOut"/>
+        </after>
+        <!--Create new attribute-->
+        <amOnPage url="{{CustomerAddressAttributesPage.url}}" stepKey="navigateToCustomerAddress"/>
+        <waitForPageLoad time="30" stepKey="timeToLoadAttributes"/>
+        <actionGroup ref="AdminAddOptionsCustomerAttribute" stepKey="adminCreateCustomerFirstAttribute">
+            <argument name="defaultLabel" value="{{AttributeDropdownData.label}}"/>
+            <argument name="attributeCode" value="{{AttributeDropdownData.code}}"/>
+            <argument name="inputType" value="{{AttributeDropdownData.inputType}}"/>
+            <argument name="sortOrder" value="{{AttributeDropdownData.sortOrder}}"/>
+            <argument name="firstOption" value="{{AttributeDropdownData.firstOption}}"/>
+            <argument name="secondOption" value="{{AttributeDropdownData.secondOption}}"/>
+        </actionGroup>
+
+        <!--Go to Storefront. Add product to cart-->
+        <amOnPage url="/$$product.custom_attributes[url_key]$$.html" stepKey="GoToProduct"/>
+        <actionGroup ref="StorefrontAddToCartCustomOptionsProductPageActionGroup" stepKey="AddProductToCard">
+            <argument name="productName" value="$$product.name$$"/>
+        </actionGroup>
+
+        <!--Proceed to checkout-->
+        <click selector="{{StorefrontMinicartSection.showCart}}" stepKey="clickCart"/>
+        <click selector="{{StorefrontMinicartSection.goToCheckout}}" stepKey="goToCheckout"/>
+        <waitForPageLoad stepKey="waitForPageLoad"/>
+
+        <!--Verify that created "Test Dropdown" options appears on the page-->
+        <see userInput="{{AttributeDropdownData.label}}" stepKey="seeLabelCreatedDropDownMenu"/>
+        <selectOption selector="{{StorefrontCustomerAddressAttributeSection.dropdownField(AttributeDropdownData.code)}}" userInput="{{AttributeDropdownData.firstOption}}" stepKey="selectFirstOptionFromDropDownMenu"/>
+
+
+        <actionGroup ref="GuestCheckoutFillingShippingSectionActionGroup" stepKey="guestCheckoutFillingShippingSection">
+        </actionGroup>
+
+        <see selector=".billing-address-details" userInput="{{AttributeDropdownData.firstOption}}" stepKey="seeBillingAddressDetails"/>
+        <see selector=".shipping-information-content" userInput="{{AttributeDropdownData.firstOption}}" stepKey="seeShippingAddressDetails"/>
+    </test>
+</tests>

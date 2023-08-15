@@ -1,0 +1,85 @@
+<?php
+/**
+ * Copyright © Magento, Inc. All rights reserved.
+ * See COPYING.txt for license details.
+ */
+/* @var $block Magento\VisualMerchandiser\Block\Adminhtml\Category\SmartCategoryRules */
+/** @var \Magento\Framework\View\Helper\SecureHtmlRenderer $secureRenderer */
+?>
+<div id="manage-rules-panel" class="manage-rules-panel hidden">
+    <?php if (!$block->isSmartCategoryVisible()): ?>
+    <div class="message message-info">
+        <div><?= $block->escapeHtml(__('You can create a rule only to the existing categories.')) ?></div>
+    </div>
+    <?php else: ?>
+    <div class="message message-info">
+        <div>
+            <?= $block->escapeHtml(
+                __(
+                    'Only products matched by rule will be present in the category after save.'
+                    . ' Unmatched products and manual sorting will be removed from the category.'
+                )
+            ) ?>
+        </div>
+    </div>
+
+    <div class="manage-rules-sorting">
+        <?= $block->getChildHtml('automatic_sorting') ?>
+    </div>
+    <?php endif; ?>
+
+    <input type="hidden"
+           data-form-part="category_form"
+           name="smart_category_rules"
+           id="smart_category_rules"
+           value="<?= /* @noEscape */ $block->getSmartCategoryRules() ?>" />
+
+    <div class="admin__data-grid-wrap" id="smart_category_table_wrapper">
+        <table class="data-grid smart-category-table" id="smart_category_table">
+            <thead>
+                <tr class="headings" id="attribute-rules-table">
+                    <th class="data-grid-th col-attribute"><?= $block->escapeHtml(__('Attribute')) ?></th>
+                    <th class="data-grid-th col-operator"><?= $block->escapeHtml(__('Operator')) ?></th>
+                    <th class="data-grid-th col-value"><?= $block->escapeHtml(__('Value')) ?></th>
+                    <th class="data-grid-th col-logic logic_header"><?= $block->escapeHtml(__('Logic')) ?></th>
+                    <th class="data-grid-th col-action"><?= $block->escapeHtml(__('Action')) ?></th>
+                </tr>
+            </thead>
+            <tbody data-role="rules-container"></tbody>
+        </table>
+    </div>
+
+    <button class="add-rule-button action-default action-secondary" type="button" id="add_new_rule_button">
+        <span><?= $block->escapeHtml(__('Add Condition')) ?></span>
+    </button>
+    <?php if (!$block->isSmartCategoryVisible()): ?>
+        <?= /* @noEscape */
+        $secureRenderer->renderStyleAsTag(
+            'display: none;',
+            '#add_new_rule_button'
+        );
+        ?>
+    <?php endif;?>
+</div>
+
+<script id="row-template" type="text/x-magento-template">
+    <tr>
+        <td class="col-attribute">
+            <?= $block->getChildHtml('smart_category_attribute_select') ?>
+        </td>
+        <td class="col-operator">
+            <?= $block->getChildHtml('smart_category_operator_select') ?>
+        </td>
+        <td class="col-value">
+            <input type="text" name="rule_value" data-form-part="category_form" class="smart_category_rule" />
+        </td>
+        <td class="col-logic smart_category_logic_select">
+            <?= $block->getChildHtml('smart_category_logic_select') ?>
+        </td>
+        <td id="delete_button_container_<%- data.id %>" class="col-action col-delete">
+            <button class="action-delete delete-rule" type="button" id="delete_button_<%- data.id %>">
+                <span><?= $block->escapeHtml(__('Delete')) ?></span>
+            </button>
+        </td>
+    </tr>
+</script>

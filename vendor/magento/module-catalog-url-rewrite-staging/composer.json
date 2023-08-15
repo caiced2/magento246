@@ -1,0 +1,30 @@
+{
+    "name": "magento/module-catalog-url-rewrite-staging",
+    "description": "N/A",
+    "type": "magento2-module",
+    "license": [
+        "proprietary"
+    ],
+    "config": {
+        "sort-packages": true
+    },
+    "version": "100.4.5-p1",
+    "require": {
+        "magento/framework": "103.0.*",
+        "magento/module-catalog": "104.0.*",
+        "magento/module-catalog-url-rewrite": "100.4.*",
+        "magento/module-staging": "101.2.*",
+        "magento/module-url-rewrite": "102.0.*",
+        "magento/module-catalog-staging": "100.4.*",
+        "php": "~8.1.0||~8.2.0"
+    },
+    "autoload": {
+        "files": [
+            "registration.php"
+        ],
+        "psr-4": {
+            "Magento\\CatalogUrlRewriteStaging\\": ""
+        }
+    }
+}
+

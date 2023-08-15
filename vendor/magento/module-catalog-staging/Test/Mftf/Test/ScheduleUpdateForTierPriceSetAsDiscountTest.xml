@@ -1,0 +1,115 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+ /**
+  * Copyright © Magento, Inc. All rights reserved.
+  * See COPYING.txt for license details.
+  */
+-->
+
+<tests xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xsi:noNamespaceSchemaLocation="urn:magento:mftf:Test/etc/testSchema.xsd">
+    <test name="ScheduleUpdateForTierPriceSetAsDiscountTest">
+        <annotations>
+            <features value="CatalogStaging"/>
+            <stories value="Discount"/>
+            <title value="Scheduling an update for the Tier price set as a discount on the original price"/>
+            <description value="Scheduling an update for the Tier price set as a discount on the original price"/>
+            <severity value="AVERAGE"/>
+            <testCaseId value="MAGETWO-98887"/>
+            <useCaseId value="MAGETWO-98818"/>
+            <group value="CatalogStaging"/>
+            <skip>
+                <issueId value="MC-17175"/>
+            </skip>
+            <group value="pr_exclude"/>
+        </annotations>
+        <before>
+            <actionGroup ref="AdminLoginActionGroup" stepKey="loginAsAdmin"/>
+            <!-- Create new product -->
+            <comment userInput="Create new product" stepKey="createProduct"/>
+            <createData entity="_defaultCategory" stepKey="createCategory"/>
+            <createData entity="SimpleProduct" stepKey="createSimpleProduct">
+                <requiredEntity createDataKey="createCategory"/>
+            </createData>
+        </before>
+        <after>
+            <!--Delete created product-->
+            <comment userInput="Delete created product" stepKey="deleteProduct"/>
+            <deleteData createDataKey="createSimpleProduct" stepKey="deleteSimpleProduct"/>
+            <deleteData createDataKey="createCategory" stepKey="deleteCategory"/>
+            <actionGroup ref="AdminLogoutActionGroup" stepKey="logout"/>
+        </after>
+        <!--Open product page and click advanced pricing link-->
+        <comment userInput="Open product page and click advanced pricing link" stepKey="advancedPricingLink"/>
+        <amOnPage url="{{AdminProductEditPage.url($$createSimpleProduct.id$$)}}" stepKey="visitAdminProductPage"/>
+        <waitForPageLoad stepKey="waitForProductPageLoad"/>
+        <click selector="{{AdminProductFormSection.advancedPricingLink}}" stepKey="clickAdvancedPricingLink"/>
+        <waitForElementVisible selector="{{AdminProductFormAdvancedPricingSection.specialPrice}}" stepKey="waitSpecialPrice"/>
+        <!--Add new "Customer Group Price"-->
+        <comment userInput="Add new Customer Group Price" stepKey="addCustomerGroupPrice"/>
+        <actionGroup ref="AdminProductAdvancedPricingNewCustomerGroupPriceActionGroup" stepKey="customerGroupPrice">
+            <argument name="qty" value="2"/>
+            <argument name="priceType" value="Discount"/>
+            <argument name="discount" value="75"/>
+            <argument name="customerGroup" value="0"/>
+        </actionGroup>
+        <actionGroup ref="SaveProductFormActionGroup" stepKey="saveProduct"/>
+        <!--Open the Product Page and verify tier price is displayed-->
+        <comment userInput="Open the Product Page and verify tier price is displayed" stepKey="commentVerifyTierPrice"/>
+        <amOnPage url="{{StorefrontProductPage.url($$createSimpleProduct.custom_attributes[url_key]$$)}}" stepKey="goToProductPage"/>
+        <see selector="{{StorefrontProductInfoMainSection.tierPriceText}}" userInput="$30.75" stepKey="seeTierPrice"/>
+        <!--Click on "Schedule New Update" button and save the product-->
+        <comment userInput="Click on Schedule New Update button and save the product" stepKey="scheduleNewUpdate"/>
+        <amOnPage url="{{AdminProductEditPage.url($$createSimpleProduct.id$$)}}" stepKey="visitAdminProductPage2"/>
+        <waitForPageLoad stepKey="waitForProductEditPageLoad"/>
+        <generateDate date="+1 min" format="m/j/Y g:i A" stepKey="generateStartDate"/>
+        <generateDate date="+10 min" format="m/j/Y g:i A" stepKey="generateEndDate"/>
+        <click selector="{{AdminStagingSlideOutSection.scheduleNewUpdateBtn}}" stepKey="clickNewUpdate"/>
+        <waitForPageLoad stepKey="waitForUpdatePageLoad"/>
+        <actionGroup ref="FillScheduleUpdateHeaderForProductActionGroup" stepKey="fillScheduleUpdateHeader">
+            <argument name="staging" value="S5UpdateNameStaging"/>
+            <argument name="timeStart" value="{$generateStartDate}"/>
+            <argument name="timeEnd" value="{$generateEndDate}"/>
+        </actionGroup>
+        <!--Click on "Advanced Pricing Link"-->
+        <comment userInput="Click on Advanced Pricing Link" stepKey="clickOnAdvancedPricingLink"/>
+        <click selector="{{AdminProductScheduleUpdateSection.advancedPricing}}" stepKey="clickAdvancedPricingLinkInUpdate"/>
+        <waitForElementVisible selector="{{AdminProductFormAdvancedPricingSection.specialPrice}}" stepKey="waitSpecialPriceInUpdate"/>
+        <!--Change discount value for Customer Group Price-->
+        <comment userInput="Change discount value for Customer Group Price" stepKey="changeDiscountValue"/>
+        <actionGroup ref="AdminStagingAdvancedPricingNewCustomerGroupPrice" stepKey="stagingAddCustomerGroupPrice">
+            <argument name="qty" value="2"/>
+            <argument name="priceType" value="Discount"/>
+            <argument name="discount" value="25"/>
+            <argument name="customerGroup" value="0"/>
+        </actionGroup>
+        <!--Save Update and check the update appears in "Scheduled Changes" grid-->
+        <comment userInput="Save update and check the update appears in Scheduled Changes" stepKey="saveUpdate"/>
+        <actionGroup ref="SaveScheduleUpdateForProductActionGroup" stepKey="saveScheduleUpdateForProduct">
+            <argument name="staging" value="S5UpdateNameStaging"/>
+        </actionGroup>
+        <wait time="120" stepKey="waitForUpdateStart"/>
+        <magentoCLI command="cron:run --group='staging'" stepKey="cronRun"/>
+        <magentoCLI command="cron:run --group='staging'" stepKey="cronRunTwice"/>
+        <magentoCLI command="cron:run --group=index" stepKey="runCronReindex"/>
+        <!--Click View/Edit created update and open Advanced Pricing Popup-->
+        <comment userInput="Click View/Edit created update and open Advanced Pricing Popup" stepKey="editCreatedUpdate"/>
+        <amOnPage url="{{AdminProductEditPage.url($$createSimpleProduct.id$$)}}" stepKey="visitAdminProductPage3"/>
+        <waitForPageLoad stepKey="waitForProductPageLoading"/>
+        <click selector="{{AdminEntityStagingSection.nthViewEditButton('1')}}" stepKey="clickViewEdit"/>
+        <click selector="{{AdminProductScheduleUpdateSection.advancedPricing}}" stepKey="clickAdvancedPricingLinkInUpdate2"/>
+        <waitForPageLoad stepKey="waitForLoad"/>
+        <!--New discount value is displayed in "Customer Group Price" section-->
+        <comment userInput="New discount value is displayed in Customer Group Price section" stepKey="newDiscountValue"/>
+        <grabValueFrom selector="{{AdminProductFormAdvancedPricingSection.productTierPricePercentageValuePriceInput('0')}}" stepKey="grabPercentageValue"/>
+        <assertEquals stepKey="assertToMakeSureThatProductSuccessfullyAdded">
+            <actualResult type="variable">$grabPercentageValue</actualResult>
+            <expectedResult type="string">25</expectedResult>
+        </assertEquals>
+        <!--Open storefront product page and verify tier price is changed-->
+        <comment userInput="Open storefront product page and verify tier price is changed" stepKey="commentTierPriceIsChanged"/>
+        <amOnPage url="{{StorefrontProductPage.url($$createSimpleProduct.custom_attributes[url_key]$$)}}" stepKey="goToProductPage2"/>
+        <waitForPageLoad stepKey="waitForProductPageLoad2"/>
+        <see selector="{{StorefrontProductInfoMainSection.tierPriceText}}" userInput="$92.25" stepKey="seeUpdatedTierPrice"/>
+    </test>
+</tests>

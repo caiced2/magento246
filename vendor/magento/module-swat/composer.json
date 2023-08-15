@@ -1,0 +1,27 @@
+{
+    "name": "magento/module-swat",
+    "description": "N/A",
+    "type": "magento2-module",
+    "license": [
+        "proprietary"
+    ],
+    "config": {
+        "sort-packages": true
+    },
+    "version": "100.4.4",
+    "require": {
+        "php": "~8.1.0||~8.2.0",
+        "magento/framework": "103.0.*",
+        "magento/module-backend": "102.0.*",
+        "magento/module-user": "101.2.*"
+    },
+    "autoload": {
+        "files": [
+            "registration.php"
+        ],
+        "psr-4": {
+            "Magento\\Swat\\": ""
+        }
+    }
+}
+

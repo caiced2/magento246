@@ -1,0 +1,1 @@
+"Fatal Error: 'Class Heinsohn\\CmsPage\\Setup\\Patch\\Data\\CustomCmsPage contains 1 abstract method and must therefore be declared abstract or implement the remaining methods (Magento\\Framework\\Setup\\Patch\\PatchVersionInterface::getVersion)' in '\/var\/www\/html\/app\/code\/Heinsohn\/CmsPage\/Setup\/Patch\/Data\/CustomCmsPage.php' on line 7"

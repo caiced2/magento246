@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+ /**
+  * Copyright © Magento, Inc. All rights reserved.
+  * See COPYING.txt for license details.
+  */
+-->
+<tests xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:noNamespaceSchemaLocation="urn:magento:mftf:Test/etc/testSchema.xsd">
+    <test name="PageBuilderScheduleUpdateCatalogCategoryContentSnapshotTest" extends="PageBuilderCatalogCategoryContentSnapshotTest">
+        <annotations>
+            <features value="PageBuilder"/>
+            <stories value="Content Snapshot"/>
+            <title value="Catalog Category - Verify PageBuilder Content Snapshot from Schedule Update"/>
+            <description value="This test is to ensure that the PageBuilder Content Snapshot appears on stage in Schedule Update and PageBuilder works in full-screen mode."/>
+            <severity value="MAJOR"/>
+            <group value="pagebuilder"/>
+            <group value="pagebuilder-ee"/>
+            <group value="pagebuilder-contentSnapshot"/>
+            <group value="pagebuilder-catalog-category"/>
+            <group value="pagebuilder-staging"/>
+        </annotations>
+        <before>
+            <actionGroup ref="navigateToStagingSlideout" stepKey="navigateToStagingSlideout" after="navigateToAPageWithPageBuilder"/>
+            <actionGroup ref="expandAdminCategorySection" stepKey="expandContentSection">
+                <argument name="sectionSelector" value="{{AdminStagingSlideOutSection.contentTab}}"/>
+                <argument name="sectionDependentSelector" value="{{AdminStagingSlideOutSection.stagingContentTab}}"/>
+            </actionGroup>
+        </before>
+        <!-- Verify Page Builder preview is ready -->
+        <actionGroup ref="ValidatePageBuilderPreviewActionGroup" stepKey="verifyPageBuilderPreview">
+            <argument name="pageBuilderArea" value="{{AdminStagingSlideOutSection.stagingContentTab}}"/>
+        </actionGroup>
+    </test>
+</tests>

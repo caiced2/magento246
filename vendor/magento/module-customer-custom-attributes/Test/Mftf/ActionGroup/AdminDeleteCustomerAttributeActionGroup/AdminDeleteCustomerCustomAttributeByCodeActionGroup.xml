@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+ /**
+  * Copyright © Magento, Inc. All rights reserved.
+  * See COPYING.txt for license details.
+  */
+-->
+<actionGroups xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+              xsi:noNamespaceSchemaLocation="urn:magento:mftf:Test/etc/actionGroupSchema.xsd">
+    <actionGroup name="AdminDeleteCustomerCustomAttributeByCodeActionGroup">
+        <arguments>
+            <argument name="attributeCode" type="string" defaultValue="{{AttributeTextFieldData.code}}"/>
+        </arguments>
+
+        <amOnPage url="{{CustomerAttributesPage.url}}" stepKey="navigateToCustomerAttributesGrid"/>
+        <click selector="{{AdminCustomerAttributeSection.resetFilters}}" stepKey="resetGridFilters"/>
+        <fillField selector="{{AdminCustomerAttributeSection.attributeCode}}" userInput="{{attributeCode}}" stepKey="fillSearchField"/>
+        <click selector="{{AdminCustomerAttributeSection.searchBtn}}" stepKey="clickToSearchButton"/>
+        <click selector="{{AdminCustomerAttributeSection.firstAttribute}}" stepKey="clickOnAttributeRow"/>
+        <waitForElementVisible selector="{{AdminMainActionsSection.delete}}" stepKey="waitForDeleteButton"/>
+        <click selector="{{AdminMainActionsSection.delete}}" stepKey="clickOnDeleteButton"/>
+        <waitForElementVisible selector="{{AdminMainActionsSection.confirmDelete}}" stepKey="waitForDeleteConfirmation"/>
+        <click selector="{{AdminMainActionsSection.confirmDelete}}" stepKey="clickToConfirm"/>
+        <waitForElementVisible selector="{{AdminMessagesSection.success}}" stepKey="waitForSuccessMessageAppeared"/>
+        <see selector="{{AdminMessagesSection.success}}" userInput="You deleted the customer attribute." stepKey="seeSuccessDeleteMessage"/>
+    </actionGroup>
+</actionGroups>

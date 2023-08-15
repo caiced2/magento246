@@ -1,0 +1,36 @@
+<?php
+/**
+ * Copyright © Magento, Inc. All rights reserved.
+ * See COPYING.txt for license details.
+ */
+/**
+ * Order by SKU Failed item info
+ *
+ * @var $block \Magento\AdvancedCheckout\Block\Sku\Products\Info
+ */
+// phpcs:disable Magento2.Files.LineLength
+
+$_item = $block->getItem();
+$escapedSkuAttr = $block->escapeHtmlAttr($_item->getSku());
+?>
+<dl class="item-options product-attribute-sku">
+    <dt><?= $block->escapeHtml(__('Sku')) ?></dt>
+    <dd><?= $block->escapeHtml($_item->getSku()) ?></dd>
+</dl>
+<?= $block->getProductTierPriceHtml() ?>
+<?= $block->escapeHtml($block->getLink(), ['a']) ?>
+<div role="alert" class="message error item"><div><?= $block->escapeHtml($block->getMessage(), ['span', 'br']) ?></div></div>
+<input type="hidden" name="failed[<?= /* @noEscape - escaped var declaration */ $escapedSkuAttr ?>][sku]" value="<?= /* @noEscape - escaped var declaration */ $escapedSkuAttr ?>" />
+<input type="hidden" name="failed[<?= /* @noEscape - escaped var declaration */ $escapedSkuAttr ?>][code]" value="<?= $block->escapeHtmlAttr($_item->getCode()) ?>" />
+<input type="hidden" name="failed[<?= /* @noEscape - escaped var declaration */ $escapedSkuAttr ?>][qty]" value="<?= $block->escapeHtmlAttr($_item->getQty()) ?>" class="sku_failed_qty" data-role="sku-failed-qty" />
+<?php if (!$block->isItemSkuFailed()) : ?>
+    <?php if ($_item->getQtyMaxAllowed()) : ?>
+        <input type="hidden" class="qty_max_allowed" value="<?= $block->escapeHtmlAttr($_item->getQtyMaxAllowed()) ?>"/>
+    <?php endif ?>
+    <?php if ($_item->getQtyMinAllowed()) : ?>
+        <input type="hidden" class="qty_min_allowed" value="<?= $block->escapeHtmlAttr($_item->getQtyMinAllowed()) ?>"/>
+    <?php endif ?>
+    <?php if ($_item->getCode() == \Magento\AdvancedCheckout\Helper\Data::ADD_ITEM_STATUS_FAILED_QTY_INCREMENTS) : ?>
+        <input type="hidden" class="qty_increments" value="<?= $block->escapeHtmlAttr($_item->getQtyIncrements()) ?>"/>
+    <?php endif ?>
+<?php endif; ?>

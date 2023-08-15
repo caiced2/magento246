@@ -1,0 +1,143 @@
+{
+    "magento_targetrule": {
+        "column": {
+            "rule_id": true,
+            "name": true,
+            "from_date": true,
+            "to_date": true,
+            "is_active": true,
+            "conditions_serialized": true,
+            "actions_serialized": true,
+            "positions_limit": true,
+            "apply_to": true,
+            "sort_order": true,
+            "action_select": true,
+            "action_select_bind": true
+        },
+        "index": {
+            "MAGENTO_TARGETRULE_IS_ACTIVE": true,
+            "MAGENTO_TARGETRULE_APPLY_TO": true,
+            "MAGENTO_TARGETRULE_SORT_ORDER": true,
+            "MAGENTO_TARGETRULE_FROM_DATE_TO_DATE": true
+        },
+        "constraint": {
+            "PRIMARY": true
+        }
+    },
+    "magento_targetrule_customersegment": {
+        "column": {
+            "rule_id": true,
+            "segment_id": true
+        },
+        "index": {
+            "MAGENTO_TARGETRULE_CUSTOMERSEGMENT_SEGMENT_ID": true
+        },
+        "constraint": {
+            "PRIMARY": true,
+            "FK_C8689D7B7075ACE9DF3E95CB5CE36E91": true,
+            "FK_B8814D55D65E69A6594EEA15177ADE79": true
+        }
+    },
+    "magento_targetrule_product": {
+        "column": {
+            "rule_id": true,
+            "product_id": true
+        },
+        "index": {
+            "MAGENTO_TARGETRULE_PRODUCT_PRODUCT_ID": true
+        },
+        "constraint": {
+            "PRIMARY": true,
+            "MAGENTO_TARGETRULE_PRD_PRD_ID_CAT_PRD_ENTT_ENTT_ID": true,
+            "MAGENTO_TARGETRULE_PRODUCT_RULE_ID_MAGENTO_TARGETRULE_RULE_ID": true
+        }
+    },
+    "magento_targetrule_index": {
+        "column": {
+            "entity_id": true,
+            "store_id": true,
+            "customer_group_id": true,
+            "type_id": true,
+            "flag": true,
+            "customer_segment_id": true
+        },
+        "constraint": {
+            "PRIMARY": true
+        }
+    },
+    "magento_targetrule_index_related": {
+        "column": {
+            "entity_id": true,
+            "store_id": true,
+            "customer_group_id": true,
+            "customer_segment_id": true,
+            "product_set_id": true
+        },
+        "constraint": {
+            "PRIMARY": true,
+            "UNQ_CDB499BD6E62A607DAB1EE4895AD5DF1": true,
+            "IDX_CDB499BD6E62A607DAB1EE4895AD5DF1": true
+        }
+    },
+    "magento_targetrule_index_upsell": {
+        "column": {
+            "entity_id": true,
+            "store_id": true,
+            "customer_group_id": true,
+            "customer_segment_id": true,
+            "product_set_id": true
+        },
+        "constraint": {
+            "PRIMARY": true,
+            "UNQ_2FF9494DEBB08EA6B55B5276F0B78C45": true,
+            "IDX_2FF9494DEBB08EA6B55B5276F0B78C45": true
+        }
+    },
+    "magento_targetrule_index_crosssell": {
+        "column": {
+            "entity_id": true,
+            "store_id": true,
+            "customer_group_id": true,
+            "customer_segment_id": true,
+            "product_set_id": true
+        },
+        "constraint": {
+            "PRIMARY": true,
+            "UNQ_31AF14EF81FDC2FBC907C7AFB551F407": true,
+            "IDX_31AF14EF81FDC2FBC907C7AFB551F407": true
+        }
+    },
+    "magento_targetrule_index_crosssell_product": {
+        "column": {
+            "product_set_id": true,
+            "product_id": true
+        },
+        "constraint": {
+            "PRIMARY": true,
+            "FK_9345746865FD6F97C44AAD7D03EC3058": true,
+            "MAGENTO_TARGETRULE_IDX_CROSSSELL_PRD_PRD_SET_ID_PRD_ID": true
+        }
+    },
+    "magento_targetrule_index_related_product": {
+        "column": {
+            "product_set_id": true,
+            "product_id": true
+        },
+        "constraint": {
+            "PRIMARY": true,
+            "FK_F018B7EA5426D7CD98E40E7B3081DAB9": true,
+            "MAGENTO_TARGETRULE_IDX_RELATED_PRD_PRD_SET_ID_PRD_ID": true
+        }
+    },
+    "magento_targetrule_index_upsell_product": {
+        "column": {
+            "product_set_id": true,
+            "product_id": true
+        },
+        "constraint": {
+            "PRIMARY": true,
+            "FK_9D05BD7FDEEE55E1FC4C2891966C909A": true,
+            "MAGENTO_TARGETRULE_IDX_UPSELL_PRD_PRD_SET_ID_PRD_ID": true
+        }
+    }
+}

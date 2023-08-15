@@ -1,0 +1,64 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+/**
+ * Copyright © Magento, Inc. All rights reserved.
+ * See COPYING.txt for license details.
+ */
+-->
+
+<tests xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xsi:noNamespaceSchemaLocation="urn:magento:mftf:Test/etc/testSchema.xsd">
+    <test name="AddNonexistentProductBySkuFromCustomerAccountTest">
+        <annotations>
+            <features value="AdvancedCheckout"/>
+            <stories value="Add Product By SKU"/>
+            <title value="Add nonexistent product by sku from customer account test"/>
+            <description value="Add nonexistent product by sku from customer account"/>
+            <severity value="CRITICAL"/>
+            <testCaseId value="MC-14036"/>
+            <group value="AdvancedCheckout"/>
+            <group value="mtf_migrated"/>
+        </annotations>
+        <before>
+            <!-- Create customer -->
+            <createData entity="Simple_US_Customer" stepKey="createCustomer"/>
+        </before>
+        <after>
+            <!-- Delete customer -->
+            <deleteData createDataKey="createCustomer" stepKey="deleteCustomer"/>
+        </after>
+
+        <!-- Login to Frontend -->
+        <actionGroup ref="LoginToStorefrontActionGroup" stepKey="loginAsCustomer">
+            <argument name="Customer" value="$$createCustomer$$"/>
+        </actionGroup>
+
+        <!-- Open My Account > Order by SKU -->
+        <amOnPage stepKey="goToMyAccountPage" url="{{StorefrontCustomerDashboardPage.url}}"/>
+        <waitForPageLoad stepKey="waitForPageLoad"/>
+        <actionGroup ref="StorefrontCustomerGoToSidebarMenu" stepKey="goToSidebarMenu">
+            <argument name="menu" value="Order by SKU"/>
+        </actionGroup>
+
+        <!-- Fill data according dataset -->
+        <actionGroup ref="FillProductSkuAndQtyActionGroup" stepKey="fillProductQtyAndSkuForOrderProduct">
+            <argument name="sku" value="{{CONST.nonexistentProductSku}}"/>
+            <argument name="quantity" value="{{ApiSimpleSingleQty.quantity}}"/>
+            <argument name="index" value="0"/>
+        </actionGroup>
+
+        <!-- Add product to cart -->
+        <waitForElementClickable selector="{{StorefrontCustomerOrderBySkuSection.addToCart}}" stepKey="waitForAddToCart"/>
+        <click selector="{{StorefrontCustomerOrderBySkuSection.addToCart}}" stepKey="clickAddToCart"/>
+
+        <!-- Assert product required attention fail message -->
+        <waitForElementVisible selector="{{StorefrontCustomerOrderBySkuSection.requiredAttentionMessage}}" stepKey="waitForPageAppeared"/>
+        <see selector="{{StorefrontCustomerOrderBySkuSection.requiredAttentionMessage}}" userInput="1 product requires your attention." stepKey="seeFailMessage"/>
+
+        <!-- Assert qty is not enough fail message-->
+        <see selector="{{StorefrontCustomerOrderBySkuSection.errorMessage}}" userInput="The SKU was not found in the catalog" stepKey="assertFailMessage"/>
+
+        <!-- Assert cart is empty -->
+        <actionGroup ref="AssertMiniCartEmptyActionGroup" stepKey="seeMiniCartEmpty"/>
+    </test>
+</tests>

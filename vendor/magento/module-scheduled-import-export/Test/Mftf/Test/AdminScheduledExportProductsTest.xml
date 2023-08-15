@@ -1,0 +1,130 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+ /**
+  * Copyright © Magento, Inc. All rights reserved.
+  * See COPYING.txt for license details.
+  */
+-->
+
+<tests xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xsi:noNamespaceSchemaLocation="urn:magento:mftf:Test/etc/testSchema.xsd">
+    <test name="AdminScheduledExportProductsTest">
+        <annotations>
+            <features value="ScheduledImportExport"/>
+            <stories value="Export Products"/>
+            <title value="Schedule Export for Simple Product"/>
+            <description value="Exports 2 simple products from admin System > Data Transfer > Scheduled Imports/Exports
+            page, verifies that an export history file is generated and verifies that the actual export file is
+            generated and contains the 2 expected products."/>
+            <severity value="MAJOR"/>
+            <testCaseId value="MC-38948"/>
+            <group value="importExport"/>
+            <group value="scheduledImportExport"/>
+            <group value="pr_exclude"/>
+        </annotations>
+
+        <before>
+            <!-- Create Category & Products -->
+            <createData entity="_defaultCategory" stepKey="category"/>
+            <createData entity="_defaultProduct" stepKey="simpleProduct1">
+                <requiredEntity createDataKey="category"/>
+            </createData>
+            <createData entity="_defaultProduct" stepKey="simpleProduct2">
+                <requiredEntity createDataKey="category"/>
+            </createData>
+
+            <!-- Login as Admin -->
+            <actionGroup ref="AdminLoginActionGroup" stepKey="loginAsAdmin"/>
+        </before>
+
+        <after>
+            <!-- Delete Data -->
+            <deleteData createDataKey="category" stepKey="deleteCategory"/>
+            <deleteData createDataKey="simpleProduct1" stepKey="deleteProduct1"/>
+            <deleteData createDataKey="simpleProduct2" stepKey="deleteProduct2"/>
+            <actionGroup ref="AdminNavigateToScheduledImportsExportsPageActionGroup" stepKey="navigateToScheduledImportsExportsPage"/>
+            <actionGroup ref="AdminDeleteAllScheduledImportsExportsActionGroup" stepKey="deleteScheduledExport"/>
+            <actionGroup ref="AdminNavigateToConfigurationSystemSectionActionGroup" stepKey="navigateToScheduledImportExportFileHistoryCleaning">
+                <argument name="section" value="{{AdminConfigData.sectionHref}}"/>
+            </actionGroup>
+            <generateDate date="now" format="Y" timezone="UTC" stepKey="currentYear"/>
+            <generateDate date="now" format="m" timezone="UTC" stepKey="currentMonth"/>
+            <actionGroup ref="AdminConfigClickCleanNowButtonActionGroup" stepKey="deleteScheduledImportExportFiles"/>
+            <helper class="Magento\Catalog\Test\Mftf\Helper\LocalFileAssertions" method="assertDirectoryEmpty" stepKey="assertExportHistoryFileDeleted">
+                <argument name="path">var/import_export/history/{$currentYear}/{$currentMonth}/</argument>
+            </helper>
+            <helper class="Magento\Catalog\Test\Mftf\Helper\LocalFileAssertions" method="deleteDirectory" stepKey="deleteExportFileDirectory">
+                <argument name="path">var/export/{{ScheduleExport1.name}}/</argument>
+            </helper>
+            <actionGroup ref="AdminLogoutActionGroup" stepKey="logoutFromAdmin"/>
+        </after>
+
+        <!-- Create Scheduled Export for Simple Products -->
+        <actionGroup ref="AdminNavigateToNewScheduledExportPageActionGroup" stepKey="navigateToNewScheduledExportPage"/>
+        <actionGroup ref="AdminFillScheduledExportFormActionGroup" stepKey="fillScheduledExportForm">
+            <argument name="name" value="{{ScheduleExport1.name}}"/>
+            <argument name="entityType" value="Products"/>
+            <argument name="fileFormat" value="CSV"/>
+            <argument name="serverType" value="Local Server"/>
+            <argument name="fileDirectory" value="var/export/{{ScheduleExport1.name}}/"/>
+        </actionGroup>
+        <actionGroup ref="AdminClickSaveScheduledImportExportActionGroup" stepKey="clickSave">
+            <argument name="resultMessage" value="You saved the scheduled report."/>
+        </actionGroup>
+        <actionGroup ref="AdminFilterLegacyGridActionGroup" stepKey="filterGrid">
+            <argument name="field" value="{{AdminLegacyDataGridFilterSection.inputFieldByNameAttr('name')}}"/>
+            <argument name="value" value="{{ScheduleExport1.name}}"/>
+        </actionGroup>
+        <actionGroup ref="AdminAssertSavedScheduledImportExportActionGroup" stepKey="verifyScheduledExportRow">
+            <argument name="name" value="{{ScheduleExport1.name}}"/>
+            <argument name="operation" value="Export"/>
+            <argument name="lastOutcome" value="Pending"/>
+        </actionGroup>
+
+        <!-- Run Scheduled Export for Simple Products -->
+        <actionGroup ref="AdminRunSavedScheduledImportExportActionGroup" stepKey="runExport"/>
+        <generateDate date="now" format="Y" timezone="UTC" stepKey="currentYear"/>
+        <generateDate date="now" format="m" timezone="UTC" stepKey="currentMonth"/>
+        <generateDate date="now" format="d" timezone="UTC" stepKey="currentDay"/>
+        <generateDate date="now" format="H" timezone="UTC" stepKey="currentHour"/>
+        <generateDate date="now" format="i" timezone="UTC" stepKey="currentMinute"/>
+        <actionGroup ref="AdminFilterLegacyGridActionGroup" stepKey="filterGrid2">
+            <argument name="field" value="{{AdminLegacyDataGridFilterSection.inputFieldByNameAttr('name')}}"/>
+            <argument name="value" value="{{ScheduleExport1.name}}"/>
+        </actionGroup>
+        <actionGroup ref="AdminAssertSavedScheduledImportExportActionGroup" stepKey="verifyScheduledExportRow2">
+            <argument name="name" value="{{ScheduleExport1.name}}"/>
+            <argument name="operation" value="Export"/>
+            <argument name="lastOutcome" value="Successful"/>
+        </actionGroup>
+
+        <!-- Verify Export History File -->
+        <helper class="Magento\Catalog\Test\Mftf\Helper\LocalFileAssertions" method="assertFileExists" stepKey="assertExportHistoryFileExists">
+            <argument name="filePath">var/import_export/history/{$currentYear}/{$currentMonth}/{$currentDay}/{$currentHour}-{$currentMinute}_export_catalog_product.csv</argument>
+        </helper>
+        <helper class="Magento\Catalog\Test\Mftf\Helper\LocalFileAssertions" method="assertFileContainsString" stepKey="assertExportHistoryFileContainsSimpleProduct1">
+            <argument name="filePath">var/import_export/history/{$currentYear}/{$currentMonth}/{$currentDay}/{$currentHour}-{$currentMinute}_export_catalog_product.csv</argument>
+            <argument name="text">$$simpleProduct1.sku$$</argument>
+        </helper>
+        <helper class="Magento\Catalog\Test\Mftf\Helper\LocalFileAssertions" method="assertFileContainsString" stepKey="assertExportHistoryFileContainsSimpleProduct2">
+            <argument name="filePath">var/import_export/history/{$currentYear}/{$currentMonth}/{$currentDay}/{$currentHour}-{$currentMinute}_export_catalog_product.csv</argument>
+            <argument name="text">$$simpleProduct2.sku$$</argument>
+        </helper>
+
+        <!-- Verify Exported File -->
+        <helper class="Magento\Catalog\Test\Mftf\Helper\LocalFileAssertions" method="assertGlobbedFileExists" stepKey="assertExportFileExists">
+            <argument name="path">var/export/{{ScheduleExport1.name}}</argument>
+            <argument name="pattern">{$currentYear}-{$currentMonth}-{$currentDay}_{$currentHour}-{$currentMinute}-??_export_catalog_product.csv</argument>
+        </helper>
+        <helper class="Magento\Catalog\Test\Mftf\Helper\LocalFileAssertions" method="assertGlobbedFileContainsString" stepKey="assertExportFileContainsSimpleProduct1">
+            <argument name="path">var/export/{{ScheduleExport1.name}}</argument>
+            <argument name="pattern">{$currentYear}-{$currentMonth}-{$currentDay}_{$currentHour}-{$currentMinute}-??_export_catalog_product.csv</argument>
+            <argument name="text">$$simpleProduct1.sku$$</argument>
+        </helper>
+        <helper class="Magento\Catalog\Test\Mftf\Helper\LocalFileAssertions" method="assertGlobbedFileContainsString" stepKey="assertExportFileContainsSimpleProduct2">
+            <argument name="path">var/export/{{ScheduleExport1.name}}</argument>
+            <argument name="pattern">{$currentYear}-{$currentMonth}-{$currentDay}_{$currentHour}-{$currentMinute}-??_export_catalog_product.csv</argument>
+            <argument name="text">$$simpleProduct2.sku$$</argument>
+        </helper>
+    </test>
+</tests>

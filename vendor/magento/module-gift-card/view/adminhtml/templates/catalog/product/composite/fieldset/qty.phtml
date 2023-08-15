@@ -1,0 +1,18 @@
+<?php
+/**
+ * Copyright © Magento, Inc. All rights reserved.
+ * See COPYING.txt for license details.
+ */
+?>
+<?php /* @var $block \Magento\Catalog\Block\Adminhtml\Product\Composite\Fieldset\Qty */ ?>
+
+<div class="field admin__field giftcard-qty-form">
+    <label class="label admin__field-label"><span><?= $block->escapeHtml(__('Quantity')) ?></span></label>
+    <div class="control admin__field-control">
+        <input id="product_composite_configure_input_qty"
+               class="input-text admin__control-text"
+               type="text"
+               name="qty"
+               value="<?= $block->escapeHtmlAttr($block->getQtyValue() * 1) ?>">
+    </div>
+</div>

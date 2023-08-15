@@ -1,0 +1,98 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+ /**
+  * Copyright © Magento, Inc. All rights reserved.
+  * See COPYING.txt for license details.
+  */
+-->
+
+<tests xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xsi:noNamespaceSchemaLocation="urn:magento:mftf:Test/etc/testSchema.xsd">
+    <test name="RestrictedUserRoleForProductRemovalTest">
+        <annotations>
+            <features value="AdminGws"/>
+            <stories value="Restrict users"/>
+            <title value="Restricted admin user should not be able to remove product from other websites"/>
+            <description value="Restricted admin not able to remove products from websites other than access provided by the user role"/>
+            <severity value="CRITICAL"/>
+            <testCaseId value="MC-25823"/>
+            <group value="userRole"/>
+            <group value="pr_exclude"/>
+        </annotations>
+        <before>
+            <createData entity="adminProductInWebsiteRole" stepKey="restrictedAdminRoleMainWebsite"/>
+            <createData entity="SimpleSubCategory" stepKey="createCategory"/>
+            <createData entity="SimpleProduct" stepKey="createSimpleProduct">
+                <requiredEntity createDataKey="createCategory"/>
+            </createData>
+            <createData entity="restrictedWebUser" stepKey="restrictedAdminUserMainWebsite"/>
+            <actionGroup ref="AdminLoginActionGroup" stepKey="loginAsAdmin"/>
+        </before>
+        <after>
+            <deleteData createDataKey="createSimpleProduct" stepKey="deleteSimpleProduct1"/>
+            <deleteData createDataKey="createCategory" stepKey="deleteCategory"/>
+            <actionGroup ref="AdminLogoutActionGroup" stepKey="logoutFromRestrictedAdmin"/>
+            <actionGroup ref="AdminLoginActionGroup" stepKey="loginAsAdminWithAllAccess"/>
+            <actionGroup ref="AdminDeleteWebsiteActionGroup" stepKey="deleteSecondWebsite">
+                <argument name="websiteName" value="{{customWebsite.name}}"/>
+            </actionGroup>
+            <magentoCron groups="index" stepKey="reindex"/>
+            <actionGroup ref="AdminDeleteUserRoleActionGroup" stepKey="deleteRestrictedRole">
+                <argument name="roleName" value="$$restrictedAdminRoleMainWebsite.rolename$$"/>
+            </actionGroup>
+            <actionGroup ref="ClearFiltersAdminDataGridActionGroup" stepKey="resetRoleFilters"/>
+            <actionGroup ref="AdminLogoutActionGroup" stepKey="amOnLogoutPage"/>
+        </after>
+
+        <actionGroup ref="AdminCreateWebsiteActionGroup" stepKey="createAdditionalWebsite">
+            <argument name="newWebsiteName" value="{{customWebsite.name}}"/>
+            <argument name="websiteCode" value="{{customWebsite.code}}"/>
+        </actionGroup>
+        <actionGroup ref="AdminCreateNewStoreGroupActionGroup" stepKey="createNewStore">
+            <argument name="website" value="{{customWebsite.name}}"/>
+            <argument name="storeGroupName" value="{{customStoreGroup.name}}"/>
+            <argument name="storeGroupCode" value="{{customStoreGroup.code}}"/>
+        </actionGroup>
+
+        <!--Create Store view -->
+        <actionGroup ref="AdminCreateStoreViewActionGroup" stepKey="createFirstStoreView">
+            <argument name="StoreGroup" value="customStoreGroup"/>
+            <argument name="customStore" value="customStore"/>
+        </actionGroup>
+        <magentoCron groups="index" stepKey="reindex"/>
+
+        <amOnPage url="{{AdminUsersPage.url}}" stepKey="amOnAdminUsersPage"/>
+        <fillField stepKey="fillUsernameSearch" selector="{{AdminUserGridSection.usernameFilterTextField}}" userInput="$$restrictedAdminUserMainWebsite.username$$"/>
+        <click stepKey="clickSearchButton" selector="{{AdminUserGridSection.searchButton}}"/>
+        <waitForPageLoad stepKey="wait1" time="10"/>
+        <see stepKey="seeFoundUsername" selector="{{AdminUserGridSection.usernameInFirstRow}}" userInput="$$restrictedAdminUserMainWebsite.username$$"/>
+        <click stepKey="clickFoundUsername" selector="{{AdminUserGridSection.searchResultFirstRow}}"/>
+        <waitForPageLoad stepKey="wait2" time="30"/>
+        <seeInField stepKey="seeUsernameInField" selector="{{AdminEditUserSection.usernameTextField}}" userInput="$$restrictedAdminUserMainWebsite.username$$"/>
+        <fillField stepKey="fillCurrentPassword" selector="{{AdminEditUserSection.currentPasswordField}}" userInput="{{_ENV.MAGENTO_ADMIN_PASSWORD}}"/>
+        <scrollToTopOfPage stepKey="scrollToTopOfPage" />
+        <click stepKey="clickUserRoleTab" selector="{{AdminEditUserSection.userRoleTab}}"/>
+
+        <fillField selector="{{AdminEditUserSection.roleNameFilterTextField}}" userInput="$$restrictedAdminRoleMainWebsite.rolename$$" stepKey="fillRoleNameSearch"/>
+        <click stepKey="clickSearchButtonUserRole" selector="{{AdminEditUserSection.searchButton}}"/>
+        <waitForPageLoad stepKey="wait3" time="10"/>
+        <see stepKey="seeFoundRoleName" selector="{{AdminEditUserSection.roleNameInFirstRow}}" userInput="$$restrictedAdminRoleMainWebsite.rolename$$"/>
+        <click stepKey="clickFoundRoleName" selector="{{AdminEditUserSection.searchResultFirstRow}}"/>
+        <click stepKey="clickSaveButton" selector="{{AdminEditUserSection.saveButton}}"/>
+        <waitForPageLoad stepKey="wait4" time="10"/>
+        <see stepKey="saveUserSuccessMessage" selector="{{AdminUserGridSection.successMessage}}" userInput="You saved the user."/>
+        <actionGroup ref="AdminLogoutActionGroup" stepKey="amOnLogoutPage2"/>
+
+        <!--login as restricted user-->
+        <actionGroup ref="AdminLoginActionGroup" stepKey="loginAsAdminUser">
+            <argument name="username" value="$$restrictedAdminUserMainWebsite.username$$"/>
+            <argument name="password" value="$$restrictedAdminUserMainWebsite.password$$"/>
+        </actionGroup>
+
+        <!-- Open product edit page -->
+        <amOnPage url="{{AdminProductEditPage.url($createSimpleProduct.id$)}}" stepKey="openEditProduct"/>
+        <scrollTo selector="{{ProductInWebsitesSection.sectionHeader}}" stepKey="scrollToWebsites"/>
+        <conditionalClick selector="{{ProductInWebsitesSection.sectionHeader}}" dependentSelector="{{AdminProductContentSection.sectionHeaderShow}}" visible="false" stepKey="openProductInWebsitesSection1"/>
+        <dontSeeElementInDOM selector="//label[contains(text(), '{{customWebsite.name}}')]/parent::div//input[@type='checkbox']" stepKey="dontSeeTheSecondWebsiteCheckbox"/>
+    </test>
+</tests>

@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+ /**
+  * Copyright © Magento, Inc. All rights reserved.
+  * See COPYING.txt for license details.
+  */
+-->
+<actionGroups xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+              xsi:noNamespaceSchemaLocation="urn:magento:mftf:Test/etc/actionGroupSchema.xsd">
+    <actionGroup name="CreateSalesRulePermanentUpdateActionGroup">
+        <arguments>
+            <argument name="ruleName"/>
+            <argument name="schedule"/>
+        </arguments>
+        <amOnPage url="{{AdminCartPriceRulesPage.url}}" stepKey="amOnCartPriceList"/>
+        <waitForPageLoad stepKey="waitForPriceList"/>
+        <fillField selector="{{AdminCartPriceRulesSection.filterByNameInput}}" userInput="{{ruleName.name}}" stepKey="filterByName"/>
+        <click selector="{{AdminCartPriceRulesSection.searchButton}}" stepKey="doFilter"/>
+        <click selector="{{AdminCartPriceRulesSection.rowByIndex('1')}}" stepKey="goToEditRulePage"/>
+        <click selector="{{AdminStagingSlideOutSection.scheduleNewUpdateBtn}}" stepKey="clickButtonSheduleNewUpdate1"/>
+        <fillField selector="{{AdminStagingSlideOutSection.updateName}}" userInput="{{schedule.name}}" stepKey="fillUpdateName"/>
+        <fillField selector="{{AdminStagingSlideOutSection.updateDescription}}" userInput="{{schedule.description}}" stepKey="fillDescription"/>
+        <fillField selector="{{AdminStagingSlideOutSection.startDate}}" userInput="{{schedule.startDate}}" stepKey="fillStartDate"/>
+        <click selector="{{AdminStagingSlideOutSection.save}}" stepKey="clickSave"/>
+        <waitForPageLoad time="30" stepKey="waitForPageLoad2"/>
+    </actionGroup>
+</actionGroups>

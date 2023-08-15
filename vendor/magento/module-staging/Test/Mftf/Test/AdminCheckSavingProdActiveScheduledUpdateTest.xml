@@ -1,0 +1,109 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+ /**
+  * Copyright © Magento, Inc. All rights reserved.
+  * See COPYING.txt for license details.
+  */
+-->
+
+<tests xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xsi:noNamespaceSchemaLocation="urn:magento:mftf:Test/etc/testSchema.xsd">
+    <test name="AdminCheckSavingProdActiveScheduledUpdateTest">
+        <annotations>
+            <features value="Staging"/>
+            <stories value="Unique attribute value"/>
+            <title value="Saving product with an attribute which requires a Unique Value when there is an active Scheduled Update"/>
+            <description value="Check saving product with an attribute with a Unique Value when there is an active Scheduled Update"/>
+            <severity value="MAJOR"/>
+            <testCaseId value="MAGETWO-96445"/>
+            <useCaseId value="MAGETWO-95836"/>
+            <group value="staging"/>
+        </annotations>
+        <before>
+            <createData entity="productDropDownAttribute" stepKey="attribute"/>
+            <createData entity="productAttributeOption1" stepKey="option1">
+                <requiredEntity createDataKey="attribute"/>
+            </createData>
+            <createData entity="AddToDefaultSet" stepKey="attributeSet">
+                <requiredEntity createDataKey="attribute"/>
+            </createData>
+            <createData entity="SimpleProduct2" stepKey="createSimpleProduct"/>
+            <actionGroup ref="AdminLoginActionGroup" stepKey="loginAsAdmin"/>
+        </before>
+        <after>
+            <deleteData createDataKey="attribute" stepKey="deleteAttribute"/>
+            <actionGroup ref="DeleteProductUsingProductGridActionGroup" stepKey="deleteProduct">
+                <argument name="product" value="SimpleProduct2"/>
+            </actionGroup>
+            <actionGroup ref="ResetAdminDataGridToDefaultViewActionGroup" stepKey="clickClearFilters"/>
+            <actionGroup ref="AdminLogoutActionGroup" stepKey="logout"/>
+
+            <!-- Reindex invalidated indices after product attribute has been created/deleted -->
+           <magentoCron groups="index" stepKey="reindexInvalidatedIndices"/>
+        </after>
+        <!--Open product attribute. Set Unique Value = Yes-->
+        <actionGroup ref="NavigateToEditProductAttributeActionGroup" stepKey="navigateToSkuProductAttribute">
+            <argument name="ProductAttribute" value="attribute"/>
+        </actionGroup>
+        <!-- Set advanced attribute properties -->
+        <click selector="{{AdvancedAttributePropertiesSection.AdvancedAttributePropertiesSectionToggle}}" stepKey="showAdvancedAttributePropertiesSection"/>
+        <waitForElementVisible selector="{{AdvancedAttributePropertiesSection.AttributeCode}}" stepKey="waitForSlideOut"/>
+        <selectOption selector="{{AdvancedAttributePropertiesSection.UniqueValue}}" userInput="Yes" stepKey="fillAttributeCode"/>
+        <!-- Save the product attribute -->
+        <click selector="{{AttributePropertiesSection.Save}}" stepKey="clickSave1"/>
+        <waitForPageLoad stepKey="waitForGridPageLoad"/>
+        <seeElement selector="{{AdminProductMessagesSection.successMessage}}" stepKey="waitForSuccessMessage"/>
+
+        <!-- Go to default attribute set edit page and add the product attribute to the set -->
+        <comment userInput="Go to default attribute set edit page and add the product attribute to the set" stepKey="commentAttributeSetEdit" />
+        <amOnPage url="{{AdminProductAttributeSetEditPage.url}}/{{AddToDefaultSet.attributeSetId}}/" stepKey="onAttributeSetEdit"/>
+        <dragAndDrop selector1="{{AdminProductAttributeSetSection.attribute($$attribute.attribute[attribute_code]$$)}}" selector2="{{AdminProductAttributeSetSection.attribute('Product Details')}}" stepKey="assignTestAttributes"/>
+        <click selector="{{AdminProductAttributeSetSection.saveBtn}}" stepKey="clickAttributeSetSave"/>
+
+        <!-- Flush cache -->
+        <actionGroup ref="CliCacheFlushActionGroup" stepKey="flushCache">
+            <argument name="tags" value=""/>
+        </actionGroup>
+
+        <!-- Go to simple product edit page and set the product attribute to a value -->
+        <comment userInput="Go to simple product edit page and set the product attribute to a value" stepKey="commentProductAttributeEdit" />
+        <amOnPage url="{{AdminProductEditPage.url($$createSimpleProduct.id$$)}}" stepKey="goToEditPage"/>
+        <selectOption selector="{{AdminProductFormSection.customSelectField($$attribute.attribute[attribute_code]$$)}}" userInput="option1" stepKey="selectAttribute"/>
+        <actionGroup ref="SaveProductFormActionGroup" stepKey="saveSimpleProduct"/>
+
+        <!-- Schedule an update -->
+        <click selector="{{AdminStagingSlideOutSection.scheduleNewUpdateBtn}}" stepKey="clickScheduleNewUpdateButton"/>
+        <waitForElementVisible selector="{{AdminStagingSlideOutSection.updateName}}" stepKey="waitForElementVisible"/>
+        <fillField selector="{{AdminStagingSlideOutSection.updateName}}" userInput="{{S5UpdateNameStaging.updateName}}" stepKey="fillUpdateName"/>
+        <generateDate stepKey="generateDate" date="+722 minute" format="m/d/Y g:i A"/>
+        <fillField selector="{{AdminStagingSlideOutSection.startDate}}" userInput="$generateDate" stepKey="fillStartDate"/>
+        <!-- Fill out the field to be changed in the staging update -->
+        <fillField stepKey="changeProductName" selector="{{AdminStagingSlideOutSection.name}}" userInput="$$createSimpleProduct.name$$22"/>
+        <!-- Save the update details -->
+        <scrollToTopOfPage stepKey="scrollToTop"/>
+        <click selector="{{AdminStagingSlideOutSection.save}}" stepKey="clickSave"/>
+        <see selector="{{AdminStagingSlideOutSection.scheduledChanges}}" userInput="{{S5UpdateNameStaging.updateName}}" stepKey="seeUpdate"/>
+
+        <!--Open in a new window: Content > Content Staging > Dashboard-->
+        <executeJS function=" window.open()" stepKey="executeJS2"/>
+        <switchToNextTab stepKey="switchToNewTab"/>
+        <comment userInput="BIC workaround" stepKey="amOnStagingUpdatePage"/>
+        <comment userInput="BIC workaround" stepKey="waitForPageLoad"/>
+        <actionGroup ref="changeStagingView" stepKey="changeDashboardView">
+            <argument name="view" value="timeline"/>
+        </actionGroup>
+
+        <fillField selector="{{AdminAssignToExistingUpdateSection.searchStagingName}}" userInput="{{S5UpdateNameStaging.updateName}}" stepKey="fillSearchStagingName"/>
+        <click selector="{{AdminAssignToExistingUpdateSection.submitSearch}}" stepKey="clickSubmitSearch"/>
+        <waitForPageLoad stepKey="waitForPageLoad1"/>
+        <click selector="{{AdminContentStagingDashboardSection.timeLineEvent}}" stepKey="clickTimelineEvent"/>
+        <waitForPageLoad stepKey="waitForPageLoad2"/>
+
+        <!--wait until the Schedule update is active-->
+        <wait stepKey="waitTwoMinute" time="120"/>
+
+        <!--Go to the Product page and click 'Save' button. Make sure product saved correctly-->
+        <switchToPreviousTab stepKey="switchToPreviousTab"/>
+        <actionGroup ref="SaveProductFormActionGroup" stepKey="saveAgainSimpleProduct"/>
+    </test>
+</tests>

@@ -1,0 +1,191 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+ /**
+  * Copyright © Magento, Inc. All rights reserved.
+  * See COPYING.txt for license details.
+  */
+-->
+
+<entities xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:noNamespaceSchemaLocation="urn:magento:mftf:DataGenerator/etc/dataProfileSchema.xsd">
+    <entity name="Attribute" type="data">
+        <data key="label" unique="suffix">CustomAttribute</data>
+        <data key="code" unique="suffix">customcode</data>
+        <data key="sortOrder">1</data>
+    </entity>
+    <entity name="AttributeDate" type="data">
+        <data key="label" unique="suffix">Date</data>
+        <data key="code" unique="suffix">test_date</data>
+        <data key="inputType">Date</data>
+        <data key="inputFilter">Normalize Date</data>
+    </entity>
+    <entity name="CustomerData" extends="Simple_US_Customer">
+        <data key="address">customcode</data>
+        <data key="password">myStrong_pass</data>
+    </entity>
+    <entity name="AttributeTextField" type="customer_attribute">
+        <data key="frontend_label" unique="suffix">test_text_filed</data>
+        <data key="attribute_code" unique="suffix">test_text_filed</data>
+        <data key="frontend_input">Text Field</data>
+        <data key="is_visible">Yes</data>
+        <data key="sort_order">1</data>
+        <data key="used_in_forms">Customer Registration</data>
+        <data key="defaultValue">test1</data>
+    </entity>
+    <entity name="AttributeTextArea" type="customer_attribute">
+        <data key="frontend_label" unique="suffix">test_text_area</data>
+        <data key="attribute_code" unique="suffix">test_text_area</data>
+        <data key="frontend_input">Text Area</data>
+        <data key="is_visible">Yes</data>
+        <data key="sort_order">2</data>
+        <data key="used_in_forms">Customer Registration</data>
+        <data key="defaultValue">test2</data>
+    </entity>
+    <entity name="AttributeMultiLine" type="customer_attribute">
+        <data key="frontend_label" unique="suffix">test_multiple_line</data>
+        <data key="attribute_code" unique="suffix">test_multiple_line</data>
+        <data key="frontend_input">Multiple Line</data>
+        <data key="is_visible">Yes</data>
+        <data key="multiline_count">2</data>
+        <data key="sort_order">3</data>
+        <data key="used_in_forms">Customer Registration</data>
+        <data key="defaultValue">test3</data>
+    </entity>
+    <entity name="AttributeDate" type="customer_attribute">
+        <data key="frontend_label" unique="suffix">test_date</data>
+        <data key="attribute_code" unique="suffix">test_date</data>
+        <data key="frontend_input">Date</data>
+        <data key="is_visible">Yes</data>
+        <data key="sort_order">4</data>
+        <data key="used_in_forms">Customer Registration</data>
+    </entity>
+    <entity name="AttributeDropDown" type="customer_attribute">
+        <data key="frontend_label" unique="suffix">test_drop_down</data>
+        <data key="attribute_code" unique="suffix">test_drop_down</data>
+        <data key="frontend_input">Dropdown</data>
+        <data key="is_visible">Yes</data>
+        <data key="sort_order">5</data>
+        <data key="used_in_forms">Customer Registration</data>
+        <data key="option1">opt1</data>
+        <data key="option2">opt2</data>
+    </entity>
+    <entity name="AttributeMultiSelect" type="customer_attribute">
+        <data key="frontend_label" unique="suffix">test_multiple_select</data>
+        <data key="attribute_code" unique="suffix">test_multiple_select</data>
+        <data key="frontend_input">Multiple Select</data>
+        <data key="is_visible">Yes</data>
+        <data key="sort_order">6</data>
+        <data key="used_in_forms">Customer Registration</data>
+        <data key="option1">opt1</data>
+        <data key="option2">opt2</data>
+    </entity>
+    <entity name="AttributeYesNo" type="customer_attribute">
+        <data key="frontend_label" unique="suffix">test_yes_no</data>
+        <data key="attribute_code" unique="suffix">test_yes_no</data>
+        <data key="frontend_input">Yes/No</data>
+        <data key="is_visible">Yes</data>
+        <data key="sort_order">7</data>
+        <data key="used_in_forms">Customer Registration</data>
+    </entity>
+    <entity name="AttributeFile" type="customer_attribute">
+        <data key="frontend_label" unique="suffix">file_upload</data>
+        <data key="attribute_code" unique="suffix">file_upload</data>
+        <data key="frontend_input">File (attachment)</data>
+        <data key="is_visible">Yes</data>
+        <data key="sort_order">7</data>
+        <data key="used_in_forms">Customer Registration</data>
+    </entity>
+    <entity name="AttributeImageFile" type="customer_attribute">
+        <data key="frontend_label" unique="suffix">image_file</data>
+        <data key="attribute_code" unique="suffix">image_file</data>
+        <data key="frontend_input">Image File</data>
+        <data key="is_visible">Yes</data>
+        <data key="sort_order">9</data>
+        <data key="used_in_forms">Customer Registration</data>
+    </entity>
+    <entity name="AttributeDropdownData" type="data">
+        <data key="label">Test Dropdown</data>
+        <data key="code" unique="suffix">test_dropdown</data>
+        <data key="inputType">Dropdown</data>
+        <data key="sortOrder">10</data>
+        <data key="firstOption">dropdown_option_1</data>
+        <data key="secondOption">dropdown_option_2</data>
+    </entity>
+    <entity name="AttributeMultipleData" type="data">
+        <data key="label">Test Multiple select</data>
+        <data key="code" unique="suffix">test_multiple_select</data>
+        <data key="inputType">Multiple Select</data>
+        <data key="sortOrder">20</data>
+        <data key="firstOption">multiple_option_1</data>
+        <data key="secondOption">multiple_option_2</data>
+    </entity>
+    <entity name="AttributeLastName" type="data">
+        <data key="swedish">Efternamn</data>
+        <data key="finnish">Sukunimi</data>
+    </entity>
+    <entity name="AttributeMultiSelectForSegment" type="customer_attribute">
+        <data key="frontend_label" unique="suffix">MultipleSelect_Customer_</data>
+        <data key="attribute_code" unique="suffix">multi_</data>
+        <data key="frontend_input">Multiple Select</data>
+        <data key="is_required">No</data>
+        <data key="is_used_for_customer_segment">Yes</data>
+        <data key="is_visible">Yes</data>
+        <data key="sort_order">60</data>
+        <data key="used_in_forms">'Customer Account Edit','Admin Checkout'</data>
+        <data key="option1" unique="suffix">option1</data>
+        <data key="option2" unique="suffix">option2</data>
+    </entity>
+    <entity name="AttributeTextAreaUpdate" type="customer_attribute">
+        <data key="frontend_label" unique="suffix">test_text_area_update</data>
+        <data key="attribute_code" unique="suffix">test_text_area_update</data>
+        <data key="frontend_input">Text Area</data>
+        <data key="is_visible">Yes</data>
+        <data key="sort_order">20</data>
+        <data key="used_in_forms">Customer Registration</data>
+        <data key="defaultValue">update_value</data>
+    </entity>
+    <entity name="AttributeMultiLineUpdate" type="customer_attribute">
+        <data key="frontend_label" unique="suffix">test_multiple_line_update</data>
+        <data key="attribute_code" unique="suffix">test_multiple_line_update</data>
+        <data key="frontend_input">Multiple Line</data>
+        <data key="is_visible">Yes</data>
+        <data key="multiline_count">5</data>
+        <data key="sort_order">30</data>
+        <data key="used_in_forms">Customer Account Edit</data>
+        <data key="defaultValue">update_value</data>
+    </entity>
+    <entity name="AttributeMultiSelectUpdate" type="customer_attribute">
+        <data key="frontend_label" unique="suffix">test_multiple_select_update</data>
+        <data key="attribute_code" unique="suffix">test_multiple_select_update</data>
+        <data key="frontend_input">Multiple Select</data>
+        <data key="is_visible">No</data>
+        <data key="sort_order">60</data>
+        <data key="used_in_forms">Customer Registration</data>
+        <data key="option1">opt1_update</data>
+        <data key="option2">opt2_update</data>
+    </entity>
+    <entity name="AttributeYesNoUpdate" type="customer_attribute">
+        <data key="frontend_label" unique="suffix">test_yes_no_update</data>
+        <data key="attribute_code" unique="suffix">test_yes_no_update</data>
+        <data key="frontend_input">Yes/No</data>
+        <data key="is_visible">No</data>
+        <data key="sort_order">70</data>
+        <data key="used_in_forms">Customer Registration</data>
+    </entity>
+    <entity name="AttributeFileUpdate" type="customer_attribute">
+        <data key="frontend_label" unique="suffix">file_upload_update</data>
+        <data key="attribute_code" unique="suffix">file_upload_update</data>
+        <data key="frontend_input">File (attachment)</data>
+        <data key="is_visible">No</data>
+        <data key="sort_order">80</data>
+        <data key="used_in_forms">Customer Registration</data>
+    </entity>
+    <entity name="AttributeImageFileUpdate" type="customer_attribute">
+        <data key="frontend_label" unique="suffix">image_file_update</data>
+        <data key="attribute_code" unique="suffix">image_file_update</data>
+        <data key="frontend_input">Image File</data>
+        <data key="is_visible">Yes</data>
+        <data key="sort_order">90</data>
+        <data key="used_in_forms">Customer Registration</data>
+    </entity>
+</entities>

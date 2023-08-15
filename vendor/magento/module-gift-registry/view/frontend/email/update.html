@@ -1,0 +1,32 @@
+<!--
+/**
+ * Copyright © Magento, Inc. All rights reserved.
+ * See COPYING.txt for license details.
+ */
+-->
+<!--@subject {{trans "Gift Registry updated at %store_name" store_name=$store.frontend_name}} @-->
+<!--@vars {
+"store url=\"customer\/account\/\"":"Customer Account URL",
+"template config_path=\"design\/email\/footer_template\"":"Email Footer Template",
+"template config_path=\"design\/email\/header_template\"":"Email Header Template",
+"var logo_alt":"Email Logo Image Alt",
+"var logo_url":"Email Logo Image URL",
+"var owner_data.name|escape":"Owner Name",
+"layout handle=\"magento_giftregistry_email_entity_items\" entity=$entity":"Registry Items",
+"var entity.title|escape":"Registry Title",
+"var store.frontend_name":"Store Name",
+"store url=\"\"":"Store URL",
+"var entity":"Entity"
+} @-->
+
+{{template config_path="design/email/header_template"}}
+
+<p class="greeting">{{trans "%name," name=$owner_data.name}}</p>
+
+<p>{{trans "The following items have been purchased from your gift registry \"%registry_name\":" registry_name=$entity.title}}</p>
+
+{{layout handle="magento_giftregistry_email_entity_items" entity=$entity}}
+
+<p>{{trans "You can sign in to your account to view more details about this gift registry."}}</p>
+
+{{template config_path="design/email/footer_template"}}

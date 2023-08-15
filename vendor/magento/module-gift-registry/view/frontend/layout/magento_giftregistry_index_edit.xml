@@ -1,0 +1,49 @@
+<?xml version="1.0"?>
+<!--
+/**
+ * Copyright © Magento, Inc. All rights reserved.
+ * See COPYING.txt for license details.
+ */
+-->
+<page xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="urn:magento:framework:View/Layout/etc/page_configuration.xsd">
+    <update handle="customer_account"/>
+    <update handle="page_calendar"/>
+    <body>
+        <referenceBlock name="head.components">
+            <block class="Magento\Framework\View\Element\Js\Components" name="giftregistry_page_head_components" template="Magento_GiftRegistry::js/components.phtml"/>
+        </referenceBlock>
+        <referenceBlock name="customer_account_navigation">
+            <action method="setActive">
+                <argument name="path" xsi:type="string">magento_giftregistry/index/index</argument>
+            </action>
+        </referenceBlock>
+        <referenceBlock name="customer-account-navigation-giftregistry-link">
+            <arguments>
+                <argument name="is_highlighted" xsi:type="boolean">true</argument>
+            </arguments>
+        </referenceBlock>
+        <referenceContainer name="content">
+            <block class="Magento\GiftRegistry\Block\Customer\Edit" name="giftregistry_edit" template="Magento_GiftRegistry::edit/edit.phtml" cacheable="false">
+                <action method="addInputTypeTemplate">
+                    <argument name="type" xsi:type="string">text</argument>
+                    <argument name="template" xsi:type="string">Magento_GiftRegistry::attributes/text.phtml</argument>
+                </action>
+                <action method="addInputTypeTemplate">
+                    <argument name="type" xsi:type="string">region</argument>
+                    <argument name="template" xsi:type="string">Magento_GiftRegistry::attributes/region.phtml</argument>
+                </action>
+                <block class="Magento\GiftRegistry\Block\Customer\Edit\Registry" name="giftregistry_edit_registry" template="Magento_GiftRegistry::edit/registry.phtml" cacheable="false">
+                    <arguments>
+                        <argument name="region_provider" xsi:type="object">Magento\Customer\ViewModel\Address\RegionProvider</argument>
+                    </arguments>
+                </block>
+                <block class="Magento\GiftRegistry\Block\Customer\Edit\Registrants" name="giftregistry_edit_registrants" template="Magento_GiftRegistry::edit/registrants.phtml" cacheable="false"/>
+                <block class="Magento\GiftRegistry\Block\Customer\Address\Edit" name="giftregistry_address_edit" template="Magento_GiftRegistry::address/edit.phtml" cacheable="false">
+                    <arguments>
+                        <argument name="region_provider" xsi:type="object">Magento\Customer\ViewModel\Address\RegionProvider</argument>
+                    </arguments>
+                </block>
+            </block>
+        </referenceContainer>
+    </body>
+</page>

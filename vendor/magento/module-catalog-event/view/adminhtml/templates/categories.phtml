@@ -1,0 +1,171 @@
+<?php
+/**
+ * Copyright © Magento, Inc. All rights reserved.
+ * See COPYING.txt for license details.
+ */
+
+/**
+ * Categories tree for catalogevent
+ *
+ * @see \Magento\CatalogEvent\Block\Adminhtml\Edit\Category
+ *
+ * @var \Magento\Framework\View\Helper\SecureHtmlRenderer $secureRenderer
+ */
+$spinnerId = 'category-tree-spinner';
+?>
+<fieldset class="admin__fieldset">
+    <legend class="admin__legend"><span><?= $block->escapeHtml(__('Select Category'))?></span></legend>
+    <br />
+    <div id="tree-div" class="tree"></div>
+<?= /* @noEscape */
+$secureRenderer->renderStyleAsTag(
+    'width:auto;',
+    '#tree-div'
+);
+?>
+</fieldset>
+
+<?php if ($block->getRoot()): ?>
+    <?= /* @noEscape */
+    $secureRenderer->renderTag(
+        'style',
+        [],
+        '.em { font-style: italic; }',
+        true
+    );
+    ?>
+<div class="admin__data-grid-loading-mask" data-role="spinner" data-ui-id="<?= $block->escapeHtmlAttr($spinnerId) ?>">
+    <div class="spinner">
+        <span></span><span></span><span></span><span></span>
+        <span></span><span></span><span></span><span></span>
+    </div>
+</div>
+<!--[if IE]>
+<script id="ie-deferred-loader" defer="defer" src="//:"></script>
+<![endif]-->
+
+    <?php
+    $escapedSpinnerId = $block->escapeJs($spinnerId);
+    $escapedCurrentUrl = $block->escapeJs($block->getCurrentUrl());
+    $escapedLoadTreeUrl = $block->escapeJs($block->getLoadTreeUrl());
+    $treeArray = $block->getTreeArray(null, true);
+    ?>
+    <?php $scriptString = <<<script
+require([
+    'jquery',
+    "extjs/ext-tree-checkbox"
+], function($){
+
+var spinnerId = '{$escapedSpinnerId}';
+
+//<![CDATA[
+if ((typeof FORM_KEY) == 'undefined') {
+    FORM_KEY = '';
+}
+var tree;
+
+/**
+ * Fix ext compatibility with prototype 1.6
+ */
+Ext.lib.Event.getTarget = function(e) {
+    var ee = e.browserEvent || e;
+    return ee.target ? Event.element(ee) : null;
+};
+
+/**
+ * Extend standard TreePanel
+ */
+Ext.tree.TreePanel.Enhanced = function(el, config)
+{
+    Ext.tree.TreePanel.Enhanced.superclass.constructor.call(this, el, config);
+};
+Ext.extend(Ext.tree.TreePanel.Enhanced, Ext.tree.TreePanel, {
+    /**
+     * Category click event hanlder
+     */
+    categoryClick : function(node, e)
+    {
+        if (!node.disabled) {
+            window.location = '{$escapedCurrentUrl}' + 'category_id/' + node.id;
+        }
+    }
+});
+
+/**
+ * Initialize tree and its loader when extjs is ready
+ */
+$(function()
+{
+    categoryLoader = new Ext.tree.TreeLoader({
+       dataUrl: '{$escapedLoadTreeUrl}'
+    });
+
+    /**
+     * Render tree node from config
+     * Nodes text is generated from `name` and `products` attributes
+     */
+    categoryLoader.createNode = function(config) {
+        var _node = Object.clone(config);
+        _node.text = _node.name + ' (' + _node.product_count + ')';
+        if (_node.children_count && !_node.children) {
+            return new Ext.tree.AsyncTreeNode(_node);
+        }
+        return new Ext.tree.TreeNode(_node);
+    };
+
+    /**
+     * Render tree nodes recursively
+     */
+    categoryLoader.buildCategoryTree = function(parent, config)
+    {
+        if (!config) {
+            return;
+        }
+        if (parent && config && config.length) {
+            for (var i in config) {
+                if (!isNaN(i)) {
+                    var node = this.createNode(config[i]);
+                    parent.appendChild(node);
+                    node.loader = node.getOwnerTree().loader;
+                    if (config[i].children && config[i].children.length) {
+                        this.buildCategoryTree(node, config[i].children);
+                    }
+                }
+            }
+        }
+    };
+
+    /**
+     * Add additional params before loading asynchronous mode
+     */
+    categoryLoader.on('beforeload', function(treeLoader, node) {
+        treeLoader.baseParams.id = node.attributes.id;
+        treeLoader.baseParams.form_key = FORM_KEY;
+    });
+
+    // render categories tree
+    var config = {$treeArray};
+    tree = new Ext.tree.TreePanel.Enhanced('tree-div', {
+        animate         : false,
+        loader          : categoryLoader,
+        enableDD        : false,
+        containerScroll : true,
+        selModel        : new Ext.tree.CheckNodeMultiSelectionModel(),
+        rootVisible     : false,
+        useAjax         : true,
+        addNodeTo       : false
+    });
+    var root = new Ext.tree.TreeNode(config);
+    tree.setRootNode(root);
+    tree.addListener('click', tree.categoryClick);
+    tree.loader.buildCategoryTree(root, config.children);
+    tree.el.dom.innerHTML = '';
+    tree.render();
+    $('[data-ui-id='+ spinnerId +']').hide();
+});
+
+});
+script;
+    ?>
+    <?= /* @noEscape */ $secureRenderer->renderTag('script', [], $scriptString, false); ?>
+<?php endif; ?>

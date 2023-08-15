@@ -1,0 +1,104 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+ /**
+  * Copyright © Magento, Inc. All rights reserved.
+  * See COPYING.txt for license details.
+  */
+-->
+
+<tests xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xsi:noNamespaceSchemaLocation="urn:magento:mftf:Test/etc/testSchema.xsd">
+    <test name="CheckGiftCardAccountLifetimeDatesTest">
+        <annotations>
+            <stories value="MAGETWO-91611 - Date of created Gift Card is wrong if Lifetime is set up"/>
+            <title value="Check that Lifetime dates are correct in a 'Gift Card Accounts' page"/>
+            <description value="Check that Lifetime dates are correct in a 'Gift Card Accounts' page"/>
+            <severity value="MAJOR"/>
+            <testCaseId value="MAGETWO-94304"/>
+            <group value="giftCardAccount"/>
+        </annotations>
+
+        <before>
+            <!--Login as admin-->
+            <actionGroup ref="AdminLoginActionGroup" stepKey="LoginAsAdmin"/>
+            <!--Create Gift Card-->
+            <amOnPage url="{{AdminProductCreatePage.url(GiftCard.attribute_set_id, GiftCard.type_id)}}" stepKey="goToCreateGiftCard"/>
+            <waitForPageLoad stepKey="waitForPageLoad1"/>
+            <fillField selector="{{AdminProductFormSection.productName}}" userInput="{{GiftCard.name}}" stepKey="fillName"/>
+            <click selector="{{AdminProductFormSection.openAmountToggle}}" stepKey="clickOpenAmountToggle"/>
+            <fillField selector="{{AdminProductFormSection.openAmountMin}}" userInput="10" stepKey="fillOpenAmountFrom"/>
+            <fillField selector="{{AdminProductFormSection.openAmountMax}}" userInput="999" stepKey="fillOpenAmountTo"/>
+            <fillField selector="{{AdminProductFormSection.productQuantity}}" userInput="100" stepKey="fillQuantity"/>
+            <selectOption selector="{{AdminProductFormSection.productStockStatus}}" userInput="1" stepKey="selectInStock"/>
+            <selectOption selector="{{AdminGiftCardAccountInformationSection.giftCardType}}" userInput="1" stepKey="selectCardType"/>
+            <click selector="{{AdminProductFormActionSection.saveButton}}" stepKey="clickSave"/>
+            <see userInput="You saved the product." stepKey="VerifyGoftCartIsCreated"/>
+            <!--Generate new code pool-->
+            <createData entity="GiftCardCodePool" stepKey="createCodePool"/>
+            <!--Change settings-->
+            <createData entity="GiftCardSettings" stepKey="giftCardAccountSetting"/>
+        </before>
+
+        <!--Open Gift Cart page-->
+        <amOnPage url="{{StorefrontProductPage.url(GiftCard.urlKey)}}" stepKey="goToGiftCard"/>
+        <waitForPageLoad stepKey="waitForPageLoad2"/>
+        <!--Set required data-->
+        <fillField selector="{{StorefrontAddSenderDataSection.amount}}" userInput="11" stepKey="setAmount"/>
+        <fillField selector="{{StorefrontAddSenderDataSection.receiver}}" userInput="Receiver" stepKey="setReceiver"/>
+        <fillField selector="{{StorefrontAddSenderDataSection.sender}}" userInput="Sender" stepKey="setSender"/>
+        <!--Add product to cart and proceed to checkout-->
+        <click selector="{{StorefrontAddSenderDataSection.add}}" stepKey="AddToCart"/>
+        <waitForPageLoad stepKey="waitForPageLoad3"/>
+        <actionGroup ref="GoToCheckoutFromMinicartActionGroup" stepKey="GoToCheckoutFromMinicartActionGroup"/>
+        <waitForPageLoad stepKey="waitForPageLoad4"/>
+        <!--Fill shipping form-->
+        <actionGroup ref="GuestCheckoutFillShippingNoWaitForPaymentActionGroup" stepKey="guestCheckoutFillingShippingSection">
+            <argument name="customerVar" value="CustomerEntityOne" />
+            <argument name="customerAddressVar" value="CustomerAddressSimple" />
+        </actionGroup>
+        <!-- Checkout select Check/Money Order payment -->
+        <actionGroup ref="CheckoutSelectCheckMoneyOrderPaymentActionGroup" stepKey="selectCheckMoneyPayment"/>
+        <!--Place order -->
+        <actionGroup ref="CheckoutPlaceOrderActionGroup" stepKey="placeOrder">
+            <argument name="orderNumberMessage" value="CONST.successGuestCheckoutOrderNumberMessage" />
+            <argument name="emailYouMessage" value="CONST.successCheckoutEmailYouMessage"/>
+        </actionGroup>
+        <!--Go to Gift Card Account page-->
+        <amOnPage url="{{AdminGiftCardAccountGridPage.url}}" stepKey="goToGiftCartAccount"/>
+        <executeJS function="
+            let currentDay = new Date().toString();
+            let startDate = currentDay.split(' ');
+            let trimmedDate = startDate[2].indexOf('0') == 0 ? startDate[2].substring(1) : startDate[2];
+            return startDate[1] + ' ' + trimmedDate + ', ' + startDate[3];
+            " stepKey="getCurrentDate"/>
+        <grabTextFrom selector="{{AdminGiftCardAccountGridSection.created}}" stepKey="getActualStartDate"/>
+        <assertEquals stepKey="checkStartDate">
+            <expectedResult type="variable">$getCurrentDate</expectedResult>
+            <actualResult type="variable">$getActualStartDate</actualResult>
+        </assertEquals>
+
+        <grabTextFrom selector="{{AdminGiftCardAccountGridSection.expires}}" stepKey="getActualEndDate"/>
+        <executeJS function="
+            let currentDay = new Date();
+            let dd = new Date(currentDay.getFullYear(), currentDay.getMonth(), (currentDay.getDate() + 4)).toString();
+            let endDate = dd.split(' ');
+            let trimmedDate = endDate[2].indexOf('0') == 0 ? endDate[2].substring(1) : endDate[2];
+            return endDate[1] + ' ' + trimmedDate + ', ' + endDate[3];
+        " stepKey="getEndDate"/>
+        <assertEquals stepKey="checkEndDate">
+            <expectedResult type="variable">$getEndDate</expectedResult>
+            <actualResult type="variable">$getActualEndDate</actualResult>
+        </assertEquals>
+
+        <after>
+            <createData entity="RollBackGiftCardSettings" stepKey="RollBackGiftCardSettings"/>
+            <grabTextFrom selector="{{AdminGiftCardAccountGridSection.giftCardCode}}" stepKey="code"/>
+            <actionGroup ref="DeleteGiftCardAccountActionGroup" stepKey="DeleteGiftCardAccountActionGroup">
+                <argument name="giftCardAccountCode" value="$code"/>
+            </actionGroup>
+            <actionGroup ref="DeleteGiftCardActionGroup" stepKey="DeleteGiftCardActionGroup">
+                <argument name="giftCardAccount" value="GiftCard.name"/>
+            </actionGroup>
+        </after>
+    </test>
+</tests>

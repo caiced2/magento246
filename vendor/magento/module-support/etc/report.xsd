@@ -1,0 +1,86 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+/**
+ * Copyright © Magento, Inc. All rights reserved.
+ * See COPYING.txt for license details.
+ */
+-->
+<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema">
+    <xs:element name="config">
+        <xs:complexType>
+            <xs:sequence>
+                <xs:element name="group" type="groupDeclaration" minOccurs="1" maxOccurs="unbounded" />
+            </xs:sequence>
+        </xs:complexType>
+        <xs:unique name="uniqueGroupName">
+            <xs:selector xpath="group" />
+            <xs:field xpath="@name" />
+        </xs:unique>
+    </xs:element>
+
+    <xs:complexType name="groupDeclaration">
+        <xs:annotation>
+            <xs:documentation>
+                Group of actions
+            </xs:documentation>
+        </xs:annotation>
+        <xs:sequence>
+            <xs:element name="title" type="groupTitle" minOccurs="1" maxOccurs="1" />
+            <xs:element ref="sections" minOccurs="1" maxOccurs="1" />
+        </xs:sequence>
+        <xs:attribute name="name" type="groupName" use="required" />
+        <xs:attribute name="priority" type="xs:int" use="optional"/>
+    </xs:complexType>
+
+    <xs:simpleType name="groupName">
+        <xs:annotation>
+            <xs:documentation>
+                Group name attribute can contain only [a-z].
+            </xs:documentation>
+        </xs:annotation>
+        <xs:restriction base="xs:string">
+            <xs:pattern value="[a-z]{1,}" />
+        </xs:restriction>
+    </xs:simpleType>
+
+    <xs:element name="sections">
+        <xs:complexType>
+            <xs:sequence>
+                <xs:choice minOccurs="1" maxOccurs="unbounded">
+                    <xs:element ref="section" />
+                </xs:choice>
+            </xs:sequence>
+        </xs:complexType>
+    </xs:element>
+
+    <xs:element name="section">
+        <xs:complexType>
+            <xs:sequence>
+                <xs:element ref="data" minOccurs="0" maxOccurs="1" />
+            </xs:sequence>
+            <xs:attribute name="model" type="xs:string" use="required" />
+            <xs:attribute name="priority" type="xs:int" use="required" />
+        </xs:complexType>
+    </xs:element>
+
+    <xs:element name="data">
+        <xs:complexType>
+            <xs:sequence>
+                <xs:element name="item" type="item" minOccurs="1" maxOccurs="unbounded" />
+            </xs:sequence>
+        </xs:complexType>
+    </xs:element>
+
+    <xs:complexType name="item" mixed="true">
+        <xs:attribute name="name" type="xs:string" use="required" />
+    </xs:complexType>
+
+    <xs:complexType name="groupTitle" mixed="true">
+        <xs:annotation>
+            <xs:documentation>
+                Title with translate parameter for all fields
+            </xs:documentation>
+        </xs:annotation>
+        <xs:attribute name="translate" type="xs:boolean" />
+    </xs:complexType>
+</xs:schema>

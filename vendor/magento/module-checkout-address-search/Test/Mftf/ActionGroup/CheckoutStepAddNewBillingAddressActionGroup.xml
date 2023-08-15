@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+ /**
+  * Copyright © Magento, Inc. All rights reserved.
+  * See COPYING.txt for license details.
+  */
+-->
+
+<actionGroups xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:noNamespaceSchemaLocation="urn:magento:mftf:Test/etc/actionGroupSchema.xsd">
+    <actionGroup name="CheckoutStepAddNewBillingAddressActionGroup">
+        <arguments>
+            <argument name="address" type="entity"/>
+        </arguments>
+        <click selector="{{CheckoutBillingAddressSection.newAddressButton}}" stepKey="addNewAddress"/>
+        <waitForElement selector="{{CheckoutBillingNewAddressSection.firstName}}" time="30" stepKey="waitForBillingAddressFormLoad"/>
+        <fillField stepKey="fillFirstName" selector="{{CheckoutBillingNewAddressSection.firstName}}" userInput="{{address.firstname}}"/>
+        <fillField stepKey="fillLastName" selector="{{CheckoutBillingNewAddressSection.lastName}}" userInput="{{address.lastname}}"/>
+        <fillField stepKey="fillCompany" selector="{{CheckoutBillingNewAddressSection.company}}" userInput="{{address.company}}"/>
+        <fillField stepKey="fillPhoneNumber" selector="{{CheckoutBillingNewAddressSection.telephone}}" userInput="{{address.telephone}}"/>
+        <fillField stepKey="fillStreetAddress" selector="{{CheckoutBillingNewAddressSection.street}}" userInput="{{address.street[0]}}"/>
+        <fillField stepKey="fillCityName" selector="{{CheckoutBillingNewAddressSection.city}}" userInput="{{address.city}}"/>
+        <selectOption stepKey="selectCounty" selector="{{CheckoutBillingNewAddressSection.country}}" userInput="{{address.country_id}}"/>
+        <selectOption stepKey="selectState" selector="{{CheckoutBillingNewAddressSection.state}}" userInput="{{address.state}}"/>
+        <fillField stepKey="fillZip" selector="{{CheckoutBillingNewAddressSection.postcode}}" userInput="{{address.postcode}}"/>
+        <click selector="{{CheckoutBillingAddressSection.saveAddressButton}}" stepKey="saveNewAddress"/>
+    </actionGroup>
+</actionGroups>

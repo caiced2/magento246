@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+ /**
+  * Copyright © Magento, Inc. All rights reserved.
+  * See COPYING.txt for license details.
+  */
+-->
+<actionGroups xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:noNamespaceSchemaLocation="urn:magento:mftf:Test/etc/actionGroupSchema.xsd">
+    <actionGroup name="StagingDashboardSearchUpdateActionGroup">
+        <arguments>
+            <argument name="staging"/>
+        </arguments>
+        <amOnPage url="{{AdminStagingDashboardPage.url}}" stepKey="amOnStagingUpdatePage"/>
+        <waitForPageLoad stepKey="waitForStagingUpdatePageLoad"/>
+        <selectOption selector="{{AdminContentStagingDashboardSection.stagingViewTypeSelect}}" userInput="Timeline" stepKey="selectTimelineMode"/>
+        <waitForPageLoad stepKey="waitForTimelineLoad"/>
+        <conditionalClick selector="{{AdminDataGridHeaderSection.clearFilters}}" dependentSelector="{{AdminDataGridHeaderSection.clearFilters}}" visible="true" stepKey="clearExistingFilters"/>
+        <clearField selector="{{AdminAssignToExistingUpdateSection.searchStagingName}}" stepKey="clearField"/>
+        <fillField selector="{{AdminAssignToExistingUpdateSection.searchStagingName}}" userInput="{{staging.updateName}}" stepKey="fillStagingName"/>
+        <click selector="{{AdminAssignToExistingUpdateSection.submitSearch}}" stepKey="clickSubmitSearch"/>
+        <see selector="{{AdminContentStagingDashboardSection.timeLineEvent}}" userInput="{{staging.updateName}}" stepKey="seeNeededUpdate"/>
+    </actionGroup>
+</actionGroups>

@@ -1,0 +1,145 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+/**
+ * Copyright © Magento, Inc. All rights reserved.
+ * See COPYING.txt for license details.
+ */
+-->
+<form xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="urn:magento:module:Magento_Ui:etc/ui_configuration.xsd">
+    <fieldset name="cms_page" class="Magento\Staging\Ui\Component\Form\Fieldset" sortOrder="20">
+        <settings>
+            <collapsible>true</collapsible>
+            <label translate="true">CMS Pages</label>
+        </settings>
+        <modal name="update_cms_page_form_modal">
+            <insertForm name="update_cms_page_form_loader" component="Magento_Staging/js/form/components/insert-form">
+                <argument name="data" xsi:type="array">
+                    <item name="config" xsi:type="array">
+                        <item name="upcomingListingProvider" xsi:type="string">staging_update_edit_page_grid</item>
+                        <item name="removeModalProvider" xsi:type="string">${ $.ns}.${ $.ns}.update_remove_cms_page_form_modal</item>
+                        <item name="removeResponseProvider" xsi:type="string">${ $.removeModalProvider }.update_remove_cms_page_form_loader:responseData</item>
+                        <item name="modalSubTitleProvider" xsi:type="string">${ $.externalProvider }:data.staging.name</item>
+                        <item name="modalTitleProvider" xsi:type="string">${ $.externalProvider }:data.title</item>
+                    </item>
+                </argument>
+                <settings>
+                    <formSubmitType>ajax</formSubmitType>
+                    <renderUrl path="mui/index/render_handle">
+                        <param name="handle">cmsstaging_page_update</param>
+                        <param name="buttons">1</param>
+                    </renderUrl>
+                    <loading>false</loading>
+                    <toolbarContainer>${ $.parentName }</toolbarContainer>
+                    <externalProvider>${ $.ns }.cmsstaging_page_update_form_data_source</externalProvider>
+                    <ns>cmsstaging_page_update_form</ns>
+                </settings>
+            </insertForm>
+        </modal>
+        <modal name="update_remove_cms_page_form_modal">
+            <settings>
+                <options>
+                    <option name="title" xsi:type="string">Remove CMS Page from Campaign</option>
+                </options>
+            </settings>
+            <insertForm name="update_remove_form_loader" component="Magento_Staging/js/form/components/insert-form">
+                <argument name="data" xsi:type="array">
+                    <item name="config" xsi:type="array">
+                        <item name="source" xsi:type="string">staging</item>
+                        <item name="upcomingListingProvider" xsi:type="string">staging_update_edit_page_grid</item>
+                    </item>
+                </argument>
+                <settings>
+                    <formSubmitType>ajax</formSubmitType>
+                    <renderUrl path="mui/index/render_handle">
+                        <param name="handle">cmsstaging_page_update_remove</param>
+                        <param name="buttons">1</param>
+                    </renderUrl>
+                    <toolbarContainer>${ $.parentName }</toolbarContainer>
+                    <externalProvider>${ $.ns }.cmsstaging_page_update_remove_form_data_source</externalProvider>
+                    <ns>cmsstaging_page_update_remove_form</ns>
+                </settings>
+            </insertForm>
+        </modal>
+        <insertListing name="staging_update_edit_page_grid">
+            <settings>
+                <externalProvider>${ $.ns }.staging_update_edit_page_grid_data_source</externalProvider>
+                <autoRender>true</autoRender>
+                <ns>staging_update_edit_page_grid</ns>
+                <exports>
+                    <link name="updateId">${ $.externalProvider }:params.update_id</link>
+                </exports>
+                <imports>
+                    <link name="updateId">${ $.provider }:data.general.id</link>
+                </imports>
+            </settings>
+        </insertListing>
+    </fieldset>
+    <fieldset name="cms_block" class="Magento\Staging\Ui\Component\Form\Fieldset" sortOrder="40">
+        <settings>
+            <collapsible>true</collapsible>
+            <label translate="true">CMS Blocks</label>
+        </settings>
+        <modal name="update_cms_block_form_modal">
+            <insertForm name="update_cms_block_form_loader" component="Magento_Staging/js/form/components/insert-form">
+                <argument name="data" xsi:type="array">
+                    <item name="config" xsi:type="array">
+                        <item name="upcomingListingProvider" xsi:type="string">staging_update_edit_block_grid</item>
+                        <item name="removeModalProvider" xsi:type="string">${ $.ns}.${ $.ns}.update_remove_cms_block_form_modal</item>
+                        <item name="removeResponseProvider" xsi:type="string">${ $.removeModalProvider }.update_remove_cms_block_form_loader:responseData</item>
+                        <item name="modalSubTitleProvider" xsi:type="string">${ $.externalProvider }:data.staging.name</item>
+                        <item name="modalTitleProvider" xsi:type="string">${ $.externalProvider }:data.title</item>
+                    </item>
+                </argument>
+                <settings>
+                    <formSubmitType>ajax</formSubmitType>
+                    <renderUrl path="mui/index/render_handle">
+                        <param name="handle">cmsstaging_block_update</param>
+                        <param name="buttons">1</param>
+                    </renderUrl>
+                    <loading>false</loading>
+                    <toolbarContainer>${ $.parentName }</toolbarContainer>
+                    <externalProvider>${ $.ns }.cmsstaging_block_update_form_data_source</externalProvider>
+                    <ns>cmsstaging_block_update_form</ns>
+                </settings>
+            </insertForm>
+        </modal>
+        <modal name="update_remove_cms_block_form_modal">
+            <settings>
+                <options>
+                    <option name="title" xsi:type="string">Remove CMS Block from Campaign</option>
+                </options>
+            </settings>
+            <insertForm name="update_remove_form_loader" component="Magento_Staging/js/form/components/insert-form">
+                <argument name="data" xsi:type="array">
+                    <item name="config" xsi:type="array">
+                        <item name="source" xsi:type="string">staging</item>
+                        <item name="upcomingListingProvider" xsi:type="string">staging_update_edit_block_grid</item>
+                    </item>
+                </argument>
+                <settings>
+                    <formSubmitType>ajax</formSubmitType>
+                    <renderUrl path="mui/index/render_handle">
+                        <param name="handle">cmsstaging_block_update_remove</param>
+                        <param name="buttons">1</param>
+                    </renderUrl>
+                    <toolbarContainer>${ $.parentName }</toolbarContainer>
+                    <externalProvider>${ $.ns }.cmsstaging_block_update_remove_form_data_source</externalProvider>
+                    <ns>cmsstaging_block_update_remove_form</ns>
+                </settings>
+            </insertForm>
+        </modal>
+        <insertListing name="staging_update_edit_block_grid">
+            <settings>
+                <externalProvider>${ $.ns }.staging_update_edit_block_grid_data_source</externalProvider>
+                <autoRender>true</autoRender>
+                <ns>staging_update_edit_block_grid</ns>
+                <exports>
+                    <link name="updateId">${ $.externalProvider }:params.update_id</link>
+                </exports>
+                <imports>
+                    <link name="updateId">${ $.provider }:data.general.id</link>
+                </imports>
+            </settings>
+        </insertListing>
+    </fieldset>
+</form>

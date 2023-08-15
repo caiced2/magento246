@@ -1,0 +1,137 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+ /**
+  * Copyright © Magento, Inc. All rights reserved.
+  * See COPYING.txt for license details.
+  */
+-->
+<tests xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:noNamespaceSchemaLocation="urn:magento:mftf:Test/etc/testSchema.xsd">
+    <test name="PageBuilderDynamicBlockUseDefaultValueCheckBoxWithPageBuilderTest">
+        <annotations>
+            <features value="PageBuilder"/>
+            <stories value="Dynamic Block"/>
+            <title value="Dynamic Block use default value checkbox disabled PageBuilder on different store view"/>
+            <description value="Verify that use default value checkbox disables pagebuilder on different store views"/>
+            <severity value="MAJOR"/>
+            <testCaseId value="MC-5222"/>
+            <useCaseId value="MC-5107"/>
+            <group value="pagebuilder"/>
+            <group value="pagebuilder-ee"/>
+            <group value="pagebuilder-dynamic-block"/>
+        </annotations>
+        <before>
+            <createData entity="_defaultDynamicBlock" stepKey="createDynamicBlock"/>
+            <actionGroup ref="AdminLoginActionGroup" stepKey="loginAsAdmin"/>
+            <actionGroup ref="NavigateToCreatedDynamicBlockActionGroup" stepKey="navigateToCreatedDynamicBlock">
+                <argument name="Banner" value="$$createDynamicBlock$$"/>
+            </actionGroup>
+        </before>
+        <after>
+            <actionGroup ref="DeleteBannerActionGroup" stepKey="deleteDynamicBlock">
+                <argument name="bannerName" value="$$createDynamicBlock.name$$"/>
+            </actionGroup>
+            <actionGroup ref="AdminLogoutActionGroup" stepKey="logout"/>
+        </after>
+        <!-- Change scope -->
+        <comment userInput="Change scope" stepKey="commentChangeScope"/>
+        <click selector="{{AdminBannerBasicActionSection.Scope}}" stepKey="clickScopeSelector"/>
+        <waitForPageLoad stepKey="waitForScope"/>
+        <waitForElementVisible selector="{{AdminBannerBasicActionSection.ScopeDropdown}}" stepKey="waitForScopeDropdownVisible"/>
+        <waitForPageLoad stepKey="waitForScopeDropdown"/>
+        <click selector="{{AdminBannerBasicActionSection.ScopeOption('Default Store View')}}" stepKey="selectScope"/>
+        <waitForPageLoad stepKey="waitForScopeOptionChange"/>
+        <waitForElementVisible selector="{{AdminBannerBasicActionSection.ScopeModal}}" stepKey="waitForScopeModal"/>
+        <click selector="{{AdminBannerBasicActionSection.ScopeModalConfirm}}" stepKey="confirmScopeModal"/>
+        <waitForPageLoad stepKey="waitForScopeModalConfirm"/>
+        <seeElement selector="{{PageBuilderStage.disabled}}" stepKey="seeDisabledPageBuilder"/>
+        <!-- Verify disabled PageBuilder -->
+        <comment userInput="Verify disabled PageBuilder" stepKey="commentVerifyDisabledPageBuilder"/>
+        <executeJS function="return window.getComputedStyle(document.evaluate(&quot;{{PageBuilderStage.disabled}}&quot;, document.body).iterateNext())['pointer-events']" stepKey="getPointerEvents"/>
+        <executeJS function="return window.getComputedStyle(document.evaluate(&quot;{{PageBuilderStage.disabled}}&quot;, document.body).iterateNext())['opacity']" stepKey="getOpacity"/>
+        <assertEquals stepKey="assertPointerEventsValue">
+            <expectedResult type="string">none</expectedResult>
+            <actualResult type="variable">getPointerEvents</actualResult>
+        </assertEquals>
+        <assertEquals stepKey="assertOpacityValue">
+            <expectedResult type="string">0.5</expectedResult>
+            <actualResult type="variable">getOpacity</actualResult>
+        </assertEquals>
+        <!-- Verify enabled PageBuilder -->
+        <comment userInput="Verify enabled PageBuilder" stepKey="commentVerifyEnabledPageBuilder"/>
+        <click selector="{{BannerContentSection.UseDefaultValue}}" stepKey="checkDefaultValueCheckbox"/>
+        <waitForPageLoad stepKey="waitForPageBuilderEnabling"/>
+        <seeElement selector="{{PageBuilderStage.enabled}}" stepKey="seeEnabledPageBuilder"/>
+        <executeJS function="return window.getComputedStyle(document.evaluate(&quot;{{PageBuilderStage.enabled}}&quot;, document.body).iterateNext())['pointer-events']" stepKey="getPointerEvents2"/>
+        <executeJS function="return window.getComputedStyle(document.evaluate(&quot;{{PageBuilderStage.enabled}}&quot;, document.body).iterateNext())['opacity']" stepKey="getOpacity2"/>
+        <assertEquals stepKey="assertPointerEventsValue2">
+            <expectedResult type="string">auto</expectedResult>
+            <actualResult type="variable">getPointerEvents2</actualResult>
+        </assertEquals>
+        <assertEquals stepKey="assertOpacityValue2">
+            <expectedResult type="string">1</expectedResult>
+            <actualResult type="variable">getOpacity2</actualResult>
+        </assertEquals>
+        <actionGroup ref="switchToPageBuilderStage" stepKey="switchToPageBuilderStage"/>
+        <actionGroup ref="dragContentTypeToStage" stepKey="dragRowToRootContainer">
+            <argument name="contentType" value="PageBuilderRowContentType"/>
+            <argument name="containerTargetType" value="PageBuilderRootContainerContentType"/>
+        </actionGroup>
+        <actionGroup ref="expandPageBuilderPanelMenuSection" stepKey="expandPageBuilderPanelMenuSection">
+            <argument name="contentType" value="PageBuilderTextContentType"/>
+        </actionGroup>
+        <actionGroup ref="dragContentTypeToStage" stepKey="dragButtonsOntoStage">
+            <argument name="contentType" value="PageBuilderTextContentType"/>
+        </actionGroup>
+        <actionGroup ref="exitPageBuilderFullScreen" stepKey="exitPageBuilderFullScreen"/>
+        <!-- Check disable PageBuilder again -->
+        <comment userInput="Check disable PageBuilder again" stepKey="commentDisablePageBuilder"/>
+        <click selector="{{BannerContentSection.UseDefaultValue}}" stepKey="clickDefaultValueCheckbox2"/>
+        <waitForPageLoad stepKey="waitForFieldControlChange"/>
+        <waitForElementNotVisible selector="{{PageBuilderStage.enabled}}" stepKey="waitForNotEnabledPageBuilder"/>
+        <actionGroup ref="SaveAndContinueDynamicBlockActionGroup" stepKey="saveDynamicBlock"/>
+        <seeElement selector="{{PageBuilderStage.disabled}}" stepKey="seeDisabledPageBuilder2"/>
+        <!-- Verify disabled PageBuilder after save-->
+        <comment userInput="Verify disabled PageBuilder after save" stepKey="commentVerifyDisabledPageBuilderAfterSave"/>
+        <executeJS function="return window.getComputedStyle(document.evaluate(&quot;{{PageBuilderStage.disabled}}&quot;, document.body).iterateNext())['pointer-events']" stepKey="getPointerEventsAfterSave"/>
+        <executeJS function="return window.getComputedStyle(document.evaluate(&quot;{{PageBuilderStage.disabled}}&quot;, document.body).iterateNext())['opacity']" stepKey="getOpacityAfterSave"/>
+        <assertEquals stepKey="assertPointerEventsValueAfterSave">
+            <expectedResult type="string">none</expectedResult>
+            <actualResult type="variable">getPointerEventsAfterSave</actualResult>
+        </assertEquals>
+        <assertEquals stepKey="assertOpacityValueAfterSave">
+            <expectedResult type="string">0.5</expectedResult>
+            <actualResult type="variable">getOpacityAfterSave</actualResult>
+        </assertEquals>
+        <!-- Verify re-enabling PageBuilder after save-->
+        <comment userInput="Verify re-enabling PageBuilder after save" stepKey="commentVerifyReEnablingPageBuilderAfterSave"/>
+        <click selector="{{BannerContentSection.UseDefaultValue}}" stepKey="uncheckDefaultValueCheckbox"/>
+        <waitForPageLoad stepKey="waitForPageBuilderReEnablingAfterSave"/>
+        <seeElement selector="{{PageBuilderStage.enabled}}" stepKey="seeReEnabledPageBuilderAfterSave"/>
+        <executeJS function="return window.getComputedStyle(document.evaluate(&quot;{{PageBuilderStage.enabled}}&quot;, document.body).iterateNext())['pointer-events']" stepKey="getPointerReEnablingEventsAfterSave"/>
+        <executeJS function="return window.getComputedStyle(document.evaluate(&quot;{{PageBuilderStage.enabled}}&quot;, document.body).iterateNext())['opacity']" stepKey="getOpacityReEnablingAfterSave"/>
+        <assertEquals stepKey="assertPointerReEnablingEventsValueAfterSave">
+            <expectedResult type="string">auto</expectedResult>
+            <actualResult type="variable">getPointerReEnablingEventsAfterSave</actualResult>
+        </assertEquals>
+        <assertEquals stepKey="assertOpacityReEnablingValueAfterSave">
+            <expectedResult type="string">1</expectedResult>
+            <actualResult type="variable">getOpacityReEnablingAfterSave</actualResult>
+        </assertEquals>
+        <!-- Verify re-disabling PageBuilder after save-->
+        <comment userInput="Verify re-disabled PageBuilder after save" stepKey="commentVerifyReDisabledPageBuilderAfterSave"/>
+        <click selector="{{BannerContentSection.UseDefaultValue}}" stepKey="checkDefaultValueCheckbox2"/>
+        <waitForPageLoad stepKey="waitForBannerReDisabledAfterSave"/>
+        <seeElement selector="{{PageBuilderStage.disabled}}" stepKey="seeReDisabledPageBuilderAfterSave"/>
+        <executeJS function="return window.getComputedStyle(document.evaluate(&quot;{{PageBuilderStage.disabled}}&quot;, document.body).iterateNext())['pointer-events']" stepKey="getPointerReDisabledEventsAfterSave"/>
+        <executeJS function="return window.getComputedStyle(document.evaluate(&quot;{{PageBuilderStage.disabled}}&quot;, document.body).iterateNext())['opacity']" stepKey="getOpacityReDisabledAfterSave"/>
+        <assertEquals stepKey="assertPointerReDisabledEventsValueAfterSave">
+            <expectedResult type="string">none</expectedResult>
+            <actualResult type="variable">getPointerReDisabledEventsAfterSave</actualResult>
+        </assertEquals>
+        <assertEquals stepKey="assertOpacityReDisabledValueAfterSave">
+            <expectedResult type="string">0.5</expectedResult>
+            <actualResult type="variable">getOpacityReDisabledAfterSave</actualResult>
+        </assertEquals>
+    </test>
+</tests>

@@ -1,0 +1,57 @@
+<?php
+/**
+ * Copyright © Magento, Inc. All rights reserved.
+ * See COPYING.txt for license details.
+ */
+?>
+<?php
+/** @var \Magento\GoogleTagManager\Block\Ga $block */
+
+$accountType = $block->getConfig(\Magento\GoogleTagManager\Helper\Data::XML_PATH_TYPE);
+$gtmAccountId = $block->getConfig(\Magento\GoogleTagManager\Helper\Data::XML_PATH_CONTAINER_ID);
+$gapAccountId = $block->getConfig(\Magento\GoogleTagManager\Helper\Data::XML_PATH_ACCOUNT);
+switch ($accountType) {
+    case \Magento\GoogleTagManager\Helper\Data::TYPE_TAG_MANAGER:
+        if (!empty($gtmAccountId)) {
+            ?>
+            <!-- GOOGLE TAG MANAGER -->
+            <script type="text/x-magento-init">
+            {
+                "*": {
+                    "Magento_GoogleTagManager/js/google-tag-manager": {
+                        "isCookieRestrictionModeEnabled": <?= (int)$block->isCookieRestrictionModeEnabled() ?>,
+                        "currentWebsite": <?= (int)$block->getCurrentWebsiteId() ?>,
+                        "cookieName": "<?= /* @noEscape */ \Magento\Cookie\Helper\Cookie::IS_USER_ALLOWED_SAVE_COOKIE ?>",
+                        "gtmAccountId": "<?= $block->escapeJs($gtmAccountId) ?>",
+                        "storeCurrencyCode": "<?= $block->escapeJs($block->getStoreCurrencyCode()) ?>",
+                        "ordersData": <?= /* @noEscape */ json_encode($block->getOrdersDataArray()) ?>
+                    }
+                }
+            }
+            </script>
+            <!-- END GOOGLE TAG MANAGER -->
+            <?php
+        }
+        break;
+    case \Magento\GoogleTagManager\Helper\Data::TYPE_UNIVERSAL:
+        if (!empty($gapAccountId)) {
+            ?>
+            <!-- BEGIN GOOGLE UNIVERSAL ANALYTICS CODE -->
+            <script type="text/x-magento-init">
+            {
+                "*": {
+                    "Magento_GoogleAnalytics/js/google-analytics": {
+                        "isCookieRestrictionModeEnabled": <?= (int)$block->isCookieRestrictionModeEnabled() ?>,
+                        "currentWebsite": <?= (int)$block->getCurrentWebsiteId() ?>,
+                        "cookieName": "<?= /* @noEscape */ \Magento\Cookie\Helper\Cookie::IS_USER_ALLOWED_SAVE_COOKIE ?>",
+                        "ordersTrackingData": <?= /* @noEscape */ json_encode($block->getOrdersTrackingData()) ?>,
+                        "pageTrackingData": <?= /* @noEscape */ json_encode($block->getPageTrackingData($gapAccountId)) ?>
+                    }
+                }
+            }
+            </script>
+            <!-- END GOOGLE UNIVERSAL ANALYTICS CODE -->
+            <?php
+        }
+        break;
+}

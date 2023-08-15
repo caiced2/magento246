@@ -1,0 +1,63 @@
+<?xml version="1.0"?>
+<!--
+/**
+ * Copyright © Magento, Inc. All rights reserved.
+ * See COPYING.txt for license details.
+ */
+-->
+<schema xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:noNamespaceSchemaLocation="urn:magento:framework:Setup/Declaration/Schema/etc/schema.xsd">
+    <table name="support_backup" resource="default" engine="innodb" comment="Support System Backups">
+        <column xsi:type="int" name="backup_id" unsigned="true" nullable="false" identity="true"
+                comment="Backup ID"/>
+        <column xsi:type="varchar" name="name" nullable="true" length="255" comment="Name"/>
+        <column xsi:type="smallint" name="status" unsigned="true" nullable="false" identity="false"
+                default="0" comment="Status"/>
+        <column xsi:type="timestamp" name="last_update" on_update="true" nullable="false" default="CURRENT_TIMESTAMP"
+                comment="Last Updated"/>
+        <column xsi:type="text" name="log" nullable="true" comment="Log"/>
+        <constraint xsi:type="primary" referenceId="PRIMARY">
+            <column name="backup_id"/>
+        </constraint>
+        <index referenceId="SUPPORT_BACKUP_STATUS" indexType="btree">
+            <column name="status"/>
+        </index>
+    </table>
+    <table name="support_backup_item" resource="default" engine="innodb" comment="Support System Backup Items">
+        <column xsi:type="int" name="item_id" unsigned="true" nullable="false" identity="true"
+                comment="Item ID"/>
+        <column xsi:type="smallint" name="status" unsigned="true" nullable="false" identity="false"
+                default="0" comment="Status"/>
+        <column xsi:type="smallint" name="type" unsigned="true" nullable="false" identity="false"
+                default="0" comment="Type"/>
+        <column xsi:type="bigint" name="size" unsigned="true" nullable="false" identity="false" default="0"
+                comment="Size"/>
+        <column xsi:type="int" name="backup_id" unsigned="true" nullable="false" identity="false"
+                comment="Backup ID"/>
+        <constraint xsi:type="primary" referenceId="PRIMARY">
+            <column name="item_id"/>
+        </constraint>
+        <constraint xsi:type="foreign" referenceId="SUPPORT_BACKUP_ITEM_BACKUP_ID_SUPPORT_BACKUP_BACKUP_ID"
+                    table="support_backup_item" column="backup_id" referenceTable="support_backup"
+                    referenceColumn="backup_id" onDelete="CASCADE"/>
+        <index referenceId="SUPPORT_BACKUP_ITEM_STATUS" indexType="btree">
+            <column name="status"/>
+        </index>
+        <index referenceId="SUPPORT_BACKUP_ITEM_TYPE" indexType="btree">
+            <column name="type"/>
+        </index>
+    </table>
+    <table name="support_report" resource="default" engine="innodb" comment="Support System Reports">
+        <column xsi:type="int" name="report_id" unsigned="true" nullable="false" identity="true"
+                comment="Report ID"/>
+        <column xsi:type="timestamp" name="created_at" on_update="false" nullable="true" comment="Creation Time"/>
+        <column xsi:type="varchar" name="client_host" nullable="false" length="255" comment="Client Host"/>
+        <column xsi:type="varchar" name="magento_version" nullable="false" length="25" comment="Magento"/>
+        <column xsi:type="text" name="report_groups" nullable="false" comment="Report Groups"/>
+        <column xsi:type="text" name="report_flags" nullable="false" comment="Report Flags"/>
+        <column xsi:type="mediumtext" name="report_data" nullable="false" comment="Report Data"/>
+        <constraint xsi:type="primary" referenceId="PRIMARY">
+            <column name="report_id"/>
+        </constraint>
+    </table>
+</schema>

@@ -1,0 +1,83 @@
+<?php
+/**
+ * Copyright © Magento, Inc. All rights reserved.
+ * See COPYING.txt for license details.
+ */
+namespace Magento\Reminder\Model\Rule\Condition;
+
+class CartTest extends \PHPUnit\Framework\TestCase
+{
+    /**
+     * @var \Magento\Reminder\Model\Rule\Condition\Cart
+     */
+    protected $_model;
+
+    /**
+     * @dataProvider daysDiffConditionDataProvider
+     */
+    public function testDaysDiffCondition($operator, $value, $expectedResult)
+    {
+        $dateModelMock = $this->createPartialMock(\Magento\Framework\Stdlib\DateTime\DateTime::class, ['gmtDate']);
+        $dateModelMock->expects($this->atLeastOnce())->method('gmtDate')->willReturn('2013-12-24');
+
+        $this->_model = \Magento\TestFramework\Helper\Bootstrap::getObjectManager()->create(
+            \Magento\Reminder\Model\Rule\Condition\Cart::class,
+            ['dateModel' => $dateModelMock]
+        );
+        $this->_model->setOperator($operator);
+        $this->_model->setValue($value);
+
+        $where = $this->_model->getConditionsSql(0, 0)->getPart('where');
+        $this->assertStringContainsString($expectedResult, $where[2]);
+    }
+
+    /**
+     * @return array
+     */
+    public function daysDiffConditionDataProvider()
+    {
+        $prefixClause = 'AND';
+        $suffixClause = '\'2013-12-24 00:00:00\'';
+
+        return [
+            [
+                '>=',
+                '1',
+                $prefixClause. ' (TIMESTAMPDIFF(DAY, IF(quote.updated_at = 0, quote.created_at, quote.updated_at), '
+                . $suffixClause.') >= 1)'
+            ],
+            [
+                '>',
+                '1',
+                $prefixClause. ' (TIMESTAMPDIFF(DAY, IF(quote.updated_at = 0, quote.created_at, quote.updated_at), '
+                . $suffixClause.') > 1)'
+            ],
+            [
+                '>=',
+                '0',
+                $prefixClause. ' (TIMESTAMPDIFF(DAY, IF(quote.updated_at = 0, quote.created_at, quote.updated_at), '
+                . $suffixClause.') >= 0)'
+            ],
+            [
+                '>',
+                '0',
+                $prefixClause. ' (TIMESTAMPDIFF(DAY, IF(quote.updated_at = 0, quote.created_at, quote.updated_at), '
+                . $suffixClause.') > 0)'
+            ]
+        ];
+    }
+
+    /**
+     */
+    public function testDaysDiffConditionException()
+    {
+        $this->expectException(\Magento\Framework\Exception\LocalizedException::class);
+
+        $this->_model = \Magento\TestFramework\Helper\Bootstrap::getObjectManager()->create(
+            \Magento\Reminder\Model\Rule\Condition\Cart::class
+        );
+        $this->_model->setOperator('');
+        $this->_model->setValue(-1);
+        $this->_model->getConditionsSql(0, 0);
+    }
+}

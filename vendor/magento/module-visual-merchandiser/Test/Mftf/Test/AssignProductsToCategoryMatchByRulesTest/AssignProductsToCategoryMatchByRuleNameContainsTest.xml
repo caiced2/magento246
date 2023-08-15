@@ -1,0 +1,113 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+ /**
+  * Copyright © Magento, Inc. All rights reserved.
+  * See COPYING.txt for license details.
+  */
+-->
+<tests xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:noNamespaceSchemaLocation="urn:magento:mftf:Test/etc/testSchema.xsd">
+    <test name="AssignProductsToCategoryMatchByRuleNameContainsTest">
+        <annotations>
+            <features value="VisualMerchandiser"/>
+            <stories value="[Visual Merchandiser] Assign/Unassign products to/from a category"/>
+            <title value="[Visual Merchandiser] Admin should be able to assign products using match by products rule - product name contains"/>
+            <description value="[Visual Merchandiser] Admin should be able to assign products using match by products rule - product name contains"/>
+            <severity value="CRITICAL"/>
+            <testCaseId value="MC-2270"/>
+            <group value="VisualMerchandiser"/>
+        </annotations>
+        <before>
+            <actionGroup ref="AdminLoginActionGroup" stepKey="login"/>
+            <createData entity="_defaultCategory" stepKey="category"/>
+            <createData entity="_defaultCategory" stepKey="category2"/>
+            <createData entity="ApiSimplePrice10Qty10" stepKey="product1">
+                <requiredEntity createDataKey="category2"/>
+            </createData>
+            <createData entity="ApiSimplePrice100Qty100" stepKey="product2">
+                <requiredEntity createDataKey="category2"/>
+            </createData>
+            <createData entity="ApiSimplePrice100Qty100v2" stepKey="product3"/>
+        </before>
+        <after>
+            <actionGroup ref="AdminLogoutActionGroup" stepKey="logout"/>
+            <deleteData createDataKey="product1" stepKey="deleteProduct1"/>
+            <deleteData createDataKey="product2" stepKey="deleteProduct2"/>
+            <deleteData createDataKey="product3" stepKey="deleteProduct3"/>
+            <deleteData createDataKey="category" stepKey="deleteCategory1"/>
+            <deleteData createDataKey="category2" stepKey="deleteCategory2"/>
+        </after>
+
+        <!-- Go to admin category page -->
+        <actionGroup ref="GoToAdminCategoryPageByIdActionGroup" stepKey="goToAdminCategoryPage">
+            <argument name="id" value="$$category.id$$"/>
+        </actionGroup>
+        <!-- Open products in category section -->
+        <actionGroup ref="OpenProductsInCategorySectionActionGroup" stepKey="OpenProductsInCategorySection"/>
+        <!-- Enable match products by rule -->
+        <actionGroup ref="EnableMatchProductsByRuleActionGroup" stepKey="EnableMatchProductsByRule"/>
+
+        <actionGroup ref="AddFirstConditionForMatchProductByRuleActionGroup" stepKey="rule1">
+            <argument name="attribute" value="Product Name"/>
+            <argument name="operator" value="Contains"/>
+            <argument name="value" value="$$product2.name$$"/>
+        </actionGroup>
+
+        <actionGroup ref="AddNthConditionForMatchProductByRuleActionGroup" stepKey="rule2">
+            <argument name="n" value="2"/>
+            <argument name="logic" value="OR"/>
+            <argument name="attribute" value="Product Name"/>
+            <argument name="operator" value="Contains"/>
+            <argument name="value" value="$$product3.name$$"/>
+        </actionGroup>
+
+        <actionGroup ref="AddNthConditionForMatchProductByRuleActionGroup" stepKey="rule3">
+            <argument name="n" value="3"/>
+            <argument name="logic" value="AND"/>
+            <argument name="attribute" value="Price"/>
+            <argument name="operator" value="Greater than"/>
+            <argument name="value" value="{{Qty_99.qty}}"/>
+        </actionGroup>
+
+        <actionGroup ref="AddNthConditionForMatchProductByRuleActionGroup" stepKey="rule4">
+            <argument name="n" value="4"/>
+            <argument name="logic" value="AND"/>
+            <argument name="attribute" value="Quantity"/>
+            <argument name="operator" value="Less than"/>
+            <argument name="value" value="{{Qty_101.qty}}"/>
+        </actionGroup>
+
+        <!-- Save category and assert success message -->
+        <click selector="{{AdminCategoryMainActionsSection.SaveButton}}" stepKey="saveCategoryWithProducts"/>
+        <see userInput="Category rules applied" selector="{{AdminMessagesSection.nthSuccess('1')}}" stepKey="seeCategorySaveSuccess1"/>
+        <see userInput="You saved the category" selector="{{AdminMessagesSection.nthSuccess('2')}}" stepKey="seeCategorySaveSuccess2"/>
+
+        <!-- Open products in category section -->
+        <actionGroup ref="OpenProductsInCategorySectionActionGroup" stepKey="OpenProductsInCategorySection2"/>
+
+        <!-- See total count -->
+        <actionGroup ref="SwitchToGridModeProductInCategoryActionGroup" stepKey="switchToGrid"/>
+        <see userInput="2" selector="{{AdminCategoryProductsGridSection.totalCount}}" stepKey="seeTotalCount"/>
+        <!-- See products in category product grid -->
+        <actionGroup ref="SeeProductInProductCategoryGridForCurrentCategoryActionGroup" stepKey="seeProduct1">
+            <argument name="product" value="$$product2$$"/>
+        </actionGroup>
+        <actionGroup ref="SeeProductInProductCategoryGridForCurrentCategoryActionGroup" stepKey="seeProduct2">
+            <argument name="product" value="$$product3$$"/>
+        </actionGroup>
+
+        <!-- Perform reindex and flush cache -->
+        <magentoCLI command="cron:run --group=index" stepKey="runCronReindex"/>
+
+        <!-- Go to storefront category page -->
+        <amOnPage url="{{StorefrontCategoryPage.url($$category.custom_attributes[url_key]$$)}}" stepKey="onCategoryPage"/>
+        <waitForPageLoad stepKey="waitForPageLoad"/>
+        <!-- Assert product2 in storefront category page -->
+        <actionGroup ref="StorefrontCheckCategorySimpleProductActionGroup" stepKey="seeProduct2InCategory">
+            <argument name="product" value="$$product2$$"/>
+        </actionGroup>
+        <actionGroup ref="StorefrontCheckCategorySimpleProductActionGroup" stepKey="seeProduct3InCategory">
+            <argument name="product" value="$$product3$$"/>
+        </actionGroup>
+    </test>
+</tests>

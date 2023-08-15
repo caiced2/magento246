@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+ /**
+  * Copyright © Magento, Inc. All rights reserved.
+  * See COPYING.txt for license details.
+  */
+-->
+<sections xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:noNamespaceSchemaLocation="urn:magento:mftf:Page/etc/SectionObject.xsd">
+    <section name="AdminScheduleUpdateAdvancedPriceSection">
+        <element name="customerGroupPriceAddButton" type="button" selector="[data-action='add_new_row']" timeout="30"/>
+        <element name="productTierPriceQtyInput" type="input" selector="[name='product[tier_price][{{customerGroup}}][price_qty]']" parameterized="true"/>
+        <element name="productTierPriceValueTypeSelect" type="select" selector="[name='product[tier_price][{{customerGroup}}][value_type]']" parameterized="true"/>
+        <element name="productTierPricePercentageValuePriceInput" type="input" selector="[name='product[tier_price][{{customerGroup}}][percentage_value]']" parameterized="true"/>
+        <element name="specialPrice" type="input" selector="input[name='product[special_price]']"/>
+    </section>
+</sections>

@@ -1,0 +1,63 @@
+<?xml version="1.0"?>
+<!--
+/**
+ * Copyright © Magento, Inc. All rights reserved.
+ * See COPYING.txt for license details.
+ */
+-->
+<config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="urn:magento:framework:Event/etc/events.xsd">
+    <event name="catalog_product_collection_before_add_count_to_categories">
+        <observer name="magento_catalogpermissions" instance="Magento\CatalogPermissions\Observer\ApplyProductPermissionOnCollectionObserver"/>
+    </event>
+    <event name="catalog_product_is_salable_after">
+        <observer name="magento_catalogpermissions" instance="Magento\CatalogPermissions\Observer\ApplyIsSalableToProductObserver"/>
+    </event>
+    <event name="catalog_category_collection_load_after">
+        <observer name="magento_catalogpermissions" instance="Magento\CatalogPermissions\Observer\ApplyCategoryPermissionOnLoadCollectionObserver"/>
+    </event>
+    <event name="catalog_category_collection_add_is_active_filter">
+        <observer name="magento_catalogpermissions" instance="Magento\CatalogPermissions\Observer\ApplyCategoryPermissionOnIsActiveFilterToCollectionObserver"/>
+    </event>
+    <event name="catalog_category_tree_init_inactive_category_ids">
+        <observer name="magento_catalogpermissions" instance="Magento\CatalogPermissions\Observer\ApplyCategoryInactiveIdsObserver"/>
+    </event>
+    <event name="catalog_product_collection_apply_limitations_after">
+        <observer name="magento_catalogpermissions" instance="Magento\CatalogPermissions\Observer\ApplyProductPermissionOnCollectionObserver"/>
+    </event>
+    <event name="catalog_product_collection_load_after">
+        <observer name="magento_catalogpermissions" instance="Magento\CatalogPermissions\Observer\ApplyProductPermissionOnCollectionAfterLoadObserver"/>
+    </event>
+    <event name="catalog_controller_product_init_after">
+        <observer name="magento_catalogpermissions" instance="Magento\CatalogPermissions\Observer\ApplyProductPermissionObserver"/>
+    </event>
+    <event name="review_controller_product_init_after">
+        <observer name="magento_catalogpermissions" instance="Magento\CatalogPermissions\Observer\ApplyProductPermissionObserver"/>
+    </event>
+    <event name="catalog_controller_category_init_after">
+        <observer name="magento_catalogpermissions" instance="Magento\CatalogPermissions\Observer\ApplyCategoryPermissionObserver"/>
+    </event>
+    <event name="checkout_cart_product_add_after">
+        <observer name="magento_catalogpermissions" instance="Magento\CatalogPermissions\Observer\CheckQuoteItemSetProductObserver"/>
+    </event>
+    <event name="checkout_cart_save_before">
+        <observer name="magento_catalogpermissions" instance="Magento\CatalogPermissions\Observer\CheckQuotePermissionsObserver"/>
+    </event>
+    <event name="controller_action_predispatch_catalogsearch">
+        <observer name="magento_catalogpermissions" instance="Magento\CatalogPermissions\Observer\CheckCatalogSearchPreDispatchObserver"/>
+    </event>
+    <event name="layout_load_before">
+        <observer name="magento_catalogpermissions" instance="Magento\CatalogPermissions\Observer\CheckCatalogSearchLayoutObserver"/>
+    </event>
+    <event name="rss_catalog_new_xml_callback">
+        <observer name="magento_catalogpermissions" instance="Magento\CatalogPermissions\Observer\CheckIfProductAllowedInRssObserver"/>
+    </event>
+    <event name="rss_catalog_special_xml_callback">
+        <observer name="magento_catalogpermissions" instance="Magento\CatalogPermissions\Observer\CheckIfProductAllowedInRssObserver"/>
+    </event>
+    <event name="rss_catalog_tagged_item_xml_callback">
+        <observer name="magento_catalogpermissions" instance="Magento\CatalogPermissions\Observer\CheckIfProductAllowedInRssObserver"/>
+    </event>
+    <event name="rss_catalog_category_xml_callback">
+        <observer name="magento_catalogpermissions" instance="Magento\CatalogPermissions\Observer\CheckIfProductAllowedInRssObserver"/>
+    </event>
+</config>

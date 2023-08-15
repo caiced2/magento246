@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+ /**
+  * Copyright © Magento, Inc. All rights reserved.
+  * See COPYING.txt for license details.
+  */
+-->
+<actionGroups xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:noNamespaceSchemaLocation="urn:magento:mftf:Test/etc/actionGroupSchema.xsd">
+    <actionGroup name="AdminCheckAddProductButtonIsEnabledOnCategoryPageActionGroup">
+        <annotations>
+            <description>Checks if Add Product button is enabled for the Category opened with specific Store View</description>
+        </annotations>
+        <!-- Check Add Products Button Is Present On The Page -->
+        <seeElement selector="{{AdminCategoryProductsSection.addProducts}}" stepKey="checkAddProductButtonIsPresent"/>
+        <!-- Check Add Products Button Is Not Disabled On The Page -->
+        <dontSeeElement selector="{{AdminCategoryProductsSection.addProductsDisabled}}" stepKey="checkAddProductIsNotDisabled"/>
+    </actionGroup>
+</actionGroups>

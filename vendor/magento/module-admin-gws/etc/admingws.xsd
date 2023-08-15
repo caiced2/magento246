@@ -1,0 +1,145 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+/**
+ * Copyright © Magento, Inc. All rights reserved.
+ * See COPYING.txt for license details.
+ */
+-->
+<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema">
+    <xs:element name="config">
+        <xs:complexType>
+            <xs:choice maxOccurs="unbounded">
+                <xs:element name="group" type="groupDeclaration" minOccurs="0" maxOccurs="unbounded">
+                    <xs:unique name="uniqueCallbackClass">
+                        <xs:annotation>
+                            <xs:documentation>
+                                Callback class must be unique.
+                            </xs:documentation>
+                        </xs:annotation>
+                        <xs:selector xpath="callback"/>
+                        <xs:field xpath="@class"/>
+                    </xs:unique>
+                </xs:element>
+                <xs:element name="aclDeny" type="aclDenyDeclaration" minOccurs="0" maxOccurs="1">
+                    <xs:unique name="uniqueLevelName">
+                        <xs:annotation>
+                            <xs:documentation>
+                                Level name must be unique.
+                            </xs:documentation>
+                        </xs:annotation>
+                        <xs:selector xpath="level"/>
+                        <xs:field xpath="@name"/>
+                    </xs:unique>
+                </xs:element>
+            </xs:choice>
+        </xs:complexType>
+        <xs:unique name="uniqueGroupName">
+            <xs:annotation>
+                <xs:documentation>
+                    Group name must be unique.
+                </xs:documentation>
+            </xs:annotation>
+            <xs:selector xpath="group" />
+            <xs:field xpath="@name" />
+        </xs:unique>
+    </xs:element>
+
+    <xs:complexType name="groupDeclaration">
+        <xs:annotation>
+            <xs:documentation>
+                Group declaration.
+            </xs:documentation>
+        </xs:annotation>
+        <xs:sequence>
+            <xs:element name="callback" type="callbackDeclaration" minOccurs="1" maxOccurs="unbounded" />
+        </xs:sequence>
+        <xs:attribute name="name" type="entityName" use="required" />
+        <xs:attribute name="processor" type="entityName" use="required" />
+    </xs:complexType>
+
+    <xs:complexType name="callbackDeclaration">
+        <xs:annotation>
+            <xs:documentation>
+                Callback declaration.
+            </xs:documentation>
+        </xs:annotation>
+        <xs:attribute name="class" type="entityName" use="required" />
+        <xs:attribute name="method" type="methodName" use="required" />
+    </xs:complexType>
+
+    <xs:complexType name="aclDenyDeclaration">
+        <xs:annotation>
+            <xs:documentation>
+                ACL deny declaration.
+            </xs:documentation>
+        </xs:annotation>
+        <xs:sequence>
+            <xs:element name="level" type="levelDeclaration" minOccurs="1" maxOccurs="unbounded">
+                <xs:unique name="uniqueRuleName">
+                    <xs:annotation>
+                        <xs:documentation>
+                            Rule name must be unique.
+                        </xs:documentation>
+                    </xs:annotation>
+                    <xs:selector xpath="rule"/>
+                    <xs:field xpath="@name"/>
+                </xs:unique>
+            </xs:element>
+        </xs:sequence>
+    </xs:complexType>
+
+    <xs:complexType name="levelDeclaration">
+        <xs:annotation>
+            <xs:documentation>
+                Level declaration.
+            </xs:documentation>
+        </xs:annotation>
+        <xs:sequence>
+            <xs:element name="rule" type="ruleDeclaration" minOccurs="1" maxOccurs="unbounded" />
+        </xs:sequence>
+        <xs:attribute name="name" type="entityName" use="required" />
+    </xs:complexType>
+
+    <xs:complexType name="ruleDeclaration">
+        <xs:annotation>
+            <xs:documentation>
+                Rule declaration.
+            </xs:documentation>
+        </xs:annotation>
+        <xs:attribute name="name" type="entityName" use="required" />
+        <xs:attribute name="resource" type="resourceName" use="required" />
+    </xs:complexType>
+
+    <xs:simpleType name="methodName">
+        <xs:annotation>
+            <xs:documentation>
+                Method name can contain only [a-zA-Z].
+            </xs:documentation>
+        </xs:annotation>
+        <xs:restriction base="xs:string">
+            <xs:pattern value="[a-zA-Z]+" />
+        </xs:restriction>
+    </xs:simpleType>
+
+    <xs:simpleType name="entityName">
+        <xs:annotation>
+            <xs:documentation>
+                Entity name can contain only [a-zA-Z_].
+            </xs:documentation>
+        </xs:annotation>
+        <xs:restriction base="xs:string">
+            <xs:pattern value="[a-zA-Z_\\]+" />
+        </xs:restriction>
+    </xs:simpleType>
+
+    <xs:simpleType name="resourceName">
+        <xs:annotation>
+            <xs:documentation>
+                Resource name can contain only [a-zA-Z_:].
+            </xs:documentation>
+        </xs:annotation>
+        <xs:restriction base="xs:string">
+            <xs:pattern value="[a-zA-Z_:]+" />
+        </xs:restriction>
+    </xs:simpleType>
+</xs:schema>

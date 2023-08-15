@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+ /**
+  * Copyright © Magento, Inc. All rights reserved.
+  * See COPYING.txt for license details.
+  */
+-->
+<actionGroups xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+              xsi:noNamespaceSchemaLocation="urn:magento:mftf:Test/etc/actionGroupSchema.xsd">
+    <actionGroup name="AssertDeletedCustomerAttributeNotInGridActionGroup">
+        <arguments>
+            <argument name="attributeLabel" type="string"/>
+        </arguments>
+        <amOnPage url="{{CustomerAddressAttributesPage.url}}" stepKey="navigateToCustomerAttributePage"/>
+        <waitForPageLoad stepKey="waitForCustomerAttributePageLoaded"/>
+        <click selector="{{CustomerAccountSection.reset}}" stepKey="clickResetFilter"/>
+        <waitForElementVisible selector="{{CustomerAccountSection.defaultLabel}}" stepKey="waitForDefaultLabelToVisible"/>
+        <fillField selector="{{CustomerAccountSection.defaultLabel}}" userInput="{{attributeLabel}}" stepKey="TypeAttributeName"/>
+        <click selector="{{CustomerAccountSection.search}}" stepKey="clickToSearchButton"/>
+        <waitForPageLoad stepKey="waitForResult"/>
+        <seeElement selector="{{CustomerAccountSection.emptyRow}}" stepKey="seeEmptyRow"/>
+    </actionGroup>
+</actionGroups>

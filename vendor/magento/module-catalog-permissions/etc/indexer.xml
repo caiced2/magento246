@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+/**
+ * Copyright © Magento, Inc. All rights reserved.
+ * See COPYING.txt for license details.
+ */
+-->
+<config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="urn:magento:framework:Indexer/etc/indexer.xsd">
+    <indexer id="catalogpermissions_category" view_id="catalogpermissions_category" class="Magento\CatalogPermissions\Model\Indexer\Category" shared_index="catalog_permissions">
+        <title translate="true">Catalog Category Permissions</title>
+        <description translate="true">Indexed permissions for categories</description>
+        <dependencies>
+            <indexer id="catalog_category_product" />
+        </dependencies>
+    </indexer>
+    <indexer id="catalogpermissions_product" view_id="catalogpermissions_product" class="Magento\CatalogPermissions\Model\Indexer\Product" shared_index="catalog_permissions">
+        <title translate="true">Catalog Product Permissions</title>
+        <description translate="true">Indexed permissions for products</description>
+        <dependencies>
+            <indexer id="catalog_product_category" />
+        </dependencies>
+    </indexer>
+</config>

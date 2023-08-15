@@ -1,0 +1,30 @@
+<?xml version="1.0"?>
+<!--
+/**
+ * Copyright © Magento, Inc. All rights reserved.
+ * See COPYING.txt for license details.
+ */
+-->
+<config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="urn:magento:framework:Event/etc/events.xsd">
+    <event name="controller_action_predispatch_adminhtml_system_config_save">
+        <observer name="magento_logging" instance="Magento\Logging\Observer\AdminSystemConfigSavePredispatchObserver"/>
+    </event>
+    <event name="controller_action_postdispatch">
+        <observer name="magento_logging" instance="Magento\Logging\Observer\ControllerPostdispatchObserver" />
+    </event>
+    <event name="model_save_after">
+        <observer name="magento_logging" instance="Magento\Logging\Observer\ModelSaveAfterObserver" />
+    </event>
+    <event name="model_delete_after">
+        <observer name="magento_logging" instance="Magento\Logging\Observer\ModelDeleteAfterObserver" />
+    </event>
+    <event name="model_load_after">
+        <observer name="magento_logging" instance="Magento\Logging\Observer\ModelLoadAfterObserver" />
+    </event>
+    <event name="backend_auth_user_login_success">
+        <observer name="magento_logging" instance="Magento\Logging\Observer\AdminSessionLoginSuccessObserver" />
+    </event>
+    <event name="backend_auth_user_login_failed">
+        <observer name="magento_logging" instance="Magento\Logging\Observer\AdminSessionLoginFailedObserver" />
+    </event>
+</config>

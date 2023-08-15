@@ -1,0 +1,81 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+/**
+ * Copyright © Magento, Inc. All rights reserved.
+ * See COPYING.txt for license details.
+ */
+-->
+<form xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="urn:magento:module:Magento_Ui:etc/ui_configuration.xsd">
+    <argument name="data" xsi:type="array">
+        <item name="js_config" xsi:type="array">
+            <item name="provider" xsi:type="string">catalogstaging_upcoming_form.catalogstaging_upcoming_form_data_source</item>
+        </item>
+        <item name="label" xsi:type="string" translate="true">Scheduled Changes</item>
+        <item name="template" xsi:type="string">templates/form/collapsible</item>
+    </argument>
+    <settings>
+        <selectorPrefix>.block-schedule</selectorPrefix>
+        <deps>
+            <dep>catalogstaging_upcoming_form.catalogstaging_upcoming_form_data_source</dep>
+        </deps>
+    </settings>
+    <dataSource name="catalogstaging_upcoming_form_data_source">
+        <argument name="data" xsi:type="array">
+            <item name="js_config" xsi:type="array">
+                <item name="component" xsi:type="string">Magento_Ui/js/form/provider</item>
+            </item>
+        </argument>
+        <dataProvider class="Magento\CatalogStaging\Model\Product\Identifier\DataProvider" name="catalogstaging_upcoming_form_data_source">
+            <settings>
+                <requestFieldName>id</requestFieldName>
+                <primaryFieldName>entity_id</primaryFieldName>
+            </settings>
+        </dataProvider>
+    </dataSource>
+    <modal name="catalogstaging_update_form_modal">
+        <settings>
+            <options>
+                <option name="modalClass" xsi:type="string">scheduled-changes-modal-slide</option>
+            </options>
+        </settings>
+        <insertForm name="update_form_loader" component="Magento_Staging/js/form/components/insert-form">
+            <argument name="data" xsi:type="array">
+                <item name="config" xsi:type="array">
+                    <item name="upcomingListingProvider" xsi:type="string">catalogstaging_upcoming_grid</item>
+                    <item name="removeModalProvider" xsi:type="string">${ $.ns}.${ $.ns}.catalogstaging_update_remove_form_modal</item>
+                    <item name="removeResponseProvider" xsi:type="string">${ $.removeModalProvider }.update_remove_form_loader:responseData</item>
+                    <item name="modalSubTitleProvider" xsi:type="string">${ $.externalProvider }:data.staging.name</item>
+                    <item name="modalTitleProvider" xsi:type="string">${ $.externalProvider }:data.product.name</item>
+                </item>
+            </argument>
+            <settings>
+                <formSubmitType>ajax</formSubmitType>
+                <renderUrl path="mui/index/render_handle">
+                    <param name="handle">catalogstaging_update</param>
+                    <param name="buttons">1</param>
+                </renderUrl>
+                <loading>false</loading>
+                <toolbarContainer>${ $.parentName }</toolbarContainer>
+                <externalProvider>${ $.ns }.catalogstaging_update_form_data_source</externalProvider>
+                <ns>catalogstaging_update_form</ns>
+                <imports>
+                    <link name="params.store">${ $.provider }:data.store_id</link>
+                </imports>
+            </settings>
+        </insertForm>
+    </modal>
+    <insertListing name="catalogstaging_upcoming_grid">
+        <settings>
+            <externalProvider>catalogstaging_upcoming_grid.catalogstaging_upcoming_grid_data_source</externalProvider>
+            <loading>false</loading>
+            <autoRender>true</autoRender>
+            <ns>catalogstaging_upcoming_grid</ns>
+            <exports>
+                <link name="entityId">${ $.externalProvider }:params.id</link>
+            </exports>
+            <imports>
+                <link name="entityId">${ $.provider }:data.entity_id</link>
+            </imports>
+        </settings>
+    </insertListing>
+</form>

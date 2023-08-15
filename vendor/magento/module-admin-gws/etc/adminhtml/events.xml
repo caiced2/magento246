@@ -1,0 +1,100 @@
+<?xml version="1.0"?>
+<!--
+/**
+ * Copyright © Magento, Inc. All rights reserved.
+ * See COPYING.txt for license details.
+ */
+-->
+<config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="urn:magento:framework:Event/etc/events.xsd">
+    <event name="authorization_roles_load_after">
+        <observer name="magento_admingws" instance="Magento\AdminGws\Observer\AddDataAfterRoleLoad" />
+    </event>
+    <event name="authorization_roles_save_before">
+        <observer name="magento_admingws" instance="Magento\AdminGws\Observer\SetDataBeforeRoleSave" />
+    </event>
+    <event name="admin_permissions_role_prepare_save">
+        <observer name="magento_admingws" instance="Magento\AdminGws\Observer\PrepareRoleSave" />
+    </event>
+    <event name="controller_action_predispatch">
+        <observer name="magento_admingws" instance="Magento\AdminGws\Observer\AdminControllerPredispatch" />
+    </event>
+    <event name="store_save_after">
+        <observer name="magento_admingws" instance="Magento\AdminGws\Observer\RefreshRolePermissions" />
+    </event>
+    <event name="store_delete_after">
+        <observer name="magento_admingws" instance="Magento\AdminGws\Observer\RefreshRolePermissions" />
+    </event>
+    <event name="store_group_delete_after">
+        <observer name="magento_admingws" instance="Magento\AdminGws\Observer\RefreshRolePermissions" />
+    </event>
+    <event name="website_save_after">
+        <observer name="magento_admingws" instance="Magento\AdminGws\Observer\RefreshRolePermissions" />
+    </event>
+    <event name="website_delete_after">
+        <observer name="magento_admingws" instance="Magento\AdminGws\Observer\RefreshRolePermissions" />
+    </event>
+    <event name="core_collection_abstract_load_before">
+        <observer name="magento_admingws" instance="Magento\AdminGws\Observer\LimitCollection" />
+    </event>
+    <event name="eav_collection_abstract_load_before">
+        <observer name="magento_admingws" instance="Magento\AdminGws\Observer\LimitCollection" />
+    </event>
+    <event name="log_visitor_collection_load_before">
+        <observer name="magento_admingws" instance="Magento\AdminGws\Observer\LimitCollection" />
+    </event>
+    <event name="model_save_before">
+        <observer name="magento_admingws" instance="Magento\AdminGws\Observer\ValidateModelSaveBefore" />
+    </event>
+    <event name="model_delete_before">
+        <observer name="magento_admingws" instance="Magento\AdminGws\Observer\ValidateModelDeleteBefore" />
+    </event>
+    <event name="model_load_after">
+        <observer name="magento_admingws" instance="Magento\AdminGws\Observer\ValidateModelLoadAfter" />
+    </event>
+    <event name="adminhtml_catalog_category_tree_is_moveable">
+        <observer name="magento_admingws" instance="Magento\AdminGws\Observer\CatalogCategoryIsMoveable" />
+    </event>
+    <event name="adminhtml_catalog_category_tree_can_add_root_category">
+        <observer name="magento_admingws" instance="Magento\AdminGws\Observer\CatalogRootCategoryCanBeAdded" />
+    </event>
+    <event name="adminhtml_catalog_category_tree_can_add_sub_category">
+        <observer name="magento_admingws" instance="Magento\AdminGws\Observer\CatalogCategoryCanBeAdded" />
+    </event>
+    <event name="adminhtml_block_html_before">
+        <observer name="magento_admingws" instance="Magento\AdminGws\Observer\RestrictBlocks" />
+    </event>
+    <event name="store_group_save_after">
+        <observer name="magento_admingws" instance="Magento\AdminGws\Observer\CoreStoreGroupSaveAfter" />
+        <observer name="magento_admingws_role_permissions" instance="Magento\AdminGws\Observer\RefreshRolePermissions" />
+    </event>
+    <event name="adminhtml_catalog_product_grid_prepare_massaction">
+        <observer name="magento_admingws" instance="Magento\AdminGws\Observer\CatalogProductPrepareMassAction" />
+    </event>
+    <event name="adminhtml_catalog_product_edit_tab_attributes_create_html_before">
+        <observer name="magento_admingws" instance="Magento\AdminGws\Observer\DisallowCreateAttributeButtonDisplay" />
+    </event>
+    <event name="adminhtml_catalog_product_attribute_set_main_html_before">
+        <observer name="magento_admingws" instance="Magento\AdminGws\Observer\RemoveAttributeSetControls" />
+    </event>
+    <event name="adminhtml_catalog_product_attribute_set_toolbar_main_html_before">
+        <observer name="magento_admingws" instance="Magento\AdminGws\Observer\RemoveAddNewAttributeSetButton" />
+    </event>
+    <event name="sales_sale_collection_query_before">
+        <observer name="magento_admingws" instance="Magento\AdminGws\Observer\AddSalesSaleCollectionStoreFilter" />
+    </event>
+    <event name="rss_catalog_notify_stock_collection_select">
+        <observer name="magento_admingws" instance="Magento\AdminGws\Observer\RssCatalogNotifyStockCollectionSelect" />
+    </event>
+    <event name="rss_catalog_review_collection_select">
+        <observer name="magento_admingws" instance="Magento\AdminGws\Observer\RssCatalogReviewCollectionSelect" />
+    </event>
+    <event name="rss_order_new_collection_select">
+        <observer name="magento_admingws" instance="Magento\AdminGws\Observer\RssOrderNewCollectionSelect" />
+    </event>
+    <event name="adminhtml_banner_edit_tab_content_before_prepare_form">
+        <observer name="magento_admingws" instance="Magento\AdminGws\Observer\DisableAllStoreViewsContentField" />
+    </event>
+    <event name="store_add">
+        <observer name="magento_admingws" instance="Magento\AdminGws\Observer\UpdateRoleStores" />
+    </event>
+</config>

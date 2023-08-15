@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+/**
+ * Copyright © Magento, Inc. All rights reserved.
+ * See COPYING.txt for license details.
+ */
+-->
+<config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="urn:magento:framework:Event/etc/events.xsd">
+    <event name="customer_login">
+        <observer name="quick_checkout_login" instance="Magento\QuickCheckout\Observer\CleanBoltTokenOnCustomerLogin"/>
+    </event>
+    <event name="customer_logout">
+        <observer name="quick_checkout_logout" instance="Magento\QuickCheckout\Observer\CleanBoltTokenOnCustomerLogout"/>
+    </event>
+    <event name="checkout_onepage_controller_success_action">
+        <observer name="quick_checkout_place_order_after" instance="Magento\QuickCheckout\Observer\CleanBoltTokenOnSuccessOrderPlaced" />
+    </event>
+</config>

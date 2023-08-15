@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+ /**
+  * Copyright © Magento, Inc. All rights reserved.
+  * See COPYING.txt for license details.
+  */
+-->
+<actionGroups xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:noNamespaceSchemaLocation="urn:magento:mftf:Test/etc/actionGroupSchema.xsd">
+    <actionGroup name="AdminOpenEmailReminderByNameActionGroup">
+        <annotations>
+            <description>Goes to the Admin Email Reminders grid page. Filters the grid based on the provided Rule name. Clicks on Edit.</description>
+        </annotations>
+        <arguments>
+            <argument name="ruleName" type="string"/>
+        </arguments>
+
+        <amOnPage url="{{AdminEmailRemindersGridPage.url}}" stepKey="goToEmailRemindersPage"/>
+        <waitForPageLoad stepKey="waitForEmailRemindersPageLoaded"/>
+        <conditionalClick selector="{{AdminDataGridHeaderSection.clearFilters}}" dependentSelector="{{AdminDataGridHeaderSection.clearFilters}}" visible="true" stepKey="clearExistingFilters"/>
+        <fillField selector="{{AdminEmailRemindersGridSection.filterByRuleName}}" userInput="{{ruleName}}" stepKey="filterByRuleName"/>
+        <click selector="{{AdminDataGridHeaderSection.applyFilters}}" stepKey="clickSearchButton"/>
+        <click selector="{{AdminGridTableSection.row('1')}}" stepKey="clickToEdit"/>
+        <waitForPageLoad stepKey="waitForEmailReminderPageLoaded"/>
+    </actionGroup>
+</actionGroups>

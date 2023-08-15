@@ -1,0 +1,95 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+ /**
+  * Copyright © Magento, Inc. All rights reserved.
+  * See COPYING.txt for license details.
+  */
+-->
+
+<tests xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xsi:noNamespaceSchemaLocation="urn:magento:mftf:Test/etc/testSchema.xsd">
+    <test name="AdminApplyBannerToDifferentAdminRoleTest">
+        <annotations>
+            <title value="Admin role has access to banner that created for storeview he has access to"/>
+            <description value="Admin role has access to banner that created for storeview he has access to"/>
+            <severity value="CRITICAL"/>
+            <testCaseId value="MAGETWO-86445"/>
+            <features value="MAGETWO-36659-[CMS] WYSIWYG update"/>
+            <stories value="MAGETWO-42047-Apply new WYSIWYG to Banner add/edit"/>
+            <group value="Banner"/>
+        </annotations>
+        <before>
+            <actionGroup ref="AdminLoginActionGroup" stepKey="loginGetFromGeneralFile"/>
+            <actionGroup ref="EnabledWYSIWYGActionGroup" stepKey="enableWYSIWYG"/>
+            <actionGroup ref="ConfigAdminAccountSharingActionGroup" stepKey="allowAdminShareAccount"/>
+
+            <!--Create storeGroup 1-->
+            <createData stepKey="createStore" entity="customStoreGroup"/>
+        </before>
+        <after>
+            <actionGroup ref="AdminLogoutActionGroup" stepKey="logoutOfCurrentUser"/>
+            <actionGroup ref="AdminLoginActionGroup" stepKey="loginAsAdmin" />
+            <actionGroup ref="DisabledWYSIWYGActionGroup" stepKey="disableWYSIWYG"/>
+            <actionGroup ref="DeleteCustomStoreActionGroup" stepKey="deleteCustomStoreGroup">
+                <argument name="storeGroupName" value="customStoreGroup.name" />
+            </actionGroup>
+            <magentoCron groups="index" stepKey="reindex"/>
+            <actionGroup ref="AdminLogoutActionGroup" stepKey="logoutOfAdmin"/>
+        </after>
+
+        <!--Create storeView 1-->
+        <actionGroup ref="AdminCreateStoreViewActionGroup" stepKey="createStoreView">
+            <argument name="StoreGroup" value="customStoreGroup"/>
+        </actionGroup>
+        <magentoCron groups="index" stepKey="reindex"/>
+
+        <!--Create userRole 1-->
+        <actionGroup ref="AdminCreateUserRoleActionGroup" stepKey="createNewAdminUserRole">
+            <argument name="role" value="adminRole"/>
+            <argument name="StoreGroup" value="customStoreGroup"/>
+            <argument name="User" value="newAdmin"/>
+        </actionGroup>
+
+        <!--Create user 1-->
+        <actionGroup ref="AdminCreateUserActionGroup" stepKey="createAdminUser">
+            <argument name="role" value="adminRole"/>
+        </actionGroup>
+
+        <!--Create banner for Defaulf Store View-->
+        <amOnPage url="{{AdminBannerPage.url}}" stepKey="goToNewBannerPage" />
+        <waitForPageLoad stepKey="waitForPageLoad1" />
+
+        <!--Make sure that Banner Name is a required field-->
+        <click selector="{{AdminBannerBasicActionSection.Save}}" stepKey="saveFormWithoutRequiredField" />
+        <seeElement selector="{{AdminBannerBasicActionSection.BannerRequiredField}}" stepKey="seeRequiredMessage" />
+
+        <click selector="{{AdminBannerBasicActionSection.Scope}}" stepKey="clickScopeSelector"/>
+        <waitForElementVisible selector="{{AdminBannerBasicActionSection.ScopeDropdown}}" stepKey="waitForScopeDropdown"/>
+        <click selector="{{AdminBannerBasicActionSection.ScopeOption('Default Store View')}}" stepKey="selectScope"/>
+        <waitForElementVisible selector="{{AdminBannerBasicActionSection.ScopeModal}}" stepKey="waitForScopeModal"/>
+        <click selector="{{AdminBannerBasicActionSection.ScopeModalConfirm}}" stepKey="confirmScopeModal"/>
+        <waitForPageLoad stepKey="waitForPageLoad2"/>
+        <click selector="{{AdminBannerBasicActionSection.Save}}" stepKey="clickSaveButton" />
+        <fillField selector="{{AdminBannerBasicActionSection.Name}}" userInput="{{sampleBanner.Name}}" stepKey="fillBannerName" />
+        <conditionalClick selector="{{AdminBannerBasicActionSection.ContentTab}}" dependentSelector="{{BannerContentSection.checkIfContentTabOpen}}" stepKey="clickIfContentTabCloses" visible="true"/>
+        <waitForElementVisible selector="{{TinyMCESection.TinyMCE}}" stepKey="waitForTinyMCE" />
+        <executeJS function="tinyMCE.get('banner_form_store_contents').setContent('Hello World from banner!');" stepKey="executeJSFillContent"/>
+        <click selector="{{BannerContentSection.ShowHideBtn}}" stepKey="clickShowHideBtn" />
+        <click selector="{{BannerContentSection.ShowHideBtn}}" stepKey="clickShowHideBtn1" />
+        <waitForPageLoad stepKey="waitForPageLoad3" />
+        <click selector="{{AdminBannerBasicActionSection.Save}}" stepKey="clickSaveBanner" />
+
+        <!--Logout from current user-->
+        <actionGroup ref="AdminLogoutActionGroup" stepKey="logout"/>
+
+        <!--Login by created user-->
+        <actionGroup ref="CustomLoginActionGroup" stepKey="loginByCustomUser">
+            <argument name="User" value="newAdmin"/>
+        </actionGroup>
+
+        <!--Navigate to edit page of banner-->
+        <amOnPage url="{{AdminDynamicBlockGridPage.url}}" stepKey="goToBannerGrid"/>
+        <waitForPageLoad stepKey="waitForPageLoad4"/>
+        <dontSee userInput="{{sampleBanner.Name}}" stepKey="dontSeeCreatedBanner"/>
+    </test>
+</tests>

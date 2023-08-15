@@ -1,0 +1,433 @@
+<?php
+/**
+ * Copyright © Magento, Inc. All rights reserved.
+ * See COPYING.txt for license details.
+ */
+
+/** @var \Magento\Framework\View\Helper\SecureHtmlRenderer $secureRenderer */
+
+/* @var $jsonHelper \Magento\Framework\Json\Helper\Data */
+$jsonHelper = $block->getData('jsonHelper');
+?>
+
+<div class="fieldset-wrapper custom-options attribute-custom-options">
+    <div class="fieldset-wrapper-title">
+        <span class="title"><?= $block->escapeHtml($block->getFormTitle()) ?></span>
+        <div class="actions"><?= $block->getAddButtonHtml() ?></div>
+    </div>
+
+    <?= $block->getTemplatesHtml() ?>
+
+    <div id="<?= $block->escapeHtmlAttr($block->getFieldPrefix()) ?>_attribute_container"></div>
+
+<?php
+$newAttributeText = $block->escapeJs(__('New Attribute'));
+$deleteButtonHtml = $jsonHelper->jsonEncode($block->getDeleteButtonHtml());
+$codeText = $block->escapeJs(__('Code'));
+$inputTypeText = $block->escapeJs(__('Input Type'));
+$attributeGroupText = $block->escapeJs(__('Attribute Group'));
+$labelText = $block->escapeJs(__('Label'));
+$isRequiredText = $block->escapeJs(__('Is Required'));
+$sortOrderText = $block->escapeJs(__('Sort Order'));
+$isSearcheableText = $block->escapeJs(__('Is Searcheable'));
+$isListedText = $block->escapeJs(__('Is Listed'));
+$fieldPrefix = $block->escapeJs($block->getFieldPrefix());
+$typeSelectHtml = $jsonHelper->jsonEncode($block->getTypeSelectHtml());
+$groupSelectHtml = $jsonHelper->jsonEncode($block->getGroupSelectHtml());
+$requiredSelectHtml = $block->getRequiredSelectHtml();
+$searcheableSelectHtml = $block->getSearcheableSelectHtml();
+$listedSelectHtml = $block->getListedSelectHtml();
+$staticTypesJson = $block->getStaticTypes()->toJson();
+$errorDuplicateTypeMessage = $block->escapeJs(
+    __(
+        'We found an attribute with this static input type already in the gift registry type.'
+        . ' Please select a different input type.'
+    )
+);
+$addButtonId = $block->escapeJs($block->getAddButtonId());
+$typeStoreId = $block->escapeJs($block->getTypeStoreId());
+?>
+<?php $scriptString = <<<script
+require([
+    'jquery',
+    'mage/template',
+    'Magento_Ui/js/modal/alert',
+    'collapsable',
+    'mage/adminhtml/form',
+    'Magento_GiftRegistry/edit/validation-rules',
+    'prototype'
+], function(jQuery, mageTemplate, alert){
+
+    //<![CDATA[
+    var attributeTemplate =
+        '<div class="fieldset-wrapper opened option-box admin__collapsible-block-wrapper"' +
+            ' id="<%- data.prefix %>_option_<%- data.id %>">'+
+            '<div class="fieldset-wrapper-title">'+
+                '<strong ' +
+                    'class="admin__collapsible-title"' +
+                    'data-bs-toggle="collapse"' +
+                    'data-bs-target="#<%= data.prefix %>_option_<%= data.id %>-content">' +
+                    '<span>{$newAttributeText}</span>'+
+                '</strong>'+
+                '<div class="actions">'+ {$deleteButtonHtml} +'</div>'+
+            '</div>'+
+            '<div class="fieldset-wrapper-content in collapse" id="<%- data.prefix %>_option_<%- data.id %>-content">'+
+                '<fieldset class="fieldset">'+
+                    '<table id="<%- data.prefix %>_attribute_<%- data.id %>" class="data-table table-fieldset-alt">'+
+                        '<thead>'+
+                            '<tr>'+
+                                '<th class="col-code required">{$codeText}</th>'+
+                                '<th class="col-input-type required">{$inputTypeText}</th>'+
+                                '<th class="col-attribute-group required">{$attributeGroupText}</th>'+
+                                '<th class="col-label required">{$labelText}</th>'+
+                                '<th class="col-is-required">{$isRequiredText}</th>'+
+                                '<th class="col-sort-order">{$sortOrderText}</th>'+
+                            '</tr>'+
+                        '</thead>'+
+                        '<tbody>'+
+                            '<tr>'+
+                                '<td><input type="text"' +
+                                    ' class="required-entry validate-code input-text global-scope attribute-code"' +
+                                    ' id="<%= data.prefix %>_attribute_<%= data.id %>_code"' +
+                                    ' name="attributes[<%= data.prefix %>][<%= data.id %>][code]"' +
+                                    ' value="<%= data.code %>"></td>'+
+                                '<td>' + {$typeSelectHtml} + '</td>'+
+                                '<td>' + {$groupSelectHtml} + '</td>'+
+                                '<td><input type="text" class="required-entry input-text"' +
+                                    ' id="<%= data.prefix %>_attribute_<%= data.id %>_label"' +
+                                    ' name="attributes[<%= data.prefix %>][<%= data.id %>][label]"' +
+                                    ' value="<%- data.label %>"><%= data.checkbox_scope %></td>'+
+                                '<td>{$requiredSelectHtml}</td>'+
+                                '<td><input type="text" class="input-text global-scope"' +
+                                    ' id="<%- data.prefix %>_attribute_<%- data.id %>_sort_order"' +
+                                    ' name="attributes[<%- data.prefix %>][<%- data.id %>][sort_order]"' +
+                                    ' value="<%- data.sort_order %>"></td>'+
+                            '</tr>'+
+                        '</tbody>'+
+                    '</table>'+
+
+                    '<input type="hidden" id="<%- data.prefix %>_attribute_<%- data.id %>_is_deleted"' +
+                        ' name="attributes[<%- data.prefix %>][<%- data.id %>][is_deleted]">'+
+                    '<input type="hidden" id="<%- data.prefix %>_attribute_<%- data.id %>_hidden_type"' +
+                        ' name="attributes[<%- data.prefix %>][<%- data.id %>][type]" value="<%- data.type %>">'+
+                    '<input class="hidden-code" type="hidden"' +
+                        ' id="<%- data.prefix %>_attribute_<%- data.id %>_hidden_code"' +
+                        ' name="attributes[<%- data.prefix %>][<%- data.id %>][code]"' +
+                        ' value="<%- data.code %>" disabled="disabled">'+
+                    '<input type="hidden" id="<%- data.prefix %>_attribute_<%- data.id %>_hidden_group"' +
+                        ' name="attributes[<%- data.prefix %>][<%- data.id %>][group]" value="<%- data.group %>"' +
+                        ' disabled="disabled">'+
+
+                    '<div class="giftregistry-custom-attributes"  id="<%- data.prefix %>_option_ext_<%- data.id %>">'+
+                        '<div class="field field-searcheable">'+
+                            '<label class="label" for=""><span>{$isSearcheableText}</span></label>'+
+                            '<div class="control">{$searcheableSelectHtml}</div>'+
+                        '</div>'+
+                        '<div class="field field-listed">'+
+                            '<label class="label" for=""><span>{$isListedText}</span></label>'+
+                            '<div class="control">{$listedSelectHtml}</div>'+
+                        '</div>'+
+                    '</div>'+
+                    '<div id="<%- data.prefix %>_attribute_<%- data.id %>_options"></div>'+
+
+                '</fieldset>'+
+            '</div>'+
+        '</div>';
+
+    var customAttribute = {
+        types : {$staticTypesJson},
+        templateText : attributeTemplate,
+        attributeId : 0,
+        prefix : '{$fieldPrefix}',
+        usedMessage : '{$errorDuplicateTypeMessage}',
+        add : function(data) {
+            if(data.id == undefined){
+                data = {};
+                this.attributeId++;
+                data.id  = this.attributeId;
+            } else {
+                this.attributeId = data.id;
+            }
+            data.prefix = this.prefix;
+
+            this.template = mageTemplate(this.templateText);
+            Element.insert($(this.prefix + '_attribute_container'), {
+                'after': this.template({
+                    data: data
+                })
+            });
+
+            jQuery('.collapse').collapsable();
+
+            if (data.type) {
+                var is_static = 0;
+                var type = data.type;
+                if (this.types[data.code]) {
+                    type += ':' + data.code;
+                    is_static = 1;
+                }
+                \$A($(this.prefix+'_attribute_'+data.id+'_type').options).each(function(option){
+                    if (option.value==type || (is_static && option.value.include(type))) option.selected = true;
+                });
+            }
+            if (data.group) {
+                \$A($(this.prefix+'_attribute_'+data.id+'_group').options).each(function(option){
+                    if (option.value==data.group) option.selected = true;
+                });
+            }
+            if (data.is_required) {
+                \$A($(this.prefix+'_attribute_'+data.id+'_is_required').options).each(function(option){
+                    if (option.value==data.is_required) option.selected = true;
+                });
+            }
+            if (data.is_searcheable) {
+                \$A($(this.prefix+'_attribute_'+data.id+'_is_searcheable').options).each(function(option){
+                    if (option.value==data.is_searcheable) option.selected = true;
+                });
+            }
+            if (data.is_listed) {
+                \$A($(this.prefix+'_attribute_'+data.id+'_is_listed').options).each(function(option){
+                    if (option.value==data.is_listed) option.selected = true;
+                });
+            }
+            if (data.checkbox_scope) {
+                if ($(this.prefix+'_attribute_'+data.id+'_label') && data.label_disabled) {
+                    $(this.prefix+'_attribute_'+data.id+'_label').disable();
+                }
+            }
+
+            var template = this.getOptionTemplate(data.type);
+            this.checkStaticType(null, $(this.prefix+'_attribute_'+data.id+'_type'));
+            if (template) {
+                this.insertOptionTemplate(template, data);
+                if (data.type == 'select') {
+                    if (data.items) {
+                        data.items.each(function(value) {
+                            selectOptionType.add(value);
+                        });
+                    }
+                    selectOptionType.bindAddButton();
+                }
+                if (data.type == 'date') {
+                    selectDateType.add(data);
+                }
+                if (data.type == 'country') {
+                    selectCountryType.add(data);
+                }
+            }
+            this.bindRemoveButtons();
+            this.bindSelectInputType();
+        },
+        addParams : function(element, type){
+            var template = this.getOptionTemplate(type);
+            data = {};
+            data.id = element.id.sub(this.prefix+'_attribute_', '').sub('_type', '');
+            data.type = type;
+            data.prefix = this.prefix;
+
+            this.clearParams(element);
+            this.insertOptionTemplate(template, data);
+            if (type == 'select') {
+                selectOptionType.bindAddButton();
+            }
+        },
+        clearParams : function(element) {
+            var container = element.id.sub('attribute', 'option').sub('_type', '');
+            $$('#'+container+' .type-options').each(function(el){
+                $(el.id).remove();
+            });
+        },
+        remove : function(event){
+            var element = $(Event.findElement(event, 'div.fieldset-wrapper'));
+            if (element) {
+                fieldId = element.id.sub(this.prefix+'_option_','');
+                $(this.prefix+'_attribute_'+fieldId+'_is_deleted').value = '1';
+
+                element.addClassName('no-display');
+                element.addClassName('ignore-validate');
+                element.hide();
+            }
+        },
+        bindRemoveButtons : function(){
+            var buttons = $$('div.attribute-custom-options .delete-attribute-option');
+            for(var i=0;i<buttons.length;i++){
+                if(!$(buttons[i]).binded){
+                    $(buttons[i]).binded = true;
+                    Event.observe(buttons[i], 'click', this.remove.bind(this));
+                }
+            }
+            var inputs = $$(
+                'div.attribute-custom-options button',
+                'div.attribute-custom-options input',
+                'div.attribute-custom-options select'
+            );
+            inputs.each(function(el) { Event.observe(el, 'change', el.setHasChanges.bind(el));  })
+        },
+        bindScopeCheckbox : function(){
+            var checkboxes = $$('.attribute-option-scope-checkbox');
+            for (var i=0;i<checkboxes.length;i++) {
+                if (!$(checkboxes[i]).binded) {
+                    $(checkboxes[i]).binded = true;
+                    Event.observe(checkboxes[i], 'click', this.addScope.bind(this));
+                }
+            }
+        },
+        bindSelectInputType : function(){
+            var types = $$('.attribute-type');
+            for(var i=0;i<types.length;i++){
+                if(!$(types[i]).binded){
+                    $(types[i]).binded = true;
+                    Event.observe(types[i], 'change', this.checkStaticType.bind(this));
+                }
+            }
+        },
+        addScope : function(event){
+            var element = $(Event.element(event));
+            el = $(element.id.sub('_use_default', ''));
+            if (el.disabled) el.enable();
+            else el.disable();
+        },
+        changeScopeInputs : function(scope, mode){
+            if (scope) {
+                $$('.global-scope').each(function(el){el.disable()});
+                $$('.hidden-code').each(function(el){el.enable()});
+                $$('.scope-item').each(function(el){el.hide()});
+            }
+        },
+        checkStaticType : function(event, element){
+            if (element == undefined) {
+                element = $(Event.findElement(event, 'select'));
+            }
+
+            var parts = element.value.split(':');
+            var type = parts[0];
+            var code = (parts[1] != undefined) ? parts[1] : 0;
+            var group = (parts[2] != undefined) ? parts[2] : 0;
+            var alreadyUsed = false;
+
+            var codeInput = $(element.id.sub('_type','_code'));
+            var hiddenCodeInput = $(element.id.sub('_type','_hidden_code'));
+            var groupInput = $(element.id.sub('_type','_group'));
+            var hiddenGroupInput = $(element.id.sub('_type','_hidden_group'));
+
+            $$('.attribute-type').each(function(el){
+                var optionBox = $(el).up('.option-box');
+                if (el.id != element.id && el.value == element.value && code && !optionBox.hasClassName('no-display')) {
+                    alreadyUsed = true;
+                }
+            });
+
+            if (alreadyUsed) {
+                alert({
+                    content: this.usedMessage
+                });
+                element.selectedIndex = 0;
+                this.clearParams(element);
+                this.hideExtBox(element);
+                codeInput.enable();
+                groupInput.enable();
+                return;
+            }
+
+            var hiddenTypeInput = $(element.id.sub('_type','_hidden_type'));
+            hiddenTypeInput.value = type;
+
+            if (code) {
+                codeInput.value = code;
+                codeInput.disable();
+                hiddenCodeInput.value = code;
+                hiddenCodeInput.enable();
+                this.showExtBox(element);
+            } else {
+                codeInput.enable();
+                hiddenCodeInput.disable();
+                this.hideExtBox(element);
+            }
+
+            if (group) {
+                \$A(groupInput.options).each(function(option){
+                    if (option.value==group && option.selected==false) {
+                        option.selected = true;
+                    }
+                });
+                groupInput.disable();
+                hiddenGroupInput.value = group;
+                hiddenGroupInput.enable();
+            } else {
+                groupInput.enable();
+                hiddenGroupInput.disable();
+            }
+            customAttribute.addParams(element, type);
+        },
+        showExtBox : function(element){
+            var extBox = $(element.id.sub('_type','').sub('attribute','option_ext'));
+            extBox.show();
+            $$('div#'+extBox.id+' .select').each(function(el){el.enable()});
+        },
+        hideExtBox : function(element){
+            var extBox = $(element.id.sub('_type','').sub('attribute','option_ext'));
+            extBox.hide();
+            $$('div#'+extBox.id+' .select').each(function(el){el.disable()});
+        },
+        getOptionTemplate : function(type){
+            var template;
+            switch(type){
+                case 'select':
+                    template = OptionTemplateSelect;
+                    break;
+                case 'date':
+                    template = OptionTemplateDate;
+                    break;
+                case 'country':
+                    template = OptionTemplateCountry;
+                    break;
+                default:
+                    template = '';
+                    break;
+            }
+            return template;
+        },
+        insertOptionTemplate : function(template, data){
+            var id = data.prefix+'_'+data.id+'_type_'+data.type;
+            if (!$(id)) {
+                var output = '<div id="'+id+'" class="type-options">'+template+'</div>';
+                this.secondTemplate = mageTemplate(output);
+
+                element='registry_attribute_'+data.id+'_options';
+                Element.insert(element, {
+                    'after': this.secondTemplate({
+                        data: data
+                    })
+                });
+            }
+        }
+    };
+
+    if($('{$addButtonId}')){
+        Event.observe('{$addButtonId}', 'click', customAttribute.add.bind(customAttribute));
+    }
+script;
+
+foreach ($block->getAttributeValues() as $_value) {
+    $scriptString .= 'customAttribute.add(' . $_value->toJson() . ');';
+}
+$scriptString .= <<<script
+
+    customAttribute.bindScopeCheckbox();
+    customAttribute.changeScopeInputs({$typeStoreId});
+
+
+    bindActiveRegistryTab = function(event, ui) {
+        var anchor = jQuery(ui.newTab).find('a');
+        if ($('store_switcher') && anchor.length && anchor.prop('name')) {
+            $('store_switcher').switchParams = 'active_tab/' + anchor.prop('name') + '/';
+        }
+    }
+    jQuery(document).on('tabsactivate', bindActiveRegistryTab);
+    //]]>
+
+});
+script;
+?>
+    <?= /* @noEscape */ $secureRenderer->renderTag('script', [], $scriptString, false); ?>
+</div>

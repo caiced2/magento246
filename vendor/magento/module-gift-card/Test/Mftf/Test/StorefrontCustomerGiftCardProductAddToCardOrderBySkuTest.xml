@@ -1,0 +1,87 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+ /**
+  * Copyright © Magento, Inc. All rights reserved.
+  * See COPYING.txt for license details.
+  */
+-->
+
+<tests xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xsi:noNamespaceSchemaLocation="urn:magento:mftf:Test/etc/testSchema.xsd">
+    <test name="StorefrontCustomerGiftCardProductAddToCardOrderBySkuTest">
+        <annotations>
+            <features value="GiftCard"/>
+            <stories value="Add to card order by sku gift card product"/>
+            <title value="Add to card order by sku gift card product test"/>
+            <description value="Customer should be add to card order by sku gift card product"/>
+            <severity value="CRITICAL"/>
+            <testCaseId value="AC-2630"/>
+            <group value="mtf_migrated"/>
+            <group value="GiftCard"/>
+        </annotations>
+        <before>
+            <!-- Create customer -->
+            <createData entity="Simple_US_Customer" stepKey="createCustomer"/>
+            <!-- Create category -->
+            <createData entity="SimpleSubCategory" stepKey="createCategory"/>
+            <!-- Create Gift Card Product -->
+            <createData entity="ApiGiftCard" stepKey="createGiftCardProduct">
+                <requiredEntity createDataKey="createCategory"/>
+            </createData>
+            <!-- Login as admin -->
+            <actionGroup ref="AdminLoginActionGroup" stepKey="loginAsAdmin"/>
+        </before>
+        <after>
+            <!-- Delete customer -->
+            <deleteData createDataKey="createCustomer" stepKey="deleteCustomer"/>
+            <!-- Delete category -->
+            <deleteData createDataKey="createCategory" stepKey="deleteCategory"/>
+            <!-- Log out -->
+            <actionGroup ref="AdminLogoutActionGroup" stepKey="logout"/>
+        </after>
+        <!-- Login to Frontend -->
+        <actionGroup ref="LoginToStorefrontActionGroup" stepKey="loginAsCustomer">
+            <argument name="Customer" value="$$createCustomer$$"/>
+        </actionGroup>
+        <!-- Open My Account > Order by SKU -->
+        <amOnPage stepKey="goToMyAccountPage" url="{{StorefrontCustomerDashboardPage.url}}"/>
+        <waitForPageLoad stepKey="waitForPageLoad"/>
+        <actionGroup ref="StorefrontCustomerGoToSidebarMenu" stepKey="goToSidebarMenu">
+            <argument name="menu" value="Order by SKU"/>
+        </actionGroup>
+        <!-- Fill data according dataset -->
+        <actionGroup ref="FillProductSkuAndQtyActionGroup" stepKey="fillProductQtyAndSkuForOrderFirstProduct">
+            <argument name="sku" value="$$createGiftCardProduct.sku$$"/>
+            <argument name="quantity" value="1"/>
+            <argument name="index" value="0"/>
+        </actionGroup>
+        <!-- Add product to cart -->
+        <click selector="{{StorefrontCustomerOrderBySkuSection.addToCart}}" stepKey="clickAddToCart"/>
+        <!-- Assert product fail messages -->
+        <waitForElementVisible selector="{{StorefrontCustomerOrderBySkuSection.requiredAttentionMessage}}"
+                               stepKey="waitForPageAppeared"/>
+        <see selector="{{StorefrontCustomerOrderBySkuSection.requiredAttentionMessage}}"
+             userInput="1 product requires your attention." stepKey="seeFailMessage"/>
+        <see selector="{{StorefrontCustomerOrderBySkuSection.errorMessage}}"
+             userInput="You need to choose options for your item." stepKey="assertProductFailMessage"/>
+        <!-- Assert specify product option link -->
+        <see selector="{{StorefrontCustomerOrderBySkuSection.optionsLink}}"
+             userInput="Specify the product's options." stepKey="seeAddLink"/>
+        <!-- Assert cart is empty -->
+        <actionGroup ref="AssertMiniCartEmptyActionGroup" stepKey="seeMiniCartEmpty"/>
+        <click selector="{{StorefrontCustomerOrderBySkuSection.optionsLink}}" stepKey="clickOpenProductOption"/>
+        <fillField selector="{{StorefrontCustomerOrderBySkuSection.customGiftCardAmountInput}}"
+                   userInput="10" stepKey="fillCustomGiftCardAmountInput"/>
+        <fillField selector="{{StorefrontCustomerOrderBySkuSection.senderName}}"
+                   userInput="Joe" stepKey="fillSendNameField"/>
+        <fillField selector="{{StorefrontCustomerOrderBySkuSection.recipientName}}"
+                   userInput="John" stepKey="fillRecipientNameField"/>
+        <fillField selector="{{StorefrontCustomerOrderBySkuSection.quantity}}"
+                   userInput="1" stepKey="fillGiftQtyField"/>
+        <click selector="{{StorefrontCustomerOrderBySkuSection.updateCart}}" stepKey="clickUpdateCard"/>
+        <waitForPageLoad stepKey="waitForPageLoad1"/>
+        <see selector="{{StorefrontCustomerOrderBySkuSection.successAddToCardMessage}}"
+             userInput="You added $$createGiftCardProduct.name$$ to your shopping cart."
+             stepKey="assertAddToCardSuccessMessage"/>
+    </test>
+</tests>

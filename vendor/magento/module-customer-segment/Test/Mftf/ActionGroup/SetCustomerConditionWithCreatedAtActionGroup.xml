@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+ /**
+  * Copyright © Magento, Inc. All rights reserved.
+  * See COPYING.txt for license details.
+  */
+-->
+
+<actionGroups xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+              xsi:noNamespaceSchemaLocation="urn:magento:mftf:Test/etc/actionGroupSchema.xsd">
+    <!--Set Created At equals or less than today Customer Segment-->
+    <actionGroup name="SetCustomerConditionWithCreatedAtActionGroup">
+        <arguments>
+            <argument name="conditionData" type="entity"/>
+        </arguments>
+        <click selector="{{AdminCustomerSegmentEditSection.conditionsTab}}" stepKey="proceedToConditionsTab"/>
+        <click selector="{{AdminCustomerSegmentConditionsEditSection.addCondition}}" stepKey="clickToAddCondition" />
+        <selectOption userInput="{{conditionData.condition}}" selector="{{AdminCustomerSegmentConditionsEditSection.conditions}}" stepKey="selectCondition"/>
+        <waitForPageLoad stepKey="waitForConditionsToAppear"/>
+        <click selector="{{AdminCustomerSegmentConditionsEditSection.selectConditionType}}" stepKey="clickToSelectTheCondition" after="waitForConditionsToAppear"/>
+        <selectOption selector="{{AdminCustomerSegmentConditionsEditSection.selectConditionValue}}" userInput="{{conditionData.operator}}" stepKey="fillConditionValue"/>
+        <waitForPageLoad stepKey="waitForInputBoxToAppear"/>
+        <click selector="{{AdminMainActionsSection.saveAndContinue}}" stepKey="saveSegment"/>
+        <see userInput="You saved the segment." selector="{{AdminMessagesSection.success}}" stepKey="checkSuccessMessage"/>
+    </actionGroup>
+</actionGroups>

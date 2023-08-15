@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+ /**
+  * Copyright © Magento, Inc. All rights reserved.
+  * See COPYING.txt for license details.
+  */
+-->
+<sections xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:noNamespaceSchemaLocation="urn:magento:mftf:Page/etc/SectionObject.xsd">
+    <section name="AdminReturnAttributePropertiesSection">
+        <element name="properties" type="button" selector="#rma_item_attribute_tabs_general" timeout="30"/>
+        <element name="label" type="input" selector="#attribute_label"/>
+        <element name="attributeCode" type="input" selector="#attribute_code"/>
+        <element name="inputType" type="select" selector="#frontend_input"/>
+        <element name="isRequiredValue" type="select" selector="#is_required"/>
+        <element name="defaultValue" type="input" selector="#default_value_text"/>
+        <element name="inputValidation" type="select" selector="#input_validation"/>
+        <element name="minTextLength" type="input" selector="#min_text_length"/>
+        <element name="maxTextLength" type="input" selector="#max_text_length"/>
+        <element name="filter" type="select" selector="#input_filter"/>
+        <element name="isVisible" type="select" selector="#is_visible"/>
+        <element name="sortOrder" type="input" selector="#sort_order"/>
+        <element name="usedInForms" type="select" selector="#used_in_forms"/>
+    </section>
+</sections>

@@ -1,0 +1,38 @@
+{
+    "magento_customercustomattributes_sales_flat_order": {
+        "column": {
+            "entity_id": true
+        },
+        "constraint": {
+            "PRIMARY": true,
+            "FK_E3B93E92D5321FB267FA7CF9818B862A": true
+        }
+    },
+    "magento_customercustomattributes_sales_flat_order_address": {
+        "column": {
+            "entity_id": true
+        },
+        "constraint": {
+            "PRIMARY": true,
+            "FK_16AD7FB31D74E6482A0A134C553F0177": true
+        }
+    },
+    "magento_customercustomattributes_sales_flat_quote": {
+        "column": {
+            "entity_id": true
+        },
+        "constraint": {
+            "PRIMARY": true,
+            "MAGENTO_CSTRCUSTOMATTRS_SALES_FLAT_QUOTE_ENTT_ID_QUOTE_ENTT_ID": true
+        }
+    },
+    "magento_customercustomattributes_sales_flat_quote_address": {
+        "column": {
+            "entity_id": true
+        },
+        "constraint": {
+            "PRIMARY": true,
+            "FK_AADF6B0F92C452C82D02E232341ADB1B": true
+        }
+    }
+}

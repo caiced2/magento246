@@ -1,0 +1,18 @@
+<?php
+/**
+ * Copyright © Magento, Inc. All rights reserved.
+ * See COPYING.txt for license details.
+ */
+
+/** @var \Magento\Framework\View\Helper\SecureHtmlRenderer $secureRenderer */
+?>
+
+<div id="popup-window-mask"></div>
+<?= /* @noEscape */
+$secureRenderer->renderTag(
+    'style',
+    [],
+    "#popup-window-mask { display:none; }",
+    false
+);
+?>

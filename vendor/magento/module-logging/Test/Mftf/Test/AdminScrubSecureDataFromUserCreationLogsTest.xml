@@ -1,0 +1,67 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+ /**
+  * Copyright © Magento, Inc. All rights reserved.
+  * See COPYING.txt for license details.
+  */
+-->
+
+<tests xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xsi:noNamespaceSchemaLocation="urn:magento:mftf:Test/etc/testSchema.xsd">
+    <test name="AdminScrubSecureDataFromUserCreationLogsTest">
+        <annotations>
+            <features value="Logging"/>
+            <stories value="Admin Secure Data"/>
+            <title value="Admin scrub secure data from user creation logs test"/>
+            <description value="Scrub secure data from user creation logs"/>
+            <severity value="CRITICAL"/>
+            <testCaseId value="MC-11681"/>
+            <group value="logging"/>
+        </annotations>
+        <before>
+            <!-- Login as admin -->
+            <actionGroup ref="AdminLoginActionGroup" stepKey="loginAsAdmin"/>
+        </before>
+        <after>
+            <!-- Delete admin -->
+            <actionGroup ref="AdminDeleteCustomUserActionGroup" stepKey="deleteAdminUserActionGroup">
+                <argument name="user" value="NewAdminUser"/>
+            </actionGroup>
+
+            <!-- Log out -->
+            <actionGroup ref="AdminLogoutActionGroup" stepKey="logout"/>
+        </after>
+
+        <!-- Go to the System > Permissions > All Users -->
+        <actionGroup ref="AdminOpenNewUserPageActionGroup" stepKey="openNewUserPage"/>
+
+        <!-- Create Admin User -->
+        <actionGroup ref="AdminFillNewUserFormRequiredFieldsActionGroup" stepKey="fillNewUserForm">
+            <argument name="user" value="NewAdminUser"/>
+        </actionGroup>
+        <actionGroup ref="AdminClickSaveButtonOnUserFormActionGroup" stepKey="clickSave"/>
+        <actionGroup ref="AssertAdminUserSaveMessageActionGroup" stepKey="saveNewAdminUser"/>
+
+        <!-- Go to the System > Action Log > Report -->
+        <actionGroup ref="AdminOpenActionLogsReportPageActionGroup" stepKey="openActionLogsReportPage"/>
+
+        <!-- Find created admin in grid -->
+        <actionGroup ref="AdminGridFilterResetActionGroup" stepKey="clearGridFilters"/>
+        <actionGroup ref="AdminFillInputFilterFieldActionGroup" stepKey="searchNewUserInGrid">
+            <argument name="filterInputName" value="fullaction"/>
+            <argument name="filterValue" value="adminhtml_user_save"/>
+        </actionGroup>
+        <actionGroup ref="AdminClickSearchInGridActionGroup" stepKey="applyGridFilter"/>
+        <click selector="{{AdminActionLogReportGridSection.firstRowInTable}}" stepKey="clickFirstRow"/>
+
+        <!-- Assert secure data -->
+        <dontSee selector="{{AdminActionLogReportDetailsSection.parametersList}}" userInput="password" stepKey="dontSeePasswordParameter"/>
+        <dontSee selector="{{AdminActionLogReportDetailsSection.parametersList}}" userInput="{{DefaultAdminUser.password}}" stepKey="dontSeePasswordValue"/>
+        <dontSee selector="{{AdminActionLogReportDetailsSection.parametersList}}" userInput="new_password" stepKey="dontSeeNewPasswordParameter"/>
+        <dontSee selector="{{AdminActionLogReportDetailsSection.parametersList}}" userInput="{{NewAdminUser.password}}" stepKey="dontSeeNewPasswordValue"/>
+        <dontSee selector="{{AdminActionLogReportDetailsSection.parametersList}}" userInput="password_confirmation" stepKey="dontSeePasswordConfirmationParameter"/>
+        <dontSee selector="{{AdminActionLogReportDetailsSection.parametersList}}" userInput="{{NewAdminUser.password_confirmation}}" stepKey="dontSeePasswordConfirmationValue"/>
+        <dontSee selector="{{AdminActionLogReportDetailsSection.parametersList}}" userInput="current_password" stepKey="dontSeeCurrentPasswordParameter"/>
+        <dontSee selector="{{AdminActionLogReportDetailsSection.parametersList}}" userInput="{{NewAdminUser.current_password}}" stepKey="dontSeeCurrentPasswordValue"/>
+    </test>
+</tests>

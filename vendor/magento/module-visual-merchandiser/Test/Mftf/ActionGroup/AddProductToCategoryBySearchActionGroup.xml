@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+ /**
+  * Copyright © Magento, Inc. All rights reserved.
+  * See COPYING.txt for license details.
+  */
+-->
+
+<actionGroups xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:noNamespaceSchemaLocation="urn:magento:mftf:Test/etc/actionGroupSchema.xsd">
+    <actionGroup name="AddProductToCategoryBySearchActionGroup">
+        <arguments>
+            <argument name="product"/>
+            <argument name="categoryEntity"/>
+        </arguments>
+
+        <seeInCurrentUrl url="{{AdminCategoryPage.url}}" stepKey="seeOnCategoryPage"/>
+        <click selector="{{AdminCategorySidebarTreeSection.categoryInTree(categoryEntity.name)}}" stepKey="clickCategoryLink"/>
+        <click selector="{{AdminCategoryProductsSection.sectionHeader}}" stepKey="openProductsInCategorySection"/>
+        <click selector="{{AdminCategoryProductsSection.addProducts}}" stepKey="clickAddProductsToCategory"/>
+        <click selector="{{AdminCategoryAddProductsModalSection.searchAllProducts}}" stepKey="clickSearchProductsTab"/>
+        <click selector="{{AdminCategoryAddProductsModalSection.filters}}" stepKey="openFilters"/>
+        <fillField selector="{{AdminCategoryAddProductsModalSection.nameFilter}}" userInput="{{product.name}}" stepKey="fillNameFilter"/>
+        <click selector="{{AdminCategoryAddProductsModalSection.applyFilters}}" stepKey="applyGridFilter"/>
+        <click selector="{{AdminCategoryAddProductsModalSection.gridActionToggle}}" stepKey="clickToggleActionDropdown"/>
+        <click selector="{{AdminCategoryAddProductsModalSection.gridSelectAll}}" stepKey="clickSelectAll"/>
+        <click selector="{{AdminCategoryAddProductsModalSection.saveClose}}" stepKey="saveCloseModal"/>
+        <click selector="{{AdminCategoryMainActionsSection.SaveButton}}" stepKey="saveCategoryWithProducts"/>
+        <seeElement selector="{{AdminCategoryMessagesSection.SuccessMessage}}" stepKey="seeCategorySaveSuccess"/>
+    </actionGroup>
+</actionGroups>

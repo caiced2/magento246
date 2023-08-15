@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+/**
+ * Copyright © Magento, Inc. All rights reserved.
+ * See COPYING.txt for license details.
+ */
+-->
+<config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="urn:magento:module:Magento_GiftRegistry:etc/giftregistry.xsd">
+    <attribute_type name="text">
+        <label translate="true">Text</label>
+    </attribute_type>
+    <attribute_type name="text"><!-- Duplicate attribute_type name -->
+        <label translate="true">Text</label>
+    </attribute_type>
+    <registry>
+        <static_attribute name="event_date">
+            <label translate="true">Event Date</label>
+        </static_attribute>
+    </registry>
+    <registrant>
+        <static_attribute name="role" group="registrant">
+            <label translate="true">Role</label>
+        </static_attribute>
+    </registrant>
+</config>

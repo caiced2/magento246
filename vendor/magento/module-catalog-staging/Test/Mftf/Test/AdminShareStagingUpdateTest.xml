@@ -1,0 +1,65 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+ /**
+  * Copyright © Magento, Inc. All rights reserved.
+  * See COPYING.txt for license details.
+  */
+-->
+
+<tests xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xsi:noNamespaceSchemaLocation="urn:magento:mftf:Test/etc/testSchema.xsd">
+    <test name="AdminShareStagingUpdateTest">
+        <annotations>
+            <features value="CatalogStaging"/>
+            <stories value="Admin manages staging update"/>
+            <title value="Admin should be able to share a staging update"/>
+            <description value="Admin should be able to share a staging update"/>
+            <severity value="CRITICAL"/>
+            <testCaseId value="MC-293"/>
+            <group value="CatalogStaging"/>
+        </annotations>
+        <before>
+            <actionGroup ref="AdminLoginActionGroup" stepKey="login"/>
+            <createData entity="ApiCategory" stepKey="createCategory"/>
+            <createData entity="ApiSimpleProduct" stepKey="createProduct">
+                <requiredEntity createDataKey="createCategory"/>
+            </createData>
+        </before>
+        <after>
+            <deleteData createDataKey="createProduct" stepKey="deleteProduct"/>
+            <deleteData createDataKey="createCategory" stepKey="deleteCategory"/>
+            <amOnPage url="{{AdminLogoutPage.url}}" stepKey="logout"/>
+        </after>
+
+        <!-- Go to the product edit page -->
+        <amOnPage url="{{AdminProductEditPage.url($$createProduct.id$$)}}" stepKey="goToEditProduct"/>
+        <waitForPageLoad stepKey="waitForEditProduct"/>
+
+        <!-- Schedule an update -->
+        <click selector="{{AdminStagingSlideOutSection.scheduleNewUpdateBtn}}" stepKey="clickScheduleNewUpdateButton"/>
+        <fillField selector="{{AdminStagingSlideOutSection.updateName}}" userInput="TEST UPDATE NAME" stepKey="fillUpdateName"/>
+        <generateDate date="+1 week" format="m/j/Y g:i A" stepKey="futureDate" />
+        <fillField selector="{{AdminStagingSlideOutSection.startDate}}" userInput="{$futureDate}" stepKey="fillStartDate"/>
+        <click selector="{{AdminStagingSlideOutSection.save}}" stepKey="clickSave"/>
+        <see selector="{{AdminStagingSlideOutSection.scheduledChanges}}" userInput="TEST UPDATE NAME" stepKey="seeUpdate"/>
+
+        <!-- Go to the preview staging update page -->
+        <click selector="{{AdminStagingSlideOutSection.nthPreviewLink('1')}}" stepKey="clickPreview"/>
+        <switchToNextTab stepKey="switchToPreviewTab"/>
+        <waitForPageLoad stepKey="waitForPreviewLoad"/>
+        <actionGroup ref="WaitForStagingPreviewLoadedActionGroup" stepKey="waitForStagingPreviewFrameLoaded"/>
+
+        <!-- Grab the share url for the preview staging update page -->
+        <click selector="{{AdminStagingPreviewSection.calendarBtn}}" stepKey="clickToExpandCalendar"/>
+        <waitForElementVisible selector="{{AdminStagingPreviewSection.shareBtn}}" stepKey="waitForShareButton"/>
+        <click selector="{{AdminStagingPreviewSection.shareBtn}}" stepKey="clickShare"/>
+        <grabValueFrom selector="{{AdminStagingPreviewSection.shareUrl}}" stepKey="grabShareUrl"/>
+
+        <!-- Go to the share url and see the preview staging update -->
+        <amOnUrl url="{$grabShareUrl}" stepKey="amOnShareUrl"/>
+        <waitForPageLoad stepKey="waitForPreviewLoadAgain"/>
+        <executeJS function="jQuery('iframe[data-role=preview-iframe]').attr('name', 'theIframe');" stepKey="setIframeName"/>
+        <switchToIFrame userInput="theIframe" stepKey="switchToIframe"/>
+        <see selector="{{StorefrontProductInfoMainSection.productName}}" userInput="$$createProduct.name$$" stepKey="seeProduct"/>
+    </test>
+</tests>

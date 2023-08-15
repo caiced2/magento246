@@ -1,0 +1,318 @@
+<?xml version="1.0"?>
+<!--
+/**
+ * Copyright © Magento, Inc. All rights reserved.
+ * See COPYING.txt for license details.
+ */
+-->
+<schema xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:noNamespaceSchemaLocation="urn:magento:framework:Setup/Declaration/Schema/etc/schema.xsd">
+    <table name="magento_sales_order_grid_archive" resource="sales" engine="innodb"
+           comment="Magento Sales Order Grid Archive">
+        <column xsi:type="int" name="entity_id" unsigned="true" nullable="false" identity="false"
+                comment="Entity Id"/>
+        <column xsi:type="varchar" name="status" nullable="true" length="32"/>
+        <column xsi:type="smallint" name="store_id" unsigned="true" nullable="true" identity="false"/>
+        <column xsi:type="varchar" name="store_name" nullable="true" length="255"/>
+        <column xsi:type="int" name="customer_id" unsigned="true" nullable="true" identity="false"/>
+        <column xsi:type="decimal" name="base_grand_total" scale="4" precision="20" unsigned="false" nullable="true"/>
+        <column xsi:type="decimal" name="base_total_paid" scale="4" precision="20" unsigned="false" nullable="true"/>
+        <column xsi:type="decimal" name="grand_total" scale="4" precision="20" unsigned="false" nullable="true"/>
+        <column xsi:type="decimal" name="total_paid" scale="4" precision="20" unsigned="false" nullable="true"/>
+        <column xsi:type="varchar" name="increment_id" nullable="true" length="50"/>
+        <column xsi:type="varchar" name="base_currency_code" nullable="true" length="3"/>
+        <column xsi:type="varchar" name="order_currency_code" nullable="true" length="255"/>
+        <column xsi:type="varchar" name="shipping_name" nullable="true" length="255"/>
+        <column xsi:type="varchar" name="billing_name" nullable="true" length="255"/>
+        <column xsi:type="timestamp" name="created_at" on_update="false" nullable="true"/>
+        <column xsi:type="timestamp" name="updated_at" on_update="false" nullable="true"/>
+        <column xsi:type="varchar" name="billing_address" nullable="true" length="255"/>
+        <column xsi:type="varchar" name="shipping_address" nullable="true" length="255"/>
+        <column xsi:type="varchar" name="shipping_information" nullable="true" length="255"/>
+        <column xsi:type="varchar" name="customer_email" nullable="true" length="255"/>
+        <column xsi:type="varchar" name="customer_group" nullable="true" length="255"/>
+        <column xsi:type="decimal" name="subtotal" scale="4" precision="20" unsigned="false" nullable="true"/>
+        <column xsi:type="decimal" name="shipping_and_handling" scale="4" precision="20" unsigned="false"
+                nullable="true"/>
+        <column xsi:type="varchar" name="customer_name" nullable="true" length="255"/>
+        <column xsi:type="varchar" name="payment_method" nullable="true" length="255"/>
+        <column xsi:type="decimal" name="total_refunded" scale="4" precision="20" unsigned="false" nullable="true"/>
+        <constraint xsi:type="primary" referenceId="PRIMARY">
+            <column name="entity_id"/>
+        </constraint>
+        <constraint xsi:type="unique" referenceId="MAGENTO_SALES_ORDER_GRID_ARCHIVE_INCREMENT_ID_STORE_ID">
+            <column name="increment_id"/>
+            <column name="store_id"/>
+        </constraint>
+        <index referenceId="MAGENTO_SALES_ORDER_GRID_ARCHIVE_STATUS" indexType="btree">
+            <column name="status"/>
+        </index>
+        <index referenceId="MAGENTO_SALES_ORDER_GRID_ARCHIVE_STORE_ID" indexType="btree">
+            <column name="store_id"/>
+        </index>
+        <index referenceId="MAGENTO_SALES_ORDER_GRID_ARCHIVE_BASE_GRAND_TOTAL" indexType="btree">
+            <column name="base_grand_total"/>
+        </index>
+        <index referenceId="MAGENTO_SALES_ORDER_GRID_ARCHIVE_BASE_TOTAL_PAID" indexType="btree">
+            <column name="base_total_paid"/>
+        </index>
+        <index referenceId="MAGENTO_SALES_ORDER_GRID_ARCHIVE_GRAND_TOTAL" indexType="btree">
+            <column name="grand_total"/>
+        </index>
+        <index referenceId="MAGENTO_SALES_ORDER_GRID_ARCHIVE_TOTAL_PAID" indexType="btree">
+            <column name="total_paid"/>
+        </index>
+        <index referenceId="MAGENTO_SALES_ORDER_GRID_ARCHIVE_SHIPPING_NAME" indexType="btree">
+            <column name="shipping_name"/>
+        </index>
+        <index referenceId="MAGENTO_SALES_ORDER_GRID_ARCHIVE_BILLING_NAME" indexType="btree">
+            <column name="billing_name"/>
+        </index>
+        <index referenceId="MAGENTO_SALES_ORDER_GRID_ARCHIVE_CREATED_AT" indexType="btree">
+            <column name="created_at"/>
+        </index>
+        <index referenceId="MAGENTO_SALES_ORDER_GRID_ARCHIVE_CUSTOMER_ID" indexType="btree">
+            <column name="customer_id"/>
+        </index>
+        <index referenceId="MAGENTO_SALES_ORDER_GRID_ARCHIVE_UPDATED_AT" indexType="btree">
+            <column name="updated_at"/>
+        </index>
+        <index referenceId="FTI_79B209645FB0D568E4FBA1CC62512D9B" indexType="fulltext">
+            <column name="increment_id"/>
+            <column name="billing_name"/>
+            <column name="shipping_name"/>
+            <column name="shipping_address"/>
+            <column name="billing_address"/>
+            <column name="customer_name"/>
+            <column name="customer_email"/>
+        </index>
+    </table>
+    <table name="magento_sales_invoice_grid_archive" resource="sales" engine="innodb"
+           comment="Magento Sales Invoice Grid Archive">
+        <column xsi:type="int" name="entity_id" unsigned="true" nullable="false" identity="false"/>
+        <column xsi:type="varchar" name="increment_id" nullable="true" length="50"/>
+        <column xsi:type="int" name="state" unsigned="false" nullable="true" identity="false"/>
+        <column xsi:type="smallint" name="store_id" unsigned="true" nullable="true" identity="false"/>
+        <column xsi:type="varchar" name="store_name" nullable="true" length="255"/>
+        <column xsi:type="int" name="order_id" unsigned="true" nullable="false" identity="false"/>
+        <column xsi:type="varchar" name="order_increment_id" nullable="true" length="50"/>
+        <column xsi:type="timestamp" name="order_created_at" on_update="false" nullable="true"/>
+        <column xsi:type="varchar" name="customer_name" nullable="true" length="255"/>
+        <column xsi:type="varchar" name="customer_email" nullable="true" length="255"/>
+        <column xsi:type="int" name="customer_group_id" unsigned="false" nullable="true" identity="false"/>
+        <column xsi:type="varchar" name="payment_method" nullable="true" length="128"/>
+        <column xsi:type="varchar" name="store_currency_code" nullable="true" length="3"/>
+        <column xsi:type="varchar" name="order_currency_code" nullable="true" length="3"/>
+        <column xsi:type="varchar" name="base_currency_code" nullable="true" length="3"/>
+        <column xsi:type="varchar" name="global_currency_code" nullable="true" length="3"/>
+        <column xsi:type="varchar" name="billing_name" nullable="true" length="255"/>
+        <column xsi:type="varchar" name="billing_address" nullable="true" length="255"/>
+        <column xsi:type="varchar" name="shipping_address" nullable="true" length="255"/>
+        <column xsi:type="varchar" name="shipping_information" nullable="true" length="255"/>
+        <column xsi:type="decimal" name="subtotal" scale="4" precision="20" unsigned="false" nullable="true"/>
+        <column xsi:type="decimal" name="shipping_and_handling" scale="4" precision="20" unsigned="false"
+                nullable="true"/>
+        <column xsi:type="decimal" name="grand_total" scale="4" precision="20" unsigned="false" nullable="true"/>
+        <column xsi:type="decimal" name="base_grand_total" scale="4" precision="20" unsigned="false" nullable="true"
+                comment="Base Grand Total" />
+        <column xsi:type="timestamp" name="created_at" on_update="false" nullable="true" comment="Created At"/>
+        <column xsi:type="timestamp" name="updated_at" on_update="false" nullable="true"/>
+        <constraint xsi:type="primary" referenceId="PRIMARY">
+            <column name="entity_id"/>
+        </constraint>
+        <constraint xsi:type="unique" referenceId="MAGENTO_SALES_INVOICE_GRID_ARCHIVE_INCREMENT_ID_STORE_ID">
+            <column name="increment_id"/>
+            <column name="store_id"/>
+        </constraint>
+        <index referenceId="MAGENTO_SALES_INVOICE_GRID_ARCHIVE_STORE_ID" indexType="btree">
+            <column name="store_id"/>
+        </index>
+        <index referenceId="MAGENTO_SALES_INVOICE_GRID_ARCHIVE_GRAND_TOTAL" indexType="btree">
+            <column name="grand_total"/>
+        </index>
+        <index referenceId="MAGENTO_SALES_INVOICE_GRID_ARCHIVE_ORDER_ID" indexType="btree">
+            <column name="order_id"/>
+        </index>
+        <index referenceId="MAGENTO_SALES_INVOICE_GRID_ARCHIVE_STATE" indexType="btree">
+            <column name="state"/>
+        </index>
+        <index referenceId="MAGENTO_SALES_INVOICE_GRID_ARCHIVE_ORDER_INCREMENT_ID" indexType="btree">
+            <column name="order_increment_id"/>
+        </index>
+        <index referenceId="MAGENTO_SALES_INVOICE_GRID_ARCHIVE_CREATED_AT" indexType="btree">
+            <column name="created_at"/>
+        </index>
+        <index referenceId="MAGENTO_SALES_INVOICE_GRID_ARCHIVE_UPDATED_AT" indexType="btree">
+            <column name="updated_at"/>
+        </index>
+        <index referenceId="MAGENTO_SALES_INVOICE_GRID_ARCHIVE_ORDER_CREATED_AT" indexType="btree">
+            <column name="order_created_at"/>
+        </index>
+        <index referenceId="MAGENTO_SALES_INVOICE_GRID_ARCHIVE_BILLING_NAME" indexType="btree">
+            <column name="billing_name"/>
+        </index>
+        <index referenceId="MAGENTO_SALES_INVOICE_GRID_ARCHIVE_BASE_GRAND_TOTAL" indexType="btree">
+            <column name="base_grand_total"/>
+        </index>
+        <index referenceId="FTI_A75C745F987392073B05C77D6CE3B1A4" indexType="fulltext">
+            <column name="increment_id"/>
+            <column name="order_increment_id"/>
+            <column name="billing_name"/>
+            <column name="billing_address"/>
+            <column name="shipping_address"/>
+            <column name="customer_name"/>
+            <column name="customer_email"/>
+        </index>
+    </table>
+    <table name="magento_sales_creditmemo_grid_archive" resource="sales" engine="innodb"
+           comment="Magento Sales Creditmemo Grid Archive">
+        <column xsi:type="int" name="entity_id" unsigned="true" nullable="false" identity="false"/>
+        <column xsi:type="varchar" name="increment_id" nullable="true" length="50"/>
+        <column xsi:type="timestamp" name="created_at" on_update="false" nullable="true"/>
+        <column xsi:type="timestamp" name="updated_at" on_update="false" nullable="true"/>
+        <column xsi:type="int" name="order_id" unsigned="true" nullable="false" identity="false"/>
+        <column xsi:type="varchar" name="order_increment_id" nullable="true" length="50"/>
+        <column xsi:type="timestamp" name="order_created_at" on_update="false" nullable="true"/>
+        <column xsi:type="varchar" name="billing_name" nullable="true" length="255"/>
+        <column xsi:type="int" name="state" unsigned="false" nullable="true" identity="false"/>
+        <column xsi:type="decimal" name="base_grand_total" scale="4" precision="20" unsigned="false" nullable="true"/>
+        <column xsi:type="varchar" name="order_status" nullable="true" length="32"/>
+        <column xsi:type="smallint" name="store_id" unsigned="true" nullable="true" identity="false"/>
+        <column xsi:type="varchar" name="billing_address" nullable="true" length="255"/>
+        <column xsi:type="varchar" name="shipping_address" nullable="true" length="255"/>
+        <column xsi:type="varchar" name="customer_name" nullable="false" length="128"/>
+        <column xsi:type="varchar" name="customer_email" nullable="true" length="128"/>
+        <column xsi:type="smallint" name="customer_group_id" unsigned="false" nullable="true"
+                identity="false"/>
+        <column xsi:type="varchar" name="payment_method" nullable="true" length="32"/>
+        <column xsi:type="varchar" name="shipping_information" nullable="true" length="255"/>
+        <column xsi:type="decimal" name="subtotal" scale="4" precision="20" unsigned="false" nullable="true"/>
+        <column xsi:type="decimal" name="shipping_and_handling" scale="4" precision="20" unsigned="false"
+                nullable="true"/>
+        <column xsi:type="decimal" name="adjustment_positive" scale="4" precision="20" unsigned="false"
+                nullable="true"/>
+        <column xsi:type="decimal" name="adjustment_negative" scale="4" precision="20" unsigned="false"
+                nullable="true"/>
+        <column xsi:type="decimal" name="order_base_grand_total" scale="4" precision="20" unsigned="false"
+                nullable="true"/>
+        <constraint xsi:type="primary" referenceId="PRIMARY">
+            <column name="entity_id"/>
+        </constraint>
+        <constraint xsi:type="unique" referenceId="MAGENTO_SALES_CREDITMEMO_GRID_ARCHIVE_INCREMENT_ID_STORE_ID">
+            <column name="increment_id"/>
+            <column name="store_id"/>
+        </constraint>
+        <index referenceId="MAGENTO_SALES_CREDITMEMO_GRID_ARCHIVE_ORDER_INCREMENT_ID" indexType="btree">
+            <column name="order_increment_id"/>
+        </index>
+        <index referenceId="MAGENTO_SALES_CREDITMEMO_GRID_ARCHIVE_CREATED_AT" indexType="btree">
+            <column name="created_at"/>
+        </index>
+        <index referenceId="MAGENTO_SALES_CREDITMEMO_GRID_ARCHIVE_UPDATED_AT" indexType="btree">
+            <column name="updated_at"/>
+        </index>
+        <index referenceId="MAGENTO_SALES_CREDITMEMO_GRID_ARCHIVE_ORDER_CREATED_AT" indexType="btree">
+            <column name="order_created_at"/>
+        </index>
+        <index referenceId="MAGENTO_SALES_CREDITMEMO_GRID_ARCHIVE_STATE" indexType="btree">
+            <column name="state"/>
+        </index>
+        <index referenceId="MAGENTO_SALES_CREDITMEMO_GRID_ARCHIVE_BILLING_NAME" indexType="btree">
+            <column name="billing_name"/>
+        </index>
+        <index referenceId="MAGENTO_SALES_CREDITMEMO_GRID_ARCHIVE_ORDER_STATUS" indexType="btree">
+            <column name="order_status"/>
+        </index>
+        <index referenceId="MAGENTO_SALES_CREDITMEMO_GRID_ARCHIVE_BASE_GRAND_TOTAL" indexType="btree">
+            <column name="base_grand_total"/>
+        </index>
+        <index referenceId="MAGENTO_SALES_CREDITMEMO_GRID_ARCHIVE_STORE_ID" indexType="btree">
+            <column name="store_id"/>
+        </index>
+        <index referenceId="MAGENTO_SALES_CREDITMEMO_GRID_ARCHIVE_ORDER_BASE_GRAND_TOTAL" indexType="btree">
+            <column name="order_base_grand_total"/>
+        </index>
+        <index referenceId="MAGENTO_SALES_CREDITMEMO_GRID_ARCHIVE_ORDER_ID" indexType="btree">
+            <column name="order_id"/>
+        </index>
+        <index referenceId="FTI_43A9A4B1F8641AB6CB07B1EA73959202" indexType="fulltext">
+            <column name="increment_id"/>
+            <column name="order_increment_id"/>
+            <column name="billing_name"/>
+            <column name="billing_address"/>
+            <column name="shipping_address"/>
+            <column name="customer_name"/>
+            <column name="customer_email"/>
+        </index>
+    </table>
+    <table name="magento_sales_shipment_grid_archive" resource="sales" engine="innodb"
+           comment="Magento Sales Shipment Grid Archive">
+        <column xsi:type="int" name="entity_id" unsigned="true" nullable="false" identity="false"/>
+        <column xsi:type="varchar" name="increment_id" nullable="true" length="50"/>
+        <column xsi:type="smallint" name="store_id" unsigned="true" nullable="true" identity="false"/>
+        <column xsi:type="varchar" name="order_increment_id" nullable="false" length="32"/>
+        <column xsi:type="int" name="order_id" unsigned="true" nullable="false" identity="false"/>
+        <column xsi:type="timestamp" name="order_created_at" on_update="true" nullable="false"
+                default="CURRENT_TIMESTAMP"/>
+        <column xsi:type="varchar" name="customer_name" nullable="false" length="128"/>
+        <column xsi:type="decimal" name="total_qty" scale="4" precision="12" unsigned="false" nullable="true"/>
+        <column xsi:type="int" name="shipment_status" unsigned="false" nullable="true" identity="false"/>
+        <column xsi:type="varchar" name="order_status" nullable="true" length="32"/>
+        <column xsi:type="varchar" name="billing_address" nullable="true" length="255"/>
+        <column xsi:type="varchar" name="shipping_address" nullable="true" length="255"/>
+        <column xsi:type="varchar" name="billing_name" nullable="true" length="128"/>
+        <column xsi:type="varchar" name="shipping_name" nullable="true" length="128"/>
+        <column xsi:type="varchar" name="customer_email" nullable="true" length="128"/>
+        <column xsi:type="int" name="customer_group_id" unsigned="false" nullable="true" identity="false"/>
+        <column xsi:type="varchar" name="payment_method" nullable="true" length="32"/>
+        <column xsi:type="varchar" name="shipping_information" nullable="true" length="255"/>
+        <column xsi:type="timestamp" name="created_at" on_update="false" nullable="true"/>
+        <column xsi:type="timestamp" name="updated_at" on_update="false" nullable="true"/>
+        <constraint xsi:type="primary" referenceId="PRIMARY">
+            <column name="entity_id"/>
+        </constraint>
+        <constraint xsi:type="unique" referenceId="MAGENTO_SALES_SHIPMENT_GRID_ARCHIVE_INCREMENT_ID_STORE_ID">
+            <column name="increment_id"/>
+            <column name="store_id"/>
+        </constraint>
+        <index referenceId="MAGENTO_SALES_SHIPMENT_GRID_ARCHIVE_STORE_ID" indexType="btree">
+            <column name="store_id"/>
+        </index>
+        <index referenceId="MAGENTO_SALES_SHIPMENT_GRID_ARCHIVE_TOTAL_QTY" indexType="btree">
+            <column name="total_qty"/>
+        </index>
+        <index referenceId="MAGENTO_SALES_SHIPMENT_GRID_ARCHIVE_ORDER_INCREMENT_ID" indexType="btree">
+            <column name="order_increment_id"/>
+        </index>
+        <index referenceId="MAGENTO_SALES_SHIPMENT_GRID_ARCHIVE_SHIPMENT_STATUS" indexType="btree">
+            <column name="shipment_status"/>
+        </index>
+        <index referenceId="MAGENTO_SALES_SHIPMENT_GRID_ARCHIVE_ORDER_STATUS" indexType="btree">
+            <column name="order_status"/>
+        </index>
+        <index referenceId="MAGENTO_SALES_SHIPMENT_GRID_ARCHIVE_CREATED_AT" indexType="btree">
+            <column name="created_at"/>
+        </index>
+        <index referenceId="MAGENTO_SALES_SHIPMENT_GRID_ARCHIVE_UPDATED_AT" indexType="btree">
+            <column name="updated_at"/>
+        </index>
+        <index referenceId="MAGENTO_SALES_SHIPMENT_GRID_ARCHIVE_ORDER_CREATED_AT" indexType="btree">
+            <column name="order_created_at"/>
+        </index>
+        <index referenceId="MAGENTO_SALES_SHIPMENT_GRID_ARCHIVE_SHIPPING_NAME" indexType="btree">
+            <column name="shipping_name"/>
+        </index>
+        <index referenceId="MAGENTO_SALES_SHIPMENT_GRID_ARCHIVE_BILLING_NAME" indexType="btree">
+            <column name="billing_name"/>
+        </index>
+        <index referenceId="FTI_8AADD234E7AA26F900B1E9B1D368A6CA" indexType="fulltext">
+            <column name="increment_id"/>
+            <column name="order_increment_id"/>
+            <column name="shipping_name"/>
+            <column name="customer_name"/>
+            <column name="customer_email"/>
+            <column name="billing_address"/>
+            <column name="shipping_address"/>
+        </index>
+    </table>
+</schema>

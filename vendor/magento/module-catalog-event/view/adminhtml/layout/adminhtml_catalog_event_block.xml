@@ -1,0 +1,121 @@
+<?xml version="1.0"?>
+<!--
+/**
+ * Copyright © Magento, Inc. All rights reserved.
+ * See COPYING.txt for license details.
+ */
+-->
+<page xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="urn:magento:framework:View/Layout/etc/page_configuration.xsd">
+    <body>
+        <referenceBlock name="adminhtml.catalog.event.grid.container">
+            <block class="Magento\Backend\Block\Widget\Grid" name="adminhtml.catalog.event.grid" as="grid">
+                <arguments>
+                    <argument name="id" xsi:type="string">catalogEventGrid</argument>
+                    <argument name="dataSource" xsi:type="object" shared="false">Magento\CatalogEvent\Model\ResourceModel\Event\Grid\Collection</argument>
+                    <argument name="default_sort" xsi:type="string">event_id</argument>
+                    <argument name="default_dir" xsi:type="string">ASC</argument>
+                    <argument name="save_parameters_in_session" xsi:type="string">1</argument>
+                </arguments>
+                <block class="Magento\Backend\Block\Widget\Grid\ColumnSet" name="adminhtml.catalog.event.grid.columnSet" as="grid.columnSet">
+                    <arguments>
+                        <argument name="rowUrl" xsi:type="array">
+                            <item name="path" xsi:type="string">*/*/edit</item>
+                            <item name="extraParamsTemplate" xsi:type="array">
+                                <item name="id" xsi:type="string">getId</item>
+                            </item>
+                        </argument>
+                    </arguments>
+                    <block class="Magento\Backend\Block\Widget\Grid\Column" name="adminhtml.catalog.event.grid.columnSet.event_id" as="event_id">
+                        <arguments>
+                            <argument name="header" xsi:type="string" translate="true">ID</argument>
+                            <argument name="type" xsi:type="string">text</argument>
+                            <argument name="index" xsi:type="string">event_id</argument>
+                            <argument name="column_css_class" xsi:type="string">col-id</argument>
+                            <argument name="header_css_class" xsi:type="string">col-id</argument>
+                        </arguments>
+                    </block>
+                    <block class="Magento\Backend\Block\Widget\Grid\Column" name="adminhtml.catalog.event.grid.columnSet.category_id" as="category_id">
+                        <arguments>
+                            <argument name="header" xsi:type="string" translate="true">Category ID</argument>
+                            <argument name="type" xsi:type="string">text</argument>
+                            <argument name="index" xsi:type="string">category_id</argument>
+                            <argument name="column_css_class" xsi:type="string">col-id</argument>
+                            <argument name="header_css_class" xsi:type="string">col-id</argument>
+                        </arguments>
+                    </block>
+                    <block class="Magento\Backend\Block\Widget\Grid\Column" name="adminhtml.catalog.event.grid.columnSet.category" as="category">
+                        <arguments>
+                            <argument name="header" xsi:type="string" translate="true">Category</argument>
+                            <argument name="type" xsi:type="string">text</argument>
+                            <argument name="index" xsi:type="string">category_name</argument>
+                        </arguments>
+                    </block>
+                    <block class="Magento\Backend\Block\Widget\Grid\Column" name="adminhtml.catalog.event.grid.columnSet.date_start" as="date_start">
+                        <arguments>
+                            <argument name="header" xsi:type="string" translate="true">Start</argument>
+                            <argument name="type" xsi:type="string">datetime</argument>
+                            <argument name="index" xsi:type="string">date_start</argument>
+                            <argument name="timezone" xsi:type="boolean">true</argument>
+                            <argument name="filter_time" xsi:type="string">0</argument>
+                            <argument name="column_css_class" xsi:type="string">col-date</argument>
+                            <argument name="header_css_class" xsi:type="string">col-date</argument>
+                        </arguments>
+                    </block>
+                    <block class="Magento\Backend\Block\Widget\Grid\Column" name="adminhtml.catalog.event.grid.columnSet.date_end" as="date_end">
+                        <arguments>
+                            <argument name="header" xsi:type="string" translate="true">End</argument>
+                            <argument name="type" xsi:type="string">datetime</argument>
+                            <argument name="index" xsi:type="string">date_end</argument>
+                            <argument name="timezone" xsi:type="boolean">true</argument>
+                            <argument name="filter_time" xsi:type="string">0</argument>
+                            <argument name="column_css_class" xsi:type="string">col-date</argument>
+                            <argument name="header_css_class" xsi:type="string">col-date</argument>
+                        </arguments>
+                    </block>
+                    <block class="Magento\Backend\Block\Widget\Grid\Column" name="adminhtml.catalog.event.grid.columnSet.status" as="status">
+                        <arguments>
+                            <argument name="header" xsi:type="string" translate="true">Status</argument>
+                            <argument name="type" xsi:type="string">options</argument>
+                            <argument name="index" xsi:type="string">status</argument>
+                            <argument name="options" xsi:type="options" model="Magento\CatalogEvent\Model\ResourceModel\Event\Grid\Statuses"/>
+                        </arguments>
+                    </block>
+                    <block class="Magento\Backend\Block\Widget\Grid\Column" name="adminhtml.catalog.event.grid.columnSet.display_state" as="display_state">
+                        <arguments>
+                            <argument name="header" xsi:type="string" translate="true">Countdown Ticker</argument>
+                            <argument name="type" xsi:type="string">options</argument>
+                            <argument name="index" xsi:type="string">display_state</argument>
+                            <argument name="renderer" xsi:type="string">Magento\CatalogEvent\Block\Adminhtml\Event\Grid\Column\Renderer\Bitmask</argument>
+                            <argument name="options" xsi:type="options" model="Magento\CatalogEvent\Model\ResourceModel\Event\Grid\State"/>
+                        </arguments>
+                    </block>
+                    <block class="Magento\Backend\Block\Widget\Grid\Column" name="adminhtml.catalog.event.grid.columnSet.sort_order" as="sort_order">
+                        <arguments>
+                            <argument name="header" xsi:type="string" translate="true">Sort Order</argument>
+                            <argument name="type" xsi:type="string">text</argument>
+                            <argument name="index" xsi:type="string">sort_order</argument>
+                        </arguments>
+                    </block>
+                    <block class="Magento\Backend\Block\Widget\Grid\Column" name="adminhtml.catalog.event.grid.columnSet.actions" as="actions">
+                        <arguments>
+                            <argument name="header" xsi:type="string" translate="true">Action</argument>
+                            <argument name="sortable" xsi:type="string">0</argument>
+                            <argument name="filter" xsi:type="string">0</argument>
+                            <argument name="type" xsi:type="string">action</argument>
+                            <argument name="index" xsi:type="string">event_id</argument>
+                            <argument name="actions" xsi:type="array">
+                                <item name="edit" xsi:type="array">
+                                    <item name="caption" xsi:type="string" translate="true">Edit</item>
+                                    <item name="url" xsi:type="array">
+                                        <item name="base" xsi:type="string">*/*/edit</item>
+                                    </item>
+                                    <item name="field" xsi:type="string">id</item>
+                                </item>
+                            </argument>
+                        </arguments>
+                    </block>
+                </block>
+            </block>
+        </referenceBlock>
+    </body>
+</page>

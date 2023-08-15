@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+ /**
+  * Copyright © Magento, Inc. All rights reserved.
+  * See COPYING.txt for license details.
+  */
+-->
+<actionGroups xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+              xsi:noNamespaceSchemaLocation="urn:magento:mftf:Test/etc/actionGroupSchema.xsd">
+    <actionGroup name="AdminCreateUserRoleWithReportsActionGroup">
+        <annotations>
+            <description>Deprecated. Please use AdminStartCreateUserRoleActionGroup, AdminChooseUserRoleResourceActionGroup, AdminSaveUserRoleActionGroup instead.</description>
+        </annotations>
+        <arguments>
+            <argument name="role"/>
+            <argument name="store"/>
+        </arguments>
+        <click selector="#menu-magento-backend-system" stepKey="clickOnSystemIcon"/>
+        <waitForPageLoad stepKey="waitForSystemsPageOpen"/>
+        <click selector="{{AdminEditRoleResourcesSection.userRoles}}" stepKey="clickToSelectUserRoles"/>
+        <waitForPageLoad stepKey="waitForUserRolesPageToOpen"/>
+        <click selector="{{AdminCreateRoleSection.create}}" stepKey="clickToAddNewRole"/>
+        <fillField stepKey="setTheRoleName" selector="{{AdminCreateRoleSection.name}}" userInput="{{role.name}}"/>
+        <fillField stepKey="setPassword" selector="{{AdminCreateRoleSection.password}}" userInput="{{_ENV.MAGENTO_ADMIN_PASSWORD}}"/>
+        <click selector="{{AdminCreateRoleSection.roleResources}}" stepKey="clickToOpenRoleResources"/>
+        <waitForPageLoad stepKey="waitForRoleResourcePage" time="5"/>
+        <selectOption selector="{{AdminEditRoleResourcesSection.roleScopes}}" stepKey="chooseRoleScope" userInput="Custom"/>
+        <click selector="{{AdminStoreSection.createdStoreInRolesPage(store.name)}}" stepKey="chooseTheStore"/>
+        <selectOption selector="{{AdminEditRoleResourcesSection.resourceAccess}}" stepKey="chooseResourceAccess" userInput="Custom"/>
+        <click stepKey="checkReports" selector="{{AdminEditRoleResourcesSection.reportsCheckbox}}"/>
+        <click selector="{{AdminCreateRoleSection.save}}" stepKey="clickToSaveRole"/>
+        <waitForPageLoad stepKey="waitForPageLoad"/>
+        <see userInput="You saved the role." stepKey="seeSuccessMessageForSavedRole"/>
+    </actionGroup>
+</actionGroups>

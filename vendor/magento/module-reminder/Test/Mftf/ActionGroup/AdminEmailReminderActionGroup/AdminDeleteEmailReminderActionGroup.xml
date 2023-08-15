@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+ /**
+  * Copyright © Magento, Inc. All rights reserved.
+  * See COPYING.txt for license details.
+  */
+-->
+<actionGroups xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:noNamespaceSchemaLocation="urn:magento:mftf:Test/etc/actionGroupSchema.xsd">
+    <actionGroup name="AdminDeleteEmailReminderActionGroup" extends="AdminOpenEmailReminderByNameActionGroup">
+        <annotations>
+            <description>EXTENDS: AdminOpenEmailReminderByNameActionGroup. Deletes the Email Reminder.</description>
+        </annotations>
+
+        <waitForElementVisible selector="{{AdminMainActionsSection.delete}}" after="waitForEmailReminderPageLoaded" stepKey="waitForDeleteButtonVisible"/>
+        <click selector="{{AdminMainActionsSection.delete}}" stepKey="clickToDelete"/>
+        <waitForElementVisible selector="{{AdminConfirmationModalSection.ok}}" stepKey="waitForConfirmButtonVisible"/>
+        <click selector="{{AdminConfirmationModalSection.ok}}" stepKey="clickToConfirm"/>
+        <waitForElementVisible selector="{{AdminMessagesSection.success}}" stepKey="waitForSuccessMessage"/>
+        <see selector="{{AdminMessagesSection.success}}" userInput="You deleted the reminder rule." stepKey="seeSuccessMessage"/>
+    </actionGroup>
+</actionGroups>

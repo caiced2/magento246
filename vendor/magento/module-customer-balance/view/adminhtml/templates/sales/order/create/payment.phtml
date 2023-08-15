@@ -1,0 +1,29 @@
+<?php
+/**
+ * Copyright © Magento, Inc. All rights reserved.
+ * See COPYING.txt for license details.
+ */
+
+use Magento\CustomerBalance\Block\Adminhtml\Sales\Order\Create\Payment;
+
+/**
+ * @var Payment $block
+ */
+if ($block->canUseCustomerBalance()) : ?>
+    <div class="admin__field admin__field-option">
+        <input id="p_method_use_customerbalance"
+               value="1"
+               class="admin__control-checkbox"
+               name="payment[use_customer_balance]"
+               type="checkbox"
+               title="<?= $block->escapeHtmlAttr(__('Store Credit')); ?>"
+               <?php if ($block->getUseCustomerBalance()) : ?>checked<?php endif; ?>
+               data-mage-init='{
+                    "Magento_CustomerBalance/js/payment": {}
+               }'
+        />
+        <label class="admin__field-label" for="p_method_use_customerbalance">
+            <?= /* @noEscape */ __('Use Store Credit (%1 available)', $block->formatPrice($block->getBalance(true))); ?>
+        </label>
+    </div>
+<?php endif; ?>

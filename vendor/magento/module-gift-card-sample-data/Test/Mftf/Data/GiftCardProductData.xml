@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+ /**
+  * Copyright © Magento, Inc. All rights reserved.
+  * See COPYING.txt for license details.
+  */
+-->
+
+<entities xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+          xsi:noNamespaceSchemaLocation="urn:magento:mftf:DataGenerator/etc/dataProfileSchema.xsd">
+    <entity name="LumaMailedGiftCardProductSampleData">
+        <data key="url_key">luma-mailed-gift-card</data>
+        <data key="name">Luma Mailed Gift Card</data>
+        <data key="sku">243-MB04</data>
+        <data key="image">gift-card-physical-custom.jpg</data>
+    </entity>
+    <entity name="LumaVirtualGiftCardProductSampleData">
+        <data key="url_key">luma-virtual-gift-card</data>
+        <data key="name">Luma Virtual Gift Card</data>
+        <data key="sku">243-MB09</data>
+        <data key="image">gift-card-virtual-custom.jpg</data>
+    </entity>
+</entities>

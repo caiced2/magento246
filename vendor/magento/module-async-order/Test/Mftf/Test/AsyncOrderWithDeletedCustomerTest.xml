@@ -1,0 +1,133 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+ /**
+  * Copyright © Magento, Inc. All rights reserved.
+  * See COPYING.txt for license details.
+  */
+-->
+<tests xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xsi:noNamespaceSchemaLocation="urn:magento:mftf:Test/etc/testSchema.xsd">
+    <test name="AsyncOrderWithDeletedCustomerTest">
+        <annotations>
+            <features value="Checkout"/>
+            <stories value="Customer checkout via Async Checkout"/>
+            <title value="Order placement by Customer which was deleted before order processing"/>
+            <description value="Order placed by customer should be placed as guest order if customer is deleted at the time of order processing"/>
+            <severity value="CRITICAL"/>
+            <testCaseId value="MC-43232"/>
+            <group value="checkout"/>
+            <group value="async_checkout"/>
+        </annotations>
+        <before>
+            <comment userInput="BIC workaround" stepKey="enableAsyncCheckout"/>
+
+            <!-- Create Customer -->
+            <createData entity="Simple_US_Customer" stepKey="createCustomer"/>
+
+            <!-- Create Product and Category for Order placement -->
+            <createData entity="_defaultCategory" stepKey="createCategory"/>
+            <createData entity="ApiSimpleProduct" stepKey="createProduct">
+                <requiredEntity createDataKey="createCategory"/>
+            </createData>
+        </before>
+        <after>
+            <!-- Logout from admin-->
+            <actionGroup ref="AdminLogoutActionGroup" stepKey="adminLogout"/>
+
+            <!-- Delete created entities -->
+            <deleteData createDataKey="createCategory" stepKey="deleteCategory"/>
+            <deleteData createDataKey="createProduct" stepKey="deleteProduct"/>
+
+            <comment userInput="BIC workaround" stepKey="disableAsyncCheckout"/>
+        </after>
+
+        <!-- Login Customer Storefront -->
+        <actionGroup ref="LoginToStorefrontActionGroup" stepKey="customerLogin">
+            <argument name="Customer" value="$createCustomer$" />
+        </actionGroup>
+
+        <!-- Customer Checkout Process-->
+        <amOnPage url="{{StorefrontCategoryPage.url($$createCategory.custom_attributes[url_key]$$)}}" stepKey="onCategoryPage"/>
+        <waitForPageLoad stepKey="waitForPageLoad"/>
+        <actionGroup ref="StorefrontHoverProductOnCategoryPageActionGroup" stepKey="hoverProduct"/>
+        <actionGroup ref="StorefrontClickAddToCartButtonActionGroup" stepKey="addToCart"/>
+        <waitForElementVisible selector="{{StorefrontCategoryMainSection.SuccessMsg}}" time="30" stepKey="waitForProductAdded"/>
+        <see selector="{{StorefrontCategoryMainSection.SuccessMsg}}" userInput="You added $$createProduct.name$$ to your shopping cart." stepKey="seeAddedToCartMessage"/>
+        <see selector="{{StorefrontMinicartSection.quantity}}" userInput="1" stepKey="seeCartQuantity"/>
+        <actionGroup ref="GoToCheckoutFromMinicartActionGroup" stepKey="customerGoToCheckoutFromMinicart"/>
+
+        <!--Select Shipping Method-->
+        <actionGroup ref="CheckoutSelectFlatRateShippingMethodActionGroup" stepKey="selectFlatRateShippingMethod"/>
+        <actionGroup ref="StorefrontCheckoutClickNextOnShippingStepActionGroup" stepKey="clickNext"/>
+
+        <!--Select Payment Method-->
+        <actionGroup ref="CheckoutSelectCheckMoneyOrderPaymentActionGroup" stepKey="selectPaymentMethod"/>
+
+        <!-- Place Order -->
+        <actionGroup ref="CheckoutPlaceOrderActionGroup" stepKey="placeOrder">
+            <argument name="orderNumberMessage" value="CONST.successCheckoutOrderNumberMessage"/>
+            <argument name="emailYouMessage" value="CONST.successCheckoutEmailYouMessage"/>
+        </actionGroup>
+
+        <!-- Get Order id -->
+        <grabTextFrom selector="{{CheckoutSuccessMainSection.orderNumber22}}" stepKey="grabOrderNumber"/>
+
+        <!-- Assert Cart is Empty -->
+        <actionGroup ref="AssertShoppingCartIsEmptyActionGroup" stepKey="seeEmptyShoppingCartForFirstCustomer"/>
+
+        <!-- Go to Customer Order History and Check Order -->
+        <amOnPage url="{{StorefrontCustomerDashboardPage.url}}" stepKey="navigateToCustomerDashboardPage"/>
+        <waitForPageLoad stepKey="waitForCustomerDashboardPageLoad"/>
+        <see selector="{{StorefrontCustomerRecentOrdersSection.orderTotal}}" userInput="$128.00" stepKey="checkOrderTotalInStorefront"/>
+        <see selector="#my-orders-table td.status" userInput="Received" stepKey="checkOrderStatusReceived"/>
+        <dontSeeElement selector="#my-orders-table td.actions a.order" stepKey="dontSeeReorderButton"/>
+        <dontSeeElement selector="#my-orders-table td.actions a.view" stepKey="dontSeeViewButton"/>
+
+        <!-- Login into admin-->
+        <actionGroup ref="AdminLoginActionGroup" stepKey="loginAsAdmin"/>
+
+        <comment userInput="BIC workaround" stepKey="deleteCustomer" />
+        <comment userInput="BIC workaround" stepKey="assertSuccessMessage" />
+        <comment userInput="BIC workaround" stepKey="resetGrid" />
+
+        <!-- Check that Order is Absent in admin Orders Grid -->
+        <amOnPage url="{{AdminOrdersPage.url}}" stepKey="onOrdersPage"/>
+        <waitForLoadingMaskToDisappear stepKey="waitForLoadingMaskToDisappearOnOrdersPage"/>
+        <actionGroup ref="ClearFiltersAdminDataGridActionGroup" stepKey="clearGridFilter"/>
+        <fillField selector="{{AdminOrdersGridSection.search}}" userInput="{$grabOrderNumber}" stepKey="fillOrderNum"/>
+        <click selector="{{AdminOrdersGridSection.submitSearch}}" stepKey="submitSearchOrderNum"/>
+        <waitForLoadingMaskToDisappear stepKey="waitForLoadingMaskToDisappearOnSearch"/>
+        <see selector="{{AdminDataGridTableSection.dataGridEmpty}}" userInput="We couldn't find any records." stepKey="assertDataGridEmptyMessage"/>
+        <click selector="{{AdminProductAttributeGridSection.ResetFilter}}" stepKey="clearExistingFilters"/>
+
+        <!-- Trigger Async Place Order Consumer-->
+        <actionGroup ref="CliConsumerStartActionGroup" stepKey="startMessageQueueConsumer">
+            <argument name="consumerName" value="{{AsyncPlaceOrderConsumerData.consumerName}}"/>
+            <argument name="maxMessages" value="{{AsyncPlaceOrderConsumerData.messageLimit}}"/>
+        </actionGroup>
+
+        <!-- Wait 30s for Order Processing-->
+        <wait time="30" stepKey="conditionalWait"/>
+
+        <!-- Delete customer -->
+        <actionGroup ref="DeleteCustomerByEmailActionGroup" stepKey="deleteCustomerByEmail">
+            <argument name="email" value="{{Simple_US_Customer.email}}"/>
+        </actionGroup>
+        <actionGroup ref="AssertMessageInAdminPanelActionGroup" stepKey="assertSuccessMessageInAdminPanel">
+            <argument name="message" value="A total of 1 record(s) were deleted."/>
+        </actionGroup>
+        <actionGroup ref="ResetAdminDataGridToDefaultViewActionGroup" stepKey="resetGridToDefaultView"/>
+
+        <!-- Check Order Status is Rejected -->
+        <!--Assert Order is in Orders Grid -->
+        <amOnPage url="{{AdminOrdersPage.url}}" stepKey="onOrdersPage2"/>
+        <waitForLoadingMaskToDisappear stepKey="waitForLoadingMaskToDisappearOnOrdersPage2"/>
+        <actionGroup ref="ClearFiltersAdminDataGridActionGroup" stepKey="clearGridFilter2"/>
+        <fillField selector="{{AdminOrdersGridSection.search}}" userInput="{$grabOrderNumber}" stepKey="fillOrderNum2"/>
+        <click selector="{{AdminOrdersGridSection.submitSearch}}" stepKey="submitSearchOrderNum2"/>
+        <waitForLoadingMaskToDisappear stepKey="waitForLoadingMaskToDisappearOnSearch2"/>
+        <see userInput="{$grabOrderNumber}" selector="{{AdminOrdersGridSection.gridCell('1','ID')}}" stepKey="assertOrderID"/>
+        <see userInput="Pending" selector="{{AdminOrdersGridSection.gridCell('1','Status')}}" stepKey="assertOrderStatus"/>
+
+    </test>
+</tests>

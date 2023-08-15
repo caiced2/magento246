@@ -1,0 +1,22 @@
+<?xml version="1.0"?>
+<!--
+/**
+ * Copyright © Magento, Inc. All rights reserved.
+ * See COPYING.txt for license details.
+ */
+-->
+<config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="urn:magento:module:Magento_Config:etc/system_file.xsd">
+    <system>
+        <section id="customer">
+            <group id="address">
+                <field id="street_lines" showInDefault="0" showInWebsite="0" showInStore="0"></field>
+                <field id="prefix_show" showInDefault="0" showInWebsite="0" showInStore="0"></field>
+                <field id="middlename_show" showInDefault="0" showInWebsite="0" showInStore="0"></field>
+                <field id="suffix_show" showInDefault="0" showInWebsite="0" showInStore="0"></field>
+                <field id="dob_show" showInDefault="0" showInWebsite="0" showInStore="0"></field>
+                <field id="taxvat_show" showInDefault="0" showInWebsite="0" showInStore="0"></field>
+                <field id="gender_show" showInDefault="0" showInWebsite="0" showInStore="0"></field>
+            </group>
+        </section>
+    </system>
+</config>

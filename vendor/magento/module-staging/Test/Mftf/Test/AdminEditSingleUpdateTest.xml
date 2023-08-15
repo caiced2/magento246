@@ -1,0 +1,218 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+ /**
+  * Copyright © Magento, Inc. All rights reserved.
+  * See COPYING.txt for license details.
+  */
+-->
+
+<tests xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xsi:noNamespaceSchemaLocation="urn:magento:mftf:Test/etc/testSchema.xsd">
+    <test name="AdminEditSingleUpdateTest">
+        <annotations>
+            <features value="Staging"/>
+            <stories value="Staging updates"/>
+            <stories value="Edit shedule update"/>
+            <title value="Edit Single Update"/>
+            <description value="The purpose of this end-to-end scenario is testing of business use case 'Edit single future update'."/>
+            <severity value="CRITICAL"/>
+            <testCaseId value="MAGETWO-55892"/>
+            <group value="staging"/>
+        </annotations>
+        <before>
+            <createData entity="_defaultCategory" stepKey="createCategory"/>
+            <createData entity="SimpleProduct" stepKey="createProduct">
+                <field key="price">10</field>
+                <requiredEntity createDataKey="createCategory"/>
+            </createData>
+            <createData entity="SimpleProduct" stepKey="createProduct2">
+                <field key="price">20</field>
+                <requiredEntity createDataKey="createCategory"/>
+            </createData>
+        </before>
+        <after>
+            <deleteData createDataKey="createProduct" stepKey="deleteProduct"/>
+            <deleteData createDataKey="createProduct2" stepKey="deleteProduct2"/>
+            <deleteData createDataKey="createCategory" stepKey="deleteCategory"/>
+            <actionGroup ref="AdminClearFiltersActionGroup" stepKey="clearProductFilters"/>
+            <actionGroup ref="StagingDashboardClearFiltersActionGroup" stepKey="clearStagingDashboardFilters"/>
+            <actionGroup ref="AdminLogoutActionGroup" stepKey="logout"/>
+        </after>
+        <!-- 1. Login to Magento backend-->
+        <actionGroup ref="AdminLoginActionGroup" stepKey="loginAsAdmin"/>
+        <!-- 2. Navigate to menu Products->Catalog-->
+        <!-- 3. Click on "Edit" link for product with name P1ProductName-->
+        <actionGroup ref="SearchForProductOnBackendActionGroup" stepKey="filterProduct1">
+            <argument name="product" value="$$createProduct$$"/>
+        </actionGroup>
+        <click selector="{{AdminProductGridSection.productGridNameProduct('$$createProduct.name$$')}}" stepKey="openProductForEdit"/>
+        <seeElement selector="{{AdminStagingSlideOutSection.scheduledChanges}}" stepKey="seeBlockSheduledChanges"/>
+        <dontSeeElement selector="{{AdminStagingSlideOutSection.contentBlock}}" stepKey="dontSeeContentBlock"/>
+        <!-- 4. Click on "Schedule New Update" button-->
+        <!-- 5. Click on "Save" button-->
+        <generateDate date="+7 minutes" format="m/j/Y g:i A" stepKey="generateStartDate"/>
+        <generateDate date="+7 minutes" format="M j, Y g:i A" stepKey="generateStartDateForPreview"/>
+        <generateDate date="+6 minutes" format="m/j/Y g:i A" stepKey="generateStartDateForEdit"/>
+        <generateDate date="+6 minutes" format="M j, Y g:i A" stepKey="generateStartDateForEditCheck"/>
+        <generateDate date="+9 minutes" format="m/j/Y g:i A" stepKey="generateEndDateForEdit"/>
+        <actionGroup ref="FillScheduleUpdateWithCheckActionGroup" stepKey="createScheduleUpdate">
+            <argument name="staging" value="S5UpdateNameStaging"/>
+            <argument name="timeStart" value="{$generateStartDate}"/>
+            <argument name="productPrice" value="12"/>
+        </actionGroup>
+        <!-- 6. Click on "Schedule New Update" button -->
+        <!-- 7. On Slide panel fill new update with data -->
+        <!-- 8. Click on "Save" button-->
+        <generateDate date="+10 minutes" format="m/j/Y g:i A" stepKey="generateStartDateTwo"/>
+        <generateDate date="+10 minutes" format="M j, Y g:i A" stepKey="generateStartDateTwoForCheck"/>
+        <generateDate date="+11 minutes" format="m/j/Y g:i A" stepKey="generateStartDateTwoForEdit"/>
+        <generateDate date="+11 minutes" format="M j, Y g:i A" stepKey="generateStartDateTwoForEditCheck"/>
+        <generateDate date="+12 minutes" format="m/j/Y g:i A" stepKey="generateEndDateForEditUpdate1"/>
+        <generateDate date="+13 minutes" format="m/j/Y g:i A" stepKey="generateEndDateTwo"/>
+        <generateDate date="+14 minutes" format="m/j/Y g:i A" stepKey="generateEndDateTwoForEdit"/>
+        <actionGroup ref="FillScheduleUpdateWithCheckEndActionGroup" stepKey="createScheduleUpdate2">
+            <argument name="staging" value="S8UpdateNameStaging"/>
+            <argument name="timeStart" value="{$generateStartDateTwo}"/>
+            <argument name="timeEnd" value="{$generateEndDateTwo}"/>
+            <argument name="productPrice" value="11"/>
+        </actionGroup>
+        <!-- 9. Click on "Schedule New Update" button -->
+        <!-- 10. Click on "Save" button-->
+        <generateDate date="+16 minutes" format="m/j/Y g:i A" stepKey="generateStartDateThree"/>
+        <generateDate date="+16 minutes" format="M j, Y g:i A" stepKey="generateStartDateThreeCheck"/>
+        <generateDate date="+15 minutes" format="m/j/Y g:i A" stepKey="generateStartDateThreeForEditUpdate1"/>
+        <generateDate date="+19 minutes" format="m/j/Y g:i A" stepKey="generateEndDateThree"/>
+        <actionGroup ref="FillScheduleUpdateWithCheckEndActionGroup" stepKey="createScheduleUpdate3">
+            <argument name="staging" value="S18UpdateNameStaging"/>
+            <argument name="timeStart" value="{$generateStartDateThree}"/>
+            <argument name="timeEnd" value="{$generateEndDateThree}"/>
+            <argument name="productPrice" value="13"/>
+        </actionGroup>
+        <!-- 11. Navigate to menu Products->Catalog-->
+        <!-- 12. Click on "Edit" link for product with name P2ProductName -->
+        <actionGroup ref="SearchForProductOnBackendActionGroup" stepKey="filterProduct2">
+            <argument name="product" value="$$createProduct2$$"/>
+        </actionGroup>
+        <click selector="{{AdminProductGridSection.productGridNameProduct('$$createProduct2.name$$')}}" stepKey="openProduct2ForEdit"/>
+        <!-- 13. Click on "Schedule New Update" button -->
+        <!-- 14.  Select "Assign to Existing Update" option -->
+        <!-- 15. Click on "Select" button for UpdateName3 -->
+        <!-- 16. On Slide panel change product price for update -->
+        <!-- 17. Click on "Save" button-->
+        <actionGroup ref="AssignToExistingUpdateActionGroup" stepKey="assignScheduleUpdate">
+            <argument name="staging" value="S18UpdateNameStaging"/>
+            <argument name="productPrice" value="23"/>
+        </actionGroup>
+        <!-- 18. Navigate to menu Products->Catalog -->
+        <!-- 19. Click on "Edit" link for product with name P1ProductName -->
+        <actionGroup ref="SearchForProductOnBackendActionGroup" stepKey="searchProduct1Again">
+            <argument name="product" value="$$createProduct$$"/>
+        </actionGroup>
+        <click selector="{{AdminProductGridSection.productGridNameProduct('$$createProduct.name$$')}}" stepKey="openProductForEditAgain"/>
+        <!-- 20. Click on "View/Edit" link for UpdateName2 -->
+        <click selector="{{AdminScheduledChangesSection.scheduleViewEdit(S8UpdateNameStaging.updateName)}}" stepKey="clickViewEdit"/>
+        <!-- 21. Change start date to (StartDate1 - 1minute) -->
+        <fillField selector="{{AdminStagingSlideOutSection.startDate}}" userInput="{$generateStartDateForEdit}" stepKey="changeStartDate"/>
+        <!-- 22. Click on "Save" button-->
+        <click selector="{{AdminStagingSlideOutSection.save}}" stepKey="clickSave"/>
+        <see selector="{{AdminStagingSlideOutSection.scheduleErrorMessage}}" userInput="error: : Future Update already exists in this time range. Set a different range and try again." stepKey="seeStartErrorMessage"/>
+        <!-- 23. Change start date to (EndDate2 + 1minute )-->
+        <fillField selector="{{AdminStagingSlideOutSection.startDate}}" userInput="{$generateEndDateTwoForEdit}" stepKey="changeEndDate"/>
+        <click selector="{{AdminStagingSlideOutSection.save}}" stepKey="clickSaveAgain"/>
+        <see selector="{{AdminStagingSlideOutSection.scheduleErrorMessage}}" userInput="error: : The Future Update End Time is invalid. It can't be the same time or earlier than the current time." stepKey="seeEndErrorMessageInUpdate2"/>
+        <!-- 24. Change UpdateName2 attributes-->
+        <!-- 25. Click on "Save" button-->
+        <actionGroup ref="FillScheduleUpdateWithCheckEndActionGroup" stepKey="changeScheduleUpdate2">
+            <argument name="staging" value="S8UpdateNameStaging"/>
+            <argument name="timeStart" value="{$generateStartDateTwoForEdit}"/>
+            <argument name="timeEnd" value="{$generateEndDateTwo}"/>
+            <argument name="productPrice" value="111"/>
+        </actionGroup>
+        <!-- 26. Click on 'View/Edit' link for UpdateName1 -->
+        <click selector="{{AdminScheduledChangesSection.scheduleViewEdit(S5UpdateNameStaging.updateName)}}" stepKey="clickViewEditUpdate2"/>
+        <!-- 27. Change end date to (StartDate1 - 1minute) -->
+        <fillField selector="{{AdminStagingSlideOutSection.endDate}}" userInput="{$generateStartDateForEdit}" stepKey="changeEndDateForUpdate1"/>
+        <!-- 28. Click on "Save" button-->
+        <click selector="{{AdminStagingSlideOutSection.save}}" stepKey="clickSaveUpdate1"/>
+        <see selector="{{AdminStagingSlideOutSection.scheduleErrorMessage}}" userInput="error: : The Future Update End Time is invalid. It can't be the same time or earlier than the current time." stepKey="seeEndErrorMessageInUpdate1"/>
+        <!-- 29. Change end date to (StartDate2 + 2minute )-->
+        <fillField selector="{{AdminStagingSlideOutSection.endDate}}" userInput="{$generateEndDateForEditUpdate1}" stepKey="changeEndDateForUpdate1Again"/>
+        <click selector="{{AdminStagingSlideOutSection.save}}" stepKey="clickSaveUpdate1Again"/>
+        <see selector="{{AdminStagingSlideOutSection.scheduleErrorMessage}}" userInput="error: : Future Update already exists in this time range. Set a different range and try again." stepKey="seeEndErrorMessageInUpdate1Again"/>
+        <!-- 30. Change end date to (StartDate3 - 1minute) -->
+        <fillField selector="{{AdminStagingSlideOutSection.endDate}}" userInput="{$generateStartDateThreeForEditUpdate1}" stepKey="changeEndDateUpdate1Again"/>
+        <!-- 31. Click on "Save" button-->
+        <see selector="{{AdminStagingSlideOutSection.scheduleErrorMessage}}" userInput="error: : Future Update already exists in this time range. Set a different range and try again." stepKey="seeEndErrorMessageForUpdate1Again"/>
+        <!-- 32. Change product update attributes -->
+        <!-- 33. Click on "Save" button-->
+        <actionGroup ref="FillScheduleUpdateWithCheckActionGroup" stepKey="changeScheduleUpdate1">
+            <argument name="staging" value="S5UpdateNameStaging"/>
+            <argument name="timeStart" value="{$generateStartDate}"/>
+            <argument name="timeEnd" value="{$generateEndDateForEdit}"/>
+            <argument name="productPrice" value="121"/>
+        </actionGroup>
+        <!-- 34. Run cron twice-->
+        <magentoCLI command="cron:run" arguments="--group staging" stepKey="cronRun"/>
+        <magentoCLI command="cron:run" arguments="--group staging" stepKey="cronRunTwice"/>
+        <!-- 35. Navigate to Content->Staging Dashboard-->
+        <actionGroup ref="StagingDashboardSearchUpdateActionGroup" stepKey="searchStagingUpdate3">
+            <argument name="staging" value="S18UpdateNameStaging"/>
+        </actionGroup>
+        <!-- 36. Click on UpdateName2-->
+        <actionGroup ref="StagingDashboardVerifyHoverContentActionGroup" stepKey="verifyHoverContentUpdate2">
+            <argument name="staging" value="S8UpdateNameStaging"/>
+        </actionGroup>
+        <!-- 37. Click on UpdateName1-->
+        <actionGroup ref="StagingDashboardVerifyHoverContentActionGroup" stepKey="verifyHoverContentUpdate1">
+            <argument name="staging" value="S5UpdateNameStaging"/>
+        </actionGroup>
+        <!-- 38. Click on View/Edit button for UpdateName1-->
+        <actionGroup ref="VerifyStagingUpdateAndIncludedProductActionGroup" stepKey="verifyStagingUpdate1Product">
+            <argument name="includedProduct" value="$createProduct$"/>
+            <argument name="stagingUpdate" value="S5UpdateNameStaging"/>
+            <argument name="startDate" value="{$generateStartDate}"/>
+            <argument name="endDate" value="{$generateEndDateForEdit}"/>
+        </actionGroup>
+        <!-- 39. Click on button Preview -->
+        <click selector="{{AdminGridMainControls.back}}" stepKey="clickBack"/>
+        <click selector="{{AdminContentStagingDashboardSection.timeLineEvent(S5UpdateNameStaging.updateName)}}" stepKey="clickTimelineEvent"/>
+        <click selector="{{AdminContentStagingDashboardSection.stagingEventsActions(S5UpdateNameStaging.updateName, 'Preview')}}" stepKey="clickPreviewS5"/>
+        <!-- 40. Open P1ProductSKU page in preview -->
+        <actionGroup ref="VerifyStagingUpdateDateAndPriceActionGroup" stepKey="verifyStagingUpdate1DateAndPrice">
+            <argument name="category" value="$createCategory$"/>
+            <argument name="product" value="$createProduct$"/>
+            <argument name="previewDate" value="{$generateStartDateForPreview}"/>
+            <argument name="expectedPrice" value="121"/>
+        </actionGroup>
+        <!-- 41. Click on Calendar-->
+        <!-- 42. Click on 'Preview' button-->
+        <actionGroup ref="VerifyStagingUpdatePriceActionGroup" stepKey="verifyStagingUpdate1PriceBefore">
+            <argument name="category" value="$createCategory$"/>
+            <argument name="product" value="$createProduct$"/>
+            <argument name="previewDate" value="{$generateStartDateForEditCheck}"/>
+        </actionGroup>
+        <!-- 43. Click on Calendar-->
+        <!-- 44. Click on 'Preview' button-->
+        <actionGroup ref="VerifyStagingUpdatePriceActionGroup" stepKey="verifyStagingUpdate1PriceAgain">
+            <argument name="category" value="$createCategory$"/>
+            <argument name="product" value="$createProduct$"/>
+            <argument name="previewDate" value="{$generateStartDateTwoForCheck}"/>
+        </actionGroup>
+        <!-- 45. Click on Calendar-->
+        <!-- 46. Click on 'Preview' button-->
+        <actionGroup ref="VerifyStagingUpdatePriceActionGroup" stepKey="verifyStagingUpdate2EditPrice">
+            <argument name="category" value="$createCategory$"/>
+            <argument name="product" value="$createProduct$"/>
+            <argument name="previewDate" value="{$generateStartDateTwoForEditCheck}"/>
+            <argument name="expectedPrice" value="111"/>
+        </actionGroup>
+        <!-- Check Update3 -->
+        <actionGroup ref="VerifyStagingUpdatePriceActionGroup" stepKey="verifyStagingUpdate3Price">
+            <argument name="category" value="$createCategory$"/>
+            <argument name="product" value="$createProduct$"/>
+            <argument name="previewDate" value="{$generateStartDateThreeCheck}"/>
+            <argument name="expectedPrice" value="13"/>
+        </actionGroup>
+        <see selector="{{StorefrontCategoryProductSection.ProductPriceByName('$$createProduct2.name$$')}}" userInput="23" stepKey="verifyProduct2PriceThree"/>
+    </test>
+</tests>

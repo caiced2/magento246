@@ -1,0 +1,48 @@
+<?php
+/**
+ * Copyright © Magento, Inc. All rights reserved.
+ * See COPYING.txt for license details.
+ */
+?>
+<?php
+/** @var \Magento\GoogleTagManager\Block\GtagGa $block */
+/** @var \Magento\GoogleTagManager\ViewModel\TagManagerConfig $gtmConfig */
+
+use Magento\GoogleTagManager\Model\Config\TagManagerConfig;
+
+$gtmConfig = $block->getData('view_model');
+$accountType = $gtmConfig->getAccountType();
+$gtmAccountId = $gtmConfig->getContainerId();
+$gapAccountId = $gtmConfig->getMeasurementId();
+switch ($accountType) {
+    case TagManagerConfig::TYPE_TAG_MANAGER:
+        if (!empty($gtmAccountId)) {
+            ?>
+            <!-- GOOGLE TAG MANAGER -->
+            <script type="text/x-magento-init">
+            {
+                "*": {
+                    "Magento_GoogleTagManager/js/google-tag-manager": <?= /* @noEscape */ $block->getTagManagerData() ?>
+                }
+            }
+            </script>
+            <!-- END GOOGLE TAG MANAGER -->
+            <?php
+        }
+        break;
+    case TagManagerConfig::TYPE_ANALYTICS4:
+        if (!empty($gapAccountId)) {
+            ?>
+            <!-- BEGIN GOOGLE ANALYTICS 4 CODE -->
+            <script type="text/x-magento-init">
+                {
+                    "*": {
+                        "Magento_GoogleGtag/js/google-analytics": <?= /* @noEscape */ $block->getAnalyticsData() ?>
+                    }
+                }
+            </script>
+            <!-- END GOOGLE ANALYTICS 4 CODE -->
+            <?php
+        }
+        break;
+}

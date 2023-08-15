@@ -1,0 +1,62 @@
+{
+    "sequence_catalogrule": {
+        "column": {
+            "sequence_value": true
+        },
+        "constraint": {
+            "PRIMARY": true
+        }
+    },
+    "catalogrule_customer_group": {
+        "column": {
+            "rule_id": true,
+            "row_id": true
+        },
+        "constraint": {
+            "CATALOGRULE_CUSTOMER_GROUP_RULE_ID_CATALOGRULE_RULE_ID": true,
+            "CATALOGRULE_CUSTOMER_GROUP_ROW_ID_CATALOGRULE_ROW_ID": true,
+            "PRIMARY": true,
+            "STAGING_PRIMARY": true
+        }
+    },
+    "catalogrule_website": {
+        "column": {
+            "rule_id": true,
+            "row_id": true
+        },
+        "constraint": {
+            "CATALOGRULE_WEBSITE_RULE_ID_CATALOGRULE_RULE_ID": true,
+            "CATALOGRULE_WEBSITE_ROW_ID_CATALOGRULE_ROW_ID": true,
+            "PRIMARY": true,
+            "STAGING_PRIMARY": true
+        }
+    },
+    "catalogrule": {
+        "column": {
+            "rule_id": true,
+            "row_id": true,
+            "created_in": true,
+            "updated_in": true
+        },
+        "index": {
+            "CATALOGRULE_CREATED_IN": true,
+            "CATALOGRULE_UPDATED_IN": true,
+            "CATALOGRULE_RULE_ID": true
+        },
+        "constraint": {
+            "PRIMARY": true,
+            "STAGING_PRIMARY": true,
+            "CATALOGRULE_RULE_ID_SEQUENCE_CATALOGRULE_SEQUENCE_VALUE": true
+        }
+    },
+    "catalogrule_group_website": {
+        "constraint": {
+            "CATRULE_GROUP_WS_RULE_ID_SEQUENCE_CATRULE_SEQUENCE_VAL": true
+        }
+    },
+    "magento_banner_catalogrule": {
+        "constraint": {
+            "MAGENTO_BANNER_CATRULE_RULE_ID_SEQUENCE_CATRULE_SEQUENCE_VAL": true
+        }
+    }
+}

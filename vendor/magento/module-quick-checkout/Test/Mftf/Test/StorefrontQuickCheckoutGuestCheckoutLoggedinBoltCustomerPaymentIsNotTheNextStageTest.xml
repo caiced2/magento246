@@ -1,0 +1,58 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+ /**
+  * Copyright © Magento, Inc. All rights reserved.
+  * See COPYING.txt for license details.
+  */
+-->
+<tests xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xsi:noNamespaceSchemaLocation="urn:magento:mftf:Test/etc/testSchema.xsd">
+    <test name="StorefrontQuickCheckoutGuestCheckoutLoggedinBoltCustomerPaymentIsNotTheNextStageTest">
+        <annotations>
+            <features value="MagentoQuickCheckout"/>
+            <stories value="Guest customer can log in as Bolt customer and navigate to a stage different than Payment page"/>
+            <title value="Guest customer can log in as Bolt customer and navigate to a stage different than Payment page"/>
+            <description value="Guest customer can log in as Bolt customer and navigate to a stage different than Payment page if it's configured (i.e.: Shipping)"/>
+            <severity value="CRITICAL"/>
+            <testCaseId value="guest-checkout-navigate-to-shipping-page"/>
+            <group value="quick-checkout"/>
+        </annotations>
+
+        <before>
+            <magentoCLI command="config:set {{EnableFreeShippingConfigData.path}} {{EnableFreeShippingConfigData.value}}" stepKey="enableFreeShipping"/>
+            <actionGroup ref="AdminLoginActionGroup" stepKey="login"/>
+            <actionGroup ref="AdminConfigureQuickCheckoutActionGroup" stepKey="configurePaymentMethod">
+                <argument name="nextStageAfterLoginAction" value="shipping"/>
+            </actionGroup>
+            <createData entity="_defaultCategory" stepKey="createCategory"/>
+            <createData entity="_defaultProduct" stepKey="createProduct">
+                <requiredEntity createDataKey="createCategory"/>
+            </createData>
+        </before>
+
+        <after>
+            <magentoCLI command="config:set {{DisableFreeShippingMethod.path}} {{DisableFreeShippingMethod.value}}" stepKey="disableFreeShipping"/>
+            <actionGroup ref="AdminDisableQuickCheckoutActionGroup" stepKey="disablePaymentMethod" />
+            <!-- Delete product -->
+            <deleteData stepKey="deleteCategory" createDataKey="createCategory"/>
+            <deleteData stepKey="deleteProduct" createDataKey="createProduct"/>
+            <!-- Logout -->
+            <actionGroup ref="AdminLogoutActionGroup" stepKey="logoutFromAdmin"/>
+        </after>
+
+        <!-- Navigate to storefront as a guest -->
+        <amOnPage url="{{StorefrontCategoryPage.url($$createCategory.name$$)}}" stepKey="navigateToCategoryPage"/>
+        <actionGroup ref="StorefrontAddProductToCartFromCategoryActionGroup" stepKey="addProductToCart">
+            <argument name="productName" value="$$createProduct.name$$"/>
+        </actionGroup>
+        <actionGroup ref="GoToCheckoutFromMinicartActionGroup" stepKey="goToCheckoutFromMinicart"/>
+
+        <actionGroup ref="LoginWithEmailAddressAndOtpActionGroup" stepKey="loginWithEmailAddressAndOtp">
+            <argument name="customer" value="BoltCustomer"/>
+        </actionGroup>
+
+        <!-- Navigation flow has changed and I can see the Shipping page instead of the Payments one -->
+        <waitForPageLoad stepKey="waitForShippingStep"/>
+        <seeInCurrentUrl url="checkout/#shipping" stepKey="shippingStep"/>
+    </test>
+</tests>

@@ -1,0 +1,28 @@
+<?xml version="1.0"?>
+<!--
+/**
+ * Copyright © Magento, Inc. All rights reserved.
+ * See COPYING.txt for license details.
+ */
+-->
+<config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:noNamespaceSchemaLocation="urn:magento:framework:ObjectManager/etc/config.xsd">
+    <type name="Magento\Framework\GraphQl\Schema\Type\Enum\DefaultDataMapper">
+        <arguments>
+            <argument name="map" xsi:type="array">
+                <item name="WishlistVisibilityEnum" xsi:type="array">
+                    <item name="0" xsi:type="string">private</item>
+                    <item name="1" xsi:type="string">public</item>
+                </item>
+            </argument>
+        </arguments>
+    </type>
+    <type name="Magento\StoreGraphQl\Model\Resolver\Store\StoreConfigDataProvider">
+        <arguments>
+            <argument name="extendedConfigData" xsi:type="array">
+                <item name="maximum_number_of_wishlists" xsi:type="string">wishlist/general/multiple_wishlist_number</item>
+                <item name="enable_multiple_wishlists" xsi:type="string">wishlist/general/multiple_enabled</item>
+            </argument>
+        </arguments>
+    </type>
+</config>

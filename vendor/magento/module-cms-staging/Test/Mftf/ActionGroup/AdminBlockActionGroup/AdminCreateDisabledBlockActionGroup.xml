@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+ /**
+  * Copyright © Magento, Inc. All rights reserved.
+  * See COPYING.txt for license details.
+  */
+-->
+<actionGroups xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:noNamespaceSchemaLocation="urn:magento:mftf:Test/etc/actionGroupSchema.xsd">
+    <actionGroup name="AdminCreateDisabledBlockActionGroup">
+        <arguments>
+            <argument name="block"/>
+        </arguments>
+        <amOnPage url="{{CmsNewBlock.url}}" stepKey="goCreateNewBlockPage"/>
+        <fillField selector="{{AdminCreateNewBlockSection.blockTitle}}" userInput="{{block.title}}" stepKey="fillTitle"/>
+        <fillField selector="{{AdminCreateNewBlockSection.identifier}}" userInput="{{block.identifier}}" stepKey="fillIdentifier"/>
+        <selectOption selector="{{AdminCreateNewBlockSection.storeView}}" userInput="{{block.store_id}}" stepKey="selectStoreView"/>
+        <fillField selector="{{AdminCreateNewBlockSection.content}}" userInput="{{block.content}}" stepKey="fillContent"/>
+        <scrollToTopOfPage stepKey="scrollToTopOfPage1"/>
+        <click selector="{{AdminCreateNewBlockSection.isEnabled}}" stepKey="disableBlock"/>
+        <click selector="{{AdminCreateNewBlockSection.save}}" stepKey="save"/>
+        <waitForPageLoad stepKey="waitForPageLoad"/>
+        <see userInput="You saved the block." stepKey="seeSuccessMessage"/>
+    </actionGroup>
+</actionGroups>

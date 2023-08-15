@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+ /**
+  * Copyright © Magento, Inc. All rights reserved.
+  * See COPYING.txt for license details.
+  */
+-->
+<actionGroups xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:noNamespaceSchemaLocation="urn:magento:mftf:Test/etc/actionGroupSchema.xsd">
+    <actionGroup name="FillProductsToMatchInformation">
+        <arguments>
+            <argument name="information" defaultValue="SimpleTargetRuleMatchInformation"/>
+            <argument name="attributeSet"/>
+        </arguments>
+        <click selector="{{AdminTargetRuleSection.productToMatchTab}}" stepKey="clickOnTab1"/>
+        <click selector="{{AdminTargetRuleProductsToMatchSection.selectButton('1')}}" stepKey="clickOnAll"/>
+        <selectOption selector="{{AdminTargetRuleProductsToMatchSection.conditionAggregator}}" userInput="{{information.conditionAggregator}}" stepKey="selectConditionAggregator"/>
+        <click selector="{{AdminTargetRuleSection.productToMatchTab}}" stepKey="clickOnTab2"/>
+        <click selector="{{AdminTargetRuleProductsToMatchSection.selectButton('2')}}" stepKey="clickOnTrue"/>
+        <selectOption selector="{{AdminTargetRuleProductsToMatchSection.conditionValue}}" userInput="{{information.conditionValue}}" stepKey="selectConditionValue"/>
+        <click selector="{{AdminTargetRuleSection.productToMatchTab}}" stepKey="clickOnTab3"/>
+        <click selector="{{AdminTargetRuleProductsToMatchSection.selectCondition('1','1')}}" stepKey="clickOnPlus"/>
+        <selectOption selector="{{AdminTargetRuleProductsToMatchSection.newCondition}}" userInput="{{information.newCondition}}" stepKey="selectNewCondition"/>
+        <click selector="{{AdminTargetRuleSection.productToMatchTab}}" stepKey="clickOnTab4"/>
+        <click selector="{{AdminTargetRuleProductsToMatchSection.selectCondition('1','1')}}" stepKey="clickOnIs"/>
+        <selectOption selector="{{AdminTargetRuleProductsToMatchSection.newConditionOperator}}" userInput="{{information.newConditionOperator}}" stepKey="selectNewConditionOperator"/>
+        <click selector="{{AdminTargetRuleSection.productToMatchTab}}" stepKey="clickOnTab5"/>
+        <click selector="{{AdminTargetRuleProductsToMatchSection.selectCondition('1','2')}}" stepKey="clickOnDots"/>
+        <selectOption selector="{{AdminTargetRuleProductsToMatchSection.newConditionValue}}" userInput="{{attributeSet}}" stepKey="selectNewConditionValue"/>
+    </actionGroup>
+</actionGroups>

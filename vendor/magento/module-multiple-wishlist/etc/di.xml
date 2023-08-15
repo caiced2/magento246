@@ -1,0 +1,37 @@
+<?xml version="1.0"?>
+<!--
+/**
+ * Copyright © Magento, Inc. All rights reserved.
+ * See COPYING.txt for license details.
+ */
+-->
+<config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="urn:magento:framework:ObjectManager/etc/config.xsd">
+    <!-- TODO: this preference should be check -->
+    <preference for="Magento\Wishlist\Helper\Data" type="Magento\MultipleWishlist\Helper\Data"/>
+    <type name="Magento\MultipleWishlist\Model\Item\Collection">
+        <arguments>
+            <argument name="resource" xsi:type="object">Magento\MultipleWishlist\Model\ResourceModel\Item</argument>
+        </arguments>
+    </type>
+    <type name="Magento\MultipleWishlist\Controller\Index">
+        <arguments>
+            <argument name="wishlistSession" xsi:type="object">Magento\Wishlist\Model\Session</argument>
+        </arguments>
+    </type>
+    <type name="Magento\MultipleWishlist\Block\Customer\Sharing">
+        <arguments>
+            <argument name="wishlistSession" xsi:type="object">Magento\Wishlist\Model\Session</argument>
+        </arguments>
+    </type>
+    <virtualType name="Magento\MultipleWishlist\Block\Context" type="Magento\Catalog\Block\Product\Context">
+        <arguments>
+            <argument name="wishlistHelper" xsi:type="object">Magento\MultipleWishlist\Helper\Rss</argument>
+        </arguments>
+    </virtualType>
+    <type name="Magento\Wishlist\Model\Rss\Wishlist">
+        <plugin name="aroundGetHeader" type="Magento\MultipleWishlist\Model\Plugin\Rss\Wishlist" />
+    </type>
+    <type name="Magento\MultipleWishlist\Controller\AbstractIndex">
+        <plugin name="multiple_enabled_filter" type="Magento\MultipleWishlist\Controller\Index\Plugin" sortOrder="20"/>
+    </type>
+</config>

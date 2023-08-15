@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+ /**
+  * Copyright © Magento, Inc. All rights reserved.
+  * See COPYING.txt for license details.
+  */
+-->
+<tests xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:noNamespaceSchemaLocation="urn:magento:mftf:Test/etc/testSchema.xsd">
+    <test name="PageBuilderScheduleUpdateDisablePageBuilderInCMSBlockTest" extends="PageBuilderCmsBlockDisablePageBuilderTest">
+        <annotations>
+            <features value="PageBuilder"/>
+            <stories value="Schedule Update - CMS Block"/>
+            <title value="Verify PageBuilder does not appear when disabled in Schedule Update in CMS Block"/>
+            <description value="This test is intended to ensure that PageBuilder does not appear when disabled for Schedule Update in CMS Block."/>
+            <severity value="AVERAGE"/>
+            <useCaseId value="MC-5773"/>
+            <testCaseId value="MC-14962"/>
+            <group value="pagebuilder"/>
+            <group value="pagebuilder-ee"/>
+            <group value="pagebuilder-staging"/>
+            <group value="pagebuilder-cms-block"/>
+            <group value="pagebuilder-disable"/>
+        </annotations>
+        <before>
+            <actionGroup ref="navigateToStagingSlideout" stepKey="navigateToStagingSlideout" after="navigateToCreatedCMSBlockPage"/>
+        </before>
+        <dontSeeElementInDOM selector="{{AdminCMSBlockStagingSlideOutSection.contentArea}}" stepKey="dontSeeContentAreaInDOM"/>
+        <actionGroup ref="navigateToStagingSlideout" stepKey="navigateToStagingSlideout" after="navigateToCreatedCMSBlockPage"/>
+        <seeElementInDOM selector="{{AdminCMSBlockStagingSlideOutSection.contentArea}}" stepKey="seeContentAreaInDOM"/>
+    </test>
+</tests>

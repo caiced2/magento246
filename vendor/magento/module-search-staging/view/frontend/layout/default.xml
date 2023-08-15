@@ -1,0 +1,43 @@
+<?xml version="1.0"?>
+<!--
+/**
+ * Copyright © Magento, Inc. All rights reserved.
+ * See COPYING.txt for license details.
+ */
+-->
+<page xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="urn:magento:framework:View/Layout/etc/page_configuration.xsd">
+    <body>
+        <referenceBlock name="top.search">
+            <arguments>
+                <argument name="additionalSearchFormData" xsi:type="object">Magento\SearchStaging\ViewModel\AdditionalSearchFormData</argument>
+            </arguments>
+        </referenceBlock>
+        <referenceContainer name="header-wrapper">
+            <block class="Magento\Staging\Block\Preview\RequireInjector" name="top.search.staging" template="Magento_Staging::js/require-injector.phtml">
+                <arguments>
+                    <argument name="requireModuleName" xsi:type="string">quickSearch</argument>
+                    <argument name="requireInjectionsList" xsi:type="array">
+                        <item name="quickSearch" xsi:type="string">Magento_SearchStaging/js/search/form-mini-stub</item>
+                    </argument>
+                </arguments>
+            </block>
+        </referenceContainer>
+        <referenceBlock name="footer_links">
+            <block class="Magento\Staging\Block\Preview\LinkStub" name="catalog-search-advanced-link">
+                <arguments>
+                    <argument name="label" xsi:type="string" translate="true">Advanced Search</argument>
+                    <argument name="path" xsi:type="string">catalogsearch/advanced</argument>
+                    <argument name="attributes" xsi:type="array">
+                        <item name="data-action" xsi:type="string">advanced-search</item>
+                    </argument>
+                </arguments>
+            </block>
+            <block class="Magento\Staging\Block\Preview\LinkStub" ifconfig="catalog/seo/search_terms" name="search-term-popular-link">
+                <arguments>
+                    <argument name="label" xsi:type="string" translate="true">Search Terms</argument>
+                    <argument name="path" xsi:type="string">search/term/popular</argument>
+                </arguments>
+            </block>
+        </referenceBlock>
+    </body>
+</page>

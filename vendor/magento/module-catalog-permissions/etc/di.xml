@@ -1,0 +1,102 @@
+<?xml version="1.0"?>
+<!--
+/**
+ * Copyright © Magento, Inc. All rights reserved.
+ * See COPYING.txt for license details.
+ */
+-->
+<config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="urn:magento:framework:ObjectManager/etc/config.xsd">
+    <preference for="Magento\CatalogPermissions\App\ConfigInterface" type="Magento\CatalogPermissions\App\Config" />
+    <preference for="Magento\CatalogPermissions\Model\Indexer\UpdateIndexInterface" type="Magento\CatalogPermissions\Model\Indexer\InvalidateIndex" />
+    <type name="Magento\CatalogPermissions\Helper\Data">
+        <arguments>
+            <argument name="customerSession" xsi:type="object">Magento\Customer\Model\Session\Proxy</argument>
+        </arguments>
+    </type>
+    <type name="Magento\Catalog\Model\Layer\FilterList">
+        <plugin name="catalogPermissionsFilterListRemovePrice" type="Magento\CatalogPermissions\Model\Plugin\Catalog\Model\Layer\FilterList" />
+    </type>
+    <type name="Magento\Store\Model\ResourceModel\Store">
+        <plugin name="catalogPermissionsIndexerStoreView" type="Magento\CatalogPermissions\Model\Indexer\Plugin\Store\View" />
+    </type>
+    <type name="Magento\Store\Model\ResourceModel\Group">
+        <plugin name="catalogPermissionsIndexerStoreGroup" type="Magento\CatalogPermissions\Model\Indexer\Plugin\Store\Group"/>
+    </type>
+    <type name="Magento\ImportExport\Model\Import">
+        <plugin name="catalogPermissionImport" type="Magento\CatalogPermissions\Model\Indexer\Plugin\Import" />
+    </type>
+    <type name="Magento\Framework\Mview\View\StateInterface">
+        <plugin name="catalogPermissionsIndexerSetStatusForMview" type="Magento\CatalogPermissions\Model\Indexer\Plugin\MviewState" />
+    </type>
+    <type name="Magento\CatalogPermissions\Model\Indexer\Plugin\MviewState">
+        <arguments>
+            <argument name="state" xsi:type="object" shared="false">Magento\Framework\Mview\View\StateInterface</argument>
+            <argument name="changelog" xsi:type="object" shared="false">Magento\Framework\Mview\View\ChangelogInterface</argument>
+        </arguments>
+    </type>
+    <type name="Magento\Indexer\Model\Config\Data">
+        <plugin name="catalogPermissionsIndexerConfigGet" type="Magento\CatalogPermissions\Model\Indexer\Plugin\IndexerConfigData" />
+    </type>
+    <type name="Magento\Customer\Api\GroupRepositoryInterface">
+        <plugin name="customerGroupEdit" type="Magento\CatalogPermissions\Model\Indexer\Plugin\GroupRepository" />
+    </type>
+    <type name="Magento\Catalog\Model\Product">
+        <plugin name="catalogPermissionsProductChange" type="Magento\CatalogPermissions\Model\Indexer\Plugin\Product"/>
+    </type>
+    <type name="Magento\Catalog\Model\Product\Action">
+        <plugin name="catalogPermissionsProductMassChange" type="Magento\CatalogPermissions\Model\Indexer\Plugin\Product\Action"/>
+    </type>
+    <type name="Magento\Catalog\Model\Category">
+        <plugin name="categoryChange" type="Magento\CatalogPermissions\Model\Indexer\Plugin\Category" />
+    </type>
+    <type name="Magento\CatalogPermissions\Model\Indexer\Plugin\Category">
+        <arguments>
+            <argument name="authorization" xsi:type="object">Magento\Framework\AuthorizationInterface\Proxy</argument>
+        </arguments>
+    </type>
+    <type name="Magento\Config\Model\Config">
+        <plugin name="configPermissionChange" type="Magento\CatalogPermissions\Model\Indexer\Plugin\ConfigData" />
+    </type>
+    <type name="Magento\Framework\Module\Setup\Migration">
+        <arguments>
+            <argument name="compositeModules" xsi:type="array">
+                <item name="magento_catalogpermissions" xsi:type="string">Magento_CatalogPermissions</item>
+            </argument>
+        </arguments>
+    </type>
+    <type name="Magento\Theme\Block\Html\Topmenu">
+        <plugin name="catalogPermissionsCachingTopmenu"
+                type="Magento\CatalogPermissions\Model\Plugin\Theme\Block\Html\Topmenu"/>
+    </type>
+    <type name="Magento\Framework\Pricing\Render\PriceBox">
+        <plugin name="can_show_price_plugin" type="Magento\CatalogPermissions\Plugin\Framework\Pricing\Render\CanShowPricePlugin" />
+    </type>
+    <type name="Magento\CatalogSearch\Model\ResourceModel\Fulltext\Collection">
+        <plugin name="can_show_price_in_layered_navigation_plugin" type="Magento\CatalogPermissions\Plugin\CatalogSearch\Model\ResourceModel\Fulltext\Collection" />
+    </type>
+    <type name="Magento\Customer\Model\ResourceModel\GroupRepository">
+        <plugin name="create_delete_customer_groups_index_tables"
+                type="Magento\CatalogPermissions\Plugin\Customer\Model\ResourceModel\GroupRepositoryPlugin" />
+    </type>
+    <type name="Magento\Indexer\Console\Command\IndexerSetDimensionsModeCommand">
+        <arguments>
+            <argument name="dimensionSwitchers" xsi:type="array">
+                <item name="catalogpermissions_category" xsi:type="object">Magento\CatalogPermissions\Model\Indexer\Category\ModeSwitcher</item>
+            </argument>
+        </arguments>
+    </type>
+    <type name="Magento\Indexer\Console\Command\IndexerShowDimensionsModeCommand">
+        <arguments>
+            <argument name="indexers" xsi:type="array">
+                <item name="catalogpermissions_category" xsi:type="string">catalogpermissions_category</item>
+            </argument>
+            <argument name="optionalIndexers" xsi:type="array">
+                <item name="catalogpermissions_category" xsi:type="string">catalogpermissions_category</item>
+            </argument>
+        </arguments>
+    </type>
+    <type name="Magento\Sales\CustomerData\LastOrderedItems">
+        <plugin name="check_catalog_permission_after_get_section_data"
+                type="Magento\CatalogPermissions\Plugin\Sales\CustomerData\CheckCatalogPermissionAfterLastOrderedItemsPlugin" />
+    </type>
+</config>

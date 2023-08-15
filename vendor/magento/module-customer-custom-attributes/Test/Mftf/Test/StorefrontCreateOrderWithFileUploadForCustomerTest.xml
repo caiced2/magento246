@@ -1,0 +1,101 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+ /**
+  * Copyright © Magento, Inc. All rights reserved.
+  * See COPYING.txt for license details.
+  */
+-->
+
+<tests xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:noNamespaceSchemaLocation="urn:magento:mftf:Test/etc/testSchema.xsd">
+    <test name="StorefrontCreateOrderWithFileUploadForCustomerTest">
+        <annotations>
+            <features value="CustomerCustomAttributes"/>
+            <stories value="Create order"/>
+            <title value="Create order from storefront with file upload for registered customer"/>
+            <description value="Create order from storefront with file upload for registered customer"/>
+            <severity value="AVERAGE"/>
+            <testCaseId value="MC-6316"/>
+            <useCaseId value="MAGETWO-64838"/>
+            <group value="customer"/>
+            <skip>
+                <issueId value="MC-6277"/>
+            </skip>
+            <group value="pr_exclude"/>
+        </annotations>
+        <before>
+            <!--Login as admin-->
+            <comment userInput="Login as admin" stepKey="commentLoginAsAdmin"/>
+            <actionGroup ref="AdminLoginActionGroup" stepKey="loginAsAdmin"/>
+            <!--Create customer-->
+            <comment userInput="Create customer" stepKey="commentCreateCustomer"/>
+            <createData entity="Simple_US_CA_Customer" stepKey="createCustomer"/>
+            <!--Create product-->
+            <comment userInput="Create product" stepKey="commentCreateProduct"/>
+            <createData entity="SimpleProduct2" stepKey="createProduct"/>
+        </before>
+        <after>
+            <!--Delete created data-->
+            <comment userInput="Delete created data" stepKey="commentDeleteCreatedData"/>
+            <actionGroup ref="AdminDeleteCustomerAttribute" stepKey="deleteCustomerAttribute">
+                <argument name="defaultLabel" value="{{AttributeFile.attribute_code}}"/>
+            </actionGroup>
+            <deleteData createDataKey="createProduct" stepKey="deleteProduct" />
+            <deleteData createDataKey="createCustomer" stepKey="deleteCustomer"/>
+            <actionGroup ref="AdminLogoutActionGroup" stepKey="logOut"/>
+        </after>
+        <!--Create new customer address attribute-->
+        <comment userInput="Create new customer address attribute" stepKey="commentCreateNewAttribute"/>
+        <amOnPage url="{{CustomerAddressAttributesPage.url}}" stepKey="navigateToCustomerAddress"/>
+        <waitForPageLoad stepKey="waitForCustomerAttributePageLoaded"/>
+        <actionGroup ref="AdminCreateCustomerNewAttribute" stepKey="createFileAttribute">
+            <argument name="defaultLabel" value="{{AttributeFile.frontend_label}}"/>
+            <argument name="attributeCode" value="{{AttributeFile.attribute_code}}"/>
+            <argument name="inputType" value="{{AttributeFile.frontend_input}}"/>
+            <argument name="sortOrder" value="{{AttributeFile.sort_order}}"/>
+        </actionGroup>
+        <!--Go to Storefront as customer-->
+        <comment userInput="Go to Storefront as customer" stepKey="commentLoginSorefront"/>
+        <actionGroup ref="LoginToStorefrontActionGroup" stepKey="customerLogin">
+            <argument name="Customer" value="$$createCustomer$$" />
+        </actionGroup>
+        <!--Add product to cart-->
+        <comment userInput="Add product to cart" stepKey="commentAddProductToCart"/>
+        <amOnPage url="{{StorefrontProductPage.url($$createProduct.custom_attributes[url_key]$$)}}" stepKey="goToProductPage"/>
+        <waitForPageLoad stepKey="waitForPageLoad"/>
+        <actionGroup ref="StorefrontAddProductToCartActionGroup" stepKey="cartAddSimpleProductToCart">
+            <argument name="product" value="$$createProduct$$"/>
+            <argument name="productCount" value="1"/>
+        </actionGroup>
+        <!--Proceed to checkout-->
+        <comment userInput="Proceed to checkout" stepKey="commentProceedToCheckout"/>
+        <actionGroup ref="GoToCheckoutFromMinicartActionGroup" stepKey="goToCheckoutFromMinicartActionGroup"/>
+        <!--Add new address-->
+        <comment userInput="Add new address" stepKey="commentAddNewAddress"/>
+        <click selector="{{CheckoutShippingSection.newAddressButton}}" stepKey="addAddress"/>
+        <actionGroup ref="LoggedInCheckoutWithOneAddressFieldWithoutStateFieldActionGroup" stepKey="changeAddress">
+            <argument name="Address" value="UK_Not_Default_Address"/>
+            <argument name="classPrefix" value="._show"/>
+        </actionGroup>
+        <!--Attach file-->
+        <comment userInput="Attach file" stepKey="commentAttachFile"/>
+        <attachFile selector="{{StorefrontCustomerAddressAttributeSection.uploadFile}}" userInput="{{MagentoLogo.file}}" stepKey="attachValidFile"/>
+        <!--Save new address -->
+        <comment userInput="Save new address" stepKey="commentSaveNewAddress"/>
+        <click selector="{{CheckoutShippingSection.saveAddress}}" stepKey="saveAddress"/>
+        <waitForPageLoad stepKey="waitForAddressSaved"/>
+        <!--Place for order-->
+        <comment userInput="Place for order" stepKey="commentPlaceForOrder"/>
+        <actionGroup ref="StorefrontCheckoutClickNextButtonActionGroup" stepKey="clickNext"/>
+        <comment userInput="BIC workaround" stepKey="waitForPlaceOrderButton"/>
+        <actionGroup ref="ClickPlaceOrderActionGroup" stepKey="clickPlaceOrder"/>
+        <!--Go to customer addressed page and check that file is present-->
+        <comment userInput="Go to customer addressed page and check that file is present" stepKey="commentFilePresent"/>
+        <amOnPage url="{{AdminEditCustomerPage.url($$createCustomer.id$$)}}" stepKey="goToCustomerEditPage"/>
+        <waitForPageLoad stepKey="waitPageToLoad"/>
+        <click selector="{{AdminCustomerAccountInformationSection.addressesButton}}" stepKey="clickAddresses"/>
+        <waitForPageLoad stepKey="waitAddressesPageLoad"/>
+        <click selector="{{AdminCustomerAddressesDefaultShippingSection.editButton}}" stepKey="clickEditDefaultShippingAddress"/>
+        <waitForPageLoad stepKey="waitForCustomerAddressAddUpdateFormLoad"/>
+    </test>
+</tests>

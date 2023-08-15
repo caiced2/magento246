@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+ /**
+  * Copyright © Magento, Inc. All rights reserved.
+  * See COPYING.txt for license details.
+  */
+-->
+
+<actionGroups xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+              xsi:noNamespaceSchemaLocation="urn:magento:mftf:Test/etc/actionGroupSchema.xsd">
+    <actionGroup name="AdminProductScheduledUpdateAssertImageAltTextActionGroup">
+        <annotations>
+            <description>Verify product scheduled update image alt text.</description>
+        </annotations>
+        <arguments>
+            <argument name="image" defaultValue="ProductImage"/>
+            <argument name="altText" defaultValue="{{ProductImage.title}}" type="string"/>
+        </arguments>
+        <waitForElementVisible selector="{{AdminProductScheduledUpdateImagesSection.productImagesToggle}}" stepKey="waitForImagesSection"/>
+        <conditionalClick selector="{{AdminProductScheduledUpdateImagesSection.productImagesToggle}}" dependentSelector="{{AdminProductScheduledUpdateImagesSection.imageFile(image.fileName)}}" visible="false" stepKey="expandImages"/>
+        <waitForPageLoad stepKey="waitForImages"/>
+        <waitForElementVisible selector="{{AdminProductScheduledUpdateImagesSection.imageFile(image.fileName)}}" stepKey="seeProductImageName"/>
+        <click selector="{{AdminProductScheduledUpdateImagesSection.imageFile(image.fileName)}}" stepKey="clickProductImage"/>
+        <waitForPageLoad stepKey="waitForImageDetails"/>
+        <waitForElementVisible selector="{{AdminProductScheduledUpdateImagesSection.altText}}" stepKey="seeAltTextSection"/>
+        <grabValueFrom selector="{{AdminProductScheduledUpdateImagesSection.altText}}" stepKey="actualAltText"/>
+        <assertEquals stepKey="assertAltText">
+            <expectedResult type="string">{{altText}}</expectedResult>
+            <actualResult type="variable">actualAltText</actualResult>
+        </assertEquals>
+        <click selector="{{AdminStagingSlideOutSection.closeButtonForNestedDialog}}" stepKey="clickCloseButton"/>
+        <waitForPageLoad stepKey="waitForClose"/>
+        <waitForElementNotVisible selector="{{AdminProductScheduledUpdateImagesSection.altText}}" stepKey="waitForDetailsGone"/>
+    </actionGroup>
+</actionGroups>

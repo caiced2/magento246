@@ -1,0 +1,59 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+ /**
+  * Copyright © Magento, Inc. All rights reserved.
+  * See COPYING.txt for license details.
+  */
+-->
+
+<tests xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xsi:noNamespaceSchemaLocation="urn:magento:mftf:Test/etc/testSchema.xsd">
+    <test name="AdminCreateTwoProductUpdateSameDateRangeTest">
+        <annotations>
+            <stories value="Create staging updates"/>
+            <title value="Create scheduled product updates"/>
+            <description value="Create 2 product update campaigns with the same date range and get error message"/>
+            <severity value="CRITICAL"/>
+            <testCaseId value="MC-14768"/>
+            <group value="CatalogStaging"/>
+            <group value="mtf_migrated"/>
+        </annotations>
+        <before>
+            <actionGroup ref="AdminLoginActionGroup" stepKey="loginAsAdmin"/>
+            <createData entity="_defaultCategory" stepKey="createCategory"/>
+            <createData entity="SimpleProduct" stepKey="createProduct">
+                <requiredEntity createDataKey="createCategory"/>
+            </createData>
+
+            <!--Create simple product with an update campaign -->
+            <actionGroup ref="AdminClearFiltersStagingDashboardActionGroup" stepKey="clearFilter"/>
+            <amOnPage url="{{AdminProductEditPage.url($$createProduct.id$$)}}" stepKey="visitAdminProductPage"/>
+            <waitForPageLoad stepKey="waitForProductPageLoad"/>
+            <actionGroup ref="AdminFillTemporaryUpdateActionGroup" stepKey="fillStagingUpdate">
+                <argument name="stage" value="UpdatePlus9Mouth"/>
+            </actionGroup>
+            <scrollToTopOfPage stepKey="scrollToTop"/>
+            <click selector="{{AdminStagingSlideOutSection.save}}" stepKey="clickSaveButton"/>
+            <click selector="{{AdminProductFormActionSection.saveButton}}" stepKey="saveProduct"/>
+            <seeElement selector="{{AdminProductMessagesSection.successMessage}}" stepKey="assertSuccess"/>
+        </before>
+        <after>
+            <deleteData createDataKey="createProduct" stepKey="deleteProduct"/>
+            <deleteData createDataKey="createCategory" stepKey="deleteCategory"/>
+            <actionGroup ref="AdminClearFiltersStagingDashboardActionGroup" stepKey="clearStagingFilter"/>
+            <amOnPage url="{{AdminLogoutPage.url}}" stepKey="amOnLogoutPage"/>
+        </after>
+
+        <!--Create another product update with the same date range -->
+        <amOnPage url="{{AdminProductEditPage.url($$createProduct.id$$)}}" stepKey="visitAdminProductPage1"/>
+        <waitForPageLoad stepKey="waitForProductPageLoad1"/>
+        <actionGroup ref="AdminFillTemporaryUpdateActionGroup" stepKey="fillStagingUpdate1">
+            <argument name="stage" value="UpdatePlus9Mouth"/>
+        </actionGroup>
+
+        <!-- Verify that correct error message is displayed -->
+        <click selector="{{AdminStagingSlideOutSection.save}}" stepKey="clickSave"/>
+        <waitForElement selector="{{AdminStagingSlideOutSection.scheduleErrorMessage}}" stepKey="waitForMessage"/>
+        <see userInput="error: : Future Update already exists in this time range. Set a different range and try again." stepKey="assertError"/>
+    </test>
+</tests>

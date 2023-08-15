@@ -1,0 +1,23 @@
+<?xml version="1.0"?>
+<!--
+/**
+ * Copyright © Magento, Inc. All rights reserved.
+ * See COPYING.txt for license details.
+ */
+-->
+<page xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="urn:magento:framework:View/Layout/etc/page_configuration.xsd">
+    <update handle="adminhtml_sku_errors_block"/>
+    <body>
+        <referenceBlock name="data">
+            <block class="Magento\AdvancedCheckout\Block\Adminhtml\Sales\Order\Create\Sku" name="additional_area" template="Magento_Sales::order/create/abstract.phtml">
+                <block class="Magento\AdvancedCheckout\Block\Adminhtml\Sales\Order\Create\Sku\Add" name="additional_area.sku_add"/>
+            </block>
+            <block class="Magento\AdvancedCheckout\Block\Adminhtml\Sales\Order\Create\Sku\Errors" name="errors"/>
+        </referenceBlock>
+        <referenceContainer name="content">
+            <block class="Magento\Backend\Block\Template"
+                   name="error_message_element_provider"
+                   template="Magento_AdvancedCheckout::sku/error_message_element_provider.phtml"/>
+        </referenceContainer>
+    </body>
+</page>

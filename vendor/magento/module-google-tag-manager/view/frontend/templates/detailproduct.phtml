@@ -1,0 +1,23 @@
+<?php
+/**
+ * Copyright © Magento, Inc. All rights reserved.
+ * See COPYING.txt for license details.
+ */
+?>
+<?php
+/** @var \Magento\GoogleTagManager\Block\ListJson $block */
+$product = $block->getCurrentProduct();
+?>
+
+
+<script type="text/x-magento-init">
+    {
+        "*": {
+            "Magento_GoogleTagManager/js/actions/product-detail": {
+                "id": "<?= $block->escapeJs($product->getSku()) ?>",
+                "name": "<?= $block->escapeJs($product->getName()) ?>",
+                "category": "<?= $block->escapeJs($block->getCurrentCategoryName()) ?>"
+            }
+        }
+    }
+</script>

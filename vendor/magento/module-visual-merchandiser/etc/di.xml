@@ -1,0 +1,27 @@
+<?xml version="1.0"?>
+<!--
+/**
+ * Copyright © Magento, Inc. All rights reserved.
+ * See COPYING.txt for license details.
+ */
+-->
+
+<config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="urn:magento:framework:ObjectManager/etc/config.xsd">
+
+    <preference for="\Magento\VisualMerchandiser\Api\RuleFactoryPoolInterface" type="\Magento\VisualMerchandiser\Model\RuleFactoryPool" />
+
+    <type name="\Magento\VisualMerchandiser\Model\RuleFactoryPool">
+        <arguments>
+            <argument name="rules" xsi:type="array">
+                <item name="Boolean" xsi:type="object">\Magento\VisualMerchandiser\Model\Rules\Rule\BooleanFactory</item>
+                <item name="CategoryId" xsi:type="object">\Magento\VisualMerchandiser\Model\Rules\Rule\CategoryIdFactory</item>
+                <item name="CreatedAt" xsi:type="object">\Magento\VisualMerchandiser\Model\Rules\Rule\CreatedAtFactory</item>
+                <item name="DaysAgo" xsi:type="object">\Magento\VisualMerchandiser\Model\Rules\Rule\DaysAgoFactory</item>
+                <item name="Literal" xsi:type="object">\Magento\VisualMerchandiser\Model\Rules\Rule\LiteralFactory</item>
+                <item name="QuantityAndStockStatus" xsi:type="object">\Magento\VisualMerchandiser\Model\Rules\Rule\QuantityAndStockStatusFactory</item>
+                <item name="Source" xsi:type="object">\Magento\VisualMerchandiser\Model\Rules\Rule\SourceFactory</item>
+                <item name="UpdatedAt" xsi:type="object">\Magento\VisualMerchandiser\Model\Rules\Rule\UpdatedAtFactory</item>
+            </argument>
+        </arguments>
+    </type>
+</config>

@@ -1,0 +1,19 @@
+<?xml version="1.0"?>
+<!--
+/**
+ * Copyright © Magento, Inc. All rights reserved.
+ * See COPYING.txt for license details.
+ */
+-->
+<layout xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="urn:magento:framework:View/Layout/etc/layout_generic.xsd">
+    <update handle="adminhtml_customer_balance_grid"/>
+    <container name="root" label="Root">
+        <block class="Magento\CustomerBalance\Block\Adminhtml\Customer\Edit\Tab\Customerbalance\Balance" name="customerbalance.balance" template="Magento_CustomerBalance::balance.phtml"/>
+        <block class="Magento\CustomerBalance\Block\Adminhtml\Customer\Edit\Tab\Customerbalance\Form" name="customerbalance.form">
+            <arguments>
+                <argument name="target_form" xsi:type="string">customer_form</argument>
+            </arguments>
+        </block>
+        <block class="Magento\CustomerBalance\Block\Adminhtml\Customer\Edit\Tab\Customerbalance\Balance\History" name="customerbalance.history"/>
+    </container>
+</layout>

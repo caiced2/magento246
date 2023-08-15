@@ -1,0 +1,78 @@
+<?php
+/**
+ * Copyright © Magento, Inc. All rights reserved.
+ * See COPYING.txt for license details.
+ */
+
+// phpcs:disable Magento2.Files.LineLength.MaxExceeded
+
+/** @var $block \Magento\GiftRegistry\Block\Search\Quick */
+?>
+
+<?php if ($block->getEnabled() && $block->getTypesCollection()->getSize()) : ?>
+<div class="block block-giftregistry-search">
+    <div class="block-title"> <strong><?= $block->escapeHtml(__('Gift Registry Search')) ?></strong></div>
+    <div class="block-content">
+        <form id="gr-quick-search-form" action="<?= $block->escapeUrl($block->getActionUrl()) ?>" method="post" class="form form-giftregistry-search">
+            <div class="field name required">
+                <?= $block->getBlockHtml('formkey') ?>
+                <label for="params-firstname" class="label"><span><?= $block->escapeHtml(__('First Name')) ?></span></label>
+                <div class="control">
+                    <input type="text" class="input-text" data-validate="{required:true,minlength:2}" id="params-firstname" name="params[firstname]">
+                </div>
+            </div>
+            <div class="field lastname required">
+                <label for="params-lastname" class="label"><span><?= $block->escapeHtml(__('Last Name')) ?></span></label>
+                <div class="control">
+                    <input type="text" class="input-text" data-validate="{required:true,minlength:2}" id="params-lastname" name="params[lastname]">
+                    <div class="note">* <?= $block->escapeHtml(__('Please enter at least two letters of the name.')) ?></div>
+                </div>
+            </div>
+            <div class="field type required">
+                <label class="label"><span><?= $block->escapeHtml(__('Type')) ?></span></label>
+                <div class="control"><?= $block->getTypeSelectHtml() ?></div>
+            </div>
+            <div class="actions-toolbar">
+                <input type="hidden" name="params[search]" value="type">
+                <button type="submit" title="<?= $block->escapeHtmlAttr(__('Search')) ?>" class="action search"><span><?= $block->escapeHtml(__('Search')) ?></span></button>
+            </div>
+        </form>
+
+        <form id="gr-quick-search-email-form" action="<?= $block->escapeUrl($block->getActionUrl()) ?>" method="post" class="form form-giftregistry-search">
+            <div class="field email required">
+                <?= $block->getBlockHtml('formkey') ?>
+                <label for="params_email" class="label"><span><?= $block->escapeHtml(__('Registrant Email')) ?></span></label>
+                <div class="control">
+                    <input type="text" class="input-text required-entry validate-email" id="params_email" name="params[email]" />
+                </div>
+            </div>
+
+            <div class="actions-toolbar">
+                <input type="hidden" name="params[search]" value="email">
+                <button type="submit" title="<?= $block->escapeHtmlAttr(__('Search')) ?>" class="action search"><span><?= $block->escapeHtml(__('Search')) ?></span></button>
+            </div>
+        </form>
+
+        <form id="gr-quick-search-id-form" action="<?= $block->escapeUrl($block->getActionUrl()) ?>" method="post" class="form form-giftregistry-search">
+            <div class="field id required">
+                <?= $block->getBlockHtml('formkey') ?>
+                <label for="params_id" class="label"><span><?= $block->escapeHtml(__('Gift Registry ID')) ?></span></label>
+                <div class="input-box">
+                    <input type="text" class="input-text required-entry" id="params_id" name="params[id]" />
+                </div>
+            </div>
+            <div class="actions-toolbar">
+                <input type="hidden" name="params[search]" value="id">
+                <button type="submit" title="<?= $block->escapeHtml(__('Search')) ?>" class="action primary search"><span><?= $block->escapeHtml(__('Search')) ?></span></button>
+            </div>
+        </form>
+    </div>
+</div>
+<script type="text/x-magento-init">
+    {
+        "form[id^='gr-quick-search']": {
+            "validation": {}
+        }
+    }
+</script>
+<?php endif; ?>

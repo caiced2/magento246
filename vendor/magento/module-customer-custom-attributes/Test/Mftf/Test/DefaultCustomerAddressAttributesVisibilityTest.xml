@@ -1,0 +1,57 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+ /**
+  * Copyright © Magento, Inc. All rights reserved.
+  * See COPYING.txt for license details.
+  */
+-->
+
+<tests xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xsi:noNamespaceSchemaLocation="urn:magento:mftf:Test/etc/testSchema.xsd">
+    <test name="DefaultCustomerAddressAttributesVisibilityTest">
+        <annotations>
+            <features value="CustomerCustomAttributes"/>
+            <stories value="Customer default address attribute visibility in customer account on frontend"/>
+            <title value="Default customer address attributes visibility test"/>
+            <description value="Default customer address attributes visibility test"/>
+            <severity value="MAJOR"/>
+            <testCaseId value="MC-14565"/>
+            <group value="CustomerCustomAttributes"/>
+            <group value="mtf_migrated"/>
+        </annotations>
+        <before>
+            <!-- Create customer -->
+            <createData entity="Simple_Customer_Without_Address" stepKey="createCustomer"/>
+        </before>
+        <after>
+            <!-- Logout customer -->
+            <actionGroup ref="StorefrontCustomerLogoutActionGroup" stepKey="customerLogoutStorefront"/>
+
+            <!-- Delete customer -->
+            <deleteData createDataKey="createCustomer" stepKey="deleteCustomer"/>
+        </after>
+
+        <!-- Login as customer -->
+        <actionGroup ref="LoginToStorefrontActionGroup" stepKey="loginToStorefrontAccount">
+            <argument name="Customer" value="$$createCustomer$$"/>
+        </actionGroup>
+
+        <!-- Go to Address Book -->
+        <actionGroup ref="StorefrontCustomerGoToSidebarMenu" stepKey="goToAddressBook">
+            <argument name="menu" value="Address Book"/>
+        </actionGroup>
+
+        <!-- Assert customer address attributes visibility on frontend -->
+        <dontSeeElement selector="{{CustomerAddressAttributesSection.addressSimpleAttribute('prefix')}}" stepKey="dontSeePrefixAttribute"/>
+        <seeElement selector="{{CustomerAddressAttributesSection.addressSimpleAttribute('firstname')}}" stepKey="seeFirstNameAttribute"/>
+        <dontSeeElement selector="{{CustomerAddressAttributesSection.addressSimpleAttribute('middlename')}}" stepKey="dontSeeMiddleNameAttribute"/>
+        <seeElement selector="{{CustomerAddressAttributesSection.addressSimpleAttribute('lastname')}}" stepKey="seeLastNameAttribute"/>
+        <dontSeeElement selector="{{CustomerAddressAttributesSection.addressSimpleAttribute('suffix')}}" stepKey="dontSeeSuffixAttribute"/>
+        <seeElement selector="{{CustomerAddressAttributesSection.addressSimpleAttribute('company')}}" stepKey="seeCompanyAttribute"/>
+        <seeElement selector="{{CustomerAddressAttributesSection.addressSimpleAttribute('city')}}" stepKey="seeCityAttribute"/>
+        <seeElement selector="{{CustomerAddressAttributesSection.addressSimpleAttribute('country_id')}}" stepKey="seeCountryIdAttribute"/>
+        <seeElement selector="{{CustomerAddressAttributesSection.addressSimpleAttribute('postcode')}}" stepKey="seePostcodeAttribute"/>
+        <seeElement selector="{{CustomerAddressAttributesSection.addressSimpleAttribute('telephone')}}" stepKey="seeTelephoneAttribute"/>
+        <dontSeeElement selector="{{CustomerAddressAttributesSection.addressSimpleAttribute('fax')}}" stepKey="dontSeeFaxAttribute"/>
+    </test>
+</tests>

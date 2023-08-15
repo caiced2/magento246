@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+ /**
+  * Copyright © Magento, Inc. All rights reserved.
+  * See COPYING.txt for license details.
+  */
+-->
+
+<sections xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+          xsi:noNamespaceSchemaLocation="urn:magento:mftf:Page/etc/SectionObject.xsd">
+    <section name="AdminEmailReminderRuleFormConditionsSection">
+        <element name="addCondition" type="button" selector=".rule-param.rule-param-new-child" timeout="30"/>
+        <element name="conditionName" type="select" selector="select[name*='new_child']"/>
+        <element name="condition" type="text" selector="//span[@class='rule-param']/a[text()='{{condition}}']" parameterized="true"/>
+        <element name="conditionOperator" type="select" selector=".rule-param-edit select"/>
+        <element name="conditionValue" type="input" selector=".rule-param-edit input"/>
+    </section>
+</sections>

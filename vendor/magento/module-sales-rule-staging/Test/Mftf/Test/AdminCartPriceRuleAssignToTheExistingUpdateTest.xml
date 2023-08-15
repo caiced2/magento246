@@ -1,0 +1,180 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+ /**
+  * Copyright © Magento, Inc. All rights reserved.
+  * See COPYING.txt for license details.
+  */
+-->
+
+<tests xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xsi:noNamespaceSchemaLocation="urn:magento:mftf:Test/etc/testSchema.xsd">
+    <test name="AdminCartPriceRuleAssignToTheExistingUpdateTest">
+        <annotations>
+            <features value="SalesRule"/>
+            <stories value="[Staging] Cart Price Rule >> Assign to the existing Update"/>
+            <title value="[Staging] Cart Price Rule >> Assign to the existing Update"/>
+            <description value="[Staging] Cart Price Rule >> Assign to the existing Update"/>
+            <severity value="MAJOR"/>
+            <testCaseId value="MAGETWO-49363"/>
+            <group value="salesRule"/>
+        </annotations>
+        <before>
+            <!-- Create 1st CartPriceRule-->
+            <createData entity="ApiCartRule" stepKey="create1stCartPriceRule"/>
+            <!-- Create 2nd CartPriceRule -->
+            <createData entity="ApiCartRule" stepKey="create2ndCartPriceRule"/>
+            <actionGroup ref="AdminLoginActionGroup" stepKey="loginToAdmin"/>
+        </before>
+        <after>
+            <!-- Delete Cart Price Rules -->
+            <amOnPage url="{{AdminStagingDashboardPage.url}}" stepKey="amOnStagingDashboardPage"/>
+            <waitForPageLoad stepKey="waitForPageLoad"/>
+            <actionGroup ref="ClearFiltersAdminDataGridActionGroup" stepKey="clearFilters"/>
+            <deleteData createDataKey="create1stCartPriceRule" stepKey="delete1stCartPriceRule"/>
+            <deleteData createDataKey="create2ndCartPriceRule" stepKey="delete2ndCartPriceRule"/>
+            <!-- Logout Admin -->
+            <actionGroup ref="AdminLogoutActionGroup" stepKey="logoutAdmin"/>
+        </after>
+        <!--  Create new Update for the 1st Cart Price Rule-->
+        <amOnPage url="{{AdminCartPriceRuleEditPage.url('$$create1stCartPriceRule.rule_id$$')}}" stepKey="openEditRule1"/>
+        <click selector="{{ScheduleUpdateSection.scheduleUpdate}}" stepKey="clickNewScheduleUpdate"/>
+        <generateDate date="+2 day" format="m/j/Y g:i A" stepKey="generateStartDateUp1"/>
+        <generateDate date="+4 day" format="m/j/Y g:i A" stepKey="generateEndDateUp1"/>
+        <actionGroup ref="FillScheduleUpdateRemovePriceActionGroup" stepKey="createUpdate1">
+            <argument name="staging" value="UpdateDataFor1CPR"/>
+            <argument name="timeStart" value="$generateStartDateUp1"/>
+            <argument name="timeEnd" value="$generateEndDateUp1"/>
+        </actionGroup>
+        <!-- Navigate to Content > Dashboard. Validate that the update exists in the dashboard -->
+        <comment userInput="BIC workaround" stepKey="amOnStagingDashboardPage"/>
+        <comment userInput="BIC workaround" stepKey="waitForPageLoad"/>
+        <actionGroup ref="changeStagingView" stepKey="changeDashboardView">
+            <argument name="view" value="timeline"/>
+        </actionGroup>
+        <actionGroup ref="SearchAdminDataGridByKeywordActionGroup" stepKey="searchUpdate">
+            <argument name="keyword" value="UpdateDataFor1CPR.updateName"/>
+        </actionGroup>
+        <see selector="{{AdminContentStagingDashboardSection.timeLineEventParameterized(UpdateDataFor1CPR.updateName)}}" userInput="{{UpdateDataFor1CPR.updateName}}" stepKey="seeUpadate"/>
+        <!--  Create new Update for the 2nd Cart Price Rule-->
+        <amOnPage url="{{AdminCartPriceRuleEditPage.url('$$create2ndCartPriceRule.rule_id$$')}}" stepKey="openEditRule2"/>
+        <click selector="{{ScheduleUpdateSection.scheduleUpdate}}" stepKey="clickNewScheduleUpdate2"/>
+        <generateDate date="+2 week" format="m/j/Y g:i A" stepKey="generateStartDateUp2"/>
+        <generateDate date="+3 week" format="m/j/Y g:i A" stepKey="generateEndDateUp2"/>
+        <actionGroup ref="FillScheduleUpdateRemovePriceActionGroup" stepKey="createUpdate2">
+            <argument name="staging" value="UpdateDataFor2CPR"/>
+            <argument name="timeStart" value="$generateStartDateUp2"/>
+            <argument name="timeEnd" value="$generateEndDateUp2"/>
+        </actionGroup>
+        <!-- Navigate to Content > Dashboard. Validate that the update exists in the dashboard -->
+        <comment userInput="BIC workaround" stepKey="amOnStagingDashboardPage2"/>
+        <comment userInput="BIC workaround" stepKey="waitForPageLoad1"/>
+        <actionGroup ref="changeStagingView" stepKey="changeDashboardView2">
+            <argument name="view" value="timeline"/>
+        </actionGroup>
+        <actionGroup ref="SearchAdminDataGridByKeywordActionGroup" stepKey="searchUpdate2">
+            <argument name="keyword" value="UpdateDataFor2CPR.updateName"/>
+        </actionGroup>
+        <see selector="{{AdminContentStagingDashboardSection.timeLineEventParameterized(UpdateDataFor2CPR.updateName)}}" userInput="{{UpdateDataFor2CPR.updateName}}" stepKey="seeUpadate2"/>
+        <!-- Steps -->
+        <!-- 2 Navigate to Marketing > Promotion > Cart Price Rules. -->
+        <actionGroup ref="AdminOpenCartPriceRulesPageActionGroup" stepKey="goToCartPriceRulePage"/>
+        <!-- Page should display Cart Price Rules grid with sample cart price rules created. -->
+        <seeElement selector="{{AdminCartPriceRulesSection.rowContainingText($$create1stCartPriceRule.name$$)}}" stepKey="seeFirstCartPriceRule"/>
+        <seeElement selector="{{AdminCartPriceRulesSection.rowContainingText($$create2ndCartPriceRule.name$$)}}" stepKey="seeSecondCartPriceRule"/>
+        <!-- 3 Click on the 2nd Cart Price Rule in the grid to open details page. -->
+        <actionGroup ref="AdminFilterCartPriceRuleActionGroup" stepKey="filterCartPriceRule">
+            <argument name="ruleName" value="$create2ndCartPriceRule.name$"/>
+        </actionGroup>
+        <!-- Button "Schedule New Update" is displayed and enabled.- Under Schedule Changes grid, Validate if Update created from precondition step exist and View/Edit link is enabled. -->
+        <seeElement selector="{{ScheduleUpdateSection.scheduleUpdate}}" stepKey="seeScheduleNewUpdateButton"/>
+        <click selector="{{ScheduleUpdateSection.scheduleUpdate}}" stepKey="clickScheduleNewUpdateButton"/>
+        <seeElement selector="{{AdminStagingSlideOutSection.title}}" stepKey="seeScheduleUpdateDetailsPage"/>
+        <click selector="{{AdminSlideOutDialogSection.cancelButton}}" stepKey="closePopup"/>
+        <seeElement selector="{{AdminScheduledChangesSection.scheduleViewEdit(UpdateDataFor2CPR.updateName)}}" stepKey="seeViewEditLink"/>
+        <!-- 4 Click "View/Edit" link. -->
+        <click selector="{{AdminScheduledChangesSection.scheduleViewEdit(UpdateDataFor2CPR.updateName)}}" stepKey="clickViewEditLink"/>
+        <seeElement selector="{{AdminStagingSlideOutSection.title}}" stepKey="seeScheduleUpdateDetailsPage2"/>
+        <seeElement selector="{{AdminStagingSlideOutSection.editExistingUpdate}}" stepKey="seeEditExistingUpdate"/>
+        <seeElement selector="{{AdminAssignToExistingUpdateSection.assignToExistingUpdate}}" stepKey="seeAssignToExistingUpdate"/>
+        <click selector="{{AdminAssignToExistingUpdateSection.assignToExistingUpdate}}" stepKey="seeAssignToExistingUpdate2"/>
+        <waitForPageLoad stepKey="waitForLoadingMaskToDisappear"/>
+        <click selector="{{AdminStagingSlideOutSection.editExistingUpdate}}" stepKey="seeEditExistingUpdate2"/>
+        <grabValueFrom selector="{{AdminStagingSlideOutSection.updateName}}" stepKey="grabUpdateName"/>
+        <assertEquals message="incorrectUpdateName" stepKey="assertUpdateName">
+            <expectedResult type="string">{{UpdateDataFor2CPR.updateName}}</expectedResult>
+            <actualResult type="variable">$grabUpdateName</actualResult>
+        </assertEquals>
+        <grabValueFrom selector="{{AdminStagingSlideOutSection.updateDescription}}" stepKey="grabUpdateDescription"/>
+        <assertEquals message="incorrectUpdateDescription" stepKey="assertUpdateDescription">
+            <expectedResult type="string">{{UpdateDataFor2CPR.updateDescription}}</expectedResult>
+            <actualResult type="variable">$grabUpdateDescription</actualResult>
+        </assertEquals>
+        <grabValueFrom selector="{{AdminStagingSlideOutSection.startDate}}" stepKey="grabStartDate"/>
+        <assertEquals message="incorrectUpdateStartDate" stepKey="assertUpdateStartDate" after="grabStartDate">
+            <expectedResult type="string">$generateStartDateUp2</expectedResult>
+            <actualResult type="variable">$grabStartDate</actualResult>
+        </assertEquals>
+        <grabValueFrom selector="{{AdminStagingSlideOutSection.endDate}}" stepKey="grabEndDate"/>
+        <assertEquals message="incorrectUpdateEndDate" stepKey="assertUpdateEndDate">
+            <expectedResult type="string">$generateEndDateUp2</expectedResult>
+            <actualResult type="variable">$grabEndDate</actualResult>
+        </assertEquals>
+        <!-- 5 Click radio button "Assign to another scheduled update". -->
+        <click selector="{{AdminAssignToExistingUpdateSection.assignToExistingUpdate}}" stepKey="seeAssignToExistingUpdate3"/>
+        <waitForPageLoad stepKey="waitForLoadingMaskToDisappear2"/>
+        <seeElement selector="{{AdminAssignToExistingUpdateSection.assignSection}}" stepKey="checkTableViewIsDisplayed"/>
+        <fillField selector="{{AdminAssignToExistingUpdateSection.searchStagingName}}" userInput="{{UpdateDataFor1CPR.updateName}}" stepKey="fillSearchField"/>
+        <click selector="{{AdminAssignToExistingUpdateSection.submitSearch}}" stepKey="clickSearch"/>
+        <seeElement selector="{{AdminAssignToExistingUpdateSection.enabledSelect(UpdateDataFor1CPR.updateName)}}" stepKey="checkSelectForUpdateNotDisabled"/>
+        <!-- 6 Click Select button to assign update created on Content > Dashboard page. Click Save.-->
+        <click selector="{{AdminAssignToExistingUpdateSection.enabledSelect(UpdateDataFor1CPR.updateName)}}" stepKey="checkSelectForUpdateNotDisabled2"/>
+        <click selector="{{AdminStagingSlideOutSection.save}}" stepKey="clickSave"/>
+        <!-- See Schedule Update -->
+        <grabFromCurrentUrl regex="~/id/(\d+)/~" stepKey="grabIdFromCurrentUrl"/>
+        <seeInCurrentUrl url="{{AdminCartPriceRuleEditPage.url('$grabIdFromCurrentUrl')}}" after="grabIdFromCurrentUrl" stepKey="seePCartPriceRuleDetailsPageUrl"/>
+        <grabTextFrom selector="{{AdminScheduledChangesSection.scheduleStartDateByIndex('1')}}" stepKey="grabUpdateStartDate"/>
+        <assertRegExp message="incorrectStartDateFormat" stepKey="checkStartDateFormat">
+			<actualResult type="variable">$grabUpdateStartDate</actualResult>
+			<expectedResult type="string">/[A-Za-z]{3}\s\d{1,2},\s\d{4}/</expectedResult>
+        </assertRegExp>
+        <grabTextFrom selector="{{AdminScheduledChangesSection.scheduleStartTimeByIndex('1')}}" stepKey="grabUpdateStartTime"/>
+        <assertRegExp message="incorrectStartTimeFormat" after="grabUpdateStartTime" stepKey="checkStratTimeFormat">
+			<actualResult type="variable">$grabUpdateStartTime</actualResult>
+			<expectedResult type="string">/\d{1,2}:\d{1,2}\s(AM|PM){1}/</expectedResult>
+        </assertRegExp>
+        <grabTextFrom selector="{{AdminScheduledChangesSection.scheduleEndDateByIndex('1')}}" stepKey="grabUpdateEndDate"/>
+        <grabTextFrom selector="{{AdminScheduledChangesSection.scheduleEndTimeByIndex('1')}}" stepKey="grabUpdateEndTime"/>
+        <assertRegExp message="incorrectEndDateFormat" after="grabUpdateEndDate" stepKey="checkEndDateFormat">
+			<actualResult type="variable">$grabUpdateEndDate</actualResult>
+			<expectedResult type="string">/[A-Za-z]{3}\s\d{1,2},\s\d{4}/</expectedResult>
+        </assertRegExp>
+        <assertRegExp message="incorrectEndTimeFormat" after="grabUpdateEndTime" stepKey="checkEndTimeFormat">
+			<actualResult type="variable">$grabUpdateEndTime</actualResult>
+			<expectedResult type="string">/\d{1,2}:\d{1,2}\s(AM|PM){1}/</expectedResult>
+        </assertRegExp>
+        <see selector="{{AdminScheduledChangesSection.scheduleItemName}}" userInput="{{UpdateDataFor2CPR.updateName}}" stepKey="checkUpdateName"/>
+        <see selector="{{AdminScheduledChangesSection.scheduleItemDescription}}" userInput="{{UpdateDataFor2CPR.updateDescription}}" stepKey="checkUpdateDescription"/>
+        <grabTextFrom selector="{{AdminScheduledChangesSection.scheduleStartDateByIndex('2')}}" stepKey="grabUpdateStartDate2"/>
+        <grabTextFrom selector="{{AdminScheduledChangesSection.scheduleStartTimeByIndex('2')}}" stepKey="grabUpdateStartTime2"/>
+        <assertRegExp message="incorrectStartDateFormat2" after="grabUpdateStartDate2" stepKey="checkStartDateFormat2">
+			<actualResult type="variable">$grabUpdateStartDate2</actualResult>
+			<expectedResult type="string">/[A-Za-z]{3}\s\d{1,2},\s\d{4}/</expectedResult>
+        </assertRegExp>
+        <assertRegExp message="incorrectStartTimeFormat2" after="grabUpdateStartTime2" stepKey="checkStartTimeFormat2">
+			<actualResult type="variable">$grabUpdateStartTime2</actualResult>
+			<expectedResult type="string">/\d{1,2}:\d{1,2}\s(AM|PM){1}/</expectedResult>
+        </assertRegExp>
+        <grabTextFrom selector="{{AdminScheduledChangesSection.scheduleEndDateByIndex('2')}}" stepKey="grabUpdateEndDate2"/>
+        <grabTextFrom selector="{{AdminScheduledChangesSection.scheduleEndTimeByIndex('2')}}" stepKey="grabUpdateEndTime2"/>
+        <assertRegExp message="incorrectEndDateFormat2" after="grabUpdateEndDate2" stepKey="checkEndDateFormat2">
+			<actualResult type="variable">$grabUpdateEndDate2</actualResult>
+			<expectedResult type="string">/[A-Za-z]{3}\s\d{1,2},\s\d{4}/</expectedResult>
+        </assertRegExp>
+        <assertRegExp message="incorrectEndTimeFormat2" after="grabUpdateEndTime2" stepKey="checkEndTimeFormat2">
+			<actualResult type="variable">$grabUpdateEndTime2</actualResult>
+			<expectedResult type="string">/\d{1,2}:\d{1,2}\s(AM|PM){1}/</expectedResult>
+        </assertRegExp>
+        <see selector="{{AdminScheduledChangesSection.scheduleItemName}}" userInput="{{UpdateDataFor1CPR.updateName}}" stepKey="checkUpdateName2"/>
+        <see selector="{{AdminScheduledChangesSection.scheduleItemDescription}}" userInput="{{UpdateDataFor1CPR.updateDescription}}" stepKey="checkUpdateDescription2"/>
+    </test>
+</tests>

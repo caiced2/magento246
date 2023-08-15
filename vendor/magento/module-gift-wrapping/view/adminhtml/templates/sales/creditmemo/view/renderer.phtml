@@ -1,0 +1,46 @@
+<?php
+/**
+ * Copyright © Magento, Inc. All rights reserved.
+ * See COPYING.txt for license details.
+ */
+
+// phpcs:disable Magento2.Files.LineLength
+// phpcs:disable Magento2.Templates.ThisInTemplate
+
+/** @var $block \Magento\GiftWrapping\Block\Adminhtml\Sales\Order\View\Items */
+?>
+
+<?php $_item = $block->getItem() ?>
+<tr class="border">
+    <td><?= $block->escapeHtml(__('Gift Wrapping')) ?></td>
+    <td class="a-right">
+        <?php if ($this->helper(Magento\GiftWrapping\Helper\Data::class)->displaySalesWrappingBothPrices()
+            || $this->helper(Magento\GiftWrapping\Helper\Data::class)->displaySalesWrappingExcludeTaxPrice()) : ?>
+            <span class="price-excl-tax">
+                <?php if ($this->helper(Magento\GiftWrapping\Helper\Data::class)->displaySalesWrappingBothPrices()) : ?>
+                    <span class="label"><?= $block->escapeHtml(__('Excl. Tax')) ?>:</span>
+                <?php endif; ?>
+                <?= $block->escapeHtml($block->displayPrices($_item->getGwBasePrice(), $_item->getGwPrice()), ['span','strong','br'])?>
+            </span>
+        <?php endif; ?>
+        <?php if ($this->helper(Magento\GiftWrapping\Helper\Data::class)->displaySalesWrappingBothPrices()
+            || $this->helper(Magento\GiftWrapping\Helper\Data::class)->displaySalesWrappingIncludeTaxPrice()) : ?>
+            <br />
+            <span class="price-incl-tax">
+                <?php if ($this->helper(Magento\GiftWrapping\Helper\Data::class)->displaySalesWrappingBothPrices()) : ?>
+                    <span class="label"><?= $block->escapeHtml(__('Incl. Tax')) ?>:</span>
+                <?php endif; ?>
+                <?php $_incl = $_item->getGwPrice() + $_item->getGwTaxAmount(); ?>
+                <?php $_baseIncl = $_item->getGwBasePrice() + $_item->getGwBaseTaxAmount(); ?>
+                <?= $block->escapeHtml($block->displayPrices($_baseIncl, $_incl), ['span','strong','br']) ?>
+            </span>
+        <?php endif; ?>
+    </td>
+    <td></td>
+    <td></td>
+    <td class="a-right">
+        <?= $block->escapeHtml($block->displayPrices($_item->getGwBaseTaxAmount(), $_item->getGwTaxAmount()), ['span','strong','br']) ?>
+    </td>
+    <td></td>
+    <td class="last"></td>
+</tr>

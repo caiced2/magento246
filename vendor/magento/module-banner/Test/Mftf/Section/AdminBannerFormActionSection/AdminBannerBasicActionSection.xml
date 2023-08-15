@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+ /**
+  * Copyright © Magento, Inc. All rights reserved.
+  * See COPYING.txt for license details.
+  */
+-->
+<sections xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:noNamespaceSchemaLocation="urn:magento:mftf:Page/etc/SectionObject.xsd">
+    <section name="AdminBannerBasicActionSection">
+        <element name="Scope" type="button" selector="#store-change-button"/>
+        <element name="ScopeDropdown" type="button" selector="ul[data-role='stores-list']"/>
+        <element name="ScopeOption" type="button" selector="//*[contains(text(), '{{var1}}')]" parameterized="true"/>
+        <element name="ScopeModal" type="button" selector="//div[@class='modal-content']//div[contains(text(), 'Please confirm scope switching.')]"/>
+        <element name="ScopeModalConfirm" type="button" selector="//button[contains(@class, 'action-accept')]"/>
+        <element name="Back" type="button" selector="#back"/>
+        <element name="Reset" type="button" selector="#reset"/>
+        <element name="SaveContinueEdit" type="button" selector="#save_and_continue"/>
+        <element name="Save" type="button" selector="#save" timeout="30"/>
+        <element name="Delete" type="button" selector="#delete"/>
+        <element name="EnableBanner" type="select" selector=".admin__actions-switch-label"/>
+        <element name="Name" type="input" selector="input[ name='name']"/>
+        <element name="type" type="select" selector="div[data-index='types'] div.action-select"/>
+        <element name="OptionType" type="button" selector="//div[@data-index='types']//span[text()='{{var1}}']" parameterized="true"/>
+        <element name="CustomerSegment" type="select" selector="//div[@data-index='customer_segment_ids']/div"/>
+        <element name="OptionCustomer" type="button" selector="//span[text()='{{var1}}']" parameterized="true"/>
+        <element name="ContentTab" type="button" selector="//strong[@class='admin__collapsible-title']//span[text()='Content']"/>
+        <element name="insertImage" type="button" selector="button.action-add-image" timeout="30"/>
+        <element name="RelatedPromotions" type="button" selector="//span[text()='Related Promotions']"/>
+        <element name="SearchBtn" type="button" selector="//button[@class='action-submit']"/>
+        <element name="activeDoneButton" type="button" selector="._active button[data-action='close-advanced-select']"/>
+        <element name="RelatedPromotionsTab" type="button" selector="//span[text()='Related Promotions']"/>
+        <element name="BannerPromotions" type="button" selector="//div[@data-index='{{var1}}']" parameterized="true"/>
+        <element name="BannerRequiredField" type="text" selector="//span[text()='Dynamic Block Name']/ancestor::div[1]//following-sibling::div//label[text()='This is a required field.']"/>
+        <element name="saveBlockWarningMessage" type="text" selector=".message-warning"/>
+    </section>
+</sections>

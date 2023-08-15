@@ -1,0 +1,63 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+ /**
+  * Copyright © Magento, Inc. All rights reserved.
+  * See COPYING.txt for license details.
+  */
+-->
+
+<tests xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="urn:magento:mftf:Test/etc/testSchema.xsd">
+    <test name="AdminCreateWidgetOrderBySkuTest">
+        <annotations>
+            <stories value="Widget Order By SKU"/>
+            <title value="Create Widget Order By SKU"/>
+            <description value="Create Widget Order By SKU"/>
+            <severity value="CRITICAL"/>
+            <testCaseId value="MC-14060"/>
+            <group value="AdvancedCheckout"/>
+            <group value="mtf_migrated"/>
+        </annotations>
+        <before>
+            <actionGroup ref="AdminLoginActionGroup" stepKey="loginAsAdmin"/>
+            <createData entity="_defaultCategory" stepKey="createCategory"/>
+            <!--Register Customer-->
+            <createData entity="Simple_US_Customer" stepKey="createCustomer"/>
+        </before>
+        <after>
+            <!-- Flush cache -->
+            <actionGroup ref="CliCacheFlushActionGroup" stepKey="flushCache">
+                <argument name="tags" value=""/>
+            </actionGroup>
+            <deleteData createDataKey="createCustomer" stepKey="deleteCustomer"/>
+            <deleteData createDataKey="createCategory" stepKey="deleteCategory"/>
+            <actionGroup ref="AdminDeleteWidgetActionGroup" stepKey="deleteWidget">
+                <argument name="widget" value="DefaultOrderBySKUWidget"/>
+            </actionGroup>
+            <actionGroup ref="AdminLogoutActionGroup" stepKey="logout"/>
+        </after>
+        <!--Create widget "Order by Sku" -->
+        <actionGroup ref="AdminCreateWidgetActionGroup" stepKey="createWidget">
+            <argument name="widget" value="DefaultOrderBySKUWidget" />
+        </actionGroup>
+
+        <!-- Assert Widget Success Save Message -->
+        <click selector="{{AdminMainActionsSection.save}}" stepKey="clickSaveWidget"/>
+        <waitForPageLoad stepKey="waitForPageLoad"/>
+        <see selector="{{AdminMessagesSection.success}}" userInput="The widget instance has been saved" stepKey="seeSuccess"/>
+
+        <!-- Assert Widget In Grid -->
+        <conditionalClick selector="{{AdminWidgetsSection.resetFilter}}" dependentSelector="{{AdminWidgetsSection.resetFilter}}" visible="true" stepKey="resetFilter"/>
+        <fillField selector="{{AdminWidgetsSection.widgetTitleSearch}}" userInput="{{DefaultOrderBySKUWidget.name}}" stepKey="fillTitle"/>
+        <click selector="{{AdminWidgetsSection.searchButton}}" stepKey="clickContinue"/>
+
+        <see selector="{{AdminWidgetsSection.searchResult}}" userInput="{{DefaultOrderBySKUWidget.name}}" stepKey="seeWidgetName"/>
+        <see selector="{{AdminWidgetsSection.searchResult}}" userInput="{{DefaultOrderBySKUWidget.type}}" stepKey="seeWidgetType"/>
+        <see selector="{{AdminWidgetsSection.searchResult}}" userInput="{{DefaultOrderBySKUWidget.design_theme}}" stepKey="seeWidgetTheme"/>
+
+        <!-- Assert Widget Order By Sku On Category Page -->
+        <amOnPage url="{{StorefrontCategoryPage.url($$createCategory.custom_attributes[url_key]$$)}}" stepKey="onCategoryPage"/>
+        <waitForPageLoad stepKey="waitForCategoryPageLoad"/>
+        <seeElement selector="{{StorefrontWidgetsSection.widgetBlock}}" stepKey="seeWidgetBlock"/>
+        <see userInput="{{DefaultOrderBySKUWidget.type}}" selector="{{StorefrontWidgetsSection.widgetTitle}}" stepKey="seeTitle"/>
+    </test>
+</tests>

@@ -1,0 +1,16 @@
+<?xml version="1.0"?>
+<!--
+/**
+ * Copyright © Magento, Inc. All rights reserved.
+ * See COPYING.txt for license details.
+ */
+-->
+<schema xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:noNamespaceSchemaLocation="urn:magento:framework:Setup/Declaration/Schema/etc/schema.xsd">
+    <table name="weee_tax" resource="default" comment="Weee Tax">
+        <constraint xsi:type="foreign" referenceId="WEEE_TAX_ENTITY_ID_CATALOG_PRODUCT_ENTITY_ENTITY_ID" disabled="1"/>
+        <constraint xsi:type="foreign" referenceId="WEEE_TAX_ENTITY_ID_SEQUENCE_PRODUCT_SEQUENCE_VALUE" table="weee_tax"
+                    column="entity_id" referenceTable="sequence_product" referenceColumn="sequence_value"
+                    onDelete="CASCADE"/>
+    </table>
+</schema>

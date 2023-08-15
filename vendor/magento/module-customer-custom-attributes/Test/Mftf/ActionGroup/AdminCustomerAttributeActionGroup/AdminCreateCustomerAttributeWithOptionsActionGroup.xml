@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+ /**
+  * Copyright © Magento, Inc. All rights reserved.
+  * See COPYING.txt for license details.
+  */
+-->
+<actionGroups xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:noNamespaceSchemaLocation="urn:magento:mftf:Test/etc/actionGroupSchema.xsd">
+    <actionGroup name="AdminCreateCustomerAttributeWithOptions" extends="AdminCreateCustomerNewAttribute">
+        <arguments>
+            <argument name="option1" type="string"/>
+            <argument name="option2" type="string"/>
+        </arguments>
+        <remove keyForRemoval="selectFormsToUse"/>
+        <selectOption selector="{{CustomerAccountSection.selectFormToUse}}" userInput="{{formToUse}}" stepKey="selectCustomerRegistration" after="TypeSortOrder"/>
+        <scrollToTopOfPage stepKey="scrollToTop" after="selectCustomerRegistration"/>
+        <waitForAjaxLoad stepKey="waitForAjax" after="scrollToTop"/>
+        <click selector="{{CustomerAccountSection.attributeOption}}" stepKey="goOptionSection" after="waitForAjax"/>
+        <waitForElementVisible selector="{{AttributeOptionSection.addOption}}" stepKey="waitForElement" after="goOptionSection"/>
+        <click selector="{{AttributeOptionSection.addOption}}" stepKey="addOption" after="waitForElement"/>
+        <waitForAjaxLoad stepKey="waitForAjaxLoad" after="addOption"/>
+        <fillField selector="{{AttributeOptionSection.optionField('1')}}" userInput="{{option1}}" stepKey="fillOption1" after="waitForAjaxLoad"/>
+        <click selector="{{AttributeOptionSection.enable('1')}}" stepKey="enableOption1" after="fillOption1"/>
+        <click selector="{{AttributeOptionSection.addOption}}" stepKey="addOption2" after="enableOption1"/>
+        <fillField selector="{{AttributeOptionSection.optionField('2')}}" userInput="{{option2}}" stepKey="fillOption2" after="addOption2"/>
+        <click selector="{{AttributeOptionSection.enable('2')}}" stepKey="enableOption2" after="fillOption2"/>
+    </actionGroup>
+</actionGroups>

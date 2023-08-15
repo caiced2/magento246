@@ -1,0 +1,152 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+ /**
+  * Copyright © Magento, Inc. All rights reserved.
+  * See COPYING.txt for license details.
+  */
+-->
+
+<tests xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xsi:noNamespaceSchemaLocation="urn:magento:mftf:Test/etc/testSchema.xsd">
+    <test name="StoreFrontProductSpecialPriceSetByScheduledUpdateTest">
+        <annotations>
+            <features value="CatalogStaging"/>
+            <stories value="Staging updates"/>
+            <title value="Check that Special price set by scheduled updated for selected product"/>
+            <description value="Check that Special price set by scheduled updated for selected product"/>
+            <severity value="MAJOR" />
+            <testCaseId value="MAGETWO-96732"/>
+            <useCaseId value="MAGETWO-96429"/>
+            <group value="CatalogStaging"/>
+        </annotations>
+        <before>
+            <actionGroup ref="AdminLoginActionGroup" stepKey="loginAsAdmin"/>
+            <createData entity="SimpleProduct2" stepKey="createProduct"/>
+            <createData entity="UseFlatCatalogCategoryAndProduct" stepKey="flatCatalogCategoryAndProduct"/>
+            <createData entity="CatalogPriceScopeWebsite" stepKey="paymentMethodsSettingConfig"/>
+        </before>
+        <after>
+            <!--Set default configurations-->
+            <comment userInput="Set default configurations" stepKey="commentSetDefaultConfig"/>
+            <createData entity="DefaultFlatCatalogCategoryAndProduct" stepKey="defaultFlatCatalogCategoryAndProduct"/>
+            <createData entity="DefaultConfigCatalogPrice" stepKey="defaultConfigCatalogPrice"/>
+            <!--Delete created data-->
+            <comment userInput="Delete created data" stepKey="commentDeleteCreatedData"/>
+            <deleteData createDataKey="createProduct" stepKey="deleteProduct"/>
+            <actionGroup ref="AdminDeleteWebsiteActionGroup" stepKey="deleteSecondWebsite">
+                <argument name="websiteName" value="{{NewWebSiteData.name}}"/>
+            </actionGroup>
+            <magentoCron groups="index" stepKey="reindex"/>
+            <actionGroup ref="AdminLogoutActionGroup" stepKey="logout"/>
+        </after>
+        <!--Create  website-->
+        <comment userInput="Create  website" stepKey="commentCreateWebsite"/>
+        <actionGroup ref="AdminCreateWebsiteActionGroup" stepKey="createSecondWebsite">
+            <argument name="newWebsiteName" value="{{NewWebSiteData.name}}"/>
+            <argument name="websiteCode" value="{{NewWebSiteData.code}}"/>
+        </actionGroup>
+        <actionGroup ref="AdminCreateNewStoreGroupActionGroup" stepKey="createSecondStore">
+            <argument name="website" value="{{NewWebSiteData.name}}"/>
+            <argument name="storeGroupName" value="{{NewStoreData.name}}"/>
+            <argument name="storeGroupCode" value="{{NewStoreData.code}}"/>
+        </actionGroup>
+        <actionGroup ref="AdminCreateStoreViewActionGroup" stepKey="createSecondStoreView">
+            <argument name="StoreGroup" value="NewStoreData"/>
+            <argument name="customStore" value="storeViewData"/>
+        </actionGroup>
+        <magentoCron groups="index" stepKey="reindex"/>
+        <!--Open created product-->
+        <comment userInput="Open created product" stepKey="commentOpenCreatedProduct"/>
+        <amOnPage url="{{AdminProductEditPage.url($$createProduct.id$$)}}" stepKey="amOnEditPage"/>
+        <waitForPageLoad stepKey="waitForEditPage"/>
+        <!--Add product to website-->
+        <comment userInput="Add product to website" stepKey="commentAddProductToWebsite"/>
+        <actionGroup ref="SelectProductInWebsitesActionGroup" stepKey="addProductToWebsite">
+            <argument name="website" value="{{NewWebSiteData.name}}"/>
+        </actionGroup>
+        <actionGroup ref="SaveProductFormActionGroup" stepKey="saveProduct"/>
+        <!--Switch to "Default Store View" and add special price-->
+        <comment userInput="Switch to 'Default Store View' and add special price" stepKey="commentAddSpecialPriceDefaultView"/>
+        <actionGroup ref="SwitchToTheNewStoreViewActionGroup" stepKey="selectStoreView">
+            <argument name="storeViewName" value="Default Store View"/>
+        </actionGroup>
+        <waitForPageLoad stepKey="waitForPageLoad"/>
+        <actionGroup ref="AdminProductAddSpecialPriceActionGroup" stepKey="addProductSpecialPrice">
+            <argument name="specialPrice" value="20"/>
+        </actionGroup>
+        <!--Switch to  "All Store View" and check that special price is empty-->
+        <comment userInput="Switch to 'All Store View' and add special price" stepKey="commentAddSpecialPriceAllStoreView"/>
+        <actionGroup ref="SwitchToTheNewStoreViewActionGroup" stepKey="selectStoreView1">
+            <argument name="storeViewName" value="All Store Views"/>
+        </actionGroup>
+        <click selector="{{AdminProductFormSection.advancedPricingLink}}" stepKey="clickAdvancedPricingLink"/>
+        <waitForElementVisible selector="{{AdminProductFormAdvancedPricingSection.specialPrice}}" stepKey="waitSpecialPrice"/>
+        <grabValueFrom selector="{{AdminProductFormAdvancedPricingSection.specialPrice}}" stepKey="grabSpecialPriceValue"/>
+        <assertEquals stepKey="assertSpecialPriceValueIsEmpty">
+			<actualResult type="const">$grabSpecialPriceValue</actualResult>
+			<expectedResult type="const"></expectedResult>
+        </assertEquals>
+        <!--Got to StoreFront created product page and check special price-->
+        <comment userInput="Got to StoreFront created product page and check special price" stepKey="commentCheckSpecialPrice"/>
+        <amOnPage url="{{StorefrontHomePage.url}}$$createProduct.custom_attributes[url_key]$$.html" stepKey="amOnProduct1Page"/>
+        <waitForPageLoad stepKey="waitForProductPageLoad" time="90"/>
+        <grabTextFrom selector="{{StorefrontProductInfoMainSection.specialPriceValue}}" stepKey="grabSpecialPrice"/>
+        <assertEquals stepKey="assertValuesAreEqual">
+			<actualResult type="const">$grabSpecialPrice</actualResult>
+			<expectedResult type="string">$20.00</expectedResult>
+        </assertEquals>
+        <!--Schedule new update and set special price 10-->
+        <comment userInput="Schedule new update and set special price 10" stepKey="commentScheduleUpdate"/>
+        <amOnPage url="{{AdminProductEditPage.url($$createProduct.id$$)}}" stepKey="amOnEditPage1"/>
+        <waitForPageLoad stepKey="waitForEditPage1"/>
+        <click selector="{{AdminProductFormActionSection.changeStoreButton}}" stepKey="clickStoreViewSwitcher"/>
+        <conditionalClick selector="{{AdminProductFormActionSection.selectStoreView('All Store Views')}}" dependentSelector="{{AdminProductFormActionSection.selectStoreView('All Store Views')}}" visible="true" stepKey="chooseStoreView"/>
+        <conditionalClick selector="{{AdminConfirmationModalSection.ok}}" dependentSelector="{{AdminConfirmationModalSection.ok}}" visible="true" stepKey="acceptStoreSwitchingMessage"/>
+        <waitForPageLoad stepKey="waitStoreViewLoad"/>
+        <!-- StagingUpdate with special price -->
+        <actionGroup ref="AdminStartCreateStagingUpdate" stepKey="startCreateStagingUpdate"/>
+        <actionGroup ref="AdminFillProductScheduleUpdateSpecialPrice" stepKey="fillProductScheduleUpdateSpecialPrice">
+            <argument name="specialPrice" value="10"/>
+        </actionGroup>
+        <generateDate date="+10 minute" format="m/j/Y g:i A" stepKey="generateNewEndDate"/>
+        <actionGroup ref="AdminFillDatesAndSaveProductStagingUpdate" stepKey="fillDatesAndSaveStagingUpdate">
+            <argument name="endDate" value="$generateNewEndDate"/>
+        </actionGroup>
+        <!-- run cron twice -->
+        <actionGroup ref="ApplyUpdatedRuleStagingByCron" stepKey="runCronTwice"/>
+        <!-- reindex and flush cache -->
+        <actionGroup ref="AdminReindexAndFlushCache" stepKey="reindexAndFlushCache"/>
+
+        <!--Go to StoreFront created product page and check special price after schedule new update-->
+        <comment userInput="Go to StoreFront created product page and check special price after schedule new update" stepKey="commentCheckSpecialPriceAfterUpdate"/>
+        <amOnPage url="{{StorefrontHomePage.url}}$$createProduct.custom_attributes[url_key]$$.html" stepKey="amOnProduct1Page1"/>
+        <waitForPageLoad stepKey="waitForProductPageLoad1"/>
+        <grabTextFrom selector="{{StorefrontProductInfoMainSection.specialPriceValue}}" stepKey="grabSpecialPrice1"/>
+        <assertEquals stepKey="assertPriceValuesAreEqual">
+			<actualResult type="const">$grabSpecialPrice1</actualResult>
+			<expectedResult type="string">$20.00</expectedResult>
+        </assertEquals>
+        <!--Quick search product and check special price-->
+        <comment userInput="Quick search product and check special price" stepKey="commentCheckSpecialPriceQuickSearch"/>
+        <fillField selector="{{StorefrontQuickSearchResultsSection.searchTextBox}}" userInput="$$createProduct.name$$" stepKey="fillProductName"/>
+        <waitForPageLoad stepKey="waitForSearchButtonEnabled"/>
+        <click selector="{{StorefrontQuickSearchResultsSection.searchTextBoxButton}}" stepKey="clickSearchTextBoxButton"/>
+        <waitForElementVisible selector="{{StorefrontQuickSearchResultsSection.productLink}}" stepKey="waitForProduct"/>
+        <!--Check product special price in search result page-->
+        <comment userInput="Check product special price in search result page" stepKey="commentCheckPriceSearchResultPage"/>
+        <grabTextFrom selector="{{StorefrontQuickSearchResultsSection.productSpecialPrice($$createProduct.name$$)}}" stepKey="grabProductSpecialPriceSearchResultPage"/>
+        <assertEquals stepKey="assertProductSpecialPriceSearchResultPage">
+			<actualResult type="const">$grabProductSpecialPriceSearchResultPage</actualResult>
+			<expectedResult type="string">$20.00</expectedResult>
+        </assertEquals>
+        <!--Check product special price product page-->
+        <comment userInput="Check product special price product page" stepKey="commentCheckSpecialPriceProductPage"/>
+        <click selector="{{StorefrontQuickSearchResultsSection.productLink}}" stepKey="openSearchedProduct"/>
+        <waitForPageLoad stepKey="waitForSearchedProductPageLoad"/>
+        <grabTextFrom selector="{{StorefrontProductInfoMainSection.specialPriceValue}}" stepKey="grabProductSpecialPrice"/>
+        <assertEquals stepKey="assertProductPriceValuesAreEqual">
+			<actualResult type="const">$grabProductSpecialPrice</actualResult>
+			<expectedResult type="string">$20.00</expectedResult>
+        </assertEquals>
+    </test>
+</tests>

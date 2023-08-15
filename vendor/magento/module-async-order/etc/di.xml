@@ -1,0 +1,134 @@
+<?xml version="1.0"?>
+<!--
+/**
+ * Copyright © Magento, Inc. All rights reserved.
+ * See COPYING.txt for license details.
+ */
+-->
+<config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="urn:magento:framework:ObjectManager/etc/config.xsd">
+    <preference for="Magento\AsyncOrder\Api\AsyncPaymentInformationCustomerPublisherInterface"
+                type="Magento\AsyncOrder\Model\AsyncPaymentInformationCustomerPublisher" />
+    <preference for="Magento\AsyncOrder\Api\AsyncPaymentInformationGuestPublisherInterface"
+                type="Magento\AsyncOrder\Model\AsyncPaymentInformationGuestPublisher" />
+    <preference for="Magento\AsyncOrder\Api\Data\AsyncOrderMessageInterface"
+                type="Magento\AsyncOrder\Model\Entity\AsyncOrderMessage" />
+    <preference for="Magento\AsyncOrder\Api\Data\OrderInterface" type="Magento\AsyncOrder\Model\Order"/>
+    <type name="Magento\AsyncOrder\Model\OrderManagement">
+        <arguments>
+            <argument name="paymentMethods" xsi:type="array">
+                <item name="hosted_pro" xsi:type="string">hosted_pro</item>
+                <item name="payflow_advanced" xsi:type="string">payflow_advanced</item>
+                <item name="payflow_link" xsi:type="string">payflow_link</item>
+            </argument>
+        </arguments>
+    </type>
+    <type name="Magento\Backend\Block\Dashboard\Orders\Grid">
+        <plugin name="orders_grid_plugin" type="Magento\AsyncOrder\Plugin\Block\Dashboard\Orders\Grid" sortOrder="50"/>
+    </type>
+    <type name="Magento\Sales\Controller\Order\View">
+        <plugin name="redirect_view_order" type="Magento\AsyncOrder\Plugin\Controller\Order\CustomerRedirectPlugin"/>
+    </type>
+    <type name="Magento\Sales\Controller\Order\Reorder">
+        <plugin name="redirect_reorder" type="Magento\AsyncOrder\Plugin\Controller\Order\CustomerRedirectPlugin"/>
+    </type>
+    <type name="Magento\Sales\Controller\Order\Creditmemo">
+        <plugin name="redirect_creditmemo" type="Magento\AsyncOrder\Plugin\Controller\Order\CustomerRedirectPlugin"/>
+    </type>
+    <type name="Magento\Sales\Controller\Order\Invoice">
+        <plugin name="redirect_invoice" type="Magento\AsyncOrder\Plugin\Controller\Order\CustomerRedirectPlugin"/>
+    </type>
+    <type name="Magento\Sales\Controller\Order\Shipment">
+        <plugin name="redirect_shipment" type="Magento\AsyncOrder\Plugin\Controller\Order\CustomerRedirectPlugin"/>
+    </type>
+    <type name="Magento\Sales\Controller\Order\PrintAction">
+        <plugin name="redirect_print" type="Magento\AsyncOrder\Plugin\Controller\Order\CustomerRedirectPlugin"/>
+    </type>
+    <type name="Magento\Sales\Controller\Order\PrintCreditmemo">
+        <plugin name="redirect_print_creditmemo" type="Magento\AsyncOrder\Plugin\Controller\Order\CustomerRedirectPlugin"/>
+    </type>
+    <type name="Magento\Sales\Controller\Order\PrintInvoice">
+        <plugin name="redirect_print_invoice" type="Magento\AsyncOrder\Plugin\Controller\Order\CustomerRedirectPlugin"/>
+    </type>
+    <type name="Magento\Sales\Controller\Order\PrintShipment">
+        <plugin name="redirect_print_shipment" type="Magento\AsyncOrder\Plugin\Controller\Order\CustomerRedirectPlugin"/>
+    </type>
+    <type name="Magento\Sales\Helper\Guest">
+        <plugin name="redirect_guest_on_received_order" type="Magento\AsyncOrder\Plugin\Helper\GuestPlugin"/>
+    </type>
+    <virtualType name="SalesOrderIndexGridAsyncInsert" type="Magento\Sales\Model\GridAsyncInsert">
+        <arguments>
+            <argument name="globalConfig" xsi:type="object">Magento\AsyncOrder\Model\AsyncGlobalConfig</argument>
+        </arguments>
+    </virtualType>
+    <virtualType name="SalesInvoiceIndexGridAsyncInsert" type="Magento\Sales\Model\GridAsyncInsert">
+        <arguments>
+            <argument name="globalConfig" xsi:type="object">Magento\AsyncOrder\Model\AsyncGlobalConfig</argument>
+        </arguments>
+    </virtualType>
+    <virtualType name="SalesShipmentIndexGridAsyncInsert" type="Magento\Sales\Model\GridAsyncInsert">
+        <arguments>
+            <argument name="globalConfig" xsi:type="object">Magento\AsyncOrder\Model\AsyncGlobalConfig</argument>
+        </arguments>
+    </virtualType>
+    <virtualType name="SalesCreditmemoIndexGridAsyncInsert" type="Magento\Sales\Model\GridAsyncInsert">
+        <arguments>
+            <argument name="globalConfig" xsi:type="object">Magento\AsyncOrder\Model\AsyncGlobalConfig</argument>
+        </arguments>
+    </virtualType>
+    <type name="Magento\Sales\Observer\GridSyncInsertObserver">
+        <arguments>
+            <argument name="globalConfig" xsi:type="object">Magento\AsyncOrder\Model\AsyncGlobalConfig</argument>
+        </arguments>
+    </type>
+    <type name="Magento\Sales\Model\OrderIncrementIdChecker">
+        <plugin name="after_increment_id_check" type="Magento\AsyncOrder\Plugin\Model\OrderIncrementIdCheckerPlugin" sortOrder="50"/>
+    </type>
+    <type name="Magento\Sales\Model\Order\OrderCustomerExtractor">
+        <plugin name="after_extract" type="Magento\AsyncOrder\Plugin\Model\OrderCustomerExtractorPlugin" sortOrder="50"/>
+    </type>
+    <type name="Magento\AsyncOrder\Model\CustomerOrderProcessor">
+        <arguments>
+            <argument name="customerPaymentInformationManagement" xsi:type="object">asyncCustomerPaymentInformationManagement</argument>
+        </arguments>
+    </type>
+    <virtualType name="asyncCustomerPaymentInformationManagement" type="Magento\Checkout\Model\PaymentInformationManagement">
+        <arguments>
+            <argument name="cartRepository" xsi:type="object">Magento\AsyncOrder\Model\CartRepository</argument>
+        </arguments>
+    </virtualType>
+    <type name="Magento\AsyncOrder\Model\GuestOrderProcessor">
+        <arguments>
+            <argument name="guestPaymentInformationManagement" xsi:type="object">asyncGuestPaymentInformationManagement</argument>
+        </arguments>
+    </type>
+    <virtualType name="asyncGuestPaymentInformationManagement" type="Magento\Checkout\Model\GuestPaymentInformationManagement">
+        <arguments>
+            <argument name="cartRepository" xsi:type="object">Magento\AsyncOrder\Model\CartRepository</argument>
+        </arguments>
+    </virtualType>
+    <type name="Magento\Checkout\Model\PaymentInformationManagement">
+        <arguments>
+            <argument name="cartManagement" xsi:type="object">asyncCartManagement</argument>
+        </arguments>
+    </type>
+    <type name="Magento\Quote\Model\GuestCart\GuestCartManagement">
+        <arguments>
+            <argument name="quoteManagement" xsi:type="object">asyncCartManagement</argument>
+        </arguments>
+    </type>
+    <virtualType name="asyncCartManagement" type="Magento\Quote\Model\QuoteManagement">
+        <arguments>
+            <argument name="quoteRepository" xsi:type="object">Magento\AsyncOrder\Model\CartRepository</argument>
+        </arguments>
+    </virtualType>
+    <type name="Magento\Payment\Observer\SalesOrderBeforeSaveObserver">
+        <plugin name="skip_order_payment_verification" type="Magento\AsyncOrder\Plugin\OrderPaymentVerificationPlugin"/>
+    </type>
+    <type name="Magento\Framework\View\Element\UiComponent\DataProvider\CollectionFactory">
+        <arguments>
+            <argument name="collections" xsi:type="array">
+                <item name="sales_order_grid_data_source" xsi:type="string">Magento\AsyncOrder\Model\ResourceModel\Order\Grid\Collection</item>
+            </argument>
+        </arguments>
+    </type>
+</config>

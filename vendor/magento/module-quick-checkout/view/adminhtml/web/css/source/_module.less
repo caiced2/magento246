@@ -1,0 +1,50 @@
+// /**
+//  * Copyright © Magento, Inc. All rights reserved.
+//  * See COPYING.txt for license details.
+//  */
+
+div.quickcheckout-custom-group {
+    border-bottom: 0;
+
+    .heading {
+        border-bottom: 1px solid @color-gray80;
+    }
+}
+
+div.quickcheckout-custom-group-head {
+    .overview {
+        .logo-img {
+            background: url('@{baseDir}Magento_QuickCheckout/images/bolt-logo-new.png') no-repeat 100% 48%;
+            background-size: 13rem;
+            height: 3rem;
+            position: absolute;
+            width: 11rem;
+        }
+
+        .heading {
+            min-height: 27px;
+            padding-left: 12rem;
+        }
+
+        .setup-instructions {
+            padding-left: 12rem;
+
+            p {
+                font-weight: bold;
+                margin: 15px 0 0 0;
+            }
+
+            ul {
+                list-style: none;
+            }
+        }
+    }
+}
+
+div.page-create-order {
+    .bolt-credit-card-form {
+        margin-left: 20px;
+        margin-top: 20px;
+        width: ~'calc(calc(100% * 2) - 40px)';
+    }
+}

@@ -1,0 +1,91 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+ /**
+  * Copyright © Magento, Inc. All rights reserved.
+  * See COPYING.txt for license details.
+  */
+-->
+<tests xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:noNamespaceSchemaLocation="urn:magento:mftf:Test/etc/testSchema.xsd">
+    <test name="PageBuilderStagingDashboardVerifyCanMoveContentTypesFromOnHoverOptionMenusTest" extends="PageBuilderCatalogProductVerifyCanMoveContentTypesFromOnHoverOptionMenusTest">
+        <annotations>
+            <features value="PageBuilder"/>
+            <stories value="Staging Dashboard - CMS Page"/>
+            <title value="verify that user can move content types from on-hover option menus from Staging Dashboard"/>
+            <description value="This test is intended to ensure that users can move content types from the on-hover option menus within the PageBuilder stage for Staging Dashboard."/>
+            <severity value="MAJOR"/>
+            <useCaseId value="MC-14992"/>
+            <testCaseId value="MC-15262"/>
+            <group value="pagebuilder"/>
+            <group value="pagebuilder-ee"/>
+            <group value="pagebuilder-staging"/>
+            <group value="pagebuilder-stagingDashboard"/>
+            <group value="pagebuilder-cms-page"/>
+            <group value="pagebuilder-column"/>
+            <group value="pagebuilder-heading"/>
+            <group value="pagebuilder-divider"/>
+            <group value="pagebuilder-move"/>
+        </annotations>
+        <before>
+            <createData entity="_emptyCmsPage" stepKey="createCMSPage" before="createPreReqCategory"/>
+            <comment userInput="---merging to remove step---" stepKey="createPreReqCategory"/>
+            <comment userInput="---merging to remove step---" stepKey="createProduct"/>
+            <actionGroup ref="navigateToCMSPage" stepKey="navigateToCreatedProductEditPage">
+                <argument name="CMSPage" value="$$createCMSPage$$"/>
+            </actionGroup>
+            <comment userInput="---merging to remove step---" stepKey="expandAdminProductSection"/>
+            <comment userInput="---merging to remove step---" stepKey="openPageBuilderForDescription"/>
+            <comment userInput="Create Schedule New Update" stepKey="commentCreateScheduleNewUpdate" after="openPageBuilderForDescription"/>
+            <actionGroup ref="navigateToStagingSlideout" stepKey="navigateToStagingSlideout" after="commentCreateScheduleNewUpdate"/>
+            <actionGroup ref="FillScheduleUpdateBasicActionGroup" stepKey="createScheduleUpdate" after="navigateToStagingSlideout">
+                <argument name="schedule" value="UpdateWithoutEndUnique_2MinutesAhead"/>
+            </actionGroup>
+            <!-- Open Content Staging Dashboard -->
+            <comment userInput="Open Content Staging Dashboard" stepKey="commentOpenContentStagingDashboard" after="createScheduleUpdate"/>
+            <actionGroup ref="navigateToViewStagingUpdateFromStagingDashboard" stepKey="navigateToViewStagingUpdateFromStagingDashboard" after="commentOpenContentStagingDashboard">
+                <argument name="update" value="UpdateWithoutEndUnique_2MinutesAhead"/>
+            </actionGroup>
+            <actionGroup ref="openEditSlideOutForCMSPagesStagingUpdateFromViewStagingUpdate" stepKey="openEditSlideOutForCMSPagesStagingUpdateFromViewStagingUpdate" after="navigateToViewStagingUpdateFromStagingDashboard"/>
+            <actionGroup ref="ExpandAdminProductSectionActionGroup" stepKey="clickContentSectionHeader" after="openEditSlideOutForCMSPagesStagingUpdateFromViewStagingUpdate">
+                <argument name="sectionSelector" value="{{AdminStagingDashboardSection.contentHeader}}"/>
+                <argument name="sectionDependentSelector" value="{{AdminStagingDashboardSection.contentHeaderActive}}"/>
+            </actionGroup>
+            <actionGroup ref="switchToPageBuilderStage" stepKey="switchToPageBuilderStage" after="clickContentSectionHeader">
+                <argument name="sectionSelector" value="{{AdminStagingSlideOutSection.contentTab}}"/>
+                <argument name="sectionDependentSelector" value="{{AdminStagingSlideOutSection.stagingContentTab}}"/>
+            </actionGroup>
+        </before>
+        <after>
+            <deleteData createDataKey="createCMSPage" stepKey="deleteCreatedProduct"/>
+            <comment userInput="---merging to remove step---" stepKey="deleteCreatedCategory"/>
+            <amOnPage url="{{AdminStagingDashboardPage.url}}" stepKey="NavigateToAndResetProductGridToDefaultView"/>
+            <actionGroup ref="ClearFiltersAdminDataGridActionGroup" stepKey="clearFilter" after="NavigateToAndResetProductGridToDefaultView"/>
+        </after>
+        <actionGroup ref="expandPageBuilderPanelMenuSection" stepKey="expandGroupElements" before="dragColumnToRow">
+            <argument name="contentType" value="PageBuilderDividerContentType"/>
+        </actionGroup>
+        <!-- Saving Staging -->
+        <comment userInput="Saving Staging" stepKey="commentSaveProduct"/>
+        <actionGroup ref="saveStagingDashboardSlideOutUpdateForm" stepKey="saveProduct"/>
+        <actionGroup ref="saveStagingDashboardUpdateForm" stepKey="saveStagingDashboardUpdateForm" after="saveProduct">
+            <argument name="updateName" value="UpdateWithoutEndUnique_2MinutesAhead.updateName"/>
+        </actionGroup>
+        <actionGroup ref="navigateToViewStagingUpdateFromStagingDashboard" stepKey="expandAdminProductSection">
+            <argument name="update" value="UpdateWithoutEndUnique_2MinutesAhead"/>
+        </actionGroup>
+        <actionGroup ref="openEditSlideOutForCMSPagesStagingUpdateFromViewStagingUpdate" stepKey="openPageBuilderForDescription" after="expandAdminProductSection"/>
+        <actionGroup ref="ExpandAdminProductSectionActionGroup" stepKey="clickContentSectionHeader" after="openPageBuilderForDescription">
+            <argument name="sectionSelector" value="{{AdminStagingDashboardSection.contentHeader}}"/>
+            <argument name="sectionDependentSelector" value="{{AdminStagingDashboardSection.contentHeaderActive}}"/>
+        </actionGroup>
+        <actionGroup ref="switchToPageBuilderStage" stepKey="switchToPageBuilderStage2" after="clickContentSectionHeader">
+            <argument name="sectionSelector" value="{{AdminStagingSlideOutSection.contentTab}}"/>
+            <argument name="sectionDependentSelector" value="{{AdminStagingSlideOutSection.stagingContentTab}}"/>
+        </actionGroup>
+        <!-- Validate staging preview -->
+        <comment userInput="Validate staging preview" stepKey="commentValidateStorefront"/>
+        <actionGroup ref="openPreviewForScheduledUpdateFromSlideOut" stepKey="navigateToProductStorefront"/>
+        <actionGroup ref="exitPageBuilderFullScreen" stepKey="exitPageBuilderFullScreen2" before="navigateToProductStorefront"/>
+        <comment userInput="---merging to remove step---" stepKey="scrollToProductDescription"/>
+    </test>
+</tests>

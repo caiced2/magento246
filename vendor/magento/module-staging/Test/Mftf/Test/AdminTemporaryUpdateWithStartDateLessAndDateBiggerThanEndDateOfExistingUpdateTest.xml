@@ -1,0 +1,92 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+ /**
+  * Copyright © Magento, Inc. All rights reserved.
+  * See COPYING.txt for license details.
+  */
+-->
+
+<tests xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xsi:noNamespaceSchemaLocation="urn:magento:mftf:Test/etc/testSchema.xsd">
+  <test name="AdminTemporaryUpdateWithStartDateLessAndDateBiggerThanEndDateOfExistingUpdateTest">
+    <annotations>
+      <features value="Staging"/>
+      <stories value="Staging updates"/>
+      <title value="Temporary Update with start date less than start date of existing update and end date bigger than end date of existing update."/>
+      <description value="Temporary Update with start date less than start date of existing update and end date bigger than end date of existing update."/>
+      <severity value="MAJOR"/>
+      <testCaseId value="AC-4135"/>
+      <group value="staging"/>
+    </annotations>
+    <before>
+      <!--Create Simple Product and Category-->
+      <createData entity="_defaultCategory" stepKey="createCategory"/>
+      <createData entity="ApiProductWithDescription" stepKey="createProduct">
+        <requiredEntity createDataKey="createCategory"/>
+        <field key="price">10</field>
+      </createData>
+      <actionGroup ref="AdminLoginActionGroup" stepKey="loginAsAdmin"/>
+      <!-- Create storeView -->
+      <actionGroup ref="AdminCreateStoreViewActionGroup" stepKey="createStoreView"/>
+      <magentoCron groups="index" stepKey="reindex"/>
+    </before>
+    <after>
+      <deleteData createDataKey="createProduct" stepKey="deleteProduct"/>
+      <deleteData createDataKey="createCategory" stepKey="deleteCategory"/>
+      <actionGroup ref="AdminDeleteStoreViewActionGroup" stepKey="deleteStoreView"/>
+      <magentoCron groups="index" stepKey="reindex"/>
+      <actionGroup ref="AdminClearFiltersActionGroup" stepKey="clearProductFilters"/>
+      <actionGroup ref="AdminLogoutActionGroup" stepKey="logout"/>
+    </after>
+    <!-- Open Product Grid, Filter product and open -->
+    <actionGroup ref="SearchForProductOnBackendActionGroup" stepKey="searchProduct">
+      <argument name="product" value="$$createProduct$$"/>
+    </actionGroup>
+    <click selector="{{AdminProductGridSection.productGridNameProduct('$$createProduct.name$$')}}" stepKey="openProductForEdit"/>
+    <!-- Block "Scheduled Changes"  with no inside content is presented on product view page -->
+    <dontSeeElement selector="{{AdminStagingSlideOutSection.contentBlock}}" stepKey="dontSeeContentInScheduledChanges"/>
+    <!-- Create Schedule New Update -->
+    <click selector="{{AdminStagingSlideOutSection.scheduleNewUpdateBtn}}" stepKey="clickButtonScheduleNewUpdate"/>
+    <click selector="{{AdminStagingSlideOutSection.changeStoreButton}}" stepKey="clickStoreSwitcher"/>
+    <click selector="{{AdminStagingSlideOutSection.selectStoreView(customStore.name)}}" stepKey="clickStoreView"/>
+    <waitForElementVisible selector="{{AdminConfirmationModalSection.ok}}" stepKey="waitForElementVisible"/>
+    <click selector="{{AdminConfirmationModalSection.ok}}" stepKey="acceptMessage"/>
+    <!-- Fill Schedule update fields -->
+    <generateDate date="+1 day" format="m/j/Y g:i A" stepKey="generateStartDate"/>
+    <generateDate date="+3 day" format="m/j/Y g:i A" stepKey="generateEndDate"/>
+    <fillField selector="{{AdminStagingSlideOutSection.updateName}}" userInput="s5UpdateName" stepKey="fillUpdateName"/>
+    <fillField selector="{{AdminStagingSlideOutSection.updateDescription}}" userInput="s5updateDescription" stepKey="fillDescription"/>
+    <fillField selector="{{AdminStagingSlideOutSection.startDate}}" userInput="{$generateStartDate}}" stepKey="fillStartDate"/>
+    <fillField selector="{{AdminStagingSlideOutSection.endDate}}" userInput="{$generateEndDate}" stepKey="fillEndDate"/>
+    <fillField selector="{{AdminCatalogStagingSlideOutSection.productPrice}}" userInput="14" stepKey="fillProductPrice"/>
+    <!-- Open date picker and collect date and time in format that we need for assertions -->
+    <!-- Start date First Staging S5 -->
+    <click selector="{{AdminStagingSlideOutSection.datepickerStartDate}}" stepKey="clickDatePickerStartDay"/>
+    <grabTextFrom selector="{{AdminStagingSlideOutSection.datapickerCurrentDay}}" stepKey="grabStartCurrentDayS5"/>
+    <grabTextFrom selector="{{AdminStagingSlideOutSection.datapickerMonth}}" stepKey="grabStartMonthS5"/>
+    <grabValueFrom selector="{{AdminStagingSlideOutSection.datapickerYear}}" stepKey="grabStartYearS5"/>
+    <click selector="{{AdminStagingSlideOutSection.datepickerClose}}" stepKey="clickClose"/>
+    <!-- End date First Staging S5-->
+    <click selector="{{AdminStagingSlideOutSection.datepickerEndDate}}" stepKey="clickDatePickerEndDay"/>
+    <grabTextFrom selector="{{AdminStagingSlideOutSection.datapickerCurrentDay}}" stepKey="grabEndCurrentDayS5"/>
+    <grabTextFrom selector="{{AdminStagingSlideOutSection.datapickerMonth}}" stepKey="grabEndMonthS5"/>
+    <grabValueFrom selector="{{AdminStagingSlideOutSection.datapickerYear}}" stepKey="grabEndYearS5"/>
+    <click selector="{{AdminStagingSlideOutSection.datepickerClose}}" stepKey="clickCloseDatePicker"/>
+    <click selector="{{AdminStagingSlideOutSection.save}}" stepKey="clickSave"/>
+    <!-- assert update details -->
+    <see selector="{{AdminScheduledChangesSection.scheduleItemName}}" userInput="s5UpdateName" stepKey="seeUpdateName"/>
+    <see selector="{{AdminScheduledChangesSection.scheduleItemDescription}}" userInput="s5updateDescription" stepKey="seeUpdateDescription"/>
+    <seeElement selector="{{AdminScheduledChangesSection.scheduleStartDate('{$grabStartMonthS5} {$grabStartCurrentDayS5}, {$grabStartYearS5}')}}" stepKey="seeStartDate"/>
+    <seeElement selector="{{AdminScheduledChangesSection.scheduleEndDate('{$grabEndMonthS5} {$grabEndCurrentDayS5}, {$grabEndYearS5}')}}" stepKey="seeEndDate"/>
+
+    <!-- Create Schedule New Update for which start date less than start date of existing update and end date bigger than end date of existing update -->
+    <generateDate date="+1 hour" format="m/j/Y g:i A" stepKey="generateSecondStartDate"/>
+    <generateDate date="+4 day" format="m/j/Y g:i A" stepKey="generateSecondEndDate"/>
+    <actionGroup ref="FillScheduleUpdateRemovePriceActionGroup" stepKey="fillWrongScheduleUpdate">
+      <argument name="staging" value="S8UpdateNameStaging"/>
+      <argument name="timeStart" value="{$generateSecondStartDate}"/>
+      <argument name="timeEnd" value="{$generateSecondEndDate}"/>
+    </actionGroup>
+    <see selector="{{AdminStagingSlideOutSection.scheduleErrorMessage}}" userInput="error: : Future Update already exists in this time range. Set a different range and try again." stepKey="seeMessageError"/>
+  </test>
+</tests>

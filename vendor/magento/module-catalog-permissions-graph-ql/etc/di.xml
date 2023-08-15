@@ -1,0 +1,36 @@
+<?xml version="1.0"?>
+<!--
+/**
+ * Copyright © Magento, Inc. All rights reserved.
+ * See COPYING.txt for license details.
+ */
+-->
+<config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="urn:magento:framework:ObjectManager/etc/config.xsd">
+    <type name="Magento\CatalogGraphQl\Model\Resolver\Products">
+        <plugin name="catalog_search_permissions" type="Magento\CatalogPermissionsGraphQl\Model\Resolver\Products"/>
+    </type>
+    <type name="Magento\CatalogGraphQl\Model\Resolver\Categories\DataProvider\Category\CompositeCollectionProcessor">
+        <arguments>
+            <argument name="collectionProcessors" xsi:type="array">
+                <item name="customerGroup" xsi:type="object">Magento\CatalogPermissionsGraphQl\Model\Resolver\Categories\DataProvider\Category\CollectionProcessor\ApplyPermissionsOnCategory</item>
+            </argument>
+        </arguments>
+    </type>
+    <type name="Magento\QuoteGraphQl\Model\CartItem\PrecursorComposite">
+        <arguments>
+            <argument name="precursors" xsi:type="array">
+                <item name="permissionsBulkPreload" xsi:type="object">Magento\CatalogPermissionsGraphQl\Model\CartItem\BulkPermissionsPrecursor</item>
+            </argument>
+        </arguments>
+    </type>
+    <type name="Magento\QuoteGraphQl\Model\CartItem\DataProvider\Processor\ItemDataCompositeProcessor">
+        <arguments>
+            <argument name="itemDataProcessors" xsi:type="array">
+                <item name="applyCategoryPermissionsOnCartItem" xsi:type="object">Magento\CatalogPermissionsGraphQl\Model\CartItem\DataProvider\Processor\PermissionsProcessor</item>
+            </argument>
+        </arguments>
+    </type>
+    <type name="Magento\CatalogGraphQl\Model\Resolver\Products\DataProvider\Product\CompositeCollectionProcessor">
+        <plugin name="applyCategoryPermissionsOnProductProcessor" type="\Magento\CatalogPermissionsGraphQl\Plugin\CatalogGraphQl\Model\Resolver\Products\DataProvider\Product\CompositeCollectionProcessorPlugin" disabled="false"/>
+    </type>
+</config>

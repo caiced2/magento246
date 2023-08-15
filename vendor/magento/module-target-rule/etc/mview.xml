@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+/**
+ * Copyright © Magento, Inc. All rights reserved.
+ * See COPYING.txt for license details.
+ */
+-->
+<config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="urn:magento:framework:Mview/etc/mview.xsd">
+    <view id="targetrule_product_rule" class="Magento\TargetRule\Model\Indexer\TargetRule\Product\Rule" group="indexer">
+        <subscriptions>
+            <table name="catalog_product_entity" entity_column="entity_id" />
+            <table name="catalog_category_product" entity_column="product_id" />
+        </subscriptions>
+    </view>
+    <view id="targetrule_rule_product" class="Magento\TargetRule\Model\Indexer\TargetRule\Rule\Product" group="indexer">
+        <subscriptions>
+            <table name="magento_targetrule" entity_column="rule_id" />
+            <table name="magento_targetrule_customersegment" entity_column="rule_id" />
+        </subscriptions>
+    </view>
+</config>

@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+ /**
+  * Copyright © Magento, Inc. All rights reserved.
+  * See COPYING.txt for license details.
+  */
+-->
+
+<tests xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="urn:magento:mftf:Test/etc/testSchema.xsd">
+    <test name="ApplyCatalogPriceRuleByProductAttributeTest">
+        <remove keyForRemoval="selectActive"/>
+        <!-- Click 'Save' button -->
+        <remove keyForRemoval="seeSuccessMessage"/>
+
+        <!-- Open the rule and Click Schedule new Update button and update Start Date field to a future date Change the status to Active Save update -->
+            <click selector="{{AdminNewCatalogPriceRule.saveAndContinue}}" stepKey="clickSave"/>
+            <actionGroup ref="CreateCatalogRuleStagingUpdateWithItsStartActionGroup" after="clickSave" stepKey="fillOutActionGroup">
+                    <argument name="stagingUpdate" value="_defaultCatalogRule"/>
+            </actionGroup>
+    </test>
+</tests>

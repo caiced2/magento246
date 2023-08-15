@@ -1,0 +1,34 @@
+<?php
+/**
+ * Copyright © Magento, Inc. All rights reserved.
+ * See COPYING.txt for license details.
+ */
+
+/**
+ * @var \Magento\GiftCardAccount\Block\Sales\Order\Giftcards $block
+ */
+$order  = $block->getOrder();
+$source = $block->getSource();
+$cards  = $block->getGiftCards();
+?>
+<?php if ($cards) : ?>
+    <?php foreach ($cards as $card) : ?>
+        <tr class="giftcard totals">
+            <td <?= /* @noEscape */ $block->getLabelProperties() ?>>
+                <?= $block->escapeHtml(__('Gift Card (%1)', $card->getCode())) ?>
+            </td>
+            <td <?= /* @noEscape */ $block->getValueProperties() ?>>
+                <span class="discount">-<?= /* @noEscape */ $order->formatPrice($card->getAmount()) ?></span>
+            </td>
+        </tr>
+    <?php endforeach; ?>
+<?php elseif ($source->getGiftCardsAmount() > 0) : ?>
+    <tr class="giftcard totals">
+        <td <?= /* @noEscape */ $block->getLabelProperties() ?>>
+            <?= $block->escapeHtml(__('Gift Card')) ?>
+        </td>
+        <td <?= /* @noEscape */ $block->getValueProperties() ?>>
+            <span class="discount">-<?= /* @noEscape */ $order->formatPrice($source->getGiftCardsAmount()) ?></span>
+        </td>
+    </tr>
+<?php endif?>

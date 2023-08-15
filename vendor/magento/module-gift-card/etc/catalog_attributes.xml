@@ -1,0 +1,38 @@
+<?xml version="1.0"?>
+<!--
+/**
+ * Copyright © Magento, Inc. All rights reserved.
+ * See COPYING.txt for license details.
+ */
+-->
+<config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="urn:magento:module:Magento_Catalog:etc/catalog_attributes.xsd">
+    <group name="catalog_product">
+        <attribute name="giftcard_type"/>
+        <attribute name="giftcard_amounts"/>
+        <attribute name="allow_open_amount"/>
+        <attribute name="open_amount_min"/>
+        <attribute name="open_amount_max"/>
+        <attribute name="use_config_lifetime"/>
+        <attribute name="lifetime"/>
+        <attribute name="use_config_is_redeemable"/>
+        <attribute name="is_redeemable"/>
+    </group>
+    <group name="quote_item">
+        <attribute name="giftcard_type"/>
+        <attribute name="giftcard_amounts"/>
+        <attribute name="allow_open_amount"/>
+        <attribute name="open_amount_min"/>
+        <attribute name="open_amount_max"/>
+        <attribute name="use_config_lifetime"/>
+        <attribute name="lifetime"/>
+        <attribute name="use_config_is_redeemable"/>
+        <attribute name="is_redeemable"/>
+        <attribute name="use_config_email_template"/>
+        <attribute name="email_template"/>
+    </group>
+    <group name="unassignable">
+        <attribute name="allow_open_amount" />
+        <attribute name="giftcard_amounts" />
+        <attribute name="giftcard_type" />
+    </group>
+</config>

@@ -1,0 +1,84 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+ /**
+  * Copyright © Magento, Inc. All rights reserved.
+  * See COPYING.txt for license details.
+  */
+-->
+
+<tests xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xsi:noNamespaceSchemaLocation="urn:magento:mftf:Test/etc/testSchema.xsd">
+    <test name="AdminVerifyOrderCanNotBePlacedOnStagingPreviewTest">
+        <annotations>
+            <stories value="Order can not be placed on Staging Preview"/>
+            <title value="[Staging] Verify that order can not be placed on Staging Preview"/>
+            <description value="[Staging] Verify that order can not be placed on Staging Preview"/>
+            <severity value="CRITICAL"/>
+            <testCaseId value="MAGETWO-49571"/>
+            <group value="staging"/>
+        </annotations>
+        <before>
+            <magentoCLI command="config:set {{EnableFlatRateConfigData.path}} {{EnableFlatRateConfigData.value}}" stepKey="enableFlatRate"/>
+            <createData entity="SimpleSubCategory" stepKey="createCategory"/>
+            <createData entity="SimpleProduct" stepKey="createProduct">
+                <requiredEntity createDataKey="createCategory"/>
+            </createData>
+            <createData entity="Simple_US_Customer" stepKey="createCustomer"/>
+            <!-- Log in Admin -->
+            <actionGroup ref="AdminLoginActionGroup" stepKey="loginAsAdmin"/>
+            <!-- Open product for edit -->
+            <amOnPage url="{{AdminProductEditPage.url($$createProduct.id$$)}}" stepKey="goToAdminProductEditPage"/>
+            <!-- Create Schedule New Update -->
+            <generateDate date="+7 day" format="m/j/Y g:i A" stepKey="generateStartDate"/>
+            <generateDate date="+10 day" format="m/j/Y g:i A" stepKey="generateEndDate"/>
+            <actionGroup ref="FillScheduleUpdateWithCheckActionGroup" stepKey="fillScheduleUpdateWithoutEnd">
+                <argument name="staging" value="S5UpdateNameStaging"/>
+                <argument name="timeStart" value="{$generateStartDate}"/>
+                <argument name="timeEnd" value="{$generateEndDate}"/>
+                <argument name="productPrice" value="15"/>
+            </actionGroup>
+            <actionGroup ref="SaveProductFormActionGroup" stepKey="saveProductForm"/>
+
+            <!-- TODO: REMOVE AFTER FIX MC-21717 -->
+            <magentoCLI command="cron:run --group=index" stepKey="runCronReindex"/>
+        </before>
+        <after>
+            <magentoCLI command="config:set {{DisableFlatRateConfigData.path}} {{DisableFlatRateConfigData.value}}" stepKey="disableFlatRate"/>
+            <deleteData createDataKey="createCategory" stepKey="deleteCategory"/>
+            <deleteData createDataKey="createProduct" stepKey="deleteProduct"/>
+            <deleteData createDataKey="createCustomer" stepKey="deleteCustomer"/>
+            <amOnPage url="{{AdminStagingDashboardPage.url}}" stepKey="amOnStagingDashboardPage"/>
+            <waitForPageLoad stepKey="waitForPageLoad"/>
+            <actionGroup ref="ClearFiltersAdminDataGridActionGroup" stepKey="clearProductFilters"/>
+            <actionGroup ref="AdminLogoutActionGroup" stepKey="logout"/>
+        </after>
+        <!-- 1. Go to Content > Dashboard -->
+        <!-- 2. Click *Select > Preview* next to update from preconditions -->
+        <actionGroup ref="NavigateToPreviewStagingUpdateFromStagingDashboard" stepKey="navigateToViewStagingUpdateFromStagingDashboard">
+            <argument name="update" value="S5UpdateNameStaging"/>
+        </actionGroup>
+        <click selector="{{StorefrontPanelHeaderSection.customerLoginLink}}" stepKey="clickSignOutButton"/>
+        <fillField userInput="$$createCustomer.email$$" selector="{{StorefrontCustomerSignInFormSection.emailField}}" stepKey="fillEmail"/>
+        <fillField userInput="$$createCustomer.password$$" selector="{{StorefrontCustomerSignInFormSection.passwordField}}" stepKey="fillPassword"/>
+        <click selector="{{StorefrontCustomerSignInFormSection.signInAccountButton}}" stepKey="clickSignInAccountButton"/>
+        <!-- 3. Add simple product to the shopping cart -->
+        <click selector="{{StorefrontHeaderSection.NavigationCategoryByName($$createCategory.name$$)}}" stepKey="navigateToCategory"/>
+        <waitForPageLoad time="30" stepKey="waitForCategoryPageLoad"/>
+        <click selector="{{StorefrontCategoryProductSection.ProductTitleByNumber('1')}}" stepKey="navigateToProduct"/>
+        <waitForPageLoad time="30" stepKey="waitForProductPageLoad"/>
+        <actionGroup ref="AddToCartFromStorefrontProductPageActionGroup" stepKey="addToCartFromStorefrontProductPage">
+            <argument name="productName" value="$$createProduct.name$$"/>
+        </actionGroup>
+        <!-- 4. Click *Proceed to Checkout* button from mini shopping cart -->
+        <actionGroup ref="GoToCheckoutFromMinicartActionGroup" stepKey="goToCheckoutFromMinicartActionGroup"/>
+        <actionGroup ref="StorefrontCheckoutForwardFromShippingStepActionGroup" stepKey="fillOrderShippingInfo"/>
+        <!-- 7. Select *Check\Money Order* as a payment method -->
+        <actionGroup ref="CheckoutSelectCheckMoneyOrderPaymentActionGroup" stepKey="selectCheckMoneyOrderAsPaymentMethod"/>
+        <checkOption selector="{{StorefrontCheckoutPaymentMethodSection.billingAddressSameAsShipping}}" stepKey="checkBillingAddressSameAsShippingCheckmo"/>
+        <!-- 8. Click *Place Order* button -->
+        <waitForElementVisible selector="{{CheckoutPaymentSection.placeOrder}}" stepKey="waitForPlaceOrderButtonVisible"/>
+        <click selector="{{CheckoutPaymentSection.placeOrder}}" stepKey="clickPlaceOrder"/>
+        <waitForElement selector="{{StorefrontMessagesSection.error}}" stepKey="waitForValidationErrorMessage"/>
+        <see selector="{{StorefrontMessagesSection.error}}" userInput="The order can't be submitted in preview mode." stepKey="assertValidationErrorMessage"/>
+    </test>
+</tests>

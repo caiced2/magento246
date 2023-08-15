@@ -1,0 +1,116 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+ /**
+  * Copyright © Magento, Inc. All rights reserved.
+  * See COPYING.txt for license details.
+  */
+-->
+
+<tests xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xsi:noNamespaceSchemaLocation="urn:magento:mftf:Test/etc/testSchema.xsd">
+    <test name="AdminDeleteProductStagingUpdateWhenTheProductIsUsedTest">
+        <annotations>
+            <features value="CatalogStaging"/>
+            <stories value="Admin manages staging update"/>
+            <title value="Delete Product Staging Update when the Product is used"/>
+            <description value="Verifies that after deleting a product update, other entities that use the product are not affected"/>
+            <severity value="CRITICAL"/>
+            <testCaseId value="MAGETWO-70227"/>
+            <group value="catalog_staging"/>
+        </annotations>
+        <before>
+            <magentoCLI command="config:set catalog/seo/generate_category_product_rewrites 1" stepKey="enableCategoryProductRewrites"/>
+            <!--Create anchor category BB with product B in it-->
+            <createData entity="ApiCategory" stepKey="createCategoryBB"/>
+            <createData entity="SimpleProduct" stepKey="createSimpleProductB">
+                <requiredEntity createDataKey="createCategoryBB"/>
+            </createData>
+            <!--Create product A assigned to category AA-->
+            <createData entity="SubCategoryWithParent" stepKey="createCategoryAA">
+                <requiredEntity createDataKey="createCategoryBB"/>
+            </createData>
+            <createData entity="SimpleProduct3" stepKey="createSimpleProductA">
+                <requiredEntity createDataKey="createCategoryAA"/>
+            </createData>
+            <getData entity="GetProduct2" stepKey="getProductB">
+                <requiredEntity createDataKey="createSimpleProductB"/>
+            </getData>
+            <actionGroup ref="AdminLoginActionGroup" stepKey="login"/>
+            <!--Create "Catalog Product Link" widget for product A-->
+            <actionGroup ref="AdminCreateProductLinkWidgetActionGroup" stepKey="createProductLinkWidgetForProductA">
+                <argument name="widget" value="ProductLinkWidget"/>
+                <argument name="product" value="$$createSimpleProductA$$"/>
+            </actionGroup>
+            <!--Assign product A as a related to  product B-->
+            <createData entity="OneRelatedProductLink" stepKey="addRelatedProductToProductB">
+                <requiredEntity createDataKey="getProductB"/>
+                <requiredEntity createDataKey="createSimpleProductA"/>
+            </createData>
+            <!--Register customer C, add product A to his cart-->
+            <createData entity="Simple_US_Customer" stepKey="createCustomer"/>
+            <actionGroup ref="LoginToStorefrontActionGroup" stepKey="loginToStorefront">
+                <argument name="Customer" value="$$createCustomer$$"/>
+            </actionGroup>
+            <amOnPage url="{{StorefrontProductPage.url($$createSimpleProductA.custom_attributes[url_key]$$)}}" stepKey="openProductAPage"/>
+            <actionGroup ref="StorefrontAddProductToCartActionGroup" stepKey="AddSimpleProductToCart">
+                <argument name="product" value="$$createSimpleProductA$$"/>
+                <argument name="productCount" value="1"/>
+            </actionGroup>
+            <!--Create an URL rewrite D for product A URL-->
+            <amOnPage url="{{AdminUrlRewriteIndexPage.url}}" stepKey="amOnUrlRewriteIndexPage"/>
+            <click selector="{{AdminDataGridHeaderSection.filters}}" stepKey="openUrlRewriteGridFilters"/>
+            <fillField selector="{{AdminDataGridHeaderSection.filterFieldInput('request_path')}}" userInput="$createSimpleProductA.custom_attributes[url_key]$.html" stepKey="inputProductName"/>
+            <click selector="{{AdminDataGridHeaderSection.applyFilters}}" stepKey="clickSearchButton"/>
+            <seeElement selector="{{AdminUrlRewriteIndexSection.gridCellByColumnValue('Request Path', $createSimpleProductA.custom_attributes[url_key]$.html)}}" stepKey="seeValue1"/>
+            <click selector="{{AdminUrlRewriteIndexSection.select('3')}}" stepKey="clickSelect"/>
+            <waitForElementVisible selector="{{AdminUrlRewriteIndexSection.activeEdit}}" stepKey="waitForEdit"/>
+            <click selector="{{AdminUrlRewriteIndexSection.activeEdit}}" stepKey="clickEdit"/>
+            <waitForPageLoad stepKey="waitForPageLoad"/>
+            <fillField selector="{{AdminUrlRewriteEditSection.requestPathField}}" userInput="{{SimpleProduct4.urlKey}}.html" stepKey="inputNewProductUrlKey"/>
+            <click selector="{{AdminMainActionsSection.save}}" stepKey="saveUrlRewriteForProductPage"/>
+            <see selector="{{AdminMessagesSection.success}}" userInput="The URL Rewrite has been saved." stepKey="seeSuccessMessages"/>
+        </before>
+        <after>
+            <actionGroup ref="StorefrontCustomerLogoutActionGroup" stepKey="storefrontCustomerLogout"/>
+            <actionGroup ref="AdminDeleteWidgetActionGroup" stepKey="deleteProductLinkWidget">
+                <argument name="widget" value="ProductLinkWidget"/>
+            </actionGroup>
+            <deleteData createDataKey="createSimpleProductA" stepKey="deleteSimpleProductA"/>
+            <deleteData createDataKey="createSimpleProductB" stepKey="deleteSimpleProductB"/>
+            <deleteData createDataKey="createCategoryAA" stepKey="deleteCategoryAA"/>
+            <deleteData createDataKey="createCategoryBB" stepKey="deleteCategoryBB"/>
+            <deleteData createDataKey="createCustomer" stepKey="deleteCustomer"/>
+            <actionGroup ref="AdminLogoutActionGroup" stepKey="logout"/>
+            <magentoCLI command="config:set catalog/seo/generate_category_product_rewrites 0" stepKey="disableCategoryProductRewrites"/>
+        </after>
+        <!--Create a product update-->
+        <amOnPage url="{{AdminProductEditPage.url($$createSimpleProductA.id$$)}}" stepKey="goToEditProductAPage"/>
+        <generateDate date="+1 day" format="m/j/Y g:i A" stepKey="generateSecondStartDate"/>
+        <generateDate date="+3 day" format="m/j/Y g:i A" stepKey="generateSecondEndDate"/>
+        <actionGroup ref="FillScheduleUpdateWithCheckEndActionGroup" stepKey="fillScheduleUpdate">
+            <argument name="staging" value="S5UpdateNameStaging"/>
+            <argument name="timeStart" value="{$generateSecondStartDate}"/>
+            <argument name="timeEnd" value="{$generateSecondEndDate}"/>
+            <argument name="productPrice" value="15"/>
+        </actionGroup>
+        <!--Delete the created product update-->
+        <actionGroup ref="DeleteTheUpdateActionGroup" stepKey="DeleteTheUpdateActionGroup">
+            <argument name="fromStaging" value="S5UpdateNameStaging"/>
+        </actionGroup>
+        <!--Open the shopping cart, the cart still contains product *A*-->
+        <amOnPage url="{{CheckoutCartPage.url}}" stepKey="openShoppingCartPage"/>
+        <seeElement selector="{{CheckoutCartProductSection.ProductLinkByName($$createSimpleProductA.name$$)}}" stepKey="seeProductInCart"/>
+        <!--Open category *AA* on Storefront, Category *AA* displays product *A*-->
+        <amOnPage url="{{StorefrontCategoryPage.url($$createCategoryBB.custom_attributes[url_key]$$/$$createCategoryAA.custom_attributes[url_key]$$)}}" stepKey="goToCategoryAAPage"/>
+        <seeElement selector="{{StorefrontCategoryProductSection.ProductTitleByName($$createSimpleProductA.name$$)}}" stepKey="seeProductAInCategoryAAPage"/>
+        <!--Open category *BB* on Storefront, Category *BB* displays product *A*-->
+        <amOnPage url="{{StorefrontCategoryPage.url($$createCategoryBB.custom_attributes[url_key]$$)}}" stepKey="goToCategoryBBPage"/>
+        <seeElement selector="{{StorefrontCategoryProductSection.ProductTitleByName($$createSimpleProductA.name$$)}}" stepKey="seeProductAInCategoryBBPage"/>
+        <!--Open product *B* page on Storefront, Product *A* is displayed as a related-->
+        <amOnPage url="{{StorefrontProductPage.url($$createSimpleProductB.custom_attributes[url_key]$$)}}" stepKey="goToProductBPage"/>
+        <seeElement selector="{{StorefrontProductRelatedProductsSection.relatedProductName($$createSimpleProductA.name$$)}}" stepKey="seeRelatedProductAInStorefront"/>
+        <!--Open product *A* page using its custom URL *D*, Product *A* page is opened-->
+        <amOnPage url="{{StorefrontProductPage.url(SimpleProduct4.urlKey)}}" stepKey="goToProductAPageUseCustomUrl"/>
+        <see selector="{{StorefrontProductInfoMainSection.productName}}" userInput="$$createSimpleProductA.name$$" stepKey="seeProductName"/>
+    </test>
+</tests>

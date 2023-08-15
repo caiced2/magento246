@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+ /**
+  * Copyright © Magento, Inc. All rights reserved.
+  * See COPYING.txt for license details.
+  */
+-->
+<actionGroups xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:noNamespaceSchemaLocation="urn:magento:mftf:Test/etc/actionGroupSchema.xsd">
+    <actionGroup name="AdminAddEmailReminderWithShoppingCartConditionActionGroup">
+        <annotations>
+            <description>Adds Email Reminder Rule with Shopping cart condition.</description>
+        </annotations>
+        <arguments>
+            <argument name="reminder" type="entity" defaultValue="SimpleReminderAbandonedCart"/>
+        </arguments>
+
+        <amOnPage url="{{AdminEmailRemindersGridPage.url}}" stepKey="onRemindersPage"/>
+        <waitForPageLoad stepKey="waitForEmailRemindersPageLoaded"/>
+        <click selector="{{AdminMainActionsSection.add}}" stepKey="clickOnAddNewRuleButton"/>
+        <waitForElementVisible selector="{{AdminEmailReminderRuleFormInformationSection.ruleName}}" stepKey="waitForRuleNameVisible"/>
+        <fillField selector="{{AdminEmailReminderRuleFormInformationSection.ruleName}}" userInput="{{reminder.ruleName}}" stepKey="fillRuleName"/>
+        <selectOption selector="{{AdminEmailReminderRuleFormInformationSection.status}}" userInput="{{reminder.status}}" stepKey="selectStatus"/>
+        <scrollToTopOfPage stepKey="scrollToTopOfPage"/>
+        <click selector="{{AdminEmailReminderRuleFormNavigationSection.conditionsTab}}" stepKey="clickOnConditionsTab"/>
+        <waitForElementVisible selector="{{AdminEmailReminderRuleFormConditionsSection.addCondition}}" stepKey="waitForAddConditionButtonVisible"/>
+        <click selector="{{AdminEmailReminderRuleFormConditionsSection.addCondition}}" stepKey="clickOnAddConditionButton"/>
+        <selectOption selector="{{AdminEmailReminderRuleFormConditionsSection.conditionName}}" userInput="{{reminder.conditionName}}" stepKey="selectConditionName"/>
+        <waitForPageLoad stepKey="waitForConditionSelected"/>
+        <click selector="{{AdminEmailReminderRuleFormConditionsSection.condition('for')}}" stepKey="clickOnConditionOperator"/>
+        <selectOption selector="{{AdminEmailReminderRuleFormConditionsSection.conditionOperator}}" userInput="{{reminder.conditionOperator}}" stepKey="selectConditionOperator"/>
+        <!-- In case we are choosing already selected value - select is not closed automatically -->
+        <conditionalClick selector="{{AdminEmailReminderRuleFormConditionsSection.condition('...')}}" dependentSelector="{{AdminEmailReminderRuleFormConditionsSection.conditionOperator}}" visible="true" stepKey="closeSelect"/>
+        <click selector="{{AdminEmailReminderRuleFormConditionsSection.condition('...')}}" stepKey="clickToFillConditionValue"/>
+        <fillField selector="{{AdminEmailReminderRuleFormConditionsSection.conditionValue}}" userInput="{{reminder.daysForAbandonedCart}}" stepKey="fillConditionValue"/>
+        <click selector="{{AdminMainActionsSection.save}}" stepKey="clickSaveButton"/>
+        <waitForElementVisible selector="{{AdminMessagesSection.success}}" stepKey="waitForSuccessMessage"/>
+        <see selector="{{AdminMessagesSection.success}}" userInput="You saved the reminder rule." stepKey="seeSuccessMessage"/>
+    </actionGroup>
+</actionGroups>

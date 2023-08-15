@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+ /**
+  * Copyright © Magento, Inc. All rights reserved.
+  * See COPYING.txt for license details.
+  */
+-->
+<tests xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="urn:magento:mftf:Test/etc/testSchema.xsd">
+    <test name="AdminCreateUserRoleTest">
+        <annotations>
+            <features value="AdminGws"/>
+            <stories value="Create users"/>
+            <title value="Create a user role in admin"/>
+            <description value="Create a user role in admin"/>
+            <severity value="CRITICAL"/>
+            <group value="userRole"/>
+            <group value="pr_exclude"/>
+        </annotations>
+        <before>
+            <actionGroup ref="AdminLoginActionGroup" stepKey="login"/>
+        </before>
+        <actionGroup ref="AdminCreateUserRoleActionGroup" stepKey="createUserRole">
+            <argument name="role" value="adminRole"/>
+        </actionGroup>
+        <amOnPage url="{{AdminRolesPage.url}}" stepKey="navigateToRoleGrid" />
+        <waitForPageLoad stepKey="waitForPageLoad1" />
+        <fillField selector="{{AdminRoleGridSection.roleNameFilterTextField}}" userInput="{{adminRole.name}}" stepKey="enterRoleName" />
+        <click selector="{{AdminRoleGridSection.searchButton}}" stepKey="clickSearch" />
+        <waitForPageLoad stepKey="waitForPageLoad2" />
+        <see selector="{{AdminRoleGridSection.roleNameInFirstRow}}" userInput="{{adminRole.name}}" stepKey="seeNewRole" />
+    </test>
+</tests>

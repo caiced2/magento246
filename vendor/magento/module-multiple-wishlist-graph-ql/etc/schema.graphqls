@@ -1,0 +1,67 @@
+# Copyright © Magento, Inc. All rights reserved.
+# See COPYING.txt for license details.
+
+type Mutation {
+    createWishlist(input: CreateWishlistInput! @doc(description: "An input object that defines a new wish list.")): CreateWishlistOutput @resolver(class: "\\Magento\\MultipleWishlistGraphQl\\Model\\Resolver\\CreateWishlistResolver") @doc(description: "Create a new wish list.")
+    deleteWishlist(wishlistId: ID! @doc(description: "The ID of the wish list to delete.")): DeleteWishlistOutput @resolver(class: "\\Magento\\MultipleWishlistGraphQl\\Model\\Resolver\\DeleteWishlistResolver") @doc(description: "Delete the specified wish list. You cannot delete the customer's default (first) wish list.")
+    copyProductsBetweenWishlists(sourceWishlistUid: ID! @doc(description: "The ID of the original wish list."), destinationWishlistUid: ID! @doc(description: "The ID of the target wish list."), wishlistItems: [WishlistItemCopyInput!]! @doc(description: "An array of items to copy.")): CopyProductsBetweenWishlistsOutput @resolver(class: "\\Magento\\MultipleWishlistGraphQl\\Model\\Resolver\\CopyProductsBetweenWishlistResolver") @doc(description: "Copy products from one wish list to another. The original wish list is unchanged.")
+    moveProductsBetweenWishlists(sourceWishlistUid: ID! @doc(description: "The ID of the original wish list."), destinationWishlistUid: ID! @doc(description: "The ID of the target wish list."), wishlistItems: [WishlistItemMoveInput!]! @doc(description: "An array of items to move.")): MoveProductsBetweenWishlistsOutput @resolver(class: "\\Magento\\MultipleWishlistGraphQl\\Model\\Resolver\\MoveProductsBetweenWishlistResolver") @doc(description: "Move products from one wish list to another.")
+    updateWishlist(wishlistId: ID! @doc(description: "The ID of the wish list to update."), name: String @doc(description: "The name assigned to the wish list."), visibility: WishlistVisibilityEnum @doc(description: "Indicates the visibility of the wish list.")): UpdateWishlistOutput @resolver(class: "\\Magento\\MultipleWishlistGraphQl\\Model\\Resolver\\UpdateWishlistResolver") @doc(description: "Change the name and visibility of the specified wish list.")
+}
+
+enum WishlistVisibilityEnum @doc(description: "Defines the wish list visibility types.") {
+    PUBLIC
+    PRIVATE
+}
+
+type Wishlist {
+    name: String @doc(description: "The name of the wish list.")
+    visibility: WishlistVisibilityEnum! @doc(description: "Indicates whether the wish list is public or private.")
+}
+
+type CreateWishlistOutput @doc(description: "Contains the wish list."){
+    wishlist: Wishlist! @doc(description: "The newly-created wish list")
+}
+
+type DeleteWishlistOutput @doc(description: "Contains the status of the request to delete a wish list and an array of the customer's remaining wish lists.") {
+    status: Boolean! @doc(description: "Indicates whether the wish list was deleted.")
+    wishlists: [Wishlist!]! @doc(description: "A list of undeleted wish lists.")
+}
+
+type CopyProductsBetweenWishlistsOutput @doc(description: "Contains the source and target wish lists after copying products.") {
+    source_wishlist: Wishlist! @doc(description: "The wish list that the products were copied from.")
+    destination_wishlist: Wishlist! @doc(description: "The destination wish list containing the copied products.")
+    user_errors: [WishListUserInputError!]! @doc(description:"An array of errors encountered while copying products in a wish list.")
+}
+
+input WishlistItemCopyInput @doc(description: "Specifies the IDs of items to copy and their quantities."){
+    wishlist_item_id: ID! @doc(description: "The unique ID of the `WishlistItemInterface` object to be copied.")
+    quantity: Float @doc(description: "The quantity of this item to copy to the destination wish list. This value can't be greater than the quantity in the source wish list.")
+}
+
+input WishlistItemMoveInput @doc(description: "Specifies the IDs of the items to move and their quantities.") {
+    wishlist_item_id: ID! @doc(description: "The unique ID of the `WishlistItemInterface` object to be moved.")
+    quantity: Float @doc(description: "The quantity of this item to move to the destination wish list. This value can't be greater than the quantity in the source wish list.")
+}
+
+input CreateWishlistInput @doc(description: "Defines the name and visibility of a new wish list."){
+    name: String! @doc(description: "The name of the new wish list.")
+    visibility: WishlistVisibilityEnum! @doc(description: "Indicates whether the wish list is public or private.")
+}
+
+type UpdateWishlistOutput @doc(description: "Contains the name and visibility of an updated wish list."){
+    uid: ID! @doc(description: "The unique ID of a `Wishlist` object.")
+    name: String! @doc(description: "The wish list name.")
+    visibility: WishlistVisibilityEnum! @doc(description: "Indicates whether the wish list is public or private.")
+}
+
+type MoveProductsBetweenWishlistsOutput @doc(description: "Contains the source and target wish lists after moving products."){
+    source_wishlist: Wishlist! @doc(description: "The source wish list after moving products from it.")
+    destination_wishlist: Wishlist! @doc(description: "The destination wish list after receiving products moved from the source wish list.")
+    user_errors: [WishListUserInputError!]! @doc(description:"An array of errors encountered while moving products to a wish list.")
+}
+
+type StoreConfig {
+    maximum_number_of_wishlists: String @doc(description: "If multiple wish lists are enabled, the maximum number of wish lists the customer can have.")
+    enable_multiple_wishlists: String @doc(description: "Indicates whether customers can have multiple wish lists. Possible values: 1 (Yes) and 0 (No).")
+}

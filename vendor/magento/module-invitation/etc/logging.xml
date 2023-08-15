@@ -1,0 +1,29 @@
+<?xml version="1.0"?>
+<!--
+/**
+ * Copyright © Magento, Inc. All rights reserved.
+ * See COPYING.txt for license details.
+ */
+-->
+<logging xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:noNamespaceSchemaLocation="urn:magento:module:Magento_Logging:etc/logging.xsd">
+    <groups>
+        <group name="magento_invitation">
+            <label translate="true">Customer Invitations</label>
+            <expected_models>
+                <expected_model class="Magento\Invitation\Model\Invitation" />
+            </expected_models>
+            <events>
+                <event controller_action="invitations_index__view" action_alias="view" />
+                <event controller_action="invitations_index__save" action_alias="save" />
+                <event controller_action="invitations_index__saveInvitation"
+                       action_alias="save" />
+                <event controller_action="invitations_index_massCancel"
+                       action_alias="massUpdate" />
+                <event controller_action="invitations_index_massResend"
+                       action_alias="massUpdate"
+                       post_dispatch="Magento\Invitation\Model\Logging::postDispatchInvitationMassUpdate" />
+            </events>
+        </group>
+    </groups>
+</logging>

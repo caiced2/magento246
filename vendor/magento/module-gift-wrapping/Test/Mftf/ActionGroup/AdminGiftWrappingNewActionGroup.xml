@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+ /**
+  * Copyright © Magento, Inc. All rights reserved.
+  * See COPYING.txt for license details.
+  */
+-->
+<actionGroups xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+              xsi:noNamespaceSchemaLocation="urn:magento:mftf:Test/etc/actionGroupSchema.xsd">
+    <actionGroup name="AdminGiftWrappingNewActionGroup">
+        <arguments>
+            <argument name="image" defaultValue="ImageUpload"/>
+            <argument name="giftWrappingDesign" type="string"/>
+            <argument name="giftWrappingWebsite" type="string"/>
+            <argument name="giftWrappingPrice" type="string"/>
+        </arguments>
+        <amOnPage url="{{AdminGiftWrappingPage.url}}" stepKey="goToGiftWrapping"/>
+        <click selector="{{AdminGiftWrappingGridSection.addGiftWrapping}}" stepKey="clickAddGiftWrapping"/>
+        <fillField selector="{{AdminGiftWrappingSection.giftWrappingDesign}}" userInput="{{giftWrappingDesign}}" stepKey="fillFieldWrappingDesign"/>
+        <selectOption selector="{{AdminGiftWrappingSection.website}}" userInput="{{giftWrappingWebsite}}" stepKey="checkWebsite"/>
+        <fillField selector="{{AdminGiftWrappingSection.price}}" userInput="{{giftWrappingPrice}}" stepKey="fillFieldPrice"/>
+        <attachFile selector="{{AdminGiftWrappingSection.imageFileUpload}}" userInput="{{image.file}}" stepKey="uploadFile"/>
+        <waitForAjaxLoad time="30" stepKey="waitForAjaxUpload"/>
+        <waitForLoadingMaskToDisappear stepKey="waitForLoading"/>
+        <click selector="{{AdminGiftWrappingSection.saveButton}}" stepKey="clickSave"/>
+        <seeInCurrentUrl url="{{AdminGiftWrappingPage.url}}" stepKey="assertGiftWrappingIndexPageUrl"/>
+        <see selector="{{AdminMessagesSection.success}}" userInput="You saved the gift wrapping." stepKey="seeGiftWrappingSuccessCreated"/>
+    </actionGroup>
+</actionGroups>

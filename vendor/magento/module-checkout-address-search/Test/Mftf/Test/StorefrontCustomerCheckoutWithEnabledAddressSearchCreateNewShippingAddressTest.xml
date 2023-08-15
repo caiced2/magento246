@@ -1,0 +1,94 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+ /**
+  * Copyright © Magento, Inc. All rights reserved.
+  * See COPYING.txt for license details.
+  */
+-->
+
+<tests xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xsi:noNamespaceSchemaLocation="urn:magento:mftf:Test/etc/testSchema.xsd">
+    <test name="StorefrontCustomerCheckoutWithEnabledAddressSearchCreateNewShippingAddressTest">
+        <annotations>
+            <features value="Checkout with search address enabled"/>
+            <stories value="MC-5681: Implement handling of large number of addresses on Onepage Checkout"/>
+            <title value="One Page Checkout with Customer Addresses Search - Add new shipping address"/>
+            <description value="One Page Checkout with Customer Addresses Search - Add new shipping address"/>
+            <severity value="CRITICAL"/>
+            <testCaseId value="MC-15834"/>
+            <group value="checkout"/>
+        </annotations>
+        <before>
+            <createData entity="SimpleSubCategory" stepKey="simpleCategory"/>
+            <createData entity="SimpleProduct" stepKey="simpleProduct">
+                <requiredEntity createDataKey="simpleCategory"/>
+            </createData>
+            <createData entity="Simple_US_Customer_NY" stepKey="simpleUsCustomer"/>
+            <magentoCLI command="config:set {{EnableCustomerAddressSearch.path}} {{EnableCustomerAddressSearch.value}}" stepKey="enableCustomerAddressSearch"/>
+            <magentoCLI command="config:set {{AddressSearchLimitZero.path}} {{AddressSearchLimitZero.value}}" stepKey="setAddressSearchLimitZero"/>
+            <magentoCLI command="config:set {{EnableFlatRateConfigData.path}} {{EnableFlatRateConfigData.value}}" stepKey="enableFlatRate"/>
+        </before>
+        <after>
+            <!--Clear filters-->
+            <amOnPage url="{{AdminCustomerPage.url}}" stepKey="navigateToCustomers"/>
+            <conditionalClick selector="{{AdminDataGridHeaderSection.clearFilters}}" dependentSelector="{{AdminDataGridHeaderSection.clearFilters}}" visible="true" stepKey="clearExistingCustomerFilters"/>
+            <deleteData createDataKey="simpleProduct" stepKey="deleteProduct"/>
+            <deleteData createDataKey="simpleCategory" stepKey="deleteCategory"/>
+            <deleteData createDataKey="simpleUsCustomer" stepKey="deleteCustomer"/>
+            <magentoCLI command="config:set {{DisableCustomerAddressSearch.path}} {{DisableCustomerAddressSearch.value}}" stepKey="disableCustomerAddressSearch"/>
+            <magentoCLI command="config:set {{DefaultAddressSearchLimit.path}} {{DefaultAddressSearchLimit.value}}" stepKey="setAddressSearchLimitTen"/>
+        </after>
+        <!--Login to storefront-->
+        <actionGroup ref="LoginToStorefrontActionGroup" stepKey="customerLogin">
+            <argument name="Customer" value="$$simpleUsCustomer$$" />
+        </actionGroup>
+        <!--Add Simple Product to Shopping Cart and Proceed to checkout-->
+        <amOnPage url="{{StorefrontProductPage.url($$simpleProduct.custom_attributes[url_key]$$)}}" stepKey="amOnSimpleProductPage"/>
+        <actionGroup ref="StorefrontAddProductToCartActionGroup" stepKey="addProductToCart">
+            <argument name="product" value="$$simpleProduct$$"/>
+            <argument name="productCount" value="1"/>
+        </actionGroup>
+        <actionGroup ref="GoToCheckoutFromMinicartActionGroup" stepKey="goToCheckoutFromMinicart" />
+        <!--Verify default address data-->
+        <actionGroup ref="CheckSelectedShippingAddressInCheckoutWithSearchActionGroup" stepKey="checkDefaultShippingAddressSelected">
+            <argument name="customerVar" value="$$simpleUsCustomer$$" />
+            <argument name="customerAddressVar" value="US_Address_NY" />
+        </actionGroup>
+        <!--Check that "Change Address" button is visible-->
+        <seeElement stepKey="CheckIfChangeAddressButtonIsVisible" selector="{{CheckoutShippingAddressSection.changeAddressButton}}"/>
+        <!--Click New Address button-->
+        <click stepKey="ClickAddNewShippingAddress" selector="{{CheckoutShippingAddressSection.newAddressButton}}"/>
+        <!--Fill New Address Form-->
+        <actionGroup ref="FillNewShippingAddressModalActionGroup" stepKey="fillNewShippingAddressForm">
+            <argument name="address" value="US_Address_TX"/>
+        </actionGroup>
+        <click selector="{{CheckoutShippingSection.saveAddress}}" stepKey="createShippingAddress"/>
+        <!--Verify selected shipping address has changed-->
+        <actionGroup ref="CheckSelectedShippingAddressInCheckoutWithSearchActionGroup" stepKey="checkSelectedShippingAddressHasChanged">
+            <argument name="customerVar" value="$$simpleUsCustomer$$" />
+            <argument name="customerAddressVar" value="US_Address_TX" />
+        </actionGroup>
+        <dontSeeElement selector="{{CheckoutShippingAddressSection.newAddressButton}}" stepKey="checkIfAddNewAddressIsVisible"/>
+        <!--Select first shipping method-->
+        <click stepKey="SelectFirstShippingMethod" selector="{{CheckoutShippingMethodsSection.firstShippingMethod}}"/>
+        <comment userInput="BIC workaround" stepKey="WaitForNextButtonVisible"/>
+        <actionGroup ref="StorefrontCheckoutClickNextButtonActionGroup" stepKey="ProceedToBillingStep"/>
+        <!--Review & Payments step of checkout is opened-->
+        <!--Select Check / Money order Payment method-->
+        <actionGroup ref="CheckoutSelectCheckMoneyOrderPaymentActionGroup" stepKey="selectCheckMoneyPayment"/>
+        <!--Default Shipping Address is displayed as billing address for selected payment method-->
+        <actionGroup ref="CheckBillingAddressInCheckoutActionGroup" stepKey="checkFirstBillingAddressOnBillingPage">
+            <argument name="customerVar" value="$$simpleUsCustomer$$" />
+            <argument name="customerAddressVar" value="US_Address_NY" />
+        </actionGroup>
+        <!--Click "My billing and shipping address are the same" checkbox-->
+        <click stepKey="ClickBillingAndShippingAddressAreTheSameButton" selector="{{CheckoutBillingAddressSection.billingAndShippingAddressAreTheSameOnPaymentMethod('checkmo')}}"/>
+        <!--Check that billing address has changed to the New Address-->
+        <actionGroup ref="CheckShipToInformationInCheckoutActionGroup" stepKey="checkThatBillingAddressHasChangedToTheNewlyCreatedOne">
+            <argument name="customerVar" value="$$simpleUsCustomer$$" />
+            <argument name="customerAddressVar" value="US_Address_TX" />
+        </actionGroup>
+        <!-- Place order -->
+        <actionGroup ref="ClickPlaceOrderActionGroup" stepKey="PlaceOrder" />
+    </test>
+</tests>

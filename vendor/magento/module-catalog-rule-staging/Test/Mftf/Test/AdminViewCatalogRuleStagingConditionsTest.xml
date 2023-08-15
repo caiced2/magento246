@@ -1,0 +1,63 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+ /**
+  * Copyright © Magento, Inc. All rights reserved.
+  * See COPYING.txt for license details.
+  */
+-->
+
+<tests xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="urn:magento:mftf:Test/etc/testSchema.xsd">
+    <test name="AdminViewCatalogRuleStagingConditionsTest">
+        <annotations>
+            <features value="CatalogRule"/>
+            <stories value="View catalog price rule staging with conditions"/>
+            <title value="View/Edit for Scheduled Update in Catalog Price Rule"/>
+            <description value="View/Edit for Scheduled Update in Catalog Price Rule: Condition has incorrect values"/>
+            <severity value="AVERAGE"/>
+            <testCaseId value="MC-40824"/>
+            <useCaseId value="MC-40697"/>
+            <group value="CatalogRule"/>
+        </annotations>
+        <before>
+            <!-- Create category -->
+            <createData entity="ApiCategory" stepKey="createCategory"/>
+        </before>
+        <after>
+            <!-- Delete the category and product -->
+            <deleteData createDataKey="createCategory" stepKey="deleteCategory"/>
+            <!-- Reindex invalidated indices -->
+            <magentoCron groups="index" stepKey="reindexAfterRemoveRule"/>
+            <actionGroup ref="AdminLogoutActionGroup" stepKey="logoutFromAdmin"/>
+        </after>
+        <!-- Login to admin area -->
+        <actionGroup ref="AdminLoginActionGroup" stepKey="loginAsAdmin"/>
+        <!-- 1. Begin creating a new catalog price rule -->
+        <actionGroup ref="AdminOpenNewCatalogPriceRuleFormPageActionGroup" stepKey="openNewCatalogPriceRulePage"/>
+        <actionGroup ref="AdminCatalogPriceRuleFillMainInfoActionGroup" stepKey="fillMainInfoForCatalogPriceRule">
+            <argument name="groups" value="'NOT LOGGED IN'"/>
+        </actionGroup>
+        <actionGroup ref="AdminCatalogPriceRuleFillActionsActionGroup" stepKey="fillActionsForCatalogPriceRule">
+            <argument name="apply" value="by_fixed"/>
+            <argument name="discountAmount" value="12.3"/>
+        </actionGroup>
+        <!-- Save and continue edit the catalog price rule -->
+        <actionGroup ref="SaveAndContinueEditCatalogPriceRuleActionGroup" stepKey="saveAndContinueEdit"/>
+        <!-- Create Schedule Update to activate the rule -->
+        <actionGroup ref="CreateCatalogPriceRuleConditionWithoutStartActionGroup"
+                     stepKey="createScheduleUpdateForTheRule"/>
+        <actionGroup ref="CreateCatalogRuleStagingUpdateWithCategoryIdsConditionsActionGroup"
+                     stepKey="createScheduleUpdateForCategoryIdsConditionsTheRule">
+            <argument name="conditionValue" value="$createCategory.id$"/>
+        </actionGroup>
+        <click selector="{{AdminEntityStagingSection.nthViewEditButton('1')}}" stepKey="clickViewEdit"/>
+        <actionGroup ref="AssertCatalogRuleStagingHasConditionsActionGroup" stepKey="checkStagingConditions">
+            <argument name="conditionValue" value="$createCategory.id$"/>
+        </actionGroup>
+        <!-- Delete the rule -->
+        <actionGroup ref="AdminOpenCatalogPriceRulePageActionGroup" stepKey="goToPriceRulePage"/>
+        <actionGroup ref="deleteEntitySecondaryGrid" stepKey="deletePriceRule">
+            <argument name="name" value="{{_defaultCatalogRule.name}}"/>
+            <argument name="searchInput" value="{{AdminSecondaryGridSection.catalogRuleIdentifierSearch}}"/>
+        </actionGroup>
+    </test>
+</tests>

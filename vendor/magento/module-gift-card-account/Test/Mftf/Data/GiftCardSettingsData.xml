@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+ /**
+  * Copyright © Magento, Inc. All rights reserved.
+  * See COPYING.txt for license details.
+  */
+-->
+
+<entities xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+          xsi:noNamespaceSchemaLocation="urn:magento:mftf:DataGenerator/etc/dataProfileSchema.xsd">
+
+    <entity name="GiftCardSettings" type="giftcart_config_state">
+        <requiredEntity type="lifetime">giftCardAccountLifetime</requiredEntity>
+        <requiredEntity type="order_item_status">giftCardAccountOrderItem</requiredEntity>
+    </entity>
+    <entity name="giftCardAccountLifetime" type="lifetime">
+        <data key="value">4</data>
+    </entity>
+    <entity name="giftCardAccountOrderItem" type="order_item_status">
+        <data key="value">1</data>
+    </entity>
+
+    <entity name="RollBackGiftCardSettings" type="giftcart_config_state">
+        <requiredEntity type="lifetime">defaultGiftCardAccountLifetime</requiredEntity>
+        <requiredEntity type="order_item_status">defaultGiftCardAccountOrderItem</requiredEntity>
+    </entity>
+    <entity name="defaultGiftCardAccountLifetime" type="lifetime">
+        <data key="value">0</data>
+    </entity>
+    <entity name="defaultGiftCardAccountOrderItem" type="order_item_status">
+        <data key="value">9</data>
+    </entity>
+</entities>

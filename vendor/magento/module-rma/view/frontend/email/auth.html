@@ -1,0 +1,78 @@
+<!--
+/**
+ * Copyright © Magento, Inc. All rights reserved.
+ * See COPYING.txt for license details.
+ */
+-->
+<!--@subject {{trans "%store_name : New Return #%increment_id" store_name=$store.frontend_name increment_id=$rma.increment_id}} @-->
+<!--@vars {
+"store url=\"customer\/account\/\"":"Customer Account URL",
+"template config_path=\"design\/email\/footer_template\"":"Email Footer Template",
+"template config_path=\"design\/email\/header_template\"":"Email Header Template",
+"var logo_alt":"Email Logo Image Alt",
+"var logo_url":"Email Logo Image URL",
+"store url=\"sales\/guest\/form\/\"":"Guest Form URL",
+"var item_collection":"Items Collection",
+"var return_address|raw":"Return Address",
+"var rma.increment_id":"Return Id",
+"layout handle=\"magento_rma_email_rma_items\" collection=$item_collection":"Return Items Collection",
+"var rma_data.status_label":"Return Status",
+"var formattedShippingAddress|raw":"Shipping Address",
+"var store.frontend_name":"Store Name",
+"var supportEmail": "Support Email",
+"var storePhone": "Store Phone",
+"store url=\"\"":"Store URL",
+"var order_data.customer_name":"Customer Name",
+"var this.getUrl($store, 'customer/account/',[_nosid:1])":"Account URL",
+"var this.getUrl($store, 'sales/guest/form/',[_nosid:1])":"Form URL",
+"var rma_id":"Rma Id"
+} @-->
+
+{{template config_path="design/email/header_template"}}
+
+<p class="greeting">{{trans "%name," name=$order_data.customer_name}}</p>
+
+<p>{{trans "Your return request has been updated. Please see below."}}</p>
+
+<p>
+    {{trans
+        'You can check the status of your return by <a href="%account_url">logging into your account</a> or <a href="%form_url">using your order number</a>.'
+
+        account_url="$this.getUrl($store, 'customer/account/',[_nosid:1])"
+        form_url="$this.getUrl($store, 'sales/guest/form/',[_nosid:1])"
+    |raw}}
+</p>
+
+<p>
+    {{trans
+        'If you have any questions, please feel free to contact us at <a href="mailto:%support_email">%support_email</a> or by phone at <a href="tel:%store_phone">%store_phone</a>'
+
+        support_email="$supportEmail"
+        store_phone="$storePhone"
+    |raw}}
+</p>
+
+<h1>
+    {{trans
+        "Your Return #%increment_id - %status_label"
+        increment_id="$rma.increment_id"
+        status_label="$rma_data.status_label"
+    |raw}}
+</h1>
+
+<table class="order-details" cellspacing="0" cellpadding="0" border="0">
+    <tr>
+        <td class="address-details">
+            <h3>{{trans "Shipping Address"}}</h3>
+            <p>{{var formattedShippingAddress|raw}}</p>
+        </td>
+        <td class="address-details">
+            <h3>{{trans "Return Address"}}</h3>
+            <p>{{var return_address|raw}}</p>
+        </td>
+    </tr>
+</table>
+<br/>
+{{layout handle="magento_rma_email_rma_items" rma_id=$rma_id}}
+
+{{template config_path="design/email/footer_template"}}

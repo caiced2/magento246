@@ -1,0 +1,119 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+ /**
+  * Copyright © Magento, Inc. All rights reserved.
+  * See COPYING.txt for license details.
+  */
+-->
+
+<tests xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xsi:noNamespaceSchemaLocation="urn:magento:mftf:Test/etc/testSchema.xsd">
+    <test name="OnePageCheckoutAsUKGuestWithVirtualProductUsingGiftCardAccountTest">
+        <annotations>
+            <features value="OnePageCheckout"/>
+            <stories value="OnePageCheckout within Offline Payment Methods"/>
+            <title value="OnePageCheckout as UK guest with virtual product using gift card account test"/>
+            <description value="Checkout as UK guest with virtual product using gift card account"/>
+            <severity value="CRITICAL"/>
+            <testCaseId value="MC-14736"/>
+            <group value="GiftCardAccount"/>
+            <group value="mtf_migrated"/>
+        </annotations>
+        <before>
+            <!-- Create Virtual Product -->
+            <createData entity="VirtualProduct" stepKey="createVirtualProduct">
+                <field key="price">10</field>
+            </createData>
+
+            <!-- Create gift card code pool -->
+            <createData entity="GiftCardCodePool" stepKey="createCodePool"/>
+
+            <!-- Create gift card account -->
+            <createData entity="GiftCardAccount100" stepKey="createGiftCard"/>
+
+            <actionGroup ref="AdminLoginActionGroup" stepKey="loginAsAdmin"/>
+        </before>
+        <after>
+            <!-- Logout customer -->
+            <actionGroup ref="StorefrontCustomerLogoutActionGroup" stepKey="customerLogoutStorefront"/>
+
+            <!-- Logout admin -->
+            <actionGroup ref="AdminLogoutActionGroup" stepKey="logout"/>
+
+            <!-- Delete created products -->
+            <deleteData createDataKey="createVirtualProduct" stepKey="deleteVirtualProduct"/>
+        </after>
+
+        <!-- Grab gift card code -->
+        <amOnPage url="{{AdminGiftCardAccountGridPage.url}}" stepKey="goToAccountGrid"/>
+        <waitForPageLoad stepKey="waitForGiftCardAccountPageLoad"/>
+        <actionGroup ref="SortByIdDescendingActionGroup" stepKey="sortAccountsByIdDesc"/>
+        <click selector="{{AdminGridTableSection.row('1')}}" stepKey="clickPrereqAccount"/>
+        <waitForPageLoad stepKey="waitForAccountEditPage"/>
+        <grabTextFrom selector="{{AdminGiftCardAccountInformationSection.giftCardCode}}" stepKey="giftCardAccountCode"/>
+
+        <!-- Add Virtual Product to cart -->
+        <amOnPage url="{{StorefrontProductPage.url($$createVirtualProduct.custom_attributes[url_key]$$)}}" stepKey="navigateToVirtualProductPage"/>
+        <waitForPageLoad stepKey="waitForVirtualProductPageLoad"/>
+        <actionGroup ref="AddToCartFromStorefrontProductPageActionGroup" stepKey="addToCartFromStorefrontProductPage3">
+            <argument name="productName" value="$$createVirtualProduct.name$$"/>
+        </actionGroup>
+
+        <!-- Go to shopping cart -->
+        <actionGroup ref="ClickViewAndEditCartFromMiniCartActionGroup" stepKey="goToShoppingCartFromMinicart"/>
+        <actionGroup ref="FillShippingZipForm" stepKey="fillShippingZipForm">
+            <argument name="address" value="US_Address_CA"/>
+        </actionGroup>
+
+        <!-- Apply gift card to order -->
+        <actionGroup ref="AddGiftCardToOrderFromCartActionGroup" stepKey="applyGiftCardToOrder">
+            <argument name="code" value="$giftCardAccountCode"/>
+        </actionGroup>
+
+        <click selector="{{CheckoutCartSummarySection.proceedToCheckout}}" stepKey="clickProceedToCheckout"/>
+        <waitForPageLoad stepKey="waitForProceedToCheckout"/>
+
+        <!-- Fill new customer from UK data -->
+        <fillField selector="{{CheckoutShippingSection.email}}" userInput="{{Simple_Customer_Without_Address.email}}" stepKey="fillEmailField"/>
+        <fillField selector="{{CheckoutPaymentSection.guestFirstName}}" userInput="{{UK_Not_Default_Address.firstname}}" stepKey="fillFirstName"/>
+        <fillField selector="{{CheckoutPaymentSection.guestLastName}}" userInput="{{UK_Not_Default_Address.lastname}}" stepKey="fillLastName"/>
+        <selectOption selector="{{CheckoutPaymentSection.guestCountry}}" userInput="{{UK_Not_Default_Address.country_id}}" stepKey="fillCountry"/>
+        <clearField selector="{{CheckoutPaymentSection.guestPostcode}}"  stepKey="clearFieldZip"/>
+        <fillField selector="{{CheckoutPaymentSection.guestPostcode}}" userInput="{{UK_Not_Default_Address.postcode}}" stepKey="fillPostalCode"/>
+        <fillField selector="{{CheckoutPaymentSection.guestStreet}}" userInput="{{UK_Not_Default_Address.street[0]}}" stepKey="fillStreetLine"/>
+        <fillField selector="{{CheckoutPaymentSection.guestCity}}" userInput="{{UK_Not_Default_Address.city}}" stepKey="fillCity"/>
+        <fillField selector="{{CheckoutPaymentSection.guestTelephone}}" userInput="{{UK_Not_Default_Address.telephone}}" stepKey="fillPhoneNumber"/>
+
+        <!-- Check order summary in checkout -->
+        <actionGroup ref="StorefrontClickUpdateAddressInCheckoutActionGroup" stepKey="clickToUpdate"/>
+        <comment userInput="BIC workaround" stepKey="waitForPageLoad"/>
+
+        <!-- Place order -->
+        <actionGroup ref="ClickPlaceOrderActionGroup" stepKey="clickPlaceOrder"/>
+        <comment userInput="BIC workaround" stepKey="waitForCheckoutPaymentSectionPageLoad"/>
+        <seeElement selector="{{CheckoutSuccessMainSection.success}}" stepKey="orderIsSuccessfullyPlaced"/>
+        <grabTextFrom selector="{{CheckoutSuccessMainSection.orderNumber}}" stepKey="grabOrderNumber"/>
+
+        <!-- Check that the mini cart is empty -->
+        <actionGroup ref="AssertMiniCartEmptyActionGroup" stepKey="assertMiniCartEmpty"/>
+
+        <!-- Open created order in backend -->
+        <amOnPage url="{{AdminOrdersPage.url}}" stepKey="goToOrders"/>
+        <waitForPageLoad stepKey="waitForOrdersPageLoad"/>
+        <actionGroup ref="OpenOrderByIdActionGroup" stepKey="filterOrderGridById">
+            <argument name="orderId" value="$grabOrderNumber"/>
+        </actionGroup>
+
+        <!-- Assert order status is correct -->
+        <see selector="{{AdminOrderDetailsInformationSection.orderStatus}}" userInput="Pending" stepKey="seeOrderStatus"/>
+
+        <!-- Assert order total -->
+        <scrollTo selector="{{AdminOrderTotalSection.grandTotal}}" stepKey="scrollToOrderTotalSection"/>
+        <see selector="{{AdminOrderTotalSection.grandTotal}}" userInput="$0.00" stepKey="checkOrderTotalInBackend"/>
+
+        <!-- Delete gift card account -->
+        <actionGroup ref="DeleteGiftCardAccountActionGroup" stepKey="deleteGiftCardAccount">
+            <argument name="giftCardAccountCode" value="$giftCardAccountCode"/>
+        </actionGroup>
+    </test>
+</tests>

@@ -1,0 +1,35 @@
+<?xml version="1.0"?>
+<!--
+/**
+ * Copyright © Magento, Inc. All rights reserved.
+ * See COPYING.txt for license details.
+ */
+-->
+<config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="urn:magento:framework:ObjectManager/etc/config.xsd">
+    <type name="Magento\Logging\Model\Config\Data">
+        <arguments>
+            <argument name="reader" xsi:type="object">Magento\Logging\Model\Config\Reader</argument>
+            <argument name="cacheId" xsi:type="string">logging_config</argument>
+        </arguments>
+    </type>
+    <type name="Magento\Logging\Observer\ModelLoadAfterObserver">
+        <arguments>
+            <argument name="processor" xsi:type="object">Magento\Logging\Model\Processor\Proxy</argument>
+        </arguments>
+    </type>
+    <type name="Magento\Logging\Model\Processor">
+        <arguments>
+            <argument name="authSession" xsi:type="object">Magento\Backend\Model\Auth\Session\Proxy</argument>
+        </arguments>
+    </type>
+    <type name="Magento\Logging\App\Action\Plugin\Log">
+        <arguments>
+            <argument name="extraParamMapping" xsi:type="array">
+                <item name="mui_export_gridToXml" xsi:type="string">namespace</item>
+                <item name="mui_export_gridToCsv" xsi:type="string">namespace</item>
+                <item name="mui_index_render" xsi:type="string">namespace</item>
+                <item name="mui_bookmark_save" xsi:type="string">namespace</item>
+            </argument>
+        </arguments>
+    </type>
+</config>

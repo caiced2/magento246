@@ -1,0 +1,98 @@
+<?xml version="1.0"?>
+<!--
+/**
+ * Copyright © Magento, Inc. All rights reserved.
+ * See COPYING.txt for license details.
+ */
+-->
+<schema xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:noNamespaceSchemaLocation="urn:magento:framework:Setup/Declaration/Schema/etc/schema.xsd">
+    <table name="magento_invitation" resource="default" engine="innodb" comment="Enterprise Invitation">
+        <column xsi:type="int" name="invitation_id" unsigned="true" nullable="false" identity="true"
+                comment="Invitation Id"/>
+        <column xsi:type="int" name="customer_id" unsigned="true" nullable="true" identity="false"
+                comment="Customer Id"/>
+        <column xsi:type="timestamp" name="invitation_date" on_update="false" nullable="true"
+                comment="Invitation Date"/>
+        <column xsi:type="varchar" name="email" nullable="true" length="255" comment="Email"/>
+        <column xsi:type="int" name="referral_id" unsigned="true" nullable="true" identity="false"
+                comment="Referral Id"/>
+        <column xsi:type="varchar" name="protection_code" nullable="true" length="32" comment="Protection Code"/>
+        <column xsi:type="timestamp" name="signup_date" on_update="false" nullable="true" comment="Signup Date"/>
+        <column xsi:type="smallint" name="store_id" unsigned="true" nullable="false" identity="false"
+                comment="Store Id"/>
+        <column xsi:type="int" name="group_id" unsigned="true" nullable="true" identity="false"
+                comment="Group Id"/>
+        <column xsi:type="text" name="message" nullable="true" comment="Message"/>
+        <column xsi:type="varchar" name="status" nullable="false" length="8" default="new" comment="Status"/>
+        <constraint xsi:type="primary" referenceId="PRIMARY">
+            <column name="invitation_id"/>
+        </constraint>
+        <constraint xsi:type="foreign" referenceId="MAGENTO_INVITATION_GROUP_ID_CUSTOMER_GROUP_CUSTOMER_GROUP_ID"
+                    table="magento_invitation" column="group_id" referenceTable="customer_group"
+                    referenceColumn="customer_group_id" onDelete="SET NULL"/>
+        <constraint xsi:type="foreign" referenceId="MAGENTO_INVITATION_CUSTOMER_ID_CUSTOMER_ENTITY_ENTITY_ID"
+                    table="magento_invitation" column="customer_id" referenceTable="customer_entity"
+                    referenceColumn="entity_id" onDelete="SET NULL"/>
+        <constraint xsi:type="foreign" referenceId="MAGENTO_INVITATION_REFERRAL_ID_CUSTOMER_ENTITY_ENTITY_ID"
+                    table="magento_invitation" column="referral_id" referenceTable="customer_entity"
+                    referenceColumn="entity_id" onDelete="SET NULL"/>
+        <constraint xsi:type="foreign" referenceId="MAGENTO_INVITATION_STORE_ID_STORE_STORE_ID" table="magento_invitation"
+                    column="store_id" referenceTable="store" referenceColumn="store_id" onDelete="CASCADE"/>
+        <index referenceId="MAGENTO_INVITATION_CUSTOMER_ID" indexType="btree">
+            <column name="customer_id"/>
+        </index>
+        <index referenceId="MAGENTO_INVITATION_REFERRAL_ID" indexType="btree">
+            <column name="referral_id"/>
+        </index>
+        <index referenceId="MAGENTO_INVITATION_STORE_ID" indexType="btree">
+            <column name="store_id"/>
+        </index>
+        <index referenceId="MAGENTO_INVITATION_GROUP_ID" indexType="btree">
+            <column name="group_id"/>
+        </index>
+    </table>
+    <table name="magento_invitation_status_history" resource="default" engine="innodb"
+           comment="Enterprise Invitation Status History">
+        <column xsi:type="int" name="history_id" unsigned="true" nullable="false" identity="true"
+                comment="History Id"/>
+        <column xsi:type="int" name="invitation_id" unsigned="true" nullable="false" identity="false"
+                comment="Invitation Id"/>
+        <column xsi:type="timestamp" name="invitation_date" on_update="false" nullable="true"
+                comment="Invitation Date"/>
+        <column xsi:type="varchar" name="status" nullable="false" length="8" default="new" comment="Invitation Status"/>
+        <constraint xsi:type="primary" referenceId="PRIMARY">
+            <column name="history_id"/>
+        </constraint>
+        <constraint xsi:type="foreign" referenceId="FK_9221D90F23B9A75B6A9E48D763D01D02"
+                    table="magento_invitation_status_history" column="invitation_id" referenceTable="magento_invitation"
+                    referenceColumn="invitation_id" onDelete="CASCADE"/>
+        <index referenceId="MAGENTO_INVITATION_STATUS_HISTORY_INVITATION_ID" indexType="btree">
+            <column name="invitation_id"/>
+        </index>
+    </table>
+    <table name="magento_invitation_track" resource="default" engine="innodb" comment="Enterprise Invitation Track">
+        <column xsi:type="int" name="track_id" unsigned="true" nullable="false" identity="true"
+                comment="Track Id"/>
+        <column xsi:type="int" name="inviter_id" unsigned="true" nullable="false" identity="false"
+                default="0" comment="Inviter Id"/>
+        <column xsi:type="int" name="referral_id" unsigned="true" nullable="false" identity="false"
+                default="0" comment="Referral Id"/>
+        <constraint xsi:type="primary" referenceId="PRIMARY">
+            <column name="track_id"/>
+        </constraint>
+        <constraint xsi:type="foreign" referenceId="MAGENTO_INVITATION_TRACK_INVITER_ID_CUSTOMER_ENTITY_ENTITY_ID"
+                    table="magento_invitation_track" column="inviter_id" referenceTable="customer_entity"
+                    referenceColumn="entity_id" onDelete="CASCADE"/>
+        <constraint xsi:type="foreign" referenceId="MAGENTO_INVITATION_TRACK_REFERRAL_ID_CUSTOMER_ENTITY_ENTITY_ID"
+                    table="magento_invitation_track" column="referral_id" referenceTable="customer_entity"
+                    referenceColumn="entity_id" onDelete="CASCADE"/>
+        <constraint xsi:type="unique" referenceId="MAGENTO_INVITATION_TRACK_INVITER_ID_REFERRAL_ID">
+            <column name="inviter_id"/>
+            <column name="referral_id"/>
+        </constraint>
+        <index referenceId="MAGENTO_INVITATION_TRACK_REFERRAL_ID" indexType="btree">
+            <column name="referral_id"/>
+        </index>
+    </table>
+</schema>

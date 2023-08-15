@@ -1,0 +1,123 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+/**
+ * Copyright © Magento, Inc. All rights reserved.
+ * See COPYING.txt for license details.
+ */
+-->
+
+<tests xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xsi:noNamespaceSchemaLocation="urn:magento:mftf:Test/etc/testSchema.xsd">
+    <test name="UpdateMultipleLineCustomerAttributeTest">
+        <annotations>
+            <features value="CustomerCustomAttributes"/>
+            <stories value="Update Customer Custom Attributes"/>
+            <title value="Update multiple line customer attribute test"/>
+            <description value="Update multiple line customer attribute"/>
+            <severity value="MAJOR"/>
+            <testCaseId value="MC-14576"/>
+            <group value="CustomerCustomAttributes"/>
+            <group value="mtf_migrated"/>
+        </annotations>
+        <before>
+            <!-- Login as admin -->
+            <actionGroup ref="AdminLoginActionGroup" stepKey="LoginAsAdmin"/>
+
+            <!-- Create customer -->
+            <createData entity="Simple_US_Customer" stepKey="createCustomer"/>
+        </before>
+        <after>
+            <!-- Logout customer -->
+            <actionGroup ref="StorefrontCustomerLogoutActionGroup" stepKey="logoutCustomer"/>
+
+            <!-- Delete customer -->
+            <deleteData createDataKey="createCustomer" stepKey="deleteCustomer"/>
+
+            <!-- Logout admin -->
+            <actionGroup ref="AdminLogoutActionGroup" stepKey="logout"/>
+            <magentoCron groups="index" stepKey="reindex"/>
+        </after>
+
+        <!-- Go to Stores > Customer -->
+        <amOnPage url="{{CustomerAttributesPage.url}}" stepKey="navigateToCustomerAttributes"/>
+        <waitForPageLoad stepKey="waitForAttributePageLoad"/>
+
+        <!-- Create customer attribute -->
+        <actionGroup ref="AdminCreateCustomerNewMultipleLineAttribute" stepKey="createMultiLineAttribute">
+            <argument name="customerAttribute" value="AttributeMultiLine"/>
+            <argument name="defaultLabel" value="{{AttributeMultiLine.frontend_label}}"/>
+            <argument name="attributeCode" value="{{AttributeMultiLine.attribute_code}}"/>
+            <argument name="inputType" value="{{AttributeMultiLine.frontend_input}}"/>
+            <argument name="sortOrder" value="{{AttributeMultiLine.sort_order}}"/>
+            <argument name="multilineCount" value="{{AttributeMultiLine.multiline_count}}"/>
+            <argument name="formToUse" value="Customer Registration"/>
+            <argument name="message" value="You saved the customer attribute."/>
+        </actionGroup>
+
+        <!-- Open created customer attribute -->
+        <actionGroup ref="FilterCustomerAttributesByAttributeCodeAndDefaultLabelActionGroup" stepKey="findCreatedAttribute">
+            <argument name="defaultLabel" value="{{AttributeMultiLine.frontend_label}}"/>
+            <argument name="attributeCode" value="{{AttributeMultiLine.attribute_code}}"/>
+        </actionGroup>
+        <click selector="{{AdminCustomerAttributeSection.firstAttribute}}" stepKey="clickFirstRow"/>
+
+        <!-- Change data according to dataset -->
+        <fillField selector="{{CustomerAccountSection.label}}" userInput="{{AttributeMultiLineUpdate.frontend_label}}" stepKey="typeDefaultLabel"/>
+        <selectOption selector="{{CustomerAccountSection.usedForSegment}}" userInput="Yes" stepKey="setUseInCustomerSegment"/>
+        <selectOption selector="{{CustomerAccountSection.inputFilter}}" userInput="Escape HTML Entities" stepKey="fillInputFilter"/>
+        <fillField selector="{{CustomerAccountSection.lineCount}}" userInput="{{AttributeMultiLineUpdate.multiline_count}}" stepKey="fillLineCount"/>
+        <selectOption selector="{{CustomerAccountSection.showInSF}}" userInput="{{AttributeMultiLineUpdate.is_visible}}" stepKey="setSFOption"/>
+        <selectOption selector="{{CustomerAccountSection.selectFormToUse}}" parameterArray="[{{AttributeMultiLineUpdate.used_in_forms}}]" stepKey="setFormsToUse"/>
+        <fillField selector="{{CustomerAccountSection.sortOrder}}" userInput="{{AttributeMultiLineUpdate.sort_order}}" stepKey="typeSortOrder"/>
+        <click selector="{{AttributeEditSection.saveAttribute}}" stepKey="saveAttribute"/>
+        <waitForPageLoad stepKey="WaitForAttributeSaved"/>
+
+        <!-- Assert customer custom attribute success save message -->
+        <see selector="{{AdminMessagesSection.success}}" userInput="You saved the customer attribute." stepKey="verifyAttributeCreated"/>
+
+        <!-- Assert customer custom attribute in grid -->
+        <actionGroup ref="FilterCustomerAttributesByAttributeCodeAndDefaultLabelActionGroup" stepKey="findChangedAttribute">
+            <argument name="defaultLabel" value="{{AttributeMultiLineUpdate.frontend_label}}"/>
+            <argument name="attributeCode" value="{{AttributeMultiLine.attribute_code}}"/>
+        </actionGroup>
+        <seeElement selector="{{AdminCustomerAttributeSection.firstAttribute}}" stepKey="seeChangedAttribute"/>
+
+        <!-- Create new segment -->
+        <actionGroup ref="CreateCustomerSegmentActionGroup" stepKey="createCustomerSegment"/>
+
+        <!-- Search and open new segment -->
+        <actionGroup ref="FindAndOpenCustomerSegmentActionGroup" stepKey="openCustomerSegment">
+            <argument name="segmentName" value="{{CustomerSegmentForNoorders.name}}"/>
+        </actionGroup>
+
+        <!-- Assert customer custom attribute in customer segment -->
+        <actionGroup ref="CreateCustomerSegmentConditionWithCustomerCustomAttributeActionGroup" stepKey="createCustomerSegmentCondition">
+            <argument name="attributeLabel" value="{{AttributeMultiLineUpdate.frontend_label}}"/>
+        </actionGroup>
+
+        <!-- Login as customer -->
+        <actionGroup ref="LoginToStorefrontActionGroup" stepKey="loginAsCustomer">
+            <argument name="Customer" value="$$createCustomer$$"/>
+        </actionGroup>
+
+        <!-- Go to customer Account Information -->
+        <actionGroup ref="StorefrontCustomerGoToSidebarMenu" stepKey="goToAccountInformation">
+            <argument name="menu" value="Account Information"/>
+        </actionGroup>
+
+        <!-- Assert customer custom attribute on customer edit page -->
+        <seeElement selector="{{StoreFrontCustomerAdvancedAttributesSection.attributeLabel(AttributeMultiLineUpdate.frontend_label)}}" stepKey="assertCustomerCustomAttribute"/>
+
+        <!-- Delete created attribute -->
+        <amOnPage url="{{CustomerAttributesPage.url}}" stepKey="navigateToCustomerAttributesPage"/>
+        <waitForPageLoad stepKey="waitForCustomerAttributePageLoad"/>
+        <actionGroup ref="DeleteCustomerAttribute" stepKey="deleteCustomerAttribute">
+            <argument name="defaultLabel" value="{{AttributeMultiLineUpdate.frontend_label}}"/>
+        </actionGroup>
+
+        <!-- Delete customer segment -->
+        <actionGroup ref="FindAndDeleteCustomerSegmentActionGroup" stepKey="deleteCustomerSegment">
+            <argument name="segmentName" value="{{CustomerSegmentForNoorders.name}}"/>
+        </actionGroup>
+    </test>
+</tests>

@@ -1,0 +1,56 @@
+<?php
+/**
+ * Copyright © Magento, Inc. All rights reserved.
+ * See COPYING.txt for license details.
+ */
+
+?>
+<?php
+/**
+ * @see \Magento\Rma\Block\Adminhtml\Rma\Edit\Tab\General
+ */
+/** @var \Magento\Framework\View\Helper\SecureHtmlRenderer $secureRenderer */
+?>
+<?php $scriptString = <<<script
+    require(['prototype', 'Magento_Rma/rma'], function () {
+        window.rma = new AdminRma();
+    });
+    require(['Magento_Rma/details-validator'], function () {});
+script;
+?>
+<?= /* @noEscape */ $secureRenderer->renderTag('script', [], $scriptString, false); ?>
+
+<section class="admin__page-section">
+    <div class="admin__page-section-title">
+        <span class="title"><?= $block->escapeHtml(__('Order &amp; Account Information')) ?></span>
+    </div>
+    <div class="admin__page-section-content">
+        <?= $block->getChildHtml('request_details') ?>
+
+        <?php if ($block->getChildHtml('shipping_method')): ?>
+            <?= $block->getChildHtml('shipping_method') ?>
+        <?php endif; ?>
+    </div>
+</section>
+
+<section class="admin__page-section">
+    <div class="admin__page-section-title">
+        <span class="title"><?= $block->escapeHtml(__('Address Information')) ?></span>
+    </div>
+    <div class="admin__page-section-content">
+        <?= $block->getChildHtml('shipping_address') ?>
+
+        <?= $block->getChildHtml('return_address') ?>
+    </div>
+</section>
+
+<section class="admin__page-section">
+    <div class="admin__page-section-title">
+        <span class="title"><?= $block->escapeHtml(__('Return Totals')) ?></span>
+    </div>
+    <div class="admin__page-section-content">
+        <?= $block->getChildHtml('comments_history') ?>
+
+        <?= $block->getChildHtml('return_confirmation') ?>
+    </div>
+</section>

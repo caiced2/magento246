@@ -1,0 +1,47 @@
+<?php
+/**
+ * Copyright © Magento, Inc. All rights reserved.
+ * See COPYING.txt for license details.
+ */
+
+/** @var $block \Magento\GiftRegistry\Block\Search\Results */
+?>
+<?php if ($block->getSearchResults() && $block->getSearchResults()->getSize()) :?>
+<div class="block block-giftregistry-results">
+    <div class="block-title"><strong><?= $block->escapeHtml(__('Search Results')) ?></strong></div>
+    <div class="block-content">
+        <div class="table-wrapper">
+            <table class="data table" id="giftregistry-search-results">
+                <caption class="table-caption"><?= $block->escapeHtml(__('Search Results')) ?></caption>
+                <thead>
+                <tr>
+                    <th class="col name" scope="col"><?= $block->escapeHtml(__('Name')) ?></th>
+                    <th class="col location" scope="col"><?= $block->escapeHtml(__('Location')) ?></th>
+                    <th class="col event" scope="col"><?= $block->escapeHtml(__('Event')) ?></th>
+                    <th class="col type" scope="col"><?= $block->escapeHtml(__('Type')) ?></th>
+                    <th class="col date" scope="col"><?= $block->escapeHtml(__('Event Date')) ?></th>
+                    <th class="col actions" scope="col"><?= $block->escapeHtml(__('Actions')) ?></th>
+                </tr>
+                </thead>
+                <tbody>
+                <?php foreach ($block->getSearchResults() as $item) :?>
+                    <tr>
+                        <td class="col name" data-th="<?= $block->escapeHtmlAttr(__('Name')) ?>"><?= $block->escapeHtml($item->getRegistrant()) ?></td>
+                        <td class="col location" data-th="<?= $block->escapeHtmlAttr(__('Location')) ?>"><?= $block->escapeHtml($item->getEventLocation()) ?></td>
+                        <td class="col event" data-th="<?= $block->escapeHtmlAttr(__('Event')) ?>"><?= $block->escapeHtml($item->getTitle()) ?></td>
+                        <td class="col type" data-th="<?= $block->escapeHtmlAttr(__('Type')) ?>"><?= $block->escapeHtml($item->getType()) ?></td>
+                        <td class="col date" data-th="<?= $block->escapeHtmlAttr(__('Event Date')) ?>"><?= $block->escapeHtml($block->getFormattedDate($item)) ?></td>
+                        <td class="col actions" data-th="<?= $block->escapeHtmlAttr(__('Actions')) ?>"><a href="<?= $block->escapeUrl($block->getRegistryLink($item)) ?>" title="<?= $block->escapeHtml(__('View')) ?>"><?= $block->escapeHtml(__('View')) ?></a></td>
+                    </tr>
+                <?php endforeach; ?>
+                </tbody>
+            </table>
+        </div>
+        <?php if ($block->getChildHtml('pager')) :?>
+        <div class="toolbar toolbar-giftregistry-results bottom"><?= $block->getChildHtml('pager') ?></div>
+        <?php endif; ?>
+    </div>
+</div>
+<?php else :?>
+    <div class="message error"><div><?= $block->escapeHtml(__('Your search returned no results.')) ?></div></div>
+<?php endif; ?>

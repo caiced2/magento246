@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+/**
+ * Copyright © Magento, Inc. All rights reserved.
+ * See COPYING.txt for license details.
+ */
+-->
+<listing xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="urn:magento:module:Magento_Ui:etc/ui_configuration.xsd">
+    <dataSource name="sales_order_view_creditmemo_grid_data_source">
+        <aclResource>Magento_SalesArchive::creditmemos</aclResource>
+        <dataProvider class="Magento\SalesArchive\Ui\CreditmemoDataProvider" name="sales_order_view_creditmemo_grid_data_source" />
+    </dataSource>
+</listing>

@@ -1,0 +1,13 @@
+<?xml version="1.0"?>
+<!--
+/**
+ * Copyright © Magento, Inc. All rights reserved.
+ * See COPYING.txt for license details.
+ */
+-->
+<config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="urn:magento:module:Magento_VersionsCms:etc/menu_hierarchy.xsd">
+    <menuLayout name="name_one" label="Label Name" handle="handle_name" isDefault="true" />
+    <menuLayout name="name_two" label="Label Name Two" handle="node_one_two">
+        <pageLayout handle="node_one_two" />
+    </menuLayout>
+</config>

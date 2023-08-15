@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+ /**
+  * Copyright © Magento, Inc. All rights reserved.
+  * See COPYING.txt for license details.
+  */
+-->
+<actionGroups xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+              xsi:noNamespaceSchemaLocation="urn:magento:mftf:Test/etc/actionGroupSchema.xsd">
+    <actionGroup name="FindAndDeleteCustomerSegmentActionGroup" extends="FindAndOpenCustomerSegmentActionGroup">
+        <arguments>
+            <argument name="segmentName" type="string"/>
+        </arguments>
+        <click selector="{{AdminMainActionsSection.delete}}" stepKey="clickDeleteSegmentButton"/>
+        <waitForElementVisible selector="{{AdminConfirmationModalSection.ok}}" stepKey="waitForPageLoadAfterClickingDelete"/>
+        <click selector="{{AdminConfirmationModalSection.ok}}" stepKey="confirmDeletion"/>
+        <see selector="{{AdminMessagesSection.success}}" userInput="You deleted the segment." stepKey="seeSuccessMessage"/>
+        <click selector="{{AdminDataGridHeaderSection.clearFilters}}" stepKey="resetFilters"/>
+    </actionGroup>
+</actionGroups>

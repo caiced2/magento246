@@ -1,0 +1,101 @@
+<?php
+/**
+ * Copyright © Magento, Inc. All rights reserved.
+ * See COPYING.txt for license details.
+ */
+
+// phpcs:disable Magento2.Templates.ThisInTemplate
+// phpcs:disable Magento2.Files.LineLength.MaxExceeded
+
+/** @var $block \Magento\GiftRegistry\Block\Customer\Edit\Registry */
+/** @var \Magento\GiftRegistry\ViewModel\Address\RegionProvider $regionProvider */
+$regionProvider = $block->getRegionProvider();
+?>
+
+<input type="hidden" name="entity_id" id="entity_id"
+       value="<?= $block->escapeHtmlAttr($block->getEntity()->getEntityId()) ?>"/>
+<input type="hidden" name="type_id" id="type_id" value="<?= $block->escapeHtmlAttr($block->getTypeId()) ?>" />
+
+<p class="giftregistry-type">
+    <span class="label"><?= $block->escapeHtml(__('Type:')) ?></span>
+    <strong><?= $block->escapeHtml($block->getTypeLabel()) ?></strong>
+</p>
+
+<fieldset class="fieldset">
+    <legend class="legend"><span><?= $block->escapeHtml(__('General Information')) ?></span></legend>
+
+    <div class="field event required">
+        <label for="title" class="label"><span><?= $block->escapeHtml(__('Event')) ?></span></label>
+        <div class="control">
+            <input type="text" name="title" id="title"
+                   value="<?= $block->escapeHtmlAttr($block->getEntity()->getTitle()) ?>"
+                   title="<?= $block->escapeHtmlAttr(__('Event')) ?>" class="input-text"
+                   data-validate="{required:true}"/>
+        </div>
+    </div>
+    <div class="field textarea required">
+        <label for="message" class="label"><span><?= $block->escapeHtml(__('Message')) ?></span></label>
+        <div class="control">
+            <textarea name="message" id="message" cols="5" rows="3"
+                      title="<?= $block->escapeHtmlAttr(__('Message')) ?>"
+                      data-validate="{required:true}"><?= $block->escapeHtml($block->getEntity()->getMessage()) ?>
+            </textarea>
+        </div>
+    </div>
+    <div class="field privacy required">
+        <label for="is_public" class="label"><span><?= $block->escapeHtml(__('Privacy Settings')) ?></span></label>
+        <div class="control">
+            <?= $block->getIsPublicHtml() ?>
+        </div>
+    </div>
+    <div class="field status required">
+        <label for="select" class="label"><span><?= $block->escapeHtml(__('Status')) ?></span></label>
+        <div class="control">
+            <?= $block->getStatusHtml() ?>
+        </div>
+    </div>
+</fieldset>
+
+<?php
+$fieldsets = $block->getGroupedRegistryAttributes();
+foreach ($fieldsets as $fieldset => $fields):?>
+<fieldset class="fieldset">
+    <legend class="legend"><span><?= $block->escapeHtml($block->getGroupLabel($fieldset)) ?></span></legend>
+
+    <?php foreach ($fields as $field => $data):?>
+        <?php $isRequired = $block->isAttributeRequired($data); ?>
+        <div class="field<?= ($isRequired ? ' required' : ''); ?><?= $field == 'event_date' ? ' date' : '' ?>">
+            <label for="<?= $block->escapeHtmlAttr($field) ?>" class="label">
+                <span><?= $block->escapeHtml(__($data['label'])) ?></span>
+            </label>
+            <div class="control">
+                <?= /* @noEscape */ $block->renderField($data, $field) ?>
+            </div>
+        </div>
+    <?php endforeach; ?>
+    <?php foreach ($fields as $field => $data):?>
+        <?php if ($block->useRegionUpdater($data)):?>
+            <?php $currentRegion = $block->escapeJs($block->getEntity()->getFieldValue($data['id'] . '_region')) ?>
+            <?php $optionalRegion = $block->getConfig('general/region/display_all') ? 'true' : 'false' ?>
+        <script type="text/x-magento-init">
+        {
+            "#<?= $block->escapeJs($field) ?>": {
+                "directoryRegionUpdater": {
+                    "optionalRegionAllowed": <?= /* @noEscape */  $optionalRegion ?>,
+                    "regionListId": "#<?= $block->escapeJs($field) ?>_region",
+                    "regionInputId": "#<?= $block->escapeJs($field) ?>_region_text",
+                    "isRegionRequired": false,
+                    "isZipRequired": false,
+                    "isCountryRequired": true,
+                    <?php if ($block->getEntity()->getFieldValue($data['id'] . '_region')):?>
+                    "currentRegion": <?= /* @noEscape */ $currentRegion ?>,
+                    <?php endif; ?>
+                    "regionJson": <?= /* @noEscape */ $regionProvider->getRegionJson() ?>
+                }
+            }
+        }
+        </script>
+        <?php endif; ?>
+    <?php endforeach; ?>
+</fieldset>
+<?php endforeach; ?>

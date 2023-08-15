@@ -1,0 +1,58 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+/**
+ * Copyright © Magento, Inc. All rights reserved.
+ * See COPYING.txt for license details.
+ */
+-->
+<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema">
+    <xs:element name="config">
+        <xs:complexType>
+            <xs:sequence>
+                <xs:element name="action" type="actionDeclaration" minOccurs="1" maxOccurs="unbounded" />
+            </xs:sequence>
+        </xs:complexType>
+        <xs:unique name="uniqueActionPath">
+            <xs:annotation>
+                <xs:documentation>
+                    Action path must be unique.
+                </xs:documentation>
+            </xs:annotation>
+            <xs:selector xpath="action" />
+            <xs:field xpath="@path" />
+        </xs:unique>
+    </xs:element>
+
+    <xs:complexType name="actionDeclaration">
+        <xs:annotation>
+            <xs:documentation>
+                Action declaration.
+            </xs:documentation>
+        </xs:annotation>
+        <xs:attribute name="path" type="actionPath" use="required" />
+        <xs:attribute name="type" type="actionType" use="required" />
+    </xs:complexType>
+
+    <xs:simpleType name="actionPath">
+        <xs:annotation>
+            <xs:documentation>
+                Action path can contain only [a-zA-Z_].
+            </xs:documentation>
+        </xs:annotation>
+        <xs:restriction base="xs:string">
+            <xs:pattern value="[a-zA-Z_]+" />
+        </xs:restriction>
+    </xs:simpleType>
+
+    <xs:simpleType name="actionType">
+        <xs:annotation>
+            <xs:documentation>
+                Action type.
+            </xs:documentation>
+        </xs:annotation>
+        <xs:restriction base="xs:string">
+            <xs:enumeration value="register"/>
+            <xs:enumeration value="generic"/>
+        </xs:restriction>
+    </xs:simpleType>
+</xs:schema>

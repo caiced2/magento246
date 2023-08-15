@@ -1,0 +1,58 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+ /**
+  * Copyright © Magento, Inc. All rights reserved.
+  * See COPYING.txt for license details.
+  */
+-->
+
+<tests xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xsi:noNamespaceSchemaLocation="urn:magento:mftf:Test/etc/testSchema.xsd">
+    <test name="StorefrontApplyStoreCreditDuringCheckoutForVirtualProductTest" extends="StorefrontApplyStoreCreditDuringCheckoutTest">
+        <annotations>
+            <features value="CustomerBalance"/>
+            <stories value="Apply Store Credit"/>
+            <title value="Apply Store Credit during Checkout for Virtual Product"/>
+            <description value="Apply Store Credit during Checkout for Virtual Product"/>
+            <severity value="CRITICAL"/>
+            <testCaseId value="MC-28588"/>
+            <group value="customerBalance"/>
+            <group value="create"/>
+        </annotations>
+        <before>
+            <!--Replace Action group with correct value for this test-->
+            <actionGroup ref="UpdateCustomerStoreCreditBalanceAdminActionGroup" stepKey="updateStoreCreditFromAdmin">
+                <argument name="storeCredit" value="5" />
+            </actionGroup>
+        </before>
+        <!--Replace Action group with correct value for this test-->
+        <actionGroup ref="AssertStorefrontStoreCreditInformationActionGroup" stepKey="assertStorefrontStoreCreditInformation"/>
+
+        <!--Replace Action group with correct value for this test-->
+        <actionGroup ref="StorefrontCheckoutUseStoreCreditActionGroup" stepKey="useStoreCredit">
+            <argument name="storeCredit" value="5" />
+        </actionGroup>
+        <remove keyForRemoval="seePaymentMethod" />
+
+        <!--Replace Action group with correct value for this test-->
+        <actionGroup ref="CheckOrderStoreCreditFromStoreFrontActionGroup" stepKey="checkOrderInfStoreCreditFromStoreFront">
+            <argument name="storeCreditUsed" value="5"/>
+        </actionGroup>
+
+        <!--Replace Action group with correct value for this test-->
+        <actionGroup ref="CheckCustomerStoreCreditFromStoreFrontActionGroup" stepKey="checkCustomerInfStoreCreditFromStoreFront">
+            <argument name="storeCreditUsed" value="5"/>
+            <argument name="storeCreditLeft" value="0"/>
+        </actionGroup>
+
+        <!--Replace action with correct value for this test-->
+        <see userInput="-$5.00" selector="{{AdminOrderFormTotalSection.storeCredit}}" stepKey="seeStoreCreditInOrder"/>
+
+        <!--Replace Action group with correct value for this test-->
+        <actionGroup ref="CheckCustomerStoreCreditFromAdminActionGroup" stepKey="checkCustomerInfStoreCreditFromAdmin">
+            <argument name="storeCreditUsed" value="5"/>
+            <argument name="storeCreditLeft" value="0"/>
+            <argument name="orderNumber" value="$grabOrderNumber"/>
+        </actionGroup>
+    </test>
+</tests>

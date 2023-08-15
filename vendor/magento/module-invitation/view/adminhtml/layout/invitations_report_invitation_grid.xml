@@ -1,0 +1,74 @@
+<?xml version="1.0"?>
+<!--
+/**
+ * Copyright © Magento, Inc. All rights reserved.
+ * See COPYING.txt for license details.
+ */
+-->
+<page xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="urn:magento:framework:View/Layout/etc/page_configuration.xsd">
+    <update handle="reports_report_grid"/>
+    <body>
+        <referenceBlock name="adminhtml.report.grid">
+            <arguments>
+                <argument name="id" xsi:type="string">report_invitation_general</argument>
+                <argument name="dataSource" xsi:type="object" shared="false">Magento\Invitation\Model\ResourceModel\Report\Invitation\Collection\Initial</argument>
+            </arguments>
+        </referenceBlock>
+        <referenceBlock name="adminhtml.report.grid.columnSet">
+            <block class="Magento\Backend\Block\Widget\Grid\Column" name="adminhtml.report.grid.columnSet.sent" as="sent">
+                <arguments>
+                    <argument name="header" xsi:type="string" translate="true">Sent</argument>
+                    <argument name="type" xsi:type="string">number</argument>
+                    <argument name="index" xsi:type="string">sent</argument>
+                    <argument name="id" xsi:type="string">sent</argument>
+                    <argument name="header_css_class" xsi:type="string">col-inv-sent</argument>
+                    <argument name="column_css_class" xsi:type="string">col-inv-sent</argument>
+                </arguments>
+            </block>
+            <block class="Magento\Backend\Block\Widget\Grid\Column" name="adminhtml.report.grid.columnSet.accepted" as="accepted">
+                <arguments>
+                    <argument name="header" xsi:type="string" translate="true">Accepted</argument>
+                    <argument name="type" xsi:type="string">number</argument>
+                    <argument name="index" xsi:type="string">accepted</argument>
+                    <argument name="id" xsi:type="string">accepted</argument>
+                    <argument name="header_css_class" xsi:type="string">col-inv-acc</argument>
+                    <argument name="column_css_class" xsi:type="string">col-inv-acc</argument>
+                </arguments>
+            </block>
+            <block class="Magento\Backend\Block\Widget\Grid\Column" name="adminhtml.report.grid.columnSet.canceled" as="canceled">
+                <arguments>
+                    <argument name="header" xsi:type="string" translate="true">Discarded</argument>
+                    <argument name="type" xsi:type="string">number</argument>
+                    <argument name="index" xsi:type="string">canceled</argument>
+                    <argument name="id" xsi:type="string">canceled</argument>
+                    <argument name="header_css_class" xsi:type="string">col-inv-disc</argument>
+                    <argument name="column_css_class" xsi:type="string">col-inv-disc</argument>
+                </arguments>
+            </block>
+            <block class="Magento\Backend\Block\Widget\Grid\Column" name="adminhtml.report.grid.columnSet.accepted_rate" as="accepted_rate">
+                <arguments>
+                    <argument name="header" xsi:type="string" translate="true">Accept Rate</argument>
+                    <argument name="type" xsi:type="string">string</argument>
+                    <argument name="index" xsi:type="string">accepted_rate</argument>
+                    <argument name="id" xsi:type="string">accepted_rated</argument>
+                    <argument name="width" xsi:type="string">170</argument>
+                    <argument name="renderer" xsi:type="string">Magento\Invitation\Block\Adminhtml\Grid\Column\Renderer\Percent</argument>
+                    <argument name="header_css_class" xsi:type="string">col-inv-acc-rate</argument>
+                    <argument name="column_css_class" xsi:type="string">col-inv-acc-rate</argument>
+                </arguments>
+            </block>
+            <block class="Magento\Backend\Block\Widget\Grid\Column" name="adminhtml.report.grid.columnSet.canceled_rate" as="canceled_rate">
+                <arguments>
+                    <argument name="header" xsi:type="string" translate="true">Discard Rate</argument>
+                    <argument name="type" xsi:type="string">number</argument>
+                    <argument name="index" xsi:type="string">canceled_rate</argument>
+                    <argument name="id" xsi:type="string">canceled_rate</argument>
+                    <argument name="width" xsi:type="string">170</argument>
+                    <argument name="renderer" xsi:type="string">Magento\Invitation\Block\Adminhtml\Grid\Column\Renderer\Percent</argument>
+                    <argument name="header_css_class" xsi:type="string">col-inv-disc-rate</argument>
+                    <argument name="column_css_class" xsi:type="string">col-inv-disc-rate</argument>
+                </arguments>
+            </block>
+        </referenceBlock>
+    </body>
+</page>

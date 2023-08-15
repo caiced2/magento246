@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+ /**
+  * Copyright © Magento, Inc. All rights reserved.
+  * See COPYING.txt for license details.
+  */
+-->
+<actionGroups xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:noNamespaceSchemaLocation="urn:magento:mftf:Test/etc/actionGroupSchema.xsd">
+    <actionGroup name="AdminVerifyProductStagingPreviewNameAndPriceActionGroup">
+        <annotations>
+            <description>Verify product name and price, staging data on staging preview page</description>
+        </annotations>
+
+        <arguments>
+            <argument name="productName" type="string"/>
+            <argument name="productPrice" type="string"/>
+            <argument name="calendarDate" type="string"/>
+        </arguments>
+
+        <executeJS function="document.querySelector('[data-role=\'preview-iframe\']').id = 'preview-iframe'" stepKey="setStagedPreviewFrameId"/>
+        <switchToIFrame userInput="preview-iframe" stepKey="switchToPreviewFrame"/>
+        <waitForPageLoad time="30" stepKey="waitForIFrameContentLoad"/>
+        <see userInput="{{productName}}" selector="{{StorefrontProductInfoMainSection.productName}}" stepKey="seeProductNameInTitle"/>
+        <see userInput="{{productPrice}}" selector="{{StorefrontProductInfoMainSection.price}}" stepKey="seeProductPrice"/>
+        <switchToIFrame stepKey="switchBackFromPreview"/>
+        <see userInput="{{calendarDate}}" selector="{{AdminStagingPreviewSection.previewDate}}" stepKey="seeStartDateInPreview"/>
+        <conditionalClick selector="{{AdminStagingPreviewSection.calendarBtn}}" dependentSelector="{{AdminStagingPreviewSection.calendarBtnActive}}" visible="false" stepKey="openCalendar"/>
+        <seeInField userInput="{{calendarDate}}" selector="{{AdminStagingPreviewSection.stagingDate}}" stepKey="seeStagingDate"/>
+    </actionGroup>
+</actionGroups>

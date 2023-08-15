@@ -1,0 +1,8 @@
+{
+    "cataloginventory_stock_item": {
+        "column": {
+            "deferred_stock_update": true,
+            "use_config_deferred_stock_update": true
+        }
+    }
+}

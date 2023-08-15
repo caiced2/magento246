@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+ /**
+  * Copyright © Magento, Inc. All rights reserved.
+  * See COPYING.txt for license details.
+  */
+-->
+
+<actionGroups xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+              xsi:noNamespaceSchemaLocation="urn:magento:mftf:Test/etc/actionGroupSchema.xsd">
+    <actionGroup name="AdminCheckLinksStagingDashboardActionGroup">
+        <arguments>
+            <argument name="updateName" type="string"/>
+        </arguments>
+         <!--Check links -->
+        <click selector="{{AdminContentStagingGridDashboardSection.buttonSelect(updateName)}}" stepKey="clickOnSelect"/>
+        <waitForPageLoad stepKey="waitForEditLink"/>
+        <click selector="{{AdminContentStagingGridDashboardSection.linkViewEdit(updateName)}}" stepKey="clickEditLink"/>
+        <waitForPageLoad stepKey="waitEditPage"/>
+        <seeInTitle userInput="{{updateName}}" stepKey="checkEditLink"/>
+
+        <amOnPage url="{{AdminStagingDashboardPage.url}}" stepKey="goBackToStagingDashboard"/>
+        <waitForPageLoad stepKey="waitForPageLoad"/>
+        <click selector="{{AdminContentStagingGridDashboardSection.buttonSelect(updateName)}}" stepKey="openOnSelect"/>
+        <waitForPageLoad stepKey="waitForPreviewLink"/>
+        <click selector="{{AdminContentStagingGridDashboardSection.linkPreview(updateName)}}"  stepKey="clickPreviewLink"/>
+        <waitForPageLoad stepKey="waitLoadPage"/>
+        <seeInTitle userInput="Staging Preview" stepKey="checkPreviewLink"/>
+    </actionGroup>
+</actionGroups>

@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+ /**
+  * Copyright © Magento, Inc. All rights reserved.
+  * See COPYING.txt for license details.
+  */
+-->
+<entities xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:noNamespaceSchemaLocation="urn:magento:mftf:DataGenerator/etc/dataProfileSchema.xsd">
+    
+    <!-- Various custom attributes used to create a gift card via createData -->
+
+    <entity name="VirtualGiftCardType" type="custom_attribute">
+        <data key="attribute_code">giftcard_type</data>
+        <data key="value">0</data>
+    </entity>
+    <entity name="PhysicalGiftCardType" type="custom_attribute">
+        <data key="attribute_code">giftcard_type</data>
+        <data key="value">1</data>
+    </entity>
+    <entity name="CombinedGiftCardType" type="custom_attribute">
+        <data key="attribute_code">giftcard_type</data>
+        <data key="value">2</data>
+    </entity>
+    <entity name="AllowOpenAmount" type="custom_attribute">
+        <data key="attribute_code">allow_open_amount</data>
+        <data key="value">1</data>
+    </entity>
+    <entity name="OpenAmountMin" type="custom_attribute">
+        <data key="attribute_code">open_amount_min</data>
+        <data key="value">1</data>
+    </entity>
+    <entity name="OpenAmountMax" type="custom_attribute">
+        <data key="attribute_code">open_amount_max</data>
+        <data key="value">999</data>
+    </entity>
+</entities>

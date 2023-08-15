@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+ /**
+  * Copyright © Magento, Inc. All rights reserved.
+  * See COPYING.txt for license details.
+  */
+-->
+<actionGroups xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+              xsi:noNamespaceSchemaLocation="urn:magento:mftf:Test/etc/actionGroupSchema.xsd">
+    <actionGroup name="AssertStorefrontGiftRegistrySearchResultActionGroup">
+        <annotations>
+            <description>Assertions of Gift Registry search results</description>
+        </annotations>
+        <arguments>
+            <argument name="name" defaultValue="{{Simple_US_Customer.firstname}}" type="string"/>
+            <argument name="event" defaultValue="Birthday" type="string"/>
+            <argument name="type" defaultValue="Birthday" type="string"/>
+            <argument name="email" defaultValue="{{Simple_US_Customer.email}}" type="string"/>
+        </arguments>
+        <waitForElementVisible selector="{{StorefrontRegistrySearchResultSection.resultsBlock}}" stepKey="waitForResultsVisible"/>
+        <dontSee selector="{{StorefrontRegistrySearchResultSection.errorMessage}}" stepKey="dontSeeErrorMessage"/>
+        <seeInField selector="{{StorefrontRegistrySearchResultSection.searchEmail}}" userInput="{{email}}" stepKey="seeCorrectEmailInInput"/>
+        <see selector="{{StorefrontRegistrySearchResultSection.resultEvent}}" userInput="{{event}}" stepKey="seeCorrectEvent"/>
+        <see selector="{{StorefrontRegistrySearchResultSection.resultType}}" userInput="{{type}}" stepKey="seeCorrectType"/>
+        <see selector="{{StorefrontRegistrySearchResultSection.resultName}}" userInput="{{name}}" stepKey="seeCorrectName"/>
+    </actionGroup>
+</actionGroups>

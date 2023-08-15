@@ -1,0 +1,96 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+ /**
+  * Copyright © Magento, Inc. All rights reserved.
+  * See COPYING.txt for license details.
+  */
+-->
+
+<tests xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xsi:noNamespaceSchemaLocation="urn:magento:mftf:Test/etc/testSchema.xsd">
+    <test name="StorefrontValidateCustomDateSavesCorrectDateForNewAddress">
+        <annotations>
+            <group value="Customer Custom Date Attribute"/>
+            <stories value="Validate Customer Custom Date Attribute Shows Correct Date After Saving New Address"/>
+            <title value="Validate custom date type customer attribute"/>
+            <description value="Validate Customer Address Attribute Date value saves correct date after editing the newly created address"/>
+            <severity value="MAJOR"/>
+            <testCaseId value="MC-41954"/>
+            <useCaseId value="MC-41756"/>
+            <group value="CustomerCustomAttributes"/>
+            <group value="customerAddress"/>
+        </annotations>
+
+        <before>
+            <!--Login as admin-->
+            <actionGroup ref="AdminLoginActionGroup" stepKey="LoginAsAdmin"/>
+            <!-- Create Customer -->
+            <createData entity="Simple_US_Customer_CA" stepKey="simpleCustomer"/>
+        </before>
+        <after>
+            <!--Delete customer attributes -->
+            <amOnPage url="{{CustomerAddressAttributesPage.url}}" stepKey="navigateToCustomerAttributePage"/>
+            <!-- Delete created attribute -->
+            <actionGroup ref="AdminDeleteCustomerAttribute" stepKey="deleteCustomerAttribute">
+                <argument name="defaultLabel" value="{{AttributeDateData.label}}"/>
+            </actionGroup>
+            <!--Delete Customer-->
+            <deleteData createDataKey="simpleCustomer" stepKey="deleteCustomer"/>
+            <!--Log out-->
+            <actionGroup ref="AdminLogoutActionGroup" stepKey="logOut"/>
+        </after>
+
+        <!-- Create new customer address custom date attribute -->
+        <amOnPage url="{{CustomerAddressAttributesPage.url}}" stepKey="navigateToCustomerAddressAttributesPage"/>
+        <waitForPageLoad stepKey="waitForCustomerAddressAttributePageLoad"/>
+        <actionGroup ref="AdminCreateCustomerNewAttributeWithRequiredValues" stepKey="createCustomDateAttribute">
+            <argument name="defaultLabel" value="{{AttributeDateData.label}}"/>
+            <argument name="attributeCode" value="{{AttributeDateData.code}}"/>
+            <argument name="inputType" value="{{AttributeDateData.inputType}}"/>
+            <argument name="sortOrder" value="{{AttributeDateData.sortOrder}}"/>
+        </actionGroup>
+
+        <!-- Navigate to Stores -> Customers -> Filter the created attribute -->
+        <amOnPage url="{{CustomerAddressAttributesPage.url}}" stepKey="navigateToCustomerAddress"/>
+        <waitForPageLoad stepKey="waitForAttributePageLoad"/>
+
+        <!-- Login as customer -->
+        <actionGroup ref="LoginToStorefrontActionGroup" stepKey="loginToStorefrontAccount">
+            <argument name="Customer" value="$$simpleCustomer$$"/>
+        </actionGroup>
+
+        <!-- Go to Address Book -->
+        <actionGroup ref="StorefrontCustomerGoToSidebarMenu" stepKey="goToAddressBook">
+            <argument name="menu" value="Address Book"/>
+        </actionGroup>
+
+        <!-- Click Add New Address button -->
+        <click selector="{{AdminCustomerAddressesSection.addNewAddress}}" stepKey="clickAddNewAddressButton"/>
+        <waitForPageLoad stepKey="waitForCustomerAddressForm"/>
+
+        <!-- Fill all required address fields -->
+        <actionGroup ref="FillNewCustomerAddressRequiredFieldsActionGroup" stepKey="fillNewAddressFields">
+            <argument name="address" value="US_Address_California"/>
+        </actionGroup>
+
+        <!-- Fill new address custom date attribute field -->
+        <fillField selector="{{StoreFrontCustomerAdvancedAttributesSection.datedAttribute(AttributeDateData.frontend_label)}}" userInput="5/3/1961" stepKey="fillNewAddressDateAttribute"/>
+
+        <!-- Save new address -->
+        <actionGroup ref="AdminSaveCustomerAddressActionGroup" stepKey="saveNewCustomerAddress"/>
+        <waitForPageLoad stepKey="waitForCustomerAddressFormToBeSaved"/>
+
+        <!--Click on edit newly created address-->
+        <click selector="{{StorefrontCustomerAddressAttributeSection.editAddressLink}}" stepKey="clickEditAddress"/>
+        <waitForPageLoad stepKey="waitForCustomerEditAddressFormToBeOpened"/>
+
+        <!--Grab date value from the editing address-->
+        <grabValueFrom selector="{{StoreFrontCustomerAdvancedAttributesSection.datedAttribute(AttributeDateData.frontend_label)}}" stepKey="grabDateValue"/>
+
+        <!--Verify custom date matches with expected date-->
+        <assertEquals stepKey="assertDateValuesAreEqual">
+            <actualResult type="string">$grabDateValue</actualResult>
+            <expectedResult type="string">5/3/1961</expectedResult>
+        </assertEquals>
+    </test>
+</tests>

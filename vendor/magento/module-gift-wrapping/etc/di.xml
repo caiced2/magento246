@@ -1,0 +1,63 @@
+<?xml version="1.0"?>
+<!--
+/**
+ * Copyright © Magento, Inc. All rights reserved.
+ * See COPYING.txt for license details.
+ */
+-->
+<config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="urn:magento:framework:ObjectManager/etc/config.xsd">
+    <preference for="Magento\GiftWrapping\Api\WrappingRepositoryInterface" type="Magento\GiftWrapping\Model\WrappingRepository"/>
+    <preference for="Magento\GiftWrapping\Api\Data\WrappingInterface" type="Magento\GiftWrapping\Model\Wrapping"/>
+    <preference for="Magento\GiftWrapping\Api\Data\WrappingSearchResultsInterface" type="Magento\Framework\Api\SearchResults" />
+    <type name="Magento\Framework\Module\Setup\Migration">
+        <arguments>
+            <argument name="compositeModules" xsi:type="array">
+                <item name="magento_giftwrapping" xsi:type="string">Magento_GiftWrapping</item>
+            </argument>
+        </arguments>
+    </type>
+    <type name="Magento\Sales\Api\OrderRepositoryInterface">
+        <plugin name="get_order_gift_wrapping" type="Magento\GiftWrapping\Model\Plugin\OrderGiftWrapping"/>
+        <plugin name="get_order_item_gift_wrapping" type="Magento\GiftWrapping\Model\Plugin\OrderItemGiftWrapping"/>
+    </type>
+    <type name="Magento\Sales\Api\CreditmemoRepositoryInterface">
+        <plugin name="get_credit_memo_gift_wrapping" type="Magento\GiftWrapping\Model\Plugin\CreditMemoGiftWrapping"/>
+    </type>
+    <type name="Magento\Sales\Api\InvoiceRepositoryInterface">
+        <plugin name="get_invoice_gift_wrapping" type="Magento\GiftWrapping\Model\Plugin\InvoiceGiftWrapping"/>
+    </type>
+    <type name="Magento\GiftWrapping\Model\WrappingRepository">
+        <arguments>
+            <argument name="collectionProcessor" xsi:type="object">Magento\GiftWrapping\Api\SearchCriteria\WrappingCollectionProcessor</argument>
+        </arguments>
+    </type>
+    <virtualType name="Magento\GiftWrapping\Api\SearchCriteria\WrappingCollectionProcessor" type="Magento\Framework\Api\SearchCriteria\CollectionProcessor">
+        <arguments>
+            <argument name="processors" xsi:type="array">
+                <item name="filters" xsi:type="object">Magento\GiftWrapping\Model\Api\SearchCriteria\CollectionProcessor\WrappingFilterProcessor</item>
+            </argument>
+        </arguments>
+    </virtualType>
+    <virtualType name="Magento\GiftWrapping\Model\Api\SearchCriteria\CollectionProcessor\WrappingFilterProcessor" type="Magento\Framework\Api\SearchCriteria\CollectionProcessor\FilterProcessor">
+        <arguments>
+            <argument name="customFilters" xsi:type="array">
+                <item name="website_ids" xsi:type="object">Magento\GiftWrapping\Model\Api\SearchCriteria\CollectionProcessor\FilterProcessor\WrappingWebsitesFilter</item>
+                <item name="status" xsi:type="object">Magento\GiftWrapping\Model\Api\SearchCriteria\CollectionProcessor\FilterProcessor\WrappingStatusFilter</item>
+                <item name="store_id" xsi:type="object">Magento\GiftWrapping\Model\Api\SearchCriteria\CollectionProcessor\FilterProcessor\WrappingStoreFilter</item>
+            </argument>
+        </arguments>
+    </virtualType>
+    <type name="Magento\Quote\Model\Cart\TotalsConverter">
+        <plugin name="gift_wrapping_total" type="Magento\GiftWrapping\Model\Plugin\TotalsConverter" />
+    </type>
+    <type name="Magento\Eav\Model\Config">
+        <arguments>
+            <argument name="attributesForPreload" xsi:type="array">
+                <item name="catalog_product" xsi:type="array">
+                    <item name="gift_wrapping_available" xsi:type="string">catalog_product</item>
+                    <item name="gift_wrapping_price" xsi:type="string">catalog_product</item>
+                </item>
+            </argument>
+        </arguments>
+    </type>
+</config>

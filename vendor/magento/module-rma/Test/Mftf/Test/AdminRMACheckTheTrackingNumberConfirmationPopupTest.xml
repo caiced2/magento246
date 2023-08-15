@@ -1,0 +1,72 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+ /**
+  * Copyright © Magento, Inc. All rights reserved.
+  * See COPYING.txt for license details.
+  */
+-->
+
+<tests xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xsi:noNamespaceSchemaLocation="urn:magento:mftf:Test/etc/testSchema.xsd">
+    <test name="AdminRMACheckTheTrackingNumberConfirmationPopupTest">
+        <annotations>
+            <stories value="Admin confirmation modal for RMA tracking number should be in Magento style"/>
+            <title value="Admin confirmation modal for RMA tracking number should be in Magento style"/>
+            <description value="Testing the confirmation modal for removing the tracking number"/>
+            <features value="Rma"/>
+            <severity value="MINOR"/>
+            <group value="rma"/>
+            <group value="pr_exclude"/>
+        </annotations>
+        <before>
+            <createData entity="Simple_US_Customer" stepKey="customer"/>
+            <createData entity="SimpleProduct2" stepKey="simpleProduct"/>
+            <actionGroup ref="AdminLoginActionGroup" stepKey="loginAsAdmin"/>
+        </before>
+        <after>
+            <deleteData createDataKey="customer" stepKey="deleteCustomer"/>
+            <deleteData createDataKey="simpleProduct" stepKey="deleteSimpleProduct"/>
+            <actionGroup ref="AdminLogoutActionGroup" stepKey="logoutAdmin"/>
+        </after>
+
+        <!-- Create and Ship the Order -->
+        <actionGroup ref="CreateOrderActionGroup" stepKey="goToCreateOrderPage">
+            <argument name="customer" value="$$customer$$"/>
+            <argument name="product" value="$$simpleProduct$$"/>
+        </actionGroup>
+        <grabFromCurrentUrl regex="~/order_id/(\d+)/~" stepKey="orderId"/>
+        <grabTextFrom selector="|Order # (\d+)|" stepKey="orderNumber"/>
+        <actionGroup ref="AdminShipThePendingOrderActionGroup" stepKey="createShipmentForOrder"/>
+
+        <!-- Create the RMA for the order -->
+        <actionGroup ref="createReturns" stepKey="createReturns">
+            <argument name="customer" value="$$customer$$"/>
+        </actionGroup>
+
+        <!--Go to return items tab-->
+        <actionGroup ref="goToReturnItemsTab" stepKey="goToReturnItemsTab"/>
+
+        <!--Add item-->
+        <actionGroup ref="addReturnItem" stepKey="addReturnItem">
+            <argument name="product" value="$$simpleProduct$$"/>
+        </actionGroup>
+
+        <!--Submit return-->
+        <actionGroup ref="submitReturnItem" stepKey="submitReturnItem">
+            <argument name="item" value="SampleReturnItem"/>
+        </actionGroup>
+
+        <!--Filter the returns by order-->
+        <actionGroup ref="filterReturnsByOrder" stepKey="filterReturnsByOrder">
+            <argument name="orderId" value="$orderNumber"/>
+        </actionGroup>
+
+        <!-- Add Shipping Tracking Info -->
+        <actionGroup ref="AdminAddRmaTrackingInformationActionGroup" stepKey="addTrackingInformation">
+            <argument name="trackingTitle" value="Carrier Title"/>
+            <argument name="trackingNumber" value="12321"/>
+        </actionGroup>
+
+        <actionGroup ref="AdminDeleteRmaTrackingNumberActionGroup" stepKey="deleteTrackingNumber"/>
+    </test>
+</tests>

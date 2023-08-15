@@ -1,0 +1,13 @@
+<?xml version="1.0"?>
+<!--
+/**
+ * Copyright © Magento, Inc. All rights reserved.
+ * See COPYING.txt for license details.
+ */
+-->
+<config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="urn:magento:framework:ObjectManager/etc/config.xsd">
+    <preference for="Magento\CatalogPermissions\App\ConfigInterface" type="Magento\CatalogPermissions\App\Backend\Config" />
+    <type name="Magento\Catalog\Model\Category\DataProvider">
+        <plugin name="catalog_permissions_category_data_provider" type="Magento\CatalogPermissions\Model\Plugin\Catalog\Category\DataProvider" />
+    </type>
+</config>

@@ -1,0 +1,152 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+ /**
+  * Copyright © Magento, Inc. All rights reserved.
+  * See COPYING.txt for license details.
+  */
+-->
+<tests xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xsi:noNamespaceSchemaLocation="urn:magento:mftf:Test/etc/testSchema.xsd">
+    <test name="StorefrontCustomerAsyncCheckoutTest">
+        <annotations>
+            <features value="Checkout"/>
+            <stories value="Customer checkout via Async Checkout"/>
+            <title value="Customer should be able to place an order asynchronously"/>
+            <description value="Should be able to place an order asynchronously as a Customer"/>
+            <severity value="CRITICAL"/>
+            <testCaseId value="MC-42777"/>
+            <group value="checkout"/>
+            <group value="async_checkout"/>
+        </annotations>
+        <before>
+            <comment userInput="BIC workaround" stepKey="enableAsyncCheckout"/>
+
+            <!-- Create Customer -->
+            <createData entity="Simple_US_Customer" stepKey="createCustomer"/>
+
+            <!-- Create Product and Category for Order placement -->
+            <createData entity="_defaultCategory" stepKey="createCategory"/>
+            <createData entity="ApiSimpleProduct" stepKey="createProduct">
+                <requiredEntity createDataKey="createCategory"/>
+            </createData>
+        </before>
+        <after>
+            <actionGroup ref="AdminLogoutActionGroup" stepKey="adminLogout"/>
+            <deleteData createDataKey="createCategory" stepKey="deleteCategory"/>
+            <deleteData createDataKey="createProduct" stepKey="deleteProduct"/>
+            <deleteData createDataKey="createCustomer" stepKey="deleteCustomer"/>
+            <comment userInput="BIC workaround" stepKey="disableAsyncCheckout"/>
+        </after>
+
+        <!-- Login Customer Storefront -->
+        <actionGroup ref="LoginToStorefrontActionGroup" stepKey="customerLogin">
+            <argument name="Customer" value="$createCustomer$" />
+        </actionGroup>
+
+        <!-- Customer Checkout Process-->
+        <amOnPage url="{{StorefrontCategoryPage.url($$createCategory.custom_attributes[url_key]$$)}}" stepKey="onCategoryPage"/>
+        <waitForPageLoad stepKey="waitForPageLoad"/>
+        <actionGroup ref="StorefrontHoverProductOnCategoryPageActionGroup" stepKey="hoverProduct"/>
+        <actionGroup ref="StorefrontClickAddToCartButtonActionGroup" stepKey="addToCart"/>
+        <waitForElementVisible selector="{{StorefrontCategoryMainSection.SuccessMsg}}" time="30" stepKey="waitForProductAdded"/>
+        <see selector="{{StorefrontCategoryMainSection.SuccessMsg}}" userInput="You added $$createProduct.name$$ to your shopping cart." stepKey="seeAddedToCartMessage"/>
+        <see selector="{{StorefrontMinicartSection.quantity}}" userInput="1" stepKey="seeCartQuantity"/>
+        <actionGroup ref="GoToCheckoutFromMinicartActionGroup" stepKey="customerGoToCheckoutFromMinicart"/>
+
+        <!-- Add Shipping Address -->
+        <actionGroup ref="StorefrontClickAddNewAddressButtonFromCheckoutShippingActionGroup" stepKey="clickAddNewAddressButton"/>
+
+        <!-- Fill Customer info for Address -->
+        <fillField selector="{{CheckoutShippingSection.firstName}}" userInput="{{Simple_US_Customer.firstname}}" stepKey="enterFirstName"/>
+        <fillField selector="{{CheckoutShippingSection.lastName}}" userInput="{{Simple_US_Customer.lastname}}" stepKey="enterLastName"/>
+
+        <!-- Fill Shipping Address info -->
+        <fillField selector="{{CheckoutShippingSection.street}}" userInput="{{UK_Not_Default_Address.street[0]}}" stepKey="enterStreet"/>
+        <fillField selector="{{CheckoutShippingSection.city}}" userInput="{{UK_Not_Default_Address.city}}" stepKey="enterCity"/>
+        <fillField selector="{{CheckoutShippingSection.postcode}}" userInput="{{UK_Not_Default_Address.postcode}}" stepKey="enterPostcode"/>
+        <selectOption selector="{{CheckoutShippingSection.country}}" userInput="{{UK_Not_Default_Address.country_id}}" stepKey="enterCountry"/>
+        <fillField selector="{{CheckoutShippingSection.telephone}}" userInput="{{UK_Not_Default_Address.telephone}}" stepKey="enterTelephone"/>
+
+        <!-- Save Shipping Address info -->
+        <click selector="{{CheckoutShippingSection.saveAddress}}" stepKey="clickSaveAddress"/>
+        <waitForLoadingMaskToDisappear stepKey="waitForLoadingMask"/>
+
+        <!--Select Shipping Method-->
+        <actionGroup ref="CheckoutSelectFlatRateShippingMethodActionGroup" stepKey="selectFlatRateShippingMethod"/>
+        <actionGroup ref="StorefrontCheckoutClickNextOnShippingStepActionGroup" stepKey="clickNext"/>
+        <!--Select Payment Method-->
+        <actionGroup ref="CheckoutSelectCheckMoneyOrderPaymentActionGroup" stepKey="selectPaymentMethod"/>
+        <!-- Place Order -->
+        <actionGroup ref="CheckoutPlaceOrderActionGroup" stepKey="placeOrder">
+            <argument name="orderNumberMessage" value="CONST.successCheckoutOrderNumberMessage"/>
+            <argument name="emailYouMessage" value="CONST.successCheckoutEmailYouMessage"/>
+        </actionGroup>
+
+        <!-- Get Order id -->
+        <grabTextFrom selector="{{CheckoutSuccessMainSection.orderNumber22}}" stepKey="grabOrderNumber"/>
+
+        <!-- Assert Cart is Empty -->
+        <actionGroup ref="AssertShoppingCartIsEmptyActionGroup" stepKey="seeEmptyShoppingCartForFirstCustomer"/>
+
+        <!-- Go to Customer Order History and Check Order -->
+        <amOnPage url="{{StorefrontCustomerDashboardPage.url}}" stepKey="navigateToCustomerDashboardPage"/>
+        <waitForPageLoad stepKey="waitForCustomerDashboardPageLoad"/>
+        <see selector="{{StorefrontCustomerRecentOrdersSection.orderTotal}}" userInput="$128.00" stepKey="checkOrderTotalInStorefront"/>
+        <see selector="#my-orders-table td.status" userInput="Received" stepKey="checkOrderStatusReceived"/>
+        <dontSeeElement selector="#my-orders-table td.actions a.order" stepKey="dontSeeReorderButton"/>
+        <dontSeeElement selector="#my-orders-table td.actions a.view" stepKey="dontSeeViewButton"/>
+
+        <!-- Login into admin-->
+        <actionGroup ref="AdminLoginActionGroup" stepKey="loginAsAdmin"/>
+
+        <!-- Check that Order is Absent in admin Orders Grid -->
+        <amOnPage url="{{AdminOrdersPage.url}}" stepKey="onOrdersPage"/>
+        <waitForLoadingMaskToDisappear stepKey="waitForLoadingMaskToDisappearOnOrdersPage"/>
+        <actionGroup ref="ClearFiltersAdminDataGridActionGroup" stepKey="clearGridFilter"/>
+        <fillField selector="{{AdminOrdersGridSection.search}}" userInput="{$grabOrderNumber}" stepKey="fillOrderNum"/>
+        <click selector="{{AdminOrdersGridSection.submitSearch}}" stepKey="submitSearchOrderNum"/>
+        <waitForLoadingMaskToDisappear stepKey="waitForLoadingMaskToDisappearOnSearch"/>
+        <see selector="{{AdminDataGridTableSection.dataGridEmpty}}" userInput="We couldn't find any records." stepKey="assertDataGridEmptyMessage"/>
+        <click selector="{{AdminProductAttributeGridSection.ResetFilter}}" stepKey="clearExistingFilters"/>
+
+        <!-- Check that Product Quantity is not Changed -->
+        <actionGroup ref="SearchForProductOnBackendActionGroup" stepKey="searchForProduct">
+            <argument name="product" value="$$createProduct$$"/>
+        </actionGroup>
+        <actionGroup ref="OpenEditProductOnBackendActionGroup" stepKey="openEditProduct">
+            <argument name="product" value="$$createProduct$$"/>
+        </actionGroup>
+        <seeInField selector="{{AdminProductFormSection.productQuantity}}" userInput="1000" stepKey="seeProductQuantity"/>
+
+        <!-- Trigger Async Place Order Consumer-->
+        <actionGroup ref="CliConsumerStartActionGroup" stepKey="startMessageQueueConsumer">
+            <argument name="consumerName" value="{{AsyncPlaceOrderConsumerData.consumerName}}"/>
+            <argument name="maxMessages" value="{{AsyncPlaceOrderConsumerData.messageLimit}}"/>
+        </actionGroup>
+
+        <!-- Wait 30 for Order Processing-->
+        <wait time="30" stepKey="conditionalWait"/>
+
+        <!-- Check that Order is Available -->
+        <amOnPage url="{{StorefrontCustomerDashboardPage.url}}" stepKey="navigateToCustomerDashboardPage2"/>
+        <waitForPageLoad stepKey="waitForCustomerDashboardPageLoad2"/>
+        <see selector="{{StorefrontCustomerRecentOrdersSection.orderTotal}}" userInput="$128.00" stepKey="checkOrderTotalInStorefront2"/>
+        <seeElement selector="#my-orders-table td.actions a.order" stepKey="seeReorderButton"/>
+        <seeElement selector="#my-orders-table td.actions a.view" stepKey="seeViewButton"/>
+        <see selector="#my-orders-table td.status" userInput="Pending" stepKey="checkOrderStatusPending"/>
+
+        <!-- Check that Address is added to address book -->
+        <amOnPage url="customer/address/" stepKey="goToCustomerAddressBook"/>
+        <waitForPageLoad stepKey="waitForAddressBookPageLoad"/>
+        <see userInput="{{UK_Not_Default_Address.city}}" stepKey="checkAddressExistsInBookPage"/>
+        <see selector="#additional-addresses-table tbody td.city" userInput="{{UK_Not_Default_Address.city}}" stepKey="checkAddressExistsInBook"/>
+
+        <!--Assert Order is in Orders Grid -->
+        <actionGroup ref="AdminOrderFilterByOrderIdAndStatusActionGroup" stepKey="seeFirstOrder">
+            <argument name="orderId" value="$grabOrderNumber"/>
+            <argument name="orderStatus" value="Pending"/>
+        </actionGroup>
+        <see userInput="{$grabOrderNumber}" selector="{{AdminOrdersGridSection.gridCell('1','ID')}}" stepKey="assertOrderID"/>
+        <see userInput="Pending" selector="{{AdminOrdersGridSection.gridCell('1','Status')}}" stepKey="assertOrderStatus"/>
+    </test>
+</tests>

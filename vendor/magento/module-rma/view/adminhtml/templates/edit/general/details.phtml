@@ -1,0 +1,53 @@
+<?php
+/**
+ * Copyright © Magento, Inc. All rights reserved.
+ * See COPYING.txt for license details.
+ */
+//phpcs:disable Magento2.Files.LineLength.MaxExceeded
+//phpcs:disable Squiz.ControlStructures.ControlSignature.NewlineAfterOpenBrace
+//phpcs:disable Squiz.WhiteSpace.ScopeClosingBrace.ContentBefore
+?>
+<?php
+/**
+ * @see \Magento\Rma\Block\Adminhtml\Rma\Edit\Tab\General\Details
+ */
+
+$customerLink = $block->getCustomerLink();
+?>
+<div class="admin__page-section-item rma-request-details">
+    <div class="admin__page-section-item-title">
+        <span class="title"><?= $block->escapeHtml(__('Request Details')) ?></span>
+    </div>
+    <div class="admin__page-section-item-content">
+        <table class="admin__table-secondary">
+            <tr>
+                <th><?= $block->escapeHtml(__('ID')) ?></th>
+                <td><?= $block->escapeHtml(__('#') . $block->getRmaData('increment_id')) ?></td>
+            </tr>
+            <tr>
+                <th><?= $block->escapeHtml(__('Order ID')) ?></th>
+                <td><a href="<?= $block->escapeUrl($block->getOrderLink()) ?>"><?= $block->escapeHtml(__('#') . $block->getOrderIncrementId()) ?></a></td>
+            </tr>
+            <tr>
+                <th><?= $block->escapeHtml(__('Customer Name')) ?></th>
+                <td>
+                    <?php if ($customerLink) : ?>
+                        <a href="<?= $block->escapeUrl($customerLink) ?>">
+                    <?php endif;?>
+                    <?= $block->escapeHtml($block->getCustomerName()) ?>
+                    <?php if ($customerLink) : ?>
+                        </a>
+                    <?php endif;?>
+                </td>
+            </tr>
+            <tr>
+                <th><?= $block->escapeHtml(__('Email Address')) ?></th>
+                <td><a href="mailto:<?= $block->escapeHtmlAttr($block->getCustomerEmail()) ?>"><?= $block->escapeHtml($block->getCustomerEmail()) ?></a></td>
+            </tr>
+            <tr>
+                <th><?= $block->escapeHtml(__('Contact Email Address')) ?></th>
+                <td><?php if ($block->getCustomerContactEmail()) : ?><a href="mailto:<?= $block->escapeHtmlAttr($block->getCustomerContactEmail()) ?>"><?= $block->escapeHtml($block->getCustomerContactEmail()) ?></a><?php endif; ?></td>
+            </tr>
+        </table>
+    </div>
+</div>

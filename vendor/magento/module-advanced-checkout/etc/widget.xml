@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+/**
+ * Copyright © Magento, Inc. All rights reserved.
+ * See COPYING.txt for license details.
+ */
+-->
+<widgets xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:noNamespaceSchemaLocation="urn:magento:module:Magento_Widget:etc/widget.xsd">
+    <widget id="order_by_sku" class="Magento\AdvancedCheckout\Block\Widget\Sku" is_email_compatible="true">
+        <label translate="true">Order by SKU</label>
+        <description translate="true">Order by SKU Description</description>
+        <parameters>
+            <parameter name="link_display" xsi:type="select" visible="true" sort_order="10"
+                       source_model="Magento\Config\Model\Config\Source\Yesno">
+                <label translate="true">Display a Link to Loading a Spreadsheet</label>
+                <description translate="true">Defines whether a link to My Account &amp;gt; Order by SKU page will be displayed on the widget</description>
+            </parameter>
+            <parameter name="link_text" xsi:type="text" required="true" visible="true" sort_order="20">
+                <label translate="true">Link Text</label>
+                <description translate="true">The text of the link to the My Account &amp;gt; Order by SKU page</description>
+                <depends>
+                    <parameter name="link_display" value="1" />
+                </depends>
+                <value translate="true">Load a list of SKUs</value>
+            </parameter>
+            <parameter name="template" xsi:type="select" required="true" visible="true">
+                <label>Template</label>
+                <options>
+                    <option name="default_template" value="widget/sku.phtml" selected="true">
+                        <label translate="true">Order by SKU Template</label>
+                    </option>
+                </options>
+            </parameter>
+            <parameter xsi:type="text" name="unique_id" required="true" visible="false" />
+        </parameters>
+        <containers>
+            <container name="sidebar.main">
+                <template name="default" value="default_template" />
+            </container>
+            <container name="sidebar.additional">
+                <template name="default" value="default_template" />
+            </container>
+        </containers>
+    </widget>
+</widgets>

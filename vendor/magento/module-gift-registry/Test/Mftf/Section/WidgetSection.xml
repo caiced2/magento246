@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+ /**
+  * Copyright © Magento, Inc. All rights reserved.
+  * See COPYING.txt for license details.
+  */
+-->
+
+<sections xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+          xsi:noNamespaceSchemaLocation="urn:magento:mftf:Page/etc/SectionObject.xsd">
+    <section name="WidgetSection">
+        <element name="giftRegistryQuickSearchType" type="select" selector="#widget_options_Magento\\\GiftRegistry\\\Block\\\Search\\\Widget\\\Form select.multiselect[name='parameters[types][]']"/>
+    </section>
+</sections>

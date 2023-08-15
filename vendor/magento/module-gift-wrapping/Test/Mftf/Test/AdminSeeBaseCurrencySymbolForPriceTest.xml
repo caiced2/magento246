@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+ /**
+  * Copyright © Magento, Inc. All rights reserved.
+  * See COPYING.txt for license details.
+  */
+-->
+
+<tests xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xsi:noNamespaceSchemaLocation="urn:magento:mftf:Test/etc/testSchema.xsd">
+    <test name="AdminSeeBaseCurrencySymbolForPriceTest">
+        <annotations>
+            <features value="GiftWrapping"/>
+            <stories value="Gift Wrapping"/>
+            <title value="Admin is able to see the default base currency symbol for Price field"/>
+            <description value="Admin should be able to see the default currency symbol for price field"/>
+            <severity value="MINOR"/>
+            <group value="pr_exclude"/>
+        </annotations>
+        <before>
+            <actionGroup ref="AdminLoginActionGroup" stepKey="LoginAsAdmin"/>
+            <actionGroup ref="AdminNavigateToNewGiftWrappingPageActionGroup" stepKey="goToNewGiftWrappingPage"/>
+        </before>
+        <after>
+            <actionGroup ref="AdminLogoutActionGroup" stepKey="logout"/>
+        </after>
+        <actionGroup ref="AssertDefaultCurrencySymbolIsVisibleForPriceActionGroup" stepKey="seeTheBaseCurrencySymbol"/>
+    </test>
+</tests>

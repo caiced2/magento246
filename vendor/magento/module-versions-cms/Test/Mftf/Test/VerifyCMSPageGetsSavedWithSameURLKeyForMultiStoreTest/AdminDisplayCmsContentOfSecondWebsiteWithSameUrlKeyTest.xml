@@ -1,0 +1,84 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+ /**
+  * Copyright © Magento, Inc. All rights reserved.
+  * See COPYING.txt for license details.
+  */
+-->
+<tests xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:noNamespaceSchemaLocation="urn:magento:mftf:Test/etc/testSchema.xsd">
+    <test name="AdminDisplayCmsContentOfSecondWebsiteWithSameUrlKeyTest" extends="VerifyCMSPageGetsSavedWithSameURLKeyForMultiStoreTest">
+        <annotations>
+            <features value="VersionsCms"/>
+            <stories value="MultiStore"/>
+            <title value="Displaying content on CMS page of second website with same URL key as first website"/>
+            <description value="Displaying content on CMS page of second website with same URL key as first website"/>
+            <severity value="CRITICAL"/>
+            <testCaseId value="MC-28651"/>
+            <useCaseId value="MAGETWO-93061"/>
+            <group value="versionsCms"/>
+            <group value="WYSIWYGDisabled"/>
+        </annotations>
+
+        <before>
+            <!-- Create new Cms Page with certain url key -->
+            <actionGroup ref="CreateNewPageWithAllValuesAndContentActionGroup" stepKey="createNewPage">
+                <argument name="PageTitle" value="{{customCmsPage.title}}"/>
+                <argument name="ContentHeading" value="{{customCmsPage.content_heading}}"/>
+                <argument name="pageContent" value="{{customCmsPage.content}}"/>
+                <argument name="URLKey" value="{{customCmsPage.identifier}}"/>
+                <argument name="selectStoreViewOpt" value="Default Store View"/>
+                <argument name="selectHierarchyOpt" value="Website Root"/>
+            </actionGroup>
+        </before>
+
+        <after>
+            <remove keyForRemoval="clearFilters"/>
+            <actionGroup ref="AdminDeleteCMSPageByUrlKeyActionGroup" stepKey="deletePage">
+                <argument name="pageUrlKey" value="{{customCmsPage.identifier}}"/>
+            </actionGroup>
+            <actionGroup ref="AdminDeleteCMSPageByUrlKeyActionGroup" stepKey="deletePage1">
+                <argument name="pageUrlKey" value="{{customCmsPage2.identifier}}"/>
+            </actionGroup>
+        </after>
+
+        <!-- Create second Cms Page with the same url key as the first one -->
+        <actionGroup ref="CreateNewPageWithAllValuesAndContentActionGroup" stepKey="createNewPage">
+            <argument name="PageTitle" value="{{customCmsPage2.title}}"/>
+            <argument name="ContentHeading" value="{{customCmsPage2.content_heading}}"/>
+            <argument name="pageContent" value="{{customCmsPage2.content}}"/>
+            <argument name="URLKey" value="{{customCmsPage2.identifier}}"/>
+            <argument name="selectStoreViewOpt" value="{{customStore.name}}"/>
+            <argument name="selectHierarchyOpt" value="Website Root"/>
+        </actionGroup>
+
+        <!-- Save Cms Page with unavailable Hierarchy and verify error message -->
+        <click selector="{{CmsNewPageHierarchySection.selectHierarchy(DefaultHierarchyNode.name)}}" after="createNewPage" stepKey="selectUnavailableHierarchy"/>
+        <click selector="{{CmsNewPagePageActionsSection.saveAndContinueEdit}}" after="selectUnavailableHierarchy" stepKey="savePageWithWrongHierarchy"/>
+        <waitForElementVisible selector="{{AdminMessagesSection.error}}" after="savePageWithWrongHierarchy" stepKey="waitErrorMessageVisible"/>
+        <see selector="{{AdminMessagesSection.error}}" userInput="This page cannot be assigned to node, because a node or page with the same URL Key already exists in this tree part." after="waitErrorMessageVisible" stepKey="verifyErrorMessage"/>
+
+        <!-- Select available Hierarchy node -->
+        <click selector="{{CmsNewPageHierarchySection.header}}" after="verifyErrorMessage" stepKey="openHierarchyTabAgain"/>
+        <waitForElementVisible selector="{{CmsNewPageHierarchySection.expandHierarchy(DefaultHierarchyNode.name)}}" after="openHierarchyTabAgain" stepKey="waitExpandButtonVisible"/>
+        <click selector="{{CmsNewPageHierarchySection.selectHierarchy(customCmsPage.title)}}" stepKey="clickPageCheckBoxes"/>
+
+        <!-- Go to second website page and make sure that corresponding content is displayed -->
+        <amOnPage url="{{CmsPagesPage.url}}" after="seeSuccessMessage" stepKey="openCmsPagesGridPage"/>
+        <conditionalClick selector="{{CmsPagesPageActionsSection.clearAllButton}}" dependentSelector="{{CmsPagesPageActionsSection.activeFilters}}" visible="true" after="openCmsPagesGridPage" stepKey="resetGridFilterIfAny"/>
+        <actionGroup ref="AdminSearchCmsPageInGridByUrlKeyActionGroup" after="resetGridFilterIfAny" stepKey="filterCmsPagesGridByUrlKey">
+            <argument name="urlKey" value="{{customCmsPage2.identifier}}"/>
+        </actionGroup>
+        <click selector="{{CmsPagesPageActionsSection.select(customCmsPage2.title)}}" after="filterCmsPagesGridByUrlKey" stepKey="clickSelect"/>
+        <waitForElementVisible selector="{{CmsPagesPageActionsSection.preview(customCmsPage2.title)}}" after="clickSelect" stepKey="waitRowMenuAppeared"/>
+        <click selector="{{CmsPagesPageActionsSection.preview(customCmsPage2.title)}}" after="waitRowMenuAppeared" stepKey="goToSecondPagePreview"/>
+        <switchToNextTab after="goToSecondPagePreview" stepKey="switchToNextTab"/>
+        <waitForPageLoad after="switchToNextTab" stepKey="waitForPreviewPageLoaded"/>
+        <actionGroup ref="AssertStoreFrontCMSPageActionGroup" after="waitForPreviewPageLoaded" stepKey="seeIfSecondPageContentIsDisplayed">
+            <argument name="cmsTitle" value="{{customCmsPage2.title}}"/>
+            <argument name="cmsContent" value="{{customCmsPage2.content}}"/>
+            <argument name="cmsContentHeading" value="{{customCmsPage2.content_heading}}"/>
+        </actionGroup>
+        <closeTab after="seeIfSecondPageContentIsDisplayed" stepKey="closePreviewTab"/>
+    </test>
+</tests>

@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+ /**
+  * Copyright © Magento, Inc. All rights reserved.
+  * See COPYING.txt for license details.
+  */
+-->
+
+<tests xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xsi:noNamespaceSchemaLocation="urn:magento:mftf:Test/etc/testSchema.xsd">
+    <test name="StorefrontAdvanceCatalogSearchGiftCardProductBySkuWithHyphenTest" extends="AdvanceCatalogSearchSimpleProductBySkuTest">
+        <annotations>
+            <features value="GiftCard"/>
+            <stories value="Advanced Catalog Product Search for all product types"/>
+            <title value="Guest customer should be able to advance search Gift Card product with product sku that contains hyphen"/>
+            <description value="Guest customer should be able to advance search Gift Card product with product sku that contains hyphen"/>
+            <severity value="MAJOR"/>
+            <testCaseId value="MC-28860"/>
+            <group value="giftCard"/>
+            <group value="SearchEngine"/>
+            <group value="pr_exclude"/>
+        </annotations>
+        <before>
+            <createData entity="ApiGiftCard" stepKey="product"/>
+        </before>
+    </test>
+</tests>

@@ -1,0 +1,97 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+ /**
+  * Copyright © Magento, Inc. All rights reserved.
+  * See COPYING.txt for license details.
+  */
+-->
+
+<tests xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:noNamespaceSchemaLocation="urn:magento:mftf:Test/etc/testSchema.xsd">
+    <test name="AdminMassUpdateSetProductAsNewTest">
+        <annotations>
+            <features value="Catalog"/>
+            <stories value="Mass update product attributes"/>
+            <title value="Set Product As New From Date should show current date after Set Product as New mass update"/>
+            <description value="Set Product As New From Date should show current date after Set Product as New mass update"/>
+            <severity value="MAJOR"/>
+            <testCaseId value="AC-2026"/>
+            <useCaseId value="ACP2E-324"/>
+            <group value="catalog"/>
+            <group value="product_attributes"/>
+        </annotations>
+        <before>
+            <actionGroup ref="AdminLoginActionGroup" stepKey="loginAsAdmin"/>
+            <createData entity="_defaultCategory" stepKey="createCategory"/>
+            <createData entity="ApiSimpleProduct" stepKey="createProductOne">
+                <requiredEntity createDataKey="createCategory"/>
+            </createData>
+            <createData entity="ApiSimpleProduct" stepKey="createProductTwo">
+                <requiredEntity createDataKey="createCategory"/>
+            </createData>
+        </before>
+        <after>
+            <actionGroup ref="AdminOpenProductIndexPageActionGroup" stepKey="navigateToProductIndex"/>
+            <actionGroup ref="ClearFiltersAdminProductGridActionGroup" stepKey="clearFiltersAdminProductGrid"/>
+            <actionGroup ref="ToggleAdminProductGridColumnsDropdownActionGroup" stepKey="openToResetColumnsDropdown"/>
+            <actionGroup ref="ResetAdminProductGridColumnsActionGroup" stepKey="resetAdminProductGridColumns"/>
+            <deleteData createDataKey="createProductOne" stepKey="deleteProductOne"/>
+            <deleteData createDataKey="createProductTwo" stepKey="deleteProductTwo"/>
+            <deleteData createDataKey="createCategory" stepKey="deleteCategory"/>
+            <actionGroup ref="AdminLogoutActionGroup" stepKey="amOnLogoutPage"/>
+        </after>
+        <!-- Navigate to products list page and select created products -->
+        <actionGroup ref="AdminOpenProductIndexPageActionGroup" stepKey="navigateToProductIndex"/>
+        <!-- Add column "Set Product as New from Date" to the grid-->
+        <actionGroup ref="ResetAdminDataGridToDefaultViewActionGroup" stepKey="resetGrid"/>
+        <actionGroup ref="ToggleAdminProductGridColumnsDropdownActionGroup" stepKey="openColumnsDropdown"/>
+        <actionGroup ref="CheckAdminProductGridColumnOptionActionGroup" stepKey="checkCostOption">
+            <argument name="optionName" value="{{newsFromDate.default_frontend_label}}"/>
+        </actionGroup>
+        <actionGroup ref="ToggleAdminProductGridColumnsDropdownActionGroup" stepKey="closeColumnsDropdown"/>
+        <!-- Filter products by keyword api-simple-product -->
+        <actionGroup ref="SearchProductGridByKeyword2ActionGroup" stepKey="searchByKeyword">
+            <argument name="keyword" value="api-simple-product"/>
+        </actionGroup>
+        <actionGroup ref="SortProductsByIdDescendingActionGroup" stepKey="sortProductsByIdDescending"/>
+        <!-- Select previously created products -->
+        <checkOption selector="{{AdminProductGridSection.productGridCheckboxOnRow('1')}}" stepKey="clickCheckbox1"/>
+        <checkOption selector="{{AdminProductGridSection.productGridCheckboxOnRow('2')}}" stepKey="clickCheckbox2"/>
+        <!-- Mass update "Set Product as New" -->
+        <actionGroup ref="AdminClickMassUpdateProductAttributesActionGroup" stepKey="clickMassUpdateProductAttributes"/>
+        <actionGroup ref="AdminMassUpdateSetProductAsNewActionGroup" stepKey="setProductAsNew"/>
+        <actionGroup ref="AdminMassUpdateProductAttributeSaveActionGroup" stepKey="saveForm"/>
+        <!-- Get the current date-->
+        <generateDate date="now" format="M j, Y" stepKey="getCurrentDate"/>
+        <!-- Start message queue for product attribute consumer -->
+        <actionGroup ref="CliConsumerStartActionGroup" stepKey="startMessageQueue">
+            <argument name="consumerName" value="{{AdminProductAttributeUpdateMessageConsumerData.consumerName}}"/>
+            <argument name="maxMessages" value="{{AdminProductAttributeUpdateMessageConsumerData.messageLimit}}"/>
+        </actionGroup>
+        <actionGroup ref="AdminOpenProductIndexPageActionGroup" stepKey="reloadProductIndexPage"/>
+        <!-- Check that "Set Product as New from Date" is showing current date for product 1-->
+        <actionGroup ref="AssertAdminProductGridCellActionGroup" stepKey="checkProductOneInGrid">
+            <argument name="row" value="1"/>
+            <argument name="column" value="{{newsFromDate.default_frontend_label}}"/>
+            <argument name="value" value="$getCurrentDate"/>
+        </actionGroup>
+        <!-- Check that "Set Product as New from Date" is showing current date for product 2 -->
+        <actionGroup ref="AssertAdminProductGridCellActionGroup" stepKey="checkProductTwoInGrid">
+            <argument name="row" value="2"/>
+            <argument name="column" value="{{newsFromDate.default_frontend_label}}"/>
+            <argument name="value" value="$getCurrentDate"/>
+        </actionGroup>
+        <!-- Open first product for edit and assert that "Set Product as New" is enabled -->
+        <actionGroup ref="AdminProductPageOpenByIdActionGroup" stepKey="goToProductEditPage">
+            <argument name="productId" value="$createProductOne.id$"/>
+        </actionGroup>
+        <waitForPageLoad stepKey="waitForProductPageLoad"/>
+        <actionGroup ref="AdminProductAssertSetProductAsNewEnabledActionGroup" stepKey="checkProductOneIsNewEnabled"/>
+        <!-- Open second product for edit and assert that "Set Product as New" is enabled -->
+        <actionGroup ref="AdminProductPageOpenByIdActionGroup" stepKey="goToProductEditPage2">
+            <argument name="productId" value="$createProductTwo.id$"/>
+        </actionGroup>
+        <waitForPageLoad stepKey="waitForProductPageLoad2"/>
+        <actionGroup ref="AdminProductAssertSetProductAsNewEnabledActionGroup" stepKey="checkProductTwoIsNewEnabled"/>
+    </test>
+</tests>

@@ -1,0 +1,25 @@
+<?xml version="1.0"?>
+<!--
+/**
+ * Copyright © Magento, Inc. All rights reserved.
+ * See COPYING.txt for license details.
+ */
+-->
+<config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="urn:magento:module:Magento_Backend:etc/menu.xsd">
+    <menu>
+        <add id="Magento_Logging::system_magento_logging" title="Action Logs" translate="title" module="Magento_Logging" sortOrder="70" parent="Magento_Backend::system" dependsOnModule="Magento_Logging" resource="Magento_Logging::magento_logging"/>
+        <add id="Magento_Logging::system_magento_logging_events" title="Report" translate="title" module="Magento_Logging" sortOrder="10" parent="Magento_Logging::system_magento_logging" action="adminhtml/logging" dependsOnModule="Magento_Logging" resource="Magento_Logging::magento_logging_events"/>
+        <add id="Magento_Logging::system_magento_logging_backups" title="Archive" translate="title" module="Magento_Logging" sortOrder="20" parent="Magento_Logging::system_magento_logging" action="adminhtml/logging/archive" dependsOnModule="Magento_Logging" resource="Magento_Logging::backups"/>
+        <add id="Magento_Logging::system_magento_logging_bulk_operations"
+             title="Bulk Actions"
+             translate="title"
+             module="Magento_Logging"
+             dependsOnModule="Magento_AsynchronousOperations"
+             sortOrder="25"
+             parent="Magento_Logging::system_magento_logging"
+             action="bulk/index/"
+             resource="Magento_Logging::system_magento_logging_bulk_operations"/>
+        <remove id="Magento_AsynchronousOperations::system_magento_logging"/>
+        <remove id="Magento_AsynchronousOperations::system_magento_logging_bulk_operations"/>
+    </menu>
+</config>

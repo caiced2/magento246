@@ -1,0 +1,145 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+ /**
+  * Copyright © Magento, Inc. All rights reserved.
+  * See COPYING.txt for license details.
+  */
+-->
+<tests xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:noNamespaceSchemaLocation="urn:magento:mftf:Test/etc/testSchema.xsd">
+    <test name="StorefrontGuestAsyncCheckoutTest">
+        <annotations>
+            <features value="Checkout"/>
+            <stories value="Checkout via Guest Async Checkout"/>
+            <title value="Guest should be able to place an order asynchronously"/>
+            <description value="Should be able to place an order asynchronously as a Guest"/>
+            <severity value="CRITICAL"/>
+            <testCaseId value="MC-42179"/>
+            <group value="checkout"/>
+            <group value="async_checkout"/>
+        </annotations>
+        <before>
+            <comment userInput="BIC workaround" stepKey="enableAsyncCheckout"/>
+
+            <!-- Create Product and Category for Order placement -->
+            <createData entity="_defaultCategory" stepKey="createCategory"/>
+            <createData entity="ApiSimpleProduct" stepKey="createProduct">
+                <requiredEntity createDataKey="createCategory"/>
+            </createData>
+        </before>
+        <after>
+            <actionGroup ref="AdminLogoutActionGroup" stepKey="adminLogout"/>
+            <deleteData createDataKey="createCategory" stepKey="deleteCategory"/>
+            <deleteData createDataKey="createProduct" stepKey="deleteProduct"/>
+            <comment userInput="BIC workaround" stepKey="disableAsyncCheckout"/>
+        </after>
+
+        <!-- Guest Checkout Process-->
+        <amOnPage url="{{StorefrontCategoryPage.url($$createCategory.custom_attributes[url_key]$$)}}" stepKey="onCategoryPage"/>
+        <waitForPageLoad stepKey="waitForPageLoad"/>
+        <actionGroup ref="StorefrontHoverProductOnCategoryPageActionGroup" stepKey="hoverProduct"/>
+        <actionGroup ref="StorefrontClickAddToCartButtonActionGroup" stepKey="addToCart"/>
+        <waitForElementVisible selector="{{StorefrontCategoryMainSection.SuccessMsg}}" time="30" stepKey="waitForProductAdded"/>
+        <see selector="{{StorefrontCategoryMainSection.SuccessMsg}}" userInput="You added $$createProduct.name$$ to your shopping cart." stepKey="seeAddedToCartMessage"/>
+        <see selector="{{StorefrontMinicartSection.quantity}}" userInput="1" stepKey="seeCartQuantity"/>
+        <actionGroup ref="GoToCheckoutFromMinicartActionGroup" stepKey="guestGoToCheckoutFromMinicart"/>
+        <actionGroup ref="GuestCheckoutFillingShippingSectionActionGroup" stepKey="guestCheckoutFillingShippingSection">
+            <argument name="customerVar" value="CustomerEntityOne"/>
+            <argument name="customerAddressVar" value="CustomerAddressSimple"/>
+        </actionGroup>
+        <actionGroup ref="CheckoutSelectCheckMoneyOrderPaymentActionGroup" stepKey="guestSelectCheckMoneyOrderPayment"/>
+        <actionGroup ref="CheckBillingAddressInCheckoutActionGroup" stepKey="guestSeeAddress">
+            <argument name="customerVar" value="CustomerEntityOne"/>
+            <argument name="customerAddressVar" value="CustomerAddressSimple"/>
+        </actionGroup>
+
+        <actionGroup ref="CheckoutPlaceOrderActionGroup" stepKey="guestPlaceorder">
+            <argument name="orderNumberMessage" value="CONST.successGuestCheckoutOrderNumberMessage"/>
+            <argument name="emailYouMessage" value="CONST.successCheckoutEmailYouMessage"/>
+        </actionGroup>
+        <seeElement selector="{{CheckoutSuccessRegisterSection.createAccountButton}}" stepKey="seeVisibleCreateAccountButton"/>
+
+        <!-- Get Order id -->
+        <grabTextFrom selector="{{CheckoutSuccessMainSection.orderNumber}}" stepKey="grabOrderNumber"/>
+
+        <!-- Assert Cart is Empty -->
+        <actionGroup ref="AssertShoppingCartIsEmptyActionGroup" stepKey="seeEmptyShoppingCartForFirstCustomer"/>
+
+        <!-- Check that Order is not Available in Orders & Returns-->
+        <!-- Find the Order on storefront > Navigate to: Orders and Returns -->
+        <amOnPage url="{{StorefrontGuestOrderSearchPage.url}}" stepKey="amOnOrdersAndReturns"/>
+        <waitForPageLoad stepKey="waiForStorefrontPage"/>
+        <!-- Fill the Form with Correspondent Order Data -->
+        <actionGroup ref="StorefrontFillOrdersAndReturnsFormActionGroup" stepKey="fillOrder">
+            <argument name="orderNumber" value="$grabOrderNumber"/>
+            <argument name="customer" value="CustomerEntityOne"/>
+        </actionGroup>
+
+        <!-- Click on the "Continue" Button -->
+        <click selector="{{StorefrontGuestOrdersReturnsSearchSection.continue}}" stepKey="clickContinue"/>
+        <waitForPageLoad stepKey="waitForPageLoad1"/>
+        <!-- Check that Order is not Available -->
+        <actionGroup ref="AssertMessageOrderSearchActionGroup" stepKey="seeOrderIsNotAvailableErrorMessage">
+            <argument name="messageType" value="error"/>
+            <argument name="message" value="Order information is not available yet. Try again in a couple of minutes."/>
+        </actionGroup>
+
+        <!-- Login into admin-->
+        <actionGroup ref="AdminLoginActionGroup" stepKey="loginAsAdmin"/>
+
+        <!-- Check that Order is Absent in admin Orders Grid -->
+        <amOnPage url="{{AdminOrdersPage.url}}" stepKey="onOrdersPage"/>
+        <waitForLoadingMaskToDisappear stepKey="waitForLoadingMaskToDisappearOnOrdersPage"/>
+        <actionGroup ref="ClearFiltersAdminDataGridActionGroup" stepKey="clearGridFilter"/>
+        <fillField selector="{{AdminOrdersGridSection.search}}" userInput="{$grabOrderNumber}" stepKey="fillOrderNum"/>
+        <click selector="{{AdminOrdersGridSection.submitSearch}}" stepKey="submitSearchOrderNum"/>
+        <waitForLoadingMaskToDisappear stepKey="waitForLoadingMaskToDisappearOnSearch"/>
+        <see selector="{{AdminDataGridTableSection.dataGridEmpty}}" userInput="We couldn't find any records." stepKey="assertDataGridEmptyMessage"/>
+        <click selector="{{AdminProductAttributeGridSection.ResetFilter}}" stepKey="clearExistingFilters"/>
+
+        <!-- Check that Product Quantity is not Changed -->
+        <actionGroup ref="SearchForProductOnBackendActionGroup" stepKey="searchForProduct">
+            <argument name="product" value="$$createProduct$$"/>
+        </actionGroup>
+        <actionGroup ref="OpenEditProductOnBackendActionGroup" stepKey="openEditProduct">
+            <argument name="product" value="$$createProduct$$"/>
+        </actionGroup>
+        <seeInField selector="{{AdminProductFormSection.productQuantity}}" userInput="1000" stepKey="seeProductQuantity"/>
+
+        <!-- Trigger Async Place Order Consumer-->
+        <actionGroup ref="CliConsumerStartActionGroup" stepKey="startMessageQueueConsumer">
+            <argument name="consumerName" value="{{AsyncPlaceOrderConsumerData.consumerName}}"/>
+            <argument name="maxMessages" value="{{AsyncPlaceOrderConsumerData.messageLimit}}"/>
+        </actionGroup>
+
+        <!-- Wait 30s for Order Processing-->
+        <wait time="30" stepKey="conditionalWait"/>
+
+        <!-- Check that Order is Available -->
+        <!-- Find the Order on storefront > Navigate to: Orders and Returns -->
+        <amOnPage url="{{StorefrontGuestOrderSearchPage.url}}" stepKey="amOnOrdersAndReturns1"/>
+        <waitForPageLoad stepKey="waiForStorefrontPage1"/>
+        <!-- Fill the Form with Correspondent Order Data -->
+        <actionGroup ref="StorefrontFillOrdersAndReturnsFormActionGroup" stepKey="fillOrder1">
+            <argument name="orderNumber" value="$grabOrderNumber"/>
+            <argument name="customer" value="CustomerEntityOne"/>
+        </actionGroup>
+        <!-- Click on the "Continue" Button -->
+        <click selector="{{StorefrontGuestOrdersReturnsSearchSection.continue}}" stepKey="clickContinue1"/>
+        <waitForPageLoad stepKey="waitForPageLoad2"/>
+        <!-- Check that Ordered Product is Available -->
+        <actionGroup ref="AssertOrderAvailableActionGroup" stepKey="checkIfOrderAvailable">
+            <argument name="product" value="$$createProduct$$"/>
+            <argument name="price" value="$128.00"/>
+            <argument name="status" value="Pending"/>
+        </actionGroup>
+
+        <!--Assert Order is in Orders Grid -->
+        <actionGroup ref="AdminOrderFilterByOrderIdAndStatusActionGroup" stepKey="seeFirstOrder">
+            <argument name="orderId" value="$grabOrderNumber"/>
+            <argument name="orderStatus" value="Pending"/>
+        </actionGroup>
+        <see userInput="{$grabOrderNumber}" selector="{{AdminOrdersGridSection.gridCell('1','ID')}}" stepKey="assertOrderID"/>
+        <see userInput="Pending" selector="{{AdminOrdersGridSection.gridCell('1','Status')}}" stepKey="assertOrderStatus"/>
+    </test>
+</tests>

@@ -1,0 +1,1351 @@
+<?xml version="1.0"?>
+<!--
+/**
+ * Copyright © Magento, Inc. All rights reserved.
+ * See COPYING.txt for license details.
+ */
+-->
+<logging xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:noNamespaceSchemaLocation="urn:magento:module:Magento_Logging:etc/logging.xsd">
+    <actions>
+        <action id="view">
+            <label translate="true">View</label>
+        </action>
+        <action id="save">
+            <label translate="true">Save</label>
+        </action>
+        <action id="delete">
+            <label translate="true">Delete</label>
+        </action>
+        <action id="massDelete">
+            <label translate="true">Mass Delete</label>
+        </action>
+        <action id="export">
+            <label translate="true">Export</label>
+        </action>
+        <action id="import">
+            <label translate="true">Import</label>
+        </action>
+        <action id="edit">
+            <label translate="true">Edit</label>
+        </action>
+        <action id="massUpdate">
+            <label translate="true">Mass Update</label>
+        </action>
+        <action id="move">
+            <label translate="true">Move</label>
+        </action>
+        <action id="new">
+            <label translate="true">New</label>
+        </action>
+        <action id="forgotpassword">
+            <label translate="true">Forgot Password</label>
+        </action>
+        <action id="global_search">
+            <label translate="true">Global Search</label>
+        </action>
+        <action id="apply">
+            <label translate="true">Apply</label>
+        </action>
+        <action id="reorder">
+            <label translate="true">Reorder</label>
+        </action>
+        <action id="print">
+            <label translate="true">Print</label>
+        </action>
+        <action id="email">
+            <label translate="true">Email</label>
+        </action>
+        <action id="run">
+            <label translate="true">Run</label>
+        </action>
+        <action id="rollback">
+            <label translate="true">Rollback</label>
+        </action>
+        <action id="reindex_process">
+            <label translate="true">Reindex Process</label>
+        </action>
+        <action id="clean">
+            <label translate="true">Clean</label>
+        </action>
+        <action id="flush">
+            <label translate="true">Flush</label>
+        </action>
+        <action id="fetch">
+            <label translate="true">Fetch</label>
+        </action>
+        <action id="updatePayment">
+            <label translate="true">Update Payment</label>
+        </action>
+        <action id="updateState">
+            <label translate="true">Update State</label>
+        </action>
+        <action id="login">
+            <label translate="true">Login</label>
+        </action>
+        <action id="send">
+            <label translate="true">Send</label>
+        </action>
+        <action id="create">
+            <label translate="true">Create</label>
+        </action>
+        <action id="save_address">
+            <label translate="true">Save Customer Address</label>
+        </action>
+        <action id="delete_address">
+            <label translate="true">Delete Customer Address</label>
+        </action>
+        <action id="massStatusUpdate">
+            <label translate="true">Mass Status Update</label>
+        </action>
+        <action id="exportReport">
+            <label translate="true">Export CSV</label>
+        </action>
+        <action id="exportXml">
+            <label translate="true">Export XML</label>
+        </action>
+        <action id="applyFilter">
+            <label translate="true">Apply Filter</label>
+        </action>
+        <action id="listing">
+            <label translate="true">Listing</label>
+        </action>
+        <action id="search">
+            <label translate="true">Search</label>
+        </action>
+        <action id="pdf">
+            <label translate="true">PDF</label>
+        </action>
+    </actions>
+    <groups>
+        <group name="catalog_products">
+            <label translate="true">Catalog Products</label>
+            <expected_models>
+                <expected_model class="Magento\Catalog\Model\Product" />
+                <expected_model class="Magento\CatalogInventory\Model\Adminhtml\Stock\Item" />
+            </expected_models>
+            <events>
+                <event controller_action="catalog_product_edit" action_alias="view" />
+                <event controller_action="catalog_product_save" action_alias="save">
+                    <skip_on_back>
+                        <controller_action name="catalog_product_edit" />
+                    </skip_on_back>
+                </event>
+                <event controller_action="catalog_product_delete"
+                       action_alias="delete" />
+                <event controller_action="catalog_product_massStatus"
+                       action_alias="massUpdate"
+                       post_dispatch="postDispatchProductUpdateAttributes" />
+                <event controller_action="catalog_product_massDelete"
+                       action_alias="massDelete" />
+                <event controller_action="catalog_product_action_attribute_save"
+                       action_alias="massUpdate"
+                       post_dispatch="postDispatchProductUpdateAttributes" />
+            </events>
+        </group>
+        <group name="catalog_categories">
+            <label translate="true">Catalog Categories</label>
+            <expected_models>
+                <expected_model class="Magento\Catalog\Model\Category" />
+            </expected_models>
+            <events>
+                <event controller_action="catalog_category_edit" action_alias="view" />
+                <event controller_action="catalog_category_save" action_alias="save" />
+                <event controller_action="catalog_category_move"
+                       action_alias="move"
+                       post_dispatch="postDispatchCategoryMove" />
+                <event controller_action="catalog_category_delete"
+                       action_alias="delete" />
+            </events>
+        </group>
+        <group name="urlrewrites">
+            <label translate="true">URL Rewrites</label>
+            <expected_models>
+                <expected_model class="Magento\UrlRewrite\Model\UrlRewrite" />
+            </expected_models>
+            <events>
+                <event controller_action="adminhtml_url_rewrite_edit" action_alias="view" />
+                <event controller_action="adminhtml_url_rewrite_save" action_alias="save" />
+                <event controller_action="adminhtml_url_rewrite_delete" action_alias="delete" />
+                <event controller_action="adminhtml_url_rewrite_inlineEdit" action_alias="save" />
+            </events>
+        </group>
+        <group name="catalogsearch">
+            <label translate="true">Catalog Search</label>
+            <expected_models>
+                <expected_model class="Magento\Search\Model\Query" />
+            </expected_models>
+            <events>
+                <event controller_action="catalog_search_edit" action_alias="view" />
+                <event controller_action="catalog_search_save" action_alias="save" />
+                <event controller_action="catalog_search_delete"
+                       action_alias="delete" />
+                <event controller_action="catalog_search_massDelete"
+                       action_alias="massDelete" />
+                <event controller_action="adminhtml_index_globalSearch"
+                       action_alias="global_search"
+                       post_dispatch="postDispatchGlobalSearch" />
+            </events>
+        </group>
+        <group name="rating">
+            <label translate="true">Catalog Ratings</label>
+            <expected_models>
+                <expected_model class="Magento\Review\Model\Rating" />
+            </expected_models>
+            <events>
+                <event controller_action="rating_edit" action_alias="view" />
+                <event controller_action="rating_save" action_alias="save" />
+                <event controller_action="rating_delete" action_alias="delete" />
+            </events>
+        </group>
+        <group name="review">
+            <label translate="true">Catalog Reviews</label>
+            <expected_models>
+                <expected_model class="Magento\Review\Model\Review" />
+            </expected_models>
+            <events>
+                <event controller_action="review_product_edit"
+                       action_alias="view" />
+                <event controller_action="review_product_save"
+                       action_alias="save" />
+                <event controller_action="review_product_post"
+                       action_alias="save" />
+                <event controller_action="review_product_delete"
+                       action_alias="delete" />
+                <event controller_action="review_product_massUpdateStatus"
+                       action_alias="massUpdate" />
+                <event controller_action="review_product_massDelete"
+                       action_alias="massDelete" />
+            </events>
+        </group>
+        <group name="catalog_attributes">
+            <label translate="true">Catalog Attributes</label>
+            <expected_models>
+                <expected_model class="Magento\Catalog\Model\ResourceModel\Eav\Attribute" />
+            </expected_models>
+            <events>
+                <event controller_action="catalog_product_attribute_edit"
+                       action_alias="view" />
+                <event controller_action="catalog_product_attribute_save"
+                       action_alias="save">
+                    <skip_on_back>
+                        <controller_action name="catalog_product_attribute_edit" />
+                    </skip_on_back>
+                </event>
+                <event controller_action="catalog_product_attribute_delete"
+                       action_alias="delete" />
+            </events>
+        </group>
+        <group name="catalog_attributesets">
+            <label translate="true">Catalog Product Templates</label>
+            <expected_models>
+                <expected_model class="Magento\Eav\Model\Entity\Attribute\Set" />
+            </expected_models>
+            <events>
+                <event controller_action="catalog_product_set_edit"
+                       action_alias="view" />
+                <event controller_action="catalog_product_set_save"
+                       action_alias="save">
+                    <skip_on_back>
+                        <controller_action name="catalog_product_set_edit" />
+                    </skip_on_back>
+                </event>
+                <event controller_action="catalog_product_set_delete"
+                       action_alias="delete" />
+            </events>
+        </group>
+        <group name="admin_login">
+            <label translate="true">Admin Sign In</label>
+            <events>
+                <event controller_action="adminhtml_auth_forgotpassword"
+                       action_alias="forgotpassword"
+                       post_dispatch="postDispatchForgotPassword">
+                    <expected_models>
+                        <expected_model class="Magento\User\Model\User" />
+                    </expected_models>
+                </event>
+            </events>
+        </group>
+        <group name="version_cms_pages">
+            <label translate="true">CMS Pages</label>
+            <expected_models>
+                <expected_model class="Magento\Cms\Model\Page" />
+            </expected_models>
+            <events>
+                <event controller_action="adminhtml_cms_page_edit" action_alias="view" />
+                <event controller_action="cms_page_edit" action_alias="view" />
+                <event controller_action="cms_page_save" action_alias="save">
+                    <skip_on_back>
+                        <controller_action name="adminhtml_cms_page_edit" />
+                        <controller_action name="cms_page_edit" />
+                    </skip_on_back>
+                </event>
+                <event controller_action="adminhtml_cms_page_delete" action_alias="delete" />
+                <event controller_action="cms_page_delete" action_alias="delete" />
+                <event controller_action="cms_page_massDelete" action_alias="massDelete" />
+                <event controller_action="cms_page_inlineEdit" action_alias="save" />
+            </events>
+        </group>
+        <group name="cms_blocks">
+            <label translate="true">CMS Blocks</label>
+            <expected_models>
+                <expected_model class="Magento\Cms\Model\Block" />
+            </expected_models>
+            <events>
+                <event controller_action="cms_block_edit" action_alias="view" />
+                <event controller_action="cms_block_save" action_alias="save" />
+                <event controller_action="cms_block_delete" action_alias="delete" />
+            </events>
+        </group>
+        <group name="customer">
+            <label translate="true">Customers</label>
+            <expected_models>
+                <expected_model class="Magento\Customer\Model\Customer">
+                    <skip_fields>
+                        <field name="new_password" />
+                        <field name="password" />
+                        <field name="password_hash" />
+                    </skip_fields>
+                </expected_model>
+            </expected_models>
+            <events>
+                <event controller_action="customer_index_index" action_alias="view" >
+                    <skip_on_back>
+                        <controller_action name="mui_index_render_customer_listing"/>
+                    </skip_on_back>
+                </event>
+                <event controller_action="customer_index_edit" action_alias="edit" />
+                <event controller_action="customer_index_save" action_alias="save">
+                    <skip_on_back>
+                        <controller_action name="customer_index_edit" />
+                        <controller_action name="mui_index_render_customer_listing" />
+                    </skip_on_back>
+                </event>
+                <event controller_action="customer_address_save" action_alias="save_address">
+                    <expected_models>
+                        <expected_model class="Magento\Customer\Model\Address">
+                            <skip_fields>
+                                <field name="id" />
+                                <field name="customer_id" />
+                                <field name="region_code" />
+                                <field name="default_shipping" />
+                                <field name="default_billing" />
+                                <field name="is_default_billing" />
+                                <field name="is_default_shipping" />
+                                <field name="store_id" />
+                                <field name="attribute_set_id" />
+                            </skip_fields>
+                        </expected_model>
+                    </expected_models>
+                </event>
+                <event controller_action="customer_address_delete" action_alias="delete_address">
+                    <expected_models>
+                        <expected_model class="Magento\Customer\Model\Address" />
+                    </expected_models>
+                </event>
+                <event controller_action="customer_index_validate"
+                       action_alias="save"
+                       post_dispatch="postDispatchCustomerValidate" />
+                <event controller_action="customer_index_delete" action_alias="delete" />
+                <event controller_action="customer_index_massSubscribe"
+                       action_alias="massUpdate" />
+                <event controller_action="customer_index_massUnsubscribe"
+                       action_alias="massUpdate" />
+                <event controller_action="customer_index_massDelete"
+                       action_alias="massDelete" />
+                <event controller_action="customer_index_massStatus"
+                       action_alias="massStatusUpdate"
+                       post_dispatch="postDispatchProductUpdateAttributes" />
+                <event controller_action="mui_export_gridToCsv_customer_listing" action_alias="exportReport" />
+                <event controller_action="mui_export_gridToXml_customer_listing" action_alias="exportXml"/>
+                <event controller_action="mui_index_render_customer_listing" action_alias="listing"/>
+                <event controller_action="mui_bookmark_save_customer_listing" action_alias="applyFilter">
+                <skip_on_back>
+                    <controller_action name="customer_index_index" />
+                </skip_on_back>
+                </event>
+                <event controller_action="customer_index_inlineEdit"
+                       action_alias="save"
+                       post_dispatch="postDispatchProductUpdateAttributes" />
+                <event controller_action="customer_index_massAssignGroup"
+                       action_alias="massUpdate" />
+            </events>
+        </group>
+        <group name="customer_online_grid">
+            <label translate="true">Customers Now Online</label>
+            <expected_models>
+                <expected_model class="Magento\Customer\Model\Customer" />
+            </expected_models>
+            <events>
+                <event controller_action="customer_online_index" action_alias="view">
+                    <skip_on_back>
+                        <controller_action name="mui_index_render_customer_online_grid"/>
+                    </skip_on_back>
+                </event>
+                <event controller_action="mui_export_gridToCsv_customer_online_grid"
+                       action_alias="ListingExport" />
+                <event controller_action="mui_export_gridToXml_customer_online_grid"
+                       action_alias="ListingExport" />
+                <event controller_action="mui_index_render_customer_online_grid"
+                       action_alias="listing" />
+                <event controller_action="mui_bookmark_save_customer_online_grid" action_alias="applyFilter"/>
+            </events>
+        </group>
+        <group name="customer_groups">
+            <label translate="true">Customer Groups</label>
+            <expected_models>
+                <expected_model class="Magento\Customer\Model\Group" />
+            </expected_models>
+            <events>
+                <event controller_action="customer_group_index" action_alias="view">
+                <skip_on_back>
+                    <controller_action name="mui_index_render_customer_group_listing"/>
+                </skip_on_back>
+                </event>
+                <event controller_action="customer_group_edit" action_alias="edit" />
+                <event controller_action="customer_group_save" action_alias="save" />
+                <event controller_action="mui_index_render_customer_group_listing" action_alias="listing" />
+                <event controller_action="mui_bookmark_save_customer_group_listing" action_alias="applyFilter"/>
+                <event controller_action="customer_group_delete" action_alias="delete" />
+            </events>
+        </group>
+        <group name="paypal_billing_agreement_index">
+            <label translate="true">Billing Agreements</label>
+            <expected_models>
+                <expected_model class="Magento\Paypal\Model\ResourceModel\Billing\Agreement\Collection"/>
+            </expected_models>
+            <events>
+                <event controller_action="paypal_billing_agreement_index" action_alias="view">
+                    <skip_on_back>
+                        <controller_action name="paypal_billing_agreement_ordersGrid"/>
+                    </skip_on_back>
+                </event>
+                <event controller_action="paypal_billing_agreement_view"
+                       action_alias="view"
+                       post_dispatch="postDispatchSimpleSave" />
+                <event controller_action="paypal_billing_agreement_grid" action_alias="search"/>
+                <event controller_action="paypal_billing_agreement_ordersGrid"
+                       action_alias="Related Orders"
+                       post_dispatch="postDispatchSimpleSave" />
+                <event controller_action="paypal_billing_agreement_cancel"
+                       action_alias="Cancel"
+                       post_dispatch="postDispatchSimpleSave" />
+                <event controller_action="paypal_billing_agreement_delete"
+                       action_alias="delete"
+                       post_dispatch="postDispatchSimpleSave" />
+            </events>
+        </group>
+        <group name="sales_transactions_index">
+            <label translate="true">Transactions</label>
+            <expected_models>
+                <expected_model class="Magento\Sales\Model\ResourceModel\Transaction\Grid\Collection"/>
+            </expected_models>
+            <events>
+                <event controller_action="sales_transactions_index"
+                       action_alias="view">
+                    <skip_on_back>
+                        <controller_action name="sales_transactions_grid"/>
+                    </skip_on_back>
+                </event>
+                <event controller_action="sales_transactions_view"
+                       action_alias="view"
+                       post_dispatch="postDispatchSimpleSave" />
+                <event controller_action="sales_transactions_grid" action_alias="search"/>
+            </events>
+        </group>
+        <group name="reports">
+            <label translate="true">Reports</label>
+            <events>
+                <event controller_action="reports_report_sales_sales"
+                       action_alias="view"
+                       post_dispatch="postDispatchReport" />
+                <event controller_action="reports_report_sales_tax"
+                       action_alias="view"
+                       post_dispatch="postDispatchReport" />
+                <event controller_action="reports_report_sales_shipping"
+                       action_alias="view"
+                       post_dispatch="postDispatchReport" />
+                <event controller_action="reports_report_sales_invoiced"
+                       action_alias="view"
+                       post_dispatch="postDispatchReport" />
+                <event controller_action="reports_report_sales_refunded"
+                       action_alias="view"
+                       post_dispatch="postDispatchReport" />
+                <event controller_action="reports_report_sales_coupons"
+                       action_alias="view"
+                       post_dispatch="postDispatchReport" />
+                <event controller_action="reports_report_shopcart_product"
+                       action_alias="view"
+                       post_dispatch="postDispatchReport" />
+                <event controller_action="reports_report_shopcart_abandoned"
+                       action_alias="view"
+                       post_dispatch="postDispatchReport" />
+                <event controller_action="reports_report_product_sold"
+                       action_alias="view"
+                       post_dispatch="postDispatchReport" />
+                <event controller_action="reports_report_product_ordered"
+                       action_alias="view"
+                       post_dispatch="postDispatchReport" />
+                <event controller_action="reports_report_product_viewed"
+                       action_alias="view"
+                       post_dispatch="postDispatchReport" />
+                <event controller_action="reports_report_product_lowstock"
+                       action_alias="view"
+                       post_dispatch="postDispatchReport" />
+                <event controller_action="reports_report_product_downloads"
+                       action_alias="view"
+                       post_dispatch="postDispatchReport" />
+                <event controller_action="reports_report_customer_accounts"
+                       action_alias="view"
+                       post_dispatch="postDispatchReport" />
+                <event controller_action="reports_report_customer_orders"
+                       action_alias="view"
+                       post_dispatch="postDispatchReport" />
+                <event controller_action="reports_report_customer_totals"
+                       action_alias="view"
+                       post_dispatch="postDispatchReport" />
+                <event controller_action="reports_report_review_customer"
+                       action_alias="view"
+                       post_dispatch="postDispatchReport" />
+                <event controller_action="reports_report_review_product"
+                       action_alias="view"
+                       post_dispatch="postDispatchReport" />
+                <event controller_action="reports_index_search"
+                       action_alias="view"
+                       post_dispatch="postDispatchReport" />
+                <event controller_action="invitations_report_invitation_index"
+                       action_alias="view"
+                       post_dispatch="postDispatchReport" />
+                <event controller_action="invitations_report_invitation_customer"
+                       action_alias="view"
+                       post_dispatch="postDispatchReport" />
+                <event controller_action="invitations_report_invitation_order"
+                       action_alias="view"
+                       post_dispatch="postDispatchReport" />
+                <event controller_action="invitations_report_invitation_order"
+                       action_alias="view"
+                       post_dispatch="postDispatchReport" />
+                <event controller_action="reports_report_sales_exportSalesCsv"
+                       action_alias="export"
+                       post_dispatch="postDispatchSimpleSave" />
+                <event controller_action="reports_report_sales_exportSalesExcel"
+                       action_alias="export"
+                       post_dispatch="postDispatchSimpleSave" />
+                <event controller_action="reports_report_sales_exportTaxCsv"
+                       action_alias="export"
+                       post_dispatch="postDispatchSimpleSave" />
+                <event controller_action="reports_report_sales_exportTaxExcel"
+                       action_alias="export"
+                       post_dispatch="postDispatchSimpleSave" />
+                <event controller_action="reports_report_sales_exportShippingCsv"
+                       action_alias="export"
+                       post_dispatch="postDispatchSimpleSave" />
+                <event controller_action="reports_report_sales_exportShippingExcel"
+                       action_alias="export"
+                       post_dispatch="postDispatchSimpleSave" />
+                <event controller_action="reports_report_sales_exportInvoicedCsv"
+                       action_alias="export"
+                       post_dispatch="postDispatchSimpleSave" />
+                <event controller_action="reports_report_sales_exportInvoicedExcel"
+                       action_alias="export"
+                       post_dispatch="postDispatchSimpleSave" />
+                <event controller_action="reports_report_sales_exportRefundedCsv"
+                       action_alias="export"
+                       post_dispatch="postDispatchSimpleSave" />
+                <event controller_action="reports_report_sales_exportRefundedExcel"
+                       action_alias="export"
+                       post_dispatch="postDispatchSimpleSave" />
+                <event controller_action="reports_report_sales_exportCouponsCsv"
+                       action_alias="export"
+                       post_dispatch="postDispatchSimpleSave" />
+                <event controller_action="reports_report_sales_exportCouponsExcel"
+                       action_alias="export"
+                       post_dispatch="postDispatchSimpleSave" />
+                <event controller_action="reports_report_shopcart_exportProductCsv"
+                       action_alias="export"
+                       post_dispatch="postDispatchSimpleSave" />
+                <event controller_action="reports_report_shopcart_exportProductExcel"
+                       action_alias="export"
+                       post_dispatch="postDispatchSimpleSave" />
+                <event controller_action="reports_report_shopcart_exportAbandonedCsv"
+                       action_alias="export"
+                       post_dispatch="postDispatchSimpleSave" />
+                <event controller_action="reports_report_shopcart_exportAbandonedExcel"
+                       action_alias="export"
+                       post_dispatch="postDispatchSimpleSave" />
+                <event controller_action="reports_report_product_exportOrderedCsv"
+                       action_alias="export"
+                       post_dispatch="postDispatchSimpleSave" />
+                <event controller_action="reports_report_product_exportOrderedExcel"
+                       action_alias="export"
+                       post_dispatch="postDispatchSimpleSave" />
+                <event controller_action="reports_report_product_exportViewedCsv"
+                       action_alias="export"
+                       post_dispatch="postDispatchSimpleSave" />
+                <event controller_action="reports_report_product_exportViewedExcel"
+                       action_alias="export"
+                       post_dispatch="postDispatchSimpleSave" />
+                <event controller_action="reports_report_product_exportSoldCsv"
+                       action_alias="export"
+                       post_dispatch="postDispatchSimpleSave" />
+                <event controller_action="reports_report_product_exportSoldExcel"
+                       action_alias="export"
+                       post_dispatch="postDispatchSimpleSave" />
+                <event controller_action="reports_report_product_exportLowstockCsv"
+                       action_alias="export"
+                       post_dispatch="postDispatchSimpleSave" />
+                <event controller_action="reports_report_product_exportLowstockExcel"
+                       action_alias="export"
+                       post_dispatch="postDispatchSimpleSave" />
+                <event controller_action="reports_report_product_exportDownloadsCsv"
+                       action_alias="export"
+                       post_dispatch="postDispatchSimpleSave" />
+                <event controller_action="reports_report_product_exportDownloadsExcel"
+                       action_alias="export"
+                       post_dispatch="postDispatchSimpleSave" />
+                <event controller_action="reports_report_customer_exportAccountsCsv"
+                       action_alias="export"
+                       post_dispatch="postDispatchSimpleSave" />
+                <event controller_action="reports_report_customer_exportAccountsExcel"
+                       action_alias="export"
+                       post_dispatch="postDispatchSimpleSave" />
+                <event controller_action="reports_report_customer_exportTotalsCsv"
+                       action_alias="export"
+                       post_dispatch="postDispatchSimpleSave" />
+                <event controller_action="reports_report_customer_exportTotalsExcel"
+                       action_alias="export"
+                       post_dispatch="postDispatchSimpleSave" />
+                <event controller_action="reports_report_customer_exportOrdersCsv"
+                       action_alias="export"
+                       post_dispatch="postDispatchSimpleSave" />
+                <event controller_action="reports_report_customer_exportOrdersExcel"
+                       action_alias="export"
+                       post_dispatch="postDispatchSimpleSave" />
+                <event controller_action="reports_report_review_exportCustomerCsv"
+                       action_alias="export"
+                       post_dispatch="postDispatchSimpleSave" />
+                <event controller_action="reports_report_review_exportCustomerExcel"
+                       action_alias="export"
+                       post_dispatch="postDispatchSimpleSave" />
+                <event controller_action="reports_report_review_exportProductCsv"
+                       action_alias="export"
+                       post_dispatch="postDispatchSimpleSave" />
+                <event controller_action="reports_report_review_exportProductExcel"
+                       action_alias="export"
+                       post_dispatch="postDispatchSimpleSave" />
+                <event controller_action="reports_index_exportSearchCsv"
+                       action_alias="export"
+                       post_dispatch="postDispatchSimpleSave" />
+                <event controller_action="reports_index_exportSearchExcel"
+                       action_alias="export"
+                       post_dispatch="postDispatchSimpleSave" />
+                <event controller_action="invitations_report_invitation_exportCsv"
+                       action_alias="export"
+                       post_dispatch="postDispatchSimpleSave" />
+                <event controller_action="invitations_report_invitation_exportExcel"
+                       action_alias="export"
+                       post_dispatch="postDispatchSimpleSave" />
+                <event controller_action="invitations_report_invitation_exportCustomerCsv"
+                       action_alias="export"
+                       post_dispatch="postDispatchSimpleSave" />
+                <event controller_action="invitations_report_invitation_exportCustomerExcel"
+                       action_alias="export"
+                       post_dispatch="postDispatchSimpleSave" />
+                <event controller_action="invitations_report_invitation_exportOrderCsv"
+                       action_alias="export"
+                       post_dispatch="postDispatchSimpleSave" />
+                <event controller_action="invitations_report_invitation_exportOrderExcel"
+                       action_alias="export"
+                       post_dispatch="postDispatchSimpleSave" />
+            </events>
+        </group>
+        <group name="adminhtml_system_config">
+            <label translate="true">System Configuration</label>
+            <events>
+                <event controller_action="adminhtml_system_config_index"
+                       action_alias="view"
+                       post_dispatch="postDispatchConfigView" />
+                <event controller_action="adminhtml_system_config_edit"
+                       action_alias="view"
+                       post_dispatch="postDispatchConfigView" />
+                <event controller_action="adminhtml_system_config_save"
+                       action_alias="save"
+                       post_dispatch="postDispatchConfigSave">
+                    <skip_on_back>
+                        <controller_action name="adminhtml_system_config_edit" />
+                    </skip_on_back>
+                </event>
+            </events>
+        </group>
+        <group name="catalogrule">
+            <label translate="true">Catalog Price Rules</label>
+            <expected_models>
+                <expected_model class="Magento\CatalogRule\Model\Rule" />
+            </expected_models>
+            <events>
+                <event controller_action="catalog_rule_promo_catalog_edit" action_alias="view" />
+                <event controller_action="catalog_rule_promo_catalog_save"
+                       action_alias="save"
+                       post_dispatch="postDispatchPromoCatalogSaveAndApply">
+                    <skip_on_back>
+                        <controller_action name="catalog_rule_promo_catalog_edit" />
+                    </skip_on_back>
+                </event>
+                <event controller_action="catalog_rule_promo_catalog_delete"
+                       action_alias="delete" />
+                <event controller_action="catalog_rule_promo_catalog_applyRules"
+                       action_alias="apply"
+                       post_dispatch="postDispatchPromoCatalogApply" />
+            </events>
+        </group>
+        <group name="salesrule">
+            <label translate="true">Cart Price Rules</label>
+            <expected_models>
+                <expected_model class="Magento\SalesRule\Model\Rule" />
+            </expected_models>
+            <events>
+                <event controller_action="catalog_promo_quote_edit" action_alias="view" />
+                <event controller_action="sales_rule_promo_quote_save" action_alias="save">
+                    <skip_on_back>
+                        <controller_action name="catalog_promo_quote_edit" />
+                    </skip_on_back>
+                </event>
+                <event controller_action="sales_rule_promo_quote_delete" action_alias="delete" />
+            </events>
+        </group>
+        <group name="adminhtml_system_account">
+            <label translate="true">Admin My Account</label>
+            <expected_models>
+                <expected_model class="Magento\User\Model\User">
+                    <skip_fields>
+                        <field name="password" />
+                        <field name="new_password" />
+                        <field name="password_confirmation" />
+                        <field name="current_password" />
+                    </skip_fields>
+                </expected_model>
+            </expected_models>
+            <events>
+                <event controller_action="adminhtml_system_account_index" action_alias="view" />
+                <event controller_action="adminhtml_system_account_save" action_alias="save" />
+            </events>
+        </group>
+        <group name="newsletter_queue">
+            <label translate="true">Newsletter Queue</label>
+            <expected_models>
+                <expected_model class="Magento\Newsletter\Model\Queue" />
+            </expected_models>
+            <events>
+                <event controller_action="newsletter_queue_edit" action_alias="view" />
+                <event controller_action="newsletter_queue_save" action_alias="save" />
+            </events>
+        </group>
+        <group name="newsletter_templates">
+            <label translate="true">Newsletter Templates</label>
+            <expected_models>
+                <expected_model class="Magento\Newsletter\Model\Template" />
+            </expected_models>
+            <events>
+                <event controller_action="newsletter_template_save"
+                       action_alias="save" />
+                <event controller_action="newsletter_template_edit"
+                       action_alias="view" />
+                <event controller_action="newsletter_template_delete"
+                       action_alias="delete" />
+                <event controller_action="newsletter_template_preview"
+                       action_alias="preview" />
+            </events>
+        </group>
+        <group name="newsletter_subscribers">
+            <label translate="true">Newsletter Subscribers</label>
+            <expected_models>
+                <expected_model class="Magento\Newsletter\Model\Subscriber" />
+            </expected_models>
+            <events>
+                <event controller_action="newsletter_subscriber_massUnsubscribe"
+                       action_alias="massUpdate" />
+                <event controller_action="newsletter_subscriber_massDelete"
+                       action_alias="massDelete" />
+                <event controller_action="newsletter_subscriber_exportCsv"
+                       action_alias="export"
+                       post_dispatch="postDispatchSimpleSave" />
+                <event controller_action="newsletter_subscriber_exportXml"
+                       action_alias="export"
+                       post_dispatch="postDispatchSimpleSave" />
+            </events>
+        </group>
+        <group name="sales_orders">
+            <label translate="true">Sales Orders</label>
+            <expected_models>
+                <expected_model class="Magento\Sales\Model\Order">
+                    <additional_fields>
+                        <field name="increment_id" />
+                    </additional_fields>
+                </expected_model>
+            </expected_models>
+            <events>
+                <event controller_action="sales_order_pdfdocs" action_alias="export" />
+                <event controller_action="sales_order_index" action_alias="view" >
+                <skip_on_back>
+                    <controller_action name="mui_index_render_sales_order_grid"/>
+                </skip_on_back>
+                </event>
+                <event controller_action="sales_order_view" action_alias="view" />
+                <event controller_action="sales_order_create_reorder"
+                       action_alias="reorder" />
+                <event controller_action="sales_order_edit_start"
+                       action_alias="edit" />
+                <event controller_action="sales_order_massHold"
+                       action_alias="massUpdate">
+                    <expected_models merge_group="true">
+                        <expected_model class="Magento\Sales\Model\Order\Status\History" />
+                    </expected_models>
+                </event>
+                <event controller_action="sales_order_massUnhold"
+                       action_alias="massUpdate">
+                    <expected_models merge_group="true">
+                        <expected_model class="Magento\Sales\Model\Order\Status\History" />
+                    </expected_models>
+                </event>
+                <event controller_action="sales_order_massCancel"
+                       action_alias="massUpdate">
+                    <expected_models merge_group="true">
+                        <expected_model class="Magento\Sales\Model\Order\Status\History" />
+                    </expected_models>
+                </event>
+                <event controller_action="sales_order_hold" action_alias="save">
+                    <expected_models merge_group="true">
+                        <expected_model class="Magento\Sales\Model\Order\Status\History" />
+                    </expected_models>
+                </event>
+                <event controller_action="sales_order_unhold" action_alias="save">
+                    <expected_models merge_group="true">
+                        <expected_model class="Magento\Sales\Model\Order\Status\History" />
+                    </expected_models>
+                </event>
+                <event controller_action="sales_order_cancel" action_alias="save">
+                    <expected_models merge_group="true">
+                        <expected_model class="Magento\Sales\Model\Order\Status\History" />
+                    </expected_models>
+                </event>
+                <event controller_action="sales_order_create_save"
+                       action_alias="save">
+                    <expected_models merge_group="true">
+                        <expected_model class="Magento\Customer\Model\Customer" />
+                        <expected_model class="Magento\Customer\Model\Address" />
+                        <expected_model class="Magento\Sales\Model\Order\Status\History" />
+                    </expected_models>
+                </event>
+                <event controller_action="sales_order_edit_save" action_alias="save">
+                    <expected_models merge_group="true">
+                        <expected_model class="Magento\Customer\Model\Customer" />
+                        <expected_model class="Magento\Customer\Model\Address" />
+                        <expected_model class="Magento\Sales\Model\Order\Status\History" />
+                    </expected_models>
+                </event>
+                <event controller_action="sales_order_email" action_alias="send">
+                    <expected_models merge_group="true">
+                        <expected_model class="Magento\Sales\Model\Order\Status\History" />
+                    </expected_models>
+                </event>
+                <event controller_action="sales_order_pdfinvoices"
+                       action_alias="export" />
+                <event controller_action="sales_order_pdfshipments"
+                       action_alias="export" />
+                <event controller_action="sales_order_pdfcreditmemos"
+                       action_alias="export" />
+                <event controller_action="mui_index_render_sales_order_grid" action_alias="listing"/>
+                <event controller_action="mui_export_gridToCsv_sales_order_grid" action_alias="exportReport" />
+                <event controller_action="mui_export_gridToXml_sales_order_grid" action_alias="exportXml" />
+                <event controller_action="mui_bookmark_save_sales_order_grid" action_alias="applyFilter" />
+            </events>
+        </group>
+        <group name="sales_order_status">
+            <label translate="true">Sales Order Status</label>
+            <events>
+                <event controller_action="sales_order_addComment"
+                       action_alias="save">
+                    <expected_models>
+                        <expected_model class="Magento\Sales\Model\Order\Status\History" />
+                    </expected_models>
+                </event>
+                <event controller_action="sales_order_status_save"
+                       action_alias="save">
+                    <expected_models>
+                        <expected_model class="Magento\Sales\Model\Order\Status" />
+                    </expected_models>
+                </event>
+                <event controller_action="sales_order_status_assignPost"
+                       action_alias="assign_save">
+                    <expected_models>
+                        <expected_model class="Magento\Sales\Model\Order\Status" />
+                    </expected_models>
+                </event>
+                <event controller_action="sales_order_status_assignPost"
+                       action_alias="assign">
+                    <expected_models>
+                        <expected_model class="Magento\Sales\Model\Order\Status" />
+                    </expected_models>
+                </event>
+                <event controller_action="sales_order_status_unassign"
+                       action_alias="unassign">
+                    <expected_models>
+                        <expected_model class="Magento\Sales\Model\Order\Status" />
+                    </expected_models>
+                </event>
+            </events>
+        </group>
+        <group name="sales_invoices">
+            <label translate="true">Sales Invoices</label>
+            <expected_models>
+                <expected_model class="Magento\Sales\Model\Order\Invoice">
+                    <additional_fields>
+                        <field name="increment_id" />
+                    </additional_fields>
+                </expected_model>
+            </expected_models>
+            <events>
+                <event controller_action="sales_invoice_index" action_alias="view" >
+                    <skip_on_back>
+                        <controller_action name="mui_index_render_sales_order_invoice_grid"/>
+                    </skip_on_back>
+                </event>
+                <event controller_action="sales_invoice_view" action_alias="view" />
+                <event controller_action="sales_order_invoice_view"
+                       action_alias="view" />
+                <event controller_action="sales_order_invoice_save"
+                       action_alias="save">
+                    <expected_models merge_group="true">
+                        <expected_model class="Magento\Sales\Model\Order\Invoice\Comment" />
+                    </expected_models>
+                    <skip_on_back>
+                        <controller_action name="adminhtml_system_config_edit" />
+                        <controller_action name="sales_order_view" />
+                    </skip_on_back>
+                </event>
+                <event controller_action="sales_order_invoice_addComment"
+                       action_alias="save">
+                    <expected_models>
+                        <expected_model class="Magento\Sales\Model\Order\Invoice\Comment" />
+                    </expected_models>
+                </event>
+                <event controller_action="sales_invoice_pdfinvoices"
+                       action_alias="export" />
+                <event controller_action="sales_order_invoice_print"
+                       action_alias="print" />
+                <event controller_action="sales_order_invoice_email"
+                       action_alias="email">
+                    <skip_on_back>
+                        <controller_action name="sales_invoice_view" />
+                    </skip_on_back>
+                </event>
+                <event controller_action="mui_index_render_sales_order_invoice_grid" action_alias="listing"/>
+                <event controller_action="mui_export_gridToCsv_sales_order_invoice_grid" action_alias="exportReport" />
+                <event controller_action="mui_export_gridToXml_sales_order_invoice_grid" action_alias="exportXml" />
+                <event controller_action="mui_bookmark_save_sales_order_invoice_grid" action_alias="applyFilter" />
+            </events>
+        </group>
+        <group name="sales_shipments">
+            <label translate="true">Sales Shipments</label>
+            <expected_models>
+                <expected_model class="Magento\Sales\Model\Order\Shipment">
+                    <additional_fields>
+                        <field name="increment_id" />
+                    </additional_fields>
+                </expected_model>
+            </expected_models>
+            <events>
+                <event controller_action="sales_shipment_index" action_alias="view">
+                    <skip_on_back>
+                        <controller_action name="mui_index_render_sales_order_shipment_grid"/>
+                    </skip_on_back>
+                </event>
+                <event controller_action="sales_shipment_view" action_alias="view" />
+                <event controller_action="adminhtml_shipment_view" action_alias="view"/>
+                <event controller_action="adminhtml_order_shipment_view"
+                       action_alias="view" />
+                <event controller_action="adminhtml_order_shipment_save"
+                       action_alias="save">
+                    <expected_models merge_group="true">
+                        <expected_model class="Magento\Sales\Model\Order\Shipment\Comment" />
+                    </expected_models>
+                    <skip_on_back>
+                        <controller_action name="sales_order_view" />
+                    </skip_on_back>
+                </event>
+                <event controller_action="sales_order_shipment_addComment"
+                       action_alias="save">
+                    <expected_models>
+                        <expected_model class="Magento\Sales\Model\Order\Shipment\Comment" />
+                    </expected_models>
+                </event>
+                <event controller_action="sales_shipment_pdfshipments"
+                       action_alias="pdf" />
+                <event controller_action="admin_shipment_massPrintShippingLabel"
+                       action_alias="print" />
+                <event controller_action="sales_shipment_print" action_alias="print"/>
+                <event controller_action="sales_order_shipment_print"
+                       action_alias="print" />
+                <event controller_action="sales_order_shipment_email"
+                       action_alias="email"/>
+                <event controller_action="sales_order_shipment_addTrack"
+                       action_alias="save">
+                    <expected_models>
+                        <expected_model class="Magento\Sales\Model\Order\Shipment\Track" />
+                    </expected_models>
+                </event>
+                <event controller_action="mui_index_render_sales_order_shipment_grid" action_alias="listing"/>
+                <event controller_action="mui_export_gridToCsv_sales_order_shipment_grid" action_alias="exportReport" />
+                <event controller_action="mui_export_gridToXml_sales_order_shipment_grid" action_alias="exportXml" />
+                <event controller_action="mui_bookmark_save_sales_order_shipment_grid" action_alias="applyFilter" />
+            </events>
+        </group>
+        <group name="sales_creditmemos">
+            <label translate="true">Sales Credit Memos</label>
+            <expected_models>
+                <expected_model class="Magento\Sales\Model\Order\Creditmemo">
+                    <additional_fields>
+                        <field name="increment_id" />
+                    </additional_fields>
+                </expected_model>
+            </expected_models>
+            <events>
+                <event controller_action="sales_creditmemo_index" action_alias="view">
+                    <skip_on_back>
+                        <controller_action name="mui_index_render_sales_order_creditmemo_grid"/>
+                    </skip_on_back>
+                </event>
+                <event controller_action="sales_creditmemo_view" action_alias="view" />
+                <event controller_action="sales_order_creditmemo_view"
+                       action_alias="view" />
+                <event controller_action="sales_order_creditmemo_save"
+                       action_alias="save">
+                    <expected_models merge_group="true">
+                        <expected_model class="Magento\Sales\Model\Order\Creditmemo\Comment" />
+                    </expected_models>
+                    <skip_on_back>
+                        <controller_action name="sales_order_view" />
+                    </skip_on_back>
+                </event>
+                <event controller_action="sales_order_creditmemo_addComment"
+                       action_alias="save">
+                    <expected_models>
+                        <expected_model class="Magento\Sales\Model\Order\Creditmemo\Comment" />
+                    </expected_models>
+                </event>
+                <event controller_action="sales_creditmemo_pdfcreditmemos"
+                       action_alias="export" />
+                <event controller_action="sales_order_creditmemo_print"
+                       action_alias="print" />
+                <event controller_action="sales_order_creditmemo_email"
+                       action_alias="email">
+                    <skip_on_back>
+                        <controller_action name="sales_creditmemo_view" />
+                    </skip_on_back>
+                </event>
+                <event controller_action="mui_index_render_sales_order_creditmemo_grid" action_alias="listing"/>
+                <event controller_action="mui_export_gridToCsv_sales_order_creditmemo_grid" action_alias="exportReport" />
+                <event controller_action="mui_export_gridToXml_sales_order_creditmemo_grid" action_alias="exportXml" />
+                <event controller_action="mui_bookmark_save_sales_order_creditmemo_grid" action_alias="applyFilter" />
+            </events>
+        </group>
+        <group name="sales_agreement">
+            <label translate="true">Checkout Terms and Conditions</label>
+            <expected_models>
+                <expected_model class="Magento\CheckoutAgreements\Model\Agreement" />
+            </expected_models>
+            <events>
+                <event controller_action="checkout_agreement_edit"
+                       action_alias="view" />
+                <event controller_action="checkout_agreement_save"
+                       action_alias="save">
+                    <skip_on_back>
+                        <controller_action name="checkout_agreement_edit" />
+                    </skip_on_back>
+                </event>
+                <event controller_action="checkout_agreement_delete"
+                       action_alias="delete" />
+            </events>
+        </group>
+        <group name="adminhtml_permission_roles">
+            <label translate="true">Admin Permission Roles</label>
+            <expected_models>
+                <expected_model class="Magento\Authorization\Model\Role" />
+            </expected_models>
+            <events>
+                <event controller_action="adminhtml_user_role_editrole" action_alias="view" />
+                <event controller_action="adminhtml_user_role_saverole" action_alias="save">
+                    <skip_on_back>
+                        <controller_action name="user_role_editrole" />
+                    </skip_on_back>
+                </event>
+                <event controller_action="adminhtml_user_role_delete" action_alias="delete" />
+            </events>
+        </group>
+        <group name="adminhtml_permission_users">
+            <label translate="true">Admin Permission Users</label>
+            <expected_models>
+                <expected_model class="Magento\User\Model\User">
+                    <skip_fields>
+                        <field name="password" />
+                        <field name="new_password" />
+                        <field name="password_confirmation" />
+                        <field name="current_password" />
+                    </skip_fields>
+                </expected_model>
+            </expected_models>
+            <events>
+                <event controller_action="adminhtml_user_edit" action_alias="view" />
+                <event controller_action="adminhtml_user_save" action_alias="save" />
+                <event controller_action="adminhtml_user_delete" action_alias="delete" />
+            </events>
+        </group>
+        <group name="adminhtml_system_websites">
+            <label translate="true">Manage Websites</label>
+            <expected_models>
+                <expected_model class="Magento\Store\Model\Website" />
+            </expected_models>
+            <events>
+                <event controller_action="adminhtml_system_store_editWebsite"
+                       action_alias="view" />
+                <event controller_action="adminhtml_system_store_save" action_alias="save">
+                    <expected_models merge_group="true">
+                        <expected_model class="Magento\Store\Model\Store" />
+                        <expected_model class="Magento\Store\Model\Store" />
+                    </expected_models>
+                </event>
+                <event controller_action="adminhtml_system_store_deleteWebsitePost"
+                       action_alias="delete" />
+            </events>
+        </group>
+        <group name="adminhtml_system_store_groups">
+            <label translate="true">Manage Stores</label>
+            <expected_models>
+                <expected_model class="Magento\Store\Model\Store" />
+            </expected_models>
+            <events>
+                <event controller_action="adminhtml_system_store_editStore"
+                       action_alias="view" />
+                <event controller_action="adminhtml_system_store_deleteStorePost"
+                       action_alias="delete" />
+            </events>
+        </group>
+        <group name="adminhtml_system_stores">
+            <label translate="true">Manage Store Views</label>
+            <expected_models>
+                <expected_model class="Magento\Store\Model\Store" />
+            </expected_models>
+            <events>
+                <event controller_action="adminhtml_system_store_deleteGroupPost"
+                       action_alias="delete" />
+                <event controller_action="adminhtml_system_store_editGroup"
+                       action_alias="view" />
+            </events>
+        </group>
+        <group name="adminhtml_system_design">
+            <label translate="true">Manage Design</label>
+            <expected_models>
+                <expected_model class="Magento\Theme\Model\Design" />
+            </expected_models>
+            <events>
+                <event controller_action="adminhtml_system_design_save" action_alias="save" />
+                <event controller_action="adminhtml_system_design_delete"
+                       action_alias="delete" />
+            </events>
+        </group>
+        <group name="adminhtml_system_currency">
+            <label translate="true">Manage Currency Rates</label>
+            <events>
+                <event controller_action="adminhtml_system_currency_saveRates"
+                       action_alias="save"
+                       post_dispatch="postDispatchSystemCurrencySave" />
+            </events>
+        </group>
+        <group name="adminhtml_email_template">
+            <label translate="true">Transactional Emails</label>
+            <expected_models>
+                <expected_model class="Magento\Email\Model\Template" />
+            </expected_models>
+            <events>
+                <event controller_action="adminhtml_email_template_save"
+                       action_alias="save" />
+                <event controller_action="adminhtml_email_template_edit"
+                       action_alias="edit" />
+                <event controller_action="adminhtml_email_template_delete"
+                       action_alias="delete" />
+            </events>
+        </group>
+        <group name="adminhtml_system_variable">
+            <label translate="true">Custom Variables</label>
+            <expected_models>
+                <expected_model class="Magento\Variable\Model\Variable" />
+            </expected_models>
+            <events>
+                <event controller_action="adminhtml_system_variable_save" action_alias="save">
+                    <skip_on_back>
+                        <controller_action name="adminhtml_system_variable_edit" />
+                    </skip_on_back>
+                </event>
+                <event controller_action="adminhtml_system_variable_edit" action_alias="view" />
+                <event controller_action="adminhtml_system_variable_delete"
+                       action_alias="delete" />
+            </events>
+        </group>
+        <group name="backups">
+            <label translate="true">System Backups</label>
+            <events>
+                <event controller_action="backup_index_create"
+                       action_alias="create"
+                       post_dispatch="postDispatchSystemBackupsCreate" />
+                <event controller_action="backup_index_massDelete"
+                       action_alias="massDelete"
+                       post_dispatch="postDispatchSystemBackupsDelete" />
+                <event controller_action="backup_index_rollback"
+                       action_alias="rollback"
+                       post_dispatch="postDispatchSystemRollback" />
+            </events>
+        </group>
+        <group name="tax_customer_tax_classes">
+            <label translate="true">Customer Tax Classes</label>
+            <expected_models>
+                <expected_model class="Magento\Tax\Model\ClassModel" />
+            </expected_models>
+            <events>
+                <event controller_action="tax_tax_ajaxDelete"
+                       action_alias="delete"
+                       post_dispatch="postDispatchTaxClassDelete" />
+                <event controller_action="tax_tax_ajaxSave"
+                       action_alias="save"
+                       post_dispatch="postDispatchTaxClassSave" />
+            </events>
+        </group>
+        <group name="tax_product_tax_classes">
+            <label translate="true">Catalog Product Tax Classes</label>
+            <expected_models>
+                <expected_model class="Magento\Tax\Model\ClassModel" />
+            </expected_models>
+        </group>
+        <group name="tax_rules">
+            <label translate="true">Tax Rules</label>
+            <expected_models>
+                <expected_model class="Magento\Tax\Model\Calculation\Rule" />
+            </expected_models>
+            <events>
+                <event controller_action="tax_rule_edit" action_alias="view" />
+                <event controller_action="tax_rule_save" action_alias="save">
+                    <skip_on_back>
+                        <controller_action name="tax_rule_edit" />
+                    </skip_on_back>
+                </event>
+                <event controller_action="tax_rule_delete" action_alias="delete" />
+            </events>
+        </group>
+        <group name="tax_rates">
+            <label translate="true">Tax Rates</label>
+            <expected_models>
+                <expected_model class="Magento\Tax\Model\Calculation\Rate" />
+            </expected_models>
+            <events>
+                <event controller_action="tax_rate_edit" action_alias="view" />
+                <event controller_action="tax_rate_save" action_alias="save" />
+                <event controller_action="tax_rate_importPost"
+                       action_alias="import"
+                       post_dispatch="postDispatchTaxRatesImport" />
+                <event controller_action="tax_rate_exportPost"
+                       action_alias="export"
+                       post_dispatch="postDispatchTaxRatesExport" />
+                <event controller_action="tax_rate_delete" action_alias="delete" />
+            </events>
+        </group>
+        <group name="google_sitemap">
+            <label translate="true">XML Sitemap</label>
+            <expected_models>
+                <expected_model class="Magento\Sitemap\Model\Sitemap" />
+            </expected_models>
+            <events>
+                <event controller_action="adminhtml_sitemap_edit" action_alias="view" />
+                <event controller_action="adminhtml_sitemap_save" action_alias="save" />
+                <event controller_action="adminhtml_sitemap_delete" action_alias="delete" />
+                <event controller_action="adminhtml_sitemap_generate" action_alias="save" />
+            </events>
+        </group>
+        <group name="widget_instance">
+            <label translate="true">Widget</label>
+            <expected_models>
+                <expected_model class="Magento\Widget\Model\Widget\Instance" />
+            </expected_models>
+            <events>
+                <event controller_action="adminhtml_widget_instance_edit" action_alias="view" />
+                <event controller_action="adminhtml_widget_instance_save" action_alias="save">
+                    <skip_on_back>
+                        <controller_action name="adminhtml_widget_instance_edit" />
+                    </skip_on_back>
+                </event>
+                <event controller_action="adminhtml_widget_instance_delete"
+                       action_alias="delete" />
+            </events>
+        </group>
+        <group name="cache_management">
+            <label translate="true">Cache Management</label>
+            <events>
+                <event controller_action="adminhtml_cache_massEnable"
+                       action_alias="save"
+                       post_dispatch="postDispatchSaveCacheSettings" />
+                <event controller_action="adminhtml_cache_massDisable"
+                       action_alias="save"
+                       post_dispatch="postDispatchSaveCacheSettings" />
+                <event controller_action="adminhtml_cache_massRefresh"
+                       action_alias="save"
+                       post_dispatch="postDispatchSaveCacheSettings" />
+                <event controller_action="adminhtml_cache_cleanImages"
+                       action_alias="clean"
+                       post_dispatch="postDispatchSimpleSave" />
+                <event controller_action="adminhtml_cache_cleanMedia"
+                       action_alias="clean"
+                       post_dispatch="postDispatchSimpleSave" />
+                <event controller_action="adminhtml_cache_flushSystem"
+                       action_alias="flush"
+                       post_dispatch="postDispatchSimpleSave" />
+                <event controller_action="adminhtml_cache_flushAll"
+                       action_alias="flush"
+                       post_dispatch="postDispatchSimpleSave" />
+            </events>
+        </group>
+        <group name="paypal_settlement_reports">
+            <label translate="true">PayPal Settlement Reports</label>
+            <events>
+                <event controller_action="adminhtml_paypal_reports_details"
+                       action_alias="view">
+                    <expected_models>
+                        <expected_model class="Magento\Paypal\Model\Report\Settlement\Row" />
+                    </expected_models>
+                </event>
+                <event controller_action="adminhtml_paypal_reports_fetch" action_alias="fetch">
+                    <expected_models>
+                        <expected_model class="Magento\Paypal\Model\Report\Settlement" />
+                    </expected_models>
+                </event>
+            </events>
+        </group>
+        <group name="index_managment">
+            <label translate="true">Index Management</label>
+            <events>
+                <event controller_action="indexer_indexer_massOnTheFly"
+                       action_alias="save"
+                       post_dispatch="postDispatchIndexerIds" />
+                <event controller_action="indexer_indexer_massChangelog"
+                       action_alias="save"
+                       post_dispatch="postDispatchIndexerIds" />
+            </events>
+        </group>
+        <group name="theme_design_config">
+            <label translate="true">Design Configuration</label>
+            <expected_models>
+                <expected_model class="Magento\Framework\App\Config\Value"/>
+            </expected_models>
+            <events>
+                <event controller_action="theme_design_config_save" action_alias="save"/>
+            </events>
+        </group>
+    </groups>
+</logging>

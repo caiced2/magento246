@@ -1,0 +1,78 @@
+<?xml version="1.0"?>
+<!--
+/**
+ * Copyright © Magento, Inc. All rights reserved.
+ * See COPYING.txt for license details.
+ */
+-->
+<routes xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:noNamespaceSchemaLocation="urn:magento:module:Magento_Webapi:etc/webapi.xsd">
+    <route url="/V1/carts/:quoteId/giftCards" method="GET">
+        <service class="Magento\GiftCardAccount\Api\GiftCardAccountManagementInterface" method="getListByQuoteId"/>
+        <resources>
+            <resource ref="Magento_GiftCardAccount::customer_giftcardaccount" />
+        </resources>
+    </route>
+    <route url="/V1/carts/:cartId/giftCards" method="PUT">
+        <service class="Magento\GiftCardAccount\Api\GiftCardAccountManagementInterface" method="saveByQuoteId"/>
+        <resources>
+            <resource ref="Magento_GiftCardAccount::customer_giftcardaccount" />
+        </resources>
+    </route>
+    <route url="/V1/carts/:cartId/giftCards/:giftCardCode" method="DELETE">
+        <service class="Magento\GiftCardAccount\Api\GiftCardAccountManagementInterface" method="deleteByQuoteId"/>
+        <resources>
+            <resource ref="Magento_GiftCardAccount::customer_giftcardaccount" />
+        </resources>
+    </route>
+    <!--delete gift cart account for guest-->
+    <route url="/V1/carts/guest-carts/:cartId/giftCards/:giftCardCode" method="DELETE">
+        <service class="Magento\GiftCardAccount\Api\GuestGiftCardAccountManagementInterface" method="deleteByQuoteId"/>
+        <resources>
+            <resource ref="anonymous" />
+        </resources>
+    </route>
+    <!--delete gift cart account for customer-->
+    <route url="/V1/carts/mine/giftCards/:giftCardCode" method="DELETE">
+        <service class="Magento\GiftCardAccount\Api\GiftCardAccountManagementInterface" method="deleteByQuoteId"/>
+        <resources>
+            <resource ref="self" />
+        </resources>
+        <data>
+            <parameter name="cartId" force="true">%cart_id%</parameter>
+        </data>
+    </route>
+    <!--add gift cart account for customer-->
+    <route url="/V1/carts/mine/giftCards" method="POST">
+        <service class="Magento\GiftCardAccount\Api\GiftCardAccountManagementInterface" method="saveByQuoteId"/>
+        <resources>
+            <resource ref="self" />
+        </resources>
+        <data>
+            <parameter name="cartId" force="true">%cart_id%</parameter>
+        </data>
+    </route>
+    <!--add gift cart account for guest-->
+    <route url="/V1/carts/guest-carts/:cartId/giftCards" method="POST">
+        <service class="Magento\GiftCardAccount\Api\GuestGiftCardAccountManagementInterface" method="addGiftCard"/>
+        <resources>
+            <resource ref="anonymous" />
+        </resources>
+    </route>
+    <!--check gift cart account for guest-->
+    <route url="/V1/carts/guest-carts/:cartId/checkGiftCard/:giftCardCode" method="GET">
+        <service class="Magento\GiftCardAccount\Api\GuestGiftCardAccountManagementInterface" method="checkGiftCard"/>
+        <resources>
+            <resource ref="anonymous" />
+        </resources>
+    </route>
+    <route url="/V1/carts/mine/checkGiftCard/:giftCardCode" method="GET">
+        <service class="Magento\GiftCardAccount\Api\GiftCardAccountManagementInterface" method="checkGiftCard"/>
+        <resources>
+            <resource ref="self" />
+        </resources>
+        <data>
+            <parameter name="cartId" force="true">%cart_id%</parameter>
+        </data>
+    </route>
+</routes>

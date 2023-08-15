@@ -1,0 +1,26 @@
+<!--
+ /**
+  * Copyright © Magento, Inc. All rights reserved.
+  * See COPYING.txt for license details.
+  */
+-->
+
+<actionGroups xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+              xsi:noNamespaceSchemaLocation="urn:magento:mftf:Test/etc/actionGroupSchema.xsd">
+    <actionGroup name="AdminProductsInCategoryAddProductBySearchActionGroup">
+        <annotations>
+            <description>Add products to category using search in Products in Category section on Category Edit Page.</description>
+        </annotations>
+        <arguments>
+            <argument name="productSku"/>
+        </arguments>
+
+        <conditionalClick selector="{{AdminCategoryAddProductsModalSection.searchAllProducts}}" dependentSelector="{{AdminCategoryAddProductsModalSection.filters}}" visible="false" stepKey="openSearchAllProductsTab"/>
+        <conditionalClick selector="{{AdminCategoryAddProductsModalSection.clearAll}}" dependentSelector="{{AdminCategoryAddProductsModalSection.clearAll}}" visible="true" stepKey="clearAllFilters"/>
+        <conditionalClick selector="{{AdminCategoryAddProductsModalSection.filters}}" dependentSelector="{{AdminCategoryAddProductsModalSection.applyFilters}}" visible="false" stepKey="openGridFilters"/>
+        <fillField selector="{{AdminCategoryAddProductsModalSection.skuFilter}}" userInput="{{productSku}}" stepKey="fillSkuFilter"/>
+        <click selector="{{AdminCategoryAddProductsModalSection.applyFilters}}" stepKey="applyGridFilter"/>
+        <click selector="{{AdminCategoryAddProductsModalSection.gridActionToggle}}" stepKey="clickToggleActionDropdown"/>
+        <click selector="{{AdminCategoryAddProductsModalSection.gridSelectAll}}" stepKey="clickSelectAll"/>
+    </actionGroup>
+</actionGroups>

@@ -1,0 +1,76 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+ /**
+  * Copyright © Magento, Inc. All rights reserved.
+  * See COPYING.txt for license details.
+  */
+-->
+
+<tests xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xsi:noNamespaceSchemaLocation="urn:magento:mftf:Test/etc/testSchema.xsd">
+    <test name="MerchantShouldBeAbleToDefineCategoryByMatchingOnPriceTest">
+        <annotations>
+            <features value="VisualMerchandiser"/>
+            <stories value="Smart Categories"/>
+            <title value="Merchant should be able to define category by matching on price"/>
+            <description value="Merchant should be able to define category by matching on price"/>
+            <severity value="CRITICAL"/>
+            <testCaseId value="MC-3288"/>
+            <group value="visualMerchandiser"/>
+        </annotations>
+        <before>
+            <createData entity="_defaultCategory" stepKey="createCategory"/>
+            <createData entity="SimpleProduct2" stepKey="createFirstSimpleProduct">
+                <field key="price">40</field>
+            </createData>
+            <createData entity="SimpleProduct2" stepKey="createSecondSimpleProduct">
+                <field key="price">55</field>
+            </createData>
+            <createData entity="SimpleProduct2" stepKey="createThirdSimpleProduct">
+                <field key="price">100</field>
+            </createData>
+        </before>
+        <after>
+            <deleteData createDataKey="createFirstSimpleProduct" stepKey="deleteFirstSimpleProduct"/>
+            <deleteData createDataKey="createSecondSimpleProduct" stepKey="deleteSecondSimpleProduct"/>
+            <deleteData createDataKey="createThirdSimpleProduct" stepKey="deleteThirdSimpleProduct"/>
+            <deleteData createDataKey="createCategory" stepKey="deleteCategory"/>
+            <actionGroup ref="AdminLogoutActionGroup" stepKey="logoutFromAdminPanel"/>
+        </after>
+        <!-- 1. Login to admin panel -->
+        <actionGroup ref="AdminLoginActionGroup" stepKey="loginAsAdmin"/>
+        <!-- 2. Open category from precondition -->
+        <actionGroup ref="OpenCategoryFromCategoryTreeActionGroup" stepKey="openCategoryFromPreconditions">
+            <argument name="category" value="$$createCategory.name$$"/>
+        </actionGroup>
+        <!-- 3. Go to 'Products in Category' tab -->
+        <actionGroup ref="OpenProductsInCategorySectionActionGroup" stepKey="openProductsInCategoryTab"/>
+        <!-- 4. Select 'Yes' on 'Match products by rule' button -->
+        <actionGroup ref="EnableMatchProductsByRuleActionGroup" stepKey="selectYesOnMatchProductsByRuleButton"/>
+        <!-- 5. Click 'Add condition' button -->
+        <!-- 6. Select attribute, operator and value from Test Data -->
+        <actionGroup ref="AdminAddSmartCategoryConditionActionGroup" stepKey="createCondition"/>
+        <!-- 7. Click save button -->
+        <actionGroup ref="SaveCategoryFormWithCategoryRulesActionGroup" stepKey="clickSaveButton"/>
+        <!--TODO: REMOVE AFTER FIX MC-21717 -->
+        <actionGroup ref="CliIndexerReindexActionGroup" stepKey="reindex">
+            <argument name="indices" value=""/>
+        </actionGroup>
+        <actionGroup ref="CliCacheFlushActionGroup" stepKey="flushCache">
+            <argument name="tags" value="full_page"/>
+        </actionGroup>
+        <!-- 8. Go to frontend and open category from preconditions -->
+        <actionGroup ref="StorefrontNavigateCategoryPageActionGroup" stepKey="navigateToStorefrontCategoryPage">
+            <argument name="category" value="$$createCategory$$"/>
+        </actionGroup>
+        <actionGroup ref="StorefrontCheckProductIsMissingInCategoryProductsPageActionGroup" stepKey="assertFirstSimpleProductIsMissingInCategory">
+            <argument name="productName" value="$createFirstSimpleProduct.name$"/>
+        </actionGroup>
+        <actionGroup ref="StorefrontCheckCategorySimpleProductActionGroup" stepKey="checkSecondSimpleProductIsPresentInCategory">
+            <argument name="product" value="$createSecondSimpleProduct$"/>
+        </actionGroup>
+        <actionGroup ref="StorefrontCheckCategorySimpleProductActionGroup" stepKey="checkThirdSimpleProductIsPresentInCategory">
+            <argument name="product" value="$createThirdSimpleProduct$"/>
+        </actionGroup>
+    </test>
+</tests>

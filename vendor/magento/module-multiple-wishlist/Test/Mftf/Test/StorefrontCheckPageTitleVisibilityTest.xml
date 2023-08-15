@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+ /**
+  * Copyright © Magento, Inc. All rights reserved.
+  * See COPYING.txt for license details.
+  */
+-->
+
+<tests xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="urn:magento:mftf:Test/etc/testSchema.xsd">
+    <test name="StorefrontCheckPageTitleVisibilityTest">
+        <annotations>
+            <features value="Wishlist"/>
+            <stories value="The wishlist name should be visible even if the multiple wishlist is disabled"/>
+            <group value="wishlist"/>
+            <title value="The page title should be visible even after disabling the wishlist"/>
+            <description value="The page title should be visible even after disabling the wishlist."/>
+            <severity value="MINOR"/>
+        </annotations>
+        <before>
+            <createData entity="Simple_US_Customer" stepKey="createCustomer"/>
+            <createData entity="WishlistSetting" stepKey="enablingMultipleWishlists"/>
+        </before>
+        <after>
+            <deleteData createDataKey="createCustomer" stepKey="deleteCustomer"/>
+        </after>
+        <actionGroup ref="LoginToStorefrontActionGroup" stepKey="customerLogin">
+            <argument name="Customer" value="$$createCustomer$$"/>
+        </actionGroup>
+        <actionGroup ref="StorefrontNavigateToWishlistPageActionGroup" stepKey="navigateToWishListPage"/>
+        <actionGroup ref="AssertStorefrontMultipleWishlistPageTitleIsVisibleActionGroup"
+                     stepKey="seeTheMultipleWishlistPageTitle"/>
+        <actionGroup ref="AdminDisableMultipleWishlistActionGroup" stepKey="disableMultipleWishlist"/>
+        <reloadPage stepKey="refreshTheWishListPage"/>
+        <actionGroup ref="AssertStorefrontMultipleWishlistPageTitleIsNotVisibleActionGroup"
+                     stepKey="dontSeeTheMultipleWishlistPageTitle"/>
+    </test>
+</tests>

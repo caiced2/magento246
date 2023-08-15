@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+ /**
+  * Copyright © Magento, Inc. All rights reserved.
+  * See COPYING.txt for license details.
+  */
+-->
+<actionGroups xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:noNamespaceSchemaLocation="urn:magento:mftf:Test/etc/actionGroupSchema.xsd">
+    <actionGroup name="CreateCatalogPriceRuleForStagingActionGroup">
+        <arguments>
+            <argument name="websiteName" type="string" defaultValue="Main Website"/>
+            <argument name="customGroupName" type="string" defaultValue="General"/>
+            <argument name="scheduleData" type="entity" defaultValue="ScheduleData"/>
+        </arguments>
+        <click selector="{{MarketingSection.marketing}}" stepKey="GoToMarketing"/>
+        <waitForPageLoad stepKey="WaitForMarketingPageLoaded"/>
+        <click selector="{{MarketingSection.catalogPriceRule}}" stepKey="GoToCatalogPriceRule"/>
+        <waitForPageLoad stepKey="WaitForCatalogPriceRulePageLoaded"/>
+        <seeInCurrentUrl url="/catalog_rule" stepKey="CatalogPriceRulePageIsOpened"/>
+        <click selector="{{MarketingSection.addNewRule}}" stepKey="ClickToAddNewRule"/>
+        <waitForPageLoad stepKey="WaitForNewRulePageLoaded"/>
+        <fillField selector="{{MarketingSection.ruleName}}" userInput="{{ScheduleData.name}}" stepKey="TypeRuleName"/>
+        <click selector="{{AdminCategoryBasicFieldSection.enableCategoryLabel}}" stepKey="selectActiveRule"/>
+        <click selector="{{MarketingSection.selectWebsite(websiteName)}}" stepKey="SelectWebsite"/>
+        <click selector="{{MarketingSection.customerGroup(customGroupName)}}" stepKey="selectCustomGroup"/>
+        <conditionalClick selector="{{AdminNewCatalogPriceRule.actionsTab}}" dependentSelector="{{AdminNewCatalogPriceRule.actionsTab}}._show" visible="false" stepKey="ClickToOpenActions"/>
+        <waitForPageLoad time="30" stepKey="waitForActionsSectionToOpend"/>
+        <waitForElementVisible time="30" selector="{{MarketingSection.discount}}" stepKey="waitForDiscountField"/>
+        <fillField selector="{{MarketingSection.discount}}" userInput="25" stepKey="TypeDiscount"/>
+        <click selector="{{MarketingSection.saveAndContinue}}" stepKey="ClickSaveAndContinue"/>
+        <waitForPageLoad stepKey="WaitForRuleSaved"/>
+        <see userInput="You saved the rule." stepKey="verifyRuleSaved"/>
+        <click selector="{{ScheduleUpdateSection.scheduleUpdate}}" stepKey="ClickScheduleUpdate"/>
+        <waitForPageLoad stepKey="WaitForPageOpened"/>
+        <waitForLoadingMaskToDisappear stepKey="waitForLoadingMask"/>
+        <generateDate date="+2 minutes" format="m/j/Y g:i A" stepKey="generateStartDate"/>
+        <generateDate date="+10 minutes" format="m/j/Y g:i A" stepKey="generateEndDate"/>
+        <fillField selector="{{AdminStagingSlideOutSection.updateName}}" userInput="{{scheduleData.newName}}" stepKey="TypeUpdatedRuleName"/>
+        <fillField selector="{{AdminStagingSlideOutSection.startDate}}" userInput="$generateStartDate" stepKey="fillStartDate"/>
+        <fillField selector="{{AdminStagingSlideOutSection.endDate}}" userInput="$generateEndDate" stepKey="fillEndDate"/>
+        <click selector="{{AdminStagingSlideOutSection.save}}" stepKey="clickSave"/>
+        <click selector="{{MarketingSection.saveRule}}" stepKey="ClickSaveRule1"/>
+        <waitForPageLoad stepKey="WaitForRuleSaved1"/>
+        <see userInput="You saved the rule." stepKey="verifyRuleSaved1"/>
+    </actionGroup>
+</actionGroups>

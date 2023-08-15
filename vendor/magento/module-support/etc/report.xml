@@ -1,0 +1,141 @@
+<?xml version="1.0"?>
+<!--
+/**
+ * Copyright © Magento, Inc. All rights reserved.
+ * See COPYING.txt for license details.
+ */
+-->
+<config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="urn:magento:module:Magento_Support:etc/report.xsd">
+    <group name="general" priority="10">
+        <title translate="true">General</title>
+        <sections>
+            <section model="Magento\Support\Model\Report\Group\General\VersionSection" priority="10"/>
+            <section model="Magento\Support\Model\Report\Group\General\DataCountSection" priority="20"/>
+            <section model="Magento\Support\Model\Report\Group\General\CacheStatusSection" priority="30"/>
+            <section model="Magento\Support\Model\Report\Group\General\IndexStatusSection" priority="40"/>
+        </sections>
+    </group>
+    <group name="data" priority="20">
+        <title translate="true">Data</title>
+        <sections>
+            <section model="Magento\Support\Model\Report\Group\Data\DuplicateCategoriesByUrlSection" priority="10"></section>
+            <section model="Magento\Support\Model\Report\Group\Data\DuplicateProductsByUrlSection" priority="20"></section>
+            <section model="Magento\Support\Model\Report\Group\Data\DuplicateProductsBySkuSection" priority="30"></section>
+            <section model="Magento\Support\Model\Report\Group\Data\DuplicateOrdersByIncrementIdSection" priority="40"></section>
+            <section model="Magento\Support\Model\Report\Group\Data\DuplicateUsersByEmailSection" priority="50"></section>
+            <section model="Magento\Support\Model\Report\Group\Data\CorruptedCategoriesDataSection" priority="60"></section>
+        </sections>
+    </group>
+    <group name="environment" priority="30">
+        <title translate="true">Environment</title>
+        <sections>
+            <section model="Magento\Support\Model\Report\Group\Environment\EnvironmentSection" priority="10"/>
+            <section model="Magento\Support\Model\Report\Group\Environment\MysqlStatusSection" priority="20"/>
+        </sections>
+    </group>
+    <group name="modules" priority="40">
+        <title translate="true">Modules</title>
+        <sections>
+            <section model="Magento\Support\Model\Report\Group\Modules\CustomModulesSection" priority="10"/>
+            <section model="Magento\Support\Model\Report\Group\Modules\DisabledModulesSection" priority="20"/>
+            <section model="Magento\Support\Model\Report\Group\Modules\AllModulesSection" priority="30"/>
+        </sections>
+    </group>
+    <group name="configuration" priority="50">
+        <title translate="true">Configuration</title>
+        <sections>
+            <section model="Magento\Support\Model\Report\Group\Configuration\ConfigurationSection" priority="10"/>
+            <section model="Magento\Support\Model\Report\Group\Configuration\EnvironmentSection" priority="20"/>
+            <section model="Magento\Support\Model\Report\Group\Configuration\ShippingMethodsSection" priority="30"/>
+            <section model="Magento\Support\Model\Report\Group\Configuration\PaymentMethodsSection" priority="40"/>
+            <section model="Magento\Support\Model\Report\Group\Configuration\PaymentFunctionalityMatrixSection" priority="50"/>
+        </sections>
+    </group>
+    <group name="logs" priority="60">
+        <title translate="true">Logs</title>
+        <sections>
+            <section model="Magento\Support\Model\Report\Group\Logs\LogFilesSection" priority="10"/>
+            <section model="Magento\Support\Model\Report\Group\Logs\TopSystemMessagesSection" priority="20"/>
+            <section model="Magento\Support\Model\Report\Group\Logs\TodayTopSystemMessagesSection" priority="30"/>
+            <section model="Magento\Support\Model\Report\Group\Logs\TopDebugMessagesSection" priority="40"/>
+            <section model="Magento\Support\Model\Report\Group\Logs\TodayTopDebugMessagesSection" priority="50"/>
+            <section model="Magento\Support\Model\Report\Group\Logs\TopExceptionMessagesSection" priority="60"/>
+            <section model="Magento\Support\Model\Report\Group\Logs\TodayTopExceptionMessagesSection" priority="70"/>
+        </sections>
+    </group>
+    <group name="attributes" priority="70">
+        <title translate="true">Attributes</title>
+        <sections>
+            <section model="Magento\Support\Model\Report\Group\Attributes\UserDefinedEavAttributesSection" priority="10"/>
+            <section model="Magento\Support\Model\Report\Group\Attributes\NewEavAttributesSection" priority="20">
+                <data>
+                    <item name="existedAttributes">["allow_message","allow_open_amount","all_children","available_sort_by","category_ids","children","children_count","city","color","company","condition","confirmation","cost","country_id","country_of_manufacture","created_at","created_at","created_in","custom_apply_to_products","custom_design","custom_design","custom_design_from","custom_design_from","custom_design_to","custom_design_to","custom_layout_update","custom_layout_update","custom_use_parent_settings","default_billing","default_shipping","default_sort_by","description","description","disable_auto_group_change","display_mode","dob","email","email_template","fax","filter_price_range","firstname","firstname","gallery","gender","giftcard_amounts","giftcard_type","gift_message_available","gift_wrapping_available","gift_wrapping_price","group_id","group_price","has_options","image","image","image_label","include_in_menu","is_active","is_anchor","is_qty_decimal","is_redeemable","is_returnable","landing_page","lastname","lastname","level","lifetime","links_exist","links_purchased_separately","links_title","manufacturer","media_gallery","meta_description","meta_description","meta_keyword","meta_keywords","meta_title","meta_title","middlename","middlename","minimal_price","msrp","msrp_display_actual_price_type","name","name","news_from_date","news_to_date","old_id","open_amount_max","open_amount_min","options_container","order_item_id","page_layout","page_layout","password_hash","path","path_in_store","position","postcode","prefix","prefix","price","price_type","price_view","product_admin_name","product_admin_sku","product_name","product_options","product_sku","qty_approved","qty_authorized","qty_requested","qty_returned","quantity_and_stock_status","reason","reason_other","region","region_id","related_tgtr_position_behavior","related_tgtr_position_limit","required_options","resolution","reward_points_balance_refunded","reward_salesrule_points","reward_update_notification","reward_warning_notification","rma_entity_id","rp_token","rp_token_created_at","samples_title","shipment_type","short_description","sku","sku_type","small_image","small_image_label","special_from_date","special_price","special_to_date","status","status","store_id","street","suffix","suffix","swatch_image","taxvat","tax_class_id","telephone","thumbnail","thumbnail_label","tier_price","updated_at","upsell_tgtr_position_behavior","upsell_tgtr_position_limit","url_key","url_key","url_path","url_path","use_config_allow_message","use_config_email_template","use_config_is_redeemable","use_config_lifetime","vat_id","vat_is_valid","vat_request_date","vat_request_id","vat_request_success","visibility","website_id","weight","weight_type"]</item>
+                </data>
+            </section>
+            <section model="Magento\Support\Model\Report\Group\Attributes\EntityTypesSection" priority="30"/>
+            <section model="Magento\Support\Model\Report\Group\Attributes\AllEavAttributesSection" priority="40"/>
+            <section model="Magento\Support\Model\Report\Group\Attributes\CategoryEavAttributesSection" priority="50"/>
+            <section model="Magento\Support\Model\Report\Group\Attributes\ProductEavAttributesSection" priority="60"/>
+            <section model="Magento\Support\Model\Report\Group\Attributes\CustomerEavAttributesSection" priority="70"/>
+            <section model="Magento\Support\Model\Report\Group\Attributes\CustomerAddressEavAttributesSection" priority="80"/>
+            <section model="Magento\Support\Model\Report\Group\Attributes\RmaItemEavAttributesSection" priority="90"/>
+        </sections>
+    </group>
+    <group name="events" priority="80">
+        <title translate="true">Events</title>
+        <sections>
+            <section model="Magento\Support\Model\Report\Group\Events\CustomGlobalEventsSection" priority="10"/>
+            <section model="Magento\Support\Model\Report\Group\Events\CustomAdminEventsSection" priority="20"/>
+            <section model="Magento\Support\Model\Report\Group\Events\CustomFrontendEventsSection" priority="30"/>
+            <section model="Magento\Support\Model\Report\Group\Events\CustomDocEventsSection" priority="40"/>
+            <section model="Magento\Support\Model\Report\Group\Events\CustomCrontabEventsSection" priority="50"/>
+            <section model="Magento\Support\Model\Report\Group\Events\CustomRestEventsSection" priority="60"/>
+            <section model="Magento\Support\Model\Report\Group\Events\CustomSoapEventsSection" priority="70"/>
+            <section model="Magento\Support\Model\Report\Group\Events\CoreGlobalEventsSection" priority="80"/>
+            <section model="Magento\Support\Model\Report\Group\Events\CoreAdminEventsSection" priority="90"/>
+            <section model="Magento\Support\Model\Report\Group\Events\CoreFrontendEventsSection" priority="100"/>
+            <section model="Magento\Support\Model\Report\Group\Events\CoreDocEventsSection" priority="110"/>
+            <section model="Magento\Support\Model\Report\Group\Events\CoreCrontabEventsSection" priority="120"/>
+            <section model="Magento\Support\Model\Report\Group\Events\CoreRestEventsSection" priority="130"/>
+            <section model="Magento\Support\Model\Report\Group\Events\CoreSoapEventsSection" priority="140"/>
+            <section model="Magento\Support\Model\Report\Group\Events\AllGlobalEventsSection" priority="150"/>
+            <section model="Magento\Support\Model\Report\Group\Events\AllAdminEventsSection" priority="160"/>
+            <section model="Magento\Support\Model\Report\Group\Events\AllFrontendEventsSection" priority="170"/>
+            <section model="Magento\Support\Model\Report\Group\Events\AllDocEventsSection" priority="180"/>
+            <section model="Magento\Support\Model\Report\Group\Events\AllCrontabEventsSection" priority="190"/>
+            <section model="Magento\Support\Model\Report\Group\Events\AllRestEventsSection" priority="200"/>
+            <section model="Magento\Support\Model\Report\Group\Events\AllSoapEventsSection" priority="210"/>
+        </sections>
+    </group>
+    <group name="cron" priority="90">
+        <title translate="true">Cron</title>
+        <sections>
+            <section model="Magento\Support\Model\Report\Group\Cron\CountStatusesSchedulesSection" priority="10"/>
+            <section model="Magento\Support\Model\Report\Group\Cron\CountCodesSchedulesSection" priority="20"/>
+            <section model="Magento\Support\Model\Report\Group\Cron\ErrorsListSchedulesSection" priority="30"/>
+            <section model="Magento\Support\Model\Report\Group\Cron\AllListSchedulesSection" priority="40"/>
+            <section model="Magento\Support\Model\Report\Group\Cron\CustomGlobalCronJobsSection" priority="50"/>
+            <section model="Magento\Support\Model\Report\Group\Cron\CustomConfigurableCronJobsSection" priority="60"/>
+            <section model="Magento\Support\Model\Report\Group\Cron\CoreGlobalCronJobsSection" priority="70"/>
+            <section model="Magento\Support\Model\Report\Group\Cron\CoreConfigurableCronJobsSection" priority="80"/>
+            <section model="Magento\Support\Model\Report\Group\Cron\AllGlobalCronJobsSection" priority="90"/>
+            <section model="Magento\Support\Model\Report\Group\Cron\AllConfigurableCronJobsSection" priority="100"/>
+        </sections>
+    </group>
+    <group name="design" priority="100">
+        <title translate="true">Design</title>
+        <sections>
+            <section model="Magento\Support\Model\Report\Group\Design\AdminhtmlThemesListSection" priority="10"/>
+            <section model="Magento\Support\Model\Report\Group\Design\FrontendThemesListSection" priority="20"/>
+        </sections>
+    </group>
+    <group name="stores" priority="110">
+        <title translate="true">Stores</title>
+        <sections>
+            <section model="Magento\Support\Model\Report\Group\Stores\WebsitesTreeSection" priority="10"/>
+            <section model="Magento\Support\Model\Report\Group\Stores\WebsitesListSection" priority="20"/>
+            <section model="Magento\Support\Model\Report\Group\Stores\StoresListSection" priority="30"/>
+            <section model="Magento\Support\Model\Report\Group\Stores\StoreViewsListSection" priority="40"/>
+        </sections>
+    </group>
+</config>

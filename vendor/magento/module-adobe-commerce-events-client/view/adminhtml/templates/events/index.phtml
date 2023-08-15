@@ -1,0 +1,81 @@
+<?php
+/**
+ * Copyright © Magento, Inc. All rights reserved.
+ * See COPYING.txt for license details.
+ */
+
+use Magento\Framework\Escaper;
+use Magento\AdobeCommerceEventsClient\Event\Collector\EventData;
+use Magento\AdobeCommerceEventsClient\Block\Events\ModuleList;
+
+/** @var Escaper $escaper */
+/** @var ModuleList $block */
+?>
+<script xmlns="http://www.w3.org/1999/html">
+    require(['jquery'], function($) {
+        $("#events-filter").keyup(function() {
+            const inputValue = $(this).val();
+            $(".admin__page-nav-title").each(function(index, value) {
+                const module = $(this).text();
+                if (!module.toLowerCase().includes(inputValue.toLowerCase())) {
+                    $(this).hide();
+                    $(this).parent().find('ul.items').hide();
+                } else {
+                    $(this).show();
+                }
+            });
+        });
+
+        $(".config-nav a.item-nav").click(function(e) {
+            e.stopPropagation();
+            e.preventDefault();
+            $('li._active').removeClass('_active');
+            $(this).parent().addClass('_active');
+            $('#container > div').html('Loading ....');
+            $.ajax({
+                type: 'POST',
+                url: '<?= $block->getUrl('adminhtml/events/eventInfo') ?>',
+                data: {
+                    'event': $.trim($(this).text()),
+                },
+                success: function(output) {
+                    $('#container > div').html(output);
+                }
+            });
+
+            $(this).val();
+        });
+    });
+</script>
+<div>
+    <input class="admin__control-text data-grid-search-control" type="text" id="events-filter" placeholder="Search module" aria-label="Search module">
+</div>
+<br/>
+<div class="config-nav">
+    <?php foreach ($block->getModules() as $module): ?>
+        <div class="config-nav-block admin__page-nav _collapsed"
+             data-mage-init='{"collapsible":{"active": "<?= $escaper->escapeHtmlAttr($module['name'] === $block->getModule()) ?>",
+             "openedState": "_show",
+             "closedState": "_hide",
+             "collapsible": true,
+             "animate": 200}}'>
+            <div class="admin__page-nav-title title _collapsible" data-role="title">
+                <strong><?= $block->escapeHtml($module['name']) ?></strong>
+            </div>
+            <ul class="admin__page-nav-items items" data-role="content">
+                <?php
+                /** @var $event EventData */
+                foreach ($module['events'] as $event) : ?>
+                    <li class="admin__page-nav-item item
+                            <?php if ($block->getEvent() === $event->getEventName()) : ?> _active<?php endif ?>
+                        ">
+                        <a href="<?= $escaper->escapeUrl($block->getUrl('adminhtml/events/index', ['module' => $module['name'], 'event' => $event->getEventName()])) ?>"
+                           class="admin__page-nav-link item-nav">
+                            <span><?= $block->escapeHtml($event->getEventName()) ?></span>
+                        </a>
+                    </li>
+                <?php endforeach; ?>
+            </ul>
+        </div>
+    <?php endforeach; ?>
+</div>

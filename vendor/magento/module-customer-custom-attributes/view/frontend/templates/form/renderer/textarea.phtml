@@ -1,0 +1,26 @@
+<?php
+/**
+ * Copyright © Magento, Inc. All rights reserved.
+ * See COPYING.txt for license details.
+ */
+?>
+<?php
+/**
+ * Create account form template
+ */
+/* @var $block \Magento\CustomAttributeManagement\Block\Form\Renderer\Textarea */
+?>
+<?php
+$fieldCssClass = 'field field-' . $block->getHtmlId();
+$fieldCssClass .= $block->isRequired() ? ' required' : '';
+?>
+<div class="<?= /* @noEscape */ $fieldCssClass ?>">
+    <label class="label" for="<?= $block->getHtmlId() ?>"><span><?= $block->escapeHtml($block->getLabel()) ?></span></label>
+    <div class="control">
+        <textarea id="<?= $block->getHtmlId() ?>" name="<?= $block->escapeHtmlAttr($block->getFieldName()) ?>" rows="5" cols="25" <?php if ($block->getHtmlClass()) :
+            ?> class="<?= $block->getHtmlClass() ?>"<?php endif;?>><?= /* @noEscape */ $block->getEscapedValue() ?></textarea>
+        <?php if ($_message = $block->getAdditionalDescription()) : ?>
+        <div class="note"><?= /* @noEscape */ $_message ?></div>
+        <?php endif; ?>
+    </div>
+</div>

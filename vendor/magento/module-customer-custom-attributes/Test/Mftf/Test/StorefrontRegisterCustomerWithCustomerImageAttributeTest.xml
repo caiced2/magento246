@@ -1,0 +1,92 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+/**
+ * Copyright © Magento, Inc. All rights reserved.
+ * See COPYING.txt for license details.
+ */
+-->
+
+<tests xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xsi:noNamespaceSchemaLocation="urn:magento:mftf:Test/etc/testSchema.xsd">
+    <test name="StorefrontRegisterCustomerWithCustomerImageAttributeTest">
+        <annotations>
+            <features value="CustomerCustomAttributes"/>
+            <stories value="Register customer with customer attribute"/>
+            <title value="Storefront register customer with customer image attribute test"/>
+            <description value="Verify that customer can register on storefront with required image attribute"/>
+            <severity value="CRITICAL"/>
+            <testCaseId value="MC-13210"/>
+            <group value="CustomerCustomAttributes"/>
+        </annotations>
+        <before>
+            <magentoCron groups="index" stepKey="reindex"/>
+            <!-- Login as admin -->
+            <actionGroup ref="AdminLoginActionGroup" stepKey="loginAsAdmin"/>
+        </before>
+        <after>
+            <!-- Logout customer -->
+            <actionGroup ref="StorefrontCustomerLogoutActionGroup" stepKey="customerLogout"/>
+
+            <!-- Delete customer attribute -->
+            <amOnPage url="{{CustomerAttributesPage.url}}" stepKey="navigateToCustomerAttributePage"/>
+            <waitForPageLoad stepKey="waitForCustomerAttributePageLoad"/>
+            <actionGroup ref="DeleteCustomerAttribute" stepKey="deleteCustomerAttribute">
+                <argument name="defaultLabel" value="{{AttributeImageFile.attribute_code}}"/>
+            </actionGroup>
+
+            <!-- Delete customer -->
+            <actionGroup ref="AdminDeleteCustomerActionGroup" stepKey="deleteCustomer">
+                <argument name="customerEmail" value="CustomerEntityOne.email"/>
+            </actionGroup>
+
+            <!-- Logout admin -->
+            <actionGroup ref="AdminLogoutActionGroup" stepKey="logout"/>
+        </after>
+
+        <!-- Go to Stores > Customer -->
+        <amOnPage url="{{CustomerAttributesPage.url}}" stepKey="navigateToCustomerAttributes"/>
+        <waitForPageLoad stepKey="waitForAttributePageLoad"/>
+
+        <!-- Create new customer attribute -->
+        <actionGroup ref="AdminCreateCustomerNewAttributeActionGroup" stepKey="createImageFileAttribute">
+            <argument name="defaultLabel" value="{{AttributeImageFile.frontend_label}}"/>
+            <argument name="attributeCode" value="{{AttributeImageFile.attribute_code}}"/>
+            <argument name="inputType" value="{{AttributeImageFile.frontend_input}}"/>
+            <argument name="sortOrder" value="{{AttributeImageFile.sort_order}}"/>
+        </actionGroup>
+
+        <!-- Open storefront and register customer -->
+        <actionGroup ref="StorefrontFillRegistrationFormActionGroup" stepKey="fillRequiredFields"/>
+
+        <!-- Upload image -->
+        <attachFile selector="{{StorefrontCustomerAddressAttributeSection.uploadFile}}" userInput="{{ProductImage.file}}" stepKey="attachFile"/>
+
+        <!-- Save customer -->
+        <actionGroup ref="SaveRegistrationFormActionGroup" stepKey="createAccount"/>
+
+        <waitForPageLoad stepKey="waitForAccountPageLoad"/>
+        <actionGroup ref="AssertMessageCustomerCreateAccountActionGroup" stepKey="seeSuccessMessage">
+            <argument name="messageType" value="success"/>
+            <argument name="message" value="Thank you for registering with Main Website Store."/>
+        </actionGroup>
+
+        <!-- Go to Customers > All Customers -->
+        <amOnPage url="{{AdminCustomerPage.url}}" stepKey="goToAllCustomersPage"/>
+        <waitForPageLoad stepKey="waitForCustomerPageLoad"/>
+        <actionGroup ref="OpenEditCustomerFromAdminActionGroup" stepKey="openEditCustomerFrom">
+            <argument name="customer" value="CustomerEntityOne"/>
+        </actionGroup>
+
+        <!-- Assert uploaded image is visible in Account Information tab -->
+        <click selector="{{AdminCustomerAccountInformationSection.accountInformationTab}}" stepKey="clickTabAccountInfo"/>
+        <waitForPageLoad stepKey="waitForInformationTabLoad"/>
+        <seeElement selector="{{AdminCustomerAccountInformationSection.attributeImage}}" stepKey="seeUploadedImage"/>
+        <grabAttributeFrom selector="{{AdminCustomerAccountInformationSection.attributeImage}}" userInput="src" stepKey="grabImageSrc"/>
+
+        <!-- Click on image and assert image is loaded -->
+        <click selector="{{AdminCustomerAccountInformationSection.attributeImage}}" stepKey="clickOnImageThumbnail"/>
+        <waitForPageLoad stepKey="waitForImageToOpen"/>
+        <switchToNextTab stepKey="switchToNewOpenedTab"/>
+        <seeInCurrentUrl url="$grabImageSrc" stepKey="seeProductImgInNewTab"/>
+    </test>
+</tests>

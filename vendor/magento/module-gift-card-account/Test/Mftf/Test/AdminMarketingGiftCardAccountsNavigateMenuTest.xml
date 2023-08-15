@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+ /**
+  * Copyright © Magento, Inc. All rights reserved.
+  * See COPYING.txt for license details.
+  */
+-->
+
+<tests xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xsi:noNamespaceSchemaLocation="urn:magento:mftf:Test/etc/testSchema.xsd">
+    <test name="AdminMarketingGiftCardAccountsNavigateMenuTest">
+        <annotations>
+            <features value="GiftCardAccount"/>
+            <stories value="Menu Navigation"/>
+            <title value="Admin marketing gift card accounts navigate menu test"/>
+            <description value="Admin should be able to navigate to Marketing > Gift Card Accounts"/>
+            <severity value="CRITICAL"/>
+            <testCaseId value="MC-14146"/>
+            <group value="menu"/>
+            <group value="mtf_migrated"/>
+            <group value="pr_exclude"/>
+        </annotations>
+        <before>
+            <actionGroup ref="AdminLoginActionGroup" stepKey="LoginAsAdmin"/>
+        </before>
+        <after>
+            <actionGroup ref="AdminLogoutActionGroup" stepKey="logout"/>
+        </after>
+        <actionGroup ref="AdminNavigateMenuActionGroup" stepKey="navigateToMarketingGiftCardAccountsPage">
+            <argument name="menuUiId" value="{{AdminMenuMarketing.dataUiId}}"/>
+            <argument name="submenuUiId" value="{{AdminMenuMarketingPromotionsGiftCardAccounts.dataUiId}}"/>
+        </actionGroup>
+        <actionGroup ref="AdminAssertPageTitleActionGroup" stepKey="seePageTitle">
+            <argument name="title" value="{{AdminMenuMarketingPromotionsGiftCardAccounts.pageTitle}}"/>
+        </actionGroup>
+    </test>
+</tests>

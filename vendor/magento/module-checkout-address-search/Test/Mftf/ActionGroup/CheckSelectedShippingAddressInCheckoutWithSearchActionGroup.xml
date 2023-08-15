@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+ /**
+  * Copyright © Magento, Inc. All rights reserved.
+  * See COPYING.txt for license details.
+  */
+-->
+
+<actionGroups xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+              xsi:noNamespaceSchemaLocation="urn:magento:mftf:Test/etc/actionGroupSchema.xsd">
+    <!-- Check selected shipping address information on shipping information step -->
+    <actionGroup name="CheckSelectedShippingAddressInCheckoutWithSearchActionGroup">
+        <arguments>
+            <argument name="customerVar"/>
+            <argument name="customerAddressVar"/>
+        </arguments>
+        <waitForElement selector="{{CheckoutShippingSection.shippingTab}}" time="30" stepKey="waitForShippingSectionLoaded"/>
+        <see stepKey="VerifyFirstNameInSelectedAddress" selector="{{CheckoutShippingAddressSection.selectedShippingAddress}}" userInput="{{customerVar.firstname}}" />
+        <see stepKey="VerifyLastNameInSelectedAddress" selector="{{CheckoutShippingAddressSection.selectedShippingAddress}}" userInput="{{customerVar.lastname}}" />
+        <see stepKey="VerifyStreetInSelectedAddress" selector="{{CheckoutShippingAddressSection.selectedShippingAddress}}" userInput="{{customerAddressVar.street[0]}}" />
+        <see stepKey="VerifyCityInSelectedAddress" selector="{{CheckoutShippingAddressSection.selectedShippingAddress}}" userInput="{{customerAddressVar.city}}" />
+        <see stepKey="VerifyZipInSelectedAddress" selector="{{CheckoutShippingAddressSection.selectedShippingAddress}}" userInput="{{customerAddressVar.postcode}}" />
+        <see stepKey="VerifyPhoneInSelectedAddress" selector="{{CheckoutShippingAddressSection.selectedShippingAddress}}" userInput="{{customerAddressVar.telephone}}" />
+    </actionGroup>
+</actionGroups>

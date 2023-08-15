@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+ /**
+  * Copyright © Magento, Inc. All rights reserved.
+  * See COPYING.txt for license details.
+  */
+-->
+
+<actionGroups xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+              xsi:noNamespaceSchemaLocation="urn:magento:mftf:Test/etc/actionGroupSchema.xsd">
+    <actionGroup name="AdminEditCMSPageHierarchyActionGroup">
+        <arguments>
+            <argument name="pageId" type="string"/>
+            <argument name="selectHierarchyOpt" type="string"/>
+        </arguments>
+
+        <amOnPage url="{{AdminCmsPageEditPage.url(pageId)}}" stepKey="navigateToEditCMSPage"/>
+        <waitForPageLoad stepKey="waitForCmsPageEditPage"/>
+        <click selector="{{CmsNewPageHierarchySection.header}}" stepKey="clickHierarchy"/>
+        <click selector="{{CmsNewPageHierarchySection.selectHierarchy(selectHierarchyOpt)}}" stepKey="clickHierarchyCheckBoxes"/>
+        <click selector="{{CmsNewPagePageActionsSection.saveAndContinueEdit}}" stepKey="clickSave"/>
+        <waitForPageLoad stepKey="waitForPageToSave"/>
+    </actionGroup>
+</actionGroups>

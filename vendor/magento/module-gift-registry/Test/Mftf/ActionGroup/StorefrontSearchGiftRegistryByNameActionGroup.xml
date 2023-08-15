@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+ /**
+  * Copyright © Magento, Inc. All rights reserved.
+  * See COPYING.txt for license details.
+  */
+-->
+<actionGroups xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+              xsi:noNamespaceSchemaLocation="urn:magento:mftf:Test/etc/actionGroupSchema.xsd">
+    <actionGroup name="StorefrontSearchGiftRegistryByNameActionGroup">
+        <annotations>
+            <description>In the gift registry search widget, use Gift Registry search by name</description>
+        </annotations>
+        <arguments>
+            <argument name="customer" defaultValue="Simple_US_Customer"/>
+            <argument name="registryType" defaultValue="Birthday" type="string"/>
+        </arguments>
+        <waitForElementVisible selector="{{StorefrontGiftRegistryWidgetOnPageSection.searchBySelect}}" stepKey="waitForSearchSelect"/>
+        <selectOption selector="{{StorefrontGiftRegistryWidgetOnPageSection.searchBySelect}}" userInput="name" stepKey="selectSearchType"/>
+        <waitForElementVisible selector="{{StorefrontGiftRegistryWidgetOnPageSection.firstNameInput}}" stepKey="waitForInputs"/>
+        <fillField selector="{{StorefrontGiftRegistryWidgetOnPageSection.firstNameInput}}" userInput="{{customer.firstname}}" stepKey="enterFirstName"/>
+        <fillField selector="{{StorefrontGiftRegistryWidgetOnPageSection.lastNameInput}}" userInput="{{customer.lastname}}" stepKey="enterLastName"/>
+        <selectOption selector="{{StorefrontGiftRegistryWidgetOnPageSection.typeSelect}}" userInput="{{registryType}}" stepKey="selectRegistryType"/>
+        <click selector="{{StorefrontGiftRegistryWidgetOnPageSection.activeSearchButton}}" stepKey="clickSearchByName"/>
+    </actionGroup>
+</actionGroups>

@@ -1,0 +1,107 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+ /**
+  * Copyright © Magento, Inc. All rights reserved.
+  * See COPYING.txt for license details.
+  */
+-->
+
+<tests xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xsi:noNamespaceSchemaLocation="urn:magento:mftf:Test/etc/testSchema.xsd">
+    <test name="AdminChangeProductPositionInCategoryGridModeTest">
+        <annotations>
+            <features value="VisualMerchandiser"/>
+            <stories value="[Visual Merchandiser] Assign/Unassign products to/from a category"/>
+            <title value="[Visual Merchandiser] Admin should be able to move assigned product position in category for grid view"/>
+            <description value="Admin should be able to move assigned product position in category for grid view"/>
+            <severity value="MAJOR"/>
+            <testCaseId value="MC-178"/>
+            <group value="visual_merchandiser"/>
+        </annotations>
+        <before>
+            <!-- Create category -->
+            <createData entity="_defaultCategory" stepKey="createCategory"/>
+
+            <!-- Create simple products -->
+            <createData entity="ApiSimpleProduct" stepKey="createFirstProduct">
+                <field key="name">First simple product</field>
+                <requiredEntity createDataKey="createCategory"/>
+            </createData>
+            <createData entity="ApiSimpleProduct" stepKey="createSecondProduct">
+                <field key="name">Second simple product</field>
+                <requiredEntity createDataKey="createCategory"/>
+            </createData>
+            <createData entity="ApiSimpleProduct" stepKey="createThirdProduct">
+                <field key="name">Third simple product</field>
+                <requiredEntity createDataKey="createCategory"/>
+            </createData>
+
+            <!-- Login as Admin -->
+            <actionGroup ref="AdminLoginActionGroup" stepKey="loginAsAdmin"/>
+        </before>
+        <after>
+            <!-- Delete created data -->
+            <deleteData createDataKey="createFirstProduct" stepKey="deleteFirstProduct"/>
+            <deleteData createDataKey="createSecondProduct" stepKey="deleteSecondProduct"/>
+            <deleteData createDataKey="createThirdProduct" stepKey="deleteThirdProduct"/>
+            <deleteData createDataKey="createCategory" stepKey="deleteCategory"/>
+
+            <!-- Admin logout -->
+            <actionGroup ref="AdminLogoutActionGroup" stepKey="adminLogout"/>
+        </after>
+
+        <!-- Go to admin category page -->
+        <actionGroup ref="GoToAdminCategoryPageByIdActionGroup" stepKey="goToAdminCategoryPage">
+            <argument name="id" value="$createCategory.id$"/>
+        </actionGroup>
+
+        <!-- Open Products in Category section -->
+        <actionGroup ref="OpenProductsInCategorySectionActionGroup" stepKey="openProductsInCategorySection"/>
+
+        <!-- Switch to Grid mode -->
+        <actionGroup ref="SwitchToGridModeProductInCategoryActionGroup" stepKey="switchModeToGrid"/>
+
+        <!-- Check products in category grid view -->
+        <see selector="{{AdminCategoryProductsGridSection.rowProductName('1')}}" userInput="$createThirdProduct.name$" stepKey="seeFirstProduct"/>
+        <see selector="{{AdminCategoryProductsGridSection.rowProductName('2')}}" userInput="$createSecondProduct.name$" stepKey="seeSecondProduct"/>
+        <see selector="{{AdminCategoryProductsGridSection.rowProductName('3')}}" userInput="$createFirstProduct.name$" stepKey="seeThirdProduct"/>
+
+        <!-- Change products positions: move row 0 to position 2 -->
+        <actionGroup ref="MoveProductByPositionFieldGridModeActionGroup" stepKey="moveProductByPosition">
+            <argument name="rowFrom" value="1"/>
+            <argument name="rowTo" value="2"/>
+        </actionGroup>
+
+        <!-- Save category -->
+        <actionGroup ref="ClickSaveButtonActionGroup" stepKey="saveCategory">
+            <argument name="message" value="You saved the category."/>
+        </actionGroup>
+        <actionGroup ref="CliIndexerReindexActionGroup" stepKey="reindex">
+            <argument name="indices" value=""/>
+        </actionGroup>
+
+        <!-- Check new positions -->
+        <actionGroup ref="OpenProductsInCategorySectionActionGroup" stepKey="openProductsInCategoryTab"/>
+        <see userInput="$createSecondProduct.id$" selector="{{AdminCategoryProductsGridSection.rowId('1')}}" stepKey="seeProductInFirstRow"/>
+        <see userInput="$createFirstProduct.id$" selector="{{AdminCategoryProductsGridSection.rowId('2')}}" stepKey="seeProductInSecondRow"/>
+        <see userInput="$createThirdProduct.id$" selector="{{AdminCategoryProductsGridSection.rowId('3')}}" stepKey="seeProductInThirdRow"/>
+
+        <!-- Go to category page on Storefront -->
+        <amOnPage url="{{StorefrontCategoryPage.url($createCategory.custom_attributes[url_key]$)}}" stepKey="openStorefrontCategoryPage"/>
+        <waitForPageLoad stepKey="waitCategoryPageLoaded"/>
+
+        <!-- Assert products positions on Storefront -->
+        <actionGroup ref="AssertStorefrontElementVisibleActionGroup" stepKey="seeFirstProductPosition">
+            <argument name="selector" value="{{StorefrontCategoryProductSection.ProductTitleByNumber('1')}}"/>
+            <argument name="userInput" value="$createSecondProduct.name$"/>
+        </actionGroup>
+        <actionGroup ref="AssertStorefrontElementVisibleActionGroup" stepKey="seeSecondProductPosition">
+            <argument name="selector" value="{{StorefrontCategoryProductSection.ProductTitleByNumber('2')}}"/>
+            <argument name="userInput" value="$createFirstProduct.name$"/>
+        </actionGroup>
+        <actionGroup ref="AssertStorefrontElementVisibleActionGroup" stepKey="seeThirdProductPosition">
+            <argument name="selector" value="{{StorefrontCategoryProductSection.ProductTitleByNumber('3')}}"/>
+            <argument name="userInput" value="$createThirdProduct.name$"/>
+        </actionGroup>
+    </test>
+</tests>

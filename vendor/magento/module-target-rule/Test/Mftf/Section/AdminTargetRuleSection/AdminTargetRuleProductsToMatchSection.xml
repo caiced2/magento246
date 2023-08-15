@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+ /**
+  * Copyright © Magento, Inc. All rights reserved.
+  * See COPYING.txt for license details.
+  */
+-->
+<sections xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:noNamespaceSchemaLocation="urn:magento:mftf:Page/etc/SectionObject.xsd">
+    <section name="AdminTargetRuleProductsToMatchSection">
+        <element name="selectButton" type="button" selector="//*[@id='rule_conditions_fieldset']/span[{{value}}]/a" parameterized="true" timeout="30"/>
+        <element name="selectCondition" type="button" selector="//*[@id='conditions__1__children']/li[{{value1}}]/span[{{value2}}]/a" parameterized="true" timeout="30"/>
+        <element name="conditionAggregator" type="select" selector="#conditions__1__aggregator" timeout="30"/>
+        <element name="conditionValue" type="select" selector="#conditions__1__value" timeout="30"/>
+        <element name="newCondition" type="select" selector="#conditions__1__new_child" timeout="30"/>
+        <element name="newConditionOperator" type="select" selector="#conditions__1--1__operator" timeout="30"/>
+        <element name="newConditionValue" type="select" selector="#conditions__1--1__value" timeout="30"/>
+        <element name="conditionSelect" type="select" selector="select[name='rule[conditions][{{index}}][new_child]']" parameterized="true"/>
+        <element name="targetEllipsis" type="input" selector="//ul[contains(@id, 'conditions')]//a[.='...']"/>
+        <element name="ruleFieldByIndex" type="input" selector="#conditions__{{index}}__value" parameterized="true"/>
+        <element name="updateValue" type="input" selector="(//span[contains(@class, 'rule-param')]//a[(contains(@class, 'label'))])[. &gt; 0]"/>
+        <element name="openChooser" type="input" selector="//ul[contains(@id, 'conditions')]//img[@title='Open Chooser']"/>
+        <element name="openChooserCategorySelect" type="checkbox" selector="//div[@class='x-tree-node-el folder active-category x-tree-node-leaf']//a/span[contains(., '{{category}}')]" parameterized="true"/>
+        <element name="apply" type="button" selector="//ul[contains(@id, 'conditions')]//img[@title='Apply']" timeout="30"/>
+        <element name="remove" type="button" selector="//ul[contains(@id, 'conditions')]//a[@title='Remove']" timeout="30"/>
+        <element name="conditionsChildrenByIndex" type="input" selector="#conditions__{{index}}__children" parameterized="true"/>
+    </section>
+</sections>

@@ -1,0 +1,83 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+ /**
+  * Copyright © Magento, Inc. All rights reserved.
+  * See COPYING.txt for license details.
+  */
+-->
+
+<tests xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xsi:noNamespaceSchemaLocation="urn:magento:mftf:Test/etc/testSchema.xsd">
+    <test name="StorefrontCustomerProductSearchWithNewBillingAddressCheckoutTest">
+        <annotations>
+            <features value="Checkout with search address enabled"/>
+            <stories value="MC-5681: Implement handling of large number of addresses on Onepage Checkout"/>
+            <title value="One Page Checkout with Customer Addresses Search - Add new billing address"/>
+            <description value="One Page Checkout with Customer Addresses Search - Add new billing address"/>
+            <severity value="CRITICAL"/>
+            <testCaseId value="MC-15835"/>
+            <group value="checkout"/>
+        </annotations>
+        <before>
+            <createData entity="SimpleSubCategory" stepKey="simpleCategory"/>
+            <createData entity="SimpleProduct" stepKey="simpleProduct">
+                <requiredEntity createDataKey="simpleCategory"/>
+            </createData>
+            <createData entity="Simple_US_CA_Customer" stepKey="simpleUsCaCustomer"/>
+            <magentoCLI command="config:set {{EnableCustomerAddressSearch.path}} {{EnableCustomerAddressSearch.value}}" stepKey="enableCustomerAddressSearch"/>
+            <magentoCLI command="config:set {{AddressSearchLimitZero.path}} {{AddressSearchLimitZero.value}}" stepKey="setSearchLimitZero"/>
+            <magentoCLI command="config:set {{DisplayBillingAddressOnPaymentMethod.path}} {{DisplayBillingAddressOnPaymentMethod.value}}" stepKey="displayBillingAddressOnPaymentMethod"/>
+            <magentoCLI command="config:set {{EnableFlatRateConfigData.path}} {{EnableFlatRateConfigData.value}}" stepKey="enableFlatRate"/>
+        </before>
+        <after>
+            <!--Logout from customer account-->
+            <amOnPage url="{{StorefrontCustomerLogoutPage.url}}" stepKey="logoutCustomer"/>
+            <!--Clear filters-->
+            <deleteData createDataKey="simpleProduct" stepKey="deleteProduct"/>
+            <deleteData createDataKey="simpleCategory" stepKey="deleteCategory"/>
+            <deleteData createDataKey="simpleUsCaCustomer" stepKey="deleteCustomer"/>
+            <magentoCLI command="config:set {{DisableCustomerAddressSearch.path}} {{DisableCustomerAddressSearch.value}}" stepKey="disableCustomerAddressSearch"/>
+            <magentoCLI command="config:set {{DefaultAddressSearchLimit.path}} {{DefaultAddressSearchLimit.value}}" stepKey="setDefaultSearchLimit"/>
+          <!-- Disable flat rate method -->
+          <magentoCLI command="config:set {{DisableFlatRateConfigData.path}} {{DisableFlatRateConfigData.value}}" stepKey="disableFlatRate"/>
+        </after>
+        <!--Login to storefront-->
+        <actionGroup ref="LoginToStorefrontActionGroup" stepKey="customerLogin">
+            <argument name="Customer" value="$$simpleUsCaCustomer$$" />
+        </actionGroup>
+        <!--Add Simple Product to Shopping Cart and Proceed to checkout-->
+        <amOnPage url="{{StorefrontProductPage.url($$simpleProduct.custom_attributes[url_key]$$)}}" stepKey="amOnSimpleProductPage"/>
+        <actionGroup ref="StorefrontAddProductToCartActionGroup" stepKey="addProductToCart">
+            <argument name="product" value="$$simpleProduct$$"/>
+            <argument name="productCount" value="1"/>
+        </actionGroup>
+        <actionGroup ref="GoToCheckoutFromMinicartActionGroup" stepKey="goToCheckoutFromMinicart" />
+        <!-- *+ New Address* button is displayed under *Shipping Address* block -->
+        <seeElement stepKey="checkIfChangeAddressButtonIsVisibleOnShippingStep" selector="{{CheckoutShippingAddressSection.changeAddressButton}}"/>
+        <!-- Click *Next* button -->
+        <actionGroup ref="StorefrontCheckoutClickNextButtonActionGroup" stepKey="clickNext"/>
+        <!-- Select "Check / Money order" payment method -->
+        <actionGroup ref="CheckoutSelectCheckMoneyOrderPaymentActionGroup" stepKey="selectCheckMoneyPayment"/>
+        <!-- Review & Payments step of checkout is opened -->
+        <waitForElement selector="{{CheckoutPaymentSection.paymentSectionTitle}}" time="30" stepKey="waitForPaymentSectionLoaded"/>
+        <seeInCurrentUrl url="{{CheckoutPage.url}}/#payment" stepKey="assertCheckoutPaymentUrl"/>
+        <!--Change Address link is displayed under Billing Address block-->
+        <seeElement stepKey="checkIfChangeAddressButtonIsVisibleOnBillingStep" selector="{{CheckoutBillingAddressSection.changeAddressButtonOnPaymentPage}}"/>
+        <!--New Addres button is displayed under Billing Address block-->
+        <seeElement stepKey="checkIfAddNewButtonIsVisible" selector="{{CheckoutBillingAddressSection.newAddressButton}}"/>
+        <!-- Click on New Address button -->
+        <!-- Fill out address data and click *Save address* button -->
+        <actionGroup ref="CheckoutStepAddNewBillingAddressActionGroup" stepKey="changeAddress">
+            <argument name="address" value="US_Address_TX"/>
+        </actionGroup>
+        <!-- *New Address* button is not displayed anymore -->
+        <dontSeeElement stepKey="checkIfAddNewButtonIsNotVisible" selector="{{CheckoutBillingAddressSection.newAddressButton}}"/>
+        <!-- Check that billing address updated -->
+        <actionGroup ref="CheckBillingAddressInCheckoutActionGroup" stepKey="checkBillingAddressOnBillingPage">
+            <argument name="customerVar" value="US_Address_TX" />
+            <argument name="customerAddressVar" value="US_Address_TX" />
+        </actionGroup>
+        <!-- Place order -->
+        <actionGroup ref="ClickPlaceOrderActionGroup" stepKey="PlaceOrder" />
+    </test>
+</tests>

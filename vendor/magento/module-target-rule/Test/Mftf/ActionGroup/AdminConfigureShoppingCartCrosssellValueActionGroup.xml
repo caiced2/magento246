@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+ /**
+  * Copyright © Magento, Inc. All rights reserved.
+  * See COPYING.txt for license details.
+  */
+-->
+
+<actionGroups xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+              xsi:noNamespaceSchemaLocation="urn:magento:mftf:Test/etc/actionGroupSchema.xsd">
+    <actionGroup name="AdminConfigureShoppingCartCrosssellValueActionGroup">
+        <annotations>
+            <description>Sets the Enable Cross-sell parameter value in the admin cart settings to the provided argument value ("Yes" or "No")</description>
+        </annotations>
+        <arguments>
+            <argument name="crosssellEnable" type="string" defaultValue="Yes"/>
+        </arguments>
+
+        <!-- Store Checkout Configuration-->
+        <amOnPage url="{{AdminShoppingCartPage.url}}" stepKey="openStoreConfig" />
+        <conditionalClick selector="{{AdminTargetRuleSection.shoppingCartTab}}" dependentSelector="{{AdminTargetRuleSection.shoppingCartTab}}" visible="true" stepKey="clickShoppingCartTab"/>
+        <click selector="{{AdminTargetRuleSection.crossSellUseSystemValue}}" stepKey="clickShowCrossSellItemsInTheShoppingCartCheckbox"/>
+        <selectOption selector="{{AdminTargetRuleSection.enableCartCrosssell}}" userInput="{{crosssellEnable}}" stepKey="selectEnableCrosssell"/>
+        <conditionalClick selector="{{AdminTargetRuleSection.shoppingCartTab}}" dependentSelector="{{AdminTargetRuleSection.shoppingCartTab}}" visible="true" stepKey="clickShoppingCartTabclose"/>
+        <click selector="{{AdminConfigSection.saveButton}}" stepKey="clickSaveConfigCrossell"/>
+        <waitForPageLoad stepKey="waitForPageLoad1"/>
+    </actionGroup>
+</actionGroups>

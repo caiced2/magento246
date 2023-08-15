@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+ /**
+  * Copyright © Magento, Inc. All rights reserved.
+  * See COPYING.txt for license details.
+  */
+-->
+<actionGroups xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+              xsi:noNamespaceSchemaLocation="urn:magento:mftf:Test/etc/actionGroupSchema.xsd">
+    <actionGroup name="AdminFillProductScheduleUpdateSpecialPrice">
+        <annotations>
+            <description>Fill the special price to the product schedule update.</description>
+        </annotations>
+        <arguments>
+            <argument name="specialPrice" type="string" defaultValue="10"/>
+        </arguments>
+        <click selector="{{AdminProductScheduleUpdateSection.advancedPricing}}" stepKey="clickAdvancedPricingLinkInUpdate"/>
+        <waitForElementVisible selector="{{AdminProductFormAdvancedPricingSection.specialPrice}}" stepKey="waitSpecialPriceInUpdate"/>
+        <fillField userInput="{{specialPrice}}" selector="{{AdminProductFormAdvancedPricingSection.specialPrice}}" stepKey="fillSpecialPriceInUpdate"/>
+        <click selector="{{AdminProductScheduleUpdateSection.doneButton}}" stepKey="clickDoneInUpdate"/>
+        <waitForElementNotVisible selector="{{AdminProductFormAdvancedPricingSection.specialPrice}}" stepKey="waitForCloseModalWindowInUpdate"/>
+    </actionGroup>
+</actionGroups>

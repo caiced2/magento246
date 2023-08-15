@@ -1,0 +1,54 @@
+<?xml version="1.0" ?>
+<!--
+/**
+ * Copyright © Magento, Inc. All rights reserved.
+ * See COPYING.txt for license details.
+ */
+-->
+<config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="urn:magento:module:Magento_Config:etc/system_file.xsd">
+    <system>
+        <tab id="adobe_services" translate="label" sortOrder="1000">
+            <label>Adobe Services</label>
+        </tab>
+        <section id="adobe_io_events" showInDefault="1" showInWebsite="1" showInStore="1" sortOrder="130">
+            <label>Adobe I/O Events</label>
+            <tab>adobe_services</tab>
+            <class>separator-top</class>
+            <resource>Magento_AdobeIoEventsClient::config</resource>
+            <group id="integration" translate="label" showInDefault="1" showInWebsite="0" showInStore="0">
+                <fieldset_css>active</fieldset_css>
+                <label>General configuration</label>
+                <frontend_model>Magento\AdobeIoEventsClient\Block\Adminhtml\System\Config\Fieldset\AuthorizationTypeSwitch</frontend_model>
+                <field id="authorization_type" translate="authorization type" type="select" sortOrder="10" showInDefault="1" showInWebsite="0" showInStore="0">
+                    <label>Adobe I/O Authorization Type</label>
+                    <comment>The selected type must match the server-to-server authentication type defined in your App Builder project.</comment>
+                    <source_model>Magento\AdobeIoEventsClient\Model\Config\Source\AuthorizationType</source_model>
+                </field>
+                <field id="private_key" translate="label" type="obscure" sortOrder="20" showInDefault="1" showInWebsite="0" showInStore="0">
+                    <label>Service Account Private Key</label>
+                    <backend_model>Magento\Config\Model\Config\Backend\Encrypted</backend_model>
+                    <depends>
+                        <field id="authorization_type">jwt</field>
+                    </depends>
+                </field>
+                <field id="workspace_configuration" translate="label" type="obscure" sortOrder="30" showInDefault="1" showInWebsite="0" showInStore="0">
+                    <label>Adobe I/O Workspace Configuration</label>
+                    <backend_model>Magento\Config\Model\Config\Backend\Encrypted</backend_model>
+                </field>
+                <field id="instance_id" translate="label" type="text" sortOrder="50" showInDefault="1" showInWebsite="0" showInStore="0">
+                    <label>Adobe Commerce Instance ID</label>
+                    <validate>validate-instance-id</validate>
+                </field>
+                <field id="provider_id" translate="label" type="text" sortOrder="60" showInDefault="1" showInWebsite="0" showInStore="0">
+                    <label>Adobe I/O Event Provider ID</label>
+                </field>
+                <field id="adobe_io_event_provider_metadata" translate="label" type="text" sortOrder="70" showInDefault="1" showInWebsite="0" showInStore="0" canRestore="1">
+                    <label>Adobe I/O Event Provider Metadata</label>
+                </field>
+                <field id="adobe_io_environment" translate="label" type="text" sortOrder="80" showInDefault="0" showInWebsite="0" showInStore="0" canRestore="1">
+                    <label>Adobe I/O Environment</label>
+                </field>
+            </group>
+        </section>
+    </system>
+</config>

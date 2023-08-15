@@ -1,0 +1,95 @@
+<?php
+/**
+ * Copyright © Magento, Inc. All rights reserved.
+ * See COPYING.txt for license details.
+ */
+
+/** @var \Magento\Framework\View\Helper\SecureHtmlRenderer $secureRenderer */
+?>
+<?php if (!$block->isUserNotAllowSaveCookie()) { ?>
+    <?php
+    /** @var \Magento\GoogleTagManager\Block\Adminhtml\Ga $block */
+    $accountType = $block->getConfig(\Magento\GoogleTagManager\Helper\Data::XML_PATH_TYPE);
+    $gtmAccountId = $block->getConfig(\Magento\GoogleTagManager\Helper\Data::XML_PATH_CONTAINER_ID);
+    $gapAccountId = $block->getConfig(\Magento\GoogleTagManager\Helper\Data::XML_PATH_ACCOUNT) ;
+    switch ($accountType) {
+        case \Magento\GoogleTagManager\Helper\Data::TYPE_TAG_MANAGER:
+            if (!empty($gtmAccountId)) { ?>
+                <?php $escapedGtmAccountId = $block->escapeHtmlAttr($gtmAccountId) ?>
+                <!-- GOOGLE TAG MANAGER -->
+                <noscript>
+                    <iframe src="https://www.googletagmanager.com/ns.html?id=<?= /* @noEscape */$escapedGtmAccountId ?>"
+                            height="0"
+                            width="0"
+                            style="display:none;visibility:hidden"></iframe>
+                </noscript>
+                <?php
+                $escapedAccountId = $block->escapeJs($gtmAccountId);
+                $currencyCode = $block->escapeJs($block->getStoreCurrencyCode());
+                $ordersData = $block->getOrdersData();
+                ?>
+                <?php $scriptString = <<<script
+                    //<![CDATA[
+                    (function (w, d, s, l, i) {
+                        w[l] = w[l] || [];
+                        w[l].push({'gtm.start': new Date().getTime(), event: 'gtm.js'});
+                        var f = d.getElementsByTagName(s)[0];
+                        var j = d.createElement(s);
+                        var dl = l != 'dataLayer' ? '&l=' + l : '';
+                        j.async = true;
+                        j.src = 'https://www.googletagmanager.com/gtm.js?id=' + i + dl;
+                        f.parentNode.insertBefore(j, f);
+                    })(window, document, 'script', 'dataLayer', '{$escapedAccountId}');
+
+                    dataLayer.push({
+                        'ecommerce': {'currencyCode': '{$currencyCode}>'}
+                    });
+                    {$ordersData}
+                    //]]>
+script;
+                ?>
+                <?= /* @noEscape */ $secureRenderer->renderTag('script', [], $scriptString, false); ?>
+                <!-- END GOOGLE TAG MANAGER -->
+                <?php
+            }
+            break;
+        case \Magento\GoogleTagManager\Helper\Data::TYPE_UNIVERSAL:
+            if (!empty($gapAccountId)) {
+                $escapedGapAccountId = $block->escapeJs($gapAccountId);
+                $anonymizationCode = $block->getAnonymizationCode();
+                $currencyCode = $block->escapeJs($block->getStoreCurrencyCode());
+                $ordersData = $block->getOrdersData();
+                ?>
+                <!-- BEGIN NEW GOOGLE UNIVERSAL CODE -->
+                <?php $scriptString = <<<script
+                    //<![CDATA[
+                    (function (i, s, o, g, r, a, m) {
+                        i['GoogleAnalyticsObject'] = r;
+                        i[r] = i[r] || function () {
+                            (i[r].q = i[r].q || []).push(arguments)
+                        }, i[r].l = 1 * new Date();
+                        a = s.createElement(o),
+                            m = s.getElementsByTagName(o)[0];
+                        a.async = 1;
+                        a.src = g;
+                        m.parentNode.insertBefore(a, m)
+                    })(window, document, 'script', 'https://www.google-analytics.com/analytics.js', 'ga');
+
+                    ga('create', '{$escapedGapAccountId}', 'auto');
+                    {$anonymizationCode}
+                    ga('send', 'pageview');
+
+                    dataLayer.push({
+                        'ecommerce': {'currencyCode': '{$currencyCode}'}
+                    });
+                    {$ordersData}
+                    //]]>
+script;
+                ?>
+                <?= /* @noEscape */ $secureRenderer->renderTag('script', [], $scriptString, false); ?>
+                <!-- END NEW GOOGLE UNIVERSAL CODE -->
+                <?php
+            }
+            break;
+    }
+}

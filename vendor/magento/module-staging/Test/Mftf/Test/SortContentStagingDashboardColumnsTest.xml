@@ -1,0 +1,102 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+ /**
+  * Copyright © Magento, Inc. All rights reserved.
+  * See COPYING.txt for license details.
+  */
+-->
+
+<tests xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xsi:noNamespaceSchemaLocation="urn:magento:mftf:Test/etc/testSchema.xsd">
+  <test name="SortContentStagingDashboardColumnsTest">
+    <annotations>
+      <stories value="Staging updates"/>
+      <title value="Sort Content Staging Dashboard Columns"/>
+      <description value="Sort Content Staging Dashboard Columns"/>
+      <severity value="MAJOR"/>
+      <testCaseId value="AC-4416"/>
+      <group value="staging"/>
+    </annotations>
+    <before>
+      <!-- Login to Magento backend -->
+      <actionGroup ref="AdminLoginActionGroup" stepKey="loginAsAdmin"/>
+      <createData entity="SimpleSubCategory" stepKey="createCategory"/>
+      <createData entity="SimpleProduct" stepKey="createProduct">
+        <requiredEntity createDataKey="createCategory"/>
+      </createData>
+      <!-- Open product in edit mode -->
+      <amOnPage url="{{AdminProductEditPage.url($$createProduct.id$$)}}" stepKey="goToAdminProductEditPage"/>
+      <!-- Create Schedule Update -->
+      <generateDate date="+1 minute" format="m/d/Y g:i A" stepKey="generateStartDateAgain"/>
+      <generateDate date="+3 minute" format="m/d/Y g:i A" stepKey="generateEndDateAgain"/>
+      <actionGroup ref="FillScheduleUpdateRemovePriceActionGroup" stepKey="createNewStagingUpdateAgain">
+        <argument name="staging" value="Update007"/>
+        <argument name="timeStart" value="{$generateStartDateAgain}"/>
+        <argument name="timeEnd" value="{$generateEndDateAgain}"/>
+      </actionGroup>
+      <actionGroup ref="ApplyUpdatedRuleStagingByCron" stepKey="runCronTwiceToApplyStagingUpdate"/>
+      <actionGroup ref="CliIndexerReindexActionGroup" stepKey="reindex">
+        <argument name="indices" value=""/>
+      </actionGroup>
+
+      <actionGroup ref="ApplyUpdatedRuleStagingByCron" stepKey="runCronTwice"/>
+
+      <!-- Create Another Schedule Update -->
+      <generateDate date="+1 day" format="m/d/Y g:i A" stepKey="generateStartDate"/>
+      <generateDate date="+1 week" format="m/d/Y g:i A" stepKey="generateEndDate"/>
+      <actionGroup ref="FillScheduleUpdateRemovePriceActionGroup" stepKey="createNewStagingUpdate">
+        <argument name="staging" value="S5UpdateNameStaging"/>
+        <argument name="timeStart" value="{$generateStartDate}"/>
+        <argument name="timeEnd" value="{$generateEndDate}"/>
+      </actionGroup>
+      <actionGroup ref="ApplyUpdatedRuleStagingByCron" stepKey="runCronTwiceToApplyStagingUpdateAgain"/>
+      <actionGroup ref="CliIndexerReindexActionGroup" stepKey="reindexAgain">
+        <argument name="indices" value=""/>
+      </actionGroup>
+    </before>
+    <after>
+      <!-- Delete created product, category -->
+      <deleteData createDataKey="createProduct" stepKey="deleteProduct"/>
+      <deleteData createDataKey="createCategory" stepKey="deleteCategory"/>
+      <!-- Clear Staging filters -->
+      <actionGroup ref="StagingDashboardClearFiltersActionGroup" stepKey="clearStagingFilters"/>
+      <!-- logout from Admin -->
+      <actionGroup ref="AdminLogoutActionGroup" stepKey="logout"/>
+    </after>
+
+    <!-- Open Content Staging Dashboard -->
+    <amOnPage url="{{AdminStagingDashboardPage.url}}" stepKey="amOnStagingUpdatePage"/>
+
+    <!-- Change the Content Dashboard view to "Grid" -->
+    <actionGroup stepKey="changeDashboardView" ref="changeStagingView">
+      <argument name="view" value="grid"/>
+    </actionGroup>
+
+    <!-- Now start sorting it by sortable columns(By Status, Start time, End Time, Update Name and Description) -->
+    <!-- Sort by Status -->
+    <actionGroup ref="SortContentDashboardGridColumnActionGroup" stepKey="sortContentDashboardGridColumnStatus">
+      <argument name="section" value="ContentDashboardPageGridSection"/>
+      <argument name="columnName" value="{{ContentDashboardGridColumns.status}}"/>
+    </actionGroup>
+    <!-- Sort by Start Time -->
+    <actionGroup ref="SortContentDashboardGridColumnActionGroup" stepKey="sortContentDashboardGridColumnStartTime">
+      <argument name="section" value="ContentDashboardPageGridSection"/>
+      <argument name="columnName" value="{{ContentDashboardGridColumns.startTime}}"/>
+    </actionGroup>
+    <!-- Sort by Update Name -->
+    <actionGroup ref="SortContentDashboardGridColumnActionGroup" stepKey="sortContentDashboardGridColumnUpdateName">
+      <argument name="section" value="ContentDashboardPageGridSection"/>
+      <argument name="columnName" value="{{ContentDashboardGridColumns.updateName}}"/>
+    </actionGroup>
+    <!-- Sort by End Time -->
+    <actionGroup ref="SortContentDashboardGridColumnActionGroup" stepKey="sortContentDashboardGridColumnEndTime">
+      <argument name="section" value="ContentDashboardPageGridSection"/>
+      <argument name="columnName" value="{{ContentDashboardGridColumns.endTime}}"/>
+    </actionGroup>
+    <!-- Sort by Description -->
+    <actionGroup ref="SortContentDashboardGridColumnActionGroup" stepKey="sortContentDashboardGridColumnDescription">
+      <argument name="section" value="ContentDashboardPageGridSection"/>
+      <argument name="columnName" value="{{ContentDashboardGridColumns.description}}"/>
+    </actionGroup>
+  </test>
+</tests>

@@ -1,0 +1,13 @@
+<?xml version="1.0"?>
+<!--
+/**
+ * Copyright © Magento, Inc. All rights reserved.
+ * See COPYING.txt for license details.
+ */
+-->
+<config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="urn:magento:module:Magento_Backend:etc/menu.xsd">
+    <menu>
+        <add id="Magento_CustomerSegment::customer_customersegment" title="Segments" translate="title" module="Magento_CustomerSegment" sortOrder="30" parent="Magento_Customer::customer" action="customersegment/index" dependsOnModule="Magento_CustomerSegment" dependsOnConfig="customer/magento_customersegment/is_enabled" resource="Magento_CustomerSegment::customersegment"/>
+        <add id="Magento_CustomerSegment::report_customers_segment" title="Segments" translate="title" module="Magento_CustomerSegment" sortOrder="50" parent="Magento_Reports::report_customers" action="customersegment/report_customer_customersegment/segment" dependsOnModule="Magento_CustomerSegment" dependsOnConfig="customer/magento_customersegment/is_enabled" resource="Magento_CustomerSegment::segment"/>
+    </menu>
+</config>

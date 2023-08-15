@@ -1,0 +1,150 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+ /**
+  * Copyright © Magento, Inc. All rights reserved.
+  * See COPYING.txt for license details.
+  */
+-->
+
+<tests xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xsi:noNamespaceSchemaLocation="urn:magento:mftf:Test/etc/testSchema.xsd">
+    <test name="StorefrontVerifyThatGiftWrappingCanBeAppliedOnItemLevelTest">
+        <annotations>
+            <features value="GiftWrapping"/>
+            <stories value="Gift wrapping"/>
+            <title value="Verify that Gift Wrapping can be applied on item level"/>
+            <description value="Verify that Gift Wrapping can be applied on item level"/>
+            <severity value="CRITICAL"/>
+            <testCaseId value="MAGETWO-46900"/>
+            <group value="giftWrapping"/>
+        </annotations>
+
+        <before>
+            <!-- Create Simple Product 1 and Simple Product 2 -->
+            <createData entity="SimpleProduct2" stepKey="createSimpleProduct">
+                <field key="price">100</field>
+            </createData>
+
+            <createData entity="SimpleProduct2" stepKey="createSimpleProduct1">
+                <field key="price">70</field>
+            </createData>
+
+            <!-- Create Gift Wrapping -->
+            <createData entity="ApiGiftWrapping" stepKey="createGiftWrapping"/>
+
+            <!-- Enable Allow Gift Wrapping for Order Items Config -->
+            <createData entity="DefaultConfigGiftMessageOptions" stepKey="disableGiftMessage"/>
+            <createData entity="EnableGiftWrappingForOrderItemsOnly" stepKey="enableGiftWrappingForOrderItemsOnly"/>
+        </before>
+
+        <after>
+            <!-- Delete Simple Product 1 and Simple Product 2 -->
+            <deleteData createDataKey="createSimpleProduct" stepKey="deleteSimpleProduct"/>
+            <deleteData createDataKey="createSimpleProduct1" stepKey="deleteSimpleProduct1"/>
+
+            <!-- Delete Gift Wrapping -->
+            <deleteData createDataKey="createGiftWrapping" stepKey="deleteGiftWrapping"/>
+
+            <!-- Default Gift Option Config -->
+            <createData entity="DefaultConfigGiftMessageOptions" stepKey="restoreDefaultConfigGiftOptions"/>
+            <createData entity="DefaultConfigGiftWrappingOptions" stepKey="defaultGiftOptions"/>
+
+            <!-- Open Order and clear filter -->
+            <amOnPage url="{{AdminOrdersPage.url}}" stepKey="onOrdersPage"/>
+            <actionGroup ref="ClearFiltersAdminDataGridActionGroup" stepKey="resetOrderFilter"/>
+
+            <!-- Logout Admin -->
+            <actionGroup ref="AdminLogoutActionGroup" stepKey="logoutOfAdmin"/>
+        </after>
+        <!-- Go to Simple Product Page and Add to Cart -->
+        <amOnPage url="{{StorefrontProductPage.url($$createSimpleProduct.custom_attributes[url_key]$$)}}" stepKey="goToSimpleProduct"/>
+        <actionGroup ref="AddToCartFromStorefrontProductPageActionGroup" stepKey="addToCartFromStorefrontProductPage">
+            <argument name="productName" value="$$createSimpleProduct.name$$"/>
+        </actionGroup>
+
+        <!-- Go to Simple Product1 Page -->
+        <amOnPage url="{{StorefrontProductPage.url($$createSimpleProduct1.custom_attributes[url_key]$$)}}" stepKey="goToSimpleProduct1"/>
+        <actionGroup ref="AddToCartFromStorefrontProductPageActionGroup" stepKey="addToCartFromStorefrontProductPage1">
+            <argument name="productName" value="$$createSimpleProduct1.name$$"/>
+        </actionGroup>
+
+        <!-- Open the Shipping Cart-->
+        <actionGroup ref="StorefrontOpenCartFromMinicartActionGroup" stepKey="openCart"/>
+        <!-- Link/Expand "Gift Option" for Simple1 is presented -->
+        <waitForText selector="{{CheckoutCartGiftWrappingSection.cartItemGiftOption('$$createSimpleProduct.name$$','Gift options')}}" userInput="Gift options" time="30" stepKey="seeGiftOptionPresent"/>
+        <!-- Link/Expand "Gift Option" for Simple2 is presented -->
+        <waitForText selector="{{CheckoutCartGiftWrappingSection.cartItemGiftOption('$$createSimpleProduct1.name$$','Gift options')}}" userInput="Gift options" time="30" stepKey="seeGiftOptionPresent1"/>
+        <!-- Link/Expand "Gift Option" is NOT presented for all order items -->
+        <dontSee selector="{{CheckoutCartGiftWrappingSection.cartGiftOptionAll('Gift options')}}" userInput="Gift options" stepKey="dontSeeGiftOptionPresentForOrder"/>
+
+        <!-- Click "Gift option" for simple1 -->
+        <click selector="{{CheckoutCartGiftWrappingSection.clickCartItemGiftOptions('$$createSimpleProduct.name$$')}}" stepKey="clickGiftOption"/>
+        <waitForElementVisible selector="{{CheckoutCartGiftWrappingSection.cartItemVisibleSmallImage}}" stepKey="waitVisibleImage"/>
+        <click selector="{{CheckoutCartGiftWrappingSection.cartItemVisibleSmallImage}}" stepKey="clickSmallImage"/>
+        <see selector="{{CheckoutCartGiftWrappingSection.giftWrappingName}}" userInput="Test Design" stepKey="seeGiftWrappingName"/>
+        <see selector="{{CheckoutCartGiftWrappingSection.giftWrappingReqularPrice}}" userInput="$36.50" stepKey="seeGiftWrappingReqularPrice"/>
+        <waitForElementVisible selector="{{CheckoutCartGiftWrappingSection.giftRemoveButton}}" stepKey="waitVisibleGiftRemoveButton"/>
+        <click selector="{{CheckoutCartGiftWrappingSection.clickImage}}" stepKey="clickImage"/>
+
+        <!-- Select GW and click Update button -->
+        <click selector="{{CheckoutCartGiftWrappingSection.cartItemClickButtonGiftUpdate('$$createSimpleProduct.name$$')}}" stepKey="clickButtonGiftUpdate"/>
+        <waitForPageLoad time="30" stepKey="waitForPage"/>
+        <see selector="{{CheckoutCartSummarySection.subtotal}}" userInput="$170.00" stepKey="seeSubtotal"/>
+        <see selector="{{CheckoutCartGiftWrappingSection.giftWrappingItemsPrice}}" userInput="$36.50" stepKey="seeGiftWrapping"/>
+
+        <!-- Click "Gift option" for simple2 -->
+        <click selector="{{CheckoutCartGiftWrappingSection.clickCartItemGiftOptions('$$createSimpleProduct1.name$$')}}" stepKey="clickGiftOption1"/>
+        <waitForElementVisible selector="{{CheckoutCartGiftWrappingSection.cartItemVisibleSmallImage}}" stepKey="waitVisibleImage1"/>
+        <click selector="{{CheckoutCartGiftWrappingSection.cartItemVisibleSmallImage}}" stepKey="clickSmallImage1"/>
+        <see selector="{{CheckoutCartGiftWrappingSection.giftWrappingName}}" userInput="Test Design" stepKey="seeGiftWrappingName1"/>
+        <see selector="{{CheckoutCartGiftWrappingSection.giftWrappingReqularPrice}}" userInput="$36.50" stepKey="seeGiftWrappingReqularPrice1"/>
+        <waitForElementVisible selector="{{CheckoutCartGiftWrappingSection.giftRemoveButton}}" stepKey="waitVisibleGiftRemoveButton1"/>
+        <click selector="{{CheckoutCartGiftWrappingSection.clickImage}}" stepKey="clickImage1"/>
+
+        <!-- Select GW and click Update button -->
+        <click selector="{{CheckoutCartGiftWrappingSection.cartItemClickButtonGiftUpdate('$$createSimpleProduct1.name$$')}}" stepKey="clickButtonGiftUpdate1"/>
+        <waitForPageLoad time="30" stepKey="waitForPage1"/>
+        <see selector="{{CheckoutCartSummarySection.subtotal}}" userInput="$170.00" stepKey="seeSubtotal1"/>
+        <see selector="{{CheckoutCartGiftWrappingSection.giftWrappingItemsPrice}}" userInput="$73.00" stepKey="seeGiftWrapping1"/>
+
+        <!-- Go to Checkout -->
+        <click selector="{{CheckoutCartSummarySection.proceedToCheckout}}" stepKey="clickProceedToCheckout"/>
+
+        <!-- Guest checkout filling shipping section -->
+        <actionGroup ref="GuestCheckoutFillingShippingSectionActionGroup" stepKey="guestCheckout">
+            <argument name="customerVar" value="Simple_US_Customer" />
+            <argument name="customerAddressVar" value="CustomerAddressSimple" />
+        </actionGroup>
+
+        <!-- Check Select Payment Method -->
+        <actionGroup ref="CheckoutSelectCheckMoneyOrderPaymentActionGroup" stepKey="selectPaymentMethod"/>
+
+        <!-- Place Order -->
+        <actionGroup ref="CheckoutPlaceOrderActionGroup" stepKey="customerPlaceOrder">
+            <argument name="orderNumberMessage" value="CONST.successGuestCheckoutOrderNumberMessage"/>
+            <argument name="emailYouMessage" value="CONST.successCheckoutEmailYouMessage"/>
+        </actionGroup>
+
+        <grabTextFrom selector="{{CheckoutSuccessMainSection.orderNumber}}" stepKey="grabOrderNumber"/>
+
+        <!-- Login to Admin and Open Order -->
+        <actionGroup ref="AdminLoginActionGroup" stepKey="loginAsAdmin"/>
+        <amOnPage url="{{AdminOrdersPage.url}}" stepKey="onOrdersPage"/>
+        <actionGroup ref="SearchAdminDataGridByKeywordActionGroup" stepKey="searchOrder">
+            <argument name="keyword" value="$grabOrderNumber"/>
+        </actionGroup>
+        <click selector="{{AdminOrdersGridSection.firstRow}}" stepKey="clickOrderRow"/>
+
+        <!-- See Order Gift Wrapping  -->
+        <click selector="{{AdminOrderGiftOptionsConfigureSection.itemGiftOptionButton('$$createSimpleProduct.name$$')}}" stepKey="clickGiftOption2"/>
+        <see selector="{{AdminOrderGiftOptionsConfigureSection.itemGiftWrappingDesignName}}" userInput="Test Design" stepKey="seeGiftWrappingName2"/>
+        <see selector="{{AdminOrderGiftOptionsConfigureSection.itemGiftWrappingPrice}}" userInput="$36.50" stepKey="seeGiftWrappingPrice"/>
+        <click selector="{{AdminOrderGiftOptionsConfigureSection.itemPopupClose}}" stepKey="closePopup"/>
+
+        <!-- See Order Gift Wrapping -->
+        <click selector="{{AdminOrderGiftOptionsConfigureSection.itemGiftOptionButton('$$createSimpleProduct1.name$$')}}" stepKey="clickGiftOption3"/>
+        <see selector="{{AdminOrderGiftOptionsConfigureSection.itemGiftWrappingDesignName}}" userInput="Test Design" stepKey="seeGiftWrappingName3"/>
+        <see selector="{{AdminOrderGiftOptionsConfigureSection.itemGiftWrappingPrice}}" userInput="$36.50" stepKey="seeGiftWrappingPrice1"/>
+        <click selector="{{AdminOrderGiftOptionsConfigureSection.itemPopupClose}}" stepKey="closePopup1"/>
+    </test>
+</tests>

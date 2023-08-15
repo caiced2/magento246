@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+ /**
+  * Copyright © Magento, Inc. All rights reserved.
+  * See COPYING.txt for license details.
+  */
+-->
+
+<actionGroups xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+              xsi:noNamespaceSchemaLocation="urn:magento:mftf:Test/etc/actionGroupSchema.xsd">
+    <!--Set Customer Group condition for Customer Segment-->
+    <actionGroup name="SetCustomerConditionWithDateActionGroup">
+        <arguments>
+            <argument name="conditionData" type="entity"/>
+        </arguments>
+        <click selector="{{AdminCustomerSegmentEditSection.conditionsTab}}" stepKey="proceedToConditionsTab"/>
+        <click selector="{{AdminCustomerSegmentConditionsEditSection.addCondition}}" stepKey="clickToAddCondition" />
+        <selectOption userInput="{{conditionData.condition}}" selector="{{AdminCustomerSegmentConditionsEditSection.conditions}}" stepKey="selectCondition"/>
+        <waitForPageLoad stepKey="waitForConditionsToAppear"/>
+
+        <click selector="{{AdminCustomerSegmentConditionsEditSection.iconData}}" stepKey="clickOnData"/>
+        <click selector="{{AdminCustomerSegmentConditionsEditSection.dataPicker}}" stepKey="clickForDataPicker"/>
+
+        <click selector="{{AdminCustomerSegmentConditionsEditSection.selectYear}}" stepKey="clickOnYear"/>
+        <selectOption selector="{{AdminCustomerSegmentConditionsEditSection.selectYear}}"  userInput="{{conditionData.yearOfBirth}}" stepKey="selectYear"/>
+
+        <click selector="{{AdminCustomerSegmentConditionsEditSection.selectMonth}}" stepKey="clickOnMonth"/>
+        <selectOption selector="{{AdminCustomerSegmentConditionsEditSection.selectMonth}}"  userInput="{{conditionData.monthOfBirth}}" stepKey="selectMonth"/>
+
+        <click selector="{{AdminCustomerSegmentConditionsEditSection.selectDay(conditionData.dayOfBirth)}}" stepKey="selectDay"/>
+
+        <click selector="{{AdminMainActionsSection.saveAndContinue}}" stepKey="saveSegment"/>
+        <see userInput="You saved the segment." selector="{{AdminMessagesSection.success}}" stepKey="checkSuccessMessage"/>
+
+    </actionGroup>
+</actionGroups>

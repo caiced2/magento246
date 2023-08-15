@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+ /**
+  * Copyright © Magento, Inc. All rights reserved.
+  * See COPYING.txt for license details.
+  */
+-->
+<sections xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:noNamespaceSchemaLocation="urn:magento:mftf:Page/etc/SectionObject.xsd">
+    <section name="RemoveCardPriceRuleSection">
+        <element name="couponCode" type="button" selector="//td[contains(text(), '{{args}}')]" parameterized="true"/>
+        <element name="delete" type="button" selector="#delete"/>
+        <element name="confirm" type="button" selector=".action-primary.action-accept"/>
+    </section>
+</sections>

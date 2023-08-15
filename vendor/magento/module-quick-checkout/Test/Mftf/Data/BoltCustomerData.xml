@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+ /**
+  * Copyright © Magento, Inc. All rights reserved.
+  * See COPYING.txt for license details.
+  */
+-->
+
+<entities xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+          xsi:noNamespaceSchemaLocation="urn:magento:mftf:DataGenerator/etc/dataProfileSchema.xsd">
+    <entity name="BoltCustomer">
+        <data key="email">test-customer1@adobe.com</data>
+        <data key="otp">509476</data>
+    </entity>
+    <entity name="BoltCustomerWithInvalidDefaultAddressAndValidSecondaryAddress">
+        <data key="email">test-customer2@adobe.com</data>
+        <data key="otp">568926</data>
+    </entity>
+    <entity name="BoltCustomerWithInvalidDefaultAddress">
+        <data key="email">test-customer3@adobe.com</data>
+        <data key="otp">048559</data>
+    </entity>
+    <entity name="BoltCustomerWithTwoCreditCards">
+        <data key="email">test-customer4@adobe.com</data>
+        <data key="otp">923105</data>
+    </entity>
+    <entity name="BoltCustomerWithTwoAddresses">
+        <data key="email">test-customer5@adobe.com</data>
+        <data key="otp">997938</data>
+    </entity>
+    <entity name="BoltCustomerWithoutAddresses">
+        <data key="email">test-customer6@adobe.com</data>
+        <data key="otp">691147</data>
+    </entity>
+    <entity name="BoltCustomerWithExpiredCreditCard">
+        <data key="email">test-customer8@adobe.com</data>
+        <data key="otp">370923</data>
+    </entity>
+    <entity name="ExistingCustomerWithBoltAccount">
+        <data key="email">test-customer11@adobe.com</data>
+        <data key="otp">751484</data>
+    </entity>
+    <entity name="BoltCustomerWithDefaultCanadianAddress">
+        <data key="email">test-customer12@adobe.com</data>
+        <data key="otp">210474</data>
+    </entity>
+</entities>

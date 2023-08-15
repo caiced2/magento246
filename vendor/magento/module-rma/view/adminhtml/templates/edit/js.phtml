@@ -1,0 +1,48 @@
+<?php
+/**
+ * Copyright © Magento, Inc. All rights reserved.
+ * See COPYING.txt for license details.
+ */
+?>
+<?php
+/** @var Magento\Rma\Block\Adminhtml\Rma\Edit\Js $block */
+/** @var \Magento\Framework\View\Helper\SecureHtmlRenderer $secureRenderer */
+?>
+<?php
+$loadAttributesUrl = $block->escapeJs($block->getLoadAttributesUrl());
+$loadSplitLineUrl = $block->escapeJs($block->getLoadSplitLineUrl());
+$deleteLineLabel = $block->escapeJs($block->escapeHtml(__('Delete Line')));
+$formKey = $block->getFormKey();
+$loadShippingMethodsUrl = $block->escapeJs($block->getLoadShippingMethodsUrl());
+$loadPslUrl = $block->escapeJs($block->getLoadPslUrl());
+?>
+<?php $scriptString = <<<script
+//<![CDATA[
+require(['prototype', 'Magento_Rma/rma', 'domReady!'], function() {
+    rma.setLoadAttributesUrl('{$loadAttributesUrl}');
+    rma.setLoadSplitLineUrl('{$loadSplitLineUrl}');
+    rma.setDeleteLineLabel('{$deleteLineLabel}');
+    $$('a.action-item-details').each(function (obj) {
+        obj.observe('click', rma.itemDetailsRowClick.bind(rma))
+    });
+    $$('a.action-item-split-line').each(function (obj) {
+        obj.observe('click', rma.itemSplitLineRowClick.bind(rma))
+    });
+    $$('a.item_reason_other').each(function (obj) {
+        obj.observe('click', rma.itemReasonOtherRowClick.bind(rma))
+    });
+    rma.setFormKey('{$formKey}');
+    rma.setLoadShippingMethodsUrl('{$loadShippingMethodsUrl}');
+    rma.setLoadPslUrl('{$loadPslUrl}');
+    if ($('get-shipping-method-and-rates')) {
+        $('get-shipping-method-and-rates').observe('click', rma.showShippingMethods.bind(rma));
+    }
+    $$('input.rowId').each(function (el, val) {
+        rma.getAjaxData($(el).value, true);
+    });
+    rma.callLoadProductsCallback();
+});
+//]]>
+script;
+?>
+<?= /* @noEscape */ $secureRenderer->renderTag('script', [], $scriptString, false); ?>

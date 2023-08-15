@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+ /**
+  * Copyright © Magento, Inc. All rights reserved.
+  * See COPYING.txt for license details.
+  */
+-->
+
+<sections xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+          xsi:noNamespaceSchemaLocation="urn:magento:mftf:Page/etc/SectionObject.xsd">
+    <section name="AdminDataGridTableSection">
+        <element name="rowSelectAction" type="button" selector=".data-grid tbody > tr:nth-of-type({{row}}) .action-select" parameterized="true" timeout="30"/>
+        <element name="rowSelectActionByName" type="button" selector="//div[contains(text(), '{{nameInRow}}')]/parent::td/following-sibling::td[contains(@class, 'data-grid-actions-cell')]//button" parameterized="true" timeout="30"/>
+        <element name="rowPreviewActionByName" type="button" selector="//div[contains(text(), '{{nameInRow}}')]/parent::td/following-sibling::td[contains(@class, 'data-grid-actions-cell')]//a[@data-action='item-preview']" parameterized="true" timeout="30"/>
+        <element name="stagingGridCellByName" type="text" selector="//*[@data-role='grid']//div[contains(text(), '{{updateName}}')]/ancestor::tr//td[count(//div[@data-role='grid-wrapper']//tr//th[normalize-space(.)= '{{columnName}}']/preceding-sibling::th)+1]" parameterized="true"/>
+    </section>
+</sections>

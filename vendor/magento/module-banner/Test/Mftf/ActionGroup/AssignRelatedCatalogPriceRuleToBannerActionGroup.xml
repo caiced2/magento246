@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+ /**
+  * Copyright © Magento, Inc. All rights reserved.
+  * See COPYING.txt for license details.
+  */
+-->
+<actionGroups xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+              xsi:noNamespaceSchemaLocation="urn:magento:mftf:Test/etc/actionGroupSchema.xsd">
+    <actionGroup name="AssignRelatedCatalogPriceRuleToBannerActionGroup">
+        <arguments>
+            <argument name="Banner"/>
+            <argument name="CatalogPriceRule" />
+        </arguments>
+        <amOnPage url="{{AdminDynamicBlockGridPage.url}}" stepKey="navigateToBannerGrid"/>
+        <waitForPageLoad stepKey="waitForPageLoad1"/>
+        <click selector="{{AdminWidgetGridSection.title(Banner.name)}}" stepKey="navigateToEditBanner" />
+        <waitForPageLoad stepKey="waitForPageLoad2"/>
+        <conditionalClick selector="{{AdminBannerBasicActionSection.RelatedPromotionsTab}}" dependentSelector="{{RelatedPromotionsSection.checkIfPromotionTabOpen}}" stepKey="clickIfPromotionTabClosed" visible="true"/>
+        <waitForElementVisible selector="{{RelatedPromotionsSection.AddRules('Add Catalog Price Rules')}}" stepKey="waitForCartRuleButton"/>
+        <click selector="{{RelatedPromotionsSection.AddRules('Add Catalog Price Rules')}}" stepKey="clickAddCartPriceRulesButton" />
+        <waitForPageLoad stepKey="waitForPageLoad3" />
+        <click selector="{{RelatedPromotionsSection.RuleCheckbox(CatalogPriceRule.name)}}" stepKey="selectCatalogRule" />
+        <click selector="{{RelatedPromotionsSection.AddSelectedRulesButton('Add Related Catalog Price Rules')}}" stepKey="clickAddSelectedRulesButton" />
+        <waitForElementNotVisible selector="{{RelatedPromotionsSection.SlideOutTitle('Add Related Catalog Price Rules')}}" stepKey="waitForSlideOutClose" />
+        <waitForElementVisible selector="{{AdminBannerBasicActionSection.BannerPromotions('banner_catalog_rules')}}" stepKey="waitForBannerCatalogRule"/>
+        <waitForLoadingMaskToDisappear stepKey="waitForCatalogRuleLoading" />
+        <click selector="{{AdminBannerBasicActionSection.Save}}" stepKey="clickSaveButton" />
+    </actionGroup>
+</actionGroups>

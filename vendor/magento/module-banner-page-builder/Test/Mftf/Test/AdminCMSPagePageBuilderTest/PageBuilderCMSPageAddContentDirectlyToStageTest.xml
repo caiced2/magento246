@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+ /**
+  * Copyright © Magento, Inc. All rights reserved.
+  * See COPYING.txt for license details.
+  */
+-->
+<tests xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xsi:noNamespaceSchemaLocation="urn:magento:mftf:Test/etc/testSchema.xsd">
+    <test name="PageBuilderCMSPageAddContentDirectlyToStageTest">
+        <annotations>
+            <features value="PageBuilder"/>
+            <stories value="CMS Page"/>
+            <title value="Verify Can Only Add Expected Content Types to CMS Page Stage Directly"/>
+            <description value="Verify user can add Row, Columns, Tabs, HTML Code, Blocks, and Dynamic Blocks to CMS Page stage directly. Verify user cannot add any other content type to CMS Page stage directly"/>
+            <severity value="BLOCKER"/>
+            <group value="pagebuilder"/>
+            <group value="pagebuilder-ee"/>
+            <group value="pagebuilder-stage"/>
+            <group value="pagebuilder-cms-page"/>
+            <group value="pr_exclude"/>
+        </annotations>
+        <actionGroup ref="dragContentTypeToDropZone" stepKey="dragDynamicBlockIntoContainer" after="dragBlockIntoContainer">
+            <argument name="contentType" value="PageBuilderDynamicBlockContentType"/>
+            <argument name="containerTargetType" value="PageBuilderRootContainerContentType"/>
+            <argument name="dropZoneIndex" value="6"/>
+        </actionGroup>
+        <executeJS function="return document.querySelectorAll(&quot;{{DynamicBlockOnStage.all}}&quot;).length" stepKey="numberOfDynamicBlockContentTypesStageAfterSave" after="assertBlockStage"/>
+        <assertEquals stepKey="assertDynamicBlockStage" after="numberOfDynamicBlockContentTypesStageAfterSave">
+            <expectedResult type="int">1</expectedResult>
+            <actualResult type="variable">numberOfDynamicBlockContentTypesStageAfterSave</actualResult>
+        </assertEquals>
+        <executeJS function="return document.querySelectorAll(&quot;{{DynamicBlockOnStorefront.all}}&quot;).length" stepKey="numberOfDynamicBlockContentTypesStorefront" after="assertBlockStorefront"/>
+        <assertEquals stepKey="assertDynamicBlockStorefront" after="numberOfDynamicBlockContentTypesStorefront">
+            <expectedResult type="int">1</expectedResult>
+            <actualResult type="variable">numberOfDynamicBlockContentTypesStorefront</actualResult>
+        </assertEquals>
+    </test>
+</tests>

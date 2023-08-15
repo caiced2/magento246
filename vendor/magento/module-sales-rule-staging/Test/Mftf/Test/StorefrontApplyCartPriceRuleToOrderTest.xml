@@ -1,0 +1,171 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+ /**
+  * Copyright © Magento, Inc. All rights reserved.
+  * See COPYING.txt for license details.
+  */
+-->
+
+<tests xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xsi:noNamespaceSchemaLocation="urn:magento:mftf:Test/etc/testSchema.xsd">
+    <test name="StorefrontApplyCartPriceRuleToOrderTest">
+        <annotations>
+            <stories value="[Staging] Cart Price Rule >> Schedule New Update - Apply Cart Price Rule to frontend-Store Order"/>
+            <title value="[Staging] Cart Price Rule >> Schedule New Update - Apply Cart Price Rule to frontend-Store Order"/>
+            <description value="Staging Dashboard provide ability to View/Edit for Updates with Cart Price Rule"/>
+            <severity value="BLOCKER"/>
+            <testCaseId value="MAGETWO-49414"/>
+            <group value="salesRuleStaging"/>
+        </annotations>
+
+        <before>
+            <actionGroup ref="AdminLoginActionGroup" stepKey="loginAsAdmin"/>
+            <!-- Creating Simple Product-->
+            <createData entity="SimpleProduct2" stepKey="createSimpleProduct">
+                <field key="price">30.00</field>
+            </createData>
+            <!-- Create a cart price rule with coupon-->
+            <createData entity="SalesRuleSpecificCouponWithFixedDiscount" stepKey="createCartPriceRule"/>
+            <createData entity="SimpleSalesRuleCoupon" stepKey="createCouponForCartPriceRule">
+                <requiredEntity createDataKey="createCartPriceRule"/>
+            </createData>
+            <!--Add condition from cart price rule-->
+            <amOnPage url="{{AdminCartPriceRuleEditPage.url($$createCartPriceRule.rule_id$$)}}" stepKey="openEditRule"/>
+            <scrollTo selector="{{AdminCartPriceRulesFormSection.actionsHeader}}" stepKey="scrollToActionTab"/>
+            <conditionalClick selector="{{AdminCartPriceRulesFormSection.actionsHeader}}" dependentSelector="{{AdminCartPriceRulesFormSection.actionsHeaderOpen}}"
+                              visible="false" stepKey="openActionTab"/>
+            <click selector="{{AdminCartPriceRulesFormSection.conditions}}" stepKey="applyRuleForConditions"/>
+            <waitForPageLoad stepKey="waitForDropDownOpened"/>
+            <selectOption selector="{{AdminCartPriceRulesFormSection.childAttribute}}" userInput="{{SalesRuleProductConditions.rowTotalInCart}}" stepKey="selectAttribute"/>
+            <waitForPageLoad stepKey="waitForOperatorOpened"/>
+            <click selector="{{AdminCartPriceRulesFormSection.condition('is')}}" stepKey="clickToChooseOption"/>
+            <selectOption userInput="equals or greater than" selector="{{AdminCartPriceRulesFormSection.actionOperator}}" stepKey="setEqualsOrGreaterThan"/>
+            <click selector="{{AdminCartPriceRulesFormSection.condition('...')}}" stepKey="clickToChooseOption1"/>
+            <fillField userInput="40" selector="{{AdminCartPriceRulesFormSection.actionValue}}" stepKey="fillActionValue"/>
+            <click selector="{{AdminCartPriceRulesFormSection.saveAndContinue}}" stepKey="clickSaveButton"/>
+            <see selector="{{AdminCartPriceRulesSection.messages}}" userInput="You saved the rule." stepKey="seeSuccessMessage"/>
+
+            <!--Enable free shipping-->
+            <createData entity="FreeShippingMethodsSettingConfig" stepKey="enableFreeShippingMethod"/>
+            <!-- Create customer -->
+            <createData entity="Simple_US_Customer" stepKey="createCustomer"/>
+        </before>
+        <after>
+            <deleteData createDataKey="createSimpleProduct" stepKey="deleteSimpleProduct"/>
+            <deleteData createDataKey="createCartPriceRule" stepKey="deleteCartPriceRule"/>
+            <createData entity="DisableFreeShippingConfig" stepKey="disableFreeShippingConfig"/>
+            <deleteData createDataKey="createCustomer" stepKey="deleteCustomer"/>
+            <actionGroup ref="AdminLogoutActionGroup" stepKey="logout"/>
+        </after>
+
+        <!--Add new schedule update-->
+        <click selector="{{ScheduleUpdateSection.scheduleUpdate}}" stepKey="clickNewScheduleUpdate"/>
+        <fillField selector="{{AdminStagingSlideOutSection.updateName}}" userInput="newUpdate" stepKey="fillUpdateName"/>
+        <generateDate date="+2 minutes" format="m/j/Y g:i A" stepKey="generateStartDate"/>
+        <generateDate date="+12 minutes" format="m/j/Y g:i A" stepKey="generateEndDate"/>
+        <fillField selector="{{AdminStagingSlideOutSection.startDate}}" userInput="$generateStartDate" stepKey="fillStartDate"/>
+        <fillField selector="{{AdminStagingSlideOutSection.endDate}}" userInput="$generateEndDate" stepKey="fillEndDate"/>
+        <scrollTo selector="{{AdminStagingSlideOutSection.modalContainer}} {{AdminCartPriceRulesFormSection.actionsHeader}}" stepKey="scrollToActionTab"/>
+        <conditionalClick selector="{{AdminStagingSlideOutSection.modalContainer}} {{AdminCartPriceRulesFormSection.actionsHeader}}" visible="false"
+                          dependentSelector="{{AdminStagingSlideOutSection.modalContainer}} {{AdminCartPriceRulesFormSection.actionsHeaderOpen}}" stepKey="openActionTab"/>
+        <fillField userInput="15" selector="{{AdminStagingSlideOutSection.modalContainer}} {{AdminCartPriceRulesFormSection.discountAmount}}" stepKey="editDiscountAmountActionValue"/>
+        <click selector="{{AdminStagingSlideOutSection.save}}" stepKey="clickSaveButton"/>
+        <see selector="{{AdminCartPriceRulesSection.messages}}" userInput="You saved the rule." stepKey="seeSuccessMessage"/>
+
+        <!--Login to storefront as previously created customer-->
+        <actionGroup ref="LoginToStorefrontActionGroup" stepKey="loginAsCustomer">
+            <argument name="Customer" value="$$createCustomer$$"/>
+        </actionGroup>
+
+        <!--Open the Product Page, add the products to Cart, go to Shopping Cart-->
+        <amOnPage url="{{StorefrontProductPage.url($$createSimpleProduct.custom_attributes[url_key]$$)}}" stepKey="navigateToSimpleProductPage"/>
+        <fillField userInput="2" selector="{{StorefrontProductPageSection.qtyInput}}" stepKey="setQty"/>
+        <actionGroup ref="StorefrontAddProductToCartActionGroup" stepKey="cartAddVirtualProductToCart">
+            <argument name="product" value="$$createSimpleProduct$$"/>
+            <argument name="productCount" value="2"/>
+        </actionGroup>
+        <actionGroup ref="StorefrontOpenCartFromMinicartActionGroup" stepKey="goToShoppingCartFromMinicart"/>
+
+        <!--Check order summary in checkout-->
+        <see userInput="$60" selector="{{CheckoutPaymentSection.orderSummaryTotal}}" stepKey="assertTotal"/>
+
+        <!--Apply coupon code-->
+        <actionGroup ref="StorefrontApplyCouponActionGroup" stepKey="couponApplyCoupon">
+            <argument name="coupon" value="$$createCouponForCartPriceRule$$"/>
+        </actionGroup>
+        <actionGroup ref="StorefrontCheckCouponAppliedActionGroup" stepKey="couponCheckAppliedDiscount">
+            <argument name="rule" value="$$createCouponForCartPriceRule$$"/>
+            <argument name="discount" value="$$createCouponForCartPriceRule.discount_amount$$"/>
+        </actionGroup>
+
+        <!--Check order summary in checkout-->
+        <see userInput="$50" selector="{{CheckoutPaymentSection.orderSummaryTotal}}" stepKey="assertTotal1"/>
+
+        <!--Go to Checkout and Click Place Order button -->
+        <actionGroup ref="PlaceOrderWithLoggedUserActionGroup" stepKey="placeOrder">
+            <argument name="shippingMethod" value="Free Shipping"/>
+        </actionGroup>
+        <grabTextFrom selector="{{CheckoutSuccessMainSection.orderLink}}" stepKey="grabOrderNumber"/>
+
+        <!--Go to created order page from admin-->
+        <actionGroup ref="FilterOrderGridByIdActionGroup" stepKey="filterOrderGridById">
+            <argument name="orderId" value="$grabOrderNumber"/>
+        </actionGroup>
+        <click selector="{{AdminDataGridTableSection.firstRow}}" stepKey="clickOrderRow"/>
+        <waitForPageLoad stepKey="waitForCreatedOrderPageOpened"/>
+
+        <!--Go to Invoice Tab and Verify Invoice Grand Total-->
+        <actionGroup ref="GoToInvoiceIntoOrderActionGroup" stepKey="goToInvoiceIntoOrder"/>
+        <see selector="{{AdminInvoiceTotalSection.grandTotal}}" userInput="$50" stepKey="seeInvoiceSubTotal"/>
+
+        <!--Open the Product Page-->
+        <amOnPage url="{{StorefrontProductPage.url($$createSimpleProduct.custom_attributes[url_key]$$)}}" stepKey="navigateToSimpleProductPage1"/>
+
+        <!--Wait start schedule update-->
+        <wait time="100" stepKey="waitStartSU"/>
+        <!--Run cron twice-->
+        <magentoCLI command="cron:run --group='staging'" stepKey="cronRun"/>
+        <magentoCLI command="cron:run --group='staging'" stepKey="cronRunTwice"/>
+
+        <!--Add the products to Cart, go to Shopping Cart-->
+        <fillField userInput="2" selector="{{StorefrontProductPageSection.qtyInput}}" stepKey="setQty1"/>
+        <actionGroup ref="StorefrontAddProductToCartActionGroup" stepKey="cartAddVirtualProductToCart1">
+            <argument name="product" value="$$createSimpleProduct$$"/>
+            <argument name="productCount" value="2"/>
+        </actionGroup>
+        <actionGroup ref="StorefrontOpenCartFromMinicartActionGroup" stepKey="goToShoppingCartFromMinicart1"/>
+
+        <!--Check order summary in checkout-->
+        <see userInput="$60" selector="{{CheckoutPaymentSection.orderSummaryTotal}}" stepKey="assertTotal2"/>
+
+        <!--Apply coupon code-->
+        <actionGroup ref="StorefrontApplyCouponActionGroup" stepKey="couponApplyCoupon1">
+            <argument name="coupon" value="$$createCouponForCartPriceRule$$"/>
+        </actionGroup>
+        <actionGroup ref="StorefrontCheckCouponAppliedActionGroup" stepKey="couponCheckAppliedDiscount1">
+            <argument name="rule" value="$$createCouponForCartPriceRule$$"/>
+            <argument name="discount" value="$$createCouponForCartPriceRule.discount_amount$$"/>
+        </actionGroup>
+
+        <!--Check order summary in checkout-->
+        <see userInput="$45" selector="{{CheckoutPaymentSection.orderSummaryTotal}}" stepKey="assertTotal3"/>
+
+        <!--Go to Checkout and Click Place Order button -->
+        <actionGroup ref="PlaceOrderWithLoggedUserActionGroup" stepKey="placeOrder1">
+            <argument name="shippingMethod" value="Free Shipping"/>
+        </actionGroup>
+        <grabTextFrom selector="{{CheckoutSuccessMainSection.orderLink}}" stepKey="grabOrderNumber1"/>
+
+        <!--Go to created order page from admin-->
+        <actionGroup ref="FilterOrderGridByIdActionGroup" stepKey="filterOrderGridById1">
+            <argument name="orderId" value="$grabOrderNumber1"/>
+        </actionGroup>
+        <click selector="{{AdminDataGridTableSection.firstRow}}" stepKey="clickOrderRow1"/>
+        <waitForPageLoad stepKey="waitForCreatedOrderPageOpened1"/>
+
+        <!--Go to Invoice Tab and Verify Invoice Grand Total-->
+        <actionGroup ref="GoToInvoiceIntoOrderActionGroup" stepKey="goToInvoiceIntoOrder1"/>
+        <see selector="{{AdminInvoiceTotalSection.grandTotal}}" userInput="$45" stepKey="seeInvoiceSubTotal1"/>
+        <actionGroup ref="AdminOrdersGridClearFiltersActionGroup" stepKey="clearOrderFilters"/>
+    </test>
+</tests>

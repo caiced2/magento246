@@ -1,0 +1,32 @@
+<?xml version="1.0"?>
+<!--
+/**
+ * Copyright © Magento, Inc. All rights reserved.
+ * See COPYING.txt for license details.
+ */
+-->
+<page xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" layout="admin-2columns-left" xsi:noNamespaceSchemaLocation="urn:magento:framework:View/Layout/etc/page_configuration.xsd">
+    <update handle="scope_switcher"/>
+    <body>
+        <referenceContainer name="content">
+            <block class="Magento\Rma\Block\Adminhtml\Rma\Item\Attribute\Edit" name="magento_rma_item_attribute_edit"/>
+        </referenceContainer>
+        <referenceContainer name="left">
+            <block class="Magento\Rma\Block\Adminhtml\Rma\Item\Attribute\Edit\Tabs" name="magento_rma_item_attribute_edit_tabs">
+                <block class="Magento\Rma\Block\Adminhtml\Rma\Item\Attribute\Edit\Tab\Main" name="magento_rma_item_attribute_edit_tab_general"/>
+                <action method="addTab">
+                    <argument name="name" xsi:type="string">general</argument>
+                    <argument name="block" xsi:type="string">magento_rma_item_attribute_edit_tab_general</argument>
+                </action>
+                <block class="Magento\Rma\Block\Adminhtml\Rma\Item\Attribute\Edit\Tab\Options" name="magento_rma_item_attribute_edit_tab_options"/>
+                <action method="addTab">
+                    <argument name="name" xsi:type="string">options</argument>
+                    <argument name="block" xsi:type="string">magento_rma_item_attribute_edit_tab_options</argument>
+                </action>
+            </block>
+        </referenceContainer>
+        <referenceContainer name="js">
+            <block class="Magento\Rma\Block\Adminhtml\Rma\Item\Attribute\Edit\Js" name="js.magento_rma_attributes" template="Magento_Rma::attribute/js.phtml"/>
+        </referenceContainer>
+    </body>
+</page>

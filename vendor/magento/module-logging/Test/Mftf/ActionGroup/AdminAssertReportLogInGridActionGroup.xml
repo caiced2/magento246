@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+ /**
+  * Copyright © Magento, Inc. All rights reserved.
+  * See COPYING.txt for license details.
+  */
+-->
+
+<actionGroups xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+              xsi:noNamespaceSchemaLocation="urn:magento:mftf:Test/etc/actionGroupSchema.xsd">
+    <actionGroup name="AdminAssertReportLogInGridActionGroup">
+        <annotations>
+            <description>Verify first row in report log grid.</description>
+        </annotations>
+        <arguments>
+            <argument name="actionGroup" type="string"/>
+            <argument name="action" type="string"/>
+            <argument name="result" type="string" defaultValue="Success"/>
+            <argument name="fullActionName" type="string"/>
+            <argument name="details" type="string"/>
+        </arguments>
+
+        <see selector="{{AdminActionLogReportGridSection.actionGroup}}" userInput="{{actionGroup}}" stepKey="seeActionGroup"/>
+        <see selector="{{AdminActionLogReportGridSection.action}}" userInput="{{action}}" stepKey="seeNewStoreViewName"/>
+        <see selector="{{AdminActionLogReportGridSection.result}}" userInput="{{result}}" stepKey="seeSuccessStatus"/>
+        <see selector="{{AdminActionLogReportGridSection.fullActionName}}" userInput="{{fullActionName}}" stepKey="seeFullActionName"/>
+        <see selector="{{AdminActionLogReportGridSection.details}}" userInput="{{details}}" stepKey="seeDetails" />
+    </actionGroup>
+</actionGroups>

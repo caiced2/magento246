@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+/**
+   * Copyright © Magento, Inc. All rights reserved.
+   * See COPYING.txt for license details.
+   */
+-->
+<sections xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+          xsi:noNamespaceSchemaLocation="urn:magento:mftf:Page/etc/SectionObject.xsd">
+    <section name="AdminCustomerSegmentEditSection">
+        <element name="segmentName" type="text" selector="#segment_name"/>
+        <element name="assignToWebsite" type="multiselect" selector="#segment_website_ids"/>
+        <element name="status" type="select" selector="#segment_is_active"/>
+        <element name="applyTo" type="multiselect" selector="#segment_apply_to"/>
+        <element name="conditionsTab" type="button" selector="#magento_customersegment_segment_tabs_conditions_section"/>
+        <element name="matchedCustomersTab" type="button" selector="#magento_customersegment_segment_tabs_customers_tab"/>
+    </section>
+</sections>

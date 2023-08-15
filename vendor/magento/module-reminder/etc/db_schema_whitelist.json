@@ -1,0 +1,86 @@
+{
+    "magento_reminder_rule": {
+        "column": {
+            "rule_id": true,
+            "name": true,
+            "description": true,
+            "conditions_serialized": true,
+            "condition_sql": true,
+            "is_active": true,
+            "salesrule_id": true,
+            "schedule": true,
+            "default_label": true,
+            "default_description": true,
+            "from_date": true,
+            "to_date": true
+        },
+        "index": {
+            "MAGENTO_REMINDER_RULE_SALESRULE_ID": true
+        },
+        "constraint": {
+            "PRIMARY": true,
+            "MAGENTO_REMINDER_RULE_SALESRULE_ID_SALESRULE_RULE_ID": true
+        }
+    },
+    "magento_reminder_rule_website": {
+        "column": {
+            "rule_id": true,
+            "website_id": true
+        },
+        "index": {
+            "MAGENTO_REMINDER_RULE_WEBSITE_WEBSITE_ID": true
+        },
+        "constraint": {
+            "PRIMARY": true,
+            "MAGENTO_REMINDER_RULE_WS_RULE_ID_MAGENTO_REMINDER_RULE_RULE_ID": true,
+            "MAGENTO_REMINDER_RULE_WS_WS_ID_STORE_WS_WS_ID": true
+        }
+    },
+    "magento_reminder_template": {
+        "column": {
+            "rule_id": true,
+            "store_id": true,
+            "template_id": true,
+            "label": true,
+            "description": true
+        },
+        "index": {
+            "MAGENTO_REMINDER_TEMPLATE_TEMPLATE_ID": true
+        },
+        "constraint": {
+            "PRIMARY": true,
+            "MAGENTO_REMINDER_TEMPLATE_TEMPLATE_ID_EMAIL_TEMPLATE_TEMPLATE_ID": true,
+            "MAGENTO_REMINDER_TEMPLATE_RULE_ID_MAGENTO_REMINDER_RULE_RULE_ID": true
+        }
+    },
+    "magento_reminder_rule_coupon": {
+        "column": {
+            "rule_id": true,
+            "coupon_id": true,
+            "customer_id": true,
+            "associated_at": true,
+            "emails_failed": true,
+            "is_active": true
+        },
+        "constraint": {
+            "PRIMARY": true,
+            "FK_FA39D6431E86747002D2933B525577A3": true
+        }
+    },
+    "magento_reminder_rule_log": {
+        "column": {
+            "log_id": true,
+            "rule_id": true,
+            "customer_id": true,
+            "sent_at": true
+        },
+        "index": {
+            "MAGENTO_REMINDER_RULE_LOG_RULE_ID": true,
+            "MAGENTO_REMINDER_RULE_LOG_CUSTOMER_ID": true
+        },
+        "constraint": {
+            "PRIMARY": true,
+            "MAGENTO_REMINDER_RULE_LOG_RULE_ID_MAGENTO_REMINDER_RULE_RULE_ID": true
+        }
+    }
+}

@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+ /**
+  * Copyright © Magento, Inc. All rights reserved.
+  * See COPYING.txt for license details.
+  */
+-->
+<actionGroups xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:noNamespaceSchemaLocation="urn:magento:mftf:Test/etc/actionGroupSchema.xsd">
+    <actionGroup name="CreateBannerActionGroup">
+        <arguments>
+            <argument name="Banner"/>
+        </arguments>
+        <amOnPage url="{{AdminBannerPage.url}}" stepKey="goToNewBannerPage"/>
+        <click selector="{{AdminBannerBasicActionSection.Name}}" stepKey="focusOnField"/>
+        <fillField selector="{{AdminBannerBasicActionSection.Name}}" userInput="{{Banner.Name}}" stepKey="fillBannerName"/>
+        <conditionalClick selector="{{AdminBannerBasicActionSection.ContentTab}}" dependentSelector="{{BannerContentSection.checkIfContentTabOpen}}" stepKey="clickIfContentTabCloses" visible="true"/>
+        <waitForElementVisible selector="{{TinyMCESection.TinyMCE}}" stepKey="waitForTinyMCE"/>
+        <executeJS function="tinyMCE.get('banner_form_store_contents').setContent('Hello World from banner!');" stepKey="executeJSFillContent"/>
+        <click selector="{{BannerContentSection.ShowHideBtn}}" stepKey="clickShowHideBtn"/>
+        <waitForPageLoad stepKey="waitForPageLoad2"/>
+        <click selector="{{AdminMainActionsSection.save}}" stepKey="clickSaveBanner"/>
+        <see selector="{{AdminMessagesSection.success}}" userInput="{{dynamicBlockSystemOutput.successfulSaveMessage}}" stepKey="seeSuccessMessage"/>
+    </actionGroup>
+</actionGroups>

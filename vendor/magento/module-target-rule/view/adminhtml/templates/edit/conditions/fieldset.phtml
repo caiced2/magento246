@@ -1,0 +1,75 @@
+<?php
+/**
+ * Copyright © Magento, Inc. All rights reserved.
+ * See COPYING.txt for license details.
+ */
+
+/**
+ * Fildset for conditions tab form
+ *
+ * @var \Magento\TargetRule\Block\Adminhtml\Targetrule\Edit\Tab\Conditions $block
+ * @var \Magento\Framework\View\Helper\SecureHtmlRenderer $secureRenderer
+ */
+?>
+<?php $_element = $block->getElement() ?>
+<div class="rule-tree">
+    <div class="entry-edit-head">
+        <h4 class="icon-head head-edit-form fieldset-legend"><?= $block->escapeHtml($_element->getLegend()) ?></h4>
+    </div>
+    <fieldset class="admin__fieldset"
+              id="<?= $block->escapeHtmlAttr($_element->getHtmlId()) ?>"
+        <?= /* @noEscape */ $_element->serialize(['class']) ?>>
+        <?= $_element->getChildrenHtml() ?>
+    </fieldset>
+</div>
+<?php
+$elementHtmlId = $_element->getHtmlId();
+$newChildUrl = $block->getNewChildUrl();
+?>
+<?php $scriptString = <<<script
+require([
+    "jquery",
+    "Magento_Rule/rules",
+    "prototype"
+], function(jQuery, VarienRulesForm){
+
+window.TargetRuleForm = Class.create(VarienRulesForm, {
+    initParam: function (\$super, container) {
+        \$super(container);
+        var valueType = container.down('.value-type-chooser');
+        if (valueType) {
+            valueType.observe('change', this.valueTypeChooser.bind(this, container));
+            this.changeValueType(valueType);
+        }
+    },
+    valueTypeChooser: function(container, event) {
+        var chooser = Event.findElement(event, 'select');
+        if (chooser) {
+            this.changeValueType(chooser);
+        }
+    },
+    changeValueType: function(valueTypeСhooser)
+    {
+        var cooserContainer = valueTypeСhooser.up('.rule-param');
+        if (cooserContainer && cooserContainer.next()) {
+            var valueSelect = cooserContainer.next().down('select');
+            if (valueTypeСhooser.value == 'constant') {
+                cooserContainer.next().show();
+                if (valueSelect) {
+                    valueSelect.disabled = false;
+                }
+            } else {
+                cooserContainer.next().hide();
+                if (valueSelect) {
+                    valueSelect.disabled = true;
+                }
+            }
+        }
+    }
+});
+
+window.{$elementHtmlId} = new TargetRuleForm('{$elementHtmlId}', '{$newChildUrl}');
+});
+script;
+?>
+<?= /* @noEscape */ $secureRenderer->renderTag('script', [], $scriptString, false); ?>

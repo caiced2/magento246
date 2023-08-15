@@ -1,0 +1,122 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+ /**
+  * Copyright © Magento, Inc. All rights reserved.
+  * See COPYING.txt for license details.
+  */
+-->
+
+<tests xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="urn:magento:mftf:Test/etc/testSchema.xsd">
+    <test name="GiftCardNotificationTest">
+        <annotations>
+            <features value="GiftMessage"/>
+            <stories value="MAGETWO-60846 - Checkout - Add notification when removing applied gift card"/>
+            <title value="DEPRECATED. System shows notification if GiftCard is added/removed"/>
+            <description value="DEPRECATED. System shows notification if GiftCard is added/removed"/>
+            <testCaseId value="MAGETWO-93688"/>
+            <group value="giftCard"/>
+            <severity value="AVERAGE"/>
+            <skip>
+                <issueId value="DEPRECATED">Use StorefrontGiftCardNotificationTest instead</issueId>
+            </skip>
+            <group value="pr_exclude"/>
+        </annotations>
+
+        <before>
+            <createData entity="SimpleProduct2" stepKey="createProduct"/>
+            <createData entity="GiftCardCodePool" stepKey="createCodePool"/>
+
+            <!--Login as admin-->
+            <actionGroup ref="AdminLoginActionGroup" stepKey="loginMagentoAsAdmin"/>
+        </before>
+
+        <after>
+            <deleteData createDataKey="createProduct" stepKey="deleteProduct"/>
+
+            <actionGroup ref="AdminLogoutActionGroup" stepKey="logout"/>
+        </after>
+
+        <!--Create Gift Card -->
+        <actionGroup ref="AddGiftCardAccountActionGroup" stepKey="createGiftCard"/>
+        <!--Get Gift Card Code-->
+        <grabTextFrom selector="{{GetGiftCardCode.code}}" stepKey="getCardCode"/>
+        <waitForPageLoad stepKey="waitForGettingCode"/>
+        <!--Create Card Price Rule-->
+        <actionGroup ref="CreateCardPriceRuleActionGroup" stepKey="CreateDiscount"/>
+
+        <!--Go to Storefront and add product to card-->
+        <actionGroup ref="AddSimpleProductToCartActionGroup" stepKey="AddProductToCard">
+            <argument name="product" value="$$createProduct$$"/>
+        </actionGroup>
+
+        <!--Proceed to shipment-->
+        <click selector="{{ProductCardSection.showCard}}" stepKey="clickToOpenCard"/>
+        <click selector="{{ProductCardSection.proceed}}" stepKey="clickToProceedToCheckout"/>
+        <waitForPageLoad stepKey="waitForTheFormIsOpened"/>
+
+        <!--Fill shipping form-->
+        <actionGroup ref="ShipmentFormActionGroup" stepKey="fillShipmentForm"/>
+
+        <!--Apply gift card code-->
+        <click selector="{{ProductCardSection.addCard}}" stepKey="clickToAddGiftCard"/>
+        <fillField selector="{{ProductCardSection.enterCode}}" userInput="$getCardCode" stepKey="TypeGiftCardCode"/>
+        <click selector="{{ProductCardSection.apply}}" stepKey="clickToApply"/>
+        <waitForPageLoad stepKey="WaitForCardToBeAdded"/>
+
+        <!--Make sure that appropriate message is displayed-->
+        <grabTextFrom selector="{{ProductCardSection.verificationMsg}}" stepKey="applyMessage"/>
+        <assertEquals stepKey="checkGiftCardIsAdded">
+            <expectedResult type="string">Gift Card $getCardCode was added.</expectedResult>
+            <actualResult type="variable">$applyMessage</actualResult>
+        </assertEquals>
+
+        <!--Remove gift card code-->
+        <waitForElementNotVisible selector="{{ProductCardSection.verificationMsg}}" stepKey="waitForMessageDisappears"/>
+        <click selector="{{ProductCardSection.remove}}" stepKey="clickToRemoveGiftCard"/>
+
+
+        <!--Make sure that appropriate message is displayed-->
+        <waitForPageLoad stepKey="WaitForCardToBeRemoved"/>
+        <grabTextFrom selector="{{ProductCardSection.verificationMsg}}" stepKey="removeMessage"/>
+        <assertEquals stepKey="checkGiftCardIsRemoved">
+            <expectedResult type="string">Gift Card $getCardCode was removed.</expectedResult>
+            <actualResult type="variable">$removeMessage</actualResult>
+        </assertEquals>
+
+        <!--Apply coupon-->
+        <click selector="{{ProductCardSection.addCoupon}}" stepKey="clickToAddDiscount"/>
+        <fillField selector="{{ProductCardSection.addCode}}" userInput="{{cardCode.priceCard}}" stepKey="TypeDiscountCode"/>
+        <click selector="{{ProductCardSection.applyDiscount}}" stepKey="clickToApplyDiscount"/>
+        <waitForPageLoad stepKey="WaitForDiscountToBeAdded"/>
+
+        <!--Make sure that appropriate message is displayed-->
+        <grabTextFrom selector="{{ProductCardSection.discountVerificationMsg}}" stepKey="discountApplyMessage"/>
+        <assertEquals stepKey="checkDiscountIsAdded">
+            <expectedResult type="string">Your coupon was successfully applied.</expectedResult>
+            <actualResult type="variable">$discountApplyMessage</actualResult>
+        </assertEquals>
+
+        <!--Remove Coupon-->
+        <click selector="{{ProductCardSection.cancel}}" stepKey="clickToCancelDiscount"/>
+        <waitForPageLoad stepKey="WaitForDiscountToBeRemoved"/>
+
+        <!--Make sure that appropriate message is displayed-->
+        <grabTextFrom selector="{{ProductCardSection.discountVerificationMsg}}" stepKey="discountRemoveMessage"/>
+        <assertEquals stepKey="checkDiscountIsRemoved">
+            <expectedResult type="string">Your coupon was successfully removed.</expectedResult>
+            <actualResult type="variable">$discountRemoveMessage</actualResult>
+        </assertEquals>
+
+        <!--Go back admin page-->
+        <amOnPage url="admin/dashboard" stepKey="LoginBackToAdmin"/>
+
+        <!--Remove discount-->
+        <actionGroup ref="RemoveCardPriceRule" stepKey="RemoveCardPriceRule"/>
+        <waitForPageLoad stepKey="waitForardPriceRuleDeleted"/>
+
+        <!--Remove created gift card-->
+        <actionGroup ref="DeleteGiftCardAccountActionGroup" stepKey="removeCreatedGiftCard">
+            <argument name="giftCardAccountCode" value="$getCardCode"/>
+        </actionGroup>
+    </test>
+</tests>

@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+ /**
+  * Copyright © Magento, Inc. All rights reserved.
+  * See COPYING.txt for license details.
+  */
+-->
+<actionGroups xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+              xsi:noNamespaceSchemaLocation="urn:magento:mftf:Test/etc/actionGroupSchema.xsd">
+    <!--Search grid with keyword search-->
+    <actionGroup name="AssertTargetRuleInGridActionGroup">
+        <arguments>
+            <argument name="ruleName" type="string"/>
+        </arguments>
+        <amOnPage url="{{AdminTargetRuleConfigurationPage.url}}" stepKey="goToAdminTargetRulePage"/>
+        <waitForPageLoad stepKey="waitForPageLoad"/>
+        <conditionalClick selector="{{AdminDataGridHeaderSection.clearFilters}}" dependentSelector="{{AdminDataGridHeaderSection.clearFilters}}" visible="true" stepKey="clickClearFilters"/>
+        <fillField selector="{{AdminTargetRuleGridFilterSection.filterByNameInput}}" userInput="{{ruleName}}" stepKey="filterByName"/>
+        <click selector="{{AdminTargetRuleGridFilterSection.searchButton}}" stepKey="doFilter"/>
+        <seeElement selector="{{AdminTargetRuleGridFilterSection.rowByIndex('1')}}" stepKey="seeAssertTargetRuleInGrid"/>
+        <see selector="{{AdminTargetRuleGridFilterSection.rowByIndex('1')}}" userInput="{{ruleName}}" stepKey="seeRuleNameInGrid"/>
+    </actionGroup>
+</actionGroups>

@@ -1,0 +1,117 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+ /**
+  * Copyright © Magento, Inc. All rights reserved.
+  * See COPYING.txt for license details.
+  */
+-->
+
+<tests xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xsi:noNamespaceSchemaLocation="urn:magento:mftf:Test/etc/testSchema.xsd">
+    <test name="AddMediaGalleryToBannerTest">
+        <annotations>
+            <title value="Admin add media gallery to WYSIWYG of Banner Page"/>
+            <description value="Admin add media gallery to WYSIWYG of Banner Page"/>
+            <severity value="CRITICAL"/>
+            <testCaseId value="MAGETWO-85846"/>
+            <features value="MAGETWO-36659-[CMS] WYSIWYG update"/>
+            <stories value="MAGETWO-42047-Apply new WYSIWYG to Banner add/edit"/>
+            <group value="Banner"/>
+        </annotations>
+        <before>
+            <createData stepKey="createSalesRule" entity="ApiSalesRule" />
+            <createData stepKey="createSalesRuleCoupon" entity="ApiSalesRuleCoupon">
+                <requiredEntity createDataKey="createSalesRule"/>
+            </createData>
+            <actionGroup ref="AdminLoginActionGroup" stepKey="loginGetFromGeneralFile"/>
+            <actionGroup ref="AdminMediaGalleryEnhancedEnableActionGroup" stepKey="enableOldMediaGallery">
+                <argument name="enabled" value="0"/>
+            </actionGroup>
+            <actionGroup ref="EnabledWYSIWYGActionGroup" stepKey="enableWYSIWYG"/>
+            <actionGroup ref="CliEnableTinyMCEActionGroup" stepKey="enableTinyMCE"/>
+            <actionGroup ref="ConfigAdminAccountSharingActionGroup" stepKey="allowAdminShareAccount"/>
+            <amOnPage url="{{AdminNewWidgetPage.url}}" stepKey="amOnAdminNewWidgetPage"/>
+            <selectOption selector="{{AdminNewWidgetSection.widgetType}}" userInput="Dynamic Blocks Rotator" stepKey="setWidgetType"/>
+            <selectOption selector="{{AdminNewWidgetSection.widgetDesignTheme}}" userInput="Magento Luma" stepKey="setWidgetDesignTheme"/>
+            <click selector="{{AdminNewWidgetSection.continue}}" stepKey="clickContinue"/>
+            <grabFromCurrentUrl regex="~/theme_id/(\d+)/~" stepKey="themeId"/>
+            <createData entity="sampleBannerWidget" stepKey="createPreReqWidget">
+                <field key="theme_id">{$themeId}</field>
+            </createData>
+            <createData entity="_defaultCategory" stepKey="createPreReqCategory"/>
+            <createData entity="_defaultProduct" stepKey="createPreReqProduct">
+                <requiredEntity createDataKey="createPreReqCategory"/>
+            </createData>
+        </before>
+        <after>
+            <actionGroup ref="DeleteWidgetActionGroup" stepKey="deleteWidget"/>
+            <actionGroup ref="DisabledWYSIWYGActionGroup" stepKey="disableWYSIWYG"/>
+            <actionGroup ref="AdminMediaGalleryEnhancedEnableActionGroup" stepKey="disableOldMediaGallery">
+                <argument name="enabled" value="1"/>
+            </actionGroup>
+            <actionGroup ref="AdminLogoutActionGroup" stepKey="logout"/>
+        </after>
+        <!--Create a banner-->
+        <actionGroup ref="CreateBannerActionGroup" stepKey="createPreReqBanner">
+            <argument name="Banner" value="sampleBanner" />
+        </actionGroup>
+
+        <!--Assign a banner-->
+        <actionGroup ref="AssignBannerToWidgetActionGroup" stepKey="createPreReqWidget">
+            <argument name="Banner" value="sampleBanner"/>
+            <argument name="Widget" value="$$createPreReqWidget$$"/>
+        </actionGroup>
+        <amOnPage url="{{AdminDynamicBlockGridPage.url}}" stepKey="goToBannerGrid"/>
+        <waitForPageLoad stepKey="waitForPageLoad1"/>
+
+        <!--Navigate to created banner-->
+        <click selector="{{AdminWidgetGridSection.title(sampleBanner.Name)}}" stepKey="navigateToPreReqBanner" />
+        <waitForPageLoad stepKey="waitForPageLoad2"/>
+        <conditionalClick selector="{{AdminBannerBasicActionSection.ContentTab}}" dependentSelector="{{TinyMCESection.CheckIfTabExpand}}" stepKey="clickIfContentTabCloses" visible="true"/>
+        <waitForElementVisible selector="{{TinyMCESection.TinyMCE}}" stepKey="waitForTinyMCE" />
+        <click selector="{{TinyMCESection.InsertImageIcon}}" stepKey="clickOnImageIcon" />
+        <waitForPageLoad stepKey="waitForPageLoad3" />
+        <actionGroup ref="ClickBrowseBtnOnUploadPopupActionGroup" stepKey="clickBrowserBtn"/>
+        <actionGroup ref="VerifyMediaGalleryStorageActionsActionGroup" stepKey="VerifyMediaGalleryStorageBtn"/>
+        <actionGroup ref="CreateImageFolderActionGroup" stepKey="CreateImageFolder">
+            <argument name="ImageFolder" value="ImageFolder"/>
+        </actionGroup>
+        <actionGroup ref="AttachImageActionGroup" stepKey="attachImage1">
+            <argument name="Image" value="ImageUpload"/>
+        </actionGroup>
+        <actionGroup ref="DeleteImageActionGroup" stepKey="deleteImage"/>
+        <actionGroup ref="AttachImageActionGroup" stepKey="attachImage2">
+            <argument name="Image" value="ImageUpload"/>
+        </actionGroup>
+        <actionGroup ref="SaveImageActionGroup" stepKey="insertImage"/>
+        <actionGroup ref="FillOutUploadImagePopupActionGroup" stepKey="fillOutUploadImagePopup" />
+
+        <!-- Go to Assign Cart Rule To Banner -->
+        <actionGroup ref="AssignRelatedCartPriceRuleToBannerActionGroup" stepKey="assignCartPriceRuleToBanner">
+            <argument name="Banner" value="sampleBanner"/>
+            <argument name="CartPriceRule" value="$$createSalesRule$$"/>
+        </actionGroup>
+        <waitForPageLoad stepKey="waitForPageLoad6" />
+        <see userInput="You saved the dynamic block." stepKey="seeSuccessMessage"/>
+        <actionGroup ref="ClearCacheActionGroup" stepKey="clearMagentoCache"/>
+        <waitForPageLoad stepKey="waitForPageLoad7" />
+
+        <!-- Go to storefront and apply cart rule -->
+        <amOnPage url="{{StorefrontProductPage.url($$createPreReqProduct.custom_attributes[url_key]$$)}}" stepKey="openProductPage"/>
+        <waitForPageLoad stepKey="waitForPageLoad4"/>
+        <actionGroup ref="ApplyCartRuleOnStorefrontActionGroup" stepKey="applyCartRule">
+            <argument name="product" value="$$createPreReqProduct$$"/>
+            <argument name="couponCode" value="$$createSalesRuleCoupon.code$$"/>
+        </actionGroup>
+        <waitForText userInput='You used coupon code "$$createSalesRuleCoupon.code$$"' stepKey="waitForText"/>
+        <see selector="{{StorefrontMessagesSection.success}}" userInput='You used coupon code "$$createSalesRuleCoupon.code$$"'
+             stepKey="seeSuccessMessage1"/>
+
+        <!-- Go to storefront banner page, assert banner content -->
+        <wait time="30" stepKey="waitForBanners"/>
+        <reloadPage stepKey="reloadPage"/>
+        <waitForElementVisible selector="{{StorefrontBannerSection.targetImage}}" stepKey="waitForImage" />
+        <seeElement selector="{{StorefrontBannerSection.targetImage}}" stepKey="assertBannerImage"/>
+        <seeElementInDOM selector="{{StorefrontBannerSection.ImageSource(ImageUpload.fileName,ImageUpload.extension)}}" stepKey="assertMediaSource"/>
+    </test>
+</tests>

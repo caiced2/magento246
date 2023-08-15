@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+ /**
+  * Copyright © Magento, Inc. All rights reserved.
+  * See COPYING.txt for license details.
+  */
+-->
+
+<actionGroups xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+              xsi:noNamespaceSchemaLocation="urn:magento:mftf:Test/etc/actionGroupSchema.xsd">
+    <actionGroup name="AssertAdminStagingInGridOnPreviewPageActionGroup">
+        <annotations>
+            <description>Check staging data in staging update preview grid</description>
+        </annotations>
+
+        <arguments>
+            <argument name="update"/>
+            <argument name="startDate" type="string"/>
+            <argument name="endDate" type="string" defaultValue=""/>
+        </arguments>
+
+        <conditionalClick selector="{{AdminStagingPreviewSection.calendarBtn}}" dependentSelector="{{AdminStagingPreviewSection.calendarBtnActive}}" visible="false" stepKey="openCalendar"/>
+        <see userInput="{{update.updateName}}" selector="{{AdminDataGridTableSection.column('Update Name')}}" stepKey="seeUpdateNameInPreviewGrid"/>
+        <see userInput="{{update.updateDescription}}" selector="{{AdminDataGridTableSection.stagingGridCellByName(update.updateName, 'Description')}}" stepKey="seeDescriptionInPreviewGrid"/>
+        <see userInput="{{startDate}}" selector="{{AdminDataGridTableSection.stagingGridCellByName(update.updateName, 'Start Time')}}" stepKey="seeStartDateInPreviewGrid"/>
+        <see userInput="{{endDate}}" selector="{{AdminDataGridTableSection.stagingGridCellByName(update.updateName, 'End Time')}}" stepKey="seeEndDateInPreviewGrid"/>
+    </actionGroup>
+</actionGroups>

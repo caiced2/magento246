@@ -1,0 +1,72 @@
+<?php
+/**
+ * Copyright © Magento, Inc. All rights reserved.
+ * See COPYING.txt for license details.
+ */
+?>
+<?php
+/** @var $block \Magento\ImportExport\Block\Adminhtml\Form\After */
+/** @var \Magento\Framework\View\Helper\SecureHtmlRenderer $secureRenderer */
+?>
+<?php
+/** @var $operation \Magento\ScheduledImportExport\Model\Scheduled\Operation */
+$operation = $block->getOperation();
+$operationType = $block->escapeJs($operation->getOperationType());
+$entityBehavior = $block->escapeJs($operation->getBehavior());
+?>
+<?php $scriptString = <<<script
+require([
+    'Magento_Ui/js/modal/alert',
+    'prototype'
+], function(alert){
+
+    if (!$('export_filter_grid') && $('export_filter_container')) {
+        $('export_filter_container').hide();
+    }
+
+    var serverType = $('server_type'),
+        onChangeCallback = function(e) {
+            var serverTypeValue = $(this).value;
+            $(this.form).getElementsBySelector('.server-dependent').each(function(e){
+                if (!e.parentNode.parentNode) {
+                    alert({
+                        content: e.nodeName
+                    });
+                }
+                var s = e.parentNode.parentNode.style;
+                if ($(e).hasClassName(serverTypeValue + '-server')) {
+                    s.display = '';
+                    e.disabled = false;
+                } else {
+                    s.display = 'none';
+                    e.disabled = true;
+                }
+            });
+        };
+    serverType.observe('change', onChangeCallback);
+    onChangeCallback.call(serverType, {type: 'change'});
+
+
+    if ('{$operationType}' == 'import') {
+        // hide all behavior fields
+        varienImportExportScheduled.handleEntityTypeSelector();
+        // set current behavior
+        if ($('entity') && \$F('entity')) {
+            var requiredBehavior = varienImportExportScheduled.entityBehaviors[\$F('entity')];
+            $(requiredBehavior).value = '{$entityBehavior}';
+        }
+    }
+    if ('{$operationType}' == 'export') {
+        // show/hide checkboxes depending on current export entity (edit scheduled export page)
+        varienImportExportScheduled.modifyFilterGrid();
+    }
+
+    window.serverType = serverType;
+    window.onChangeCallback = onChangeCallback;
+
+    window.requiredBehavior = requiredBehavior;
+
+});
+script;
+?>
+<?= /* @noEscape */ $secureRenderer->renderTag('script', [], $scriptString, false); ?>

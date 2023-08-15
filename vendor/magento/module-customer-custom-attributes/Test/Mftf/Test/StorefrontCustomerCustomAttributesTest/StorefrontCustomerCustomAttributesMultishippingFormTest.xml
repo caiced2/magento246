@@ -1,0 +1,59 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+ /**
+  * Copyright © Magento, Inc. All rights reserved.
+  * See COPYING.txt for license details.
+  */
+-->
+<tests xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:noNamespaceSchemaLocation="urn:magento:mftf:Test/etc/testSchema.xsd">
+    <test name="StorefrontCustomerCustomAttributesMultishippingFormTest">
+        <annotations>
+            <features value="Customer"/>
+            <stories value="MC-5764: [CustomerAddressAttribute] Custom customer address attribute does not display during add address template of checkout with Multiple address flow."/>
+            <title value="Check customer Custom Attributes displays correctly on multishipping new address form"/>
+            <description value="Check customer Custom Attributes displays correctly on multishipping new address form"/>
+            <severity value="MAJOR"/>
+            <testCaseId value="MAGETWO-96909"/>
+            <group value="customer"/>
+            <group value="checkout"/>
+        </annotations>
+
+        <before>
+            <actionGroup ref="AdminLoginActionGroup" stepKey="LoginAsAdmin"/>
+            <createData entity="Simple_US_Customer_CA" stepKey="createCustomer"/>
+        </before>
+
+        <after>
+            <actionGroup ref="AdminDeleteCustomerAttribute" stepKey="adminDeleteFirstCustomerAttribute">
+                <argument name="defaultLabel" value="{{AttributeDropdownData.label}}"/>
+            </actionGroup>
+            <actionGroup ref="AdminLogoutActionGroup" stepKey="logOut"/>
+        </after>
+
+        <!--Create new attribute-->
+        <amOnPage url="{{CustomerAddressAttributesPage.url}}" stepKey="navigateToCustomerAddress"/>
+        <waitForPageLoad stepKey="waitForCustomerAttributePageLoaded"/>
+
+        <actionGroup ref="AdminAddOptionsCustomerAttribute" stepKey="adminCreateCustomerFirstAttribute">
+            <argument name="defaultLabel" value="{{AttributeDropdownData.label}}"/>
+            <argument name="attributeCode" value="{{AttributeDropdownData.code}}"/>
+            <argument name="inputType" value="{{AttributeDropdownData.inputType}}"/>
+            <argument name="sortOrder" value="{{AttributeDropdownData.sortOrder}}"/>
+            <argument name="firstOption" value="{{AttributeDropdownData.firstOption}}"/>
+            <argument name="secondOption" value="{{AttributeDropdownData.secondOption}}"/>
+        </actionGroup>
+
+        <actionGroup ref="LoginToStorefrontActionGroup" stepKey="customerLogin">
+            <argument name="Customer" value="$$createCustomer$$"/>
+        </actionGroup>
+
+        <amOnPage url="{{NewMultishippingAddressPage.url}}" stepKey="goToNewAddressForm"/>
+        <waitForPageLoad stepKey="waitForPageLoad"/>
+
+        <!--Verify that created "Test Dropdown" field is present with correct options-->
+        <see userInput="{{AttributeDropdownData.label}}" stepKey="seeLabelCreatedDropDownMenu"/>
+        <selectOption selector="{{StorefrontCustomerAddressAttributeSection.dropdownField(AttributeDropdownData.code)}}" userInput="{{AttributeDropdownData.firstOption}}" stepKey="selectFirstOptionFromDropDownMenu"/>
+        <selectOption selector="{{StorefrontCustomerAddressAttributeSection.dropdownField(AttributeDropdownData.code)}}" userInput="{{AttributeDropdownData.secondOption}}" stepKey="selectSecondOptionFromDropDownMenu"/>
+    </test>
+</tests>

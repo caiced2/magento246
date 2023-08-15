@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+ /**
+  * Copyright © Magento, Inc. All rights reserved.
+  * See COPYING.txt for license details.
+  */
+-->
+<actionGroups xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+              xsi:noNamespaceSchemaLocation="urn:magento:mftf:Test/etc/actionGroupSchema.xsd">
+    <actionGroup name="AdminFillDatesAndSaveProductStagingUpdate">
+        <annotations>
+            <description>Fill staging dates: startDate +1 minute from current time and endDate from parameter.</description>
+        </annotations>
+        <arguments>
+            <argument name="endDate" defaultValue=""/>
+        </arguments>
+
+        <!-- Check to see if it is close to the new minute. If so, wait a few seconds -->
+        <executeJS stepKey="needWait" function="
+                var today = new Date();
+                var sec = today.getSeconds();
+                return sec > 50 ? (61-sec) : 0;"/>
+        <wait time="$needWait" stepKey="waitForMinuteStart"/>
+
+        <!-- Build the date in the correct format -->
+        <generateDate date="+1 minute" format="m/d/Y g:i A" stepKey="generateDate"/>
+        <executeJS function="
+                var today = new Date();
+                var sec = today.getSeconds();
+                return 60 - sec;" stepKey="numSecondsLeft"/>
+        <executeJS function="return Math.floor(new Date() / 1000);" stepKey="getStartingTime"/>
+        <fillField selector="{{AdminStagingSlideOutSection.startDate}}" userInput="{$generateDate}" stepKey="fillStartDate"/>
+        <fillField selector="{{AdminStagingSlideOutSection.endDate}}" userInput="{{endDate}}" stepKey="fillEndDate"/>
+
+        <!-- Save the update details -->
+        <scrollToTopOfPage stepKey="scrollToTop"/>
+        <click selector="{{AdminStagingSlideOutSection.save}}" stepKey="clickSave"/>
+        <click selector="{{AdminProductFormActionSection.saveButton}}" stepKey="saveProduct"/>
+        <waitForElementVisible selector="{{AdminMessagesSection.success}}" stepKey="waitForSuccessMessage"/>
+        <see selector="{{AdminMessagesSection.success}}" userInput="You saved the product." stepKey="assertSuccess"/>
+
+        <!-- Check to see if we have waited the require time yet. If not, wait the rest of the time -->
+        <executeJS function="return Math.floor(new Date() / 1000);" stepKey="getEndingTime"/>
+        <executeJS function="
+                var timePassed = {$getEndingTime} - {$getStartingTime};
+                var timeLeft = {$numSecondsLeft} - timePassed;
+                return timeLeft > 0 ? timeLeft : 0;" stepKey="getTimeToWait"/>
+        <wait time="$getTimeToWait" stepKey="waitForRequiredTime"/>
+    </actionGroup>
+</actionGroups>

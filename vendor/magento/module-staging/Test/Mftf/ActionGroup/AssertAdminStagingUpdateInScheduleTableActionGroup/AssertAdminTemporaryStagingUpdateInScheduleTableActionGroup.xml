@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+ /**
+  * Copyright © Magento, Inc. All rights reserved.
+  * See COPYING.txt for license details.
+  */
+-->
+<actionGroups xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:noNamespaceSchemaLocation="urn:magento:mftf:Test/etc/actionGroupSchema.xsd">
+    <actionGroup name="AssertAdminTemporaryStagingUpdateInScheduleTableActionGroup" extends="AssertAdminPermanentStagingUpdateInScheduleTableActionGroup">
+        <annotations>
+            <description>Assert Temporary Scheduled Update is in table "Scheduled Changes"</description>
+        </annotations>
+        <arguments>
+            <argument name="endDate" type="string"/>
+            <argument name="endTime" type="string"/>
+        </arguments>
+
+        <seeElement selector="{{AdminScheduledChangesSection.scheduleEndDate(endDate)}}" after="seeStartTime" stepKey="seeEndDate"/>
+        <seeElement selector="{{AdminScheduledChangesSection.scheduleEndTime(endTime)}}" after="seeEndDate" stepKey="seeEndTime"/>
+    </actionGroup>
+</actionGroups>

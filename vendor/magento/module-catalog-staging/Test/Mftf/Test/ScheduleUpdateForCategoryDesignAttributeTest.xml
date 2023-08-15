@@ -1,0 +1,69 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+ /**
+  * Copyright © Magento, Inc. All rights reserved.
+  * See COPYING.txt for license details.
+  */
+-->
+<tests xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xsi:noNamespaceSchemaLocation="urn:magento:mftf:Test/etc/testSchema.xsd">
+    <test name="ScheduleUpdateForCategoryDesignAttributeTest">
+        <annotations>
+            <features value="CatalogStaging"/>
+            <stories value="Create scheduled category updates"/>
+            <title value="Admin should be able to update by schedule category design attribute"/>
+            <description value="Admin should be able to update by schedule category design attribute in the config time zone"/>
+            <severity value="CRITICAL"/>
+            <testCaseId value="MC-38199"/>
+            <group value="CatalogStaging"/>
+        </annotations>
+        <before>
+            <createData entity="_defaultCategory" stepKey="createCategory"/>
+            <actionGroup ref="AdminLoginActionGroup" stepKey="loginAsAdmin"/>
+        </before>
+        <after>
+            <deleteData createDataKey="createCategory" stepKey="deleteCategory"/>
+            <amOnPage url="{{AdminLogoutPage.url}}" stepKey="amOnLogoutPage"/>
+        </after>
+
+        <!-- Go to created category page -->
+        <actionGroup ref="GoToAdminCategoryPageByIdActionGroup" stepKey="goToAdminCategoryPage">
+            <argument name="id" value="$createCategory.id$"/>
+        </actionGroup>
+        <!-- Set custom layout -->
+        <actionGroup ref="SetLayoutActionGroup" stepKey="setTwoColumnsRightBarLayout">
+            <argument name="designSection" value="CategoryDesignSection"/>
+            <argument name="layoutOption" value="simpleLumaDesignTwoColumnsRight.page_layout"/>
+        </actionGroup>
+        <actionGroup ref="AdminSaveCategoryFormActionGroup" stepKey="saveCategory"/>
+        <!-- Check layout on storefront category page -->
+        <actionGroup ref="StorefrontNavigateCategoryPageActionGroup" stepKey="navigateToCategoryPage">
+            <argument name="category" value="$createCategory$"/>
+        </actionGroup>
+        <seeElement selector="{{StorefrontProductPageDesignSection.layoutTwoColumnsRight}}" stepKey="assertTwoColumnRightLayoutOnCategoryPage"/>
+        <!-- Go to created category page to schedule -->
+        <actionGroup ref="GoToAdminCategoryPageByIdActionGroup" stepKey="goToAdminCategoryPageToSchedule">
+            <argument name="id" value="$createCategory.id$"/>
+        </actionGroup>
+        <!-- Create Schedule -->
+        <actionGroup ref="AdminFillPermanentUpdateActionGroup" stepKey="fillStagingUpdate">
+            <argument name="stage" value="UpdateDatePlusTwoMinutes"/>
+        </actionGroup>
+        <!-- Set custom layout -->
+        <actionGroup ref="SetLayoutActionGroup" stepKey="setOneColumnLayout">
+            <argument name="designSection" value="AdminCategoryStagingDesignSection"/>
+            <argument name="layoutOption" value="simpleBlankDesignOneColumn.page_layout"/>
+        </actionGroup>
+        <!-- Save the update details -->
+        <actionGroup ref="SaveRuleStagingActionGroup" stepKey="saveSchedule"/>
+        <actionGroup ref="AdminSaveCategoryFormActionGroup" stepKey="saveCategoryAfterSchedule"/>
+        <!-- Wait 2 minutes for activation update and run cron -->
+        <wait time="120" stepKey="waitForActivationUpdate"/>
+        <actionGroup ref="ApplyUpdatedRuleStagingByCron" stepKey="runCron"/>
+        <!-- Check layout on storefront category page -->
+        <actionGroup ref="StorefrontNavigateCategoryPageActionGroup" stepKey="navigateToCategoryPageAfterSchedule">
+            <argument name="category" value="$createCategory$"/>
+        </actionGroup>
+        <seeElement selector="{{StorefrontProductPageDesignSection.layoutOneColumn}}" stepKey="assertOneColumnLayoutOnCategoryPage"/>
+    </test>
+</tests>

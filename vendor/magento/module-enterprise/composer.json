@@ -1,0 +1,52 @@
+{
+    "name": "magento/module-enterprise",
+    "description": "N/A",
+    "type": "magento2-module",
+    "license": [
+        "proprietary"
+    ],
+    "config": {
+        "sort-packages": true
+    },
+    "version": "100.4.4",
+    "require": {
+        "magento/framework": "103.0.*",
+        "magento/module-advanced-checkout": "100.4.*",
+        "magento/module-authorization": "100.4.*",
+        "magento/module-backend": "102.0.*",
+        "magento/module-banner": "101.2.*",
+        "magento/module-catalog-event": "101.1.*",
+        "magento/module-catalog-permissions": "100.4.*",
+        "magento/module-customer-custom-attributes": "100.4.*",
+        "magento/module-customer-segment": "102.1.*",
+        "magento/module-gift-card": "101.3.*",
+        "magento/module-gift-card-account": "101.2.*",
+        "magento/module-gift-registry": "101.2.*",
+        "magento/module-gift-wrapping": "101.2.*",
+        "magento/module-invitation": "100.4.*",
+        "magento/module-logging": "101.2.*",
+        "magento/module-multiple-wishlist": "100.4.*",
+        "magento/module-price-permissions": "100.4.*",
+        "magento/module-promotion-permissions": "100.4.*",
+        "magento/module-reminder": "101.2.*",
+        "magento/module-reward": "101.2.*",
+        "magento/module-rma": "101.2.*",
+        "magento/module-sales-archive": "101.0.*",
+        "magento/module-scheduled-import-export": "101.2.*",
+        "magento/module-target-rule": "101.2.*",
+        "magento/module-versions-cms": "101.2.*",
+        "php": "~8.1.0||~8.2.0"
+    },
+    "suggest": {
+        "magento/module-theme": "101.1.*"
+    },
+    "autoload": {
+        "files": [
+            "registration.php"
+        ],
+        "psr-4": {
+            "Magento\\Enterprise\\": ""
+        }
+    }
+}
+

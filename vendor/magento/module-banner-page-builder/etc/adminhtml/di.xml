@@ -1,0 +1,26 @@
+<?xml version="1.0"?>
+<!--
+/**
+ * Copyright © Magento, Inc. All rights reserved.
+ * See COPYING.txt for license details.
+ */
+-->
+<config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="urn:magento:framework:ObjectManager/etc/config.xsd">
+    <type name="Magento\BannerPageBuilder\Model\ResourceModel\DynamicBlock\Grid\Collection">
+        <arguments>
+            <argument name="mainTable" xsi:type="string">magento_banner</argument>
+            <argument name="eventPrefix" xsi:type="string">banner_dynamic_block_grid_collection</argument>
+            <argument name="eventObject" xsi:type="string">dynamic_block_grid_collection</argument>
+            <argument name="resourceModel" xsi:type="string">Magento\Banner\Model\ResourceModel\Banner</argument>
+        </arguments>
+    </type>
+    <type name="Magento\PageBuilder\Model\Stage\Config">
+        <arguments>
+            <argument name="data" xsi:type="array">
+                <item name="template_types" xsi:type="array">
+                    <item name="dynamic_block" xsi:type="string">Dynamic Block</item>
+                </item>
+            </argument>
+        </arguments>
+    </type>
+</config>

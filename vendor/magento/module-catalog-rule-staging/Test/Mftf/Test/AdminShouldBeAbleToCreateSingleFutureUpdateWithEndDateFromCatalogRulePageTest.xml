@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+ /**
+  * Copyright © Magento, Inc. All rights reserved.
+  * See COPYING.txt for license details.
+  */
+-->
+
+<tests xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xsi:noNamespaceSchemaLocation="urn:magento:mftf:Test/etc/testSchema.xsd">
+    <test name="AdminShouldBeAbleToCreateSingleFutureUpdateWithEndDateFromCatalogRulePageTest">
+        <annotations>
+            <stories value="Staging update management"/>
+            <title value="Admin should be able to create Single Future Update with end date from Catalog Rule Page"/>
+            <description value="Admin should be able to create Single Future Update with end date from Catalog Rule Page"/>
+            <severity value="CRITICAL"/>
+            <testCaseId value="MC-3272"/>
+            <group value="catalogRuleStaging"/>
+        </annotations>
+        <before>
+            <!-- Create Catalog Price Rule -->
+            <createData entity="_defaultCatalogRule" stepKey="createCatalogPriceRule"/>
+            <!-- Login to Admin -->
+            <actionGroup ref="AdminLoginActionGroup" stepKey="loginToAdmin"/>
+        </before>
+        <after>
+            <!-- Delete Catalog Price Rule -->
+            <actionGroup ref="RemoveCatalogPriceRuleActionGroup" stepKey="deleteCatalogPriceRule">
+                <argument name="ruleName" value="{{_defaultCatalogRule.name}}"/>
+            </actionGroup>
+            <!-- Clear filter Catalog Price Rule -->
+            <actionGroup ref="ClearFiltersAdminDataGridActionGroup" stepKey="clearFilterCatalogPriceRule"/>
+            <!-- Clear filter Dashboard Staging -->
+            <actionGroup ref="StagingDashboardClearFiltersActionGroup" stepKey="clearFilterDashboardStaging"/>
+            <!-- Logout admin panel -->
+            <actionGroup ref="AdminLogoutActionGroup" stepKey="logout"/>
+        </after>
+        <!-- Open Catalog Price Rule for Edit -->
+        <actionGroup ref="OpenCatalogPriceRuleActionGroup" stepKey="openCatalogPriceRuleForEdit">
+            <argument name="ruleName" value="{{_defaultCatalogRule.name}}"/>
+        </actionGroup>
+        <!-- Create the new staging update -->
+        <generateDate date="+1 day" format="m/d/Y g:i A" stepKey="generateStartDate"/>
+        <generateDate date="+1 week" format="m/d/Y g:i A" stepKey="generateEndDate"/>
+        <actionGroup ref="FillScheduleUpdateRemovePriceActionGroup" stepKey="createStagingUpdate">
+            <argument name="staging" value="S18UpdateNameStaging"/>
+            <argument name="timeStart" value="{$generateStartDate}"/>
+            <argument name="timeEnd" value="{$generateEndDate}"/>
+        </actionGroup>
+        <!-- See in dashboard staging update -->
+        <actionGroup ref="StagingDashboardSearchUpdateActionGroup" stepKey="seeUpdateInDashboard">
+            <argument name="staging" value="S18UpdateNameStaging"/>
+        </actionGroup>
+    </test>
+</tests>

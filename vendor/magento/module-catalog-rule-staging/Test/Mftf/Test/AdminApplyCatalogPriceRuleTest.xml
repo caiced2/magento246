@@ -1,0 +1,253 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+ /**
+  * Copyright © Magento, Inc. All rights reserved.
+  * See COPYING.txt for license details.
+  */
+-->
+
+<tests xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="urn:magento:mftf:Test/etc/testSchema.xsd">
+    <test name="AdminApplyCatalogPriceRuleTest">
+        <annotations>
+            <features value="CatalogRule"/>
+            <stories value="Apply catalog price rule"/>
+            <title value="Apply Catalog Price Rule in Magento EE"/>
+            <description value="Apply Catalog Price Rule in Magento EE"/>
+            <severity value="BLOCKER"/>
+            <testCaseId value="MC-17520"/>
+            <useCaseId value="MC-10974"/>
+            <group value="CatalogRule"/>
+        </annotations>
+        <before>
+            <!--Create simple product-->
+            <createData entity="ApiCategory" stepKey="createCategory"/>
+            <createData entity="ApiSimpleProduct" stepKey="createSimpleProduct">
+                <requiredEntity createDataKey="createCategory"/>
+            </createData>
+            <actionGroup ref="AdminLoginActionGroup" stepKey="loginAsAdmin"/>
+            <!--Create Configurable product-->
+            <createData entity="ApiConfigurableProduct" stepKey="createConfigProduct">
+                <requiredEntity createDataKey="createCategory"/>
+            </createData>
+            <createData entity="productAttributeWithTwoOptions" stepKey="createConfigProductAttribute"/>
+            <createData entity="productAttributeOption1" stepKey="createConfigProductAttributeOption1">
+                <requiredEntity createDataKey="createConfigProductAttribute"/>
+            </createData>
+            <createData entity="productAttributeOption2" stepKey="createConfigProductAttributeOption2">
+                <requiredEntity createDataKey="createConfigProductAttribute"/>
+            </createData>
+            <createData entity="AddToDefaultSet" stepKey="createConfigAddToAttributeSet">
+                <requiredEntity createDataKey="createConfigProductAttribute"/>
+            </createData>
+            <getData entity="ProductAttributeOptionGetter" index="1" stepKey="getConfigAttributeOption1">
+                <requiredEntity createDataKey="createConfigProductAttribute"/>
+            </getData>
+            <getData entity="ProductAttributeOptionGetter" index="2" stepKey="getConfigAttributeOption2">
+                <requiredEntity createDataKey="createConfigProductAttribute"/>
+            </getData>
+            <createData entity="ApiSimpleOne" stepKey="createConfigChildProduct1">
+                <requiredEntity createDataKey="createConfigProductAttribute"/>
+                <requiredEntity createDataKey="getConfigAttributeOption1"/>
+            </createData>
+            <createData entity="ApiSimpleOne" stepKey="createConfigChildProduct2">
+                <requiredEntity createDataKey="createConfigProductAttribute"/>
+                <requiredEntity createDataKey="getConfigAttributeOption2"/>
+            </createData>
+            <createData entity="ConfigurableProductTwoOptions" stepKey="createConfigProductOption">
+                <requiredEntity createDataKey="createConfigProduct"/>
+                <requiredEntity createDataKey="createConfigProductAttribute"/>
+                <requiredEntity createDataKey="getConfigAttributeOption1"/>
+                <requiredEntity createDataKey="getConfigAttributeOption2"/>
+            </createData>
+            <createData entity="ConfigurableProductAddChild" stepKey="createConfigProductAddChild1">
+                <requiredEntity createDataKey="createConfigProduct"/>
+                <requiredEntity createDataKey="createConfigChildProduct1"/>
+            </createData>
+            <createData entity="ConfigurableProductAddChild" stepKey="createConfigProductAddChild2">
+                <requiredEntity createDataKey="createConfigProduct"/>
+                <requiredEntity createDataKey="createConfigChildProduct2"/>
+            </createData>
+            <!--Create customer-->
+            <createData entity="Simple_US_Customer_CA" stepKey="createCustomer"/>
+        </before>
+        <after>
+            <deleteData createDataKey="createCategory" stepKey="deleteCategory"/>
+            <deleteData createDataKey="createSimpleProduct" stepKey="deleteSimpleProduct"/>
+            <deleteData createDataKey="createConfigProduct" stepKey="deleteConfigurableProduct"/>
+            <deleteData createDataKey="createConfigProductAttribute" stepKey="deleteConfigProductAttribute"/>
+            <deleteData createDataKey="createCustomer" stepKey="deleteCustomer"/>
+            <!-- Delete the rule -->
+            <amOnPage url="{{CatalogRulePage.url}}" stepKey="goToPriceRulePage"/>
+            <actionGroup ref="deleteEntitySecondaryGrid" stepKey="deletePriceRule">
+                <argument name="name" value="{{_defaultCatalogRule.name}}"/>
+                <argument name="searchInput" value="{{AdminSecondaryGridSection.catalogRuleIdentifierSearch}}"/>
+            </actionGroup>
+            <actionGroup ref="AdminLogoutActionGroup" stepKey="logout"/>
+
+            <!-- Reindex invalidated indices after product attribute has been created/deleted -->
+            <actionGroup ref="CliIndexerReindexActionGroup" stepKey="reindexInvalidatedIndices">
+                <argument name="indices" value=""/>
+            </actionGroup>
+        </after>
+        <!--Create catalog price rule and check if active toggle exists and set to no-->
+        <actionGroup ref="AdminCreateNewCatalogPriceRuleWithActiveToggleAndItsValueFalseActionGroup" stepKey="createCatalogPriceRule">
+            <argument name="catalogRule" value="_defaultCatalogRule"/>
+        </actionGroup>
+        <actionGroup ref="SelectNotLoggedInCustomerGroupActionGroup" stepKey="selectNotLoggedInCustomerGroup"/>
+        <click selector="{{AdminNewCatalogPriceRule.save}}" stepKey="clickSave1"/>
+        <waitForPageLoad stepKey="waitForSave1"/>
+        <!--Verify that the rule is saved with active value no-->
+        <actionGroup ref="AdminSearchCatalogRuleInGridActionGroup" stepKey="searchCreatedCatalogRule1">
+            <argument name="catalogRuleName" value="{{_defaultCatalogRule.name}}"/>
+        </actionGroup>
+        <click selector="{{AdminCatalogPriceRuleGrid.firstRow}}" stepKey="clickFirstRow1"/>
+        <waitForPageLoad stepKey="waitForCatalogPriceRulePageLoad1"/>
+        <dontSeeElement selector="{{AdminNewCatalogPriceRule.activeIsEnabled}}" stepKey="checkThatActiveIsDisabled"/>
+        <!-- Verify that a schedule update is not created -->
+        <dontSeeElement selector="{{AdminStagingSlideOutSection.preview}}" stepKey="checkThatScheduleUpdateIsNotCreated1"/>
+        <!--Edit Active toggle to yes and save-->
+        <actionGroup ref="AdminEnableCatalogPriceRuleActionGroup" stepKey="setActiveYesAndSave"/>
+        <!-- Verify that a schedule update is not created -->
+        <dontSeeElement selector="{{AdminStagingSlideOutSection.preview}}" stepKey="checkThatScheduleUpdateIsNotCreated2"/>
+        <!-- Apply changes -->
+        <comment userInput="BIC workaround" stepKey="runCron1"/>
+        <comment userInput="BIC workaround" stepKey="runCron2"/>
+        <actionGroup ref="CliIndexerReindexActionGroup" stepKey="reindex">
+            <argument name="indices" value=""/>
+        </actionGroup>
+        <!--Verify price on category page for simple and configurable products-->
+        <amOnPage url="{{StorefrontCategoryPage.url($$createCategory.custom_attributes[url_key]$$)}}" stepKey="onCategoryPage1"/>
+        <waitForPageLoad stepKey="waitForCategoryPageLoad1"/>
+        <actionGroup ref="StorefrontAssertProductPriceOnCategoryPageActionGroup" stepKey="assertPriceSimpleProductOnCategory">
+            <argument name="productName" value="$$createSimpleProduct.name$$"/>
+            <argument name="productPrice" value="$110.70"/>
+        </actionGroup>
+        <actionGroup ref="StorefrontAssertProductPriceOnCategoryPageActionGroup" stepKey="assertPriceConfigurableProductOnCategory">
+            <argument name="productName" value="$$createConfigProduct.name$$"/>
+            <argument name="productPrice" value="$110.70"/>
+        </actionGroup>
+        <!--Verify price on the product page and add them to cart-->
+        <amOnPage url="{{StorefrontProductPage.url($$createSimpleProduct.custom_attributes[url_key]$$)}}" stepKey="gotToSimpleProductPage"/>
+        <waitForPageLoad stepKey="waitForProdPageLoad1"/>
+        <actionGroup ref="StorefrontAssertProductPriceOnProductPageActionGroup" stepKey="assertPriceSimpleProductOnProduct">
+            <argument name="productPrice" value="$110.70"/>
+        </actionGroup>
+        <actionGroup ref="StorefrontAddProductToCartActionGroup" stepKey="addSimpleProductToCart">
+            <argument name="product" value="$$createSimpleProduct$$"/>
+            <argument name="productCount" value="1"/>
+        </actionGroup>
+        <amOnPage url="{{StorefrontProductPage.url($$createConfigProduct.custom_attributes[url_key]$$)}}" stepKey="gotToConfigurableProductPage"/>
+        <waitForPageLoad stepKey="waitForConfigProdPageLoad"/>
+        <actionGroup ref="StorefrontAssertProductPriceOnProductPageActionGroup" stepKey="assertPriceConfigurableProductOnProduct">
+            <argument name="productPrice" value="$110.70"/>
+        </actionGroup>
+        <selectOption userInput="option1" selector="{{StorefrontProductInfoMainSection.productAttributeOptionsSelectButton}}" stepKey="selectOption1"/>
+        <!--Add products to cart and check price on shopping cart page-->
+        <actionGroup ref="StorefrontAddProductToCartActionGroup" stepKey="addConfigProductToCart">
+            <argument name="product" value="$$createConfigProduct$$"/>
+            <argument name="productCount" value="2"/>
+        </actionGroup>
+        <actionGroup ref="ClickViewAndEditCartFromMiniCartActionGroup" stepKey="goToShoppingCartFromMinicart"/>
+        <grabTextFrom selector="{{CheckoutCartProductSection.productFirstPrice($$createSimpleProduct.name$$)}}" stepKey="grabSimpleProdPrice2"/>
+        <assertStringContainsString stepKey="assertDiscountOnPrice2">
+			<actualResult type="const">$grabSimpleProdPrice2</actualResult>
+			<expectedResult type="string">$110.70</expectedResult>
+        </assertStringContainsString>
+        <grabTextFrom selector="{{CheckoutCartProductSection.productFirstPrice($$createConfigProduct.name$$)}}" stepKey="grabConfigurableProdPrice2"/>
+        <assertStringContainsString stepKey="assertDiscountOnPriceForConfigProd2">
+			<actualResult type="const">$grabConfigurableProdPrice2</actualResult>
+			<expectedResult type="string">$110.70</expectedResult>
+        </assertStringContainsString>
+        <!--Proceed to checkout and login during it-->
+        <click selector="{{CheckoutCartSummarySection.proceedToCheckout}}" stepKey="clickProceedToCheckout"/>
+        <waitForPageLoad stepKey="waitForCheckoutPageLoad"/>
+        <actionGroup ref="GuestCheckoutFillingShippingSectionActionGroup" stepKey="fillOrderShippingInfo">
+            <argument name="customerVar" value="Simple_US_Customer_CA"/>
+            <argument name="customerAddressVar" value="US_Address_CA"/>
+        </actionGroup>
+        <grabTextFrom selector="{{CheckoutPaymentSection.orderSummaryTotal}}" stepKey="grabOrderTotal"/>
+        <assertStringContainsString stepKey="assertDiscountOnPriceForConfigProd3">
+			<actualResult type="const">$grabOrderTotal</actualResult>
+			<expectedResult type="string">$231.40</expectedResult>
+        </assertStringContainsString>
+        <actionGroup ref="ClickPlaceOrderActionGroup" stepKey="clickPlaceOrder"/>
+        <comment userInput="BIC workaround" stepKey="waitForOrderPlacing"/>
+        <!--Navigate to catalog price rule page-->
+        <actionGroup ref="AdminSearchCatalogRuleInGridActionGroup" stepKey="searchCreatedCatalogRule2">
+            <argument name="catalogRuleName" value="{{_defaultCatalogRule.name}}"/>
+        </actionGroup>
+        <click selector="{{AdminCatalogPriceRuleGrid.firstRow}}" stepKey="clickFirstRow2"/>
+        <waitForPageLoad stepKey="waitForCatalogPriceRulePageLoad2"/>
+        <!--Schedule new update-->
+        <generateDate date="+1 day" format="m/j/Y g:i A" stepKey="generateEndDate"/>
+        <actionGroup ref="AdminCreateCatalogRuleStagingUpdateWithActiveNoActionGroup" stepKey="fillOutActionGroup1">
+            <argument name="stagingUpdate" value="_defaultCatalogRule"/>
+            <argument name="endDate" value="$generateEndDate"/>
+        </actionGroup>
+        <!--Verify price on category page for simple and configurable products-->
+        <amOnPage url="{{StorefrontCategoryPage.url($$createCategory.custom_attributes[url_key]$$)}}" stepKey="onCategoryPage3"/>
+        <waitForPageLoad stepKey="waitForCategoryPageLoad3"/>
+        <grabTextFrom selector="{{StorefrontMinicartSection.productPriceByItsName($$createSimpleProduct.name$$)}}" stepKey="grabSimpleProdPrice3"/>
+        <assertEquals stepKey="assertDiscountOnPrice3">
+			<actualResult type="const">$grabSimpleProdPrice3</actualResult>
+			<expectedResult type="string">$123.00</expectedResult>
+        </assertEquals>
+        <grabTextFrom selector="{{StorefrontMinicartSection.productPriceByItsName($$createConfigProduct.name$$)}}" stepKey="grabConfigurableProdPrice3"/>
+        <assertEquals stepKey="assertDiscountOnPriceForConfigProd4">
+			<actualResult type="const">$grabConfigurableProdPrice3</actualResult>
+			<expectedResult type="string">$123.00</expectedResult>
+        </assertEquals>
+        <!--Verify price on the product page and add them to cart-->
+        <click selector="{{StorefrontMinicartSection.productImageByItsName($$createSimpleProduct.name$$)}}" stepKey="gotToProdPage2"/>
+        <waitForPageLoad stepKey="waitForProdPageLoad2"/>
+        <grabTextFrom selector="{{StorefrontProductInfoMainSection.productPrice}}" stepKey="grabSimpleProductPrice2"/>
+        <assertStringContainsString stepKey="assertDiscountOnPriceForSimpleProduct2">
+			<actualResult type="const">$grabSimpleProductPrice2</actualResult>
+			<expectedResult type="string">$123.00</expectedResult>
+        </assertStringContainsString>
+        <actionGroup ref="StorefrontAddProductToCartActionGroup" stepKey="addSimpleProductToCart2">
+            <argument name="product" value="$$createSimpleProduct$$"/>
+            <argument name="productCount" value="1"/>
+        </actionGroup>
+        <amOnPage url="{{StorefrontCategoryPage.url($$createCategory.custom_attributes[url_key]$$)}}" stepKey="onCategoryPage4"/>
+        <waitForPageLoad stepKey="waitForCategoryPageLoad4"/>
+        <click selector="{{StorefrontMinicartSection.productImageByItsName($$createConfigProduct.name$$)}}" stepKey="gotToConfigProdPage2"/>
+        <waitForPageLoad stepKey="waitForConfigProdPageLoad2"/>
+        <grabTextFrom selector="{{StorefrontProductInfoMainSection.productPrice}}" stepKey="grabConfigProductPrice2"/>
+        <assertStringContainsString stepKey="assertDiscountOnPriceForConfigurableProduct2">
+			<actualResult type="const">$grabConfigProductPrice2</actualResult>
+			<expectedResult type="string">$123.00</expectedResult>
+        </assertStringContainsString>
+        <selectOption userInput="option1" selector="{{StorefrontProductInfoMainSection.productAttributeOptionsSelectButton}}" stepKey="selectOption3"/>
+        <!--Add products to cart and check price on shopping cart page-->
+        <actionGroup ref="StorefrontAddProductToCartActionGroup" stepKey="addConfigProductToCart2">
+            <argument name="product" value="$$createConfigProduct$$"/>
+            <argument name="productCount" value="2"/>
+        </actionGroup>
+        <actionGroup ref="ClickViewAndEditCartFromMiniCartActionGroup" stepKey="goToShoppingCartFromMinicart2"/>
+        <grabTextFrom selector="{{CheckoutCartProductSection.productFirstPrice($$createSimpleProduct.name$$)}}" stepKey="grabSimpleProdPrice4"/>
+        <assertStringContainsString stepKey="assertDiscountOnPrice4">
+			<actualResult type="const">$grabSimpleProdPrice4</actualResult>
+			<expectedResult type="string">$123.00</expectedResult>
+        </assertStringContainsString>
+        <grabTextFrom selector="{{CheckoutCartProductSection.productFirstPrice($$createConfigProduct.name$$)}}" stepKey="grabConfigurableProdPrice4"/>
+        <assertStringContainsString stepKey="assertDiscountOnPriceForConfigProd5">
+			<actualResult type="const">$grabConfigurableProdPrice4</actualResult>
+			<expectedResult type="string">$123.00</expectedResult>
+        </assertStringContainsString>
+        <!--Proceed to checkout and login during it-->
+        <click selector="{{CheckoutCartSummarySection.proceedToCheckout}}" stepKey="clickProceedToCheckout2"/>
+        <waitForPageLoad stepKey="waitForCheckoutPageLoad2"/>
+        <actionGroup ref="GuestCheckoutFillingShippingSectionActionGroup" stepKey="fillOrderShippingInfo2">
+            <argument name="customerVar" value="Simple_US_Customer_CA"/>
+            <argument name="customerAddressVar" value="US_Address_CA"/>
+        </actionGroup>
+        <grabTextFrom selector="{{CheckoutPaymentSection.orderSummaryTotal}}" stepKey="grabOrderTotal2"/>
+        <assertStringContainsString stepKey="assertDiscountOnPriceForConfigProd6">
+			<actualResult type="const">$grabOrderTotal2</actualResult>
+			<expectedResult type="string">$256.00</expectedResult>
+        </assertStringContainsString>
+        <click selector="{{CheckoutPaymentSection.placeOrder}}" stepKey="clickPlaceOrder2"/>
+        <waitForPageLoad stepKey="waitForOrderPlacing2"/>
+    </test>
+</tests>

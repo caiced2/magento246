@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+ /**
+  * Copyright © Magento, Inc. All rights reserved.
+  * See COPYING.txt for license details.
+  */
+-->
+
+<sections xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:noNamespaceSchemaLocation="urn:magento:mftf:Page/etc/SectionObject.xsd">
+    <section name="AdminProductFormSection">
+        <element name="cardType" type="select" selector="[name='product[giftcard_type]']"/>
+        <element name="addCardAmount" type="button" selector="[data-index='giftcard_amounts'] button[data-action='add_new_row']"/>
+        <element name="cardAmount" type="input" selector="table[data-index='giftcard_amounts'] tr:nth-of-type({{row}}) input[name^='product[giftcard_amounts]']" parameterized="true"/>
+        <element name="allCardAmounts" type="text" selector="table[data-index='giftcard_amounts'] .data-row [data-index=value] input"/>
+        <element name="cardAmountWebsite" type="select" selector="table[data-index='giftcard_amounts'] tr:nth-of-type({{row}}) select[name^='product[giftcard_amounts]']" parameterized="true"/>
+        <element name="lastCardAmountInput" type="input" selector="//div[@data-index='giftcard_amounts']//tr[count(//div[@data-index='giftcard_amounts']//tbody//tr[contains(., input)]/preceding-sibling::tr)+1]//input"/>
+        <element name="openAmountToggle" type="checkbox" selector="input[name='product[allow_open_amount]'] + label"/>
+        <element name="openAmountToggleValue" type="checkbox" parameterized="true" selector="input[name='product[allow_open_amount]'][value='{{value}}']"/>
+        <element name="openAmountMin" type="input" selector="input[name='product[open_amount_min]']"/>
+        <element name="openAmountMax" type="input" selector="input[name='product[open_amount_max]']"/>
+        <element name="sectionHeader" type="button" selector="div[data-index='giftcard-information']" timeout="30" />
+        <element name="treatBalanceAsStoreCreditConfigSetting" type="checkbox" selector="//*[@name='product[use_config_is_redeemable]']"/>
+        <element name="lifetimeConfigSetting" type="checkbox" selector="//*[@name='product[use_config_lifetime]']"/>
+        <element name="lifetime" type="input" selector="[name='product[lifetime]']"/>
+        <element name="allowMessageConfigSetting" type="checkbox" selector="//*[@name='product[use_config_allow_message]']"/>
+        <element name="emailTemplateConfigSetting" type="checkbox" selector="//*[@name='product[use_config_email_template]']"/>
+    </section>
+</sections>

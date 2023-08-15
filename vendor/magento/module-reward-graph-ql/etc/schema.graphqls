@@ -1,0 +1,83 @@
+# Copyright © Magento, Inc. All rights reserved.
+# See COPYING.txt for license details.
+
+type Customer {
+    reward_points: RewardPoints @resolver (class: "\\Magento\\RewardGraphQl\\Model\\Resolver\\CustomerRewardPoints") @doc(description: "Customer reward points details.")
+}
+
+type RewardPoints @doc(description: "Contains details about a customer's reward points."){
+    balance: RewardPointsAmount @doc(description: "The current balance of reward points.")
+    exchange_rates: RewardPointsExchangeRates @doc(description: "The current exchange rates for reward points.")
+    subscription_status: RewardPointsSubscriptionStatus @doc(description: "The subscription status of emails related to reward points.")
+    balance_history: [RewardPointsBalanceHistoryItem] @doc(description: "The balance history of reward points. If the ability for customers to view the balance history has been disabled in the Admin, this field will be set to null.")
+}
+
+type RewardPointsAmount @doc(description: "Lists the amount of reward points."){
+    points: Float! @doc(description: "The amount of reward points, expressed in points.")
+    money: Money! @doc(description: "The amount of reward points, expressed in the currency of the store.")
+}
+
+type RewardPointsExchangeRates @doc (description: "Lists the reward points exchange rates. The values depend on the customer group."){
+    earning: RewardPointsRate @doc(description: "How many points are earned for a given amount spent.")
+    redemption: RewardPointsRate @doc(description: "How many points must be redeemed to get a given amount of currency discount at the checkout.")
+}
+
+type RewardPointsRate @doc(description: "Contains details about customer's reward points rate."){
+    points: Float! @doc(description: "The number of points for an exchange rate. For earnings, this is the number of points earned. For redemption, this is the number of points needed for redemption.")
+    currency_amount: Float! @doc(description: "The money value for the exchange rate. For earnings, this is the amount spent to earn the specified points. For redemption, this is the amount of money the number of points represents.")
+}
+
+type RewardPointsSubscriptionStatus @doc(description: "Indicates whether the customer subscribes to reward points emails."){
+    balance_updates: RewardPointsSubscriptionStatusesEnum! @doc(description: "Indicates whether the customer subscribes to 'Reward points balance updates' emails.")
+    points_expiration_notifications: RewardPointsSubscriptionStatusesEnum! @doc(description: "Indicates whether the customer subscribes to 'Reward points expiration notifications' emails.")
+}
+
+enum RewardPointsSubscriptionStatusesEnum {
+    SUBSCRIBED
+    NOT_SUBSCRIBED
+}
+
+type RewardPointsBalanceHistoryItem @doc(description: "Contain details about the reward points transaction."){
+    balance: RewardPointsAmount @doc(description: "The award points balance after the completion of the transaction.")
+    points_change: Float! @doc(description: "The number of points added or deducted in the transaction.")
+    change_reason: String! @doc(description: "The reason the balance changed.")
+    date: String! @doc(description: "The date of the transaction.")
+}
+
+type Cart {
+    applied_reward_points: RewardPointsAmount @resolver(class: "\\Magento\\RewardGraphQl\\Model\\Resolver\\CartRewardPoints") @doc(description: "The amount of reward points applied to the cart.")
+}
+
+type RewardPointsAmount {
+    points: Float! @doc(description: "The reward points amount in points.")
+    money: Money! @doc(description: "The reward points amount in store currency.")
+}
+
+type StoreConfig {
+    magento_reward_general_is_enabled: String @doc(description: "Indicates whether reward points functionality is enabled. Possible values: 1 (Enabled) and 0 (Disabled).")
+    magento_reward_general_is_enabled_on_front: String @doc(description: "Indicates whether reward points functionality is enabled on the storefront. Possible values: 1 (Enabled) and 0 (Disabled).")
+    magento_reward_general_publish_history: String @doc(description: "When enabled, customers can see a detailed history of their reward points. Possible values: 1 (Enabled) and 0 (Disabled).")
+    magento_reward_general_min_points_balance: String @doc(description: "The minimum point balance customers must have before they can redeem them. A null value indicates no minimum.")
+    magento_reward_points_order: String @doc(description: "Indicates customers earn points for shopping according to the reward point exchange rate. In Luma, this also controls whether to show a message in the shopping cart about the rewards points earned for the purchase, as well as the customer’s current reward point balance.")
+    magento_reward_points_register: String @doc(description: "The number of points customer gets for registering.")
+    magento_reward_points_newsletter: String @doc(description: "The number of points earned by registered customers who subscribe to a newsletter.")
+    magento_reward_points_invitation_customer: String @doc(description: "The number of points for a referral when an invitee registers on the site.")
+    magento_reward_points_invitation_customer_limit: String @doc(description: "The maximum number of registration referrals that will qualify for rewards. A null value indicates no limit.")
+    magento_reward_points_invitation_order: String @doc(description: "The number of points for a referral, when an invitee places their first order on the site.")
+    magento_reward_points_invitation_order_limit: String @doc(description: "The number of order conversions that can earn points for the customer who sends the invitation. A null value indicates no limit.")
+    magento_reward_points_review: String @doc(description: "The number of points for writing a review.")
+    magento_reward_points_review_limit: String @doc(description: "The maximum number of reviews that will qualify for the rewards. A null value indicates no limit.")
+}
+
+type Mutation {
+    applyRewardPointsToCart(cartId: ID!): ApplyRewardPointsToCartOutput @resolver (class: "\\Magento\\RewardGraphQl\\Model\\Resolver\\ApplyRewardPoints") @doc(description: "Apply all available points, up to the cart total. Partial redemption is not available.")
+    removeRewardPointsFromCart(cartId: ID!): RemoveRewardPointsFromCartOutput @resolver (class: "\\Magento\\RewardGraphQl\\Model\\Resolver\\RemoveRewardPoints") @doc(description: "Cancel the application of reward points to the cart.")
+}
+
+type ApplyRewardPointsToCartOutput @doc(description: "Contains the customer cart."){
+    cart: Cart! @doc(description: "The customer cart after reward points are applied.")
+}
+
+type RemoveRewardPointsFromCartOutput @doc(description: "Contains the customer cart."){
+    cart: Cart! @doc(description: "The customer cart after reward points are removed.")
+}

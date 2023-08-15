@@ -1,0 +1,142 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+ /**
+  * Copyright © Magento, Inc. All rights reserved.
+  * See COPYING.txt for license details.
+  */
+-->
+<tests xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:noNamespaceSchemaLocation="urn:magento:mftf:Test/etc/testSchema.xsd">
+    <test name="PageBuilderScheduleUpdateCMSPageAddAndEditButtonsTest">
+        <annotations>
+            <features value="PageBuilder"/>
+            <stories value="Schedule Update - CMS Page"/>
+            <title value="Add and Edit Buttons from CMS Page Schedule Update"/>
+            <description value="Verify that a user can add and edit buttons to CMS Page content from the staging slide out"/>
+            <severity value="BLOCKER"/>
+            <useCaseId value="MC-4231"/>
+            <testCaseId value="MC-11892"/>
+            <group value="pagebuilder"/>
+            <group value="pagebuilder-ee"/>
+            <group value="pagebuilder-staging"/>
+            <group value="pagebuilder-cms-page"/>
+            <group value="pagebuilder-buttons"/>
+            <group value="pagebuilder-buttonGroup"/>
+            <group value="pagebuilder-buttonItem"/>
+            <group value="pr_exclude"/>
+        </annotations>
+        <before>
+            <actionGroup ref="AdminLoginActionGroup" stepKey="loginAsAdmin"/>
+            <createData entity="_emptyCmsPage" stepKey="createCMSPage"/>
+            <actionGroup ref="navigateToCMSPage" stepKey="navigateToCMSPage">
+                <argument name="CMSPage" value="$$createCMSPage$$"/>
+            </actionGroup>
+            <actionGroup ref="switchToPageBuilderStage" stepKey="switchToPageBuilderStage1"/>
+            <actionGroup ref="expandPageBuilderPanelMenuSection" stepKey="expandPanelGroup">
+                <argument name="contentType" value="PageBuilderButtonsContentType"/>
+            </actionGroup>
+            <actionGroup ref="dragContentTypeToStage" stepKey="dragRowToRootContainer">
+                <argument name="contentType" value="PageBuilderRowContentType"/>
+                <argument name="containerTargetType" value="PageBuilderRootContainerContentType"/>
+            </actionGroup>
+            <actionGroup ref="dragContentTypeToContainer" stepKey="dragContentTypeToStage">
+                <argument name="contentType" value="PageBuilderButtonsContentType"/>
+            </actionGroup>
+            <actionGroup ref="inlineEditButton" stepKey="inlineEditButton">
+                <argument name="text" value="PageBuilderButtonItemText_OneCharacter"/>
+            </actionGroup>
+            <actionGroup ref="exitPageBuilderFullScreen" stepKey="exitPageBuilderFullScreen"/>
+            <actionGroup ref="SaveAndContinueEditCmsPageActionGroup" stepKey="saveAndContinueEditCmsPage"/>
+            <actionGroup ref="navigateToStagingSlideout" stepKey="navigateToStagingSlideOut"/>
+            <actionGroup ref="switchToPageBuilderStage" stepKey="switchToPageBuilderStage2">
+                <argument name="sectionSelector" value="{{AdminStagingSlideOutSection.contentTab}}"/>
+                <argument name="sectionDependentSelector" value="{{AdminStagingSlideOutSection.stagingContentTab}}"/>
+            </actionGroup>
+        </before>
+        <after>
+            <deleteData createDataKey="createCMSPage" stepKey="deletePreReqCMSPage"/>
+            <actionGroup ref="AdminLogoutActionGroup" stepKey="logout"/>
+        </after>
+        <!-- Add Button Group -->
+        <comment userInput="Add Button Group" stepKey="commentAddButtonGroup"/>
+        <actionGroup ref="expandPageBuilderPanelMenuSection" stepKey="expandPanelGroup">
+            <argument name="contentType" value="PageBuilderButtonsContentType"/>
+            <argument name="pageBuilderArea" value="{{AdminStagingSlideOutSection.cmsStagingPageBase}}"/>
+        </actionGroup>
+        <actionGroup ref="dragContentTypeToDropZone" stepKey="dragContentTypeToDropZone">
+            <argument name="contentType" value="PageBuilderButtonsContentType"/>
+            <argument name="contentTypeIndex" value="2"/>
+            <argument name="containerTargetType" value="PageBuilderRowContentType"/>
+            <argument name="containerTargetIndex" value="1"/>
+            <argument name="dropZoneIndex" value="2"/>
+            <argument name="pageBuilderArea" value="{{AdminStagingSlideOutSection.cmsStagingPageBase}}"/>
+        </actionGroup>
+        <!-- Edit New Button Item -->
+        <comment userInput="Edit New Button Item" stepKey="commentEditNewButton"/>
+        <actionGroup ref="openPageBuilderEditPanelSmallByIndex" stepKey="openContentEditMenuOnStage">
+            <argument name="section" value="ButtonItemOnStage"/>
+            <argument name="targetIndex" value="2"/>
+        </actionGroup>
+        <actionGroup ref="fillSlideOutPanelFieldGeneral" stepKey="enterButtonText">
+            <argument name="property" value="PageBuilderButtonItemText_First"/>
+        </actionGroup>
+        <actionGroup ref="saveEditPanelSettings" stepKey="saveEditPanelSettings2">
+            <argument name="baseContent" value="{{AdminStagingSlideOutSection.title}}"/>
+        </actionGroup>
+        <!-- Add 2nd Button Item to Second Button Group -->
+        <comment userInput="Add 2nd Button Item to Second Button Group" stepKey="commentAddButtonItem"/>
+        <actionGroup ref="addChildContentTypeFromOptionMenu" stepKey="addChildContentType">
+            <argument name="contentType" value="PageBuilderButtonsContentType"/>
+            <argument name="index" value="2"/>
+            <argument name="pageBuilderArea" value="{{AdminStagingSlideOutSection.cmsStagingPageBase}}"/>
+        </actionGroup>
+        <actionGroup ref="inlineEditButton" stepKey="inlineEditButton2">
+            <argument name="text" value="PageBuilderButtonItemText_Common"/>
+            <argument name="index" value="3"/>
+            <argument name="pageBuilderArea" value="{{AdminStagingSlideOutSection.cmsStagingPageBase}}"/>
+        </actionGroup>
+        <!-- Validate Schedule Update Stage -->
+        <comment userInput="Validate Schedule Update Stage" stepKey="commentValidateScheduleUpdateStage"/>
+        <actionGroup ref="validateButtonItemContent" stepKey="validateButton1ScheduleUpdateStage">
+            <argument name="page" value="ButtonItemOnStage"/>
+            <argument name="text" value="PageBuilderButtonItemText_OneCharacter"/>
+            <argument name="index" value="1"/>
+        </actionGroup>
+        <actionGroup ref="validateButtonItemContent" stepKey="validateButton2ScheduleUpdateStage">
+            <argument name="page" value="ButtonItemOnStage"/>
+            <argument name="text" value="PageBuilderButtonItemText_First"/>
+            <argument name="index" value="2"/>
+        </actionGroup>
+        <actionGroup ref="validateButtonItemContent" stepKey="validateButton3ScheduleUpdateStage">
+            <argument name="page" value="ButtonItemOnStage"/>
+            <argument name="text" value="PageBuilderButtonItemText_Common"/>
+            <argument name="index" value="3"/>
+        </actionGroup>
+        <!-- Save Schedule Update -->
+        <actionGroup ref="exitPageBuilderFullScreen" stepKey="exitPageBuilderFullScreen"/>
+        <comment userInput="Save Schedule Update" stepKey="commentSaveScheduleUpdate"/>
+        <actionGroup ref="createAndSaveScheduleUpdateOneDayInFuture" stepKey="createAndSaveScheduleUpdateOneDayInFuture">
+            <argument name="stagingUpdate" value="_defaultStaging"/>
+        </actionGroup>
+        <!-- Validate Preview -->
+        <comment userInput="Validate Preview" stepKey="validatePreview"/>
+        <actionGroup ref="openPreviewForScheduledUpdate" stepKey="openPreviewForScheduledUpdate"/>
+        <seeNumberOfElements selector="{{ButtonItemOnStorefront.all}}" userInput="3" stepKey="seeThreeButtonsStorefront"/>
+        <actionGroup ref="validateButtonItemContent" stepKey="validateButton1Storefront">
+            <argument name="page" value="ButtonItemOnStorefrontEmptyLink"/>
+            <argument name="text" value="PageBuilderButtonItemText_OneCharacter"/>
+            <argument name="index" value="1"/>
+        </actionGroup>
+        <actionGroup ref="validateButtonItemContent" stepKey="validateButton2Storefront">
+            <argument name="page" value="ButtonItemOnStorefrontEmptyLink"/>
+            <argument name="text" value="PageBuilderButtonItemText_First"/>
+            <argument name="index" value="2"/>
+        </actionGroup>
+        <actionGroup ref="validateButtonItemContent" stepKey="validateButton3Storefront">
+            <argument name="page" value="ButtonItemOnStorefrontEmptyLink"/>
+            <argument name="text" value="PageBuilderButtonItemText_Common"/>
+            <argument name="index" value="3"/>
+        </actionGroup>
+        <closeTab stepKey="closeTab"/>
+    </test>
+</tests>

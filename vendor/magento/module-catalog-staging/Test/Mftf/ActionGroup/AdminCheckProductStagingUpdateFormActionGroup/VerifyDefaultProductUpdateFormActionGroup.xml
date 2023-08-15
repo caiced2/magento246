@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+ /**
+  * Copyright © Magento, Inc. All rights reserved.
+  * See COPYING.txt for license details.
+  */
+-->
+<actionGroups xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:noNamespaceSchemaLocation="urn:magento:mftf:Test/etc/actionGroupSchema.xsd">
+    <actionGroup name="verifyDefaultProductUpdateForm">
+        <see selector="{{AdminProductFormActionSection.changeStoreButton}}" userInput="All Store Views" stepKey="seeStoreScope"/>
+        
+        <!--See update fields-->
+        <seeElement selector="{{AdminProductScheduleUpdateSection.updateName}}" stepKey="seeUpdateNameInput"/>
+        <seeElement selector="{{AdminProductScheduleUpdateSection.updateDescription}}" stepKey="seeUpdateDescriptionInput"/>
+        <seeElement selector="{{AdminProductScheduleUpdateSection.startDate}}" stepKey="seeUpdateStartDateInput"/>
+        <seeElement selector="{{AdminProductScheduleUpdateSection.endDate}}" stepKey="seeUpdateEndDateInput"/>
+        
+        <!--See product fields-->
+        <seeElement selector="{{AdminProductFormSection.productStatus}}" stepKey="seeEnableProductInput"/>
+        <seeElement selector="{{AdminProductFormSection.attributeSet}}" stepKey="seeAttributeSetInput"/>
+        <seeElement selector="{{AdminProductFormSection.productName}}" stepKey="seeProductNameInput"/>
+        <seeElement selector="{{AdminProductFormSection.productSku}}" stepKey="seeSkuInput"/>
+        <seeElement selector="{{AdminProductFormSection.productSkuDisabled}}" stepKey="seeSkuInputDisabled"/>
+        <seeElement selector="{{AdminProductFormSection.productPrice}}" stepKey="seePriceInput"/>
+        <seeElement selector="{{AdminProductFormSection.productTaxClass}}" stepKey="seeTaxClassInput"/>
+        <seeElement selector="{{AdminProductFormSection.productStockStatus}}" stepKey="seeStockStatusInput"/>
+        <seeElement selector="{{AdminProductFormSection.productStockStatusDisabled}}" stepKey="seeStockStatusInputDisabled"/>
+        <seeElement selector="{{AdminProductFormSection.productWeight}}" stepKey="seeWeightInput"/>
+        <seeElement selector="{{AdminProductFormSection.visibility}}" stepKey="seeVisibilityInput"/>
+    </actionGroup>
+</actionGroups>

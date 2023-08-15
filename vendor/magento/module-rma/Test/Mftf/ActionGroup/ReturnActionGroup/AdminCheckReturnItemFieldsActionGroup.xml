@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+ /**
+  * Copyright © Magento, Inc. All rights reserved.
+  * See COPYING.txt for license details.
+  */
+-->
+<actionGroups xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:noNamespaceSchemaLocation="urn:magento:mftf:Test/etc/actionGroupSchema.xsd">
+    <actionGroup name="AdminCheckReturnItemFields">
+        <arguments>
+            <argument name="itemIndex" type="string" defaultValue="1"/>
+            <argument name="productName" type="string"/>
+            <argument name="reason" type="string"/>
+            <argument name="condition" type="string"/>
+            <argument name="resolution" type="string"/>
+            <argument name="status" type="string"/>
+        </arguments>
+        <see selector="{{AdminReturnItemsTabSection.productName(itemIndex)}}" userInput="{{productName}}" stepKey="seeProductName"/>
+        <see selector="{{AdminReturnItemsTabSection.returnReason(itemIndex)}}" userInput="{{reason}}" stepKey="seeReturnReason"/>
+        <see selector="{{AdminReturnItemsTabSection.itemCondition(itemIndex)}}" userInput="{{condition}}" stepKey="seeReturnItemCondition"/>
+        <seeOptionIsSelected selector="{{AdminReturnItemsTabSection.resolution(itemIndex)}}" userInput="{{resolution}}" stepKey="seeReturnResolution"/>
+        <seeOptionIsSelected selector="{{AdminReturnItemsTabSection.status(itemIndex)}}" userInput="{{status}}" stepKey="seeReturnStatus"/>
+    </actionGroup>
+</actionGroups>

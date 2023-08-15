@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+ /**
+  * Copyright © Magento, Inc. All rights reserved.
+  * See COPYING.txt for license details.
+  */
+-->
+
+<sections xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+          xsi:noNamespaceSchemaLocation="urn:magento:mftf:Page/etc/SectionObject.xsd">
+    <section name="AdminOrderFormConfigureProductSection">
+        <!-- Configure Gift Card Product on Create Order Page -->
+        <element name="amount" type="select" selector="#giftcard_amount" />
+        <element name="quantity" type="input" selector="#product_composite_configure_input_qty"/>
+        <element name="senderName" type="input" selector="#giftcard_sender_name"/>
+        <element name="senderEmail" type="input" selector="#giftcard_sender_email"/>
+        <element name="recipientName" type="input" selector="#giftcard_recipient_name"/>
+        <element name="recipientEmail" type="input" selector="#giftcard_recipient_email"/>
+    </section>
+</sections>

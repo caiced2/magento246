@@ -1,0 +1,29 @@
+<?xml version="1.0"?>
+<!--
+/**
+ * Copyright © Magento, Inc. All rights reserved.
+ * See COPYING.txt for license details.
+ */
+-->
+<logging xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:noNamespaceSchemaLocation="urn:magento:module:Magento_Logging:etc/logging.xsd">
+    <groups>
+        <group name="magento_banner">
+            <label translate="true">Manage Dynamic Blocks</label>
+            <expected_models>
+                <expected_model class="Magento\Banner\Model\Banner" />
+            </expected_models>
+            <events>
+                <event controller_action="adminhtml_banner_edit" action_alias="view" />
+                <event controller_action="adminhtml_banner_save" action_alias="save">
+                    <skip_on_back>
+                        <controller_action name="adminhtml_banner_edit" />
+                    </skip_on_back>
+                </event>
+                <event controller_action="adminhtml_banner_delete" action_alias="delete" />
+                <event controller_action="adminhtml_banner_massDelete"
+                       action_alias="massDelete" />
+            </events>
+        </group>
+    </groups>
+</logging>

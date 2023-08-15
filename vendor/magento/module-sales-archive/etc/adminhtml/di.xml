@@ -1,0 +1,57 @@
+<?xml version="1.0"?>
+<!--
+/**
+ * Copyright © Magento, Inc. All rights reserved.
+ * See COPYING.txt for license details.
+ */
+-->
+<config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="urn:magento:framework:ObjectManager/etc/config.xsd">
+    <type name="Magento\Ui\Model\Export\MetadataProvider">
+        <arguments>
+            <argument name="data" xsi:type="array">
+                <item name="sales_archive_order_grid" xsi:type="array">
+                    <item name="created_at" xsi:type="string">created_at</item>
+                </item>
+                <item name="sales_archive_order_creditmemo_grid" xsi:type="array">
+                    <item name="created_at" xsi:type="string">created_at</item>
+                    <item name="order_created_at" xsi:type="string">order_created_at</item>
+                </item>
+                <item name="sales_archive_order_invoice_grid" xsi:type="array">
+                    <item name="created_at" xsi:type="string">created_at</item>
+                    <item name="order_created_at" xsi:type="string">order_created_at</item>
+                </item>
+                <item name="sales_archive_order_shipment_grid" xsi:type="array">
+                    <item name="created_at" xsi:type="string">created_at</item>
+                    <item name="order_created_at" xsi:type="string">order_created_at</item>
+                </item>
+            </argument>
+        </arguments>
+    </type>
+    <virtualType name="Magento\SalesArchive\Ui\CreditmemoDataProvider" type="Magento\SalesArchive\Ui\ArchiveDataProvider">
+        <arguments>
+            <argument name="archiveDataSource" xsi:type="string">sales_archive_order_creditmemo_grid_data_source</argument>
+        </arguments>
+    </virtualType>
+    <virtualType name="Magento\SalesArchive\Ui\InvoiceDataProvider" type="Magento\SalesArchive\Ui\ArchiveDataProvider">
+        <arguments>
+            <argument name="archiveDataSource" xsi:type="string">sales_archive_order_invoice_grid_data_source</argument>
+        </arguments>
+    </virtualType>
+    <virtualType name="Magento\SalesArchive\Ui\ShipmentDataProvider" type="Magento\SalesArchive\Ui\ArchiveDataProvider">
+        <arguments>
+            <argument name="archiveDataSource" xsi:type="string">sales_archive_order_shipment_grid_data_source</argument>
+        </arguments>
+    </virtualType>
+    <type name="Magento\Sales\Block\Adminhtml\Order\View\Tab\Invoices">
+        <plugin name="invoices_show_tab" type="Magento\SalesArchive\Plugin\InvoicesSalesOrderViewTabPlugin"/>
+    </type>
+    <type name="Magento\Sales\Block\Adminhtml\Order\View\Tab\Creditmemos">
+        <plugin name="creditmemos_show_tab" type="Magento\SalesArchive\Plugin\CreditmemosSalesOrderViewTabPlugin"/>
+    </type>
+    <type name="Magento\Sales\Block\Adminhtml\Order\View\Tab\Shipments">
+        <plugin name="shipments_show_tab" type="Magento\SalesArchive\Plugin\ShipmentsSalesOrderViewTabPlugin"/>
+    </type>
+    <type name="Magento\Sales\Observer\GridSyncInsertObserver">
+        <plugin name="archived_entity_grid_sync" type="Magento\SalesArchive\Plugin\GridSyncInsertObserverPlugin"/>
+    </type>
+</config>

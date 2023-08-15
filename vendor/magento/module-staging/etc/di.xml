@@ -1,0 +1,267 @@
+<?xml version="1.0"?>
+<!--
+/**
+ * Copyright © Magento, Inc. All rights reserved.
+ * See COPYING.txt for license details.
+ */
+-->
+<config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="urn:magento:framework:ObjectManager/etc/config.xsd">
+    <preference for="Magento\Staging\Api\Data\UpdateInterface" type="Magento\Staging\Model\Update"/>
+    <preference for="Magento\Staging\Api\Data\UpdateSearchResultInterface" type="Magento\Staging\Model\ResourceModel\Update\Collection"/>
+    <preference for="Magento\Staging\Api\UpdateRepositoryInterface" type="Magento\Staging\Model\UpdateRepository"/>
+    <preference for="Magento\Staging\Model\VersionHistoryInterface" type="Magento\Staging\Model\Update\VersionHistory"/>
+    <preference for="Magento\Staging\Block\Adminhtml\Update\Entity\EntityProviderInterface" type="Magento\Staging\Block\Adminhtml\Update\Entity\DefaultEntityProvider"/>
+    <preference for="Magento\Framework\Event\ManagerInterface" type="Magento\Staging\Model\Event\Manager\Proxy" />
+    <type name="Magento\Staging\Model\Event\Manager">
+        <arguments>
+            <argument name="bannedEvents" xsi:type="array" />
+            <argument name="bannedObservers" xsi:type="array" />
+        </arguments>
+    </type>
+    <type name="Magento\Framework\View\Element\UiComponent\DataProvider\CollectionFactory">
+        <arguments>
+            <argument name="collections" xsi:type="array">
+                <item name="staging_update_grid_data_source" xsi:type="string">Magento\Staging\Model\Update\Grid\SearchResult</item>
+                <item name="staging_update_edit_data_source" xsi:type="string">Magento\Staging\Model\Update\Grid\SearchResult</item>
+                <item name="staging_update_preview_grid_data_source" xsi:type="string">Magento\Staging\Model\Update\Grid\SearchResult</item>
+            </argument>
+        </arguments>
+    </type>
+    <type name="Magento\Staging\Model\Update\Grid\SearchResult">
+        <arguments>
+            <argument name="mainTable" xsi:type="string">staging_update</argument>
+            <argument name="resourceModel" xsi:type="string">Magento\Staging\Model\ResourceModel\Update</argument>
+        </arguments>
+    </type>
+    <type name="Magento\Framework\DB\Select\SelectRenderer">
+        <arguments>
+            <argument name="renderers" xsi:type="array">
+                <item name="distinct" xsi:type="array">
+                    <item name="renderer" xsi:type="object">Magento\Framework\DB\Select\DistinctRenderer</item>
+                    <item name="sort" xsi:type="string">100</item>
+                    <item name="part" xsi:type="string">distinct</item>
+                </item>
+                <item name="columns" xsi:type="array">
+                    <item name="renderer" xsi:type="object">Magento\Framework\DB\Select\ColumnsRenderer</item>
+                    <item name="sort" xsi:type="string">200</item>
+                    <item name="part" xsi:type="string">columns</item>
+                </item>
+                <item name="union" xsi:type="array">
+                    <item name="renderer" xsi:type="object">Magento\Framework\DB\Select\UnionRenderer</item>
+                    <item name="sort" xsi:type="string">300</item>
+                    <item name="part" xsi:type="string">union</item>
+                </item>
+                <item name="from" xsi:type="array">
+                    <item name="renderer" xsi:type="object">Magento\Staging\Model\Select\FromRenderer</item>
+                    <item name="sort" xsi:type="string">400</item>
+                    <item name="part" xsi:type="string">from</item>
+                </item>
+                <item name="where" xsi:type="array">
+                    <item name="renderer" xsi:type="object">Magento\Framework\DB\Select\WhereRenderer</item>
+                    <item name="sort" xsi:type="string">500</item>
+                    <item name="part" xsi:type="string">where</item>
+                </item>
+                <item name="group" xsi:type="array">
+                    <item name="renderer" xsi:type="object">Magento\Framework\DB\Select\GroupRenderer</item>
+                    <item name="sort" xsi:type="string">600</item>
+                    <item name="part" xsi:type="string">group</item>
+                </item>
+                <item name="having" xsi:type="array">
+                    <item name="renderer" xsi:type="object">Magento\Framework\DB\Select\HavingRenderer</item>
+                    <item name="sort" xsi:type="string">700</item>
+                    <item name="part" xsi:type="string">having</item>
+                </item>
+                <item name="order" xsi:type="array">
+                    <item name="renderer" xsi:type="object">Magento\Framework\DB\Select\OrderRenderer</item>
+                    <item name="sort" xsi:type="string">800</item>
+                    <item name="part" xsi:type="string">order</item>
+                </item>
+                <item name="limit" xsi:type="array">
+                    <item name="renderer" xsi:type="object">Magento\Framework\DB\Select\LimitRenderer</item>
+                    <item name="sort" xsi:type="string">900</item>
+                    <item name="part" xsi:type="string">limitcount</item>
+                </item>
+                <item name="for_update" xsi:type="array">
+                    <item name="renderer" xsi:type="object">Magento\Framework\DB\Select\ForUpdateRenderer</item>
+                    <item name="sort" xsi:type="string">1000</item>
+                    <item name="part" xsi:type="string">forupdate</item>
+                </item>
+            </argument>
+        </arguments>
+    </type>
+    <type name="Magento\Framework\DB\SelectFactory">
+        <arguments>
+            <argument name="selectRenderer" xsi:type="object">Magento\Framework\DB\Select\RendererProxy</argument>
+            <argument name="parts" xsi:type="array">
+                <item name="disable_staging_preview" xsi:type="boolean">false</item>
+            </argument>
+        </arguments>
+    </type>
+    <type name="Magento\Staging\Plugin\Framework\App\FrontController">
+        <arguments>
+            <argument name="auth" xsi:type="object">\Magento\Backend\Model\Auth\Proxy</argument>
+        </arguments>
+    </type>
+    <type name="Magento\Framework\App\FrontControllerInterface">
+        <plugin name="staging_preview_permissions_check" type="Magento\Staging\Plugin\Framework\App\FrontController" />
+    </type>
+    <type name="Magento\Webapi\Controller\Rest">
+        <plugin name="beforeRestDispatch" type="Magento\Staging\Plugin\RestPlugin"/>
+    </type>
+    <type name="Magento\Staging\Plugin\RestPlugin">
+        <arguments>
+            <argument name="context" xsi:type="object">\Magento\Authorization\Model\UserContextInterface\Proxy</argument>
+        </arguments>
+    </type>
+    <type name="Magento\PageCache\Model\Config">
+        <plugin name="staging_pagecache_bypass" type="Magento\Staging\Plugin\PageCache\Model\Config" />
+    </type>
+    <type name="Magento\Store\Model\BaseUrlChecker">
+        <plugin name="staging_store_baseurl_check_bypass" type="Magento\Staging\Plugin\Store\Model\BaseUrlChecker" />
+    </type>
+    <type name="Magento\Framework\Stdlib\DateTime\Timezone">
+        <plugin name="staging_datetime_timezone_bypass" type="Magento\Staging\Plugin\DateTime\Timezone" />
+    </type>
+    <type name="Magento\Store\Model\StoreResolver">
+        <plugin name="staging_preview_allowed_stores_check_bypass" type="Magento\Staging\Plugin\Store\Model\StoreResolver" />
+    </type>
+    <type name="Magento\Store\Controller\Store\SwitchAction">
+        <plugin name="staging_preview_store_switch_fixing" type="Magento\Staging\Plugin\Store\Controller\Store\SwitchAction" />
+    </type>
+    <type name="Magento\Customer\Model\Session">
+        <plugin name="staging_preview_customer_session_id_change_bypass" type="Magento\Staging\Plugin\Customer\Model\Session" />
+    </type>
+    <virtualType name="Magento\Framework\DB\UnversionedSelectFactory" type="Magento\Framework\DB\SelectFactory">
+        <arguments>
+            <argument name="parts" xsi:type="array">
+                <item name="disable_staging_preview" xsi:type="boolean">true</item>
+            </argument>
+        </arguments>
+    </virtualType>
+    <type name="Magento\Framework\DB\FieldDataConverter">
+        <arguments>
+            <argument name="selectFactory" xsi:type="object">Magento\Framework\DB\UnversionedSelectFactory</argument>
+        </arguments>
+    </type>
+    <type name="Magento\Framework\Url\RouteParamsPreprocessorComposite">
+        <arguments>
+            <argument name="routeParamsPreprocessors" xsi:type="array">
+                <item name="staging_preview" xsi:type="object">Magento\Staging\Model\Preview\RouteParamsPreprocessor</item>
+            </argument>
+        </arguments>
+    </type>
+    <type name="Magento\Framework\Setup\Declaration\Schema\DataSavior\TableSavior">
+        <arguments>
+            <argument name="selectFactory" xsi:type="object">Magento\Framework\DB\UnversionedSelectFactory</argument>
+        </arguments>
+    </type>
+    <type name="Magento\Framework\Setup\Declaration\Schema\DataSavior\ColumnSavior">
+        <arguments>
+            <argument name="selectFactory" xsi:type="object">Magento\Framework\DB\UnversionedSelectFactory</argument>
+        </arguments>
+    </type>
+    <type name="Magento\Framework\Url\ModifierComposite">
+        <arguments>
+            <argument name="modifiers" xsi:type="array">
+                <item name="staging_preview_base" xsi:type="object">Magento\Staging\Model\Url\BaseUrlModifier</item>
+            </argument>
+        </arguments>
+    </type>
+    <type name="Magento\Staging\Block\Adminhtml\Update\Upcoming">
+        <arguments>
+            <argument name="aclResourceAction" xsi:type="string">Magento_Staging::staging</argument>
+        </arguments>
+    </type>
+    <type name="Magento\Framework\EntityManager\OperationPool">
+        <arguments>
+            <argument name="operations" xsi:type="array">
+                <item name="default" xsi:type="array">
+                    <item name="checkIfExists" xsi:type="string">Magento\Framework\EntityManager\Operation\CheckIfExists</item>
+                    <item name="read" xsi:type="string">Magento\Framework\EntityManager\Operation\Read</item>
+                    <item name="create" xsi:type="string">Magento\Framework\EntityManager\Operation\Create</item>
+                    <item name="update" xsi:type="string">Magento\Framework\EntityManager\Operation\Update</item>
+                    <item name="delete" xsi:type="string">Magento\Framework\EntityManager\Operation\Delete</item>
+                </item>
+            </argument>
+        </arguments>
+    </type>
+    <type name="Magento\Staging\Model\Operation\Update\TemporaryUpdateProcessorPool">
+        <arguments>
+            <argument name="processors" xsi:type="array">
+                <item name="default" xsi:type="string">Magento\Staging\Model\Operation\Update\DefaultTemporaryUpdateProcessor</item>
+            </argument>
+        </arguments>
+    </type>
+    <type name="Magento\Staging\Model\Operation\Update\PermanentUpdateProcessorPool">
+        <arguments>
+            <argument name="processors" xsi:type="array">
+                <item name="default" xsi:type="string">Magento\Staging\Model\Operation\Update\DefaultPermanentUpdateProcessor</item>
+            </argument>
+        </arguments>
+    </type>
+    <type name="Magento\Framework\EntityManager\HydratorPool">
+        <arguments>
+            <argument name="hydrators" xsi:type="array">
+                <item name="Magento\Staging\Api\Data\UpdateInterface" xsi:type="string">Magento\Framework\EntityManager\AbstractModelHydrator</item>
+            </argument>
+        </arguments>
+    </type>
+    <type name="Magento\Staging\Model\Entity\Update\Action\TransactionPool">
+        <arguments>
+            <argument name="transactionPool" xsi:type="array">
+                <item name="update_action_delete_save" xsi:type="string">Magento\Staging\Model\Entity\Update\Action\Delete\SaveAction</item>
+                <item name="update_action_save_save" xsi:type="string">Magento\Staging\Model\Entity\Update\Action\Save\SaveAction</item>
+            </argument>
+        </arguments>
+    </type>
+    <type name="Magento\Staging\Model\Entity\Builder">
+        <arguments>
+            <argument name="strategies" xsi:type="array">
+                <item name="default" xsi:type="string">Magento\Staging\Model\Entity\Builder\DefaultBuilder</item>
+            </argument>
+        </arguments>
+    </type>
+    <type name="Magento\Framework\View\Element\Template\Context">
+        <arguments>
+            <argument name="cacheState" xsi:type="object">Magento\Staging\Model\CacheState</argument>
+        </arguments>
+    </type>
+    <type name="Magento\Staging\Model\CacheState">
+        <arguments>
+            <argument name="cacheTypes" xsi:type="array">
+                <item name="block_html" xsi:type="boolean">false</item>
+            </argument>
+        </arguments>
+    </type>
+    <type name="Magento\Framework\Setup\Declaration\Schema\Operations\AddColumn">
+        <arguments>
+            <argument name="triggers" xsi:type="array">
+                <item name="migrateDataFromSameTable" xsi:type="object">Magento\Framework\Setup\Declaration\Schema\Db\MySQL\DDL\Triggers\MigrateDataFrom</item>
+                <item name="migrateSequneceColumnData" xsi:type="object">Magento\Staging\Setup\Declaration\Schema\Db\MySQL\DDL\Triggers\MigrateSequenceColumnData</item>
+            </argument>
+        </arguments>
+    </type>
+    <type name="Magento\Framework\Setup\Declaration\Schema\Operations\CreateTable">
+        <arguments>
+            <argument name="columnTriggers" xsi:type="array">
+                <item name="migrateSequneceColumnData" xsi:type="object">Magento\Staging\Setup\Declaration\Schema\Db\MySQL\DDL\Triggers\MigrateSequenceColumnData</item>
+            </argument>
+        </arguments>
+    </type>
+    <type name="Magento\Staging\Model\Preview\RouteParamsPreprocessor">
+        <arguments>
+            <argument name="versionManager" xsi:type="object">Magento\Staging\Model\VersionManager\Proxy</argument>
+            <argument name="requestSigner" xsi:type="object">\Magento\Staging\Model\Preview\RequestSigner\Proxy</argument>
+        </arguments>
+    </type>
+    <type name="Magento\Staging\Plugin\Store\Model\StoreResolver">
+        <arguments>
+            <argument name="versionManager" xsi:type="object">Magento\Staging\Model\VersionManager\Proxy</argument>
+        </arguments>
+    </type>
+    <type name="Magento\Staging\Model\UpdateRepository">
+        <arguments>
+            <argument name="periodSyncScheduler" xsi:type="object">Magento\Staging\Model\Entity\PeriodSync\Scheduler\Proxy</argument>
+        </arguments>
+    </type>
+</config>

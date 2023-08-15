@@ -1,0 +1,145 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+ /**
+  * Copyright © Magento, Inc. All rights reserved.
+  * See COPYING.txt for license details.
+  */
+-->
+
+<tests xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:noNamespaceSchemaLocation="urn:magento:mftf:Test/etc/testSchema.xsd">
+    <test name="MoveProductsByPositionFieldToFirstSamePageGridModeTest">
+        <annotations>
+            <features value="VisualMerchandiser"/>
+            <stories value="Assign/Unassign products to/from a category"/>
+            <title value="Admin should be able to move assigned product position in the category by editing Position field in grid mode - move to 1st within same page"/>
+            <description value="Admin should be able to move assigned product position in the category by editing Position field in grid mode - move to 1st within same page"/>
+            <severity value="MAJOR"/>
+            <testCaseId value="MC-25472"/>
+            <group value="visualMerchandiser"/>
+        </annotations>
+        <before>
+            <createData entity="_defaultCategory" stepKey="createCategory"/>
+            <!-- Create 4 products so that grid can have more than one page -->
+            <createData entity="ApiSimpleProduct" stepKey="createProduct1">
+                <requiredEntity createDataKey="createCategory"/>
+            </createData>
+            <createData entity="ApiSimpleProduct" stepKey="createProduct2">
+                <requiredEntity createDataKey="createCategory"/>
+            </createData>
+            <createData entity="ApiSimpleProduct" stepKey="createProduct3">
+                <requiredEntity createDataKey="createCategory"/>
+            </createData>
+            <createData entity="ApiSimpleProduct" stepKey="createProduct4">
+                <requiredEntity createDataKey="createCategory"/>
+            </createData>
+            <actionGroup ref="CliIndexerReindexActionGroup" stepKey="reindexCatalogCategoryProduct">
+                <argument name="indices" value="catalog_category_product"/>
+            </actionGroup>
+            <actionGroup ref="AdminLoginActionGroup" stepKey="loginAsAdmin"/>
+        </before>
+        <after>
+            <deleteData createDataKey="createProduct1" stepKey="deleteProduct1"/>
+            <deleteData createDataKey="createProduct2" stepKey="deleteProduct2"/>
+            <deleteData createDataKey="createProduct3" stepKey="deleteProduct3"/>
+            <deleteData createDataKey="createProduct4" stepKey="deleteProduct4"/>
+            <deleteData createDataKey="createCategory" stepKey="deleteCategory"/>
+            <actionGroup ref="AdminLogoutActionGroup" stepKey="logoutFromAdmin"/>
+        </after>
+        <!-- Re-position without saving -->
+
+        <!-- Go to admin category page -->
+        <actionGroup ref="GoToAdminCategoryPageByIdActionGroup" stepKey="goToAdminCategoryPage">
+            <argument name="id" value="$createCategory.id$"/>
+        </actionGroup>
+        <!-- Open products in category section -->
+        <actionGroup ref="AdminCategoryPageOpenProductsInCategorySectionActionGroup" stepKey="openProductsInCategory"/>
+        <!-- Prepare grid for testing -->
+        <actionGroup ref="DisableMatchProductsByRuleActionGroup" stepKey="disableMatchProductsByRule"/>
+        <actionGroup ref="SortProductsByCriteriaInCategoryActionGroup" stepKey="selectSortByNewestProducts">
+            <argument name="criteria" value="Newest products first"/>
+        </actionGroup>
+        <!-- Switch to grid mode -->
+        <actionGroup ref="SwitchToGridModeProductInCategoryActionGroup" stepKey="switchToProductGridModeInCategoryPage"/>
+        <!-- Save category with sort by newest products -->
+        <actionGroup ref="AdminSaveCategoryFormActionGroup" stepKey="saveCategoryWithSortByNewestProducts"/>
+
+        <!-- Go to storefront category page -->
+        <actionGroup ref="GoToStorefrontCategoryPageByParametersActionGroup" stepKey="navigateToStorefrontCategoryWithSortByNewestProducts">
+            <argument name="category" value="$createCategory.custom_attributes[url_key]$"/>
+            <argument name="mode" value="list"/>
+            <argument name="numOfProductsPerPage" value="5"/>
+            <argument name="sortBy" value="position"/>
+        </actionGroup>
+        <see userInput="$createProduct4.name$" selector="{{StorefrontCategoryMainSection.lineProductName('1')}}" stepKey="seeProductNameByPosition1"/>
+        <see userInput="$createProduct3.name$" selector="{{StorefrontCategoryMainSection.lineProductName('2')}}" stepKey="seeProductNameByPosition2"/>
+        <see userInput="$createProduct2.name$" selector="{{StorefrontCategoryMainSection.lineProductName('3')}}" stepKey="seeProductNameByPosition3"/>
+        <see userInput="$createProduct1.name$" selector="{{StorefrontCategoryMainSection.lineProductName('4')}}" stepKey="seeProductNameByPosition4"/>
+
+        <!-- Go to admin category page -->
+        <actionGroup ref="GoToAdminCategoryPageByIdActionGroup" stepKey="navigateToAdminCategoryPage">
+            <argument name="id" value="$createCategory.id$"/>
+        </actionGroup>
+
+        <!-- Open products in category section -->
+        <actionGroup ref="AdminCategoryPageOpenProductsInCategorySectionActionGroup" stepKey="openProductsInCategoryTab"/>
+        <!-- See total count 4 -->
+        <see userInput="4" selector="{{AdminCategoryProductsGridSection.totalCount}}" stepKey="seeTotalCount"/>
+        <!-- Move row 2 to position 0 -->
+        <actionGroup ref="MoveProductByPositionFieldGridModeActionGroup" stepKey="moveProductByPositionFieldGridMode">
+            <argument name="rowFrom" value="2"/>
+            <argument name="rowTo" value="0"/>
+        </actionGroup>
+        <!-- Assert new positions -->
+        <see userInput="$createProduct3.id$" selector="{{AdminCategoryProductsGridSection.rowId('1')}}" stepKey="seeProductOnPosition1"/>
+        <see userInput="$createProduct4.id$" selector="{{AdminCategoryProductsGridSection.rowId('2')}}" stepKey="seeProductOnPosition2"/>
+        <see userInput="$createProduct2.id$" selector="{{AdminCategoryProductsGridSection.rowId('3')}}" stepKey="seeProductOnPosition3"/>
+        <see userInput="$createProduct1.id$" selector="{{AdminCategoryProductsGridSection.rowId('4')}}" stepKey="seeProductOnPosition4"/>
+
+        <!-- Go to storefront category page -->
+        <actionGroup ref="GoToStorefrontCategoryPageByParametersActionGroup" stepKey="navigateToStorefrontCategoryWithoutChanges">
+            <argument name="category" value="$createCategory.custom_attributes[url_key]$"/>
+            <argument name="mode" value="list"/>
+            <argument name="numOfProductsPerPage" value="5"/>
+            <argument name="sortBy" value="position"/>
+        </actionGroup>
+        <see userInput="$createProduct4.name$" selector="{{StorefrontCategoryMainSection.lineProductName('1')}}" stepKey="seeProductNameInCategoryWithoutChangesByPosition1"/>
+        <see userInput="$createProduct3.name$" selector="{{StorefrontCategoryMainSection.lineProductName('2')}}" stepKey="seeProductNameInCategoryWithoutChangesByPosition2"/>
+        <see userInput="$createProduct2.name$" selector="{{StorefrontCategoryMainSection.lineProductName('3')}}" stepKey="seeProductNameInCategoryWithoutChangesByPosition3"/>
+        <see userInput="$createProduct1.name$" selector="{{StorefrontCategoryMainSection.lineProductName('4')}}" stepKey="seeProductNameInCategoryWithoutChangesByPosition4"/>
+
+        <!-- Re-position with saving -->
+
+        <!-- Go to admin category page -->
+        <actionGroup ref="GoToAdminCategoryPageByIdActionGroup" stepKey="navigateToAdminCategoryFormPage">
+            <argument name="id" value="$createCategory.id$"/>
+        </actionGroup>
+        <!-- Open products in category section -->
+        <actionGroup ref="AdminCategoryPageOpenProductsInCategorySectionActionGroup" stepKey="expandProductsInCategoryTab"/>
+        <!-- Move row 2 to position 0 -->
+        <actionGroup ref="MoveProductByPositionFieldGridModeActionGroup" stepKey="moveProductByPositionFieldInGridMode">
+            <argument name="rowFrom" value="2"/>
+            <argument name="rowTo" value="0"/>
+        </actionGroup>
+        <!-- Assert new positions -->
+        <see userInput="$createProduct3.id$" selector="{{AdminCategoryProductsGridSection.rowId('1')}}" stepKey="seeCategoryProductOnPosition1"/>
+        <see userInput="$createProduct4.id$" selector="{{AdminCategoryProductsGridSection.rowId('2')}}" stepKey="seeCategoryProductOnPosition2"/>
+        <see userInput="$createProduct2.id$" selector="{{AdminCategoryProductsGridSection.rowId('3')}}" stepKey="seeCategoryProductOnPosition3"/>
+        <see userInput="$createProduct1.id$" selector="{{AdminCategoryProductsGridSection.rowId('4')}}" stepKey="seeCategoryProductOnPosition4"/>
+
+        <!-- Save category with changed product position -->
+        <actionGroup ref="AdminSaveCategoryFormActionGroup" stepKey="saveCategoryWithChangedProductPosition"/>
+
+        <!-- Go to storefront category page -->
+        <actionGroup ref="GoToStorefrontCategoryPageByParametersActionGroup" stepKey="navigateToStorefrontCategoryWithProductPositionChange">
+            <argument name="category" value="$createCategory.custom_attributes[url_key]$"/>
+            <argument name="mode" value="list"/>
+            <argument name="numOfProductsPerPage" value="5"/>
+            <argument name="sortBy" value="position"/>
+        </actionGroup>
+        <see userInput="$createProduct3.name$" selector="{{StorefrontCategoryMainSection.lineProductName('1')}}" stepKey="seeProductNameInCategoryWithChangesByPosition1"/>
+        <see userInput="$createProduct4.name$" selector="{{StorefrontCategoryMainSection.lineProductName('2')}}" stepKey="seeProductNameInCategoryWithChangesByPosition2"/>
+        <see userInput="$createProduct2.name$" selector="{{StorefrontCategoryMainSection.lineProductName('3')}}" stepKey="seeProductNameInCategoryWithChangesByPosition3"/>
+        <see userInput="$createProduct1.name$" selector="{{StorefrontCategoryMainSection.lineProductName('4')}}" stepKey="seeProductNameInCategoryWithChangesByPosition4"/>
+    </test>
+</tests>

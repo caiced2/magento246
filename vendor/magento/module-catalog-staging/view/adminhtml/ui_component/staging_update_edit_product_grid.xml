@@ -1,0 +1,147 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+/**
+ * Copyright © Magento, Inc. All rights reserved.
+ * See COPYING.txt for license details.
+ */
+-->
+<listing xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="urn:magento:module:Magento_Ui:etc/ui_configuration.xsd">
+    <argument name="data" xsi:type="array">
+        <item name="js_config" xsi:type="array">
+            <item name="provider" xsi:type="string">staging_update_edit_product_grid.staging_update_edit_product_grid_data_source</item>
+        </item>
+    </argument>
+    <settings>
+        <spinner>staging_update_edit_product_grid_columns</spinner>
+        <deps>
+            <dep>staging_update_edit_product_grid.staging_update_edit_product_grid_data_source</dep>
+        </deps>
+    </settings>
+    <dataSource name="staging_update_edit_product_grid_data_source" component="Magento_Ui/js/grid/provider">
+        <settings>
+            <storageConfig>
+                <param name="indexField" xsi:type="string">entity_id</param>
+            </storageConfig>
+            <updateUrl path="mui/index/render"/>
+        </settings>
+        <aclResource>Magento_Catalog::products</aclResource>
+        <dataProvider class="Magento\CatalogStaging\Ui\DataProvider\ProductDataProvider" name="staging_update_edit_product_grid_data_source">
+            <settings>
+                <requestFieldName>id</requestFieldName>
+                <primaryFieldName>id</primaryFieldName>
+            </settings>
+        </dataProvider>
+    </dataSource>
+    <listingToolbar name="listing_top">
+        <settings>
+            <sticky>false</sticky>
+        </settings>
+        <columnsControls name="columns_controls"/>
+        <paging name="listing_paging"/>
+    </listingToolbar>
+    <columns name="staging_update_edit_product_grid_columns">
+        <settings>
+            <childDefaults>
+                <param name="storageConfig" xsi:type="array">
+                    <item name="root" xsi:type="string">columns.${ $.index }</item>
+                    <item name="namespace" xsi:type="string">current.${ $.storageConfig.root}</item>
+                </param>
+                <param name="clickAction" xsi:type="string">view</param>
+                <param name="actionField" xsi:type="string">actions</param>
+                <param name="controlVisibility" xsi:type="boolean">true</param>
+            </childDefaults>
+        </settings>
+        <column name="entity_id" sortOrder="10">
+            <settings>
+                <filter>textRange</filter>
+                <label translate="true">ID</label>
+                <sorting>asc</sorting>
+            </settings>
+        </column>
+        <column name="thumbnail" class="Magento\Catalog\Ui\Component\Listing\Columns\Thumbnail" component="Magento_Ui/js/grid/columns/thumbnail" sortOrder="20">
+            <settings>
+                <altField>name</altField>
+                <hasPreview>1</hasPreview>
+                <addField>true</addField>
+                <label translate="true">Thumbnail</label>
+                <sortable>false</sortable>
+            </settings>
+        </column>
+        <column name="name" sortOrder="30">
+            <settings>
+                <filter>text</filter>
+                <addField>true</addField>
+                <bodyTmpl>ui/grid/cells/html</bodyTmpl>
+                <label translate="true">Name</label>
+            </settings>
+        </column>
+        <column name="type_id" component="Magento_Ui/js/grid/columns/select" sortOrder="40">
+            <settings>
+                <filter>select</filter>
+                <options class="Magento\Catalog\Model\Product\Type"/>
+                <dataType>select</dataType>
+                <label translate="true">Type</label>
+            </settings>
+        </column>
+        <column name="attribute_set_id" component="Magento_Ui/js/grid/columns/select" sortOrder="50">
+            <settings>
+                <filter>select</filter>
+                <options class="Magento\Catalog\Model\Product\AttributeSet\Options"/>
+                <dataType>select</dataType>
+                <label translate="true">Attribute Set</label>
+            </settings>
+        </column>
+        <column name="sku" sortOrder="60">
+            <settings>
+                <filter>text</filter>
+                <bodyTmpl>ui/grid/cells/html</bodyTmpl>
+                <label translate="true">SKU</label>
+            </settings>
+        </column>
+        <column name="price" class="Magento\Catalog\Ui\Component\Listing\Columns\Price" sortOrder="70">
+            <settings>
+                <filter>textRange</filter>
+                <addField>true</addField>
+                <label translate="true">Price</label>
+            </settings>
+        </column>
+        <column name="qty" sortOrder="75">
+            <settings>
+                <filter>textRange</filter>
+                <addField>true</addField>
+                <label translate="true">Quantity</label>
+            </settings>
+        </column>
+        <column name="visibility" component="Magento_Ui/js/grid/columns/select" sortOrder="80">
+            <settings>
+                <filter>select</filter>
+                <addField>true</addField>
+                <options class="Magento\Catalog\Model\Product\Visibility"/>
+                <dataType>select</dataType>
+                <label translate="true">Visibility</label>
+            </settings>
+        </column>
+        <column name="status" component="Magento_Ui/js/grid/columns/select" sortOrder="90">
+            <settings>
+                <filter>select</filter>
+                <addField>true</addField>
+                <options class="Magento\Catalog\Model\Product\Attribute\Source\Status"/>
+                <dataType>select</dataType>
+                <label translate="true">Status</label>
+            </settings>
+        </column>
+        <column name="websites" component="Magento_Ui/js/grid/columns/select" sortOrder="100">
+            <settings>
+                <addField>true</addField>
+                <options class="Magento\Store\Model\ResourceModel\Website\Collection"/>
+                <dataType>select</dataType>
+                <label translate="true">Websites</label>
+            </settings>
+        </column>
+        <actionsColumn name="actions" class="stagingCatalogProductDashboardGridActions" sortOrder="200">
+            <settings>
+                <indexField>entity_id</indexField>
+            </settings>
+        </actionsColumn>
+    </columns>
+</listing>

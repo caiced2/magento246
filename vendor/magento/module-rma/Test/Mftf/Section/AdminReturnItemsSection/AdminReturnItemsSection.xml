@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+ /**
+  * Copyright © Magento, Inc. All rights reserved.
+  * See COPYING.txt for license details.
+  */
+-->
+<sections xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:noNamespaceSchemaLocation="urn:magento:mftf:Page/etc/SectionObject.xsd">
+    <section name="AdminReturnItemsSection">
+        <element name="addProducts" type="button" selector="#rma-items-block button.action-add" timeout="30"/>
+        <element name="productName" type="text" selector="#rma_items_grid_table .newRma tr:nth-of-type({{row}}) .col-product_name" parameterized="true"/>
+        <element name="productSku" type="text" selector="#rma_items_grid_table .newRma tr:nth-of-type({{row}}) .col-product_sku" parameterized="true"/>
+        <element name="remaining" type="text" selector="#rma_items_grid_table .newRma tr:nth-of-type({{row}}) .col-qty_ordered" parameterized="true"/>
+        <element name="requested" type="input" selector="#rma_items_grid_table .newRma tr:nth-of-type({{row}}) .col-qty_requested input" parameterized="true"/>
+        <element name="requestedError" type="text" selector="#rma_items_grid_table .newRma tr:nth-of-type({{row}}) .col-qty_requested label.mage-error" parameterized="true"/>
+        <element name="returnReason" type="select" selector="#rma_items_grid_table .newRma tr:nth-of-type({{row}}) .col-reason select" parameterized="true"/>
+        <element name="returnReasonError" type="text" selector="#rma_items_grid_table .newRma tr:nth-of-type({{row}}) .col-reason label.mage-error" parameterized="true"/>
+        <element name="returnReasonOther" type="input" selector="#rma_items_grid_table .newRma tr:nth-of-type({{row}}) .col-reason input" parameterized="true"/>
+        <element name="returnReasonOtherLink" type="button" selector=".item_reason_other"/>
+        <element name="itemCondition" type="select" selector="#rma_items_grid_table .newRma tr:nth-of-type({{row}}) .col-condition select" parameterized="true"/>
+        <element name="itemConditionError" type="text" selector="#rma_items_grid_table .newRma tr:nth-of-type({{row}}) .col-condition label.mage-error" parameterized="true"/>
+        <element name="resolution" type="select" selector="#rma_items_grid_table .newRma tr:nth-of-type({{row}}) .col-resolution select" parameterized="true"/>
+        <element name="resolutionError" type="text" selector="#rma_items_grid_table .newRma tr:nth-of-type({{row}}) .col-resolution label.mage-error" parameterized="true"/>
+        <element name="delete" type="button" selector="#rma_items_grid_table .newRma tr:nth-of-type({{row}}) .col-actions a:nth-of-type(1)" parameterized="true"/>
+        <element name="addDetails" type="button" selector="#rma_items_grid_table .newRma tr:nth-of-type({{row}}) .col-actions a:nth-of-type(2)" parameterized="true"/>
+        <element name="addSelectedProducts" type="button" selector="#select-order-items-block button.action-add" timeout="30"/>
+        <element name="search" type="button" selector="#select-order-items-block button[data-action='grid-filter-apply']" timeout="30"/>
+        <element name="resetFilter" type="button" selector="#select-order-items-block button[data-action='grid-filter-reset']" timeout="30"/>
+        <element name="productNameFilter" type="input" selector=".data-grid-filters [name='product_name']"/>
+        <element name="productSkuFilter" type="input" selector=".data-grid-filters [name='sku']"/>
+        <element name="productPriceFromFilter" type="input" selector=".data-grid-filters [name='price[from]']"/>
+        <element name="productPriceToFilter" type="input" selector=".data-grid-filters [name='price[to]']"/>
+        <element name="selectRow" type="checkbox" selector="#order_items_grid_table tbody tr:nth-of-type({{row}}) td.col-select input" parameterized="true"/>
+        <element name="itemCheck" type="text" selector="#magento_rma_item_edit_grid_table &gt; tbody .col-{{name}}" parameterized="true"/>
+        <element name="itemProcess" type="text" selector="#magento_rma_item_edit_grid_table &gt; tbody .col-qty_{{name}}" parameterized="true"/>
+        <element name="selectProcess" type="input" selector="#magento_rma_item_edit_grid_table .col-qty_{{name}} input" parameterized="true"/>
+        <element name="selectStatus" type="select" selector="#magento_rma_item_edit_grid_table .col-status select"/>
+        <element name="successMessage" type="text" selector="#messages"/>
+    </section>
+</sections>

@@ -1,0 +1,52 @@
+<?xml version="1.0"?>
+<!--
+/**
+ * Copyright © Magento, Inc. All rights reserved.
+ * See COPYING.txt for license details.
+ */
+-->
+<page xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="urn:magento:framework:View/Layout/etc/page_configuration.xsd">
+    <body>
+        <referenceBlock name="additional.product.info">
+            <block class="Magento\AdvancedCheckout\Block\Sku\Products\Info" name="sku.product.info" template="Magento_AdvancedCheckout::cart/sku/failed/info.phtml"/>
+        </referenceBlock>
+        <referenceBlock name="checkout.cart.form">
+            <block class="Magento\AdvancedCheckout\Block\Sku\Products" name="sku.failed.products" template="Magento_AdvancedCheckout::cart/sku/failed.phtml" as="shopping.cart.table.after">
+                <arguments>
+                    <argument name="overridden_templates" xsi:type="array">
+                        <item name="default" xsi:type="string">Magento_AdvancedCheckout::cart/item/failed.phtml</item>
+                        <item name="bundle" xsi:type="string">Magento_AdvancedCheckout::cart/item/failed.phtml</item>
+                        <item name="configurable" xsi:type="string">Magento_AdvancedCheckout::cart/item/failed.phtml</item>
+                        <item name="downloadable" xsi:type="string">Magento_AdvancedCheckout::cart/item/failed.phtml</item>
+                        <item name="giftcard" xsi:type="string">Magento_AdvancedCheckout::cart/item/failed.phtml</item>
+                        <item name="grouped" xsi:type="string">Magento_AdvancedCheckout::cart/item/failed.phtml</item>
+                        <item name="simple" xsi:type="string">Magento_AdvancedCheckout::cart/item/failed.phtml</item>
+                        <item name="virtual" xsi:type="string">Magento_AdvancedCheckout::cart/item/failed.phtml</item>
+                        <item name="undefined" xsi:type="string">Magento_AdvancedCheckout::cart/item/failed.phtml</item>
+                    </argument>
+                    <argument name="renderer_list_name" xsi:type="string">checkout.cart.item.renderers</argument>
+                </arguments>
+            </block>
+        </referenceBlock>
+        <referenceContainer name="checkout.cart.empty.widget">
+            <container name="sku.failed.products.container" htmlTag="div" htmlClass="cart-container" before="-">
+                <block class="Magento\AdvancedCheckout\Block\Sku\Products" after="-" template="Magento_AdvancedCheckout::cart/sku/failed.phtml" name="sku.failed.products.container.cart_sku_failed" as="shopping.cart.table.after">
+                    <arguments>
+                        <argument name="overridden_templates" xsi:type="array">
+                            <item name="default" xsi:type="string">Magento_AdvancedCheckout::cart/item/failed.phtml</item>
+                            <item name="bundle" xsi:type="string">Magento_AdvancedCheckout::cart/item/failed.phtml</item>
+                            <item name="configurable" xsi:type="string">Magento_AdvancedCheckout::cart/item/failed.phtml</item>
+                            <item name="downloadable" xsi:type="string">Magento_AdvancedCheckout::cart/item/failed.phtml</item>
+                            <item name="giftcard" xsi:type="string">Magento_AdvancedCheckout::cart/item/failed.phtml</item>
+                            <item name="grouped" xsi:type="string">Magento_AdvancedCheckout::cart/item/failed.phtml</item>
+                            <item name="simple" xsi:type="string">Magento_AdvancedCheckout::cart/item/failed.phtml</item>
+                            <item name="virtual" xsi:type="string">Magento_AdvancedCheckout::cart/item/failed.phtml</item>
+                            <item name="undefined" xsi:type="string">Magento_AdvancedCheckout::cart/item/failed.phtml</item>
+                        </argument>
+                        <argument name="renderer_list_name" xsi:type="string">checkout.cart.item.renderers</argument>
+                    </arguments>
+                </block>
+            </container>
+        </referenceContainer>
+    </body>
+</page>

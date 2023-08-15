@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+ /**
+  * Copyright © Magento, Inc. All rights reserved.
+  * See COPYING.txt for license details.
+  */
+-->
+<actionGroups xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+              xsi:noNamespaceSchemaLocation="urn:magento:mftf:Test/etc/actionGroupSchema.xsd">
+    <actionGroup name="AdminValidatesVoidTransactionInOrderActionGroup">
+        <annotations>
+            <description>Admin validates that the last transaction is of type void</description>
+        </annotations>
+        <click selector="{{AdminTransactionsGridSection.transactionsSectionBtn}}" stepKey="clickTransactionsButton"/>
+        <waitForElementVisible selector="{{AdminTransactionsGridSection.orderTxnTable}}" stepKey="orderTransactionsTableIsVisible"/>
+        <selectOption selector="{{AdminTransactionsGridSection.orderTxnTableTypeFilter}}" userInput="void" stepKey="selectVoidTypeTxn" />
+        <click selector="{{AdminTransactionsGridSection.orderTxnTableSearchBtn}}" stepKey="clickSearch"/>
+        <waitForPageLoad stepKey="waitForFilterToLoad"/>
+        <click selector="{{AdminTransactionsGridSection.orderTxnTableFirstRow}}" stepKey="clickVoidTxn"/>
+        <waitForPageLoad stepKey="waitForTxnToLoad"/>
+        <grabTextFrom selector="{{AdminTransactionsGridSection.txnType}}" stepKey="getTxnType"/>
+        <assertEquals stepKey="assertTxnType" message="Ensure transaction type is the expected">
+            <expectedResult type="string">void</expectedResult>
+            <actualResult type="variable">getTxnType</actualResult>
+        </assertEquals>
+    </actionGroup>
+</actionGroups>

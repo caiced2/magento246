@@ -1,0 +1,108 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+ /**
+  * Copyright © Magento, Inc. All rights reserved.
+  * See COPYING.txt for license details.
+  */
+-->
+
+<tests xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xsi:noNamespaceSchemaLocation="urn:magento:mftf:Test/etc/testSchema.xsd">
+    <test name="AdminCreateNewCategoryUpdateTest">
+        <annotations>
+            <features value="CatalogStaging"/>
+            <stories value="Category staging update"/>
+            <title value="Create new Category Update"/>
+            <description value="Create new Category Update"/>
+            <severity value="MAJOR"/>
+            <testCaseId value="MC-27482"/>
+            <group value="staging"/>
+            <group value="catalog_staging"/>
+        </annotations>
+        <before>
+            <!--Create two categories-->
+            <createData entity="_defaultCategory" stepKey="createCategory"/>
+            <createData entity="SimpleSubCategory" stepKey="createCategoryTwo"/>
+            <!--Login to Admin Page-->
+            <actionGroup ref="AdminLoginActionGroup" stepKey="loginAsAdmin"/>
+        </before>
+        <after>
+            <!--Delete created entities-->
+            <deleteData createDataKey="createCategory" stepKey="deleteCategory"/>
+            <deleteData createDataKey="createCategoryTwo" stepKey="deleteCategoryTwo"/>
+            <!-- Logout Admin -->
+            <actionGroup ref="AdminLogoutActionGroup" stepKey="logoutFromAdminPage"/>
+        </after>
+
+        <!--Go to category admin page and create subcategory and check staging bocks-->
+        <actionGroup ref="GoToAdminCategoryPageByIdActionGroup" stepKey="goToCategoryPageOnAdmin">
+            <argument name="id" value="$createCategory.id$"/>
+        </actionGroup>
+        <click selector="{{AdminCategorySidebarActionSection.AddSubcategoryButton}}" stepKey="clickOnAddSubCategory"/>
+        <dontSeeElement selector="{{AdminStagingSlideOutSection.scheduledChanges}}" stepKey="dontSeeBlockScheduledChanges"/>
+        <actionGroup ref="FillCategoryFormActionGroup" stepKey="fillCategoryForm">
+            <argument name="categoryEntity" value="SimpleSubCategory"/>
+        </actionGroup>
+        <dontSeeElement selector="{{AdminCategoryScheduleDesignUpdateSection.sectionHeader}}" stepKey="dontSeeScheduleDesignUpdate"/>
+        <actionGroup ref="AdminSaveCategoryFormActionGroup" stepKey="saveCategoryForm"/>
+        <seeElement selector="{{AdminStagingSlideOutSection.scheduledChanges}}" stepKey="seeBlockScheduledChanges"/>
+
+        <!--Create staging update for subcategory-->
+        <actionGroup ref="navigateToStagingSlideout" stepKey="navigateToStagingSlideOut"/>
+        <actionGroup ref="AdminSaveScheduleUpdateWithoutAnyFilledFieldActionGroup" stepKey="clickSaveScheduleUpdateWithoutAnyFilledField"/>
+        <actionGroup ref="AdminFillPermanentUpdateAndCategoryNameActionGroup" stepKey="fillStagingUpdate">
+            <argument name="stage" value="UpdateDatePlusTwoMinutes"/>
+            <argument name="updateName" value="{{_defaultStaging.updateName}}"/>
+        </actionGroup>
+        <executeJS function="return Math.floor(new Date() / 1000);" stepKey="getStartingTime"/>
+        <actionGroup ref="SaveScheduleUpdateForProductActionGroup" stepKey="saveScheduleUpdateForCategory">
+            <argument name="staging" value="UpdateDatePlusTwoMinutes"/>
+        </actionGroup>
+
+        <!-- Assign the existing campaign to second category -->
+        <actionGroup ref="GoToAdminCategoryPageByIdActionGroup" stepKey="goToCategoryTwoPageOnAdmin">
+            <argument name="id" value="$createCategoryTwo.id$"/>
+        </actionGroup>
+        <actionGroup ref="AdminAssignExistingUpdateToCategoryActionGroup" stepKey="assignScheduleUpdate">
+            <argument name="staging" value="UpdateDatePlusTwoMinutes"/>
+        </actionGroup>
+        <fillField selector="{{AdminCatalogStagingSlideOutSection.categoryName}}" userInput="{{PermanentUpdateStaging.updateName}}" stepKey="fillNewCategoryTwoName"/>
+        <actionGroup ref="SaveScheduleUpdateForProductActionGroup" stepKey="saveScheduleUpdateForCategoryTwo">
+            <argument name="staging" value="UpdateDatePlusTwoMinutes"/>
+        </actionGroup>
+
+        <!-- Go to the preview staging update page and check updates -->
+        <actionGroup ref="openPreviewForScheduledUpdate" stepKey="clickPreview"/>
+        <actionGroup ref="StorefrontCheckPresentSubCategoryActionGroup" stepKey="checkSubCategoryOnPreviewPage">
+            <argument name="parenCategoryName" value="$createCategory.name$"/>
+            <argument name="childCategoryName" value="{{_defaultStaging.updateName}}"/>
+        </actionGroup>
+        <seeElement selector="{{AdminCategorySidebarTreeSection.categoryHighlighted(PermanentUpdateStaging.updateName)}}" stepKey="checkSubCategoryTwoOnPreviewPage"/>
+        <closeTab stepKey="closePreviewTab"/>
+
+        <!-- See in dashboard staging update -->
+        <actionGroup ref="StagingDashboardSearchUpdateActionGroup" stepKey="seeUpdateInDashboard">
+            <argument name="staging" value="UpdateDatePlusTwoMinutes"/>
+        </actionGroup>
+
+        <!-- Check to see if we have waited the require time yet. If not, wait the rest of the time -->
+        <executeJS function="
+                var endingTime = Math.floor(new Date() / 1000);
+                var timePassed = endingTime - {$getStartingTime};
+                var timeLeft = 120 - timePassed;
+                return timeLeft > 0 ? timeLeft : 0;" stepKey="getTimeToWait"/>
+        <wait time="$getTimeToWait" stepKey="waitForRequiredTime"/>
+        <!-- run cron twice -->
+        <actionGroup ref="ApplyUpdatedRuleStagingByCron" stepKey="runCronTwice"/>
+        <!-- reindex and flush cache -->
+        <actionGroup ref="AdminReindexAndFlushCache" stepKey="reindexAndFlushCache"/>
+
+        <!-- Go to storefront home page and check categories name -->
+        <actionGroup ref="StorefrontOpenHomePageActionGroup" stepKey="openStoreFrontHomePage"/>
+        <actionGroup ref="StorefrontCheckPresentSubCategoryActionGroup" stepKey="checkSubCategoryUpdated">
+            <argument name="parenCategoryName" value="$createCategory.name$"/>
+            <argument name="childCategoryName" value="{{_defaultStaging.updateName}}"/>
+        </actionGroup>
+        <seeElement selector="{{AdminCategorySidebarTreeSection.categoryHighlighted(PermanentUpdateStaging.updateName)}}" stepKey="checkSubCategoryTwoUpdated"/>
+    </test>
+</tests>

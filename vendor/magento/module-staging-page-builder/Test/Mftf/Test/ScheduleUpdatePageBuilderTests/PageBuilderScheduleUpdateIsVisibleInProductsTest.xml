@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+ /**
+  * Copyright © Magento, Inc. All rights reserved.
+  * See COPYING.txt for license details.
+  */
+-->
+<tests xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:noNamespaceSchemaLocation="urn:magento:mftf:Test/etc/testSchema.xsd">
+    <test name="PageBuilderScheduleUpdateIsVisibleInProductsTest" extends="PageBuilderScheduleUpdateIsVisibleInCMSPageTest">
+        <annotations>
+            <features value="PageBuilder"/>
+            <stories value="Schedule Update - Catalog Product"/>
+            <title value="PageBuilder is visible from Schedule Update in Catalog Products"/>
+            <description value="This test is to ensure that the user can see and add a content type in PageBuilder stage for Schedule Update in Catalog Products"/>
+            <severity value="BLOCKER"/>
+            <useCaseId value="MC-5773"/>
+            <testCaseId value="MC-14907"/>
+            <group value="pagebuilder"/>
+            <group value="pagebuilder-ee"/>
+            <group value="pagebuilder-staging"/>
+            <group value="pagebuilder-catalog-product"/>
+            <group value="pagebuilder-tab"/>
+        </annotations>
+        <before>
+            <createData entity="_defaultCategory" stepKey="createCMSPage"/>
+            <createData entity="_defaultProduct" stepKey="createProduct" after="createCMSPage">
+                <requiredEntity createDataKey="createCMSPage"/>
+            </createData>
+            <actionGroup ref="NavigateToCreatedProductEditPageActionGroup" stepKey="navigateToCMSPage">
+                <argument name="product" value="$$createProduct$$"/>
+            </actionGroup>
+            <actionGroup ref="ExpandAdminProductSectionActionGroup" stepKey="switchToPageBuilderStage">
+                <argument name="sectionSelector" value="{{AdminStagingSlideOutSection.contentTab}}"/>
+                <argument name="sectionDependentSelector" value="{{AdminStagingSlideOutSection.stagingContentTab}}"/>
+            </actionGroup>
+            <actionGroup ref="dragContentTypeToContainer" stepKey="dragRowToRootContainer">
+                <argument name="contentType" value="PageBuilderRowContentType"/>
+                <argument name="containerTargetType" value="PageBuilderRootContainerContentType"/>
+                <argument name="pageBuilderArea" value="{{AdminStagingSlideOutSection.stagingContentTab}}"/>
+            </actionGroup>
+            <actionGroup ref="openPageBuilderForAttribute" stepKey="openPageBuilderForDescription" after="switchToPageBuilderStage"/>
+        </before>
+        <after>
+            <deleteData createDataKey="createProduct" stepKey="deleteCreatedProduct" after="deleteCMSPage"/>
+            <actionGroup ref="NavigateToAndResetProductGridToDefaultViewActionGroup" stepKey="NavigateToAndResetProductGridToDefaultView" after="deleteCreatedProduct"/>
+        </after>
+        <seeElement selector="{{PageBuilderStage.stageWrapperFullScreen}}" stepKey="seeElementPageBuilderStage"/>
+        <actionGroup ref="dragContentTypeToContainer" stepKey="dragTabsContentTypeToStage">
+            <argument name="contentType" value="PageBuilderTabsContentType"/>
+        </actionGroup>
+    </test>
+</tests>

@@ -1,0 +1,144 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+ /**
+  * Copyright © Magento, Inc. All rights reserved.
+  * See COPYING.txt for license details.
+  */
+-->
+
+<tests xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xsi:noNamespaceSchemaLocation="urn:magento:mftf:Test/etc/testSchema.xsd">
+    <test name="StorefrontDynamicBlockBasedOnSegmentDisplayedCorrectlyTest">
+        <annotations>
+            <features value="CustomerSegment"/>
+            <stories value="Dynamic block on storefront"/>
+            <title value="Dynamic Block based on segment is displayed correctly for visitor"/>
+            <description value="Dynamic Block based on segment is displayed correctly for visitor"/>
+            <severity value="CRITICAL"/>
+            <testCaseId value="MC-21446"/>
+            <useCaseId value="MC-18280"/>
+            <group value="customer_segment"/>
+        </annotations>
+        <before>
+            <!--Create tree products-->
+            <createData entity="SimpleSubCategory" stepKey="createCategory"/>
+            <createData entity="SimpleProduct" stepKey="createProductWithCost70">
+                <requiredEntity createDataKey="createCategory"/>
+                <field key="price">70</field>
+            </createData>
+            <createData entity="SimpleProduct" stepKey="createProductWithCost75">
+                <requiredEntity createDataKey="createCategory"/>
+                <field key="price">75</field>
+            </createData>
+            <createData entity="SimpleProduct" stepKey="createProductWithCost100">
+                <requiredEntity createDataKey="createCategory"/>
+                <field key="price">100</field>
+            </createData>
+            <!--Create Dynamic block-->
+            <createData entity="_defaultDynamicBlock" stepKey="createDynamicBlock"/>
+            <!-- loginAsAdmin -->
+            <actionGroup ref="AdminLoginActionGroup" stepKey="loginAsAdmin"/>
+        </before>
+        <after>
+            <!--Delete created data-->
+            <deleteData createDataKey="createCategory" stepKey="deleteCategory"/>
+            <deleteData createDataKey="createProductWithCost70" stepKey="deleteProductWithPrice70"/>
+            <deleteData createDataKey="createProductWithCost75" stepKey="deleteProductWithPrice75"/>
+            <deleteData createDataKey="createProductWithCost100" stepKey="deleteProductWithPrice100"/>
+            <actionGroup ref="DeleteBannerByNameActionGroup" stepKey="deleteDynamicBlock">
+                <argument name="bannerName" value="$createDynamicBlock.name$" />
+            </actionGroup>
+            <click selector="{{AdminDataGridHeaderSection.clearFilters}}" stepKey="resetFiltersOnDynamicBlocksGrid"/>
+            <actionGroup ref="FindAndDeleteCustomerSegmentActionGroup" stepKey="deleteSegment">
+                <argument name="segmentName" value="{{CustomerSegmentDefault.name}}"/>
+            </actionGroup>
+            <click selector="{{AdminDataGridHeaderSection.clearFilters}}" stepKey="resetFiltersOnSegmentGrid"/>
+            <actionGroup ref="AdminDeleteWidgetActionGroup" stepKey="deleteProductLinkWidget">
+                <argument name="widget" value="DynamicBlockRotateWidget"/>
+            </actionGroup>
+            <click selector="{{AdminDataGridHeaderSection.clearFilters}}" stepKey="resetFiltersOnWidgetGrid"/>
+            <actionGroup ref="AdminLogoutActionGroup" stepKey="logout"/>
+            <magentoCron groups="index" stepKey="reindex"/>
+        </after>
+        <!--Create Customer Segment with conditions-->
+        <actionGroup ref="CreateCustomerSegmentWithContinueEditActionGroup" stepKey="createCustomerSegment">
+            <argument name="customerSegment" value="CustomerSegmentDefault"/>
+        </actionGroup>
+        <actionGroup ref="AdminCreateConditionsInCustomerSegmentActionGroup" stepKey="createFirstCondition">
+            <argument name="conditionData" value="CustomerSegmentCartTotalGreaterEquals75Condition"/>
+            <argument name="index" value="1--1"/>
+        </actionGroup>
+        <actionGroup ref="AdminCreateConditionsInCustomerSegmentActionGroup" stepKey="createSecondCondition">
+            <argument name="conditionData" value="CustomerSegmentCartTotalLessThan100Condition"/>
+            <argument name="index" value="1--2"/>
+        </actionGroup>
+        <actionGroup ref="ClickSaveButtonActionGroup" stepKey="saveCustomerSegment">
+            <argument name="message" value="You saved the segment."/>
+        </actionGroup>
+        <!--open created dynamic block page ad select customer segment-->
+        <actionGroup ref="AdminOpenDynamicBlockByNameActionGroup" stepKey="openDynamicBlock">
+            <argument name="bannerName" value="$createDynamicBlock.name$"/>
+        </actionGroup>
+        <actionGroup ref="AdminSelectCustomerSegmentForDynamicBlockActionGroup" stepKey="selectCustomerSegment">
+            <argument name="customerSegmentName" value="{{CustomerSegmentDefault.name}}"/>
+        </actionGroup>
+        <actionGroup ref="SaveDynamicBlockActionGroup" stepKey="saveDynamicBlock"/>
+        <!--Create Widget dynamic block-->
+        <amOnPage url="{{AdminNewWidgetPage.url}}" stepKey="amOnAdminNewWidgetPage"/>
+        <waitForPageLoad stepKey="waitForCreateWidgetPageLoad"/>
+        <actionGroup ref="AdminFillSpecificPageWidgetMainFieldsActionGroup" stepKey="fillWidgetMainFields">
+            <argument name="widget" value="DynamicBlockRotateWidget"/>
+        </actionGroup>
+        <actionGroup ref="AdminConfigureDynamicBlockRotateWidgetOptionsActionGroup" stepKey="configureOptions">
+            <argument name="dynamicBlockOptions" value="DynamicBlockRotateWidgetOptions"/>
+        </actionGroup>
+        <actionGroup ref="AdminFilterDynamicBlockGridByNameActionGroup" stepKey="filterDynamicBlockGridInOptionsSection">
+            <argument name="dynamicBlockName" value="$createDynamicBlock.name$"/>
+        </actionGroup>
+        <actionGroup ref="AdminSelectDynamicBlockInWidgetOptionsDynamicBlockGridActionGroup" stepKey="selectDynamicBlock">
+            <argument name="dynamicBlockName" value="$createDynamicBlock.name$"/>
+        </actionGroup>
+        <actionGroup ref="ClickSaveButtonActionGroup" stepKey="saveWidget">
+            <argument name="message" value="The widget instance has been saved"/>
+        </actionGroup>
+        <actionGroup ref="CliCacheFlushActionGroup" stepKey="flushCache">
+            <argument name="tags" value="block_html"/>
+        </actionGroup>
+        <!--Add product to cart-->
+        <actionGroup ref="AddSimpleProductToCartActionGroup" stepKey="addSimpleProduct70ToCart">
+            <argument name="product" value="$createProductWithCost70$"/>
+        </actionGroup>
+        <executeJS function="localStorage.removeItem('mage-banners-cache-timeout')" stepKey="removeCacheTimeOutForProductWithCost70"/>
+        <!--Go cart page end assert dynamic block not exist-->
+        <actionGroup ref="clickViewAndEditCartFromMiniCartActionGroup" stepKey="goToShoppingCartFromMinicartForFirstProduct"/>
+        <waitForElementNotVisible selector="{{StorefrontProductPageDynamicBlockSection.dynamicBlockContent}}" stepKey="waitForElementNotVisible"/>
+        <dontSee selector="{{StorefrontProductPageDynamicBlockSection.dynamicBlockContent}}" userInput="$createDynamicBlock.default_contents$" stepKey="dontSeeDynamiBlockInCartWhenProductWithCost70In"/>
+        <actionGroup ref="DeleteProductFromShoppingCartActionGroup" stepKey="deleteFirstProductFromCart">
+            <argument name="productName" value="$createProductWithCost70.name$"/>
+        </actionGroup>
+        <!--Add product to cart-->
+        <actionGroup ref="AddSimpleProductToCartActionGroup" stepKey="addSimpleProduct75ToCart">
+            <argument name="product" value="$createProductWithCost75$"/>
+        </actionGroup>
+        <executeJS function="localStorage.removeItem('mage-banners-cache-timeout')" stepKey="removeCacheTimeOutForProductWithCost75"/>
+        <!--Go cart page end assert dynamic block exist-->
+        <actionGroup ref="clickViewAndEditCartFromMiniCartActionGroup" stepKey="goToShoppingCartFromMinicartForSecondProduct"/>
+        <waitForElementVisible selector="{{StorefrontProductPageDynamicBlockSection.dynamicBlockContent}}" stepKey="waitForDynamicBlockbecomeVisible"/>
+        <see selector="{{StorefrontProductPageDynamicBlockSection.dynamicBlockContent}}" userInput="$createDynamicBlock.default_contents$" stepKey="seeDynamicBlockInCartWhenProductWithCost75In"/>
+        <actionGroup ref="DeleteProductFromShoppingCartActionGroup" stepKey="deleteSecondProductFromCart">
+            <argument name="productName" value="$createProductWithCost75.name$"/>
+        </actionGroup>
+        <!--Add third product to cart-->
+        <actionGroup ref="AddSimpleProductToCartActionGroup" stepKey="addSimpleProduct100ToCart">
+            <argument name="product" value="$createProductWithCost100$"/>
+        </actionGroup>
+        <executeJS function="localStorage.removeItem('mage-banners-cache-timeout')" stepKey="removeCacheTimeOutForProductWithCost100"/>
+        <!--Go cart page end assert dynamic block not exist-->
+        <actionGroup ref="clickViewAndEditCartFromMiniCartActionGroup" stepKey="goToShoppingCartFromMinicartForThirdProduct"/>
+        <waitForElementNotVisible selector="{{StorefrontProductPageDynamicBlockSection.dynamicBlockContent}}" stepKey="waitForElementNotVisibleDynamicBlock"/>
+        <dontSee selector="{{StorefrontProductPageDynamicBlockSection.dynamicBlockContent}}" userInput="$createDynamicBlock.default_contents$" stepKey="dontSeeDynamicBlockInCartWhenProductWithCost100In"/>
+        <actionGroup ref="DeleteProductFromShoppingCartActionGroup" stepKey="deleteThirdProductFromCart">
+            <argument name="productName" value="$createProductWithCost100.name$"/>
+        </actionGroup>
+    </test>
+</tests>

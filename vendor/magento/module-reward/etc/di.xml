@@ -1,0 +1,88 @@
+<?xml version="1.0"?>
+<!--
+/**
+ * Copyright © Magento, Inc. All rights reserved.
+ * See COPYING.txt for license details.
+ */
+-->
+<config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="urn:magento:framework:ObjectManager/etc/config.xsd">
+    <preference for="Magento\Reward\Observer\PlaceOrder\RestrictionInterface" type="Magento\Reward\Observer\PlaceOrder\Restriction\Frontend"/>
+    <preference for="Magento\Reward\Api\RewardManagementInterface" type="Magento\Reward\Model\RewardManagement" />
+    <type name="Magento\Framework\Module\Manager">
+        <arguments>
+            <argument name="outputConfigPaths" xsi:type="array">
+                <item name="Magento_Reward" xsi:type="const">Magento\Reward\Helper\Data::XML_PATH_ENABLED</item>
+            </argument>
+        </arguments>
+    </type>
+    <type name="Magento\Eav\Model\Entity\Setup\PropertyMapper\Composite">
+        <arguments>
+            <argument name="propertyMappers" xsi:type="array">
+                <item name="reward" xsi:type="string">Magento\Reward\Model\ResourceModel\Setup\PropertyMapper</item>
+            </argument>
+        </arguments>
+    </type>
+    <type name="Magento\Sales\Model\ResourceModel\Order\Creditmemo">
+        <plugin name="refundRewardPoints" type="Magento\Reward\Model\Plugin\RewardPointsRefund"/>
+    </type>
+    <type name="Magento\Reward\Observer\PlaceOrder\Restriction\Api">
+        <arguments>
+            <argument name="backend" xsi:type="object">Magento\Reward\Observer\PlaceOrder\Restriction\Backend\Proxy</argument>
+            <argument name="frontend" xsi:type="object">Magento\Reward\Observer\PlaceOrder\Restriction\Frontend\Proxy</argument>
+        </arguments>
+    </type>
+    <type name="Magento\Quote\Model\Cart\CartTotalRepository">
+        <plugin name="rewardTotal" type="Magento\Reward\Model\Plugin\CartTotalRepository" />
+    </type>
+    <type name="Magento\Customer\Model\Metadata\CustomerMetadata">
+        <arguments>
+            <argument name="systemAttributes" xsi:type="array">
+                <item name="reward_update_notification" xsi:type="string">reward_update_notification</item>
+            </argument>
+        </arguments>
+    </type>
+    <type name="Magento\CustomerImportExport\Model\Import\Customer">
+        <plugin name="rewardAttributes" type="Magento\Reward\Model\Plugin\ImportCustomer" />
+    </type>
+    <type name="Magento\Quote\Model\Quote\TotalsCollector">
+        <plugin name="quoteRewardAmountUpdater" type="Magento\Reward\Model\Plugin\TotalsCollector" />
+    </type>
+    <type name="Magento\Sales\Api\OrderRepositoryInterface">
+        <plugin name="rewardCreditmemoUpdater" type="Magento\Reward\Model\Plugin\OrderRepository"/>
+    </type>
+    <type name="Magento\Framework\EntityManager\Operation\ExtensionPool">
+        <arguments>
+            <argument name="extensionActions" xsi:type="array">
+                <item name="Magento\SalesRule\Api\Data\RuleInterface" xsi:type="array">
+                    <item name="create" xsi:type="array">
+                        <item name="create_reward" xsi:type="string">Magento\Reward\Model\SalesRule\SaveHandler</item>
+                    </item>
+                    <item name="update" xsi:type="array">
+                        <item name="update_reward" xsi:type="string">Magento\Reward\Model\SalesRule\SaveHandler</item>
+                    </item>
+                    <item name="read" xsi:type="array">
+                        <item name="read_reward" xsi:type="string">Magento\Reward\Model\SalesRule\ReadHandler</item>
+                    </item>
+                </item>
+            </argument>
+        </arguments>
+    </type>
+    <type name="Magento\Reward\Helper\Customer">
+        <arguments>
+            <argument name="frontendUrlBuilder" xsi:type="object">Magento\Framework\Url</argument>
+        </arguments>
+    </type>
+    <type name="Magento\CustomerBalance\Model\Creditmemo\Balance">
+        <plugin name="customerBalanceSave" type="Magento\Reward\Model\Plugin\CustomerBalance" />
+    </type>
+    <type name="Magento\Eav\Model\Config">
+        <arguments>
+            <argument name="attributesForPreload" xsi:type="array">
+                <item name="customer" xsi:type="array">
+                    <item name="reward_update_notification" xsi:type="string">customer</item>
+                    <item name="reward_warning_notification" xsi:type="string">customer</item>
+                </item>
+            </argument>
+        </arguments>
+    </type>
+</config>

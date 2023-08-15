@@ -1,0 +1,77 @@
+<?php
+/**
+ * Copyright © Magento, Inc. All rights reserved.
+ * See COPYING.txt for license details.
+ */
+
+// phpcs:disable Magento2.Files.LineLength.MaxExceeded
+
+?>
+
+<section class="admin__page-section customer-information">
+    <div class="admin__page-section-title">
+        <span class="title"><?= $block->escapeHtml(__('General Information')) ?></span>
+    </div>
+    <div class="admin__page-section-content">
+        <table class="admin__page-section-item admin__table-secondary gift-registry-info">
+            <tbody>
+                <tr>
+                    <td><strong><?= $block->escapeHtml(__('Type')) ?>:</strong></td>
+                    <td><?= $block->escapeHtml($block->getTypeName()) ?></td>
+                </tr>
+                <tr>
+                    <td><strong><?= $block->escapeHtml(__('Event')) ?>:</strong></td>
+                    <td><?= $block->escapeHtml($block->getEntityTitle()) ?></td>
+                </tr>
+                <tr>
+                    <td><strong><?= $block->escapeHtml(__('Message')) ?>:</strong></td>
+                    <td><?= $block->escapeHtml($block->getEntityMessage()) ?></td>
+                </tr>
+                <tr>
+                    <td><strong><?= $block->escapeHtml(__('Website')) ?>:</strong></td>
+                    <td><?= $block->escapeHtml($block->getWebsiteName()) ?></td>
+                </tr>
+                <tr>
+                    <td><strong><?= $block->escapeHtml(__('Owner')) ?>:</strong></td>
+                    <td><a href="<?= $block->escapeUrl($block->getOwnerUrl()) ?>"><?= $block->escapeHtml($block->getOwnerName()) ?></a></td>
+                </tr>
+                <tr>
+                    <td><strong><?= $block->escapeHtml(__('Created on')) ?>:</strong></td>
+                    <td><?= $block->escapeHtml($block->getCreatedAt()) ?></td>
+                </tr>
+                <tr>
+                    <td><strong><?= $block->escapeHtml(__('Registrants')) ?>:</strong></td>
+                    <td><?= $block->escapeHtml($block->getRegistrants()) ?></td>
+                </tr>
+            </tbody>
+        </table>
+        <address class="admin__page-section-item gift-registry-address">
+            <div class="admin__page-section-item-title">
+                <span class="title"><?= $block->escapeHtml(__('Shipping Address')) ?></span>
+            </div>
+            <?= $block->getShippingAddressHtml() ?>
+        </address>
+    </div>
+</section>
+
+<div class="admin__fieldset">
+    <?= $block->getChildHtml('sharing_form') ?>
+</div>
+
+<section class="admin__page-section">
+    <div class="admin__page-section-title">
+        <span class="title"><?= $block->escapeHtml(__('Gift Registry Items')) ?></span>
+    </div>
+    <form id="update_form" method="post" action="<?= $block->escapeUrl($block->getActionUrl()) ?>">
+        <?= $block->getBlockHtml('formkey') ?>
+        <?= $block->getChildHtml('entity_items') ?>
+        <div class="grid-actions"><?= $block->getChildHtml('update_button') ?></div>
+    </form>
+</section>
+
+<section class="admin__page-section">
+    <div class="admin__page-section-title">
+        <span class="title"><?= $block->escapeHtml(__('Shopping Cart Items')) ?></span>
+    </div>
+    <?= $block->getChildHtml('cart_items') ?>
+</section>

@@ -1,0 +1,50 @@
+<?xml version="1.0"?>
+<!--
+/**
+ * Copyright © Magento, Inc. All rights reserved.
+ * See COPYING.txt for license details.
+ */
+-->
+<config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="urn:magento:framework:ObjectManager/etc/config.xsd">
+    <preference for="Magento\VersionsCms\Model\Hierarchy\ConfigInterface" type="Magento\VersionsCms\Model\Hierarchy\Config" />
+    <preference for="Magento\VersionsCms\Api\Data\HierarchyNodeSearchResultsInterface"
+                type="Magento\Framework\Api\SearchResults" />
+    <preference for="Magento\VersionsCms\Api\Data\HierarchyNodeInterface" type="Magento\VersionsCms\Model\Hierarchy\Node" />
+    <preference for="Magento\VersionsCms\Api\HierarchyNodeRepositoryInterface" type="Magento\VersionsCms\Model\Hierarchy\NodeRepository" />
+    <preference for="Magento\VersionsCms\Model\CurrentNodeResolverInterface" type="Magento\VersionsCms\Model\CurrentNodeResolver" />
+    <type name="Magento\VersionsCms\Model\Hierarchy\Config">
+        <arguments>
+            <argument name="reader" xsi:type="object">Magento\VersionsCms\Model\Hierarchy\Config\Reader\Proxy</argument>
+        </arguments>
+    </type>
+    <type name="Magento\VersionsCms\Model\Hierarchy\NodeRepository">
+        <arguments>
+            <argument name="collectionProcessor" xsi:type="object">Magento\VersionsCms\Api\SearchCriteria\HierarchyNodeCollectionProcessor</argument>
+        </arguments>
+    </type>
+    <virtualType name="Magento\VersionsCms\Api\SearchCriteria\HierarchyNodeCollectionProcessor" type="Magento\Framework\Api\SearchCriteria\CollectionProcessor">
+        <arguments>
+            <argument name="processors" xsi:type="array">
+                <item name="filters" xsi:type="object">Magento\VersionsCms\Model\Api\SearchCriteria\CollectionProcessor\HierarchyNodeFilterProcessor</item>
+                <item name="sorting" xsi:type="object">Magento\VersionsCms\Model\Api\SearchCriteria\CollectionProcessor\HierarchyNodeSortingProcessor</item>
+            </argument>
+        </arguments>
+    </virtualType>
+    <virtualType name="Magento\VersionsCms\Model\Api\SearchCriteria\CollectionProcessor\HierarchyNodeFilterProcessor" type="Magento\Framework\Api\SearchCriteria\CollectionProcessor\FilterProcessor">
+        <arguments>
+            <argument name="customFilters" xsi:type="array">
+                <item name="store_id" xsi:type="object">Magento\VersionsCms\Model\Api\SearchCriteria\CollectionProcessor\FilterProcessor\HierarchyNodeStoreFilter</item>
+            </argument>
+            <argument name="fieldMapping" xsi:type="array">
+                <item name="page_id" xsi:type="string">main_table.page_id</item>
+            </argument>
+        </arguments>
+    </virtualType>
+    <virtualType name="Magento\VersionsCms\Model\Api\SearchCriteria\CollectionProcessor\HierarchyNodeSortingProcessor" type="Magento\Framework\Api\SearchCriteria\CollectionProcessor\SortingProcessor">
+        <arguments>
+            <argument name="fieldMapping" xsi:type="array">
+                <item name="page_id" xsi:type="string">main_table.page_id</item>
+            </argument>
+        </arguments>
+    </virtualType>
+</config>

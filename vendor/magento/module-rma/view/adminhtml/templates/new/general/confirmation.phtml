@@ -1,0 +1,33 @@
+<?php
+/**
+ * Copyright © Magento, Inc. All rights reserved.
+ * See COPYING.txt for license details.
+ */
+
+/** @var $block \Magento\Rma\Block\Adminhtml\Rma\Edit\Tab\General\History" */
+?>
+<div class="admin__page-section-item rma-confirmation">
+    <div class="admin__page-section-item-title">
+        <span class="title"><?= $block->escapeHtml(__('Return Confirmation')) ?></span>
+    </div>
+    <div class="admin__page-section-item-content order-totals-actions rma-history-form">
+        <?php if ($block->canSendConfirmationEmail()) : ?>
+            <div class="admin__field admin__field-option field-rma-confirmation">
+                <input name="rma_confirmation"
+                       class="admin__control-checkbox"
+                       type="checkbox"
+                       id="rma_confirmation"
+                       value="1"
+                       checked="checked"/>
+                <label class="admin__field-label" for="rma_confirmation">
+                    <span><?= $block->escapeHtml(__('Email Returns Confirmation')) ?></span>
+                </label>
+            </div>
+        <?php endif; ?>
+        <div class="actions">
+            <button data-mage-init='{"button":{"event":"save","target":"#edit_form"}}'
+                    class="action-primary action-save action-default" type="button" id="rma_confirmation_submit">
+                <span><?= $block->escapeHtml(__('Submit Returns')) ?></span></button>
+        </div>
+    </div>
+</div>

@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+ /**
+  * Copyright © Magento, Inc. All rights reserved.
+  * See COPYING.txt for license details.
+  */
+-->
+
+<entities xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:noNamespaceSchemaLocation="urn:magento:mftf:DataGenerator/etc/dataProfileSchema.xsd">
+    <entity name="testData" type="data">
+        <data key="websiteName" unique="suffix">Website</data>
+        <data key="websiteCode" unique="suffix">new_website</data>
+        <data key="name" unique="suffix">Store</data>
+        <data key="storeCode" unique="suffix">new_store</data>
+        <data key="block" unique="suffix">Block</data>
+    </entity>
+
+    <entity name="role" type="data">
+        <data key="name" unique="suffix">Role</data>
+    </entity>
+    <entity name="newAdmin" type="user">
+        <data key="username" unique="suffix">admin</data>
+        <data key="firstName">John</data>
+        <data key="lastName">Smith</data>
+        <data key="password">admin123</data>
+    </entity>
+</entities>

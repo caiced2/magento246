@@ -1,0 +1,27 @@
+<?xml version="1.0"?>
+<!--
+/**
+ * Copyright © Magento, Inc. All rights reserved.
+ * See COPYING.txt for license details.
+ */
+-->
+<config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="urn:magento:framework:ObjectManager/etc/config.xsd">
+    <type name="Magento\StagingGraphQl\Plugin\Query\PreviewResolver">
+        <arguments>
+            <argument name="supportedQueries" xsi:type="array">
+                <item name="products" xsi:type="string">products</item>
+                <item name="category" xsi:type="string">category</item>
+                <item name="categoryList" xsi:type="string">categoryList</item>
+                <item name="categories" xsi:type="string">categories</item>
+            </argument>
+        </arguments>
+    </type>
+
+    <type name="Magento\CatalogRuleStaging\Pricing\Price\CatalogRulePrice">
+        <plugin name="catalogRuleStagedTracker" type="Magento\CatalogStagingGraphQl\Model\Plugin\CatalogRulePricePlugin"/>
+    </type>
+
+    <type name="Magento\CatalogGraphQl\Model\Resolver\Products\DataProvider\CategoryTree">
+        <plugin name="previewIndex" type="Magento\CatalogStagingGraphQl\Model\Plugin\PreviewReindexPlugin"/>
+    </type>
+</config>

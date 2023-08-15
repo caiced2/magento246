@@ -1,0 +1,101 @@
+<?xml version="1.0"?>
+<!--
+/**
+ * Copyright © Magento, Inc. All rights reserved.
+ * See COPYING.txt for license details.
+ */
+-->
+<config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="urn:magento:framework:ObjectManager/etc/config.xsd">
+    <preference for="Magento\Rma\Api\TrackRepositoryInterface" type="Magento\Rma\Model\TrackRepository"/>
+    <preference for="Magento\Rma\Api\RmaRepositoryInterface" type="Magento\Rma\Model\RmaRepository"/>
+    <preference for="Magento\Rma\Api\CommentRepositoryInterface" type="Magento\Rma\Model\CommentRepository"/>
+    <preference for="Magento\Rma\Api\Data\ItemInterface" type="Magento\Rma\Model\Item"/>
+    <preference for="Magento\Rma\Api\Data\RmaInterface" type="Magento\Rma\Model\Rma"/>
+    <preference for="Magento\Rma\Api\Data\CommentInterface" type="Magento\Rma\Model\Rma\Status\History"/>
+    <preference for="Magento\Rma\Api\Data\TrackInterface" type="Magento\Rma\Model\Shipping"/>
+    <preference for="Magento\Rma\Api\Data\RmaSearchResultInterface" type="Magento\Rma\Model\ResourceModel\Rma\Collection"/>
+    <preference for="Magento\Rma\Api\Data\TrackSearchResultInterface" type="Magento\Rma\Model\ResourceModel\Shipping\Collection"/>
+    <preference for="Magento\Rma\Api\RmaManagementInterface" type="Magento\Rma\Model\Service\RmaManagement"/>
+    <preference for="Magento\Rma\Model\Spi\TrackResourceInterface" type="Magento\Rma\Model\ResourceModel\Shipping"/>
+    <preference for="Magento\Rma\Api\Data\CommentSearchResultInterface" type="Magento\Rma\Model\ResourceModel\Rma\Status\History\Collection"/>
+    <preference for="Magento\Rma\Api\TrackManagementInterface" type="Magento\Rma\Model\Service\TrackManagement"/>
+    <preference for="Magento\Rma\Api\CommentManagementInterface" type="Magento\Rma\Model\Service\CommentManagement"/>
+    <preference for="Magento\Rma\Model\Spi\CommentResourceInterface" type="Magento\Rma\Model\ResourceModel\Rma\Status\History"/>
+    <preference for="Magento\Rma\Model\Spi\RmaResourceInterface" type="Magento\Rma\Model\ResourceModel\Rma"/>
+    <preference for="Magento\Rma\Api\RmaAttributesManagementInterface" type="Magento\Rma\Model\Service\RmaAttributesManagement"/>
+    <type name="Magento\Rma\Helper\Data">
+        <arguments>
+            <argument name="customerSession" xsi:type="object">Magento\Customer\Model\Session\Proxy</argument>
+            <argument name="authSession" xsi:type="object">Magento\Backend\Model\Auth\Session\Proxy</argument>
+        </arguments>
+    </type>
+    <type name="Magento\Rma\Model\Rma\Status\History">
+        <arguments>
+            <argument name="translate" xsi:type="object">Magento\Framework\Translate</argument>
+        </arguments>
+    </type>
+    <type name="Magento\Rma\Model\Rma">
+        <arguments>
+            <argument name="translate" xsi:type="object">Magento\Framework\Translate</argument>
+        </arguments>
+    </type>
+    <type name="Magento\Eav\Model\Entity\Setup\PropertyMapper\Composite">
+        <arguments>
+            <argument name="propertyMappers" xsi:type="array">
+                <item name="rma" xsi:type="string">Magento\Rma\Model\ResourceModel\Setup\PropertyMapper</item>
+            </argument>
+        </arguments>
+    </type>
+    <type name="Magento\Sales\Block\Adminhtml\Order\View\Tab\History">
+        <plugin name="sales-order-history-rma-plugin" type="Magento\Rma\Block\Adminhtml\Order\View\Tab\HistoryPlugin"/>
+    </type>
+    <virtualType name="Magento\Rma\Service\ResourceModel\Item\Form\Attribute\CollectionFactory" type="Magento\Customer\Model\ResourceModel\Form\Attribute\CollectionFactory">
+        <arguments>
+            <argument name="instanceName" xsi:type="string">Magento\Rma\Model\ResourceModel\Item\Form\Attribute\Collection</argument>
+        </arguments>
+    </virtualType>
+    <virtualType name="Magento\Rma\Model\Service\Eav\AttributeMetadataDataProvider" type="Magento\Customer\Model\AttributeMetadataDataProvider">
+        <arguments>
+            <argument name="attrFormCollectionFactory" xsi:type="object">Magento\Rma\Service\ResourceModel\Item\Form\Attribute\CollectionFactory</argument>
+        </arguments>
+    </virtualType>
+    <type name="Magento\Rma\Model\Service\RmaAttributesManagement">
+        <arguments>
+            <argument name="metadataDataProvider" xsi:type="object">Magento\Rma\Model\Service\Eav\AttributeMetadataDataProvider</argument>
+        </arguments>
+    </type>
+    <type name="Magento\Rma\Model\RmaRepository">
+        <plugin name="authorization" type="Magento\Rma\Model\Rma\Plugin\Authorization" />
+    </type>
+    <type name="Magento\SalesSequence\Model\EntityPool">
+        <arguments>
+            <argument name="entities" xsi:type="array">
+                <item name="rma_item" xsi:type="string">rma_item</item>
+            </argument>
+        </arguments>
+    </type>
+    <type name="Magento\Config\Model\Config\TypePool">
+        <arguments>
+            <argument name="sensitive" xsi:type="array">
+                <item name="sales_email/magento_rma/copy_to" xsi:type="string">1</item>
+                <item name="sales_email/magento_rma_auth/copy_to" xsi:type="string">1</item>
+                <item name="sales_email/magento_rma_comment/copy_to" xsi:type="string">1</item>
+                <item name="sales_email/magento_rma_customer_comment/copy_to" xsi:type="string">1</item>
+            </argument>
+        </arguments>
+    </type>
+    <type name="Magento\Rma\Model\ResourceModel\Rma">
+        <arguments>
+            <argument name="rmaCreate" xsi:type="object" shared="false">\Magento\Rma\Model\Rma\Create</argument>
+        </arguments>
+    </type>
+    <type name="Magento\Eav\Model\Config">
+        <arguments>
+            <argument name="attributesForPreload" xsi:type="array">
+                <item name="catalog_product" xsi:type="array">
+                    <item name="is_returnable" xsi:type="string">catalog_product</item>
+                </item>
+            </argument>
+        </arguments>
+    </type>
+</config>

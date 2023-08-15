@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+ /**
+  * Copyright © Magento, Inc. All rights reserved.
+  * See COPYING.txt for license details.
+  */
+-->
+
+<actionGroups xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+              xsi:noNamespaceSchemaLocation="urn:magento:mftf:Test/etc/actionGroupSchema.xsd">
+<actionGroup name="CustomLoginActionGroup">
+    <arguments>
+        <argument name="User"/>
+    </arguments>
+    <amOnPage url="{{_ENV.MAGENTO_BACKEND_NAME}}" stepKey="navigateToAdmin"/>
+    <fillField userInput="{{User.username}}" selector="{{AdminLoginFormSection.username}}" stepKey="fillUsername"/>
+    <fillField userInput="{{User.password}}" selector="{{AdminLoginFormSection.password}}" stepKey="fillPassword"/>
+    <click selector="{{AdminLoginFormSection.signIn}}" stepKey="clickLogin"/>
+</actionGroup>
+</actionGroups>
+

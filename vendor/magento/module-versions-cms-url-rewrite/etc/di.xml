@@ -1,0 +1,22 @@
+<?xml version="1.0"?>
+<!--
+/**
+ * Copyright © Magento, Inc. All rights reserved.
+ * See COPYING.txt for license details.
+ */
+-->
+<config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="urn:magento:framework:ObjectManager/etc/config.xsd">
+    <type name="Magento\Store\Model\StoreSwitcher">
+        <arguments>
+            <argument name="storeSwitchers" xsi:type="array">
+                <item name="manageHierarchy" xsi:type="object">Magento\VersionsCmsUrlRewrite\Model\StoreSwitcher</item>
+            </argument>
+        </arguments>
+    </type>
+    <type name="Magento\Cms\Model\PageRepository">
+        <plugin name="versions_cms_url_rewrite_plugin" type="Magento\VersionsCmsUrlRewrite\Plugin\Cms\Model\PageRepositoryPlugin"/>
+    </type>
+    <type name="Magento\Cms\ViewModel\Page\Grid\UrlBuilder">
+        <plugin name="versions_cms_page_grid_url_builder_plugin" type="Magento\VersionsCmsUrlRewrite\Plugin\Cms\ViewModel\Page\Grid\UrlBuilderPlugin"/>
+    </type>
+</config>

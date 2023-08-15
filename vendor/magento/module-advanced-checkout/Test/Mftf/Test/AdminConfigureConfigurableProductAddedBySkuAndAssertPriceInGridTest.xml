@@ -1,0 +1,94 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+ /**
+  * Copyright © Magento, Inc. All rights reserved.
+  * See COPYING.txt for license details.
+  */
+-->
+<tests xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="urn:magento:mftf:Test/etc/testSchema.xsd">
+    <test name="AdminConfigureConfigurableProductAddedBySkuAndAssertPriceInGridTest">
+        <annotations>
+            <features value="AdvancedCheckout"/>
+            <stories value="Edit order"/>
+            <title value="Price of configured Configurable product added by SKU to an Order is displayed"/>
+            <description value="Check that price of configured Configurable product added by SKU to an Order is displayed"/>
+            <severity value="AVERAGE"/>
+            <testCaseId value="MC-41585"/>
+            <useCaseId value="MC-40028"/>
+            <group value="advancedCheckout"/>
+        </annotations>
+        <before>
+            <createData entity="ApiCategory" stepKey="createCategory"/>
+            <createData entity="ApiConfigurableProduct" stepKey="createConfigurableProduct">
+                <requiredEntity createDataKey="createCategory"/>
+            </createData>
+            <createData entity="productAttributeWithTwoOptions" stepKey="createConfigurableProductAttribute"/>
+            <createData entity="productAttributeOption1" stepKey="createConfigurableProductAttributeOption1">
+                <requiredEntity createDataKey="createConfigurableProductAttribute"/>
+            </createData>
+            <createData entity="productAttributeOption2" stepKey="createConfigurableProductAttributeOption2">
+                <requiredEntity createDataKey="createConfigurableProductAttribute"/>
+            </createData>
+            <createData entity="AddToDefaultSet" stepKey="createConfigAddToAttributeSet">
+                <requiredEntity createDataKey="createConfigurableProductAttribute"/>
+            </createData>
+            <getData entity="ProductAttributeOptionGetter" index="1" stepKey="getConfigAttributeOption1">
+                <requiredEntity createDataKey="createConfigurableProductAttribute"/>
+            </getData>
+            <getData entity="ProductAttributeOptionGetter" index="2" stepKey="getConfigAttributeOption2">
+                <requiredEntity createDataKey="createConfigurableProductAttribute"/>
+            </getData>
+            <createData entity="ApiSimpleOne" stepKey="createConfigurableChildProduct1">
+                <requiredEntity createDataKey="createConfigurableProductAttribute"/>
+                <requiredEntity createDataKey="getConfigAttributeOption1"/>
+            </createData>
+            <createData entity="ApiSimpleTwo" stepKey="createConfigurableChildProduct2">
+                <requiredEntity createDataKey="createConfigurableProductAttribute"/>
+                <requiredEntity createDataKey="getConfigAttributeOption2"/>
+            </createData>
+            <createData entity="ConfigurableProductTwoOptions" stepKey="createConfigurableProductOption">
+                <requiredEntity createDataKey="createConfigurableProduct"/>
+                <requiredEntity createDataKey="createConfigurableProductAttribute"/>
+                <requiredEntity createDataKey="getConfigAttributeOption1"/>
+                <requiredEntity createDataKey="getConfigAttributeOption2"/>
+            </createData>
+            <createData entity="ConfigurableProductAddChild" stepKey="createConfigurableProductAddChild1">
+                <requiredEntity createDataKey="createConfigurableProduct"/>
+                <requiredEntity createDataKey="createConfigurableChildProduct1"/>
+            </createData>
+            <createData entity="ConfigurableProductAddChild" stepKey="createConfigurableProductAddChild2">
+                <requiredEntity createDataKey="createConfigurableProduct"/>
+                <requiredEntity createDataKey="createConfigurableChildProduct2"/>
+            </createData>
+            <createData entity="Simple_US_Customer" stepKey="createSimpleUsCustomer"/>
+            <actionGroup ref="AdminLoginActionGroup" stepKey="loginToAdmin"/>
+            <magentoCron groups="index" stepKey="reindexInvalidatedIndicesBeforeTest"/>
+        </before>
+        <after>
+            <actionGroup ref="AdminLogoutActionGroup" stepKey="logoutFromAdmin"/>
+            <deleteData createDataKey="createCategory" stepKey="deleteCategory"/>
+            <deleteData createDataKey="createSimpleUsCustomer" stepKey="deleteCustomer"/>
+            <deleteData createDataKey="createConfigurableProduct" stepKey="deleteConfigurableProduct"/>
+            <deleteData createDataKey="createConfigurableChildProduct1" stepKey="deleteConfigurableChildProduct1"/>
+            <deleteData createDataKey="createConfigurableChildProduct2" stepKey="deleteConfigurableChildProduct2"/>
+            <deleteData createDataKey="createConfigurableProductAttribute" stepKey="deleteConfigurableProductAttribute"/>
+            <magentoCron groups="index" stepKey="reindexInvalidatedIndices"/>
+        </after>
+        <actionGroup ref="NavigateToNewOrderPageExistingCustomerActionGroup" stepKey="CreateNewOrder">
+            <argument name="customer" value="Simple_US_Customer"/>
+        </actionGroup>
+        <click selector="{{AdminOrderFormItemsOrderedSection.addProductsBySku}}" stepKey="clickAddProductsBySKUButton"/>
+        <waitForElementVisible selector="{{AdminOrderFormItemsSection.skuNumber('0')}}" stepKey="waitForSkuInputVisible"/>
+        <fillField selector="{{AdminOrderFormItemsSection.skuNumber('0')}}" userInput="$createConfigurableProduct.sku$" stepKey="fillSkuField"/>
+        <pressKey selector="{{AdminOrderFormItemsSection.skuNumber('0')}}" parameterArray="[\Facebook\WebDriver\WebDriverKeys::ENTER]" stepKey="pressEnter"/>
+
+        <waitForElementVisible selector="{{AdminOrderFormItemsOrderedSection.configureButtonBySku}}" stepKey="waitForConfigureButtonBySkuAppeared"/>
+        <click selector="{{AdminOrderFormItemsOrderedSection.configureButtonBySku}}" stepKey="clickConfigureButtonBySKUButton"/>
+
+        <waitForElementVisible selector="{{AdminOrderFormItemsOrderedSection.configureProductOk}}" stepKey="waitForConfigureProductFrameVisible"/>
+        <selectOption selector="{{AdminOrderFormItemsOrderedSection.configureSelectAttribute}}" userInput="option1" stepKey="selectOption1"/>
+
+        <click selector="{{AdminOrderFormItemsOrderedSection.configureProductOk}}" stepKey="clickConfigureProductFrameOkButton"/>
+        <see selector="{{AdminOrderFormItemsOrderedSection.productPrice($createConfigurableProduct.name$)}}" userInput="$123.00" stepKey="seeProductPrice"/>
+    </test>
+</tests>

@@ -1,0 +1,30 @@
+<?php
+/**
+ * Copyright © Magento, Inc. All rights reserved.
+ * See COPYING.txt for license details.
+ */
+
+// phpcs:disable Magento2.Files.LineLength
+// phpcs:disable Magento2.Templates.ThisInTemplate
+
+/* @var $block \Magento\Reward\Block\Checkout\Payment\Additional */
+?>
+<?php if ($block->getCanUseRewardPoints()) : ?>
+    <div class="opc-payment-additional rewardpoints" id="reward_placer">
+        <div class="field choice payment">
+            <input type="checkbox" name="payment[use_reward_points]" value="1"
+                id="use-reward-points"
+                data-mage-init='{"checkoutBalance":{
+                    "balance":<?= (float)$block->getCurrencyAmount() ?>,
+                    "amountSubstracted":<?= /* @noEscape */ ($block->useRewardPoints()) ? 'true' : 'false' ?>,
+                    "usedAmount":<?= (float)$block->getQuote()->getBaseRewardCurrencyAmount() ?>
+                }}'
+                <?= $block->useRewardPoints() ? ' checked="checked"' : '' ?> class="checkbox" />
+            <label for="use-reward-points" class="label">
+                <span>
+                    <?= $block->escapeHtml(__('Use your reward points; %1 are available.', $this->helper(\Magento\Reward\Helper\Data::class)->formatReward($block->getPointsBalance(), $block->getCurrencyAmount())), ['span']) ?>
+                </span>
+            </label>
+        </div>
+    </div>
+<?php endif; ?>

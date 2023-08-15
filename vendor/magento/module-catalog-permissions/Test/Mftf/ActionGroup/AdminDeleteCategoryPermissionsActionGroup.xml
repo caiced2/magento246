@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+ /**
+  * Copyright © Magento, Inc. All rights reserved.
+  * See COPYING.txt for license details.
+  */
+-->
+
+<actionGroups xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+              xsi:noNamespaceSchemaLocation="urn:magento:mftf:Test/etc/actionGroupSchema.xsd">
+    <actionGroup name="AdminDeleteCategoryPermissionsActionGroup">
+        <annotations>
+            <description>Deletes Category Permissions.</description>
+        </annotations>
+        <arguments>
+            <argument name="permissionNumber" type="string" defaultValue="1"/>
+        </arguments>
+        <scrollTo selector="{{AdminCategoryPermissionsSection.sectionHeader}}" stepKey="scrollToCategoryPermissionsTab"/>
+        <conditionalClick selector="{{AdminCategoryPermissionsSection.sectionHeader}}" dependentSelector="{{AdminCategoryPermissionsSection.newPermissionButton}}" visible="false" stepKey="openCategoryPermissionsTab"/>
+        <waitForElementVisible selector="{{AdminConfigCatalogCategoryPermissionsSection.deletePermissionButton(permissionNumber)}}" stepKey="waitForNewPermissionButtonVisible"/>
+        <click selector="{{AdminConfigCatalogCategoryPermissionsSection.deletePermissionButton(permissionNumber)}}" stepKey="clickOnDeletePermissionButton"/>
+    </actionGroup>
+</actionGroups>

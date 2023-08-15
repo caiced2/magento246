@@ -1,0 +1,85 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+ /**
+  * Copyright © Magento, Inc. All rights reserved.
+  * See COPYING.txt for license details.
+  */
+-->
+
+<tests xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xsi:noNamespaceSchemaLocation="urn:magento:mftf:Test/etc/testSchema.xsd">
+    <test name="StorefrontQuickCheckoutGuestCheckoutExtensionDisabledTest">
+        <annotations>
+            <features value="MagentoQuickCheckout"/>
+            <stories value="Checkout with guest customer having the Quick Checkout extension disabled"/>
+            <title value="Guest customer can checkout using the Storefront having the Quick Checkout extension disabled"/>
+            <description value="Customer can checkout and place an order using the Storefront having the Quick Checkout extension disabled as guest"/>
+            <severity value="CRITICAL"/>
+            <testCaseId value="guest-checkout-hosted-fields-extension-disabled"/>
+            <group value="quick-checkout"/>
+        </annotations>
+        <before>
+            <!-- Login -->
+            <actionGroup ref="AdminLoginActionGroup" stepKey="login"/>
+            <!-- Ensure Quick Checkout extension is disabled -->
+            <actionGroup ref="AdminDisableQuickCheckoutActionGroup" stepKey="disableQuickCheckoutExtension" />
+            <amOnPage url="{{AdminQuickCheckoutPage.url}}" stepKey="navigateToSettingsPage"/>
+            <waitForPageLoad stepKey="waitForPagePageLoad"/>
+            <conditionalClick selector="{{AdminQuickCheckoutSettingsSection.quickCheckoutTab}}" dependentSelector="{{AdminQuickCheckoutSettingsSection.quickCheckoutTabOpen}}" visible="false" stepKey="openQuickCheckoutSection"/>
+            <!-- Create Product -->
+            <createData entity="_defaultCategory" stepKey="createCategory"/>
+            <createData entity="_defaultProduct" stepKey="createProduct">
+                <requiredEntity createDataKey="createCategory"/>
+            </createData>
+        </before>
+        <after>
+            <!-- Delete product -->
+            <deleteData stepKey="deleteCategory" createDataKey="createCategory"/>
+            <deleteData stepKey="deleteProduct" createDataKey="createProduct"/>
+            <!-- Logout -->
+            <actionGroup ref="AdminLogoutActionGroup" stepKey="logoutFromAdmin"/>
+        </after>
+
+        <!-- Navigate to storefront as a guest -->
+        <amOnPage url="{{StorefrontCategoryPage.url($$createCategory.name$$)}}" stepKey="navigateToCategoryPage"/>
+        <actionGroup ref="StorefrontAddProductToCartFromCategoryActionGroup" stepKey="addProductToCart">
+            <argument name="productName" value="$$createProduct.name$$"/>
+        </actionGroup>
+        <actionGroup ref="GoToCheckoutFromMinicartActionGroup" stepKey="goToCheckoutFromMinicart"/>
+
+        <!-- Fill in the guest customer's shipping information -->
+        <actionGroup ref="GuestCheckoutFillingShippingSectionActionGroup" stepKey="guestCheckoutFillingShippingSection">
+            <argument name="customerVar" value="CustomerEntityOne"/>
+            <argument name="customerAddressVar" value="CustomerAddressSimple"/>
+        </actionGroup>
+
+        <!-- Click on Magento Payments Check / Money order -->
+        <actionGroup ref="CheckoutSelectCheckMoneyOrderPaymentActionGroup" stepKey="guestSelectCheckMoneyOrderPayment"/>
+
+        <actionGroup ref="CheckBillingAddressInCheckoutActionGroup" stepKey="guestSeeAddress">
+            <argument name="customerVar" value="CustomerEntityOne"/>
+            <argument name="customerAddressVar" value="CustomerAddressSimple"/>
+        </actionGroup>
+
+        <!-- Place order and see order successful page -->
+        <actionGroup ref="CheckoutPlaceOrderActionGroup" stepKey="guestPlaceorder">
+            <argument name="orderNumberMessage" value="CONST.successGuestCheckoutOrderNumberMessage"/>
+            <argument name="emailYouMessage" value="CONST.successCheckoutEmailYouMessage"/>
+        </actionGroup>
+
+        <!-- Check order status on Admin -->
+        <grabTextFrom selector="{{CheckoutSuccessMainSection.orderNumber}}" stepKey="getOrderNumber"/>
+        <actionGroup ref="OpenOrderByIdActionGroup" stepKey="addFilterToGridAndOpenOrder">
+            <argument name="orderId" value="{$getOrderNumber}"/>
+        </actionGroup>
+        <actionGroup ref="AdminAssertNoAuthorizeButtonOnOrderPageActionGroup" stepKey="dontSeeOrderWaitingForAuthorize"/>
+        <actionGroup ref="AdminOrderViewCheckStatusActionGroup" stepKey="checkOrderStatus">
+            <argument name="status" value="Pending"/>
+        </actionGroup>
+        <see selector="{{AdminOrderDetailsInformationSection.accountInformation}}" userInput="{{CustomerEntityOne.fullname}}" stepKey="seeAdminOrderGuest"/>
+        <see selector="{{AdminOrderDetailsInformationSection.accountInformation}}" userInput="{{CustomerEntityOne.email}}" stepKey="seeAdminOrderEmail"/>
+        <see selector="{{AdminOrderDetailsInformationSection.billingAddress}}" userInput="{{CustomerAddressSimple.street[0]}}" stepKey="seeAdminOrderBillingAddress"/>
+        <see selector="{{AdminOrderDetailsInformationSection.shippingAddress}}" userInput="{{CustomerAddressSimple.street[0]}}" stepKey="seeAdminOrderShippingAddress"/>
+        <see selector="{{AdminOrderDetailsInformationSection.itemsOrdered}}" userInput="$$createProduct.name$$" stepKey="seeAdminOrderProduct"/>
+    </test>
+</tests>

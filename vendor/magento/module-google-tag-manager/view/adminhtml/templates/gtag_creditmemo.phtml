@@ -1,0 +1,65 @@
+<?php
+/**
+ * Copyright © Magento, Inc. All rights reserved.
+ * See COPYING.txt for license details.
+ */
+
+/** @var \Magento\Framework\View\Helper\SecureHtmlRenderer $secureRenderer */
+/** @var \Magento\GoogleTagManager\Block\Adminhtml\GtagGa $block */
+/** @var \Magento\GoogleTagManager\ViewModel\TagManagerConfig $gtmConfig */
+
+use Magento\GoogleTagManager\Model\Config\TagManagerConfig;
+
+$gtmConfig = $block->getData('view_model');
+$refundJson = $block->getRefundJson() ?? '[]';
+?>
+<?php if (!$block->isUserNotAllowSaveCookie()) { ?>
+    <?php
+    $accountType = $gtmConfig->getAccountType();
+    $gtmAccountId = $gtmConfig->getContainerId();
+    $measurementId = $gtmConfig->getMeasurementId();
+    switch ($accountType) {
+        case TagManagerConfig::TYPE_TAG_MANAGER:
+            if (!empty($gtmAccountId)) { ?>
+                <?php
+                $escapedAccountId = $block->escapeJs($gtmAccountId);
+                $currencyCode = $block->escapeJs($block->getStoreCurrencyCode());
+                ?>
+                <!-- GOOGLE TAG MANAGER -->
+                <script type="text/x-magento-init">
+                    {
+                        "*": {
+                            "Magento_GoogleTagManager/js/google-tag-manager": {
+                                "gtmAccountId": "<?= /* @noEscape */ $escapedAccountId ?>",
+                                "storeCurrencyCode": "<?= /* @noEscape */ $currencyCode ?>",
+                                "refundJson": <?= /* @noEscape */ $refundJson ?>
+                            }
+                        }
+                    }
+                </script>
+                <!-- END GOOGLE TAG MANAGER -->
+                <?php
+            }
+            break;
+        case TagManagerConfig::TYPE_ANALYTICS4:
+            if (!empty($measurementId)) {
+                $escapedMeasurementId = $block->escapeJs($measurementId);
+                $currencyCode = $block->escapeJs($block->getStoreCurrencyCode()); ?>
+                <!-- BEGIN NEW GOOGLE ANALYTICS 4 -->
+                <script type="text/x-magento-init">
+                    {
+                        "*": {
+                            "Magento_GoogleTagManager/js/google-analytics": {
+                                "measurementId": "<?= /* @noEscape */ $escapedMeasurementId ?>",
+                                "storeCurrencyCode": "<?= /* @noEscape */ $currencyCode ?>",
+                                "refundJson": <?= /* @noEscape */ $refundJson ?>
+                            }
+                        }
+                    }
+                </script>
+                <!-- END NEW GOOGLE ANALYTICS 4 -->
+                <?php
+            }
+            break;
+    }
+}

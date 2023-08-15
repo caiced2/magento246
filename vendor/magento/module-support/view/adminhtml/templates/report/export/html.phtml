@@ -1,0 +1,346 @@
+<?php
+/**
+ * Copyright © Magento, Inc. All rights reserved.
+ * See COPYING.txt for license details.
+ */
+
+?>
+<?php
+/** @var \Magento\Support\Block\Adminhtml\Report\Export\Html $block */
+
+/** @var \Magento\Support\Model\Report\DataConverter $dataConverter */
+$dataConverter = $block->getDataConverter();
+/** @var \Magento\Support\Model\Report\HtmlGenerator $htmlGenerator */
+$htmlGenerator = $block->getHtmlGenerator();
+?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="<?= $block->escapeHtmlAttr($block->getLang()) ?>" lang="<?= $block->escapeHtmlAttr($block->getLang()) ?>">
+<head>
+    <meta http-equiv="content-type" content="text/html; charset=utf-8" />
+    <title>Magento System Report for <?= $block->escapeHtml($block->getReportTitle()) ?></title>
+    <style type="text/css">
+        html {
+            width: 100%;
+        }
+        body {
+            line-height:1.0em;
+            font: 13px/1.5em Arial,Helvetica,sans-serif;
+        }
+        table {
+            border-collapse: collapse;
+            margin:0;
+            padding:0
+        }
+        th {
+            text-align: center;
+            font-weight: bold;
+            padding: 10px;
+            border: 1px solid black;
+            background-color: #7eadd9
+        }
+        td {
+            text-align: left;
+            padding: 7px;
+            border: 1px solid black;
+            vertical-align: top
+        }
+        h1, h2, h3, h4 {
+            margin-bottom:.5em; line-height:1.4em;
+        }
+        h2 {
+            font-size:1.7em
+        }
+        h3 {
+            margin-bottom:.5em; color:#253033; font-size:1.25em
+        }
+        h4 {
+            margin-bottom:.6em; color:#494848; font-size:1.05em
+        }
+        h5 {
+            font-size:1.05em
+        }
+        h6 {
+            font-size:1em
+        }
+        h1 a, h1 a:hover,
+        h2 a, h2 a:hover,
+        h3 a, h3 a:hover,
+        h4 a, h4 a:hover {
+            font-weight:normal
+        }
+        .flag-yes, .flag-processing, .flag-no {
+            font-weight: bold;
+            text-align: center;
+            vertical-align: middle;
+            color: #FFFFFF
+        }
+        .flag-yes {
+            background-color: #00BD39;
+        }
+        .flag-processing {
+            background-color: #FF9640;
+        }
+        .flag-no {
+            background-color: #FF4040;
+        }
+        .selected-row td, tr:hover td {
+            background-color: #FFE7A1;
+            color: #000000
+        }
+        .report-cell-text {
+            display: none;
+        }
+        a, a:visited {
+            color: #0044ff
+        }
+        a:hover {
+            background-color: #FFE7A1;
+            color: #000000
+        }
+        h1#report-title span {
+            color: #205791
+        }
+        div#copyright {
+            width: 100%;
+            text-align: left;
+            color: #6a6a6a;
+            font-size: 80%
+        }
+        .file-path {
+            color: #6a6a6a;
+            font-size: 80%
+        }
+        .diff-negative {
+            color: #FF4040;
+            font-weight: bold;
+        }
+        .diff-positive {
+            color: #00BD39;
+            font-weight: bold;
+        }
+
+        /* Menu */
+        #report-menu:after {
+            clear: both;
+            content: ".";
+            display: block;
+            font-size: 0;
+            height: 0;
+            line-height: 0;
+            overflow: hidden;
+        }
+        #report-menu {
+            background: none repeat scroll 0 0 #97c8f5;
+            left: 0;
+            position: fixed;
+            top: 0;
+            width: 100%;
+            z-index: 100;
+            border-bottom: 1px solid #6a6a6a
+        }
+        #report-menu ul {
+            margin: 0;
+            padding:0;
+            list-style:none;
+        }
+        #report-menu ul li  {
+            margin:0;
+            position:relative;
+            height:30px;
+            line-height:30px;
+        }
+        #report-menu ul li a, span.report-menu-root-item {
+            display: block;
+            text-decoration: none;
+            color: #000;
+            padding: 0 5px;
+            border-left: none;
+            background-color: #97c8f5;
+        }
+        span.report-menu-root-item:hover {
+            cursor: pointer;
+            background-color: #FFE7A1;
+        }
+        #report-menu > ul > li {
+            float: left;
+            height: 30px;
+            line-height: 30px;
+        }
+        #report-menu li > ul {
+            visibility:hidden;
+            width: 280px;
+            position: absolute;
+            top:0;
+            border-left: 1px solid #000;
+        }
+        #report-menu > ul > li > ul {
+            top:30px;
+            left:0;
+        }
+        #report-menu a:hover{
+            background-color: #FFE7A1;
+        }
+        #report-menu li:hover > ul {
+            visibility:visible;
+        }
+        * html #report-menu ul li { float: left; height: 1%; }
+        * html #report-menu ul li a { height: 1%; }
+        a.no-data-link {
+            color: #597aa3 !important;
+        }
+        a#top-link {
+            background-color: #FFE7A1 !important;
+            font-weight: bold !important
+        }
+    </style>
+    <script>
+        function toggleTableData(element, tableId)
+        {
+            var tableDiv = document.getElementById(tableId);
+            if (tableDiv.style.display == 'none') {
+                tableDiv.style.display = 'block';
+                element.firstChild.data = '<?= $block->escapeJs(__('Collapse')) ?>';
+            } else {
+                tableDiv.style.display = 'none';
+                element.firstChild.data = '<?= $block->escapeJs(__('Expand')) ?>';
+            }
+        }
+
+        function showFullText(cellId)
+        {
+            var cellObject = document.getElementById(cellId);
+            var fullTextDiv = cellObject.getElementsByClassName('report-cell-text')[0];
+            cellObject.innerHTML = fullTextDiv.innerHTML;
+
+        }
+
+        window.onload = function()
+        {
+            var rows = document.getElementsByTagName('tr');
+            for (var i = 0; i < rows.length; i++) {
+                var row = rows[i];
+                row.onclick = function () {
+                    var tds = this.childNodes;
+                    for (var j = 0; j < tds.length; j++) {
+                        if (tds[j].className.indexOf('selected-row') !=-1) {
+                            tds[j].className = tds[j].className.replace('selected-row', '');
+                        } else {
+                            tds[j].className += ' selected-row';
+                        }
+                    }
+                }
+            }
+        }
+    </script>
+</head>
+<body>
+<a name="top">&nbsp;</a><br />
+<div id="report-menu">
+    <ul>
+<?php
+$html = '';
+$reportByGroups = $block->getReports();
+
+foreach ($reportByGroups as $group) {
+    if (empty($group['reports'])) {
+        continue;
+    }
+    $html .= '<li><span class="report-menu-root-item">' . $block->escapeHtml($group['title']) . '</span><ul>';
+
+    foreach ($group['reports'] as $title => $data) {
+        $dataNumber = $data['count'];
+        $html .= '<li><a href="#' . $block->getHash($title) . '"' . (!$dataNumber ? ' class="no-data-link"' : '') . '>'
+            . $block->escapeHtml(__($title))
+            . ($dataNumber > 0 ? ' (' . $dataNumber . ')' : __(' (no data)'))
+            . '</a></li>';
+    }
+
+    $html .= '</ul></li>';
+}
+$html .= '<li><a href="#top" id="top-link">' . $block->escapeHtml(__('Top')) . '</a></li>';
+
+/* @noEscape */ echo $html;
+?>
+    </ul>
+</div>
+<h1 id="report-title">
+    Magento System Report for <span><?= $block->escapeHtml($block->getReportTitle()) ?></span>
+    on <?= $block->escapeHtml($block->getReportCreationDate()) ?>
+</h1>
+<?php
+$counter = 1;
+$html = '';
+foreach ($reportByGroups as $group) {
+    if (empty($group['reports'])) {
+        continue;
+    }
+    foreach ($group['reports'] as $title => $data) {
+        $report = $header = '';
+        $dataNumber = $data['count'];
+
+        if (is_array($data) && !empty($data) && !empty($data['headers']) && !empty($data['data'])) {
+            $preparedHeader = $data['headers'];
+            $preparedData = $data['data'];
+            if (!empty($preparedHeader)) {
+                foreach ($preparedHeader as $text) {
+                    $text = $block->escapeHtml(__($text));
+                    $header .= '<th>'
+                        . str_replace(["\n", "\r"], '<br />', $text)
+                        . '</th>';
+                }
+            }
+
+            if (!empty($preparedData)) {
+                foreach ($preparedData as $rowId => $row) {
+                    $report .= '<tr>';
+                    foreach ($row as $columnId => $text) {
+                        $rawText = $text;
+                        $text = __($text);
+                        $report .= $htmlGenerator->getExportTableCellHtml(
+                            $text,
+                            $rawText,
+                            $block->getHash($title . $rowId . $columnId)
+                        );
+                    }
+                    $report .= '</tr>';
+                }
+            }
+        } else {
+            $report .= '<tr><td>' . __('No data') . '</td></tr>';
+        }
+
+        $anchor = $block->getHash($title);
+        $title = $block->escapeHtml(__($title));
+        $expandFlag = $dataNumber > \Magento\Support\Block\Adminhtml\Report\Export\Html::MAX_NONE_COLLAPSIBLE_ROW_AMOUNT;
+        $html .= "
+    <a name=\"$anchor\">&nbsp;</a><br />
+
+    <h2>$counter. $title: ($dataNumber)"
+                . ($expandFlag ? ' | <a href="javascript:void(0);" onclick="toggleTableData(this, \'table_'
+                    . $anchor
+                    . '\')">' . __('Expand') . '</a>' : '')
+                . "</h2>
+    <div id=\"table_$anchor\" style=\"" . ($expandFlag ? 'display: none' : '') . "\">
+        <table class=\"report-table\">
+            <thead>
+                <tr>
+                    $header
+                </tr>
+            </thead>
+            <tbody>
+                $report
+            </tbody>
+        </table>
+    </div>
+";
+        $counter++;
+    }
+}
+
+/* @noEscape */ echo $html;
+?>
+<br />
+<br />
+<div id="copyright"><?= $block->escapeHtml($block->getCopyrightText()) ?></div>
+</body>
+</html>

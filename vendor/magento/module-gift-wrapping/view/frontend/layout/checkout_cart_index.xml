@@ -1,0 +1,67 @@
+<?xml version="1.0"?>
+<!--
+/**
+ * Copyright © Magento, Inc. All rights reserved.
+ * See COPYING.txt for license details.
+ */
+-->
+<page xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="urn:magento:framework:View/Layout/etc/page_configuration.xsd">
+    <body>
+        <referenceBlock name="checkout.cart.order.actions.gift_options">
+            <arguments>
+                <argument name="jsLayout" xsi:type="array">
+                    <item name="components" xsi:type="array">
+                        <item name="giftOptionsCart" xsi:type="array">
+                            <item name="children" xsi:type="array">
+                                <item name="giftWrapping" xsi:type="array">
+                                    <item name="component" xsi:type="string">Magento_GiftWrapping/js/view/gift-wrapping</item>
+                                    <item name="config" xsi:type="array">
+                                        <item name="template" xsi:type="string">Magento_GiftWrapping/gift-wrapping</item>
+                                        <item name="appliedTemplate" xsi:type="string">Magento_GiftWrapping/applied</item>
+                                    </item>
+                                </item>
+                            </item>
+                        </item>
+                    </item>
+                </argument>
+            </arguments>
+        </referenceBlock>
+        <referenceBlock name="checkout.cart.totals">
+            <arguments>
+                <argument name="jsLayout" xsi:type="array">
+                    <item name="components" xsi:type="array">
+                        <item name="block-totals" xsi:type="array">
+                            <item name="children" xsi:type="array">
+                                <item name="before_grandtotal" xsi:type="array">
+                                    <item name="children" xsi:type="array">
+                                        <item name="gift-wrapping-order-level" xsi:type="array">
+                                            <item name="component"  xsi:type="string">Magento_GiftWrapping/js/view/checkout/cart/totals</item>
+                                            <item name="config" xsi:type="array">
+                                                <item name="title" xsi:type="string">Gift Wrapping for Order</item>
+                                                <item name="level" xsi:type="string">order</item>
+                                            </item>
+                                        </item>
+                                        <item name="gift-wrapping-item-level" xsi:type="array">
+                                            <item name="component"  xsi:type="string">Magento_GiftWrapping/js/view/checkout/cart/totals</item>
+                                            <item name="config" xsi:type="array">
+                                                <item name="title" xsi:type="string">Gift Wrapping for Items</item>
+                                                <item name="level" xsi:type="string">item</item>
+                                            </item>
+                                        </item>
+                                        <item name="printed-card" xsi:type="array">
+                                            <item name="component"  xsi:type="string">Magento_GiftWrapping/js/view/checkout/cart/totals</item>
+                                            <item name="config" xsi:type="array">
+                                                <item name="title" xsi:type="string">Printed Card</item>
+                                                <item name="level" xsi:type="string">printed-card</item>
+                                            </item>
+                                        </item>
+                                    </item>
+                                </item>
+                            </item>
+                        </item>
+                    </item>
+                </argument>
+            </arguments>
+        </referenceBlock>
+    </body>
+</page>

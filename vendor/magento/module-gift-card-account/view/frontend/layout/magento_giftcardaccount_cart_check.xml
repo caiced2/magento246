@@ -1,0 +1,14 @@
+<?xml version="1.0"?>
+<!--
+/**
+ * Copyright © Magento, Inc. All rights reserved.
+ * See COPYING.txt for license details.
+ */
+-->
+<page xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" layout="1column" xsi:noNamespaceSchemaLocation="urn:magento:framework:View/Layout/etc/page_configuration.xsd" label="Gift Card Balance Check Form" design_abstraction="custom">
+    <body>
+        <referenceContainer name="content">
+            <block class="Magento\GiftCardAccount\Block\Check" template="Magento_GiftCardAccount::check.phtml" name="check.result" as="check_result"/>
+        </referenceContainer>
+    </body>
+</page>

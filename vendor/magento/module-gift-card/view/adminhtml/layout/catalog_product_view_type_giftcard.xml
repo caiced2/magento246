@@ -1,0 +1,17 @@
+<?xml version="1.0"?>
+<!--
+/**
+ * Copyright © Magento, Inc. All rights reserved.
+ * See COPYING.txt for license details.
+ */
+-->
+<page xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="urn:magento:framework:View/Layout/etc/page_configuration.xsd">
+    <body>
+        <referenceBlock name="product.composite.fieldset">
+            <block class="Magento\GiftCard\Block\Adminhtml\Catalog\Product\Composite\Fieldset\Giftcard" name="product.composite.fieldset.giftcard" before="product.composite.fieldset.options" template="Magento_GiftCard::catalog/product/composite/fieldset/giftcard.phtml">
+                <block class="Magento\Catalog\Block\Adminhtml\Product\Composite\Fieldset\Qty" name="product.composite.giftcard.qty" template="Magento_GiftCard::catalog/product/composite/fieldset/qty.phtml"/>
+            </block>
+        </referenceBlock>
+        <referenceBlock name="product.composite.fieldset.qty" remove="true" />
+    </body>
+</page>

@@ -1,0 +1,121 @@
+<?xml version="1.0"?>
+<!--
+/**
+ * Copyright © Magento, Inc. All rights reserved.
+ * See COPYING.txt for license details.
+ */
+-->
+<page xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="urn:magento:framework:View/Layout/etc/page_configuration.xsd">
+    <body>
+        <referenceBlock name="invitation_grid_container">
+            <block class="Magento\Backend\Block\Widget\Grid" name="invitation.grid.grid" as="grid">
+                <arguments>
+                    <argument name="id" xsi:type="string">invitationGrid</argument>
+                    <argument name="dataSource" xsi:type="object" shared="false">Magento\Invitation\Model\ResourceModel\Invitation\Grid\Collection</argument>
+                    <argument name="default_sort" xsi:type="string">date</argument>
+                    <argument name="default_dir" xsi:type="string">DESC</argument>
+                    <argument name="save_parameters_in_session" xsi:type="string">1</argument>
+                </arguments>
+                <block class="Magento\Backend\Block\Widget\Grid\Massaction" name="adminhtml.block.invitation.massactions" as="grid.massaction">
+                    <arguments>
+                        <argument name="massaction_id_field" xsi:type="string">invitation_id</argument>
+                        <argument name="form_field_name" xsi:type="string">invitations</argument>
+                        <argument name="use_select_all" xsi:type="string">1</argument>
+                        <argument name="options" xsi:type="array">
+                            <item name="cancel" xsi:type="array">
+                                <item name="label" xsi:type="string" translate="true">Discard Selected</item>
+                                <item name="url" xsi:type="string">*/*/massCancel</item>
+                                <item name="confirm" xsi:type="string" translate="true">Are you sure you want to do this?</item>
+                            </item>
+                            <item name="resend" xsi:type="array">
+                                <item name="label" xsi:type="string" translate="true">Send Selected</item>
+                                <item name="url" xsi:type="string">*/*/massResend</item>
+                            </item>
+                        </argument>
+                    </arguments>
+                </block>
+                <block class="Magento\Backend\Block\Widget\Grid\ColumnSet" name="adminhtml.catalog.product.set.grid.columnSet" as="grid.columnSet">
+                    <arguments>
+                        <argument name="id" xsi:type="string">tax_rate_grid</argument>
+                        <argument name="rowUrl" xsi:type="array">
+                            <item name="path" xsi:type="string">*/*/view</item>
+                            <item name="extraParamsTemplate" xsi:type="array">
+                                <item name="id" xsi:type="string">getId</item>
+                            </item>
+                        </argument>
+                    </arguments>
+                    <block class="Magento\Backend\Block\Widget\Grid\Column" name="adminhtml.catalog.product.set.grid.columnSet.magento_invitation_id" as="magento_invitation_id">
+                        <arguments>
+                            <argument name="header" xsi:type="string" translate="true">ID</argument>
+                            <argument name="align" xsi:type="string">right</argument>
+                            <argument name="type" xsi:type="string">text</argument>
+                            <argument name="index" xsi:type="string">invitation_id</argument>
+                            <argument name="column_css_class" xsi:type="string">col-id</argument>
+                            <argument name="header_css_class" xsi:type="string">col-id</argument>
+                        </arguments>
+                    </block>
+                    <block class="Magento\Backend\Block\Widget\Grid\Column" name="adminhtml.catalog.product.set.grid.columnSet.email" as="email">
+                        <arguments>
+                            <argument name="header" xsi:type="string" translate="true">Email</argument>
+                            <argument name="type" xsi:type="string">text</argument>
+                            <argument name="index" xsi:type="string">invitation_email</argument>
+                        </arguments>
+                    </block>
+                    <block class="Magento\Backend\Block\Widget\Grid\Column" name="adminhtml.catalog.product.set.grid.columnSet.invitee" as="invitee">
+                        <arguments>
+                            <argument name="header" xsi:type="string" translate="true">Invitee</argument>
+                            <argument name="type" xsi:type="string">text</argument>
+                            <argument name="index" xsi:type="string">invitee_email</argument>
+                            <argument name="renderer" xsi:type="string">Magento\Invitation\Block\Adminhtml\Invitation\Grid\Column\Invitee</argument>
+                        </arguments>
+                    </block>
+                    <block class="Magento\Backend\Block\Widget\Grid\Column" name="adminhtml.catalog.product.set.grid.columnSet.invitation_date" as="invitation_date">
+                        <arguments>
+                            <argument name="header" xsi:type="string" translate="true">Sent</argument>
+                            <argument name="type" xsi:type="string">datetime</argument>
+                            <argument name="gmtoffset" xsi:type="string">1</argument>
+                            <argument name="index" xsi:type="string">invitation_date</argument>
+                            <argument name="column_css_class" xsi:type="string">col-date</argument>
+                            <argument name="header_css_class" xsi:type="string">col-date</argument>
+                        </arguments>
+                    </block>
+                    <block class="Magento\Backend\Block\Widget\Grid\Column" name="adminhtml.catalog.product.set.grid.columnSet.signup_date" as="signup_date">
+                        <arguments>
+                            <argument name="header" xsi:type="string" translate="true">Registered</argument>
+                            <argument name="type" xsi:type="string">datetime</argument>
+                            <argument name="gmtoffset" xsi:type="string">1</argument>
+                            <argument name="index" xsi:type="string">signup_date</argument>
+                            <argument name="column_css_class" xsi:type="string">col-date</argument>
+                            <argument name="header_css_class" xsi:type="string">col-date</argument>
+                        </arguments>
+                    </block>
+                    <block class="Magento\Backend\Block\Widget\Grid\Column" name="adminhtml.catalog.product.set.grid.columnSet.status" as="status">
+                        <arguments>
+                            <argument name="header" xsi:type="string" translate="true">Status</argument>
+                            <argument name="type" xsi:type="string">options</argument>
+                            <argument name="index" xsi:type="string">status</argument>
+                            <argument name="options" xsi:type="options" model="Magento\Invitation\Model\Source\Invitation\Options"/>
+                        </arguments>
+                    </block>
+                    <block class="Magento\Backend\Block\Widget\Grid\Column" name="adminhtml.catalog.product.set.grid.columnSet.website_id" as="website_id">
+                        <arguments>
+                            <argument name="header" xsi:type="string" translate="true">Valid Website</argument>
+                            <argument name="type" xsi:type="string">options</argument>
+                            <argument name="index" xsi:type="string">website_id</argument>
+                            <argument name="options" xsi:type="options" model="Magento\Invitation\Model\Source\Invitation\WebsiteId"/>
+                        </arguments>
+                    </block>
+                    <block class="Magento\Backend\Block\Widget\Grid\Column" name="adminhtml.catalog.product.set.grid.columnSet.group_id" as="group_id">
+                        <arguments>
+                            <argument name="header" xsi:type="string" translate="true">Invitee Group</argument>
+                            <argument name="type" xsi:type="string">options</argument>
+                            <argument name="index" xsi:type="string">group_id</argument>
+                            <argument name="filter_index" xsi:type="string">invitee_group_id</argument>
+                            <argument name="options" xsi:type="options" model="Magento\Invitation\Model\Source\Invitation\GroupId"/>
+                        </arguments>
+                    </block>
+                </block>
+            </block>
+        </referenceBlock>
+    </body>
+</page>

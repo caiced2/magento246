@@ -1,0 +1,17 @@
+parameters:
+    level: 5
+    fileExtensions:
+        - php
+    paths:
+        - ../../
+    excludePaths:
+        - ../../vendor/*
+        - ../../etc/*
+    ignoreErrors:
+        - '#Property .*?Factory has unknown class .*?Factory as its type.#'
+        - '#Parameter .*?Factory of method .*? has invalid type .*?Factory.#'
+        - '#Call to method .*? on an unknown class .*?Factory.#'
+        - message: "#Parameter .* of method .*#"
+          path: ../../Model/EventRepository.php
+        - message: '#Parameter .*? \$excludedMethods of class.*#'
+          path: ../Unit/Event/Collector/MethodFilterTest.php

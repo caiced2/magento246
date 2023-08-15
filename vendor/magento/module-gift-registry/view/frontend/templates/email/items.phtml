@@ -1,0 +1,31 @@
+<?php
+/**
+ * Copyright © Magento, Inc. All rights reserved.
+ * See COPYING.txt for license details.
+ */
+
+/** @var $block Magento\GiftRegistry\Block\Email\Items */
+?>
+<table class="email-items" summary="<?= $block->escapeHtmlAttr(__('Gift Registry Items Updated')) ?>">
+    <thead>
+        <tr>
+            <th><?= $block->escapeHtml(__('Product Name')) ?></th>
+            <th><?= $block->escapeHtml(__('Requested Quantity')) ?></th>
+            <th><?= $block->escapeHtml(__('Fulfilled Quantity')) ?></th>
+            <th><?= $block->escapeHtml(__('Total Fulfilled Quantity')) ?></th>
+            <th><?= $block->escapeHtml(__('Remaining Quantity')) ?></th>
+        </tr>
+    </thead>
+    <tbody>
+    <?php $i = 0; foreach ($block->getItems() as $item) :?>
+        <tr<?= $i%2 ? ' ' : '' ?>>
+            <td><strong><?= $block->escapeHtml($item->getProductName()) ?></strong></td>
+            <td><?= $block->escapeHtml($block->getQty($item)) ?></td>
+            <td><?= $block->escapeHtml($block->getQtyOrdered($item)) ?></td>
+            <td><?= $block->escapeHtml($block->getQtyFulfilled($item)) ?></td>
+            <td><?= $block->escapeHtml($block->getRemainedQty($item)) ?></td>
+        </tr>
+        <?php $i++;
+    endforeach; ?>
+    </tbody>
+</table>

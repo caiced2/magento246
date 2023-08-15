@@ -1,0 +1,78 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+ /**
+  * Copyright © Magento, Inc. All rights reserved.
+  * See COPYING.txt for license details.
+  */
+-->
+<tests xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:noNamespaceSchemaLocation="urn:magento:mftf:Test/etc/testSchema.xsd">
+    <test name="DynamicBlockEntityIsDeletedAndMissingInGridTest">
+        <annotations>
+            <features value="PageBuilder"/>
+            <stories value="Dynamic Block"/>
+            <title value="Dynamic Block - Entity Deletion non-existent in grid"/>
+            <description value="Verify that deleted dynamic block entity does not appear in grid"/>
+            <severity value="MAJOR"/>
+            <testCaseId value="MC-16680"/>
+            <useCaseId value="MC-1413"/>
+            <group value="pagebuilder"/>
+            <group value="pagebuilder-ee"/>
+            <group value="pagebuilder-dynamic-block"/>
+        </annotations>
+        <before>
+            <createData entity="_defaultCmsPage" stepKey="createCMSPage"/>
+            <createData entity="_defaultDynamicBlock" stepKey="createDynamicBlock"/>
+            <actionGroup ref="AdminLoginActionGroup" stepKey="loginAsAdmin"/>
+        </before>
+        <after>
+            <deleteData createDataKey="createCMSPage" stepKey="deletePreReqCMSPage"/>
+            <actionGroup ref="AdminLogoutActionGroup" stepKey="logout"/>
+        </after>
+        <actionGroup ref="NavigateToCreatedCMSPageActionGroup" stepKey="navigateToCreatedCMSPage">
+            <argument name="CMSPage" value="$$createCMSPage$$"/>
+        </actionGroup>
+        <actionGroup ref="switchToPageBuilderStage" stepKey="switchToPageBuilderStage"/>
+        <actionGroup ref="dragContentTypeToStage" stepKey="dragRowToRootContainer">
+            <argument name="contentType" value="PageBuilderRowContentType"/>
+            <argument name="containerTargetType" value="PageBuilderRootContainerContentType"/>
+        </actionGroup>
+        <actionGroup ref="expandPageBuilderPanelMenuSection" stepKey="expandMenuSectionAddContent">
+            <argument name="contentType" value="PageBuilderDynamicBlockContentType"/>
+        </actionGroup>
+        <actionGroup ref="dragContentTypeToStage" stepKey="dragBlockIntoStage">
+            <argument name="contentType" value="PageBuilderDynamicBlockContentType"/>
+        </actionGroup>
+        <actionGroup ref="openPageBuilderEditPanel" stepKey="openEditMenuOnStageAfterDrop">
+            <argument name="contentType" value="PageBuilderDynamicBlockContentType"/>
+        </actionGroup>
+        <click selector="{{DynamicBlockOnForm.selectBlockBtn}}" stepKey="clickSelectBlockBtn"/>
+        <waitForElementVisible selector="{{DynamicBlockOnGrid.searchBox}}" stepKey="waitForBlockGrid"/>
+        <waitForElementVisible selector="{{DynamicBlockOnGrid.selectBtn($$createDynamicBlock.name$$)}}" stepKey="waitForSelectBlockOnGridBtn"/>
+        <comment userInput="Delete Dynamic Block" stepKey="commentDeleteDynamicBlock"/>
+        <actionGroup ref="DeleteBannerActionGroup" stepKey="deleteDynamicBlock">
+            <argument name="bannerName" value="$$createDynamicBlock.name$$"/>
+        </actionGroup>
+        <comment userInput="Do not see Dynamic Block on grid" stepKey="commentDoNotSeeDynamicBlockOnGrid"/>
+        <actionGroup ref="NavigateToCreatedCMSPageActionGroup" stepKey="navigateToCreatedCMSPage2">
+            <argument name="CMSPage" value="$$createCMSPage$$"/>
+        </actionGroup>
+        <actionGroup ref="switchToPageBuilderStage" stepKey="switchToPageBuilderStage2"/>
+        <actionGroup ref="dragContentTypeToStage" stepKey="dragRowToRootContainer2">
+            <argument name="contentType" value="PageBuilderRowContentType"/>
+            <argument name="containerTargetType" value="PageBuilderRootContainerContentType"/>
+        </actionGroup>
+        <actionGroup ref="expandPageBuilderPanelMenuSection" stepKey="expandMenuSectionAddContent2">
+            <argument name="contentType" value="PageBuilderDynamicBlockContentType"/>
+        </actionGroup>
+        <actionGroup ref="dragContentTypeToStage" stepKey="dragBlockIntoStage2">
+            <argument name="contentType" value="PageBuilderDynamicBlockContentType"/>
+        </actionGroup>
+        <actionGroup ref="openPageBuilderEditPanel" stepKey="openEditMenuOnStageAfterDrop2">
+            <argument name="contentType" value="PageBuilderDynamicBlockContentType"/>
+        </actionGroup>
+        <click selector="{{DynamicBlockOnForm.selectBlockBtn}}" stepKey="clickSelectBlockBtn2"/>
+        <waitForElementVisible selector="{{DynamicBlockOnGrid.searchBox}}" stepKey="waitForBlockGrid2"/>
+        <dontSeeElementInDOM selector="{{DynamicBlockOnGrid.selectBtn($$createDynamicBlock.name$$)}}" stepKey="doNotSeeDeletedDynamicBlockGridRowInDOM"/>
+    </test>
+</tests>

@@ -1,0 +1,159 @@
+{
+    "magento_giftregistry_type": {
+        "column": {
+            "type_id": true,
+            "code": true,
+            "meta_xml": true
+        },
+        "constraint": {
+            "PRIMARY": true
+        }
+    },
+    "magento_giftregistry_type_info": {
+        "column": {
+            "type_id": true,
+            "store_id": true,
+            "label": true,
+            "is_listed": true,
+            "sort_order": true
+        },
+        "index": {
+            "MAGENTO_GIFTREGISTRY_TYPE_INFO_STORE_ID": true
+        },
+        "constraint": {
+            "PRIMARY": true,
+            "FK_1A0B820718598BAC128535E2B6348C48": true,
+            "MAGENTO_GIFTREGISTRY_TYPE_INFO_STORE_ID_STORE_STORE_ID": true
+        }
+    },
+    "magento_giftregistry_label": {
+        "column": {
+            "type_id": true,
+            "attribute_code": true,
+            "store_id": true,
+            "option_code": true,
+            "label": true
+        },
+        "index": {
+            "MAGENTO_GIFTREGISTRY_LABEL_STORE_ID": true
+        },
+        "constraint": {
+            "PRIMARY": true,
+            "FK_CAC7838B0DC6D41132DD885A80780A1E": true,
+            "MAGENTO_GIFTREGISTRY_LABEL_STORE_ID_STORE_STORE_ID": true
+        }
+    },
+    "magento_giftregistry_entity": {
+        "column": {
+            "entity_id": true,
+            "type_id": true,
+            "customer_id": true,
+            "website_id": true,
+            "is_public": true,
+            "url_key": true,
+            "title": true,
+            "message": true,
+            "shipping_address": true,
+            "custom_values": true,
+            "is_active": true,
+            "created_at": true
+        },
+        "index": {
+            "MAGENTO_GIFTREGISTRY_ENTITY_CUSTOMER_ID": true,
+            "MAGENTO_GIFTREGISTRY_ENTITY_WEBSITE_ID": true,
+            "MAGENTO_GIFTREGISTRY_ENTITY_TYPE_ID": true
+        },
+        "constraint": {
+            "PRIMARY": true,
+            "FK_AC6F6DB40013C09CA44DFBC3453C4954": true,
+            "MAGENTO_GIFTREGISTRY_ENTT_CSTR_ID_CSTR_ENTT_ENTT_ID": true,
+            "MAGENTO_GIFTREGISTRY_ENTITY_WEBSITE_ID_STORE_WEBSITE_WEBSITE_ID": true
+        }
+    },
+    "magento_giftregistry_item": {
+        "column": {
+            "item_id": true,
+            "entity_id": true,
+            "product_id": true,
+            "qty": true,
+            "qty_fulfilled": true,
+            "note": true,
+            "added_at": true,
+            "custom_options": true
+        },
+        "index": {
+            "MAGENTO_GIFTREGISTRY_ITEM_ENTITY_ID": true,
+            "MAGENTO_GIFTREGISTRY_ITEM_PRODUCT_ID": true
+        },
+        "constraint": {
+            "PRIMARY": true,
+            "FK_BAC522E38736441C84A365FDA8A89F3D": true,
+            "MAGENTO_GIFTREGISTRY_ITEM_PRD_ID_CAT_PRD_ENTT_ENTT_ID": true
+        }
+    },
+    "magento_giftregistry_person": {
+        "column": {
+            "person_id": true,
+            "entity_id": true,
+            "firstname": true,
+            "lastname": true,
+            "email": true,
+            "role": true,
+            "custom_values": true
+        },
+        "index": {
+            "MAGENTO_GIFTREGISTRY_PERSON_ENTITY_ID": true
+        },
+        "constraint": {
+            "PRIMARY": true,
+            "FK_3BD5033D7C543D4739AB16D2DDAF3417": true
+        }
+    },
+    "magento_giftregistry_data": {
+        "column": {
+            "entity_id": true,
+            "event_date": true,
+            "event_country": true,
+            "event_country_region": true,
+            "event_country_region_text": true,
+            "event_location": true
+        },
+        "constraint": {
+            "PRIMARY": true,
+            "FK_16C9215492169187823D7D59D417E563": true
+        }
+    },
+    "magento_giftregistry_item_option": {
+        "column": {
+            "option_id": true,
+            "item_id": true,
+            "product_id": true,
+            "code": true,
+            "value": true
+        },
+        "constraint": {
+            "PRIMARY": true,
+            "FK_3D1D15BFE3A8590F21C1F66D980C9728": true
+        }
+    },
+    "quote_item": {
+        "column": {
+            "giftregistry_item_id": true
+        }
+    },
+    "quote_address": {
+        "column": {
+            "giftregistry_item_id": true
+        }
+    },
+    "sales_order_item": {
+        "column": {
+            "giftregistry_item_id": true
+        }
+    },
+    "sales_order_address": {
+        "column": {
+            "giftregistry_item_id": true
+        }
+    }
+}

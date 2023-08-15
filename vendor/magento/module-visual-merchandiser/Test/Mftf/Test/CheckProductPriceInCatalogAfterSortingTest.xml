@@ -1,0 +1,116 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+ /**
+  * Copyright © Magento, Inc. All rights reserved.
+  * See COPYING.txt for license details.
+  */
+-->
+
+<tests xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xsi:noNamespaceSchemaLocation="urn:magento:mftf:Test/etc/testSchema.xsd">
+    <test name="CheckProductPriceInCatalogAfterSortingTest">
+        <annotations>
+            <features value="VisualMerchandiser"/>
+            <stories value="MAGETWO-91602: Visual Merchandiser incorrectly displays/sorts configurable product price in Tile view"/>
+            <title value="Checking configurable product price displaying in Catalog after sorting"/>
+            <description value="Check configurable product price in Catalog after sorting"/>
+            <severity value="AVERAGE"/>
+            <testCaseId value="MC-6119"/>
+            <group value="VisualMerchandiser"/>
+        </annotations>
+
+        <before>
+            <!--Create Category -->
+            <createData entity="ApiCategory" stepKey="createCategory"/>
+            <!-- Create the configurable product and add it to the category -->
+            <createData entity="ApiConfigurableProduct" stepKey="createConfigProduct">
+                <requiredEntity createDataKey="createCategory"/>
+            </createData>
+            <!--Login-->
+            <actionGroup ref="AdminLoginActionGroup" stepKey="loginToAdminArea"/>
+        </before>
+
+        <!--Open Created product-->
+        <amOnPage url="{{AdminProductEditPage.url($$createConfigProduct.id$$)}}" stepKey="amOnEditPage"/>
+        <waitForPageLoad stepKey="waitForEditPage"/>
+
+        <!--Click "Create Configurations" button in configurations field-->
+        <click stepKey="clickOnCreateConfigurationsButton" selector="{{NewProduct.createConfigurationButton}}"/>
+        <waitForPageLoad stepKey="waitForCreateProductConfigurationsPageLoad"/>
+
+        <!--Select attribute "Color"-->
+        <click stepKey="clickAttributeColorCheckbox" selector="{{AdminCreateProductConfigurationsPanel.attributeColorCheckbox}}"/>
+        <!--Click the "Next" button-->
+        <click selector="{{AdminCreateProductConfigurationsPanel.next}}" stepKey="clickNextButton"/>
+        <!--Create one color option via "Create New Value" link-->
+        <waitForElementVisible selector="{{AdminCreateProductConfigurationsPanel.createNewValue}}" stepKey="waitCreateNewValueAppears"/>
+        <click selector="{{AdminCreateProductConfigurationsPanel.createNewValue}}" stepKey="clickOnCreateNewValue"/>
+        <fillField userInput="{{colorProductAttribute4.name}}" selector="{{AdminCreateProductConfigurationsPanel.attributeName}}" stepKey="fillFieldForNewAttribute"/>
+        <click selector="{{AdminCreateProductConfigurationsPanel.saveAttribute}}" stepKey="clickOnSaveNewAttribute"/>
+        <click selector="{{AdminCreateProductConfigurationsPanel.next}}" stepKey="clickOnNextButton"/>
+        <click selector="{{AdminCreateProductConfigurationsPanel.applySinglePriceToAllSkus}}" stepKey="clickOnApplySinglePriceToEachSku"/>
+        <fillField selector="{{AdminCreateProductConfigurationsPanel.singlePrice}}" userInput="142" stepKey="enterAttributePrice"/>
+        <click selector="{{AdminCreateProductConfigurationsPanel.applySingleQuantityToEachSkus}}" stepKey="clickOnApplySingleQuantityToEachSku"/>
+        <fillField selector="{{AdminCreateProductConfigurationsPanel.quantity}}" userInput="42" stepKey="enterAttributeQuantity"/>
+        <click selector="{{AdminCreateProductConfigurationsPanel.next}}" stepKey="clickOnNextStep3"/>
+        <click selector="{{AdminCreateProductConfigurationsPanel.next}}" stepKey="generateProducts"/>
+        <!-- Save the product -->
+        <click selector="{{AdminProductFormActionSection.saveButton}}" stepKey="saveProduct"/>
+        <conditionalClick selector="{{AdminChooseAffectedAttributeSetPopup.confirm}}" dependentSelector="{{AdminChooseAffectedAttributeSetPopup.confirm}}" stepKey="confirmNewAttributeSet" visible="true"/>
+        <see stepKey="assertSuccess" selector="{{AdminProductMessagesSection.successMessage}}" userInput="You saved the product."/>
+
+        <!--Go to Catalog > Categories.-->
+        <amOnPage url="{{AdminCategoryPage.url}}" stepKey="goToCategoryIndexPage"/>
+        <waitForPageLoad stepKey="waitForCategoryIndexPage"/>
+        <!--Choose the category where the created configurable product is.-->
+        <click selector="{{AdminCategorySidebarTreeSection.categoryInTree($$createCategory.name$$)}}" stepKey="clickCategoryInTree"/>
+        <!--Open Products in Category tab-->
+        <conditionalClick selector="{{AdminCategoryProductsSection.sectionHeader}}" dependentSelector="{{AdminCategoryProductsSection.addProducts}}" visible="false" stepKey="openProductsInCategorySort"/>
+        <waitForPageLoad stepKey="waitForSectionLoad"/>
+
+        <!--Choose Sort order > Price Low to High-->
+        <selectOption selector="{{AdminCategoryProductsSection.sortOrder}}" userInput="Price: Low to high" stepKey="selectSortByPriceDesc"/>
+        <click selector="{{AdminCategoryProductsSection.sort}}" stepKey="sortProductsByPriceDesc"/>
+
+        <!-- Switch to tile mode -->
+        <actionGroup ref="SwitchToTileModeProductInCategoryActionGroup" stepKey="switchToTile1"/>
+
+        <!--Verify that main product doesn't have price-->
+        <grabTextFrom selector="{{AdminCategoryProductsTileSection.productInfoPrice('1')}}" stepKey="grabMainProductPriceInfo"/>
+        <assertEquals stepKey="checkMainProductPriceInfo">
+            <expectedResult type="string">$0.00</expectedResult>
+            <actualResult type="variable">$grabMainProductPriceInfo</actualResult>
+        </assertEquals>
+
+        <!--Verify sub product price and stock-->
+        <grabTextFrom selector="{{AdminCategoryProductsTileSection.productInfoPrice('2')}}" stepKey="grabSubProductPriceInfo"/>
+        <assertEquals stepKey="checkSubProductPriceInfo">
+            <expectedResult type="string">$142.00</expectedResult>
+            <actualResult type="variable">$grabSubProductPriceInfo</actualResult>
+        </assertEquals>
+
+        <grabTextFrom selector="{{AdminCategoryProductsTileSection.productInfoStock('2')}}" stepKey="grabSubProductStockInfo"/>
+        <assertEquals stepKey="checkSubProductStockInfo">
+            <expectedResult type="string">Stock: 42.00</expectedResult>
+            <actualResult type="variable">$grabSubProductStockInfo</actualResult>
+        </assertEquals>
+
+        <after>
+            <!-- Clean up our modifications to the existing color attribute -->
+            <amOnPage url="{{AdminProductAttributeGridPage.url}}" stepKey="goToProductAttributes"/>
+            <waitForPageLoad stepKey="waitForProductAttributes"/>
+            <fillField selector="{{AdminProductAttributeGridSection.FilterByAttributeCode}}" userInput="color" stepKey="fillFilter"/>
+            <click selector="{{AdminProductAttributeGridSection.Search}}" stepKey="clickSearch"/>
+            <click selector="{{AdminProductAttributeGridSection.AttributeCode('color')}}" stepKey="clickRowToEdit"/>
+            <waitForElementVisible selector="{{AdminManageSwatchSection.deleteBtn('1')}}" stepKey="waitForColorAttributePageOpened"/>
+            <click selector="{{AdminManageSwatchSection.deleteBtn('1')}}" stepKey="deleteSwatch1"/>
+            <waitForPageLoad stepKey="waitToClickSave"/>
+            <click selector="{{AttributePropertiesSection.SaveAndEdit}}" stepKey="clickSaveAndEdit"/>
+
+            <deleteData createDataKey="createConfigProduct" stepKey="deleteConfigProduct"/>
+            <deleteData createDataKey="createCategory" stepKey="deleteApiCategory"/>
+            <!--Logout-->
+            <actionGroup ref="AdminLogoutActionGroup" stepKey="logout"/>
+        </after>
+    </test>
+</tests>

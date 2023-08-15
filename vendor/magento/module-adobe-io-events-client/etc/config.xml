@@ -1,0 +1,26 @@
+<?xml version="1.0"?>
+<!--
+/**
+ * Copyright © Magento, Inc. All rights reserved.
+ * See COPYING.txt for license details.
+ */
+-->
+<config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="urn:magento:module:Magento_Store:etc/config.xsd">
+    <default>
+        <adobe_io_events>
+            <integration>
+                <authorization_type></authorization_type>
+                <adobe_io_environment>production</adobe_io_environment>
+                <private_key backend_model="Magento\Config\Model\Config\Backend\Encrypted"/>
+                <workspace_configuration backend_model="Magento\Config\Model\Config\Backend\Encrypted"/>
+                <adobe_io_event_type_delete_url><![CDATA[events/#{ims_org_id}/#{project_id}/#{workspace_id}/providers/#{provider_id}/eventmetadata/#{event_code}]]></adobe_io_event_type_delete_url>
+                <adobe_io_event_type_list_url><![CDATA[events/providers/#{provider_id}/eventmetadata]]></adobe_io_event_type_list_url>
+                <adobe_io_event_creation_url><![CDATA[events/#{ims_org_id}/#{project_id}/#{workspace_id}/providers/#{provider_id}/eventmetadata]]></adobe_io_event_creation_url>
+                <adobe_io_provider_url><![CDATA[events/#{ims_org_id}/#{project_id}/#{workspace_id}/providers]]></adobe_io_provider_url>
+                <adobe_io_provider_list_url><![CDATA[events/#{ims_org_id}/providers]]></adobe_io_provider_list_url>
+                <adobe_io_event_provider_metadata></adobe_io_event_provider_metadata>
+                <ims_jwt_expiration_interval>86400</ims_jwt_expiration_interval>
+            </integration>
+        </adobe_io_events>
+    </default>
+</config>

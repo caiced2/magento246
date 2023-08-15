@@ -1,0 +1,50 @@
+<?php
+/**
+ * Copyright © Magento, Inc. All rights reserved.
+ * See COPYING.txt for license details.
+ */
+?>
+<?php
+/**
+ * @var $block \Magento\Rma\Block\Adminhtml\Rma\NewRma\Tab\Items
+ */
+/** @var \Magento\Framework\View\Helper\SecureHtmlRenderer $secureRenderer */
+?>
+
+<div id="rma-item-template-block">
+    <?= $block->getFormHtml() ?>
+</div>
+
+<div class="admin__page-section rma-items-block" id="rma-items-block">
+    <div class="admin__page-section-title">
+        <span class="title">
+            <?= $block->escapeHtml(__('RMA Items Requested for')) ?>
+        </span>
+        <div class="actions"><?= $block->getAddButtonHtml() ?></div>
+    </div>
+    <div class="admin__page-section-content">
+        <?= $block->getChildHtml('rma_items_grid') ?>
+    </div>
+</div>
+
+<div class="admin__page-section select-order-items-block" id="select-order-items-block">
+    <div class="admin__page-section-title">
+        <span class="title"><?= $block->escapeHtml(__('Please Select Products to Add')) ?></span>
+        <div class="actions"><?= $block->getAddProductButtonHtml() ?></div>
+    </div>
+    <div class="admin__page-section-content">
+        <?= $block->getChildHtml('order_items_grid') ?>
+    </div>
+</div>
+<?= /* @noEscape */
+$secureRenderer->renderStyleAsTag(
+    'display:none',
+    '#rma-item-template-block'
+);
+?>
+<?= /* @noEscape */
+$secureRenderer->renderStyleAsTag(
+    'display:none',
+    '#select-order-items-block'
+);
+?>

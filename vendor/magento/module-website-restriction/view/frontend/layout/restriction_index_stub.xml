@@ -1,0 +1,32 @@
+<?xml version="1.0"?>
+<!--
+/**
+ * Copyright © Magento, Inc. All rights reserved.
+ * See COPYING.txt for license details.
+ */
+-->
+<layout xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="urn:magento:framework:View/Layout/etc/layout_generic.xsd">
+    <container name="root">
+        <block name="require.js" class="Magento\Framework\View\Element\Template" template="Magento_Theme::js/require_js.phtml" />
+        <container name="after_body_start" as="after_body_start" label="Page Top"/>
+        <container name="columns.top" label="Before Main Columns" as="columns_top">
+            <block class="Magento\Theme\Block\Html\Title" name="page.main.title" template="Magento_Theme::html/title.phtml"/>
+            <container name="page.messages" htmlTag="div" htmlClass="page messages">
+                <block class="Magento\Framework\View\Element\Messages" name="global_messages" as="global_messages"/>
+                <block class="Magento\Framework\View\Element\Messages" name="messages" as="messages"/>
+            </container>
+        </container>
+
+        <container name="main" as="main" label="Main Content Container" htmlTag="div" htmlClass="column main">
+            <container name="content" label="Main Content Area">
+                <block class="Magento\WebsiteRestriction\Block\Cms\Stub" name="cms_page"/>
+            </container>
+        </container>
+
+        <container name="footer-container" as="footer" label="Page Footer Container" htmlTag="footer" htmlClass="footer">
+            <container name="footer" as="footer" label="Page Footer" htmlTag="div" htmlClass="content">
+                <block class="Magento\Theme\Block\Html\Footer" name="copyright" template="Magento_Theme::html/copyright.phtml"/>
+            </container>
+        </container>
+    </container>
+</layout>

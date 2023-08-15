@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+ /**
+  * Copyright © Magento, Inc. All rights reserved.
+  * See COPYING.txt for license details.
+  */
+-->
+
+<actionGroups xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:noNamespaceSchemaLocation="urn:magento:mftf:Test/etc/actionGroupSchema.xsd">
+    <!--Fill and choose all elements-->
+    <actionGroup name="FillDynamicBlockActionGroup">
+        <arguments>
+            <argument name="bannerData" defaultValue="sampleBanner"/>
+            <argument name="customerSegmentName" type="string"/>
+        </arguments>
+        <fillField selector="{{AdminBannerBasicActionSection.Name}}" userInput="{{bannerData.Name}}" stepKey="fillBannerName"/>
+        <!--Select block type-->
+        <click selector="{{AdminBannerBasicActionSection.type}}" stepKey="openDynamicBlockTypeList"/>
+        <click selector="{{AdminBannerBasicActionSection.OptionType(bannerData.Type)}}" stepKey="selectOptionType"/>
+        <click selector="{{AdminBannerBasicActionSection.activeDoneButton}}" stepKey="clickDone"/>
+        <!--Select customer segment-->
+        <click selector="{{SelectCustomerSegmentSection.CustomerSegmentDropdown}}" stepKey="openCustomerSegmentList"/>
+        <click selector="{{SelectCustomerSegmentSection.CustomerSegmentOption(customerSegmentName)}}" stepKey="selectCustomerSegmentOption"/>
+        <click selector="{{AdminBannerBasicActionSection.activeDoneButton}}" stepKey="clickDoneBtn"/>
+    </actionGroup>
+</actionGroups>

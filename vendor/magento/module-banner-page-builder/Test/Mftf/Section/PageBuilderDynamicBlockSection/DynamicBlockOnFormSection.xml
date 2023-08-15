@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+ /**
+  * Copyright © Magento, Inc. All rights reserved.
+  * See COPYING.txt for license details.
+  */
+-->
+<sections xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:noNamespaceSchemaLocation="urn:magento:mftf:Page/etc/SectionObject.xsd">
+    <section name="DynamicBlockOnForm">
+        <element name="title" type="text" selector="(//div[contains(@class,'block')]//div[contains(@class,'name') and text()='{{arg1}}'])" parameterized="true"/>
+        <element name="selectBlockBtn" type="button" selector="(//div[contains(@class,'block')]//button/span[text()='Select Dynamic Block'])" timeout="30"/>
+        <element name="status" type="text" selector="//*[text()='Status']/ancestor::td//following-sibling::td//*[text()='{{arg2}}']" parameterized="true"/>
+        <element name="blockTitle" type="text" selector="(//div[contains(@class,'block')]//div[contains(@class,'block-title') and text()='{{arg1}}'])" parameterized="true"/>
+        <element name="blockInfo" type="text" selector="(//table[contains(@class,'block-info')]//tr//div[contains(., '{{arg1}}')])" parameterized="true"/>
+    </section>
+</sections>

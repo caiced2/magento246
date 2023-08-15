@@ -1,0 +1,128 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+ /**
+  * Copyright © Magento, Inc. All rights reserved.
+  * See COPYING.txt for license details.
+  */
+-->
+
+<tests xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xsi:noNamespaceSchemaLocation="urn:magento:mftf:Test/etc/testSchema.xsd">
+    <test name="StorefrontRewardPointsFunctionalityCanBeDisabledEnabledTest">
+        <annotations>
+            <features value="Reward"/>
+            <stories value="Reward Points functionality can be disabled/enabled on Storefront"/>
+            <title value="Reward Points functionality can be disabled/enabled on Storefront"/>
+            <description value="Reward Points functionality can be disabled/enabled on Storefront"/>
+            <severity value="CRITICAL"/>
+            <testCaseId value="MAGETWO-68796"/>
+            <group value="reward"/>
+        </annotations>
+        <before>
+            <!-- Creating Customer with default shipping/billing addresses -->
+            <createData entity="Simple_US_Customer" stepKey="createCustomer" >
+                <field key="group_id">1</field>
+            </createData>
+
+            <!--Adding reward points to previously created Customer -->
+            <actionGroup ref="AdminLoginActionGroup" stepKey="loginAsAdmin"/>
+            <actionGroup ref="AdminApplyRewardPointsActionGroup" stepKey="applyRewardPointsToCustomer">
+                <argument name="customerId" value="$$createCustomer.id$$"/>
+                <argument name="rewards" value="10"/>
+            </actionGroup>
+
+            <!--Creating exchange rate - Points to Currency -->
+            <actionGroup ref="AdminCreatePointsToCurrencyRateActionGroup" stepKey="createPointsToCurrencyRateActionGroup">
+                <argument name="rate1" value="1"/>
+                <argument name="rate2" value="1"/>
+            </actionGroup>
+
+            <!--Creating exchange rate - Currency to Points -->
+            <actionGroup ref="AdminCreateCurrencyToPointsRateActionGroup" stepKey="createCurrencyToPointsRateActionGroup">
+                <argument name="rate1" value="1"/>
+                <argument name="rate2" value="1"/>
+            </actionGroup>
+
+            <!-- Creating Simple Product-->
+            <createData entity="SimpleProduct2" stepKey="createSimpleProduct">
+                <field key="price">10.00</field>
+            </createData>
+
+            <!-- Reward point Configuration -->
+            <amOnPage url="{{AdminSystemConfigMagentoRewardPage.url}}" stepKey="openConfigSystemMagentoReward" />
+            <conditionalClick selector="{{AdminSystemConfigRewardPointsSection.rewardPointsTab}}" dependentSelector="{{AdminSystemConfigRewardPointsSection.rewardPointsTab}}" visible="true" stepKey="clickRewardPointsTab"/>
+            <selectOption selector="{{AdminSystemConfigRewardPointsSection.enableRewardPointsFunctionality}}" userInput="Yes" stepKey="selectEnableRewardPointsFunctionality"/>
+            <selectOption selector="{{AdminSystemConfigRewardPointsSection.enableRewardPointsFunctionalityOnStorefront}}" userInput="No" stepKey="selectDisableRewardPointsOnStorefront"/>
+            <selectOption selector="{{AdminSystemConfigRewardPointsSection.customersMaySeeRewardPointsHistory}}" userInput="Yes" stepKey="selectCustomersMaySeeRewardPointsHistory"/>
+            <click selector="{{AdminConfigSection.saveButton}}" stepKey="clickSaveConfig"/>
+            <waitForPageLoad stepKey="waitForPageLoad"/>
+
+            <!-- Flush cache -->
+            <actionGroup ref="CliCacheCleanActionGroup" stepKey="flushCache">
+                <argument name="tags" value="config full_page"/>
+            </actionGroup>
+        </before>
+
+        <after>
+            <magentoCLI command="config:set {{RewardsPointsOnStorefrontEnable.path}} {{RewardsPointsOnStorefrontEnable.value}}" stepKey="enableRewardsPointsOnStorefront"/>
+            <actionGroup ref="CliCacheCleanActionGroup" stepKey="cleanCache">
+                <argument name="tags" value="config full_page"/>
+            </actionGroup>
+            <!-- Deleting previously created Category, Product, Customer -->
+            <deleteData createDataKey="createSimpleProduct" stepKey="deleteSimpleProduct"/>
+            <deleteData createDataKey="createCustomer" stepKey="deleteCustomer"/>
+            <actionGroup ref="AdminDeleteRewardExchangeRateActionGroup" stepKey="deleteRewardExchangeRate1"/>
+            <actionGroup ref="AdminDeleteRewardExchangeRateActionGroup" stepKey="deleteRewardExchangeRate2"/>
+            <actionGroup ref="AdminLogoutActionGroup" stepKey="logout"/>
+        </after>
+
+        <!--Login to storefront as previously created customer-->
+        <actionGroup ref="LoginToStorefrontActionGroup" stepKey="loginAsCustomer">
+            <argument name="Customer" value="$$createCustomer$$"/>
+        </actionGroup>
+        <seeInCurrentUrl url="{{StorefrontCustomerDashboardPage.url}}" stepKey="seeCustomerDashboardPage"/>
+        <dontSee selector="{{StorefrontCustomerSidebarSection.sidebarTab('Reward Points')}}" userInput="Reward Points" stepKey="dontSeeRewartPoints"/>
+
+        <!--Open the Product Page and Add the product to Cart-->
+        <amOnPage url="{{StorefrontProductPage.url($$createSimpleProduct.custom_attributes[url_key]$$)}}" stepKey="openRewardExchangeRatesPage" />
+        <actionGroup ref="AddToCartFromStorefrontProductPageActionGroup" stepKey="addToCartFromStorefrontProductPage">
+            <argument name="productName" value="$$createSimpleProduct.name$$"/>
+        </actionGroup>
+
+        <!--Go to Checkout-->
+        <actionGroup ref="GoToCheckoutFromMinicartActionGroup" stepKey="goToCheckoutFromMinicart"/>
+        <see userInput="$5.00	Fixed	Flat Rate" selector="{{CheckoutShippingMethodsSection.shippingMethodRowByName('Flat Rate')}}" stepKey="seeShippingMethod"/>
+        <click selector="{{CheckoutShippingMethodsSection.checkShippingMethodByName('Flat Rate')}}" stepKey="selectFlatShippingMethod"/>
+        <waitForPageLoad stepKey="waitForLoadingMask"/>
+        <comment userInput="BIC workaround" stepKey="waitForNextButton"/>
+        <actionGroup ref="StorefrontCheckoutClickNextButtonActionGroup" stepKey="clickNext"/>
+        <waitForElement selector="{{CheckoutPaymentSection.paymentSectionTitle}}" time="30" stepKey="waitForPaymentSectionLoaded"/>
+        <waitForElementNotVisible selector="{{CustomerCheckoutRewardsSection.checkoutRewardBlock}}" stepKey="waitBlockNotVisible"/>
+
+        <!-- Open new tab and Reward point Configuration -->
+        <openNewTab stepKey="openNewTab"/>
+        <amOnPage url="{{AdminSystemConfigMagentoRewardPage.url}}" stepKey="openConfigSystemMagentoReward1" />
+        <assertElementContainsAttribute stepKey="seeOpenTabRewardPoints">
+			<expectedResult selector="{{AdminSystemConfigRewardPointsSection.rewardPointsTab}}" attribute="class" type="string">open</expectedResult>
+        </assertElementContainsAttribute>
+        <selectOption selector="{{AdminSystemConfigRewardPointsSection.enableRewardPointsFunctionalityOnStorefront}}" userInput="Yes" stepKey="selectEnableRewardPointsOnStorefront"/>
+        <click selector="{{AdminConfigSection.saveButton}}" stepKey="clickSaveConfig1"/>
+
+        <!-- Flush cache -->
+        <actionGroup ref="CliCacheFlushActionGroup" stepKey="flushCache">
+            <argument name="tags" value=""/>
+        </actionGroup>
+
+        <!-- Return back to tab Storefront on "Review & Payments" and reload page -->
+        <closeTab stepKey="closeTab"/>
+        <reloadPage stepKey="reloadPage"/>
+
+        <waitForElementVisible selector="{{CustomerCheckoutRewardsSection.checkoutRewardBlock}}" stepKey="waitBlockVisible"/>
+        <see selector="{{CustomerCheckoutRewardsSection.checkoutRewardText}}" userInput="10 store reward points available ($10.00)" stepKey="seeRewardsMessage"/>
+        <seeElement selector="{{CustomerCheckoutRewardsSection.useRewardPoints}}" stepKey="seeRewardsButton"/>
+
+        <!--Go To My Account-->
+        <amOnPage url="{{StorefrontCustomerDashboardPage.url}}" stepKey="goToMyAccountPage"/>
+        <see selector="{{StorefrontCustomerSidebarSection.sidebarTab('Reward Points')}}" userInput="Reward Points" stepKey="seeRewardPoints"/>
+    </test>
+</tests>

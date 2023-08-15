@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+ /**
+  * Copyright © Magento, Inc. All rights reserved.
+  * See COPYING.txt for license details.
+  */
+-->
+<tests xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:noNamespaceSchemaLocation="urn:magento:mftf:Test/etc/testSchema.xsd">
+    <test name="PageBuilderDynamicBlockFullScreenLeftPanelHeightAndFunctionalityTest" extends="PageBuilderFullScreenLeftPanelHeightAndFunctionalityTest">
+        <annotations>
+            <features value="PageBuilder"/>
+            <stories value="Dynamic Block"/>
+            <title value="Left panel is full-height and works in full-screen mode in Dynamic Block"/>
+            <description value="This test is to ensure that the PageBuilder left panel works and grows to span the full height of the viewport in full-screen mode when opened for Dynamic Block."/>
+            <severity value="AVERAGE"/>
+            <useCaseId value="MC-13782"/>
+            <testCaseId value="MC-15166"/>
+            <group value="pagebuilder"/>
+            <group value="pagebuilder-ee"/>
+            <group value="pagebuilder-dynamic-block"/>
+            <group value="pagebuilder-fullScreen"/>
+        </annotations>
+        <before>
+            <createData entity="_emptyCmsPage" stepKey="createCMSPage" before="createDynamicBlock"/>
+            <createData entity="_defaultDynamicBlock" stepKey="createDynamicBlock" before="loginAsAdmin"/>
+            <actionGroup ref="NavigateToCreatedDynamicBlockActionGroup" stepKey="navigateToAPageWithPageBuilder">
+                <argument name="Banner" value="$$createDynamicBlock$$"/>
+            </actionGroup>
+        </before>
+        <after>
+            <deleteData createDataKey="createCMSPage" stepKey="deleteCMSPage" before="deleteDynamicBlock"/>
+            <actionGroup ref="DeleteBannerActionGroup" stepKey="deleteDynamicBlock" before="logout">
+                <argument name="bannerName" value="$$createDynamicBlock.name$$"/>
+            </actionGroup>
+        </after>
+    </test>
+</tests>

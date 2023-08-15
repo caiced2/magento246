@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+ /**
+  * Copyright © Magento, Inc. All rights reserved.
+  * See COPYING.txt for license details.
+  */
+-->
+<actionGroups xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:noNamespaceSchemaLocation="urn:magento:mftf:Test/etc/actionGroupSchema.xsd">
+    <actionGroup name="AddProductToWishlistActionGroup" extends="CreateNewWishListActionGroup">
+        <arguments>
+            <argument name="category" type="string" defaultValue="{{SimpleSubCategory.name}}"/>
+            <argument name="product" type="string" defaultValue="{{SimpleProduct.name}}"/>
+        </arguments>
+        <amOnPage url="{{StorefrontCategoryPage.url(category)}}" before="waitForCreateNewWishListWindowAppeared" stepKey="navigateToCategoryPage1"/>
+        <click selector="{{StorefrontCategoryMainSection.specifiedProductItemInfo(product)}}" after="navigateToCategoryPage1" stepKey="mouseHoverOnProduct"/>
+        <waitForPageLoad after="mouseHoverOnProduct" stepKey="waitForProdPageLoad"/>
+        <click selector="{{StorefrontCreateMultipleWishlistSection.wishListItem}}" after="waitForProdPageLoad" stepKey="clickAddToWishListItem"/>
+        <click selector="{{StorefrontCreateMultipleWishlistSection.addNewWishListItem}}" after="clickAddToWishListItem" stepKey="clickAddToWishListButton"/>
+        <waitForPageLoad stepKey="waitForPageToFullyLoad" time="30" after="clickAddToWishListButton"/>
+        <waitForElementVisible selector=".message-success" time="60" stepKey="waitForSuccessMessage"/>
+        <see userInput="{{product}} has been added to your Wish List" selector=".message-success" stepKey="seeForWishlistSuccessMessage"/>
+    </actionGroup>
+</actionGroups>

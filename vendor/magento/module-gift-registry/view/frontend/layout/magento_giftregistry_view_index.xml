@@ -1,0 +1,24 @@
+<?xml version="1.0"?>
+<!--
+/**
+ * Copyright © Magento, Inc. All rights reserved.
+ * See COPYING.txt for license details.
+ */
+-->
+<page xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" layout="1column" xsi:noNamespaceSchemaLocation="urn:magento:framework:View/Layout/etc/page_configuration.xsd">
+    <update handle="checkout_onepage_review_item_renderers"/>
+    <update handle="msrp_popup"/>
+    <body>
+        <referenceContainer name="content">
+            <block class="Magento\GiftRegistry\Block\View" name="magento.giftregistry.view" template="Magento_GiftRegistry::view.phtml" cacheable="false">
+                <block class="Magento\GiftRegistry\Block\Items" name="giftregistry_items" template="Magento_GiftRegistry::view/items.phtml" cacheable="false">
+                    <arguments>
+                        <argument name="renderer_template" xsi:type="string">Magento_GiftRegistry::view/items/default.phtml</argument>
+                    </arguments>
+                    <block class="Magento\Framework\View\Element\RendererList" name="checkout.onepage.review.item.renderers" as="renderer.list"/>
+                </block>
+                <block class="Magento\GiftRegistry\Block\Customer\Items" name="giftregistry.view.items" template="Magento_GiftRegistry::view/items.phtml" cacheable="false"/>
+            </block>
+        </referenceContainer>
+    </body>
+</page>

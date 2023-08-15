@@ -1,0 +1,23 @@
+<?php
+/**
+ * Copyright © Magento, Inc. All rights reserved.
+ * See COPYING.txt for license details.
+ */
+
+// phpcs:disable Magento2.Files.LineLength.MaxExceeded
+
+/** @var $block Magento\GiftRegistry\Block\Wishlist\Item\Column\Registry */
+?>
+<?php if ($block->checkProductType($block->getItem()->getProduct())) :?>
+    <div class="giftregisty-dropdown add">
+        <span class="action toggle" data-mage-init='{"dropdown":{}}' data-toggle="dropdown" title=""><span><?= $block->escapeHtml(__('Add to Gift Registry')) ?></span></span>
+        <ul class="dropdown items">
+            <?php foreach ($block->getGiftRegistryList() as $_entity) :?>
+                <li data-wishlist-to-giftregistry='{"itemId":"<?= $block->escapeHtmlAttr($block->getItem()->getId()) ?>", "entity":"<?= $block->escapeHtmlAttr($_entity->getValue()) ?>", "url":"<?= $block->escapeUrl($block->getUrl('magento_giftregistry/index/wishlist', ['_secure' => $block->getRequest()->isSecure()])) ?>"}'
+                    class="item"
+                    title="<?= $block->escapeHtmlAttr($_entity->getTitle()) ?>"
+                ><?= $block->escapeHtml($block->truncateString($_entity->getTitle(), 40)) ?></li>
+            <?php endforeach;?>
+        </ul>
+    </div>
+<?php endif;?>

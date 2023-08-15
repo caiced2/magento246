@@ -1,0 +1,22 @@
+{
+    "event_data": {
+        "column": {
+            "event_id": true,
+            "event_code": true,
+            "event_data": true,
+            "metadata": true,
+            "created_at": true,
+            "retries_count": true,
+            "status": true,
+            "updated_at": true,
+            "info": true,
+            "priority": true
+        },
+        "index": {
+            "EVENT_DATA_STATUS": true
+        },
+        "constraint": {
+            "PRIMARY": true
+        }
+    }
+}

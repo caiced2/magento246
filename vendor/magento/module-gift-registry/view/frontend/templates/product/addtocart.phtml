@@ -1,0 +1,45 @@
+<?php
+/**
+ * Copyright © Magento, Inc. All rights reserved.
+ * See COPYING.txt for license details.
+ */
+
+/** @var $block \Magento\GiftRegistry\Block\Product\View */
+?>
+<?php $_product = $block->getProduct() ?>
+<?php if ($_product->isSaleable()) :?>
+<div class="box-tocart giftregisty">
+    <div class="fieldset">
+        <?php if ($block->shouldRenderQuantity()) :?>
+            <div class="field qty">
+                <label for="qty" class="label"><span><?= $block->escapeHtml(__('Quantity:')) ?></span></label>
+                <div class="control">
+                    <input type="number"
+                           name="qty"
+                           id="qty"
+                           value="<?= $block->escapeHtmlAttr($block->getMinimalQty($_product)) ?>"
+                           title="<?= $block->escapeHtmlAttr(__('Qty')) ?>"
+                           class="input-text qty">
+                </div>
+            </div>
+        <?php endif; ?>
+        <div class="actions">
+            <button type="submit"
+                    title="<?= $block->escapeHtmlAttr(__('Add to Gift Registry')) ?>"
+                    class="action primary tocart">
+                <span><?= $block->escapeHtml(__('Add to Gift Registry')) ?></span>
+            </button>
+        </div>
+    </div>
+</div>
+<?php endif; ?>
+<script type="text/x-magento-init">
+    {
+        "#product_addtocart_form" : {
+            "Magento_Catalog/product/view/validation": {},
+            "Magento_GiftRegistry/properties": {
+                "action": "<?= $block->escapeJs($block->escapeUrl($block->getAddToGiftregistryUrl())) ?>"
+            }
+        }
+    }
+</script>

@@ -1,0 +1,70 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+ /**
+  * Copyright © Magento, Inc. All rights reserved.
+  * See COPYING.txt for license details.
+  */
+-->
+
+<tests xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xsi:noNamespaceSchemaLocation="urn:magento:mftf:Test/etc/testSchema.xsd">
+    <test name="StorefrontApplyAndRemoveStoreCreditPaymentOnCheckoutPageTest">
+        <annotations>
+            <features value="CustomerBalance"/>
+            <stories value="Store credit"/>
+            <title value="Option to Remove the Store Credit from the payment page of checkout"/>
+            <description value="Option to Remove the Store Credit from the payment page of checkout"/>
+            <severity value="MAJOR"/>
+            <testCaseId value="MC-28631"/>
+            <useCaseId value="MAGETWO-96851"/>
+            <group value="customerBalance"/>
+        </annotations>
+
+        <before>
+            <createData entity="SimpleProduct2" stepKey="createProduct"/>
+            <createData entity="Simple_US_Customer" stepKey="createSimpleUsCustomer"/>
+            <magentoCron groups="index" stepKey="reindex"/>
+            <actionGroup ref="AdminLoginActionGroup" stepKey="loginAsAdmin"/>
+        </before>
+
+        <after>
+            <actionGroup ref="StorefrontCustomerLogoutActionGroup" stepKey="storefrontCustomerLogout"/>
+            <deleteData createDataKey="createSimpleUsCustomer" stepKey="deleteCustomer"/>
+            <deleteData createDataKey="createProduct" stepKey="deleteProduct"/>
+            <actionGroup ref="AdminClearCustomersFiltersActionGroup" stepKey="clearCustomersGridFilter"/>
+            <actionGroup ref="AdminLogoutActionGroup" stepKey="logoutFromAdmin"/>
+        </after>
+
+        <!--Add Store credit balance to customer-->
+        <actionGroup ref="OpenEditCustomerFromAdminActionGroup" stepKey="openCustomerEdit">
+            <argument name="customer" value="$createSimpleUsCustomer$" />
+        </actionGroup>
+        <actionGroup ref="UpdateCustomerStoreCreditBalanceAdminActionGroup" stepKey="updateStoreCreditFromAdmin">
+            <argument name="storeCredit" value="500" />
+        </actionGroup>
+
+        <!--Go to Storefront as Customer-->
+        <actionGroup ref="LoginToStorefrontActionGroup" stepKey="customerLogin">
+            <argument name="Customer" value="$createSimpleUsCustomer$" />
+        </actionGroup>
+
+        <!-- Add simple product to cart and checkout-->
+        <actionGroup ref="AddSimpleProductToCartActionGroup" stepKey="addProductToCart">
+            <argument name="product" value="$createProduct$"/>
+        </actionGroup>
+        <actionGroup ref="GoToCheckoutFromMinicartActionGroup" stepKey="goToCheckoutFromMinicart"/>
+        <actionGroup ref="CheckoutSelectFlatRateShippingMethodActionGroup" stepKey="selectFlatRateShippingMethod"/>
+        <actionGroup ref="StorefrontCheckoutForwardFromShippingStepActionGroup" stepKey="goToCheckoutReviewStep"/>
+
+        <!--Click UseStoreCredit button and check that it works as expected-->
+        <click selector="{{CheckoutStoreCreditSection.useStoreCredit}}" stepKey="clickUseStoreCredit"/>
+        <seeElementInDOM selector="{{StorefrontCheckoutPageMessagesSection.successMessage('Your store credit was successfully applied')}}" stepKey="seeStoreCreditAppliedSuccessMessageInDOM"/>
+        <seeElement selector="{{CheckoutStoreCreditSection.remove}}" stepKey="seeRemoveButton"/>
+        <seeElement selector="{{CheckoutStoreCreditSection.price}}" stepKey="seePrice"/>
+        <!--Click Remove button and check that it works as expected-->
+        <click selector="{{CheckoutStoreCreditSection.remove}}" stepKey="clickRemove"/>
+        <seeElementInDOM selector="{{StorefrontCheckoutPageMessagesSection.successMessage('The store credit payment has been removed from shopping cart.')}}" stepKey="seeStoreCreditRemovedSuccessMessageInDOM"/>
+        <dontSeeElement selector="{{CheckoutStoreCreditSection.remove}}" stepKey="dontSeeRemoveButton"/>
+        <dontSeeElement selector="{{CheckoutStoreCreditSection.price}}" stepKey="dontSeePrice"/>
+    </test>
+</tests>

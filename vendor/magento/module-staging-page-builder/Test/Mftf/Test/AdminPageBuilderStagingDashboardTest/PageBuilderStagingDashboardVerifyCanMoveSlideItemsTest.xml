@@ -1,0 +1,119 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+ /**
+  * Copyright © Magento, Inc. All rights reserved.
+  * See COPYING.txt for license details.
+  */
+-->
+<tests xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:noNamespaceSchemaLocation="urn:magento:mftf:Test/etc/testSchema.xsd">
+    <test name="PageBuilderStagingDashboardVerifyCanMoveSlideItemsTest" extends="SlideItemMoveSlideItemsToRearrangeTest">
+        <annotations>
+            <features value="PageBuilder"/>
+            <stories value="Staging Dashboard - CMS Page"/>
+            <title value="Verify that user can move slide items from Staging Dashboard"/>
+            <description value="This test is intended to ensure that users can move slide items within the PageBuilder stage for Staging Dashboard."/>
+            <severity value="MAJOR"/>
+            <useCaseId value="MC-14992"/>
+            <testCaseId value="MC-15272"/>
+            <group value="pagebuilder"/>
+            <group value="pagebuilder-ee"/>
+            <group value="pagebuilder-staging"/>
+            <group value="pagebuilder-stagingDashboard"/>
+            <group value="pagebuilder-cms-page"/>
+            <group value="pagebuilder-slide"/>
+            <group value="pagebuilder-move"/>
+        </annotations>
+        <before>
+            <createData entity="_emptyCmsPage" stepKey="createCMSPage" before="loginAsAdmin"/>
+            <actionGroup ref="navigateToCMSPage" stepKey="navigateToAPageWithPageBuilder">
+                <argument name="CMSPage" value="$$createCMSPage$$"/>
+            </actionGroup>
+            <actionGroup ref="navigateToStagingSlideout" stepKey="navigateToStagingSlideout" after="navigateToAPageWithPageBuilder"/>
+            <actionGroup ref="FillScheduleUpdateBasicActionGroup" stepKey="switchToPageBuilderStage">
+                <argument name="schedule" value="UpdateWithoutEndUnique_2MinutesAhead"/>
+            </actionGroup>
+            <!-- Open Content Staging Dashboard -->
+            <comment userInput="Open Content Staging Dashboard" stepKey="commentOpenContentStagingDashboard" after="switchToPageBuilderStage"/>
+            <actionGroup ref="navigateToViewStagingUpdateFromStagingDashboard" stepKey="navigateToViewStagingUpdateFromStagingDashboard" after="commentOpenContentStagingDashboard">
+                <argument name="update" value="UpdateWithoutEndUnique_2MinutesAhead"/>
+            </actionGroup>
+            <actionGroup ref="openEditSlideOutForCMSPagesStagingUpdateFromViewStagingUpdate" stepKey="openEditSlideOutForCMSPagesStagingUpdateFromViewStagingUpdate" after="navigateToViewStagingUpdateFromStagingDashboard"/>
+            <actionGroup ref="ExpandAdminProductSectionActionGroup" stepKey="clickContentSectionHeader" after="openEditSlideOutForCMSPagesStagingUpdateFromViewStagingUpdate">
+                <argument name="sectionSelector" value="{{AdminStagingDashboardSection.contentHeader}}"/>
+                <argument name="sectionDependentSelector" value="{{AdminStagingDashboardSection.contentHeaderActive}}"/>
+            </actionGroup>
+            <actionGroup ref="switchToPageBuilderStage" stepKey="switchToPageBuilderStage2" after="clickContentSectionHeader">
+                <argument name="sectionSelector" value="{{AdminStagingSlideOutSection.contentTab}}"/>
+                <argument name="sectionDependentSelector" value="{{AdminStagingSlideOutSection.stagingContentTab}}"/>
+            </actionGroup>
+        </before>
+        <after>
+            <deleteData createDataKey="createCMSPage" stepKey="deleteCreatedProduct" before="logout"/>
+            <amOnPage url="{{AdminStagingDashboardPage.url}}" stepKey="NavigateToAndResetProductGridToDefaultView" after="deleteCreatedProduct"/>
+            <actionGroup ref="ClearFiltersAdminDataGridActionGroup" stepKey="clearFilter" after="NavigateToAndResetProductGridToDefaultView"/>
+        </after>
+        <comment userInput="---merging to remove step---" stepKey="enterPageTitle"/>
+        <dragAndDrop selector1="{{SliderOnStage.slideNavigationDragHandleByIndex('1', '3')}}" selector2="{{SliderOnStage.slideNavigationDot('1', '1')}}" stepKey="dragAndDropSlide"/>
+        <actionGroup ref="saveEditPanelSettings" stepKey="saveEditPanel1Settings">
+            <argument name="baseContent" value="{{AdminStagingSlideOutSection.activeSaveButton}}"/>
+        </actionGroup>
+        <actionGroup ref="saveEditPanelSettings" stepKey="saveEditPanel1Settings2">
+            <argument name="baseContent" value="{{AdminStagingSlideOutSection.activeSaveButton}}"/>
+        </actionGroup>
+        <actionGroup ref="saveEditPanelSettings" stepKey="saveEditPanel1Settings3">
+            <argument name="baseContent" value="{{AdminStagingSlideOutSection.activeSaveButton}}"/>
+        </actionGroup>
+        <!-- Saving Staging Dashboard -->
+        <comment userInput="Saving Staging Dashboard" stepKey="commentSaveStagingDashboard" before="saveAndContinueEditCmsPage"/>
+        <actionGroup ref="saveStagingDashboardSlideOutUpdateForm" stepKey="saveAndContinueEditCmsPage"/>
+        <actionGroup ref="saveStagingDashboardUpdateForm" stepKey="saveStagingDashboardUpdateForm" after="saveAndContinueEditCmsPage">
+            <argument name="updateName" value="UpdateWithoutEndUnique_2MinutesAhead.updateName"/>
+        </actionGroup>
+        <!-- Validate Stage -->
+        <actionGroup ref="navigateToViewStagingUpdateFromStagingDashboard" stepKey="switchToPageBuilderStage1">
+            <argument name="update" value="UpdateWithoutEndUnique_2MinutesAhead"/>
+        </actionGroup>
+        <actionGroup ref="openEditSlideOutForCMSPagesStagingUpdateFromViewStagingUpdate" stepKey="openPageBuilderForDescription" after="switchToPageBuilderStage1"/>
+        <actionGroup ref="ExpandAdminProductSectionActionGroup" stepKey="clickContentSectionHeader" after="openPageBuilderForDescription">
+            <argument name="sectionSelector" value="{{AdminStagingDashboardSection.contentHeader}}"/>
+            <argument name="sectionDependentSelector" value="{{AdminStagingDashboardSection.contentHeaderActive}}"/>
+        </actionGroup>
+        <actionGroup ref="switchToPageBuilderStage" stepKey="switchToPageBuilderStage3" after="clickContentSectionHeader">
+            <argument name="sectionSelector" value="{{AdminStagingSlideOutSection.contentTab}}"/>
+            <argument name="sectionDependentSelector" value="{{AdminStagingSlideOutSection.stagingContentTab}}"/>
+        </actionGroup>
+        <!-- Validate Stage After Sorting -->
+        <seeElement selector="{{SlideOnBackend.messageContent('2', PageBuilderSlideItemContent_Slide3.value)}}" stepKey="seeSlide1ContentAfterSort"/>
+        <see userInput="{{PageBuilderSlideItemSlideName_Slide3.value}}" selector="{{SliderOnStage.slideNavigationDotNameTooltip('1')}}" stepKey="seeSlideName1InTooltipAfterSort"/>
+        <seeElement selector="{{SlideOnBackend.messageContent('2', PageBuilderSlideItemContent_Slide3.value)}}" stepKey="seeSlide2ContentAfterSort"/>
+        <actionGroup ref="saveStagingDashboardSlideOutUpdateForm" stepKey="saveAndContinueEditCmsPage1"/>
+        <actionGroup ref="saveStagingDashboardUpdateForm" stepKey="saveStagingDashboardUpdateForm1" after="saveAndContinueEditCmsPage1">
+            <argument name="updateName" value="UpdateWithoutEndUnique_2MinutesAhead.updateName"/>
+        </actionGroup>
+        <!-- Validate Stage -->
+        <actionGroup ref="navigateToViewStagingUpdateFromStagingDashboard" stepKey="switchToPageBuilderStage2">
+            <argument name="update" value="UpdateWithoutEndUnique_2MinutesAhead"/>
+        </actionGroup>
+        <actionGroup ref="openEditSlideOutForCMSPagesStagingUpdateFromViewStagingUpdate" stepKey="openPageBuilderForDescription2" after="switchToPageBuilderStage2"/>
+        <actionGroup ref="ExpandAdminProductSectionActionGroup" stepKey="clickContentSectionHeader2" after="openPageBuilderForDescription2">
+            <argument name="sectionSelector" value="{{AdminStagingDashboardSection.contentHeader}}"/>
+            <argument name="sectionDependentSelector" value="{{AdminStagingDashboardSection.contentHeaderActive}}"/>
+        </actionGroup>
+        <actionGroup ref="switchToPageBuilderStage" stepKey="switchToPageBuilderStage4" after="clickContentSectionHeader2">
+            <argument name="sectionSelector" value="{{AdminStagingSlideOutSection.contentTab}}"/>
+            <argument name="sectionDependentSelector" value="{{AdminStagingSlideOutSection.stagingContentTab}}"/>
+        </actionGroup>
+        <!-- Validate Stage After Saving -->
+        <seeElement selector="{{SlideOnBackend.messageContent('1', PageBuilderSlideItemContent_Slide1.value)}}" stepKey="seeSlide3ContentAfterSave2"/>
+        <see userInput="{{PageBuilderSlideItemSlideName_Slide1.value}}" selector="{{SliderOnStage.slideNavigationDotNameTooltip('1')}}" stepKey="seeSlideName3InTooltipAfterSave2"/>
+        <see userInput="{{PageBuilderSlideItemSlideName_Slide3.value}}" selector="{{SliderOnStage.slideNavigationDotNameTooltip('1')}}" stepKey="seeSlideName1InTooltipAfterSave2"/>
+        <seeElement selector="{{SlideOnBackend.messageContent('2', PageBuilderSlideItemContent_Slide3.value)}}" stepKey="seeSlideContentAfterSave2"/>
+        <!-- Validate staging preview -->
+        <comment userInput="Validate staging preview" stepKey="commentValidateStorefront"/>
+        <actionGroup ref="exitPageBuilderFullScreen" stepKey="exitPageBuilderFullScreen3" before="navigateToStoreFront"/>
+        <actionGroup ref="openPreviewForScheduledUpdateFromSlideOut" stepKey="navigateToStoreFront"/>
+        <see userInput="{{PageBuilderSlideItemContent_Slide1.value}}" selector="{{SlideOnFrontend.slickSlideIndex('0')}}" stepKey="seeSlide1ContentDisplayed"/>
+        <see userInput="{{PageBuilderSlideItemContent_Slide3.value}}" selector="{{SlideOnFrontend.slickSlideIndex('1')}}" stepKey="seeSlide2ContentDisplayed"/>
+    </test>
+</tests>

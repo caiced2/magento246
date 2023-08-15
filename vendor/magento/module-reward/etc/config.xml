@@ -1,0 +1,32 @@
+<?xml version="1.0"?>
+<!--
+/**
+ * Copyright © Magento, Inc. All rights reserved.
+ * See COPYING.txt for license details.
+ */
+-->
+<config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="urn:magento:module:Magento_Store:etc/config.xsd">
+    <default>
+        <magento_reward>
+            <general>
+                <is_enabled>1</is_enabled>
+                <is_enabled_on_front>1</is_enabled_on_front>
+                <publish_history>1</publish_history>
+                <expiry_calculation>static</expiry_calculation>
+                <deduct_automatically>1</deduct_automatically>
+                <landing_page>reward-points</landing_page>
+            </general>
+            <notification>
+                <email_sender>general</email_sender>
+                <subscribe_by_default>1</subscribe_by_default>
+                <balance_update_template>magento_reward_notification_balance_update_template</balance_update_template>
+                <expiry_warning_template>magento_reward_notification_expiry_warning_template</expiry_warning_template>
+            </notification>
+        </magento_reward>
+        <sales>
+            <totals_sort>
+                <reward>80</reward>
+            </totals_sort>
+        </sales>
+    </default>
+</config>

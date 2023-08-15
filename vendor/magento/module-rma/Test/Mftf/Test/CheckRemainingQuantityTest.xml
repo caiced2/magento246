@@ -1,0 +1,175 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+ /**
+  * Copyright © Magento, Inc. All rights reserved.
+  * See COPYING.txt for license details.
+  */
+-->
+<tests xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="urn:magento:mftf:Test/etc/testSchema.xsd">
+    <test name="CheckRemainingQuantityTest">
+        <annotations>
+            <title value="Checking 'remaining quantity' value after return 'RMA'"/>
+            <stories value="MAGETWO-71022: After return 'RMA' is complete in Admin, 'remaining quantity' in customer account shows incorrect value"/>
+            <description value="Checking 'remaining quantity' value after return 'RMA'"/>
+            <features value="Rma"/>
+            <severity value="MAJOR"/>
+            <testCaseId value="MAGETWO-94334"/>
+            <group value="Rma"/>
+        </annotations>
+
+        <before>
+            <createData entity="EnableRmaOnStorefront" stepKey="enableRmaOnStorefront"/>
+
+            <createData entity="_defaultCategory" stepKey="defaultCategory"/>
+            <createData entity="SimpleProduct" stepKey="simpleProduct">
+                <requiredEntity createDataKey="defaultCategory"/>
+            </createData>
+
+            <createData entity="Simple_US_Customer" stepKey="customer"/>
+
+            <actionGroup ref="CliCacheFlushActionGroup" stepKey="flushCache">
+                <argument name="tags" value=""/>
+            </actionGroup>
+
+            <actionGroup ref="AdminLoginActionGroup" stepKey="loginAsAdmin"/>
+        </before>
+
+        <!--Create new customer order-->
+        <actionGroup ref="NavigateToNewOrderPageExistingCustomerActionGroup" stepKey="navigateToNewOrderWithExistingCustomer">
+            <argument name="customer" value="$$customer$$"/>
+        </actionGroup>
+
+        <!-- Choose default group -->
+        <click selector="{{AdminOrderFormAccountSection.group}}" stepKey="clickGroupSection"/>
+        <click selector="{{AdminOrderFormAccountSection.defaultGeneral}}" stepKey="clickGroupSectionGeneral"/>
+        <waitForPageLoad stepKey="waitForOrderPageLoad" time="30"/>
+
+        <!--Add product to order-->
+        <actionGroup ref="AddSimpleProductToOrderActionGroup" stepKey="addSimpleProductToOrder">
+            <argument name="product" value="$$simpleProduct$$"/>
+        </actionGroup>
+
+        <!--Select FlatRate shipping method-->
+        <actionGroup ref="OrderSelectFlatRateShippingActionGroup" stepKey="orderSelectFlatRateShippingMethod"/>
+
+        <!--Submit order-->
+        <click selector="{{AdminOrderFormActionSection.SubmitOrder}}" stepKey="submitOrder"/>
+
+        <grabFromCurrentUrl regex="~/order_id/(\d+)/~" stepKey="getOrderId"/>
+        <grabTextFrom selector="|Order # (\d+)|" stepKey="orderNumber"/>
+
+        <!--Verify order information-->
+        <actionGroup ref="VerifyCreatedOrderInformationActionGroup" stepKey="verifyCreatedOrderInformation"/>
+
+        <!--Go to invoice page into the order-->
+        <actionGroup ref="GoToInvoiceIntoOrderActionGroup" stepKey="goToInvoiceIntoOrderPage"/>
+
+        <!--Verify basic invoice information-->
+        <actionGroup ref="VerifyBasicInvoiceInformationActionGroup" stepKey="verifyBasicInvoiceInformation">
+            <argument name="customer" value="$$customer$$"/>
+            <argument name="shippingAddress" value="US_Address_TX"/>
+            <argument name="billingAddress" value="US_Address_TX"/>
+        </actionGroup>
+
+        <!--Verify items into invoice-->
+        <actionGroup ref="SeeProductInInvoiceItemsActionGroup" stepKey="seeProductInInvoiceItems">
+            <argument name="product" value="$$simpleProduct$$"/>
+        </actionGroup>
+
+        <!--Submit creating invoice into the order-->
+        <actionGroup ref="SubmitInvoiceActionGroup" stepKey="submitInvoiceIntoOrder"/>
+
+        <!--Go to shipment page into the order-->
+        <actionGroup ref="GoToShipmentIntoOrderActionGroup" stepKey="goToShipmentIntoOrder"/>
+
+        <!--Verify basic shipment information-->
+        <actionGroup ref="VerifyBasicShipmentInformationActionGroup" stepKey="verifyBasicShipmentInformation">
+            <argument name="customer" value="$$customer$$"/>
+            <argument name="shippingAddress" value="US_Address_TX"/>
+            <argument name="billingAddress" value="US_Address_TX"/>
+        </actionGroup>
+
+        <!--Verify items into shipment-->
+        <actionGroup ref="SeeProductInShipmentItemsActionGroup" stepKey="seeProductInShipmentItems">
+            <argument name="product" value="$$simpleProduct$$"/>
+        </actionGroup>
+
+        <!--Submit creating shipment into the order-->
+        <actionGroup ref="SubmitShipmentIntoOrderActionGroup" stepKey="submitShipmentIntoOrder"/>
+
+        <!--Verify that order status is Complete-->
+        <see selector="{{AdminOrderDetailsInformationSection.orderStatus}}" userInput="Complete" stepKey="seeOrderComplete"/>
+
+        <!--Create returns-->
+        <actionGroup ref="createReturns" stepKey="createReturns">
+            <argument name="customer" value="$$customer$$"/>
+        </actionGroup>
+
+        <!--Go to return items tab-->
+        <actionGroup ref="goToReturnItemsTab" stepKey="goToReturnItemsTab"/>
+
+        <!--Add item-->
+        <actionGroup ref="addReturnItem" stepKey="addReturnItem">
+            <argument name="product" value="$$simpleProduct$$"/>
+        </actionGroup>
+
+        <!--Submit return-->
+        <actionGroup ref="submitReturnItem" stepKey="submitReturnItem">
+            <argument name="item" value="SampleReturnItem"/>
+        </actionGroup>
+
+        <!--Filter the returns by order-->
+        <actionGroup ref="filterReturnsByOrder" stepKey="filterReturnsByOrder">
+            <argument name="orderId" value="$orderNumber"/>
+        </actionGroup>
+
+        <!--Go to return items tab-->
+        <actionGroup ref="goToReturnItemsTab" stepKey="goToReturnItemsTab2"/>
+
+        <!--Processing return item-->
+        <actionGroup ref="processingReturnItem" stepKey="authorizedReturnItem">
+            <argument name="process" value="AuthorizedProcessReturnItem"/>
+        </actionGroup>
+
+        <!--Go to return items tab-->
+        <actionGroup ref="goToReturnItemsTab" stepKey="goToReturnItemsTab3"/>
+
+        <!--Processing return item-->
+        <actionGroup ref="processingReturnItem" stepKey="receivedReturnItem">
+            <argument name="process" value="ReceivedProcessReturnItem"/>
+        </actionGroup>
+
+        <!--Go to return items tab-->
+        <actionGroup ref="goToReturnItemsTab" stepKey="goToReturnItemsTab4"/>
+
+        <!--Processing return item-->
+        <actionGroup ref="processingReturnItem" stepKey="approvedReturnItem">
+            <argument name="process" value="ApprovedProcessReturnItem"/>
+        </actionGroup>
+
+        <!--Go to return items tab-->
+        <actionGroup ref="goToReturnItemsTab" stepKey="goToReturnItemsTab5"/>
+
+        <!--Verify the return processed and closed-->
+        <actionGroup ref="verifyReturnProcessedAndClosed" stepKey="verifyReturnProcessedAndClosed">
+            <argument name="qty_remaining" value=""/>
+            <argument name="qty" value="1"/>
+            <argument name="item" value="SampleReturnItem"/>
+            <argument name="product_entity" value="$$simpleProduct$$"/>
+        </actionGroup>
+
+        <after>
+            <actionGroup ref="AdminLogoutActionGroup" stepKey="logout"/>
+
+            <deleteData createDataKey="simpleProduct" stepKey="deleteProduct"/>
+            <deleteData createDataKey="defaultCategory" stepKey="deleteCategory"/>
+            <deleteData createDataKey="customer" stepKey="deleteCustomer"/>
+
+            <createData entity="DisableRmaOnStorefront" stepKey="disableRmaOnStorefront"/>
+
+            <actionGroup ref="CliCacheFlushActionGroup" stepKey="flushCache">
+                <argument name="tags" value=""/>
+            </actionGroup>
+        </after>
+    </test>
+</tests>

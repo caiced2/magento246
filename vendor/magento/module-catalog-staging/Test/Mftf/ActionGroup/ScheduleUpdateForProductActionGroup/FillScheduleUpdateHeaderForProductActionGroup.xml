@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+ /**
+  * Copyright © Magento, Inc. All rights reserved.
+  * See COPYING.txt for license details.
+  */
+-->
+<actionGroups xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:noNamespaceSchemaLocation="urn:magento:mftf:Test/etc/actionGroupSchema.xsd">
+    <actionGroup name="FillScheduleUpdateHeaderForProductActionGroup">
+        <arguments>
+            <argument name="staging"/>
+            <argument name="timeStart" type="string"/>
+            <argument name="timeEnd" type="string" defaultValue=""/>
+        </arguments>
+        <fillField selector="{{AdminStagingSlideOutSection.updateName}}" userInput="{{staging.updateName}}" stepKey="fillUpdateName"/>
+        <fillField selector="{{AdminStagingSlideOutSection.updateDescription}}" userInput="{{staging.updateDescription}}" stepKey="fillDescription"/>
+        <fillField selector="{{AdminStagingSlideOutSection.startDate}}" userInput="{{timeStart}}" stepKey="fillStartDate"/>
+        <fillField selector="{{AdminStagingSlideOutSection.endDate}}" userInput="{{timeEnd}}" stepKey="fillEndDate"/>
+    </actionGroup>
+</actionGroups>

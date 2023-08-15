@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+ /**
+  * Copyright © Magento, Inc. All rights reserved.
+  * See COPYING.txt for license details.
+  */
+-->
+
+<entities xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:noNamespaceSchemaLocation="urn:magento:mftf:DataGenerator/etc/dataProfileSchema.xsd">
+    <entity name="dynamicBlockSystemOutput" type="dynamic_block_form">
+        <data key="successfulSaveMessage">You saved the dynamic block.</data>
+    </entity>
+    <entity name="sampleBanner" type="banner">
+        <data key="isActive">true</data>
+        <data key="Name" unique="suffix">SampleBanner</data>
+        <data key="Type">Header</data>
+        <data key="CustomerSegment">All Segments</data>
+    </entity>
+    <entity name="_defaultDynamicBlock" type="dynamicBlock">
+        <data key="store_id">0</data>
+        <data key="default_contents">Hello From Dynamic Block Page</data>
+        <data key="content_readonly">false</data>
+        <data key="readonly">false</data>
+        <data key="is_enabled">1</data>
+        <data key="store_contents">Hello From Dynamic Block Page</data>
+        <data key="name" unique="suffix">DynamicBlock</data>
+        <data key="use_default_value">false</data>
+        <data key="CustomerSegment">All Segments</data>
+    </entity>
+</entities>

@@ -1,0 +1,28 @@
+<?xml version="1.0"?>
+<!--
+/**
+ * Copyright © Magento, Inc. All rights reserved.
+ * See COPYING.txt for license details.
+ */
+-->
+<config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="urn:magento:module:Magento_Config:etc/system_file.xsd">
+    <system>
+        <section id="sales">
+            <group id="product_sku" translate="label" type="text" sortOrder="200" showInDefault="1" showInWebsite="1" showInStore="0">
+                <label>Order by SKU Settings</label>
+                <field id="my_account_enable" translate="label" type="select" sortOrder="1" showInDefault="1" showInWebsite="1" showInStore="0">
+                    <label>Enable Order by SKU on My Account in Storefront</label>
+                    <source_model>Magento\AdvancedCheckout\Model\Cart\Sku\Source\Settings</source_model>
+                </field>
+                <field id="allowed_groups" translate="label" sortOrder="2" showInDefault="1" showInWebsite="1" showInStore="0" type="multiselect">
+                    <label>Customer Groups</label>
+                    <validate>required-entry</validate>
+                    <source_model>Magento\Customer\Model\Config\Source\Group\Multiselect</source_model>
+                    <depends>
+                        <field id="my_account_enable">2</field>
+                    </depends>
+                </field>
+            </group>
+        </section>
+    </system>
+</config>

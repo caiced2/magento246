@@ -1,0 +1,23 @@
+<?xml version="1.0"?>
+<!--
+/**
+ * Copyright © Magento, Inc. All rights reserved.
+ * See COPYING.txt for license details.
+ */
+-->
+<page xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="urn:magento:framework:View/Layout/etc/page_configuration.xsd">
+    <body>
+        <referenceBlock name="report">
+            <arguments>
+                <argument name="bugreport_url" xsi:type="string">https://support.magento.com/</argument>
+            </arguments>
+        </referenceBlock>
+        <referenceBlock name="logo" template="Magento_Enterprise::page/header.phtml">
+            <arguments>
+                <argument name="logo_image_src" xsi:type="string">Magento_Enterprise::images/adobe-logo.svg</argument>
+            </arguments>
+        </referenceBlock>
+        <referenceBlock name="copyright" template="Magento_Enterprise::page/copyright.phtml" />
+        <referenceBlock name="version" template="Magento_Enterprise::page/footer.phtml" />
+    </body>
+</page>

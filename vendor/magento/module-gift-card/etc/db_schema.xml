@@ -1,0 +1,43 @@
+<?xml version="1.0"?>
+<!--
+/**
+ * Copyright © Magento, Inc. All rights reserved.
+ * See COPYING.txt for license details.
+ */
+-->
+<schema xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:noNamespaceSchemaLocation="urn:magento:framework:Setup/Declaration/Schema/etc/schema.xsd">
+    <table name="magento_giftcard_amount" resource="default" engine="innodb" comment="Enterprise Giftcard Amount">
+        <column xsi:type="int" name="value_id" unsigned="false" nullable="false" identity="true"
+                comment="Value Id"/>
+        <column xsi:type="smallint" name="website_id" unsigned="true" nullable="false" identity="false"
+                default="0" comment="Website Id"/>
+        <column xsi:type="decimal" name="value" scale="4" precision="12" unsigned="false" nullable="false" default="0"
+                comment="Value"/>
+        <column xsi:type="int" name="entity_id" unsigned="true" nullable="false" identity="false"
+                default="0"/>
+        <column xsi:type="smallint" name="attribute_id" unsigned="true" nullable="false" identity="false"
+                comment="Attribute Id"/>
+        <constraint xsi:type="primary" referenceId="PRIMARY">
+            <column name="value_id"/>
+        </constraint>
+        <constraint xsi:type="foreign" referenceId="MAGENTO_GIFTCARD_AMOUNT_ENTT_ID_CAT_PRD_ENTT_ENTT_ID"
+                    table="magento_giftcard_amount" column="entity_id" referenceTable="catalog_product_entity"
+                    referenceColumn="entity_id" onDelete="CASCADE"/>
+        <constraint xsi:type="foreign" referenceId="MAGENTO_GIFTCARD_AMOUNT_WEBSITE_ID_STORE_WEBSITE_WEBSITE_ID"
+                    table="magento_giftcard_amount" column="website_id" referenceTable="store_website"
+                    referenceColumn="website_id" onDelete="CASCADE"/>
+        <constraint xsi:type="foreign" referenceId="MAGENTO_GIFTCARD_AMOUNT_ATTRIBUTE_ID_EAV_ATTRIBUTE_ATTRIBUTE_ID"
+                    table="magento_giftcard_amount" column="attribute_id" referenceTable="eav_attribute"
+                    referenceColumn="attribute_id" onDelete="CASCADE"/>
+        <index referenceId="MAGENTO_GIFTCARD_AMOUNT_ENTITY_ID" indexType="btree">
+            <column name="entity_id"/>
+        </index>
+        <index referenceId="MAGENTO_GIFTCARD_AMOUNT_WEBSITE_ID" indexType="btree">
+            <column name="website_id"/>
+        </index>
+        <index referenceId="MAGENTO_GIFTCARD_AMOUNT_ATTRIBUTE_ID" indexType="btree">
+            <column name="attribute_id"/>
+        </index>
+    </table>
+</schema>

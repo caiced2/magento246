@@ -1,0 +1,87 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+ /**
+  * Copyright © Magento, Inc. All rights reserved.
+  * See COPYING.txt for license details.
+  */
+-->
+
+<tests xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xsi:noNamespaceSchemaLocation="urn:magento:mftf:Test/etc/testSchema.xsd">
+    <test name="CheckProductsAfterUpdateDeleteStagingTest">
+        <annotations>
+            <features value="CatalogStaging"/>
+            <stories value="Check products in update campaign edit page after having removed the campaign from one the products"/>
+            <title value="Check products after update delete staging test"/>
+            <description value="Check products after update delete staging"/>
+            <severity value="CRITICAL"/>
+            <testCaseId value="MC-14750"/>
+            <group value="CatalogStaging"/>
+            <group value="mtf_migrated"/>
+        </annotations>
+        <before>
+            <!-- Create first product -->
+            <createData entity="SimpleProduct2" stepKey="createFirstProduct"/>
+
+            <!-- Create second product -->
+            <createData entity="SimpleProduct2" stepKey="createSecondProduct"/>
+
+            <!-- Login as admin -->
+            <actionGroup ref="AdminLoginActionGroup" stepKey="LoginAsAdmin"/>
+        </before>
+        <after>
+            <!-- Delete created products -->
+            <deleteData createDataKey="createFirstProduct" stepKey="deleteFirstProduct"/>
+            <deleteData createDataKey="createSecondProduct" stepKey="deleteSecondProduct"/>
+
+            <!-- Log out -->
+            <actionGroup ref="AdminLogoutActionGroup" stepKey="logout"/>
+        </after>
+
+        <!-- Go to first product page -->
+        <amOnPage url="{{AdminProductEditPage.url($$createFirstProduct.id$$)}}" stepKey="goToFirstProductPage"/>
+        <waitForPageLoad stepKey="waitForFirstProductPageLoad"/>
+
+        <!-- Create the staging update for first product -->
+        <actionGroup ref="AdminFillPermanentUpdateActionGroup" stepKey="fillStagingUpdate">
+            <argument name="stage" value="TemporaryUpdatePlus5min"/>
+        </actionGroup>
+
+        <!-- Save the update details -->
+        <scrollToTopOfPage stepKey="scrollToTop"/>
+        <click selector="{{AdminStagingSlideOutSection.save}}" stepKey="clickSave"/>
+        <click selector="{{AdminProductFormActionSection.saveButton}}" stepKey="saveProduct"/>
+        <seeElement selector="{{AdminProductMessagesSection.successMessage}}" stepKey="assertSuccess"/>
+
+        <!-- Assign second product to the existing campaign -->
+        <amOnPage url="{{AdminProductEditPage.url($$createSecondProduct.id$$)}}" stepKey="goToSecondProductPage"/>
+        <waitForPageLoad stepKey="waitForSecondProductPageLoad"/>
+        <actionGroup ref="AssignToExistingUpdateActionGroup" stepKey="assignScheduleUpdate">
+            <argument name="staging" value="TemporaryUpdatePlus5min"/>
+            <argument name="productPrice" value="23.00"/>
+        </actionGroup>
+
+        <!-- Open first product and remove product update campaign -->
+        <amOnPage url="{{AdminProductEditPage.url($$createFirstProduct.id$$)}}" stepKey="goToProductPage"/>
+        <waitForPageLoad stepKey="waitForProductPageLoad"/>
+        <actionGroup ref="DeleteTheUpdateActionGroup" stepKey="deleteUpdateCampaign">
+            <argument name="fromStaging" value="TemporaryUpdatePlus5min"/>
+        </actionGroup>
+
+        <!-- Run cron twice -->
+        <magentoCLI command="cron:run" arguments="--group staging" stepKey="cronRunFirstTime"/>
+        <magentoCLI command="cron:run" arguments="--group staging" stepKey="cronRunSecondTime"/>
+
+        <!-- Open the existing campaign in the admin panel -->
+        <actionGroup ref="StagingDashboardSearchUpdateActionGroup" stepKey="searchStagingUpdate">
+            <argument name="staging" value="TemporaryUpdatePlus5min"/>
+        </actionGroup>
+
+        <!-- Assert products in update -->
+        <click selector="{{AdminContentStagingDashboardSection.timeLineEventParameterized(TemporaryUpdatePlus5min.updateName)}}" stepKey="clickTimelineEvent"/>
+        <click selector="{{AdminContentStagingDashboardSection.editEvent}}" stepKey="clickEditViewBtn"/>
+        <waitForPageLoad stepKey="waitForContentStagingPageLoad"/>
+        <click selector="{{AdminStagingDashboardSection.productsPagesDropDown}}" stepKey="clickProducts"/>
+        <see selector="{{AdminStagingDashboardSection.productsGridCell('1', 'SKU')}}" userInput="$$createSecondProduct.sku$$" stepKey="seeProductSKU"/>
+    </test>
+</tests>

@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+ /**
+  * Copyright © Magento, Inc. All rights reserved.
+  * See COPYING.txt for license details.
+  */
+-->
+<sections xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:noNamespaceSchemaLocation="urn:magento:mftf:Page/etc/SectionObject.xsd">
+    <section name="StorefrontCustomerAddressAttributeSection">
+        <element name="customAttributeJS" type="text" selector="document.querySelectorAll('[name=\'custom_attributes[{{arg1}}]\']')[{{arg2}}]" parameterized="true"/>
+        <element name="dropdownField" type="select" selector="select[name*='{{arg1}}']" parameterized="true"/>
+        <element name="multiselectField" type="multiselect" selector="option[data-title='{{arg2}}']" parameterized="true"/>
+        <element name="uploadFile" type="file" selector="(//input[@type='file'])[1]" timeout="30"/>
+        <element name="editAddressLink" type="text" selector="//table//tr[position()=1]//td//span[contains(text(),'Edit')]" timeout="30"/>
+    </section>
+</sections>

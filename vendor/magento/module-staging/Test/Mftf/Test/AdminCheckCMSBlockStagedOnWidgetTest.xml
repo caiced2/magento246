@@ -1,0 +1,78 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+ /**
+  * Copyright © Magento, Inc. All rights reserved.
+  * See COPYING.txt for license details.
+  */
+-->
+
+<tests xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xsi:noNamespaceSchemaLocation="urn:magento:mftf:Test/etc/testSchema.xsd">
+    <test name="AdminCheckCMSBlockStagedOnWidgetTest">
+        <annotations>
+            <features value="Staging"/>
+            <stories value="CMS blocks"/>
+            <title value="Check that CMS block status is staged on a widget."/>
+            <description value="Check CMS block status is staged on a widget."/>
+            <severity value="CRITICAL"/>
+            <testCaseId value="MAGETWO-96112"/>
+            <useCaseId value="MAGETWO-96106"/>
+            <group value="staging"/>
+        </annotations>
+        <before>
+            <magentoCLI command="config:set cms/wysiwyg/enabled disabled" stepKey="disableWYSIWYG"/>
+            <actionGroup ref="CliCacheCleanActionGroup" stepKey="cleanInvalidatedCaches">
+                <argument name="tags" value="config full_page layout block_html"/>
+            </actionGroup>
+            <actionGroup ref="AdminLoginActionGroup" stepKey="loginAsAdmin"/>
+        </before>
+
+        <after>
+            <magentoCLI command="config:set cms/wysiwyg/enabled enabled" stepKey="enableWYSIWYG"/>
+            <actionGroup ref="deleteBlock" stepKey="deleteCreatedBlock">
+                <argument name="Block" value="Sales25offBlock"/>
+            </actionGroup>
+            <actionGroup ref="ClearFiltersAdminDataGridActionGroup" stepKey="clearBlockFilters"/>
+            <actionGroup ref="AdminDeleteWidgetActionGroup" stepKey="deleteWidget">
+                <argument name="widget" value="WidgetWithBlock"/>
+            </actionGroup>
+            <actionGroup ref="ClearFiltersAdminDataGridActionGroup" stepKey="clearWidgetFilters"/>
+            <actionGroup ref="CliCacheCleanActionGroup" stepKey="cleanInvalidatedCaches">
+                <argument name="tags" value="config full_page layout block_html"/>
+            </actionGroup>
+            <actionGroup ref="AdminLogoutActionGroup" stepKey="logout"/>
+        </after>
+
+        <comment userInput="BIC workaround" stepKey="flushCache"/>
+
+        <!-- create disabled block -->
+        <actionGroup ref="AdminCreateDisabledBlockActionGroup" stepKey="createNewBlock">
+            <argument name="block" value="Sales25offBlock"/>
+        </actionGroup>
+        <grabTextFrom selector="{{AdminCreateNewBlockSection.blockName}}" stepKey="grabBlockName"/>
+
+        <!-- create widget with block -->
+        <actionGroup ref="AdminCreateWidgetWithBlockActionGroup" stepKey="createWidget">
+            <argument name="widget" value="WidgetWithBlock"/>
+            <argument name="block"  value="$grabBlockName"/>
+        </actionGroup>
+
+        <!-- update block adding a schedule -->
+        <actionGroup ref="AdminUpdateBlockActionGroup" stepKey="updateBlock">
+            <argument name="block" value="$grabBlockName"/>
+        </actionGroup>
+
+        <!-- preview block and check position -->
+        <waitForPageLoad stepKey="waitForAjaxLoad"/>
+        <waitForElementVisible selector="{{AdminUpdateBlockSection.preview}}" stepKey="waitForPreviewUpdate"/>
+        <click selector="{{AdminUpdateBlockSection.preview}}" stepKey="previewUpdate"/>
+        <switchToNextTab stepKey="switchToNewOpenedTab"/>
+        <waitForPageLoad stepKey="waitForSchedulePageLoad"/>
+        <seeElement selector="{{AdminUpdateBlockSection.calendar('Calendar')}}" stepKey="seeBlockCalendarOnTop"/>
+        <seeElement selector="{{AdminUpdateBlockSection.scope('Scope')}}" stepKey="seeBlockScopeOnTop"/>
+        <executeJS function="jQuery('[data-role=\'preview-iframe\']').attr('id', 'preview-iframe')" stepKey="setPreviewFrameId"/>
+        <switchToIFrame selector="preview-iframe" stepKey="switchToIFrame"/>
+        <seeElement selector="{{AdminUpdateBlockSection.blockContent('sales25off everything!')}}" stepKey="seeBlockContent"/>
+        <switchToIFrame stepKey="switchToDefault"/>
+    </test>
+</tests>

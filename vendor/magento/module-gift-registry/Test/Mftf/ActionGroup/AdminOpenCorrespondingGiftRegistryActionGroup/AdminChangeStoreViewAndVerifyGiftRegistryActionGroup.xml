@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+ /**
+  * Copyright © Magento, Inc. All rights reserved.
+  * See COPYING.txt for license details.
+  */
+-->
+<actionGroups xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:noNamespaceSchemaLocation="urn:magento:mftf:Test/etc/actionGroupSchema.xsd">
+    <actionGroup name="AdminChangeStoreViewAndVerifyGiftRegistryActionGroup">
+        <arguments>
+            <argument name="customStore" defaultValue="customStore"/>
+        </arguments>
+        <!--Click to Change Store View -->
+        <click selector="{{AdminGiftRegistrySection.allStoreViews}}" stepKey="clickOnAllStoreView"/>
+        <waitForPageLoad stepKey="waitForAllStores"/>
+        <scrollTo selector="{{AdminGiftRegistrySection.addedStoreView(customStore.name)}}" stepKey="scrollToStore"/>
+        <click selector="{{AdminGiftRegistrySection.addedStoreView(customStore.name)}}" stepKey="clickOnCreatedStoreView"/>
+        <waitForPageLoad stepKey="waitForStoreView"/>
+        <click selector="{{AdminGiftRegistrySection.confirm}}" stepKey="clickToConfirm"/>
+        <waitForPageLoad stepKey="waitForConfirmation"/>
+        <click selector="{{AdminGiftRegistrySection.attributes}}" stepKey="goToAttributesTab1"/>
+        <waitForPageLoad stepKey="waitForAttributesTab"/>
+        <click selector="{{AdminGiftRegistrySection.attributeOptionUseDefault('1','0')}}" stepKey="uncheckDUsDefaultValue"/>
+        <waitForPageLoad stepKey="waitForUncheck1"/>
+        <fillField selector="{{AdminGiftRegistrySection.attributeOptionLabel('1','0')}}" stepKey="inputOptionLabel" userInput="{{GiftRegistryAttributeRoleInputType.option_edit}}"/>
+        <click selector="{{AdminGiftRegistrySection.attributeOptionUseDefault('0','0')}}" stepKey="uncheckSecondDUsDefaultValue"/>
+        <waitForPageLoad stepKey="waitForUncheck2"/>
+        <fillField selector="{{AdminGiftRegistrySection.attributeOptionLabel('0','0')}}" stepKey="inputSecondOptionLabel" userInput="{{GiftRegistryAttributeRoleInputType.option_edit}}"/>
+        <dontSeeElement selector="{{AdminGiftRegistrySection.deleteAttribute(0)}}" stepKey="dontSeeRecycleButton1"/>
+        <dontSeeElement selector="{{AdminGiftRegistrySection.deleteAttribute(1)}}" stepKey="dontSeeRecycleButton2"/>
+        <click stepKey="saveAndContinue" selector="{{AdminGiftRegistrySection.saveAndContinue}}"/>
+        <waitForPageLoad stepKey="waitForSuccessMessage"/>
+        <see stepKey="seeSuccessMessage" userInput="You saved the gift registry type."/>
+        <click selector="{{AdminGiftRegistrySection.attributes}}" stepKey="goToAttributesTab2"/>
+        <waitForPageLoad stepKey="waitForEditedAttributes"/>
+        <grabValueFrom selector="{{AdminGiftRegistrySection.attributeOptionLabel('1','0')}}" stepKey="grabTextFromLabel1"/>
+        <assertEquals stepKey="assertLabel1" message="pass">
+            <expectedResult type="string">{{GiftRegistryAttributeRoleInputType.option_edit}}</expectedResult>
+            <actualResult type="variable">grabTextFromLabel1</actualResult>
+        </assertEquals>
+        <grabValueFrom selector="{{AdminGiftRegistrySection.attributeOptionLabel('0','0')}}" stepKey="grabTextFromLabel2"/>
+        <assertEquals stepKey="assertLabel2" message="pass">
+            <expectedResult type="string">{{GiftRegistryAttributeRoleInputType.option_edit}}</expectedResult>
+            <actualResult type="variable">grabTextFromLabel2</actualResult>
+        </assertEquals>
+    </actionGroup>
+</actionGroups>

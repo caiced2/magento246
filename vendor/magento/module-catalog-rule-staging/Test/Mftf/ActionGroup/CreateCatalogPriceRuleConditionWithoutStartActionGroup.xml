@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+ /**
+  * Copyright © Magento, Inc. All rights reserved.
+  * See COPYING.txt for license details.
+  */
+-->
+
+<actionGroups xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:noNamespaceSchemaLocation="urn:magento:mftf:Test/etc/actionGroupSchema.xsd">
+    <actionGroup name="CreateCatalogPriceRuleConditionWithoutStartActionGroup">
+        <arguments>
+            <argument name="stagingUpdate" defaultValue="_defaultStaging"/>
+        </arguments>
+        <click selector="{{ScheduleUpdateSection.scheduleUpdate}}" stepKey="clickViewEdit"/>
+        <!-- Fill out the staging update details -->
+        <waitForElementVisible stepKey="waitElementVisible" selector="{{AdminStagingSlideOutSection.updateName}}"/>
+        <fillField selector="{{AdminStagingSlideOutSection.updateName}}" userInput="{{stagingUpdate.name}}" stepKey="fillName"/>
+        <fillField selector="{{AdminStagingSlideOutSection.updateDescription}}" userInput="{{stagingUpdate.description}}" stepKey="fillDescription"/>
+        <generateDate date="+1 week" format="m/d/Y g:i A" stepKey="startDateTime"/>
+        <fillField selector="{{AdminStagingSlideOutSection.startDate}}" userInput="{$startDateTime}" stepKey="fillStartDate"/>
+    </actionGroup>
+</actionGroups>

@@ -1,0 +1,426 @@
+<?xml version="1.0"?>
+<!--
+/**
+ * Copyright © Magento, Inc. All rights reserved.
+ * See COPYING.txt for license details.
+ */
+-->
+<config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="urn:magento:framework:ObjectManager/etc/config.xsd">
+    <virtualType name="Magento\CatalogStaging\Block\Adminhtml\Update\Upcoming" type="Magento\Staging\Block\Adminhtml\Update\Upcoming">
+        <arguments>
+            <argument name="entityProvider" xsi:type="object">Magento\CatalogStaging\Block\Adminhtml\Update\Provider</argument>
+        </arguments>
+    </virtualType>
+    <virtualType name="catalogStagingUpcomingGridActions" type="Magento\Staging\Ui\Component\Listing\Column\Entity\Actions">
+        <arguments>
+            <argument name="entityIdentifier" xsi:type="string">id</argument>
+            <argument name="entityColumn" xsi:type="string">entity_id</argument>
+            <argument name="jsModalProvider" xsi:type="string">catalogstaging_upcoming_form.catalogstaging_upcoming_form.catalogstaging_update_form_modal</argument>
+            <argument name="jsLoaderProvider" xsi:type="string">catalogstaging_upcoming_form.catalogstaging_upcoming_form.catalogstaging_update_form_modal.update_form_loader</argument>
+            <argument name="urlProviderInterface" xsi:type="object">Magento\CatalogStaging\Ui\Component\Listing\Column\Product\UrlProvider</argument>
+        </arguments>
+    </virtualType>
+    <virtualType name="catalogStagingUpdateMetadataProvider" type="Magento\Staging\Model\Entity\DataProvider\MetadataProvider">
+        <arguments>
+            <argument name="requestFieldName" xsi:type="string">id</argument>
+        </arguments>
+    </virtualType>
+    <type name="Magento\CatalogStaging\Model\Product\DataProvider">
+        <plugin name="catalogStagingDataProvider" type="Magento\Staging\Model\Entity\DataProvider\DataProviderPlugin"/>
+        <arguments>
+            <argument name="metaDataProvider" xsi:type="object">catalogStagingUpdateMetadataProvider</argument>
+            <argument name="pool" xsi:type="object">Magento\CatalogStaging\Ui\DataProvider\Product\Form\Modifier\Pool</argument>
+        </arguments>
+    </type>
+    <type name="Magento\CatalogStaging\Model\Product\Identifier\DataProvider">
+        <plugin name="catalogStagingIdentifierDataProvider" type="Magento\Staging\Model\Entity\DataProvider\Identifier\DataProviderPlugin"/>
+        <arguments>
+            <argument name="pool" xsi:type="object">Magento\CatalogStaging\Ui\DataProvider\Product\Form\Modifier\Pool</argument>
+        </arguments>
+    </type>
+    <virtualType name="stagingCatalogUpdateCancelButton" type="Magento\Staging\Block\Adminhtml\Update\Entity\CancelButton">
+        <arguments>
+            <argument name="jsUpdateModal" xsi:type="string">index=catalogstaging_update_form_modal</argument>
+        </arguments>
+    </virtualType>
+    <virtualType name="stagingCatalogUpdatePreviewButton" type="Magento\Staging\Block\Adminhtml\Update\Entity\PreviewButton">
+        <arguments>
+            <argument name="entityProvider" xsi:type="object">Magento\CatalogStaging\Block\Adminhtml\Update\Provider</argument>
+        </arguments>
+    </virtualType>
+    <virtualType name="stagingCatalogProductUpdateRemoveButton" type="Magento\Staging\Block\Adminhtml\Update\Entity\RemoveButton">
+        <arguments>
+            <argument name="entityProvider" xsi:type="object">Magento\CatalogStaging\Block\Adminhtml\Update\Provider</argument>
+            <argument name="entityIdentifier" xsi:type="string">id</argument>
+            <argument name="jsRemoveModal" xsi:type="string">catalogstaging_update_form.catalogstaging_update_form.catalogstaging_update_remove_form_modal</argument>
+            <argument name="jsRemoveLoader" xsi:type="string">catalogstaging_update_form.catalogstaging_update_form.catalogstaging_update_remove_form_modal.update_remove_form_loader</argument>
+        </arguments>
+    </virtualType>
+    <virtualType name="catalogStagingBlockRemoveUpdateCancelButton" type="Magento\Staging\Block\Adminhtml\Update\Entity\CancelButton">
+        <arguments>
+            <argument name="jsUpdateModal" xsi:type="string">index=catalogstaging_update_remove_form_modal</argument>
+        </arguments>
+    </virtualType>
+    <virtualType name="Magento\CatalogStaging\Ui\DataProvider\Product\Form\Modifier\Pool" type="Magento\Ui\DataProvider\Modifier\Pool">
+        <arguments>
+            <argument name="modifiers" xsi:type="array">
+                <item name="eav" xsi:type="array">
+                    <item name="class" xsi:type="string">Magento\CatalogStaging\Ui\DataProvider\Product\Form\Modifier\Eav</item>
+                    <item name="sortOrder" xsi:type="number">10</item>
+                </item>
+                <item name="attribute_set_id" xsi:type="array">
+                    <item name="class" xsi:type="string">Magento\Catalog\Ui\DataProvider\Product\Form\Modifier\AttributeSet</item>
+                    <item name="sortOrder" xsi:type="number">20</item>
+                </item>
+                <item name="websites" xsi:type="array">
+                    <item name="class" xsi:type="string">Magento\CatalogStaging\Ui\DataProvider\Product\Form\Modifier\Websites</item>
+                    <item name="sortOrder" xsi:type="number">30</item>
+                </item>
+                <item name="system" xsi:type="array">
+                    <item name="class" xsi:type="string">Magento\CatalogStaging\Ui\DataProvider\Product\Form\Modifier\System</item>
+                    <item name="sortOrder" xsi:type="number">40</item>
+                </item>
+                <item name="general" xsi:type="array">
+                    <item name="class" xsi:type="string">Magento\Catalog\Ui\DataProvider\Product\Form\Modifier\General</item>
+                    <item name="sortOrder" xsi:type="number">50</item>
+                </item>
+                <item name="custom-options" xsi:type="array">
+                    <item name="class" xsi:type="string">Magento\CatalogStaging\Ui\DataProvider\Product\Form\Modifier\CustomOptions</item>
+                    <item name="sortOrder" xsi:type="number">70</item>
+                </item>
+                <item name="schedule-design-update" xsi:type="array">
+                    <item name="class" xsi:type="string">Magento\CatalogStaging\Ui\DataProvider\Product\Form\Modifier\ScheduleDesignUpdate</item>
+                    <item name="sortOrder" xsi:type="number">80</item>
+                </item>
+                <item name="advanced-pricing" xsi:type="array">
+                    <item name="class" xsi:type="string">Magento\CatalogStaging\Ui\DataProvider\Product\Form\Modifier\AdvancedPricing</item>
+                    <item name="sortOrder" xsi:type="number">90</item>
+                </item>
+                <item name="image-management" xsi:type="array">
+                    <item name="class" xsi:type="string">Magento\Catalog\Ui\DataProvider\Product\Form\Modifier\Images</item>
+                    <item name="sortOrder" xsi:type="number">100</item>
+                </item>
+                <item name="related" xsi:type="array">
+                    <item name="class" xsi:type="string">Magento\CatalogStaging\Ui\DataProvider\Product\Form\Modifier\Related</item>
+                    <item name="sortOrder" xsi:type="number">110</item>
+                </item>
+                <item name="attributes" xsi:type="array">
+                    <item name="class" xsi:type="string">Magento\Catalog\Ui\DataProvider\Product\Form\Modifier\Attributes</item>
+                    <item name="sortOrder" xsi:type="number">120</item>
+                </item>
+                <item name="advanced-pricing-tier-price-type" xsi:type="array">
+                    <item name="class" xsi:type="string">Magento\Catalog\Ui\DataProvider\Product\Form\Modifier\TierPrice</item>
+                    <item name="sortOrder" xsi:type="number">130</item>
+                </item>
+            </argument>
+        </arguments>
+    </virtualType>
+    <virtualType name="Magento\CatalogStaging\Ui\DataProvider\Product\Form\Modifier\System" type="Magento\Catalog\Ui\DataProvider\Product\Form\Modifier\System">
+        <arguments>
+            <argument name="productUrls" xsi:type="array">
+                <item name="submit_url" xsi:type="string">catalogstaging/product/save</item>
+                <item name="reloadUrl" xsi:type="string">catalogstaging/product/reload</item>
+            </argument>
+        </arguments>
+    </virtualType>
+    <virtualType name="Magento\CatalogStaging\Ui\DataProvider\Product\Form\Modifier\CustomOptions" type="Magento\Catalog\Ui\DataProvider\Product\Form\Modifier\CustomOptions">
+        <arguments>
+            <argument name="scopeName" xsi:type="string">catalogstaging_update_form.catalogstaging_update_form</argument>
+        </arguments>
+    </virtualType>
+    <virtualType name="Magento\CatalogStaging\Ui\DataProvider\Product\Form\Modifier\Related" type="Magento\Catalog\Ui\DataProvider\Product\Form\Modifier\Related">
+        <arguments>
+            <argument name="scopeName" xsi:type="string">catalogstaging_update_form.catalogstaging_update_form</argument>
+            <argument name="scopePrefix" xsi:type="string">catalogstaging_</argument>
+        </arguments>
+    </virtualType>
+    <type name="Magento\CatalogStaging\Model\Product\Locator\StagingLocator">
+        <arguments>
+            <argument name="requestFieldName" xsi:type="string">id</argument>
+        </arguments>
+    </type>
+    <preference for="Magento\Catalog\Model\Locator\LocatorInterface" type="Magento\CatalogStaging\Model\Product\Locator\StagingLocator"/>
+    <type name="Magento\CatalogStaging\Ui\DataProvider\Product\Form\Modifier\Eav">
+        <arguments>
+            <argument name="attributesToDisable" xsi:type="array">
+                <item name="1" xsi:type="string">url_key</item>
+                <item name="2" xsi:type="string">sku</item>
+            </argument>
+            <argument name="attributesToEliminate" xsi:type="array">
+                <item name="0" xsi:type="string">news_from_date</item>
+                <item name="1" xsi:type="string">news_to_date</item>
+                <item name="2" xsi:type="string">category_ids</item>
+                <item name="3" xsi:type="string">custom_design_from</item>
+                <item name="4" xsi:type="string">custom_design_to</item>
+                <item name="5" xsi:type="string">custom_layout</item>
+            </argument>
+        </arguments>
+    </type>
+    <virtualType name="stagingCatalogCategoryUpdateMetadataProvider" type="Magento\Staging\Model\Entity\DataProvider\MetadataProvider">
+        <arguments>
+            <argument name="requestFieldName" xsi:type="string">id</argument>
+        </arguments>
+    </virtualType>
+    <type name="Magento\CatalogStaging\Model\Category\DataProvider">
+        <plugin name="catalogStagingCategoryDataProvider" type="Magento\Staging\Model\Entity\DataProvider\DataProviderPlugin"/>
+        <arguments>
+            <argument name="metadataProvider" xsi:type="object">stagingCatalogCategoryUpdateMetadataProvider</argument>
+        </arguments>
+    </type>
+    <virtualType name="stagingCatalogCategoryUpdateCancelButton" type="Magento\Staging\Block\Adminhtml\Update\Entity\CancelButton">
+        <arguments>
+            <argument name="jsUpdateModal" xsi:type="string">index=update_form_modal</argument>
+        </arguments>
+    </virtualType>
+    <virtualType name="stagingCatalogCategoryRemoveUpdateCancelButton" type="Magento\Staging\Block\Adminhtml\Update\Entity\CancelButton">
+        <arguments>
+            <argument name="jsUpdateModal" xsi:type="string">index=update_remove_form_modal</argument>
+        </arguments>
+    </virtualType>
+    <virtualType name="stagingCatalogCategoryUpdatePreviewButton" type="Magento\Staging\Block\Adminhtml\Update\Entity\PreviewButton">
+        <arguments>
+            <argument name="entityProvider" xsi:type="object">Magento\CatalogStaging\Block\Adminhtml\Category\Update\Provider</argument>
+        </arguments>
+    </virtualType>
+    <virtualType name="stagingCatalogCategoryUpcomingGridActions" type="Magento\Staging\Ui\Component\Listing\Column\Entity\Actions">
+        <arguments>
+            <argument name="entityIdentifier" xsi:type="string">id</argument>
+            <argument name="entityColumn" xsi:type="string">entity_id</argument>
+            <argument name="jsModalProvider" xsi:type="string">catalogstaging_category_upcoming_form.catalogstaging_category_upcoming_form.update_form_modal</argument>
+            <argument name="jsLoaderProvider" xsi:type="string">catalogstaging_category_upcoming_form.catalogstaging_category_upcoming_form.update_form_modal.update_form_loader</argument>
+            <argument name="urlProviderInterface" xsi:type="object">Magento\CatalogStaging\Ui\Component\Listing\Column\Category\UrlProvider</argument>
+        </arguments>
+    </virtualType>
+    <type name="Magento\CatalogStaging\Model\Category\Identifier\DataProvider">
+        <plugin name="catalogStagingCategoryDataProvider" type="Magento\Staging\Model\Entity\DataProvider\Identifier\DataProviderPlugin"/>
+    </type>
+    <virtualType name="stagingCatalogCategoryUpdateRemoveButton" type="Magento\Staging\Block\Adminhtml\Update\Entity\RemoveButton">
+        <arguments>
+            <argument name="entityProvider" xsi:type="object">Magento\CatalogStaging\Block\Adminhtml\Category\Update\Provider</argument>
+            <argument name="entityIdentifier" xsi:type="string">id</argument>
+            <argument name="jsRemoveModal" xsi:type="string">catalogstaging_category_update_form.catalogstaging_category_update_form.update_remove_form_modal</argument>
+            <argument name="jsRemoveLoader" xsi:type="string">catalogstaging_category_update_form.catalogstaging_category_update_form.update_remove_form_modal.update_remove_form_loader</argument>
+        </arguments>
+    </virtualType>
+    <virtualType name="Magento\CatalogStaging\Block\Adminhtml\Category\Update\Upcoming" type="Magento\Staging\Block\Adminhtml\Update\Upcoming">
+        <arguments>
+            <argument name="entityProvider" xsi:type="object">Magento\CatalogStaging\Block\Adminhtml\Category\Update\Provider</argument>
+        </arguments>
+    </virtualType>
+    <virtualType name="stagingCatalogCategoryUpcomingResult" type="Magento\Staging\Model\Entity\Upcoming\SearchResult">
+        <arguments>
+            <argument name="entityRequestName" xsi:type="string">id</argument>
+            <argument name="entityTable" xsi:type="string">catalog_category_entity</argument>
+            <argument name="entityColumn" xsi:type="string">entity_id</argument>
+        </arguments>
+    </virtualType>
+    <virtualType name="stagingCatalogCategoryUpdateSelectResult" type="Magento\Staging\Model\Entity\Update\Select\SearchResult">
+        <arguments>
+            <argument name="entityRequestName" xsi:type="string">id</argument>
+            <argument name="entityTable" xsi:type="string">catalog_category_entity</argument>
+            <argument name="entityColumn" xsi:type="string">entity_id</argument>
+        </arguments>
+    </virtualType>
+    <type name="Magento\Catalog\Model\ResourceModel\Category">
+        <plugin name="catalogStaging" type="Magento\CatalogStaging\Plugin\Model\ResourceModel\Category"/>
+    </type>
+    <type name="Magento\Catalog\Model\ResourceModel\Category\AggregateCount">
+        <plugin name="aggregateCountForCatalogStaging" type="Magento\CatalogStaging\Plugin\Model\ResourceModel\Category\AggregateCount"/>
+    </type>
+    <type name="Magento\CatalogStaging\Ui\DataProvider\Product\Form\Modifier\AdvancedPricing">
+        <arguments>
+            <argument name="scopeName" xsi:type="string">catalogstaging_update_form.catalogstaging_update_form</argument>
+        </arguments>
+    </type>
+    <virtualType name="catalogProductAdvancedPricingModifier" type="Magento\CatalogStaging\Ui\DataProvider\Product\Form\Modifier\AdvancedPricing">
+        <arguments>
+            <argument name="scopeName" xsi:type="string">product_form.product_form</argument>
+        </arguments>
+    </virtualType>
+    <virtualType name="Magento\Catalog\Ui\DataProvider\Product\Form\Modifier\Pool" type="Magento\Ui\DataProvider\Modifier\Pool">
+        <arguments>
+            <argument name="modifiers" xsi:type="array">
+                <item name="advanced-pricing" xsi:type="array">
+                    <item name="class" xsi:type="string">catalogProductAdvancedPricingModifier</item>
+                    <item name="sortOrder" xsi:type="number">90</item>
+                </item>
+                <item name="eav" xsi:type="array">
+                    <item name="class" xsi:type="string">Magento\CatalogStaging\Ui\DataProvider\Catalog\Product\Form\Modifier\Eav</item>
+                    <item name="sortOrder" xsi:type="number">10</item>
+                </item>
+                <item name="schedule-design-update" xsi:type="array">
+                    <item name="class" xsi:type="string">Magento\CatalogStaging\Ui\DataProvider\Product\Form\Modifier\ScheduleDesignUpdate</item>
+                    <item name="sortOrder" xsi:type="number">80</item>
+                </item>
+            </argument>
+        </arguments>
+    </virtualType>
+    <type name="Magento\Catalog\Ui\DataProvider\Product\Form\Modifier\Eav">
+        <arguments>
+            <argument name="attributesToEliminate" xsi:type="array">
+                <item name="news_from_date" xsi:type="string">news_from_date</item>
+                <item name="news_to_date" xsi:type="string">news_to_date</item>
+                <item name="custom_design_from" xsi:type="string">custom_design_from</item>
+                <item name="custom_design_to" xsi:type="string">custom_design_to</item>
+                <item name="special_from_date" xsi:type="string">special_from_date</item>
+                <item name="special_to_date" xsi:type="string">special_to_date</item>
+            </argument>
+        </arguments>
+    </type>
+
+    <type name="Magento\Staging\Model\Entity\Update\Action\Pool">
+        <arguments>
+            <argument name="actions" xsi:type="array">
+                <item name="Magento\Catalog\Api\Data\ProductInterface" xsi:type="array">
+                    <item name="save" xsi:type="array">
+                        <item name="save" xsi:type="string">productUpdateSaveSaveAction</item>
+                        <item name="assign" xsi:type="string">productUpdateSaveAssignAction</item>
+                    </item>
+                    <item name="delete" xsi:type="array">
+                        <item name="save" xsi:type="string">productUpdateDeleteSaveAction</item>
+                        <item name="assign" xsi:type="string">productUpdateDeleteAssignAction</item>
+                        <item name="remove" xsi:type="string">productUpdateDeleteRemoveAction</item>
+                    </item>
+                </item>
+                <item name="Magento\Catalog\Api\Data\CategoryInterface" xsi:type="array">
+                    <item name="save" xsi:type="array">
+                        <item name="save" xsi:type="string">categoryUpdateSaveSaveAction</item>
+                        <item name="assign" xsi:type="string">categoryUpdateSaveAssignAction</item>
+                    </item>
+                    <item name="delete" xsi:type="array">
+                        <item name="save" xsi:type="string">categoryUpdateDeleteSaveAction</item>
+                        <item name="assign" xsi:type="string">categoryUpdateDeleteAssignAction</item>
+                        <item name="remove" xsi:type="string">categoryUpdateDeleteRemoveAction</item>
+                    </item>
+                </item>
+            </argument>
+        </arguments>
+    </type>
+
+    <!-- Category save controller -->
+    <virtualType name="categoryUpdateSaveSaveAction" type="Magento\Staging\Model\Entity\Update\Action\Save\SaveAction">
+        <arguments>
+            <argument name="entityHydrator" xsi:type="object">Magento\CatalogStaging\Model\Category\Hydrator</argument>
+        </arguments>
+    </virtualType>
+    <virtualType name="categoryUpdateSaveAssignAction" type="Magento\Staging\Model\Entity\Update\Action\Save\AssignAction">
+        <arguments>
+            <argument name="entityHydrator" xsi:type="object">Magento\CatalogStaging\Model\Category\Hydrator</argument>
+        </arguments>
+    </virtualType>
+    <virtualType name="categoryUpdateDeleteSaveAction" type="Magento\Staging\Model\Entity\Update\Action\Delete\SaveAction">
+        <arguments>
+            <argument name="entityRetriever" xsi:type="object">Magento\CatalogStaging\Model\Category\Retriever</argument>
+            <argument name="entityName" xsi:type="string">Magento\Catalog\Api\Data\CategoryInterface</argument>
+        </arguments>
+    </virtualType>
+    <virtualType name="categoryUpdateDeleteAssignAction" type="Magento\Staging\Model\Entity\Update\Action\Delete\AssignAction">
+        <arguments>
+            <argument name="entityRetriever" xsi:type="object">Magento\CatalogStaging\Model\Category\Retriever</argument>
+            <argument name="entityName" xsi:type="string">Magento\Catalog\Api\Data\CategoryInterface</argument>
+        </arguments>
+    </virtualType>
+    <virtualType name="categoryUpdateDeleteRemoveAction" type="Magento\Staging\Model\Entity\Update\Action\Delete\RemoveAction">
+        <arguments>
+            <argument name="entityRetriever" xsi:type="object">Magento\CatalogStaging\Model\Category\Retriever</argument>
+            <argument name="entityName" xsi:type="string">Magento\Catalog\Api\Data\CategoryInterface</argument>
+        </arguments>
+    </virtualType>
+    <virtualType name="categoryUpdateSave" type="Magento\Staging\Model\Entity\Update\Save">
+        <arguments>
+            <argument name="entityName" xsi:type="string">Magento\Catalog\Api\Data\CategoryInterface</argument>
+        </arguments>
+    </virtualType>
+    <type name="Magento\CatalogStaging\Controller\Adminhtml\Category\Update\Save">
+        <arguments>
+            <argument name="stagingUpdateSave" xsi:type="object">categoryUpdateSave</argument>
+        </arguments>
+    </type>
+
+    <!-- Category delete controller -->
+    <type name="Magento\CatalogStaging\Controller\Adminhtml\Category\Update\Delete">
+        <arguments>
+            <argument name="stagingUpdateDelete" xsi:type="object">categoryUpdateDelete</argument>
+        </arguments>
+    </type>
+    <virtualType name="categoryUpdateDelete" type="Magento\Staging\Model\Entity\Update\Delete">
+        <arguments>
+            <argument name="entityName" xsi:type="string">Magento\Catalog\Api\Data\CategoryInterface</argument>
+        </arguments>
+    </virtualType>
+
+    <!-- Product save controller -->
+    <virtualType name="productUpdateSaveSaveAction" type="Magento\Staging\Model\Entity\Update\Action\Save\SaveAction">
+        <arguments>
+            <argument name="entityHydrator" xsi:type="object">Magento\CatalogStaging\Model\Product\Hydrator</argument>
+        </arguments>
+    </virtualType>
+    <virtualType name="productUpdateSaveAssignAction" type="Magento\Staging\Model\Entity\Update\Action\Save\AssignAction">
+        <arguments>
+            <argument name="entityHydrator" xsi:type="object">Magento\CatalogStaging\Model\Product\Hydrator</argument>
+        </arguments>
+    </virtualType>
+    <virtualType name="productUpdateDeleteSaveAction" type="Magento\Staging\Model\Entity\Update\Action\Delete\SaveAction">
+        <arguments>
+            <argument name="entityRetriever" xsi:type="object">Magento\CatalogStaging\Model\Product\Retriever</argument>
+            <argument name="entityName" xsi:type="string">Magento\Catalog\Api\Data\ProductInterface</argument>
+        </arguments>
+    </virtualType>
+    <virtualType name="productUpdateDeleteAssignAction" type="Magento\Staging\Model\Entity\Update\Action\Delete\AssignAction">
+        <arguments>
+            <argument name="entityRetriever" xsi:type="object">Magento\CatalogStaging\Model\Product\Retriever</argument>
+            <argument name="entityName" xsi:type="string">Magento\Catalog\Api\Data\ProductInterface</argument>
+        </arguments>
+    </virtualType>
+    <virtualType name="productUpdateDeleteRemoveAction" type="Magento\Staging\Model\Entity\Update\Action\Delete\RemoveAction">
+        <arguments>
+            <argument name="entityRetriever" xsi:type="object">Magento\CatalogStaging\Model\Product\Retriever</argument>
+            <argument name="entityName" xsi:type="string">Magento\Catalog\Api\Data\ProductInterface</argument>
+        </arguments>
+    </virtualType>
+    <virtualType name="productUpdateSave" type="Magento\Staging\Model\Entity\Update\Save">
+        <arguments>
+            <argument name="entityName" xsi:type="string">Magento\Catalog\Api\Data\ProductInterface</argument>
+        </arguments>
+    </virtualType>
+    <type name="Magento\CatalogStaging\Controller\Adminhtml\Product\Save">
+        <arguments>
+            <argument name="stagingUpdateSave" xsi:type="object">productUpdateSave</argument>
+        </arguments>
+    </type>
+
+    <!-- Product delete controller -->
+    <type name="Magento\CatalogStaging\Controller\Adminhtml\Product\Delete">
+        <arguments>
+            <argument name="stagingUpdateDelete" xsi:type="object">productUpdateDelete</argument>
+        </arguments>
+    </type>
+    <virtualType name="productUpdateDelete" type="Magento\Staging\Model\Entity\Update\Delete">
+        <arguments>
+            <argument name="entityName" xsi:type="string">Magento\Catalog\Api\Data\ProductInterface</argument>
+        </arguments>
+    </virtualType>
+
+    <type name="Magento\Backend\Block\Widget\Form\Element\ElementCreator">
+        <arguments>
+            <argument name="modifiers" xsi:type="array">
+                <item name="news_from_date" xsi:type="array">
+                    <item name="inputType" xsi:type="string">boolean</item>
+                    <item name="label" xsi:type="string">Set Product as New</item>
+                </item>
+            </argument>
+        </arguments>
+    </type>
+
+    <type name="Magento\Catalog\Block\Adminhtml\Product\Edit\Action\Attribute\Tab\Attributes">
+        <arguments>
+            <argument name="excludeFields" xsi:type="array">
+                <item name="news_to_date" xsi:type="string">news_to_date</item>
+            </argument>
+        </arguments>
+    </type>
+
+    <type name="Magento\Catalog\Helper\Product\Edit\Action\Attribute">
+        <plugin name="catalogHelperProductAttributePlugin" type="Magento\CatalogStaging\Plugin\Helper\Product\Edit\Action\Attribute" />
+    </type>
+</config>

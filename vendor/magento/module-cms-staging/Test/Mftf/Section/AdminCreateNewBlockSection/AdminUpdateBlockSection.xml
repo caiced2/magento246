@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+ /**
+  * Copyright © Magento, Inc. All rights reserved.
+  * See COPYING.txt for license details.
+  */
+-->
+<sections xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:noNamespaceSchemaLocation="urn:magento:mftf:Page/etc/SectionObject.xsd">
+    <section name="AdminUpdateBlockSection">
+        <element name="scheduleNewUpdate" type="button" selector="//button[@id='staging_update_new']"/>
+        <element name="updateName" type="input" selector="//input[@name='staging[name]']"/>
+        <element name="startDate" type="input" selector="//input[@name='staging[start_time]']"/>
+        <element name="saveUpdate" type="button" selector="//button[@id='save']"/>
+        <element name="preview" type="text" selector="//a[contains(text(), 'Preview')]"/>
+        <element name="calendar" type="text" selector="//*[@class='staging-preview-header']//*[normalize-space()='{{calendar}}']" parameterized="true"/>
+        <element name="scope" type="text" selector="//*[@class='staging-preview-header']//*[contains(text(), '{{scope}}')]" parameterized="true"/>
+        <element name="blockContent" type="text" selector="//div[normalize-space()='{{content}}']" parameterized="true"/>
+        <element name="isEnabled" type="button" selector="//div[@class='modal-content']//label[@class='admin__actions-switch-label']"/>
+        <element name="activeIsEnabled" type="button" selector="//div[@class='modal-content']//label[@class='admin__actions-switch-label']/preceding-sibling::input[@value='1']"/>
+        <element name="activePosition" type="button" selector="div[class^='fieldset-wrapper fieldset-schedule admin__collapsible-block-wrapper'] fieldset[class='admin__fieldset'] div[class~='admin__field']:nth-of-type(3)"/>
+    </section>
+</sections>

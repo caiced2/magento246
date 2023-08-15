@@ -1,0 +1,17 @@
+<?php
+/**
+ * Copyright © Magento, Inc. All rights reserved.
+ * See COPYING.txt for license details.
+ */
+
+/** @var $block \Magento\GiftWrapping\Block\Adminhtml\Sales\Order\View\Link */
+?>
+
+<?php if ($block->canDisplayGiftWrappingForItem()) : ?>
+<div class="gift-options-tooltip-content no-display">
+    <?php if ($block->getDesign()) : ?>
+        <div><strong><?= $block->escapeHtml(__('Gift Wrapping Design')) ?></strong>:</div>
+        <div><?= /* @noEscape */ $block->getDesign() ?></div>
+    <?php endif; ?>
+</div>
+<?php endif; ?>

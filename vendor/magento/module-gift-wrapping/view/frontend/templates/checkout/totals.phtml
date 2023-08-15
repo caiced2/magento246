@@ -1,0 +1,19 @@
+<?php
+/**
+ * Copyright © Magento, Inc. All rights reserved.
+ * See COPYING.txt for license details.
+ */
+
+// phpcs:disable Magento2.Templates.ThisInTemplate
+
+?>
+<?php foreach ($block->getValues() as $label => $value) : ?>
+<tr class="totals giftwrapping">
+    <th class="mark" colspan="<?= $block->escapeHtmlAttr($block->getColspan()) ?>" scope="row">
+        <span><?= $block->escapeHtml($label) ?></span>
+    </th>
+    <td class="amount" data-th="<?= $block->escapeHtmlAttr($label) ?>">
+        <?= $block->escapeHtml($this->helper(Magento\Checkout\Helper\Data::class)->formatPrice($value), ['span']) ?>
+    </td>
+</tr>
+<?php endforeach; ?>

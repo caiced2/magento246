@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+ /**
+  * Copyright © Magento, Inc. All rights reserved.
+  * See COPYING.txt for license details.
+  */
+-->
+
+<tests xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xsi:noNamespaceSchemaLocation="urn:magento:mftf:Test/etc/testSchema.xsd">
+    <test name="AdminAssertFieldsAreHiddenOnGoogleAnalyticsConfigurationPageTest">
+        <annotations>
+            <features value="GoogleTagManager"/>
+            <stories value="Disable configuration inputs"/>
+            <title value="Check that all input fields are hidden after disabling Google analytics"/>
+            <description value="Check that all input fields are hidden after disabling Google analytics on configuration page"/>
+            <severity value="MAJOR"/>
+            <testCaseId value="MC-41970"/>
+            <useCaseId value="MC-23956"/>
+            <group value="googleTagManager"/>
+            <group value="pr_exclude"/>
+        </annotations>
+        <before>
+            <actionGroup ref="AdminLoginActionGroup" stepKey="loginAsAdmin"/>
+        </before>
+        <after>
+            <amOnPage url="{{AdminSalesGoogleApiConfigurationPage.url('#google_analytics-link')}}" stepKey="goToGoogleConfigurationPageAfter"/>
+            <waitForPageLoad stepKey="waitForConfigurationPageLoadAfter"/>
+            <checkOption selector="{{AdminSalesGoogleApiGoogleAnalyticsConfigurationSection.enableGoogleAnalyticsCheckbox}}" stepKey="checkDefaultCheckbox"/>
+            <actionGroup ref="AdminSaveConfigActionGroup" stepKey="saveDefaultConfiguration"/>
+            <actionGroup ref="AdminLogoutActionGroup" stepKey="logout"/>
+        </after>
+        <amOnPage url="{{AdminSalesGoogleApiConfigurationPage.url('#google_analytics-link')}}" stepKey="goToGoogleConfigurationPage"/>
+        <waitForPageLoad stepKey="waitForConfigurationPageLoad"/>
+        <uncheckOption selector="{{AdminSalesGoogleApiGoogleAnalyticsConfigurationSection.enableGoogleAnalyticsCheckbox}}" stepKey="uncheckDefaultCheckbox"/>
+        <selectOption selector="{{AdminSalesGoogleApiGoogleAnalyticsConfigurationSection.enableGoogleAnalytics}}" userInput="Yes" stepKey="enableGoogleAnalytics"/>
+        <selectOption selector="{{AdminSalesGoogleApiGoogleAnalyticsConfigurationSection.accountType}}" userInput="Google Tag Manager" stepKey="selectAccountType"/>
+        <actionGroup ref="AdminSaveConfigActionGroup" stepKey="saveConfiguration"/>
+        <seeElement selector="{{AdminSalesGoogleApiGoogleAnalyticsConfigurationSection.containerId}}" stepKey="seeContainerIdInput"/>
+        <seeElement selector="{{AdminSalesGoogleApiGoogleAnalyticsConfigurationSection.catalogPageList}}" stepKey="seeCatalogPageListInput"/>
+        <seeElement selector="{{AdminSalesGoogleApiGoogleAnalyticsConfigurationSection.crossSellBlockList}}" stepKey="seeCrossSellBlockListInput"/>
+        <seeElement selector="{{AdminSalesGoogleApiGoogleAnalyticsConfigurationSection.upSellBlockList}}" stepKey="seeUpSellBlockListInput"/>
+        <seeElement selector="{{AdminSalesGoogleApiGoogleAnalyticsConfigurationSection.relatedProductsBlockList}}" stepKey="seeRelatedProductsBlockListInput"/>
+        <seeElement selector="{{AdminSalesGoogleApiGoogleAnalyticsConfigurationSection.searchResultsList}}" stepKey="seeSearchResultsListInput"/>
+        <seeElement selector="{{AdminSalesGoogleApiGoogleAnalyticsConfigurationSection.internalPromotions}}" stepKey="seeInternalPromotionsInput"/>
+        <selectOption selector="{{AdminSalesGoogleApiGoogleAnalyticsConfigurationSection.enableGoogleAnalytics}}" userInput="No" stepKey="disableGoogleAnalytics"/>
+        <dontSeeElement selector="{{AdminSalesGoogleApiGoogleAnalyticsConfigurationSection.containerId}}" stepKey="dontSeeContainerIdInput"/>
+        <dontSeeElement selector="{{AdminSalesGoogleApiGoogleAnalyticsConfigurationSection.catalogPageList}}" stepKey="dontCatalogPageListInput"/>
+        <dontSeeElement selector="{{AdminSalesGoogleApiGoogleAnalyticsConfigurationSection.crossSellBlockList}}" stepKey="dontCrossSellBlockListInput"/>
+        <dontSeeElement selector="{{AdminSalesGoogleApiGoogleAnalyticsConfigurationSection.upSellBlockList}}" stepKey="dontSeeUpSellBlockListInput"/>
+        <dontSeeElement selector="{{AdminSalesGoogleApiGoogleAnalyticsConfigurationSection.relatedProductsBlockList}}" stepKey="dontSeeRelatedProductsBlockListInput"/>
+        <dontSeeElement selector="{{AdminSalesGoogleApiGoogleAnalyticsConfigurationSection.searchResultsList}}" stepKey="dontSeeSearchResultsListInput"/>
+        <dontSeeElement selector="{{AdminSalesGoogleApiGoogleAnalyticsConfigurationSection.internalPromotions}}" stepKey="dontSeeInternalPromotionsInput"/>
+    </test>
+</tests>

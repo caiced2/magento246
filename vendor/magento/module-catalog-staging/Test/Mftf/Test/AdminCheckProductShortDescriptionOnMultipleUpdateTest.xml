@@ -1,0 +1,93 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+ /**
+  * Copyright © Magento, Inc. All rights reserved.
+  * See COPYING.txt for license details.
+  */
+-->
+
+<tests xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xsi:noNamespaceSchemaLocation="urn:magento:mftf:Test/etc/testSchema.xsd">
+    <test name="AdminCheckProductShortDescriptionOnMultipleUpdateTest">
+        <annotations>
+            <features value="CatalogStaging"/>
+            <stories value="Staging updates"/>
+            <title value="Product short description should be correct in multiple schedule updates with wysiwyg enabled"/>
+            <description value="Product short description in wysiwyg iframe should be correct"/>
+            <severity value="MAJOR"/>
+            <testCaseId value="MC-15996"/>
+            <useCaseId value="MAGETWO-99378"/>
+            <group value="staging"/>
+            <group value="catalog_staging"/>
+            <group value="catalog"/>
+        </annotations>
+        <before>
+            <actionGroup ref="CliEnableTinyMCEActionGroup" stepKey="enableTinyMCE" />
+            <magentoCLI command="config:set {{WysiwygDisabledByDefault.path}} {{WysiwygDisabledByDefault.value}}" stepKey="disableWysiwyg" />
+            <createData entity="SimpleProduct2" stepKey="createSimpleProduct"/>
+            <actionGroup ref="AdminLoginActionGroup" stepKey="loginAsAdmin"/>
+        </before>
+        <after>
+            <actionGroup ref="CliEnableTinyMCEActionGroup" stepKey="enableTinyMCE" />
+            <deleteData createDataKey="createSimpleProduct" stepKey="deleteProduct"/>
+            <actionGroup ref="AdminLogoutActionGroup" stepKey="logout"/>
+        </after>
+        <!-- Go to simple product edit page and set the product attribute to a value -->
+        <amOnPage url="{{AdminProductEditPage.url($$createSimpleProduct.id$$)}}" stepKey="goToEditPage"/>
+        <!-- Schedule an update -->
+        <generateDate date="+5 day" format="m/j/Y g:i A" stepKey="generateStartDateForShedule"/>
+        <generateDate date="+7 day" format="m/j/Y g:i A" stepKey="generateStartDateForSecondShedule"/>
+        <actionGroup ref="CreateScheduleUpdateForProductActionGroup" stepKey="scheduleNewUpdate">
+            <argument name="staging" value="S5UpdateNameStaging"/>
+            <argument name="timeStart" value="{$generateStartDateForShedule}"/>
+        </actionGroup>
+        <actionGroup ref="AdminProductUpdateFillWysiwygFieldByName" stepKey="fillNewProductDescriptionForUpdate">
+            <argument name="fieldName" value="description"/>
+            <argument name="content" value="Update description 1"/>
+        </actionGroup>
+        <actionGroup ref="AdminProductUpdateFillWysiwygFieldByName" stepKey="fillNewProductShortDescriptionForUpdate">
+            <argument name="fieldName" value="short_description"/>
+            <argument name="content" value="Update short description 1"/>
+        </actionGroup>
+        <actionGroup ref="SaveScheduleUpdateForProductActionGroup" stepKey="saveProductScheduleUpdate">
+            <argument name="staging" value="S5UpdateNameStaging"/>
+        </actionGroup>
+        <!-- Schedule a new update -->
+        <actionGroup ref="CreateScheduleUpdateForProductActionGroup" stepKey="scheduleSecondUpdate">
+            <argument name="staging" value="S8UpdateNameStaging"/>
+            <argument name="timeStart" value="{$generateStartDateForSecondShedule}"/>
+        </actionGroup>
+        <actionGroup ref="AdminProductUpdateFillWysiwygFieldByName" stepKey="fillNewProductDescriptionForSecondUpdate">
+            <argument name="fieldName" value="description"/>
+            <argument name="content" value="Update description 2"/>
+        </actionGroup>
+        <actionGroup ref="AdminProductUpdateFillWysiwygFieldByName" stepKey="fillNewProductShortDescriptionForSecondUpdate">
+            <argument name="fieldName" value="short_description"/>
+            <argument name="content" value="Update short description 2"/>
+        </actionGroup>
+        <actionGroup ref="SaveScheduleUpdateForProductActionGroup" stepKey="saveSecondProductScheduleUpdate">
+            <argument name="staging" value="S8UpdateNameStaging"/>
+        </actionGroup>
+        <actionGroup ref="EnabledWYSIWYGActionGroup" stepKey="enableWYSIWYG"/>
+        <click selector="{{AdminScheduledChangesSection.scheduleViewEdit(S5UpdateNameStaging.updateName)}}" stepKey="clickOnViewEditLink"/>
+        <executeJS function="document.querySelector('{{AdminCatalogStagingSlideOutSection.contentTab}}').scrollIntoView()" stepKey="scrollToContentTabToInitEditors"/>
+        <click selector="{{AdminCatalogStagingSlideOutSection.contentTab}}" stepKey="clickOnContentTabToInitEditors"/>
+        <actionGroup ref="AssertWysiwygInitedForField" stepKey="isIframeInitedForDescription">
+            <argument name="field" value="description"/>
+        </actionGroup>
+        <actionGroup ref="AssertWysiwygInitedForField" stepKey="isIframeInitedForShortDescription">
+            <argument name="field" value="short_description"/>
+        </actionGroup>
+        <executeJS function="document.querySelector('{{AdminSlideOutDialogSection.closeButton}}').scrollIntoView()" stepKey="scrollToCloseButton"/>
+        <click selector="{{AdminSlideOutDialogSection.closeButton}}" stepKey="closeUpdateModal"/>
+        <click selector="{{AdminScheduledChangesSection.scheduleViewEdit(S8UpdateNameStaging.updateName)}}" stepKey="clickOnViewEditLinkOnSecondUpdate"/>
+        <executeJS function="document.querySelector('{{AdminCatalogStagingSlideOutSection.contentTab}}').scrollIntoView()" stepKey="scrollToContentTabToInitEditorsOnSecondUpdate"/>
+        <click selector="{{AdminCatalogStagingSlideOutSection.contentTab}}" stepKey="clickOnContentTabOnSecondUpdateToInitEditors"/>
+        <waitForPageLoad stepKey="waitForEditorsInitOnSecondUpdate"/>
+        <switchToIFrame selector="{{AdminCatalogStagingSlideOutSection.wysiwygIframeIdByField('description')}}" stepKey="switchToWysiwygDescriptionIframe"/>
+        <see selector="{{AdminCatalogStagingSlideOutSection.wysiwygIframeContent}}" userInput="Update description 2" stepKey="seeInDescriptionIframe"/>
+        <switchToIFrame stepKey="switchToDefault"/>
+        <switchToIFrame selector="{{AdminCatalogStagingSlideOutSection.wysiwygIframeIdByField('short_description')}}" stepKey="switchToWysiwygShortDescriptionIframe"/>
+        <see selector="{{AdminCatalogStagingSlideOutSection.wysiwygIframeContent}}" userInput="Update short description 2" stepKey="seeInShortDescriptionIframe"/>
+    </test>
+</tests>

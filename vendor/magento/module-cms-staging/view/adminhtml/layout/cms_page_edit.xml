@@ -1,0 +1,26 @@
+<?xml version="1.0"?>
+<!--
+/**
+ * Copyright © Magento, Inc. All rights reserved.
+ * See COPYING.txt for license details.
+ */
+-->
+<page xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" layout="admin-1column" xsi:noNamespaceSchemaLocation="urn:magento:framework:View/Layout/etc/page_configuration.xsd">
+    <update handle="styles"/>
+    <body>
+        <referenceContainer name="page.content">
+            <block class="Magento\CmsStaging\Block\Adminhtml\Page\Update\Upcoming" name="cmsstaging.page.upcoming.grid.block" before="page_main_actions">
+                <container name="cmsstaging.page.upcoming.grid.container" htmlTag="div" htmlClass="block-schedule block">
+                    <block class="Magento\Staging\Block\Adminhtml\Update\Entity\Toolbar" name="cmsstaging.page.upcoming.grid.toolbar" template="Magento_Staging::schedule-title.phtml">
+                        <arguments>
+                            <argument name="requestFieldName" xsi:type="string">page_id</argument>
+                            <argument name="modalPath" xsi:type="string">cmsstaging_page_upcoming_form.cmsstaging_page_upcoming_form.update_cms_page_form_modal</argument>
+                            <argument name="loaderPath" xsi:type="string">cmsstaging_page_upcoming_form.cmsstaging_page_upcoming_form.update_cms_page_form_modal.update_cms_page_form_loader</argument>
+                        </arguments>
+                    </block>
+                    <uiComponent name="cmsstaging_page_upcoming_form"/>
+                </container>
+            </block>
+        </referenceContainer>
+    </body>
+</page>

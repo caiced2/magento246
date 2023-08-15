@@ -1,0 +1,86 @@
+// /**
+//  * Copyright © Magento, Inc. All rights reserved.
+//  * See COPYING.txt for license details.
+//  */
+
+//
+//  Common
+//  _____________________________________________
+
+& when (@media-common = true) {
+    .card-list {
+        margin-bottom: 20px;
+        margin-left: 20px;
+        margin-top: 5px;
+        max-width: 400px;
+        width: 100%;
+    }
+
+    .bolt-credit-card-form {
+        min-height: 120px;
+        margin: 15px 0;
+        max-width: 450px;
+        width: 100%;
+    }
+
+    .bolt-payment-method-content {
+        .actions-toolbar {
+            margin-top: 40px;
+        }
+
+        .checkout-agreements-block {
+            margin-top: 20px;
+        }
+    }
+
+    .add-new-card-container {
+        margin-top: 20px;
+
+        .inner {
+            margin-top: 10px;
+            padding-left: 20px;
+
+            input[type='checkbox'] {
+                vertical-align: top;
+            }
+
+            .field-tooltip {
+                top: -1px;
+            }
+        }
+
+        .save-card-container {
+            float: left;
+        }
+    }
+}
+
+//
+//  Mobile
+//  _____________________________________________
+
+.media-width(@extremum, @break) when (@extremum = 'max') and (@break = @screen__m) {
+    .card-list {
+        margin-left: 0;
+    }
+
+    .bolt-payment-method-content {
+        .content-inner {
+            padding: 0 0 20px 22px;
+        }
+    }
+
+    .add-new-card-container {
+        .inner {
+            padding-left: 0;
+
+            .payment-method-billing-address {
+                width: inherit;
+            }
+        }
+
+        .save-card-container {
+            max-width: ~'calc(100% - 32px)';
+        }
+    }
+}

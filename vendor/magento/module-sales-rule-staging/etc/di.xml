@@ -1,0 +1,149 @@
+<?xml version="1.0"?>
+<!--
+/**
+ * Copyright © Magento, Inc. All rights reserved.
+ * See COPYING.txt for license details.
+ */
+-->
+<config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="urn:magento:framework:ObjectManager/etc/config.xsd">
+    <preference for="Magento\SalesRuleStaging\Api\SalesRuleStagingInterface" type="Magento\SalesRuleStaging\Model\SalesRuleStaging" />
+    <type name="Magento\Staging\Model\StagingList">
+        <arguments>
+            <argument name="entities" xsi:type="array">
+                <item name="sales_rule" xsi:type="string">Magento\SalesRule\Api\Data\RuleInterface</item>
+            </argument>
+        </arguments>
+    </type>
+    <type name="Magento\Staging\Model\EntityStaging">
+        <arguments>
+            <argument name="stagingServices" xsi:type="array">
+                <item name="Magento\SalesRule\Api\Data\RuleInterface" xsi:type="string">Magento\SalesRuleStaging\Model\SalesRuleStagingAdapter</item>
+            </argument>
+        </arguments>
+    </type>
+    <type name="Magento\SalesRule\Model\ResourceModel\Rule\Collection" shared="false">
+        <plugin name="beforeSetValidationFilter" type="Magento\SalesRuleStaging\Model\ResourceModel\Plugin\Rule\Collection" sortOrder="100"/>
+        <arguments>
+            <argument name="versionManager" xsi:type="object">Magento\Staging\Model\VersionManager\Proxy</argument>
+        </arguments>
+    </type>
+    <type name="Magento\Framework\EntityManager\MetadataPool">
+        <arguments>
+            <argument name="metadata" xsi:type="array">
+                <item name="Magento\SalesRule\Api\Data\RuleInterface" xsi:type="array">
+                    <item name="entityTableName" xsi:type="string">salesrule</item>
+                    <item name="identifierField" xsi:type="string">rule_id</item>
+                    <item name="sequenceTable" xsi:type="string">sequence_salesrule</item>
+                </item>
+            </argument>
+        </arguments>
+    </type>
+    <type name="Magento\Framework\EntityManager\OperationPool">
+        <arguments>
+            <argument name="operations" xsi:type="array">
+                <item name="Magento\SalesRule\Api\Data\RuleInterface" xsi:type="array">
+                    <item name="read" xsi:type="string">Magento\Framework\EntityManager\Operation\Read</item>
+                    <item name="create" xsi:type="string">Magento\Staging\Model\Operation\Create</item>
+                    <item name="update" xsi:type="string">Magento\Staging\Model\Operation\Update</item>
+                    <item name="delete" xsi:type="string">Magento\Staging\Model\Operation\Delete</item>
+                </item>
+            </argument>
+        </arguments>
+    </type>
+    <type name="Magento\Framework\EntityManager\Operation\AttributePool">
+        <arguments>
+            <argument name="extensionActions" xsi:type="array">
+                <item name="salesRule" xsi:type="array">
+                    <item name="Magento\SalesRule\Api\Data\RuleInterface" xsi:type="array">
+                        <item name="read" xsi:type="string">Magento\SalesRule\Model\ResourceModel\ReadHandler</item>
+                        <item name="create" xsi:type="string">Magento\SalesRule\Model\ResourceModel\SaveHandler</item>
+                        <item name="update" xsi:type="string">Magento\SalesRule\Model\ResourceModel\SaveHandler</item>
+                    </item>
+                </item>
+            </argument>
+        </arguments>
+    </type>
+    <type name="Magento\SalesRule\Model\Rule">
+        <plugin name="salesRuleDateResolver" type="Magento\SalesRuleStaging\Model\Plugin\DateResolverPlugin"/>
+        <plugin name="salesRuleBeforeBeforeSave" type="Magento\SalesRuleStaging\Model\Plugin\Rule" sortOrder="100"/>
+    </type>
+    <type name="Magento\Staging\Model\StagingApplier">
+        <arguments>
+            <argument name="appliers" xsi:type="array">
+                <item name="Magento\SalesRule\Api\Data\RuleInterface" xsi:type="object">Magento\SalesRuleStaging\Model\RuleApplier</item>
+            </argument>
+        </arguments>
+    </type>
+    <preference for="Magento\SalesRule\Model\ResourceModel\Rule\DateApplier"
+                type="Magento\SalesRuleStaging\Model\ResourceModel\Rule\DateApplier" />
+    <virtualType name="stagingSalesRuleUpdateSelectResult" type="Magento\Staging\Model\Entity\Update\Select\SearchResult">
+        <arguments>
+            <argument name="entityRequestName" xsi:type="string">id</argument>
+            <argument name="entityTable" xsi:type="string">salesrule</argument>
+            <argument name="entityColumn" xsi:type="string">rule_id</argument>
+        </arguments>
+    </virtualType>
+    <virtualType name="stagingSalesRuleUpcomingResult" type="Magento\Staging\Model\Entity\Upcoming\SearchResult">
+        <arguments>
+            <argument name="entityRequestName" xsi:type="string">rule_id</argument>
+            <argument name="entityTable" xsi:type="string">salesrule</argument>
+            <argument name="entityColumn" xsi:type="string">rule_id</argument>
+            <argument name="entityFieldsToSelect" xsi:type="array">
+                <item name="row_id" xsi:type="string">row_id</item>
+            </argument>
+            <argument name="eventPrefix" xsi:type="string">staging_salesrule_upcoming_search_result</argument>
+            <argument name="eventObject" xsi:type="string">collection</argument>
+        </arguments>
+    </virtualType>
+    <type name="Magento\Framework\View\Element\UiComponent\DataProvider\CollectionFactory">
+        <arguments>
+            <argument name="collections" xsi:type="array">
+                <item name="salesrulestaging_upcoming_grid_data_source" xsi:type="string">stagingSalesRuleUpcomingResult</item>
+                <item name="salesrulestaging_update_select_grid_data_source" xsi:type="string">stagingSalesRuleUpdateSelectResult</item>
+                <item name="salesrulestaging_update_remove_select_grid_data_source" xsi:type="string">stagingSalesRuleUpdateSelectResult</item>
+            </argument>
+        </arguments>
+    </type>
+    <type name="Magento\Staging\Model\Update\IncludesList">
+        <arguments>
+            <argument name="includes" xsi:type="array">
+                <item name="sales_rule" xsi:type="object">Magento\Staging\Model\Update\Includes</item>
+            </argument>
+        </arguments>
+    </type>
+    <virtualType name="Magento\SalesRule\Model\ResourceModel\Rule\AssociatedEntityMap" type="Magento\Framework\DataObject">
+        <arguments>
+            <argument name="data" xsi:type="array">
+                <item name="website" xsi:type="array">
+                    <item name="associations_table" xsi:type="string">salesrule_website</item>
+                    <item name="rule_id_field" xsi:type="string">row_id</item>
+                    <item name="entity_id_field" xsi:type="string">website_id</item>
+                </item>
+                <item name="customer_group" xsi:type="array">
+                    <item name="associations_table" xsi:type="string">salesrule_customer_group</item>
+                    <item name="rule_id_field" xsi:type="string">row_id</item>
+                    <item name="entity_id_field" xsi:type="string">customer_group_id</item>
+                </item>
+            </argument>
+        </arguments>
+    </virtualType>
+    <type name="Magento\Staging\Model\Operation\Update\TemporaryUpdateProcessorPool">
+        <arguments>
+            <argument name="processors" xsi:type="array">
+                <item name="Magento\SalesRule\Api\Data\RuleInterface" xsi:type="string">Magento\SalesRuleStaging\Model\Operation\Update\TemporaryUpdateProcessor</item>
+            </argument>
+        </arguments>
+    </type>
+    <type name="Magento\Staging\Model\Entity\RetrieverPool">
+        <arguments>
+            <argument name="retrievers" xsi:type="array">
+                <item name="Magento\SalesRule\Api\Data\RuleInterface" xsi:type="object">Magento\SalesRuleStaging\Model\Rule\Retriever</item>
+            </argument>
+        </arguments>
+    </type>
+    <type name="Magento\SalesRuleStaging\Model\ResourceModel\Rule\AddWebsiteIdsToCollection">
+        <arguments>
+            <argument name="associatedEntityMap" xsi:type="object">Magento\SalesRule\Model\ResourceModel\Rule\AssociatedEntityMap</argument>
+        </arguments>
+    </type>
+</config>

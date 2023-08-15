@@ -1,0 +1,77 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+/**
+ * Copyright © Magento, Inc. All rights reserved.
+ * See COPYING.txt for license details.
+ */
+-->
+
+<tests xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xsi:noNamespaceSchemaLocation="urn:magento:mftf:Test/etc/testSchema.xsd">
+    <test name="AddSimpleProductsBySkuFromCustomerAccountTest">
+        <annotations>
+            <features value="AdvancedCheckout"/>
+            <stories value="Add Product By SKU"/>
+            <title value="Add simple products by sku from customer account test"/>
+            <description value="Add simple products by sku from my customer account"/>
+            <severity value="CRITICAL"/>
+            <testCaseId value="MC-14023"/>
+            <group value="AdvancedCheckout"/>
+            <group value="mtf_migrated"/>
+        </annotations>
+        <before>
+            <!-- Create customer -->
+            <createData entity="Simple_US_Customer" stepKey="createCustomer"/>
+
+            <!-- Create products -->
+            <createData entity="SimpleProduct2" stepKey="firstSimpleProduct"/>
+            <createData entity="SimpleProduct2" stepKey="secondSimpleProduct"/>
+        </before>
+        <after>
+            <!-- Delete customer -->
+            <deleteData createDataKey="createCustomer" stepKey="deleteCustomer"/>
+
+            <!-- Delete products -->
+            <deleteData createDataKey="firstSimpleProduct" stepKey="deleteFirstSimpleProduct"/>
+            <deleteData createDataKey="secondSimpleProduct" stepKey="deleteSecondSimpleProduct"/>
+        </after>
+
+        <!-- Login to Frontend -->
+        <actionGroup ref="LoginToStorefrontActionGroup" stepKey="loginAsCustomer">
+            <argument name="Customer" value="$$createCustomer$$"/>
+        </actionGroup>
+
+        <!-- Open My Account > Order by SKU -->
+        <amOnPage stepKey="goToMyAccountPage" url="{{StorefrontCustomerDashboardPage.url}}"/>
+        <waitForPageLoad stepKey="waitForPageLoad"/>
+        <actionGroup ref="StorefrontCustomerGoToSidebarMenu" stepKey="goToSidebarMenu">
+            <argument name="menu" value="Order by SKU"/>
+        </actionGroup>
+
+        <!-- Fill data according dataset -->
+        <actionGroup ref="FillProductSkuAndQtyActionGroup" stepKey="fillProductQtyAndSkuForOrderFirstProduct">
+            <argument name="sku" value="$$firstSimpleProduct.sku$$"/>
+            <argument name="quantity" value="{{ApiSimpleSingleQty.quantity}}"/>
+            <argument name="index" value="0"/>
+        </actionGroup>
+        <click selector="{{StorefrontCustomerOrderBySkuSection.newRow}}" stepKey="addNewRow"/>
+        <actionGroup ref="FillProductSkuAndQtyActionGroup" stepKey="fillProductQtyAndSkuForOrderSecondProduct">
+            <argument name="sku" value="$$secondSimpleProduct.sku$$"/>
+            <argument name="quantity" value="{{ApiSimpleSingleQty.quantity}}"/>
+            <argument name="index" value="1"/>
+        </actionGroup>
+
+        <!-- Add products to cart -->
+        <actionGroup ref="AddProductToCartBySkuFromMyAccountActionGroup" stepKey="addProductToCartBySku"/>
+
+        <!-- Assert products present in shopping cart -->
+        <actionGroup ref="StorefrontCheckCartSimpleProductActionGroup" stepKey="checkFirstProductInCart">
+            <argument name="product" value="$$firstSimpleProduct$$"/>
+            <argument name="productQuantity" value="ApiSimpleSingleQty.quantity"/>
+        </actionGroup>
+        <actionGroup ref="StorefrontCheckCartSimpleProductActionGroup" stepKey="checkSecondProductInCart">
+            <argument name="product" value="$$secondSimpleProduct$$"/>
+            <argument name="productQuantity" value="ApiSimpleSingleQty.quantity"/>
+        </actionGroup>
+    </test>
+</tests>

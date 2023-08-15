@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+ /**
+  * Copyright © Magento, Inc. All rights reserved.
+  * See COPYING.txt for license details.
+  */
+-->
+<operations xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+            xsi:noNamespaceSchemaLocation="urn:magento:mftf:DataGenerator/etc/dataOperation.xsd">
+    <operation name="CreateRmaItemAttribute" dataType="return_attribute" type="create" auth="adminFormKey" url="/admin/rma_item_attribute/save/" method="POST" successRegex="/messages-message-success/">
+            <field key="attribute_code" required="true">string</field>
+            <field key="frontend_input" required="true">string</field>
+            <field key="is_required">boolean</field>
+            <field key="is_visible" required="true">boolean</field>
+            <field key="sort_order" required="true">integer</field>
+            <array key="frontend_label">
+                <value>string</value>
+            </array>
+            <array key="used_in_forms" required="true">
+                <value>string</value>
+            </array>
+    </operation>
+</operations>

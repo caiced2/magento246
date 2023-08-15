@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+/**
+ * Copyright © Magento, Inc. All rights reserved.
+ * See COPYING.txt for license details.
+ */
+-->
+<widgets xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:noNamespaceSchemaLocation="urn:magento:module:Magento_Widget:etc/widget.xsd">
+    <widget id="event_lister" class="Magento\CatalogEvent\Block\Widget\Lister"
+            placeholder_image="Magento_CatalogEvent::widget_lister.png">
+        <label translate="true">Catalog Events Carousel</label>
+        <description translate="true">List all open Catalog Events as a Paginated Carousel</description>
+        <parameters>
+            <parameter name="limit" xsi:type="text" required="true" visible="true">
+                <label translate="true">Frame Size</label>
+                <description translate="true">Number of Items to display at once</description>
+                <value>5</value>
+            </parameter>
+            <parameter name="scroll" xsi:type="text" required="true" visible="true">
+                <label translate="true">Scroll</label>
+                <description translate="true">Number of Items to scroll per click</description>
+                <value>2</value>
+            </parameter>
+            <parameter name="width" xsi:type="text" visible="true">
+                <label translate="true">Block Custom Width</label>
+                <description translate="true">If empty, we'll automatically set the width value in pixels.</description>
+            </parameter>
+            <parameter name="template" xsi:type="select" visible="false" required="true">
+                <options>
+                    <option name="default" value="widget/lister.phtml" selected="true">
+                        <label translate="true">Catalog Events Carousel Default Template</label>
+                    </option>
+                </options>
+            </parameter>
+        </parameters>
+        <containers>
+            <container name="sidebar.main">
+                <template name="lister" value="default" />
+            </container>
+            <container name="content">
+                <template name="lister" value="default" />
+            </container>
+            <container name="sidebar.additional">
+                <template name="lister" value="default" />
+            </container>
+        </containers>
+    </widget>
+</widgets>

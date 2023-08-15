@@ -1,0 +1,28 @@
+{
+    "magento_scheduled_operations": {
+        "column": {
+            "id": true,
+            "name": true,
+            "operation_type": true,
+            "entity_type": true,
+            "behavior": true,
+            "start_time": true,
+            "freq": true,
+            "force_import": true,
+            "file_info": true,
+            "details": true,
+            "entity_attributes": true,
+            "status": true,
+            "is_success": true,
+            "last_run_date": true,
+            "email_receiver": true,
+            "email_sender": true,
+            "email_template": true,
+            "email_copy": true,
+            "email_copy_method": true
+        },
+        "constraint": {
+            "PRIMARY": true
+        }
+    }
+}

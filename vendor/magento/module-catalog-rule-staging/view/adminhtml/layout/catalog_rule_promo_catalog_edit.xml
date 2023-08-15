@@ -1,0 +1,26 @@
+<?xml version="1.0"?>
+<!--
+/**
+ * Copyright © Magento, Inc. All rights reserved.
+ * See COPYING.txt for license details.
+ */
+-->
+<page xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" layout="admin-1column" xsi:noNamespaceSchemaLocation="urn:magento:framework:View/Layout/etc/page_configuration.xsd">
+    <update handle="styles"/>
+    <body>
+        <referenceContainer name="page.content">
+            <block class="Magento\CatalogRuleStaging\Block\Adminhtml\Update\Upcoming" name="catalogrule.staging.update.grid.wrapper" before="page_main_actions">
+                <container name="catalogrule.staging.update.grid" htmlTag="div" htmlClass="block-schedule block">
+                    <block class="Magento\Staging\Block\Adminhtml\Update\Entity\Toolbar" name="staging.schedule.title" template="Magento_Staging::schedule-title.phtml">
+                        <arguments>
+                            <argument name="requestFieldName" xsi:type="string">id</argument>
+                            <argument name="modalPath" xsi:type="string">catalogrulestaging_upcoming_form.catalogrulestaging_upcoming_form.catalogrulestaging_update_form_modal</argument>
+                            <argument name="loaderPath" xsi:type="string">catalogrulestaging_upcoming_form.catalogrulestaging_upcoming_form.catalogrulestaging_update_form_modal.update_form_loader</argument>
+                        </arguments>
+                    </block>
+                    <uiComponent name="catalogrulestaging_upcoming_form"/>
+                </container>
+            </block>
+        </referenceContainer>
+    </body>
+</page>

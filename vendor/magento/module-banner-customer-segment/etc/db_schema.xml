@@ -1,0 +1,30 @@
+<?xml version="1.0"?>
+<!--
+/**
+ * Copyright © Magento, Inc. All rights reserved.
+ * See COPYING.txt for license details.
+ */
+-->
+<schema xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:noNamespaceSchemaLocation="urn:magento:framework:Setup/Declaration/Schema/etc/schema.xsd">
+    <table name="magento_banner_customersegment" resource="default" engine="innodb"
+           comment="Enterprise Banner Customersegment">
+        <column xsi:type="int" name="banner_id" unsigned="true" nullable="false" identity="false"
+                default="0" comment="Banner Id"/>
+        <column xsi:type="int" name="segment_id" unsigned="true" nullable="false" identity="false"
+                default="0" comment="Segment Id"/>
+        <constraint xsi:type="primary" referenceId="PRIMARY">
+            <column name="banner_id"/>
+            <column name="segment_id"/>
+        </constraint>
+        <constraint xsi:type="foreign" referenceId="MAGENTO_BANNER_CSTRSEGMENT_BANNER_ID_MAGENTO_BANNER_BANNER_ID"
+                    table="magento_banner_customersegment" column="banner_id" referenceTable="magento_banner"
+                    referenceColumn="banner_id" onDelete="CASCADE"/>
+        <constraint xsi:type="foreign" referenceId="FK_5649B8A073C66134C719D8BA64821337" table="magento_banner_customersegment"
+                    column="segment_id" referenceTable="magento_customersegment_segment" referenceColumn="segment_id"
+                    onDelete="CASCADE"/>
+        <index referenceId="MAGENTO_BANNER_CUSTOMERSEGMENT_SEGMENT_ID" indexType="btree">
+            <column name="segment_id"/>
+        </index>
+    </table>
+</schema>

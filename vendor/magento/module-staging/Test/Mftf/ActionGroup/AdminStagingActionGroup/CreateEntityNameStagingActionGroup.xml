@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+ /**
+  * Copyright © Magento, Inc. All rights reserved.
+  * See COPYING.txt for license details.
+  */
+-->
+<actionGroups xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+              xsi:noNamespaceSchemaLocation="urn:magento:mftf:Test/etc/actionGroupSchema.xsd">
+    <actionGroup name="CreateEntityNameStagingActionGroup">
+        <arguments>
+          <argument name="stagingUpdate" defaultValue="_defaultStaging"/>
+          <argument name="endDate" defaultValue=""/>
+        </arguments>
+
+        <!-- Fill out the staging update details -->
+        <click stepKey="scheduleNewUpdateBtn" selector="{{AdminStagingSlideOutSection.scheduleNewUpdateBtn}}"/>
+        <fillField stepKey="fillName" selector="{{AdminStagingSlideOutSection.updateName}}" userInput="{{stagingUpdate.name}}"/>
+        <fillField stepKey="fillDescription" selector="{{AdminStagingSlideOutSection.updateDescription}}" userInput="{{stagingUpdate.description}}"/>
+
+        <!-- Check to see if it is close to the new minute. If so, wait a few seconds -->
+        <executeJS stepKey="needWait" function="
+                    var today = new Date();
+                    var sec = today.getSeconds();
+                    return sec > 50 ? (61-sec) : 0;"/>
+        <wait stepKey="conditionalWait" time="$needWait"/>
+
+        <!-- Build the date in the correct format -->
+        <generateDate date="+485 min" format="m/d/Y g:i A" stepKey="generateDate"/>
+        <!-- <generateDate stepKey="generateDate" date="+1 minute" format="m/d/Y g:i A"/> -->
+        <executeJS stepKey="numSecondsLeft" function="var today = new Date();var sec = today.getSeconds();return 60 - sec;"/>
+        <executeJS stepKey="getStartingTime" function="return Math.floor(new Date() / 1000);"/>
+        <fillField stepKey="fillStartDate" selector="{{AdminStagingSlideOutSection.startDate}}" userInput="{$generateDate}"/>
+        <fillField stepKey="fillEndDate" selector="{{AdminStagingSlideOutSection.endDate}}" userInput="{{endDate}}"/>
+
+        <!-- Fill out the field to be changed in the staging update -->
+        <fillField stepKey="fillNewName" selector="{{AdminStagingSlideOutSection.name}}" userInput="{{stagingUpdate.entityName}}"/>
+        <click selector="{{AdminStagingSlideOutSection.anchor}}" stepKey="checkAnchor"/>
+
+        <!-- Save the update details -->
+        <scrollToTopOfPage stepKey="scrollToTop"/>
+        <click stepKey="clickSave" selector="{{AdminStagingSlideOutSection.save}}"/>
+
+    </actionGroup>
+</actionGroups>

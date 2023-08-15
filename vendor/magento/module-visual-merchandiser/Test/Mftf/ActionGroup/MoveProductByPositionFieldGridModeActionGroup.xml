@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+ /**
+  * Copyright © Magento, Inc. All rights reserved.
+  * See COPYING.txt for license details.
+  */
+-->
+
+<actionGroups xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:noNamespaceSchemaLocation="urn:magento:mftf:Test/etc/actionGroupSchema.xsd">
+    <actionGroup name="MoveProductByPositionFieldGridModeActionGroup">
+        <arguments>
+            <argument name="rowFrom" type="string"/>
+            <argument name="rowTo" type="string"/>
+        </arguments>
+        <pressKey selector="{{AdminCategoryProductsGridSection.rowPositionInput(rowFrom)}}" parameterArray="[\Facebook\WebDriver\WebDriverKeys::BACKSPACE]" stepKey="delete1"/>
+        <pressKey selector="{{AdminCategoryProductsGridSection.rowPositionInput(rowFrom)}}" parameterArray="[\Facebook\WebDriver\WebDriverKeys::BACKSPACE]" stepKey="delete2"/>
+        <pressKey selector="{{AdminCategoryProductsGridSection.rowPositionInput(rowFrom)}}" parameterArray="[\Facebook\WebDriver\WebDriverKeys::BACKSPACE]" stepKey="delete3"/>
+        <pressKey selector="{{AdminCategoryProductsGridSection.rowPositionInput(rowFrom)}}" parameterArray="[\Facebook\WebDriver\WebDriverKeys::BACKSPACE]" stepKey="delete4"/>
+        <pressKey selector="{{AdminCategoryProductsGridSection.rowPositionInput(rowFrom)}}" parameterArray="[\Facebook\WebDriver\WebDriverKeys::BACKSPACE]" stepKey="delete5"/>
+        <fillField userInput="{{rowTo}}" selector="{{AdminCategoryProductsGridSection.rowPositionInput(rowFrom)}}" stepKey="fill"/>
+        <pressKey selector="{{AdminCategoryProductsGridSection.rowPositionInput(rowFrom)}}" parameterArray="[\Facebook\WebDriver\WebDriverKeys::ENTER]" stepKey="enter"/>
+    </actionGroup>
+</actionGroups>

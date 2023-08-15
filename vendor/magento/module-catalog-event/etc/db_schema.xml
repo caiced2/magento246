@@ -1,0 +1,66 @@
+<?xml version="1.0"?>
+<!--
+/**
+ * Copyright © Magento, Inc. All rights reserved.
+ * See COPYING.txt for license details.
+ */
+-->
+<schema xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:noNamespaceSchemaLocation="urn:magento:framework:Setup/Declaration/Schema/etc/schema.xsd">
+    <table name="magento_catalogevent_event" resource="default" engine="innodb" comment="Enterprise Catalogevent Event">
+        <column xsi:type="int" name="event_id" unsigned="true" nullable="false" identity="true"
+                comment="Event Id"/>
+        <column xsi:type="int" name="category_id" unsigned="true" nullable="true" identity="false"
+                comment="Category Id"/>
+        <column xsi:type="datetime" name="date_start" on_update="false" nullable="true" comment="Date Start"/>
+        <column xsi:type="datetime" name="date_end" on_update="false" nullable="true" comment="Date End"/>
+        <column xsi:type="smallint" name="display_state" unsigned="true" nullable="true" identity="false"
+                default="0" comment="Display State"/>
+        <column xsi:type="int" name="sort_order" unsigned="true" nullable="true" identity="false"
+                comment="Sort Order"/>
+        <column xsi:type="smallint" name="status" unsigned="true" nullable="false" identity="false"
+                default="1" comment="Status"/>
+        <constraint xsi:type="primary" referenceId="PRIMARY">
+            <column name="event_id"/>
+        </constraint>
+        <constraint xsi:type="unique" referenceId="MAGENTO_CATALOGEVENT_EVENT_CATEGORY_ID">
+            <column name="category_id"/>
+        </constraint>
+        <constraint xsi:type="foreign" referenceId="MAGENTO_CATEVENT_EVENT_CTGR_ID_CAT_CTGR_ENTT_ENTT_ID"
+                    table="magento_catalogevent_event" column="category_id" referenceTable="catalog_category_entity"
+                    referenceColumn="entity_id" onDelete="CASCADE"/>
+        <index referenceId="MAGENTO_CATALOGEVENT_EVENT_DATE_START_DATE_END" indexType="btree">
+            <column name="date_start"/>
+            <column name="date_end"/>
+        </index>
+    </table>
+    <table name="magento_catalogevent_event_image" resource="default" engine="innodb"
+           comment="Enterprise Catalogevent Event Image">
+        <column xsi:type="int" name="event_id" unsigned="true" nullable="false" identity="false"
+                comment="Event Id"/>
+        <column xsi:type="smallint" name="store_id" unsigned="true" nullable="false" identity="false"
+                comment="Store Id"/>
+        <column xsi:type="varchar" name="image" nullable="false" length="255" comment="Image"/>
+        <constraint xsi:type="primary" referenceId="PRIMARY">
+            <column name="event_id"/>
+            <column name="store_id"/>
+        </constraint>
+        <constraint xsi:type="foreign" referenceId="FK_62C3B6744DA50C7866378C9D30D06574"
+                    table="magento_catalogevent_event_image" column="event_id"
+                    referenceTable="magento_catalogevent_event" referenceColumn="event_id" onDelete="CASCADE"/>
+        <constraint xsi:type="foreign" referenceId="MAGENTO_CATALOGEVENT_EVENT_IMAGE_STORE_ID_STORE_STORE_ID"
+                    table="magento_catalogevent_event_image" column="store_id" referenceTable="store"
+                    referenceColumn="store_id" onDelete="CASCADE"/>
+        <index referenceId="MAGENTO_CATALOGEVENT_EVENT_IMAGE_STORE_ID" indexType="btree">
+            <column name="store_id"/>
+        </index>
+    </table>
+    <table name="quote_item" resource="checkout" comment="Sales Flat Quote Item">
+        <column xsi:type="int" name="event_id" unsigned="false" nullable="true" identity="false"
+                comment="Event Id"/>
+    </table>
+    <table name="sales_order_item" resource="sales" comment="Sales Flat Order Item">
+        <column xsi:type="int" name="event_id" unsigned="false" nullable="true" identity="false"
+                comment="Event Id"/>
+    </table>
+</schema>

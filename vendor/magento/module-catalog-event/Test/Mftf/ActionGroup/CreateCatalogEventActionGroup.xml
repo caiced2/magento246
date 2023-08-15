@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+ /**
+  * Copyright © Magento, Inc. All rights reserved.
+  * See COPYING.txt for license details.
+  */
+-->
+
+<actionGroups xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+              xsi:noNamespaceSchemaLocation="urn:magento:mftf:Test/etc/actionGroupSchema.xsd">
+    <actionGroup name="CreateCatalogEventActionGroup">
+        <generateDate date="-9 day" format="m/j/Y g:i A" stepKey="startDateDefaultValue"/>
+        <generateDate date="+9 day" format="m/j/Y g:i A" stepKey="endDateDefaultValue"/>
+        <arguments>
+            <argument name="categoryId"/>
+            <argument name="startDate" defaultValue="{$startDateDefaultValue}"/>
+            <argument name="endDate" defaultValue="{$endDateDefaultValue}"/>
+        </arguments>
+        <amOnPage url="{{AdminCatalogEventPage.url(categoryId)}}" stepKey="goToCatalogEventPage"/>
+        <fillField selector="{{CatalogEventInfoSection.eventStartDate}}" userInput="{{startDate}}" stepKey="fillStartDate"/>
+        <fillField selector="{{CatalogEventInfoSection.eventEndDate}}" userInput="{{endDate}}" stepKey="fillEndDate"/>
+        <click selector="{{AdminMainActionsSection.save}}" stepKey="saveEvent"/>
+        <waitForElementVisible selector="{{AdminMessagesSection.success}}" stepKey="waitForSuccessMessage"/>
+        <see selector="{{AdminMessagesSection.success}}" userInput="You saved the event." stepKey="assertSuccess"/>
+    </actionGroup>
+</actionGroups>

@@ -1,0 +1,24 @@
+<?xml version="1.0"?>
+<!--
+/**
+ * Copyright © Magento, Inc. All rights reserved.
+ * See COPYING.txt for license details.
+ */
+-->
+<page xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="urn:magento:framework:View/Layout/etc/page_configuration.xsd">
+    <body>
+        <referenceContainer name="content">
+            <block class="Magento\Framework\View\Element\Template" name="customer_form_template">
+                <block class="Magento\CustomAttributeManagement\Block\Form\Renderer\Text" name="customer_form_template_text" as="text" template="Magento_CustomerCustomAttributes::form/renderer/text.phtml"/>
+                <block class="Magento\CustomAttributeManagement\Block\Form\Renderer\Textarea" name="customer_form_template_textarea" as="textarea" template="Magento_CustomerCustomAttributes::form/renderer/textarea.phtml"/>
+                <block class="Magento\CustomAttributeManagement\Block\Form\Renderer\Multiline" name="customer_form_template_multiline" as="multiline" template="Magento_CustomerCustomAttributes::form/renderer/multiline.phtml"/>
+                <block class="Magento\CustomAttributeManagement\Block\Form\Renderer\Date" name="customer_form_template_date" as="date" template="Magento_CustomerCustomAttributes::form/renderer/date.phtml"/>
+                <block class="Magento\CustomAttributeManagement\Block\Form\Renderer\Select" name="customer_form_template_select" as="select" template="Magento_CustomerCustomAttributes::form/renderer/select.phtml"/>
+                <block class="Magento\CustomAttributeManagement\Block\Form\Renderer\Multiselect" name="customer_form_template_multiselect" as="multiselect" template="Magento_CustomerCustomAttributes::form/renderer/multiselect.phtml"/>
+                <block class="Magento\CustomAttributeManagement\Block\Form\Renderer\Boolean" name="customer_form_template_boolean" as="boolean" template="Magento_CustomerCustomAttributes::form/renderer/boolean.phtml"/>
+                <block class="Magento\CustomAttributeManagement\Block\Form\Renderer\File" name="customer_form_template_file" as="file" template="Magento_CustomerCustomAttributes::form/renderer/file.phtml"/>
+                <block class="Magento\CustomAttributeManagement\Block\Form\Renderer\Image" name="customer_form_template_image" as="image" template="Magento_CustomerCustomAttributes::form/renderer/image.phtml"/>
+            </block>
+        </referenceContainer>
+    </body>
+</page>

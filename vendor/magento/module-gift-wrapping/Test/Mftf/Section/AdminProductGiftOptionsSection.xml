@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+ /**
+  * Copyright © Magento, Inc. All rights reserved.
+  * See COPYING.txt for license details.
+  */
+-->
+
+<sections xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+          xsi:noNamespaceSchemaLocation="urn:magento:mftf:Page/etc/SectionObject.xsd">
+    <section name="AdminProductGiftOptionsSection">
+        <element name="isGiftOptionsTabClosed" type="text" selector="//span[text()='Gift Options']/parent::strong/parent::*[@data-state-collapsible='closed']"/>
+        <element name="giftOptions" type="text" selector="//strong[contains(@class, 'admin__collapsible-title')]/span[text()='Gift Options']"/>
+        <element name="useConfigSettingsMessage" type="checkbox" selector="[name='product[use_config_gift_message_available]']"/>
+        <element name="useConfigSettingsAvaible" type="checkbox" selector="[name='product[use_config_gift_wrapping_available]']"/>
+        <element name="allowGiftWrapping" type="checkbox" selector="[name='product[gift_wrapping_available]']"/>
+        <element name="priceForGiftWrapping" type="input" selector="input[name='product[gift_wrapping_price]']"/>
+        <element name="giftMessageSwitchOption" type="button" selector="//input[@name='product[gift_message_available]']/.."/>
+        <element name="giftWrappingSwitchOption" type="button" selector="//input[@name='product[gift_wrapping_available]']/.."/>
+    </section>
+</sections>

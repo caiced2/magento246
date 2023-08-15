@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+ /**
+  * Copyright © Magento, Inc. All rights reserved.
+  * See COPYING.txt for license details.
+  */
+-->
+
+<sections xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:noNamespaceSchemaLocation="urn:magento:mftf:Page/etc/SectionObject.xsd">
+    <section name="AdminShippingMethodsRMASection">
+        <element name="carriersFedExActiveRMA" type="select" selector="#carriers_fedex_active_rma"/>
+        <element name="carriersDHLActiveRMA" type="select" selector="#carriers_dhl_active_rma"/>
+        <element name="carriersUPSActiveRMA" type="select" selector="#carriers_ups_active_rma"/>
+        <element name="carriersUSPSActiveRMA" type="select" selector="#carriers_usps_active_rma"/>
+    </section>
+</sections>

@@ -1,0 +1,17 @@
+<?xml version="1.0"?>
+<!--
+/**
+ * Copyright © Magento, Inc. All rights reserved.
+ * See COPYING.txt for license details.
+ */
+-->
+<page xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="urn:magento:framework:View/Layout/etc/page_configuration.xsd">
+    <body>
+        <referenceBlock name="checkout.onepage.payment.methods.scripts">
+            <block class="Magento\GiftCardAccount\Block\Checkout\Onepage\Payment\Additional" template="Magento_GiftCardAccount::onepage/payment/scripts.phtml" name="giftcardaccount_scripts" cacheable="false"/>
+        </referenceBlock>
+        <referenceBlock name="checkout.onepage.payment.methods.additional">
+            <block class="Magento\GiftCardAccount\Block\Checkout\Onepage\Payment\Additional" template="Magento_GiftCardAccount::onepage/payment/additional.phtml" name="giftcardaccount_additional" cacheable="false"/>
+        </referenceBlock>
+    </body>
+</page>

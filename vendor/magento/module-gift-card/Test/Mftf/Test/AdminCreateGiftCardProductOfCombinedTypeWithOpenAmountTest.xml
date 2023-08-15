@@ -1,0 +1,108 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+ /**
+  * Copyright © Magento, Inc. All rights reserved.
+  * See COPYING.txt for license details.
+  */
+-->
+
+<tests xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xsi:noNamespaceSchemaLocation="urn:magento:mftf:Test/etc/testSchema.xsd">
+    <test name="AdminCreateGiftCardProductOfCombinedTypeWithOpenAmountTest">
+        <annotations>
+            <features value="GiftCard"/>
+            <stories value="Create gift card product"/>
+            <title value="Admin create gift card product cart of combined type with amount test"/>
+            <description value="Admin should be able to create gift cart of combined type with amount"/>
+            <severity value="CRITICAL"/>
+            <testCaseId value="MC-14495"/>
+            <group value="mtf_migrated"/>
+        </annotations>
+        <before>
+            <!-- Create category -->
+            <createData entity="SimpleSubCategory" stepKey="createCategory"/>
+
+            <!-- Login as admin -->
+            <actionGroup ref="AdminLoginActionGroup" stepKey="loginAsAdmin"/>
+        </before>
+        <after>
+            <!-- Delete product -->
+            <actionGroup ref="DeleteProductBySkuActionGroup" stepKey="deleteProduct">
+                <argument name="sku" value="{{CombinedGiftCard.sku}}"/>
+            </actionGroup>
+            <actionGroup ref="ResetAdminDataGridToDefaultViewActionGroup" stepKey="clearFilters"/>
+
+            <!-- Delete category -->
+            <deleteData createDataKey="createCategory" stepKey="deleteCategory"/>
+
+            <!-- Log out -->
+            <actionGroup ref="AdminLogoutActionGroup" stepKey="logout"/>
+        </after>
+
+        <!-- Create gift card product -->
+        <actionGroup ref="AdminOpenProductIndexPageActionGroup" stepKey="navigateToCatalogProductGrid"/>
+        <comment userInput="BIC workaround" stepKey="waitForCatalogProductGrid"/>
+        <actionGroup ref="GoToSpecifiedCreateProductPageActionGroup" stepKey="openProductFillForm">
+            <argument name="productType" value="giftcard"/>
+        </actionGroup>
+
+        <!-- Add open amount to gift card product -->
+        <actionGroup ref="AdminAddOpenAmountToGiftCardProductActionGroup" stepKey="addOpenAmountToToGiftCardProduct"/>
+
+        <!-- Add gift card product to category -->
+        <searchAndMultiSelectOption selector="{{AdminProductFormSection.categoriesDropdown}}" parameterArray="[$$createCategory.name$$]" stepKey="fillCategory"/>
+
+        <!-- Fill gift card product values -->
+        <actionGroup ref="AdminFillGiftCardProductFieldsActionGroup" stepKey="fillGiftCardProductFields">
+            <argument name="product" value="CombinedGiftCard"/>
+        </actionGroup>
+
+        <!-- Save gift card product -->
+        <actionGroup ref="SaveProductFormActionGroup" stepKey="saveProduct"/>
+
+        <!-- Assert gift card product in grid -->
+        <actionGroup ref="viewGiftCardInAdminGrid" stepKey="seeGiftCardInGrid">
+            <argument name="product" value="CombinedGiftCard"/>
+        </actionGroup>
+
+        <!-- Assert  gift card product searchable by sku -->
+        <actionGroup ref="FilterProductGridBySku2ActionGroup" stepKey="filterProductGridBySku">
+            <argument name="sku" value="{{CombinedGiftCard.sku}}"/>
+        </actionGroup>
+        <click selector="{{AdminProductGridSection.firstRow}}" stepKey="clickOnGiftCardPage"/>
+        <waitForPageLoad stepKey="waitForGiftCardPageLoad"/>
+
+        <!-- Assert gift card product amount -->
+        <seeInField selector="{{AdminProductFormSection.openAmountMin}}" userInput="{{OpenAmount.min}}" stepKey="checkGiftCardMinAmountFilled"/>
+        <seeInField selector="{{AdminProductFormSection.openAmountMax}}" userInput="{{OpenAmount.max}}" stepKey="checkGiftCardMaxAmountFilled"/>
+
+        <!-- Assert  gift card product in stock -->
+        <seeOptionIsSelected selector="{{AdminProductFormSection.productStockStatus}}" userInput="In Stock" stepKey="seeStockStatusInput"/>
+
+        <!-- Perform reindex and flush cache -->
+        <magentoCLI command="cron:run --group=index" stepKey="runCronReindex"/>
+
+        <!-- Go to storefront page -->
+        <actionGroup ref="StorefrontOpenHomePageActionGroup" stepKey="goToStorefrontPage"/>
+        <comment userInput="BIC workaround" stepKey="waitForStorefrontPageLoad"/>
+
+        <!-- Quick search gift card product -->
+        <actionGroup ref="StorefrontCheckQuickSearchActionGroup" stepKey="quickSearchForGiftCardProduct">
+            <argument name="phrase" value="CombinedGiftCard.sku"/>
+        </actionGroup>
+
+        <!-- Go to gift card product -->
+        <seeElement selector="{{StorefrontCategoryMainSection.productLink}}" stepKey="seeProductsInCategory"/>
+        <click selector="{{StorefrontCategoryMainSection.productLink}}" stepKey="openProduct"/>
+        <waitForPageLoad  stepKey="waitForProductToLoad"/>
+
+        <!-- Assert gift card product add to cart form -->
+        <seeElement selector="{{StorefrontProductInfoMainSection.giftCardAmountInput}}" stepKey="seeAmountInput"/>
+        <see selector="{{StorefrontProductInfoMainSection.giftCardAmountNote}}" userInput="Minimum: ${{OpenAmount.min}} Maximum: ${{OpenAmount.max}}" stepKey="seeAmountText"/>
+        <seeElement selector="{{StorefrontProductInfoMainSection.giftCardSenderName}}" stepKey="seeSenderNameField"/>
+        <seeElement selector="{{StorefrontProductInfoMainSection.giftCardSenderEmail}}" stepKey="seeSenderEmailField"/>
+        <seeElement selector="{{StorefrontProductInfoMainSection.giftCardRecipientName}}" stepKey="seeRecipientNameField"/>
+        <seeElement selector="{{StorefrontProductInfoMainSection.giftCardRecipientEmail}}" stepKey="seeRecipientEmailField"/>
+        <seeElement selector="{{StorefrontProductInfoMainSection.giftCardMessage}}" stepKey="seeGiftCardMessageField"/>
+    </test>
+</tests>

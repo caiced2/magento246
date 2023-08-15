@@ -1,0 +1,32 @@
+<?php
+/**
+ * Copyright © Magento, Inc. All rights reserved.
+ * See COPYING.txt for license details.
+ */
+
+namespace Magento\GiftCardAccount\view\adminhtml\templates\sales\order\totals;
+
+use Magento\GiftCardAccount\Model\Giftcardaccount;
+
+/**
+ * @var \Magento\GiftCardAccount\Block\Adminhtml\Giftcardaccount $block
+ */
+$source = $block->getSource();
+$block->setPriceDataObject($source);
+?>
+
+<?php if ((float) $source->getGiftCardsAmount()) : ?>
+    <?php $giftCards = $this->helper(\Magento\GiftCardAccount\Helper\Data::class)->getCards($source); ?>
+    <?php foreach ($giftCards as $card) : ?>
+        <?php $baseAmount = $card[Giftcardaccount::BASE_AMOUNT]; ?>
+        <?php $amount = $card[Giftcardaccount::AMOUNT]; ?>
+        <?php $code = $card[Giftcardaccount::CODE]; ?>
+
+        <tr>
+            <td class="label"><?= $block->escapeHtml(__('Gift Card (%1)', $code)) ?></td>
+            <td>
+                <?= /* @noEscape */ $block->displayPrices(-$baseAmount, -$amount) ?>
+            </td>
+        </tr>
+    <?php endforeach; ?>
+<?php endif; ?>

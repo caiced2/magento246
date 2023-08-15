@@ -1,0 +1,16 @@
+<?xml version="1.0"?>
+<!--
+/**
+ * Copyright © Magento, Inc. All rights reserved.
+ * See COPYING.txt for license details.
+ */
+-->
+<page xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="urn:magento:framework:View/Layout/etc/page_configuration.xsd">
+    <body>
+        <referenceBlock name="product.info.form.options">
+            <block class="Magento\GiftCard\Block\Catalog\Product\View\Type\Giftcard" name="product.info.giftcard" as="product_type_data" template="Magento_GiftCard::product/view/type/giftcard.phtml" cacheable="false">
+                <block class="Magento\CatalogInventory\Block\Stockqty\DefaultStockqty" name="product.info.giftcard.extra" as="product_type_data_extra" template="Magento_CatalogInventory::stockqty/default.phtml"/>
+            </block>
+        </referenceBlock>
+    </body>
+</page>

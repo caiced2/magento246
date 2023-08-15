@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+ /**
+  * Copyright © Magento, Inc. All rights reserved.
+  * See COPYING.txt for license details.
+  */
+-->
+
+<actionGroups xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:noNamespaceSchemaLocation="urn:magento:mftf:Test/etc/actionGroupSchema.xsd">
+    <actionGroup name="CreateCatalogRuleStagingUpdateWithItsStartActionGroup">
+        <arguments>
+            <argument name="stagingUpdate" defaultValue="_defaultStaging"/>
+        </arguments>
+        <click selector="{{ScheduleUpdateSection.scheduleUpdate}}" stepKey="clickViewEdit"/>
+        <waitForPageLoad stepKey="waitForSlideOut"/>
+        <!-- Fill out the staging update details -->
+        <waitForElementVisible selector="{{AdminStagingSlideOutSection.updateName}}" stepKey="waitElementVisible"/>
+        <fillField userInput="{{stagingUpdate.name}}" selector="{{AdminStagingSlideOutSection.updateName}}" stepKey="fillName"/>
+        <fillField userInput="{{stagingUpdate.description}}" selector="{{AdminStagingSlideOutSection.updateDescription}}" stepKey="fillDescription"/>
+        <!-- Save the update details -->
+        <conditionalClick selector="{{AdminCatalogPriceRuleStagingSection.isActive}}" dependentSelector="{{AdminCatalogPriceRuleStagingSection.activeIsEnabled}}" visible="false" stepKey="selectActive"/>
+        <scrollToTopOfPage stepKey="scrollToTop"/>
+        <!-- Save the update date -->
+        <executeJS function="
+                var today = new Date();
+                var sec = today.getSeconds();
+                return sec > 50 ? (61-sec) : 0;"
+                   stepKey="needWait1"/>
+        <wait time="$needWait1" stepKey="conditionalWait1"/>
+        <generateDate date="+1 minute" format="m/d/Y g:i A" stepKey="startDateTime"/>
+        <fillField selector="{{AdminStagingSlideOutSection.startDate}}" userInput="{$startDateTime}" stepKey="fillStartDate"/>
+        <click selector="{{AdminStagingSlideOutSection.save}}" stepKey="clickSave"/>
+        <waitForPageLoad stepKey="waitForSlideOutGone"/>
+        <!-- Save the price rule -->
+        <click selector="{{AdminNewCatalogPriceRule.save}}" stepKey="saveCatalogPriceRule"/>
+        <waitForPageLoad stepKey="waitForSave"/>
+        <waitForElementVisible selector="{{AdminProductMessagesSection.successMessage}}" stepKey="assertSuccess"/>
+        <!-- Wait for the right time to apply staged rules (Staging module) -->
+        <executeJS function="
+                var today = new Date();
+                var sec = today.getSeconds();
+                return sec > 1 ? (61-sec) : 0;"
+                   stepKey="needWait2"/>
+        <wait time="$needWait2" stepKey="conditionalWait2"/>
+        <wait time="60" stepKey="wait"/>
+        <magentoCLI command="cron:run --group=staging" stepKey="runCronStaging"/>
+        <magentoCLI command="cron:run --group=staging" stepKey="runCronStagingTwice"/>
+        <magentoCLI command="indexer:reindex" stepKey="runCronIndexer"/>
+    </actionGroup>
+</actionGroups>

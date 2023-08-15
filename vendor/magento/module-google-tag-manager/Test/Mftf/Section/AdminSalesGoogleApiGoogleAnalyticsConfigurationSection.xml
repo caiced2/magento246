@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+ /**
+  * Copyright © Magento, Inc. All rights reserved.
+  * See COPYING.txt for license details.
+  */
+-->
+
+<sections xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+          xsi:noNamespaceSchemaLocation="urn:magento:mftf:Page/etc/SectionObject.xsd">
+    <section name="AdminSalesGoogleApiGoogleAnalyticsConfigurationSection">
+        <element name="googleAnalytics" type="block" selector="#google_analytics-head" timeout="30"/>
+        <element name="enableGoogleAnalyticsCheckbox" type="checkbox" selector="#google_analytics_active_inherit" timeout="30"/>
+        <element name="enableGoogleAnalytics" type="select" selector="#google_analytics_active" timeout="30"/>
+        <element name="accountType" type="select" selector="#google_analytics_type" timeout="30"/>
+        <element name="containerId" type="text" selector="#google_analytics_container_id"/>
+        <element name="catalogPageList" type="text" selector="#google_analytics_catalog_page_list_value"/>
+        <element name="crossSellBlockList" type="text" selector="#google_analytics_crosssell_block_list_value"/>
+        <element name="upSellBlockList" type="text" selector="#google_analytics_upsell_block_list_value"/>
+        <element name="relatedProductsBlockList" type="text" selector="#google_analytics_related_block_list_value"/>
+        <element name="searchResultsList" type="text" selector="#google_analytics_search_page_list_value"/>
+        <element name="internalPromotions" type="text" selector="#google_analytics_promotions_list_value"/>
+    </section>
+</sections>

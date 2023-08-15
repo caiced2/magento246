@@ -1,0 +1,54 @@
+<?xml version="1.0"?>
+<!--
+/**
+ * Copyright © Magento, Inc. All rights reserved.
+ * See COPYING.txt for license details.
+ */
+-->
+<schema xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:noNamespaceSchemaLocation="urn:magento:framework:Setup/Declaration/Schema/etc/schema.xsd">
+    <table name="magento_customercustomattributes_sales_flat_order" resource="sales" engine="innodb"
+           comment="Enterprise Customer Sales Flat Order">
+        <column xsi:type="int" name="entity_id" unsigned="true" nullable="false" identity="false"
+                default="0" comment="Entity Id"/>
+        <constraint xsi:type="primary" referenceId="PRIMARY">
+            <column name="entity_id"/>
+        </constraint>
+        <constraint xsi:type="foreign" referenceId="FK_E3B93E92D5321FB267FA7CF9818B862A"
+                    table="magento_customercustomattributes_sales_flat_order" column="entity_id"
+                    referenceTable="sales_order" referenceColumn="entity_id" onDelete="CASCADE"/>
+    </table>
+    <table name="magento_customercustomattributes_sales_flat_order_address" resource="sales" engine="innodb"
+           comment="Enterprise Customer Sales Flat Order Address">
+        <column xsi:type="int" name="entity_id" unsigned="true" nullable="false" identity="false"
+                default="0" comment="Entity Id"/>
+        <constraint xsi:type="primary" referenceId="PRIMARY">
+            <column name="entity_id"/>
+        </constraint>
+        <constraint xsi:type="foreign" referenceId="FK_16AD7FB31D74E6482A0A134C553F0177"
+                    table="magento_customercustomattributes_sales_flat_order_address" column="entity_id"
+                    referenceTable="sales_order_address" referenceColumn="entity_id" onDelete="CASCADE"/>
+    </table>
+    <table name="magento_customercustomattributes_sales_flat_quote" resource="checkout" engine="innodb"
+           comment="Enterprise Customer Sales Flat Quote">
+        <column xsi:type="int" name="entity_id" unsigned="true" nullable="false" identity="false"
+                default="0" comment="Entity Id"/>
+        <constraint xsi:type="primary" referenceId="PRIMARY">
+            <column name="entity_id"/>
+        </constraint>
+        <constraint xsi:type="foreign" referenceId="MAGENTO_CSTRCUSTOMATTRS_SALES_FLAT_QUOTE_ENTT_ID_QUOTE_ENTT_ID"
+                    table="magento_customercustomattributes_sales_flat_quote" column="entity_id" referenceTable="quote"
+                    referenceColumn="entity_id" onDelete="CASCADE"/>
+    </table>
+    <table name="magento_customercustomattributes_sales_flat_quote_address" resource="checkout" engine="innodb"
+           comment="Enterprise Customer Sales Flat Quote Address">
+        <column xsi:type="int" name="entity_id" unsigned="true" nullable="false" identity="false"
+                default="0" comment="Entity Id"/>
+        <constraint xsi:type="primary" referenceId="PRIMARY">
+            <column name="entity_id"/>
+        </constraint>
+        <constraint xsi:type="foreign" referenceId="FK_AADF6B0F92C452C82D02E232341ADB1B"
+                    table="magento_customercustomattributes_sales_flat_quote_address" column="entity_id"
+                    referenceTable="quote_address" referenceColumn="address_id" onDelete="CASCADE"/>
+    </table>
+</schema>

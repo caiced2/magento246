@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+/**
+ * Copyright © Magento, Inc. All rights reserved.
+ * See COPYING.txt for license details.
+ */
+-->
+<form xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="urn:magento:module:Magento_Ui:etc/ui_configuration.xsd">
+    <fieldset name="hierarchy" sortOrder="40">
+        <argument name="data" xsi:type="array">
+            <item name="config" xsi:type="array">
+                <item name="initializeFieldsetDataByDefault" xsi:type="boolean">true</item>
+            </item>
+        </argument>
+        <settings>
+            <collapsible>true</collapsible>
+            <label translate="true">Hierarchy</label>
+        </settings>
+        <container name="hierarchy_container">
+            <argument name="data" xsi:type="array">
+                <item name="config" xsi:type="array">
+                    <item name="label" xsi:type="string" translate="true">Parent page</item>
+                </item>
+            </argument>
+            <htmlContent name="html_content">
+                <settings>
+                    <additionalClasses>
+                        <class name="admin__field">true</class>
+                    </additionalClasses>
+                </settings>
+                <block name="hierarchy" class="Magento\VersionsCms\Block\Adminhtml\Cms\Page\Edit\Tab\Hierarchy"/>
+            </htmlContent>
+        </container>
+    </fieldset>
+</form>

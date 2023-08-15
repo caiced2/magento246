@@ -1,0 +1,28 @@
+<?xml version="1.0"?>
+<!--
+/**
+ * Copyright © Magento, Inc. All rights reserved.
+ * See COPYING.txt for license details.
+ */
+-->
+<page xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" layout="admin-2columns-left" xsi:noNamespaceSchemaLocation="urn:magento:framework:View/Layout/etc/page_configuration.xsd">
+    <body>
+        <referenceContainer name="content">
+            <block class="Magento\CustomerCustomAttributes\Block\Adminhtml\Customer\Formtype\Edit" name="magento_customercustomattributes_formtype_edit"/>
+        </referenceContainer>
+        <referenceContainer name="left">
+            <block class="Magento\CustomerCustomAttributes\Block\Adminhtml\Customer\Formtype\Edit\Tabs" name="magento_customercustomattributes_formtype_edit_tabs">
+                <block class="Magento\CustomerCustomAttributes\Block\Adminhtml\Customer\Formtype\Edit\Tab\General" name="magento_customercustomattributes_formtype_edit_tab_general"/>
+                <action method="addTab">
+                    <argument name="name" xsi:type="string">magento_customercustomattributes_formtype_edit_tab_general</argument>
+                    <argument name="block" xsi:type="string">magento_customercustomattributes_formtype_edit_tab_general</argument>
+                </action>
+                <block class="Magento\CustomerCustomAttributes\Block\Adminhtml\Customer\Formtype\Edit\Tab\Tree" name="magento_customercustomattributes_formtype_edit_tab_tree" template="Magento_CustomerCustomAttributes::formtype/edit/tab/tree.phtml"/>
+                <action method="addTab">
+                    <argument name="name" xsi:type="string">magento_customercustomattributes_formtype_edit_tab_tree</argument>
+                    <argument name="block" xsi:type="string">magento_customercustomattributes_formtype_edit_tab_tree</argument>
+                </action>
+            </block>
+        </referenceContainer>
+    </body>
+</page>

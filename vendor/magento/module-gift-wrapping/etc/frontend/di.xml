@@ -1,0 +1,47 @@
+<?xml version="1.0"?>
+<!--
+/**
+ * Copyright © Magento, Inc. All rights reserved.
+ * See COPYING.txt for license details.
+ */
+-->
+<config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="urn:magento:framework:ObjectManager/etc/config.xsd">
+    <type name="Magento\GiftWrapping\Block\Checkout\Options">
+        <arguments>
+            <argument name="checkoutItems" xsi:type="array">
+                <item name="onepage" xsi:type="array">
+                    <item name="order_level" xsi:type="string">quote</item>
+                    <item name="item_level" xsi:type="string">quote_item</item>
+                </item>
+                <item name="multishipping" xsi:type="array">
+                    <item name="order_level" xsi:type="string">quote_address</item>
+                    <item name="item_level" xsi:type="string">quote_address_item</item>
+                </item>
+            </argument>
+        </arguments>
+    </type>
+    <type name="Magento\GiftMessage\Model\CompositeConfigProvider">
+        <arguments>
+            <argument name="configProviders" xsi:type="array">
+                <item name="gift_wrapping_config_provider" xsi:type="object">Magento\GiftWrapping\Model\ConfigProvider</item>
+            </argument>
+        </arguments>
+    </type>
+    <type name="Magento\Checkout\Model\CompositeConfigProvider">
+        <arguments>
+            <argument name="configProviders" xsi:type="array">
+                <item name="gift_wrapping_config_provider" xsi:type="object">Magento\GiftWrapping\Model\ConfigProvider</item>
+            </argument>
+        </arguments>
+    </type>
+    <type name="Magento\GiftMessage\Block\Cart\Item\Renderer\Actions\GiftOptions">
+        <arguments>
+            <argument name="layoutProcessors" xsi:type="array">
+                <item name="giftWrappingItemIdProcessor" xsi:type="object">Magento\GiftWrapping\Block\Cart\Item\Renderer\Actions\ItemIdProcessor</item>
+            </argument>
+        </arguments>
+    </type>
+    <type name="Magento\Quote\Model\Quote">
+        <plugin name="delete_gift_wrapping_for_empty_quote" type="Magento\GiftWrapping\Plugin\Model\Quote\DeleteGiftWrappingForEmptyQuote"/>
+    </type>
+</config>

@@ -1,0 +1,291 @@
+<?php
+/**
+ * Copyright © Magento, Inc. All rights reserved.
+ * See COPYING.txt for license details.
+ */
+?>
+<?php
+/**
+ * Invitaion view tab general block template
+ *
+ * @see \Magento\Invitation\Block\Adminhtml\Invitation\View\Tab\General
+ *
+ * @var \Magento\Framework\View\Helper\SecureHtmlRenderer $secureRenderer
+ */
+
+/** @var \Magento\Invitation\Helper\Data $invitationHelper */
+$invitationHelper = $block->getData('invitationHelper');
+?>
+    <div class="fieldset-wrapper invitation_information">
+         <div class="fieldset-wrapper-title">
+            <span class="title"><?= $block->escapeHtml(__('Invitation Information')) ?></span>
+        </div>
+        <fieldset class="fieldset">
+            <table class="data-table">
+            <tr>
+                <th><?= $block->escapeHtml(__('Send At')) ?></th>
+                <?php $invitationDate = $block->getInvitation()->getInvitationDate(); ?>
+                <td><?= /* @noEscape */ $block->formatDate($invitationDate, \IntlDateFormatter::MEDIUM, true) ?></td>
+            </tr>
+            <tr>
+                <th>
+                    <?php if ($block->canEditMessage()): ?><label for="message"><?php endif; ?>
+                    <?= $block->escapeHtml(__('Invitation Message')) ?>
+                    <?php if ($block->canEditMessage()): ?></label><?php endif; ?>
+                </th>
+                <td>
+                    <?php if ($block->canEditMessage()): ?>
+                        <?php $invitationMessage =  $block->getInvitation()->getMessage(); ?>
+                        <textarea name="message" rows="5" id="message">
+                            <?= $block->escapeHtml($invitationMessage) ?>
+                        </textarea>
+                        <?= $block->getSaveMessageButtonHtml() ?>
+                    <?php else: ?>
+                        <?php if ($block->getInvitation()->getMessage()): ?>
+                            <?= $block->escapeHtml($block->getInvitation()->getMessage()) ?>
+                        <?php else: ?>
+                            <?= $block->escapeHtml(__('N/A')) ?>
+                        <?php endif; ?>
+                        <textarea><?= $block->escapeHtml($block->getInvitation()->getMessage()) ?></textarea>
+                        <?= /* @noEscape */ $secureRenderer->renderTag(
+                            'style',
+                            [],
+                            '.invitation_information table textarea {height:1px; visibility: hidden;}',
+                            false
+                        ); ?>
+                    <?php endif; ?>
+                </td>
+            </tr>
+            <tr>
+                <th>
+                    <?php if ($block->canEditMessage()): ?><label for="email"><?php endif; ?>
+                        <?php $required = $block->canEditMessage() ? '<span class="required">*</span>': '' ?>
+                        <?= $block->escapeHtml(__('Email')) ?><?= /* @noEscape */ $required ?>
+                    <?php if ($block->canEditMessage()): ?></label><?php endif; ?>
+                </th>
+                <td>
+                <?php if ($block->canEditMessage()): ?>
+                    <input type="text"
+                           id="email"
+                           class="required-entry input-text validate-email"
+                           name="email"
+                           value="<?= $block->escapeHtml($block->getInvitation()->getEmail()) ?>" />
+                <?php else: ?>
+                    <?= $block->escapeHtml($block->getInvitation()->getEmail()) ?>
+                <?php endif; ?>
+                </td>
+            </tr>
+            <tr>
+                <th><?= $block->escapeHtml(__('Status')) ?></th>
+                <td>
+                    <?= $block->escapeHtmlAttr($invitationHelper->getInvitationStatusText($block->getInvitation())) ?>
+                </td>
+            </tr>
+            <tr>
+                <th><?= $block->escapeHtml(__('Website')) ?></th>
+                <td><?= $block->escapeHtml($block->getWebsiteName()) ?></td>
+            </tr>
+            <tr>
+                <th><?= $block->escapeHtml(__('Store View')) ?></th>
+                <td><?= $block->escapeHtml($block->getStoreName()) ?></td>
+            </tr>
+            <tr>
+                <th><?= $block->escapeHtml(__('Invitee Group')) ?></th>
+                <td>
+                    <?= $block->escapeHtml($block->getCustomerGroupCode($block->getInvitation()->getGroupId(), true)) ?>
+                </td>
+            </tr>
+            <tr>
+                <th><?= $block->escapeHtml(__('Signed Up At')) ?></th>
+                <td>
+                    <?php $invitationSignUpDate = $block->getInvitation()->getSignupDate(); ?>
+                <?php if ($invitationSignUpDate): ?>
+                    <?= /* @noEscape */ $block->formatDate($invitationSignUpDate, \IntlDateFormatter::MEDIUM, true) ?>
+                <?php else: ?>
+                    <?= $block->escapeHtml(__('N/A')) ?>
+                <?php endif; ?>
+                </td>
+            </tr>
+            <tr>
+                <th><?= $block->escapeHtml(__('Invitation URL')) ?></th>
+                <td>
+                    <?php if ($url = $block->getInvitationUrl()): ?>
+                        <a href="<?= $block->escapeHtmlAttr($url) ?>" target="_blank">
+                            <?= $block->escapeHtml(__('Link')) ?>
+                        </a>
+                    <?php else: ?><?= $block->escapeHtml(__('N/A')) ?><?php endif; ?>
+                </td>
+            </tr>
+            </table>
+        </fieldset>
+    </div>
+
+    <div class="invitee_information">
+        <div class="fieldset-wrapper">
+             <div class="fieldset-wrapper-title">
+                <span class="title"><?= $block->escapeHtml(__('Invitee Information')) ?></span>
+            </div>
+            <table class="data-table">
+            <tr>
+                <th><?= $block->escapeHtml(__('Customer ID')) ?></th>
+                <td>
+                <?php if ($block->getInvitation()->getReferralId()): ?>
+                    <?php if ($block->canShowReferralLink()): ?>
+                        <?php
+                        $referralId = $block->getInvitation()->getReferralId();
+                        $referralEditLink = $block->escapeHtmlAttr(
+                            $block->getUrl('customer/index/edit', ['id' => $referralId])
+                        );
+                        ?>
+                        <a target="_blank" href="<?= /* @noEscape */ $referralId ?>">
+                            <?= $block->escapeHtml($referralId) ?>
+                        </a>
+                    <?php else: ?>
+                        <?= $block->escapeHtml($block->getInvitation()->getReferralId()) ?>
+                    <?php endif; ?>
+                <?php else: ?>
+                    <?= $block->escapeHtml(__('N/A')) ?>
+                <?php endif; ?>
+                </td>
+            </tr>
+            <tr>
+                <th><?= $block->escapeHtml(__('Customer Group')) ?></th>
+                <td>
+                <?php if ($block->getReferral()): ?>
+                    <?= $block->escapeHtml($block->getCustomerGroupCode($block->getReferral()->getGroupId())) ?>
+                <?php else: ?>
+                    <?= $block->escapeHtml(__('N/A')) ?>
+                <?php endif; ?>
+                </td>
+            </tr>
+            <tr>
+                <th><?= $block->escapeHtml(__('First Name')) ?></th>
+                <td>
+                <?php if ($block->getReferral()): ?>
+                    <?= $block->escapeHtml($block->getReferral()->getFirstname()) ?>
+                <?php else: ?>
+                    <?= $block->escapeHtml(__('N/A')) ?>
+                <?php endif; ?>
+                </td>
+            </tr>
+            <tr>
+                <th><?= $block->escapeHtml(__('Last Name')) ?></th>
+                <td>
+                <?php if ($block->getReferral()): ?>
+                    <?= $block->escapeHtml($block->getReferral()->getLastname()) ?>
+                <?php else: ?>
+                    <?= $block->escapeHtml(__('N/A')) ?>
+                <?php endif; ?>
+                </td>
+            </tr>
+            <tr>
+                <th><?= $block->escapeHtml(__('Email')) ?></th>
+                <td>
+                <?php if ($block->getReferral()): ?>
+                    <?= $block->escapeHtml($block->getReferral()->getEmail()) ?>
+                <?php else: ?>
+                    <?= $block->escapeHtml(__('N/A')) ?>
+                <?php endif; ?>
+                </td>
+            </tr>
+            <tr>
+                <th><?= $block->escapeHtml(__('Sign Up At')) ?></th>
+                <td>
+                <?php if ($block->getReferral()): ?>
+                    <?= /* @noEscape */ $block->formatDate(
+                        $block->getReferral()->getCreatedAt(),
+                        \IntlDateFormatter::MEDIUM,
+                        true
+                    ) ?>
+                <?php else: ?>
+                    <?= $block->escapeHtml(__('N/A')) ?>
+                <?php endif; ?>
+                </td>
+            </tr>
+            </table>
+        </div>
+    </div>
+
+    <div class="inviter_information">
+        <div class="fieldset-wrapper">
+            <div class="fieldset-wrapper-title">
+                <span class="title"><?= $block->escapeHtml(__('Inviter Information')) ?></span>
+            </div>
+            <table class="data-table">
+            <?php if ($block->isInvitedByAdmin()): ?>
+            <tr>
+                <td><?= $block->escapeHtml(__('Admin')) ?><td>
+            </tr>
+            <?php else: ?>
+            <tr>
+                <th><?= $block->escapeHtml(__('Customer ID')) ?></th>
+                <td>
+                    <?php $invitationCustomerId = $block->getInvitation()->getCustomerId(); ?>
+                <?php if ($invitationCustomerId): ?>
+                    <?php $customerEditUrl = $block->getUrl('customer/index/edit', ['id' => $invitationCustomerId]); ?>
+                    <a target="_blank" href="<?= $block->escapeHtmlAttr($customerEditUrl) ?>">
+                        <?= $block->escapeHtml($invitationCustomerId) ?>
+                    </a>
+                <?php else: ?>
+                    <?= $block->escapeHtml(__('N/A')) ?>
+                <?php endif; ?>
+                </td>
+            </tr>
+            <tr>
+                <th><?= $block->escapeHtml(__('Customer Group')) ?></th>
+                <td>
+                <?php if ($block->getCustomer()): ?>
+                    <?= $block->escapeHtml($block->getCustomerGroupCode($block->getCustomer()->getGroupId())) ?>
+                <?php else: ?>
+                    <?= $block->escapeHtml(__('N/A')) ?>
+                <?php endif; ?>
+                </td>
+            </tr>
+            <tr>
+                <th><?= $block->escapeHtml(__('First Name')) ?></th>
+                <td>
+                <?php if ($block->getCustomer()): ?>
+                    <?= $block->escapeHtml($block->getCustomer()->getFirstname()) ?>
+                <?php else: ?>
+                    <?= $block->escapeHtml(__('N/A')) ?>
+                <?php endif; ?>
+                </td>
+            </tr>
+            <tr>
+                <th><?= $block->escapeHtml(__('Last Name')) ?></th>
+                <td>
+                <?php if ($block->getCustomer()): ?>
+                    <?= $block->escapeHtml($block->getCustomer()->getLastname()) ?>
+                <?php else: ?>
+                    <?= $block->escapeHtml(__('N/A')) ?>
+                <?php endif; ?>
+                </td>
+            </tr>
+            <tr>
+                <th><?= $block->escapeHtml(__('Email')) ?></th>
+                <td>
+                <?php if ($block->getCustomer()): ?>
+                    <?= $block->escapeHtml($block->getCustomer()->getEmail()) ?>
+                <?php else: ?>
+                    <?= $block->escapeHtml(__('N/A')) ?>
+                <?php endif; ?>
+                </td>
+            </tr>
+            <tr>
+                <th><?= $block->escapeHtml(__('Sign Up At')) ?></th>
+                <td>
+                <?php if ($block->getCustomer()): ?>
+                    <?= /* @noEscape */ $block->formatDate(
+                        $block->getCustomer()->getCreatedAt(),
+                        \IntlDateFormatter::MEDIUM,
+                        true
+                    ) ?>
+                <?php else: ?>
+                    <?= $block->escapeHtml(__('N/A')) ?>
+                <?php endif; ?>
+                </td>
+            </tr>
+            <?php endif; ?>
+            </table>
+        </div>
+    </div>

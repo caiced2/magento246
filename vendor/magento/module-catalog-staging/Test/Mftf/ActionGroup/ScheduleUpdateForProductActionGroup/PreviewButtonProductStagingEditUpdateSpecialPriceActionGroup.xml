@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+ /**
+  * Copyright © Magento, Inc. All rights reserved.
+  * See COPYING.txt for license details.
+  */
+-->
+<actionGroups xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:noNamespaceSchemaLocation="urn:magento:mftf:Test/etc/actionGroupSchema.xsd">
+    <actionGroup name="PreviewButtonProductStagingEditUpdateSpecialPrice">
+        <arguments>
+            <argument name="staging"/>
+            <argument name="productPrice" type="string"/>
+        </arguments>
+
+        <click selector="{{AdminScheduledChangesSection.scheduleViewEdit(staging.updateName)}}" stepKey="clickUpdateViewAndEdit"/>
+        <click selector="{{AdminSlideOutDialogSection.previewButton}}" stepKey="clickPreviewBtn"/>
+        <switchToNextTab stepKey="switchToNextTab"/>
+        <waitForPageLoad time="30" stepKey="waitForTabPageLoad"/>
+        <!--Set frame id because switchToIFrame requires ID as parameter-->
+        <executeJS function="jQuery('[data-role=\'preview-iframe\']').attr('id', 'preview-iframe')" stepKey="setPreviewFrameId"/>
+        <switchToIFrame userInput="preview-iframe" stepKey="switchToPreviewFrame"/>
+        <waitForPageLoad time="30" stepKey="waitForIframePageLoad"/>
+        <see selector="{{StorefrontProductInfoMainSection.specialPrice}}" userInput="{{productPrice}}" stepKey="seeProductPrice"/>
+        <!--Switch back to admin with a link, the preview button doesn't open a new tab-->
+        <amOnPage url="{{AdminProductEditPage.url($$createSimpleProduct.id$$)}}" stepKey="openEditProductPage"/>
+        <waitForPageLoad time="30" stepKey="waitForProductPageLoad"/>
+    </actionGroup>
+</actionGroups>

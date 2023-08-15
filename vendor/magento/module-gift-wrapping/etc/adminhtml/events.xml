@@ -1,0 +1,18 @@
+<?xml version="1.0"?>
+<!--
+/**
+ * Copyright © Magento, Inc. All rights reserved.
+ * See COPYING.txt for license details.
+ */
+-->
+<config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="urn:magento:framework:Event/etc/events.xsd">
+    <event name="adminhtml_sales_order_create_process_data">
+        <observer name="magento_giftwrapping" instance="Magento\GiftWrapping\Observer\ProcessOrderCreationData" />
+    </event>
+    <event name="sales_convert_order_to_quote">
+        <observer name="magento_giftwrapping" instance="Magento\GiftWrapping\Observer\SalesEventOrderToQuote" shared="false" />
+    </event>
+    <event name="sales_convert_order_item_to_quote_item">
+        <observer name="magento_giftwrapping" instance="Magento\GiftWrapping\Observer\SalesEventOrderItemToQuoteItem" shared="false" />
+    </event>
+</config>

@@ -1,0 +1,144 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+ /**
+  * Copyright © Magento, Inc. All rights reserved.
+  * See COPYING.txt for license details.
+  */
+-->
+<tests xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:noNamespaceSchemaLocation="urn:magento:mftf:Test/etc/testSchema.xsd">
+    <test name="StorefrontApplyGiftCardDuringCheckoutTest">
+        <annotations>
+            <features value="GiftCardAccount"/>
+            <stories value="Apply gift cards"/>
+            <title value="Apply Gift Card during Checkout that covered all amount."/>
+            <description value="Apply Gift Card during Checkout that covered all amount."/>
+            <severity value="CRITICAL"/>
+            <testCaseId value="MAGETWO-42681"/>
+            <group value="GiftCardAccount"/>
+        </annotations>
+
+        <!-- Preconditions  -->
+        <before>
+            <!--  Virtual product is created, price = 40 -->
+            <createData entity="VirtualProduct" stepKey="createVirtualProduct">
+                <field key="price">40.00</field>
+            </createData>
+            <actionGroup ref="AdminLoginActionGroup" stepKey="loginAsAdmin"/>
+        </before>
+
+        <after>
+            <deleteData createDataKey="createVirtualProduct" stepKey="deleteVirtualProduct"/>
+            <!-- Open Order Page and clear filter -->
+            <actionGroup ref="AdminOrdersGridClearFiltersActionGroup" stepKey="resetOrderFilter"/>
+            <amOnPage url="{{AdminGiftCardAccountGridPage.url}}" stepKey="amOnGiftCardAccountGridPage"/>
+            <actionGroup ref="ClearFiltersAdminDataGridActionGroup" stepKey="clearGiftAccountGridFilters"/>
+            <actionGroup ref="AdminLogoutActionGroup" stepKey="logout"/>
+        </after>
+
+        <!--  Gift Card Account(GCA) is created: -->
+        <!--  navigate to Stores>Configuration>Sales>Gift Cards -->
+        <!--  click on the Gift Card Account General Settings. -->
+        <amOnPage url="{{AdminStoresConfigurationGiftCardAccountGeneralSettingsPage.url}}" stepKey="amOnGiftCardAccountGeneralSettingsPage"/>
+
+        <!--  Hit Generate to generate a new pool of gift card accounts -->
+        <click selector="{{AdminGiftCardAccountGeneralSettingsSection.generate}}" stepKey="clickGenerateNewCodePoolButton"/>
+        <waitForElementVisible selector="{{AdminConfirmationModalSection.ok}}" stepKey="waitPopupAppears"/>
+        <click selector="{{AdminConfirmationModalSection.ok}}" stepKey="acceptPopup"/>
+        <waitForElementVisible selector="{{AdminMessagesSection.success}}" time="60" stepKey="waitCodePoolGeneratedSuccessMessage"/>
+        <see selector="{{AdminMessagesSection.success}}" userInput="New code pool was generated." stepKey="seeSuccessMessage"/>
+
+        <!--  Marketing>Gift Card accounts> Gift Account grid, click Add gift card account -->
+        <actionGroup ref="AddGiftCardAccountActionGroup" stepKey="addGiftCardAccount">
+            <argument name="website" value="Main Website"/>
+            <argument name="balanceAmount" value="50"/>
+        </actionGroup>
+        <grabTextFrom selector="{{AdminGiftCardAccountGridSection.giftCardCode}}" stepKey="grabGiftCardCode"/>
+        <grabTextFrom selector="{{AdminGiftCardAccountGridSection.giftCardBalance}}" stepKey="grabGiftCardBalance"/>
+
+        <!--  Test Steps  -->
+
+        <!--  Step 2: Open product page and add virtual product to shopping cart -->
+        <amOnPage url="{{StorefrontProductPage.url($$createVirtualProduct.custom_attributes[url_key]$$)}}" stepKey="amOnStorefrontVirtualProductPage"/>
+
+        <waitForPageLoad stepKey="waitForPageLoad"/>
+        <actionGroup ref="StorefrontAddProductToCartActionGroup" stepKey="cartAddVirtualProductToCart">
+            <argument name="product" value="$$createVirtualProduct$$"/>
+            <argument name="productCount" value="1"/>
+        </actionGroup>
+
+        <!--  Step 3: Go to Checkout -->
+        <actionGroup ref="GoToCheckoutFromMinicartActionGroup" stepKey="GoToCheckoutFromMinicartActionGroup"/>
+        <seeElement selector="{{CheckoutPaymentSection.isPaymentSection}}" stepKey="isPaymentSection"/>
+        <seeElement selector="{{CheckoutPaymentSection.availablePaymentSolutions}}" stepKey="availablePaymentSolutions"/>
+        <scrollTo selector="{{StorefrontApplyGiftCardAccountSection.applyGiftCardSection}}" stepKey="scrollToApplyGiftCardSection"/>
+        <seeElement selector="{{StorefrontApplyGiftCardAccountSection.applyGiftCardSection}}" stepKey="applyGiftCardSection"/>
+        <dontSee selector="{{StorefrontApplyGiftCardAccountSection.sectionGiftCardIsExpanded}}" stepKey="sectionGiftCardIsNotExpanded"/>
+
+        <!--  Step 4: Click Apply Gift Card -->
+        <click selector="{{StorefrontApplyGiftCardAccountSection.openApplyGiftCardSection}}" stepKey="openApplyGiftCardSection"/>
+        <waitForElementVisible selector="{{StorefrontApplyGiftCardAccountSection.sectionGiftCardIsExpanded}}" time="30" stepKey="waitForSectionGiftCardIsExpanded"/>
+        <seeElement selector="{{StorefrontApplyGiftCardAccountSection.sectionGiftCardIsExpanded}}" stepKey="sectionGiftCardIsExpanded"/>
+        <seeElement selector="{{StorefrontApplyGiftCardAccountSection.giftCardCodeField}}" stepKey="inputGCACodeField"/>
+        <seeElement selector="{{StorefrontApplyGiftCardAccountSection.applyGiftCardButton}}" stepKey="applyGiftCardButton"/>
+        <seeElement selector="{{StorefrontApplyGiftCardAccountSection.seeBalanceButton}}" stepKey="seeBalanceButton"/>
+
+        <!--  Step 5: Input %GCA_code% in field -->
+        <fillField selector="{{StorefrontApplyGiftCardAccountSection.giftCardCodeField}}" userInput="{$grabGiftCardCode}" stepKey="inputGCACodeField2"/>
+
+        <!--  Step 6: Click See Balance -->
+        <click selector="{{StorefrontApplyGiftCardAccountSection.seeBalanceButton}}" stepKey="clickSeeBalanceButton"/>
+        <waitForPageLoad stepKey="waitForLoading"/>
+        <waitForElementVisible selector="{{StorefrontApplyGiftCardAccountSection.giftCardInfo}}" time="30" stepKey="waitForGiftCardInfo"/>
+        <seeElement selector="{{StorefrontApplyGiftCardAccountSection.giftCardInfo}}" stepKey="giftCardInfo2"/>
+        <see selector="{{StorefrontApplyGiftCardAccountSection.giftCardNumber}}" userInput="{$grabGiftCardCode}" stepKey="seeGiftCardCode"/>
+        <see selector="{{StorefrontApplyGiftCardAccountSection.currentBalance}}" userInput="{$grabGiftCardBalance}" stepKey="seeCurrentBalance"/>
+
+        <!--  Step 7: Click Apply -->
+        <click selector="{{StorefrontApplyGiftCardAccountSection.applyGiftCardButton}}" stepKey="clickApplyGiftCardButton"/>
+        <comment userInput="BIC workaround" stepKey="waitForLoading2"/>
+        <waitForText selector="{{StorefrontApplyGiftCardAccountSection.giftCardCodeAdded}}" userInput="Gift Card {$grabGiftCardCode} was added." stepKey="assertGiftCardCodeAdded"/>
+        <waitForPageLoad stepKey="waitForLoading3"/>
+        <see selector="{{StorefrontApplyGiftCardAccountSection.giftCardAccountCodeName}}" userInput="Gift Card ({$grabGiftCardCode})" stepKey="assertGiftCardCodeNameInSummerySection"/>
+        <see selector="{{StorefrontApplyGiftCardAccountSection.giftCardAccountCodeDiscount}}" userInput="-$40.00" stepKey="assertGiftCardCodeInSummerySection"/>
+        <waitForElementVisible selector="{{CheckoutPaymentSection.notAvailablePaymentSolutions}}" time="30" stepKey="waitForPaymentMessage"/>
+        <see selector="{{CheckoutPaymentSection.notAvailablePaymentSolutions}}" userInput="No Payment Information Required" stepKey="assertAllPaymentsAreDisappeared"/>
+        <seeElement selector="{{CheckoutPaymentSection.billingNewAddressForm}}" stepKey="assertBillingNewAddressFormIsPresented"/>
+        <seeElement selector="{{CheckoutPaymentSection.placeOrderDisabled}}" stepKey="assertPlaceOrderButtonDisabled"/>
+
+        <!--  Step 8: Fill required fields with valid data and click Update -->
+        <actionGroup ref="GuestCheckoutFillNewBillingAddressActionGroup" stepKey="guestCheckoutFillingBillingAddress">
+            <argument name="customerVar" value="CustomerEntityOne"/>
+            <argument name="customerAddressVar" value="CustomerAddressSimple"/>
+        </actionGroup>
+        <click selector="{{CheckoutPaymentSection.update}}" stepKey="clickUpdateButton"/>
+        <waitForPageLoad stepKey="waitForLoading4"/>
+
+        <!--  Step 9: Place Order -->
+        <actionGroup ref="ClickPlaceOrderActionGroup" stepKey="clickPlaceOrderButton"/>
+        <seeElement selector="{{CheckoutSuccessMainSection.success}}" stepKey="orderIsSuccessfullyPlaced"/>
+        <grabTextFrom selector="{{CheckoutSuccessMainSection.orderNumber}}" stepKey="grabOrderNumber"/>
+
+        <actionGroup ref="OpenOrderByIdActionGroup" stepKey="openOrderById">
+            <argument name="orderId" value="$grabOrderNumber"/>
+        </actionGroup>
+        <scrollTo selector="{{AdminOrderTotalSection.subTotal}}" stepKey="scrollToOrderTotalSection"/>
+        <see selector="{{AdminOrderTotalSection.subTotal}}" userInput="$40.00" stepKey="checkSubtotal"/>
+        <see selector="{{AdminOrderTotalSection.giftCardAccountDiscount}}" userInput="-$40.00" stepKey="checkGiftCardAmount"/>
+        <see selector="{{AdminOrderTotalSection.grandTotal}}" userInput="0" stepKey="checkGrandTotal"/>
+        <actionGroup ref="AdminOpenGiftCardAccountByCodeActionGroup" stepKey="openGiftCardAccountPage">
+            <argument name="giftCardAccountCode" value="$grabGiftCardCode"/>
+        </actionGroup>
+        <scrollTo selector="{{AdminGiftCardAccountInformationSection.balance}}" stepKey="scrollToFieldBalance"/>
+        <grabValueFrom selector="{{AdminGiftCardAccountInformationSection.balance}}" stepKey="grabValueBalance"/>
+        <assertEquals message="notExpectedBalance" stepKey="assertAmountBalance">
+			<actualResult type="const">($grabValueBalance)</actualResult>
+			<expectedResult type="const">10.00</expectedResult>
+        </assertEquals>
+        <actionGroup ref="DeleteGiftCardAccountActionGroup" stepKey="deleteGiftCardAccount">
+            <argument name="giftCardAccountCode" value="{$grabGiftCardCode}"/>
+        </actionGroup>
+
+        <!-- @TODO: Add email content verification after MQE-944 is implemented -->
+    </test>
+</tests>

@@ -1,0 +1,36 @@
+<?xml version="1.0"?>
+<!--
+/**
+ * Copyright © Magento, Inc. All rights reserved.
+ * See COPYING.txt for license details.
+ */
+-->
+<config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:noNamespaceSchemaLocation="urn:magento:framework:ObjectManager/etc/config.xsd">
+    <type name="Magento\Logging\Model\Event\Changes">
+        <arguments>
+            <argument name="skipFields" xsi:type="array">
+                <item name="updateDate" xsi:type="string">updated_at</item>
+                <item name="formKey" xsi:type="string">form_key</item>
+            </argument>
+        </arguments>
+    </type>
+    <type name="Magento\Framework\App\Action\AbstractAction">
+        <plugin name="log" type="Magento\Logging\App\Action\Plugin\Log" sortOrder="95"/>
+    </type>
+    <type name="Magento\Logging\Model\Handler\Controllers">
+        <arguments>
+            <argument name="configSaveHandler" xsi:type="object">Magento\Logging\Model\Handler\Controllers\ConfigSaveHandler\Proxy</argument>
+        </arguments>
+    </type>
+    <type name="Magento\AsynchronousOperations\Controller\Adminhtml\Bulk\Details">
+        <arguments>
+            <argument name="menuId" xsi:type="string">Magento_Logging::system_magento_logging_bulk_operations</argument>
+        </arguments>
+    </type>
+    <type name="\Magento\AsynchronousOperations\Controller\Adminhtml\Index\Index">
+        <arguments>
+            <argument name="menuId" xsi:type="string">Magento_Logging::system_magento_logging_bulk_operations</argument>
+        </arguments>
+    </type>
+</config>

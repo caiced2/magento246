@@ -1,0 +1,157 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+ /**
+  * Copyright © Magento, Inc. All rights reserved.
+  * See COPYING.txt for license details.
+  */
+-->
+<tests xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xsi:noNamespaceSchemaLocation="urn:magento:mftf:Test/etc/testSchema.xsd">
+    <test name="AdminUpdateCrossSellsTargetRuleToRelatedProductsAndVerifyFrontEndTest">
+        <annotations>
+            <stories value="UpdateTargetRule"/>
+            <title value="Update CrossSells Target Rule To Related Products And Verify FrontEnd"/>
+            <description value="Test log in to Related Product Rules, Update Target Rule For Cross-sells Product And Verify FrontEnd Test"/>
+            <testCaseId value="MC-14285"/>
+            <severity value="CRITICAL"/>
+            <group value="targetRule"/>
+            <group value="mtf_migrated"/>
+        </annotations>
+        <before>
+            <createData entity="_defaultCategory" stepKey="createCategory1"/>
+            <createData entity="SimpleSubCategory" stepKey="createCategory2"/>
+            <!--Create product1 with category1-->
+            <createData entity="SimpleProduct" stepKey="createSimpleProduct1">
+                <requiredEntity createDataKey="createCategory1"/>
+            </createData>
+            <!--Create product2 with category2-->
+            <createData entity="_defaultProduct" stepKey="createSimpleProduct2">
+                <requiredEntity createDataKey="createCategory2"/>
+            </createData>
+            <actionGroup ref="AdminLoginActionGroup" stepKey="LoginAsAdmin"/>
+        </before>
+        <after>
+            <deleteData createDataKey="createCategory1" stepKey="deleteCategory1"/>
+            <deleteData createDataKey="createCategory2" stepKey="deleteCategory2"/>
+            <deleteData createDataKey="createSimpleProduct1" stepKey="deleteCreatedProduct1"/>
+            <deleteData createDataKey="createSimpleProduct2" stepKey="deleteCreatedProduct2"/>
+            <actionGroup ref="DeleteTargetRuleByNameActionGroup" stepKey="deleteUpdatedTargetRule">
+                <argument name="ruleName" value="CrossSellsTargetRuleUpdatedToRelatedProducts.ruleName"/>
+            </actionGroup>
+            <actionGroup ref="AdminLogoutActionGroup" stepKey="logout"/>
+        </after>
+
+        <!--Add special price to product1-->
+        <actionGroup ref="AssertProductOnAdminGridActionGroup" stepKey="seeProductInGrid">
+            <argument name="product" value="$$createSimpleProduct1$$"/>
+        </actionGroup>
+        <click selector="{{AdminProductGridFilterSection.nthRow('1')}}" stepKey="clickFirstRow"/>
+        <waitForPageLoad stepKey="waitForProductLoad"/>
+        <click selector="{{AdminProductFormSection.advancedPricingLink}}" stepKey="clickAdvancedPricingLink"/>
+        <fillField selector="{{AdminProductFormAdvancedPricingSection.specialPrice}}" userInput="{{updateVirtualProductSpecialPrice.special_price}}" stepKey="fillSpecialPrice"/>
+        <click selector="{{AdminProductFormAdvancedPricingSection.doneButton}}" stepKey="clickDoneButton"/>
+        <click selector="{{AdminProductFormSection.save}}" stepKey="clickSaveButton"/>
+        <waitForPageLoad stepKey="waitTillProductIsSaved"/>
+
+        <!--Create initial Related target rule as per data-->
+        <actionGroup ref="GoToTargetRulePage" stepKey="openTargetRulePage"/>
+        <actionGroup ref="ClickAddNewTargetRule" stepKey="clickAddRule"/>
+        <actionGroup ref="FillGeneralRuleInformation" stepKey="fillRuleFields">
+            <argument name="information" value="TargetRuleCrossSells"/>
+        </actionGroup>
+        <selectOption selector="{{AdminTargetRuleInformationSection.customerSegments}}" userInput="{{TargetRuleCrossSells.use_customer_segment}}" stepKey="selectAllFromCustomerSegment"/>
+        <!--Fill values in Product To Match tab-->
+        <click selector="{{AdminTargetRuleSection.productToMatchTab}}" stepKey="clickProductToMatchTab"/>
+        <click selector="{{AdminTargetRuleProductsToMatchSection.selectCondition('1','1')}}" stepKey="clickOnSelectCondition1"/>
+        <selectOption selector="{{AdminTargetRuleProductsToMatchSection.conditionSelect('1')}}" userInput="Attribute Set" stepKey="selectAttributeSet"/>
+        <waitForPageLoad stepKey="waitForAttributeLoad"/>
+        <click selector="{{AdminTargetRuleProductsToMatchSection.targetEllipsis}}" stepKey="clickEllipsisToSelectDefault"/>
+        <!--Fill values in Product To Display tab-->
+        <click selector="{{AdminTargetRuleSection.productToDisplayTab}}" stepKey="clickProductToDisplayTab"/>
+        <click selector="{{AdminTargetRuleProductsToDisplaySection.selectCondition('1','1')}}" stepKey="clickOnPlusIcon"/>
+        <selectOption selector="{{AdminTargetRuleProductsToDisplaySection.newAction}}" userInput="Price" stepKey="selectNewCondition"/>
+        <!-- Switch to main tab and fill dates -->
+        <click selector="{{AdminTargetRuleSection.ruleInformationTab}}" stepKey="clickRuleInformationTab"/>
+        <generateDate date="+1 minute" format="m/d/Y" stepKey="generateFromDate"/>
+        <fillField selector="{{AdminTargetRuleInformationSection.from}}" userInput="{$generateFromDate}" stepKey="fillFromDate"/>
+        <generateDate date="+10 day" format="m/d/Y" stepKey="generateToDate"/>
+        <fillField selector="{{AdminTargetRuleInformationSection.to}}" userInput="{$generateToDate}" stepKey="fillToDate"/>
+        <!-- save rule -->
+        <actionGroup ref="SaveTargetRule" stepKey="saveTargetRule1"/>
+
+        <!--Go to target rule grid page and verify AssertTargetRuleInGrid-->
+        <actionGroup ref="AssertTargetRuleInGridActionGroup" stepKey="searchCreatedTargetRuleInGrid">
+            <argument name="ruleName" value="{{TargetRuleCrossSells.ruleName}}"/>
+        </actionGroup>
+        <click selector="{{AdminTargetRuleGridFilterSection.rowByIndex('1')}}" stepKey="clickTargetRuleInGrid"/>
+        <waitForPageLoad stepKey="waitForTargetRuleFormPageLoad"/>
+
+        <!--Update target rule as per data and verify AssertTargetRuleSuccessSaveMessage-->
+        <actionGroup ref="FillGeneralRuleInformation" stepKey="fillRuleFields2">
+            <argument name="information" value="CrossSellsTargetRuleUpdatedToRelatedProducts"/>
+        </actionGroup>
+        <generateDate date="+1 minute" format="m/d/Y" stepKey="generateFromDate2"/>
+        <fillField selector="{{AdminTargetRuleInformationSection.from}}" userInput="{$generateFromDate}" stepKey="fillFromDate2"/>
+        <generateDate date="+10 day" format="m/d/Y" stepKey="generateToDate2"/>
+        <fillField selector="{{AdminTargetRuleInformationSection.to}}" userInput="{$generateToDate}" stepKey="fillToDate2"/>
+        <selectOption selector="{{AdminTargetRuleInformationSection.customerSegments}}" userInput="{{CrossSellsTargetRuleUpdatedToRelatedProducts.use_customer_segment}}" stepKey="selectAllFromCustomerSegment2"/>
+        <!--Update values in Product To Match Section-->
+        <click selector="{{AdminTargetRuleSection.productToMatchTab}}" stepKey="clickProductToMatchTab2"/>
+        <click selector="{{AdminTargetRuleProductsToMatchSection.remove}}" stepKey="clickRemoveToRemovePreviouslyAddedCondition"/>
+        <waitForPageLoad stepKey="waitTillPreviouslyAddedConditionsAreRemoved"/>
+        <click selector="{{AdminTargetRuleProductsToMatchSection.selectCondition('1','1')}}" stepKey="clickOnSelectCondition"/>
+        <selectOption selector="{{AdminTargetRuleProductsToMatchSection.conditionSelect('1')}}" userInput="Category" stepKey="selectCategoryInConditionSelect"/>
+        <waitForPageLoad stepKey="waitForConditionLoad"/>
+        <click selector="{{AdminTargetRuleProductsToMatchSection.targetEllipsis}}" stepKey="clickTheEllipsis"/>
+        <fillField selector="{{AdminTargetRuleProductsToMatchSection.ruleFieldByIndex('1--1')}}" userInput="$$createCategory1.id$$" stepKey="fillShippingPostcodeParameter"/>
+        <!--Update values in Product To Display Section-->
+        <click selector="{{AdminTargetRuleSection.productToDisplayTab}}" stepKey="clickProductToDisplayTab2"/>
+        <click selector="{{AdminTargetRuleProductsToDisplaySection.remove}}" stepKey="clickOnRemoveToRemovePreviouslyAddedCondition"/>
+        <waitForPageLoad stepKey="waitTillPreviouslyAddedActionsAreRemoved"/>
+        <click selector="{{AdminTargetRuleProductsToDisplaySection.selectCondition('1','1')}}" stepKey="clickToSelectCondition"/>
+        <selectOption selector="{{AdminTargetRuleProductsToDisplaySection.newAction}}" userInput="Category" stepKey="selectCategory"/>
+        <waitForPageLoad stepKey="waitForCategoryConditionLoad1"/>
+        <click selector="{{AdminTargetRuleProductsToDisplaySection.selectCondition('1','2')}}" stepKey="clickSelect"/>
+        <selectOption selector="{{AdminTargetRuleProductsToDisplaySection.selectCategoryToggle('1--1')}}" userInput="Constant Value" stepKey="selectConstantValue"/>
+        <click selector="{{AdminTargetRuleProductsToDisplaySection.targetEllipsis}}" stepKey="clickEllipsis"/>
+        <fillField selector="{{AdminTargetRuleProductsToDisplaySection.ruleFieldByIndex('1--1')}}" userInput="$$createCategory2.id$$" stepKey="fillCategory2Id"/>
+        <click selector="{{AdminTargetRuleProductsToDisplaySection.apply}}" stepKey="clickOnApply"/>
+        <actionGroup ref="SaveTargetRule" stepKey="saveTargetRule2"/>
+
+        <!--Go to target rule grid page and verify AssertTargetRuleInGrid-->
+        <actionGroup ref="AssertTargetRuleInGridActionGroup" stepKey="AssertTargetRuleInGrid">
+            <argument name="ruleName" value="{{CrossSellsTargetRuleUpdatedToRelatedProducts.ruleName}}"/>
+        </actionGroup>
+        <click selector="{{AdminTargetRuleGridFilterSection.rowByIndex('1')}}" stepKey="clickTargetRuleGrid"/>
+        <waitForPageLoad stepKey="waitForTargetRuleFormPageToLoad"/>
+
+        <!--Go to target rule form page and verify AssertTargetRuleForm-->
+        <seeInField selector="{{AdminTargetRuleInformationSection.ruleName}}" userInput="{{CrossSellsTargetRuleUpdatedToRelatedProducts.ruleName}}" stepKey="seeRuleName"/>
+        <seeInField selector="{{AdminTargetRuleInformationSection.status}}" userInput="{{CrossSellsTargetRuleUpdatedToRelatedProducts.status}}" stepKey="seeStatus"/>
+        <seeInField selector="{{AdminTargetRuleInformationSection.applyTo}}" userInput="{{CrossSellsTargetRuleUpdatedToRelatedProducts.applyTo}}" stepKey="seeApplyTo"/>
+        <scrollTo selector="{{AdminTargetRuleInformationSection.customerSegments}}" stepKey="scrollToCustomerSegments"/>
+        <seeInField selector="{{AdminTargetRuleInformationSection.customerSegments}}" userInput="{{CrossSellsTargetRuleUpdatedToRelatedProducts.use_customer_segment}}" stepKey="seeAllInCustomerSegment"/>
+        <click selector="{{AdminTargetRuleSection.productToMatchTab}}" stepKey="clickProductToMatch"/>
+        <waitForPageLoad stepKey="waitForProductToMatchTabToOpen"/>
+        <see selector="{{AdminTargetRuleProductsToMatchSection.conditionsChildrenByIndex('1')}}" userInput="$$createCategory1.id$$" stepKey="seeCategory1Value"/>
+        <click selector="{{AdminTargetRuleSection.productToDisplayTab}}" stepKey="clickOnProductToDisplayTab"/>
+        <waitForPageLoad stepKey="waitForProductToDisplayTabToOpen"/>
+        <see selector="{{AdminTargetRuleProductsToDisplaySection.ruleActionsFieldset}}" userInput="$$createCategory2.id$$" stepKey="seeCategory2Value"/>
+
+        <!--Go to storefront page and verify created product1-->
+        <actionGroup ref="AssertProductNameAndSkuInStorefrontProductPageByCustomAttributeUrlKeyActionGroup" stepKey="openProductPageAndVerifyProduct">
+            <argument name="product" value="$$createSimpleProduct1$$"/>
+        </actionGroup>
+        <waitForElementVisible selector="{{StorefrontProductRelatedProductsSection.relatedProductsActionsHeaderText}}" stepKey="waitForRelatedProductsActionsHeaderVisible"/>
+        <scrollTo selector="{{StorefrontProductRelatedProductsSection.relatedProductsActionsHeaderText}}" stepKey="scrollToRelatedProductsActionsHeader"/>
+        <!--Verify Product2 is available in Related Products and AssertProductRelatedProducts-->
+        <seeElement selector="{{StorefrontProductRelatedProductsSection.relatedProductName($$createSimpleProduct2.name$$)}}" stepKey="seeAssertProductRelatedProducts"/>
+
+        <!--Go to storefront page and verify created product2-->
+        <actionGroup ref="AssertProductNameAndSkuInStorefrontProductPageByCustomAttributeUrlKeyActionGroup" stepKey="openProductPageAndVerifyProduct2">
+            <argument name="product" value="$$createSimpleProduct2$$"/>
+        </actionGroup>
+        <!--Verify Product1 is not displayed in cross-sells products section and AssertProductAbsentCrossSells-->
+        <dontSee selector="{{CheckoutCartCrossSellSection.productRowByName($$createSimpleProduct1.name$$)}}" stepKey="seeAssertProductAbsentCrossSells"/>
+    </test>
+</tests>

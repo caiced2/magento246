@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+ /**
+  * Copyright © Magento, Inc. All rights reserved.
+  * See COPYING.txt for license details.
+  */
+-->
+<actionGroups xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:noNamespaceSchemaLocation="urn:magento:mftf:Test/etc/actionGroupSchema.xsd">
+    <actionGroup name="EditSheduleUpdateActionGroup">
+        <arguments>
+            <argument name="staging"/>
+            <argument name="timeStart" type="string"/>
+            <argument name="timeEnd" defaultValue="" type="string"/>
+        </arguments>
+        <fillField selector="{{AdminStagingEditSection.updateName}}" userInput="{{staging.updateName}}" stepKey="changeUpdateName"/>
+        <fillField selector="{{AdminStagingEditSection.updateDescription}}" userInput="{{staging.updateDescription}}" stepKey="changeUpdateDescription"/>
+        <fillField selector="{{AdminStagingEditSection.startDate}}" userInput="{{timeStart}}" stepKey="changeUpdateStart"/>
+        <fillField selector="{{AdminStagingEditSection.endDate}}" userInput="{{timeEnd}}" stepKey="fillUpdateEnd"/>
+        <click selector="{{AdminMainActionsSection.save}}" stepKey="clickSave"/>
+    </actionGroup>
+</actionGroups>

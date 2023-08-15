@@ -1,0 +1,21 @@
+{
+    "visual_merchandiser_rule": {
+        "column": {
+            "rule_id": true,
+            "category_id": true,
+            "store_id": true,
+            "is_active": true,
+            "conditions_serialized": true
+        },
+        "index": {
+            "VISUAL_MERCHANDISER_RULE_CATEGORY_ID": true,
+            "VISUAL_MERCHANDISER_RULE_STORE_ID": true
+        },
+        "constraint": {
+            "PRIMARY": true,
+            "VISUAL_MERCHANDISER_RULE_STORE_ID_STORE_STORE_ID": true,
+            "VISUAL_MERCHANDISER_RULE_CTGR_ID_CAT_CTGR_ENTT_ENTT_ID": true,
+            "VISUAL_MERCHANDISER_RULE_CATEGORY_ID_STORE_ID": true
+        }
+    }
+}

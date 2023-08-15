@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+ /**
+  * Copyright © Magento, Inc. All rights reserved.
+  * See COPYING.txt for license details.
+  */
+-->
+
+<sections xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+          xsi:noNamespaceSchemaLocation="urn:magento:mftf:Page/etc/SectionObject.xsd">
+    <section name="AdminNewScheduledExportSection">
+        <element name="saveButton" type="button" selector="#save"/>
+        <element name="name" type="input" selector="#name"/>
+        <element name="description" type="textarea" selector="#details"/>
+        <element name="entityType" type="select" selector="#entity"/>
+        <element name="startTimeHour" type="select" selector="[name='start_time[]'][data-ui-id*=hour]"/>
+        <element name="startTimeMinute" type="select" selector="[name='start_time[]'][data-ui-id*=minute]"/>
+        <element name="startTimeSecond" type="select" selector="[name='start_time[]'][data-ui-id*=second]"/>
+        <element name="frequency" type="select" selector="#freq"/>
+        <element name="status" type="select" selector="#status"/>
+        <element name="fileFormat" type="select" selector="#file_format"/>
+        <element name="serverType" type="select" selector="#server_type"/>
+        <element name="fileDirectory" type="input" selector="#file_path"/>
+        <element name="failedEmailReceiver" type="select" selector="#email_receiver"/>
+        <element name="failedEmailSender" type="select" selector="#email_sender"/>
+        <element name="failedEmailTemplate" type="select" selector="#email_template"/>
+        <element name="sendFailedEmailCopyTo" type="input" selector="#email_copy"/>
+        <element name="sendFailedEmailCopyMethod" type="select" selector="#email_copy_method"/>
+    </section>
+</sections>

@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+ /**
+  * Copyright © Magento, Inc. All rights reserved.
+  * See COPYING.txt for license details.
+  */
+-->
+
+<sections xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+          xsi:noNamespaceSchemaLocation="urn:magento:mftf:Page/etc/SectionObject.xsd">
+    <section name="CatalogEventInfoSection">
+        <element name="eventStartDate" type="input" selector="#event_edit_date_start"/>
+        <element name="eventEndDate" type="input" selector="#event_edit_date_end"/>
+        <element name="image" type="file" selector="#event_edit_image"/>
+        <element name="displayOnCategory" type="checkbox" selector="#event_edit_display_state_array_1"/>
+        <element name="displayOnProduct" type="checkbox" selector="#event_edit_display_state_array_2"/>
+    </section>
+</sections>

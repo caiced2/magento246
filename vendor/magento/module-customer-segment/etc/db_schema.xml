@@ -1,0 +1,130 @@
+<?xml version="1.0"?>
+<!--
+/**
+ * Copyright © Magento, Inc. All rights reserved.
+ * See COPYING.txt for license details.
+ */
+-->
+<schema xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:noNamespaceSchemaLocation="urn:magento:framework:Setup/Declaration/Schema/etc/schema.xsd">
+    <table name="magento_customersegment_segment" resource="default" engine="innodb"
+           comment="Enterprise Customersegment Segment">
+        <column xsi:type="int" name="segment_id" unsigned="true" nullable="false" identity="true"
+                comment="Segment Id"/>
+        <column xsi:type="varchar" name="name" nullable="true" length="255" comment="Name"/>
+        <column xsi:type="text" name="description" nullable="true" comment="Description"/>
+        <column xsi:type="smallint" name="is_active" unsigned="false" nullable="false" identity="false"
+                default="0" comment="Is Active"/>
+        <column xsi:type="mediumtext" name="conditions_serialized" nullable="true" comment="Conditions Serialized"/>
+        <column xsi:type="int" name="processing_frequency" unsigned="false" nullable="false"
+                identity="false" comment="Processing Frequency"/>
+        <column xsi:type="mediumtext" name="condition_sql" nullable="true" comment="Condition Sql"/>
+        <column xsi:type="smallint" name="apply_to" unsigned="true" nullable="false" identity="false"
+                default="0" comment="Customer types to which this segment applies"/>
+        <constraint xsi:type="primary" referenceId="PRIMARY">
+            <column name="segment_id"/>
+        </constraint>
+    </table>
+    <table name="magento_customersegment_website" resource="default" engine="innodb"
+           comment="Enterprise Customersegment Website">
+        <column xsi:type="int" name="segment_id" unsigned="true" nullable="false" identity="false"
+                comment="Segment Id"/>
+        <column xsi:type="smallint" name="website_id" unsigned="true" nullable="false" identity="false"
+                comment="Website Id"/>
+        <constraint xsi:type="primary" referenceId="PRIMARY">
+            <column name="segment_id"/>
+            <column name="website_id"/>
+        </constraint>
+        <constraint xsi:type="foreign" referenceId="FK_A519424B18F07BA7FB739ED68979A688"
+                    table="magento_customersegment_website" column="segment_id"
+                    referenceTable="magento_customersegment_segment" referenceColumn="segment_id" onDelete="CASCADE"/>
+        <constraint xsi:type="foreign" referenceId="MAGENTO_CSTRSEGMENT_WS_WS_ID_STORE_WS_WS_ID"
+                    table="magento_customersegment_website" column="website_id" referenceTable="store_website"
+                    referenceColumn="website_id" onDelete="CASCADE"/>
+        <index referenceId="MAGENTO_CUSTOMERSEGMENT_WEBSITE_WEBSITE_ID" indexType="btree">
+            <column name="website_id"/>
+        </index>
+    </table>
+    <table name="magento_customersegment_customer" resource="default" engine="innodb"
+           comment="Enterprise Customersegment Customer">
+        <column xsi:type="int" name="segment_id" unsigned="true" nullable="false" identity="false"
+                comment="Segment Id"/>
+        <column xsi:type="int" name="customer_id" unsigned="true" nullable="false" identity="false"
+                comment="Customer Id"/>
+        <column xsi:type="timestamp" name="added_date" on_update="false" nullable="false" default="CURRENT_TIMESTAMP"
+                comment="Added Date"/>
+        <column xsi:type="timestamp" name="updated_date" on_update="true" nullable="false" default="CURRENT_TIMESTAMP"
+                comment="Updated Date"/>
+        <column xsi:type="smallint" name="website_id" unsigned="true" nullable="false" identity="false"
+                comment="Website Id"/>
+        <constraint xsi:type="primary" referenceId="PRIMARY">
+            <column name="segment_id"/>
+            <column name="customer_id"/>
+            <column name="website_id"/>
+        </constraint>
+        <constraint xsi:type="foreign" referenceId="MAGENTO_CSTRSEGMENT_CSTR_WS_ID_STORE_WS_WS_ID"
+                    table="magento_customersegment_customer" column="website_id" referenceTable="store_website"
+                    referenceColumn="website_id" onDelete="CASCADE"/>
+        <constraint xsi:type="foreign" referenceId="MAGENTO_CSTRSEGMENT_CSTR_CSTR_ID_CSTR_ENTT_ENTT_ID"
+                    table="magento_customersegment_customer" column="customer_id" referenceTable="customer_entity"
+                    referenceColumn="entity_id" onDelete="CASCADE"/>
+        <constraint xsi:type="foreign" referenceId="FK_EBEC494F27927B723C3896E3466DBF6B"
+                    table="magento_customersegment_customer" column="segment_id"
+                    referenceTable="magento_customersegment_segment" referenceColumn="segment_id" onDelete="CASCADE"/>
+        <constraint xsi:type="unique" referenceId="MAGENTO_CSTRSEGMENT_CSTR_SEGMENT_ID_WS_ID_CSTR_ID">
+            <column name="segment_id"/>
+            <column name="website_id"/>
+            <column name="customer_id"/>
+        </constraint>
+        <index referenceId="MAGENTO_CUSTOMERSEGMENT_CUSTOMER_WEBSITE_ID" indexType="btree">
+            <column name="website_id"/>
+        </index>
+        <index referenceId="MAGENTO_CUSTOMERSEGMENT_CUSTOMER_CUSTOMER_ID" indexType="btree">
+            <column name="customer_id"/>
+        </index>
+    </table>
+    <table name="magento_customersegment_event" resource="default" engine="innodb"
+           comment="Enterprise Customersegment Event">
+        <column xsi:type="int" name="segment_event_id" unsigned="true" nullable="false" identity="true"
+                comment="Segment event ID"/>
+        <column xsi:type="int" name="segment_id" unsigned="true" nullable="false" identity="false"
+                comment="Segment Id"/>
+        <column xsi:type="varchar" name="event" nullable="true" length="255" comment="Event"/>
+        <constraint xsi:type="primary" referenceId="PRIMARY">
+            <column name="segment_event_id"/>
+        </constraint>
+        <constraint xsi:type="foreign" referenceId="FK_3E7684FB6181C81446A1567EA3D3975E" table="magento_customersegment_event"
+                    column="segment_id" referenceTable="magento_customersegment_segment" referenceColumn="segment_id"
+                    onDelete="CASCADE"/>
+        <index referenceId="MAGENTO_CUSTOMERSEGMENT_EVENT_EVENT" indexType="btree">
+            <column name="event"/>
+        </index>
+        <index referenceId="MAGENTO_CUSTOMERSEGMENT_EVENT_SEGMENT_ID" indexType="btree">
+            <column name="segment_id"/>
+        </index>
+    </table>
+    <table name="customer_eav_attribute" resource="default" comment="Customer Eav Attribute">
+        <column xsi:type="int" name="is_used_for_customer_segment" unsigned="true" nullable="false"
+                identity="false" default="0" comment="Customer Segment"/>
+    </table>
+    <table name="customer_entity" resource="default" comment="Customer Entity">
+        <index referenceId="CUSTOMER_ENTITY_CREATED_AT" indexType="btree">
+            <column name="created_at"/>
+        </index>
+        <index referenceId="CUSTOMER_ENTITY_DOB" indexType="btree">
+            <column name="dob"/>
+        </index>
+        <index referenceId="CUSTOMER_ENTITY_DEFAULT_BILLING" indexType="btree">
+            <column name="default_billing"/>
+        </index>
+        <index referenceId="CUSTOMER_ENTITY_DEFAULT_SHIPPING" indexType="btree">
+            <column name="default_shipping"/>
+        </index>
+        <index referenceId="CUSTOMER_ENTITY_GENDER" indexType="btree">
+            <column name="gender"/>
+        </index>
+        <index referenceId="CUSTOMER_ENTITY_GROUP_ID" indexType="btree">
+            <column name="group_id"/>
+        </index>
+    </table>
+</schema>

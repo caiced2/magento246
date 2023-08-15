@@ -1,0 +1,29 @@
+<?xml version="1.0"?>
+<!--
+/**
+ * Copyright © Magento, Inc. All rights reserved.
+ * See COPYING.txt for license details.
+ */
+-->
+<config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="urn:magento:module:Magento_Eav:etc/eav_attributes.xsd">
+    <entity type="catalog_product">
+        <attribute code="news_from_date">
+            <field code="is_visible_on_front" locked="true" />
+        </attribute>
+        <attribute code="news_to_date">
+            <field code="is_visible_on_front" locked="true" />
+        </attribute>
+        <attribute code="special_from_date">
+            <field code="is_visible_on_front" locked="true" />
+        </attribute>
+        <attribute code="special_to_date">
+            <field code="is_visible_on_front" locked="true" />
+        </attribute>
+        <attribute code="custom_design_from">
+            <field code="is_visible_on_front" locked="true" />
+        </attribute>
+        <attribute code="custom_design_to">
+            <field code="is_visible_on_front" locked="true" />
+        </attribute>
+    </entity>
+</config>

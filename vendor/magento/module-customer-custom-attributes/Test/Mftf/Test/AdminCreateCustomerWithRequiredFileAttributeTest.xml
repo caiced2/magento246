@@ -1,0 +1,152 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+ /**
+  * Copyright © Magento, Inc. All rights reserved.
+  * See COPYING.txt for license details.
+  */
+-->
+
+<tests xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xsi:noNamespaceSchemaLocation="urn:magento:mftf:Test/etc/testSchema.xsd">
+    <test name="AdminCreateCustomerWithRequiredFileAttributeTest">
+        <annotations>
+            <features value="CustomerCustomAttributes"/>
+            <stories value="Register customer with custom attribute"/>
+            <title value="Display customer attribute of type file in Account Information after created from the Admin"/>
+            <description value="Verify that customer can register on admin with required file attribute"/>
+            <severity value="AVERAGE"/>
+            <testCaseId value="MC-28803"/>
+            <useCaseId value="MC-23545"/>
+            <group value="customerCustomAttributes"/>
+            <group value="customer"/>
+        </annotations>
+        <before>
+            <!--Create category and product-->
+            <createData entity="SimpleProduct2" stepKey="simpleProduct"/>
+            <!--Create customer without attribute-->
+            <createData entity="CustomerEntityOne" stepKey="createCustomerOne"/>
+            <!-- Login as admin -->
+            <actionGroup ref="AdminLoginActionGroup" stepKey="loginAsAdmin"/>
+
+            <!--Navigate to customers attribute page-->
+            <actionGroup ref="AdminNavigateToCustomerAttributesPageActionGroup" stepKey="navigateToCustomerAddress"/>
+            <comment userInput="BIC workaround" stepKey="waitForCustomerAttributePageLoaded"/>
+
+            <!--Create required customer attribute with file type-->
+            <actionGroup ref="AdminCreateCustomerNewAttributeWithRequiredValues" stepKey="createTextFieldAttribute">
+                <argument name="defaultLabel" value="{{AttributeFile.frontend_label}}"/>
+                <argument name="attributeCode" value="{{AttributeFile.attribute_code}}"/>
+                <argument name="inputType" value="{{AttributeFile.frontend_input}}"/>
+                <argument name="sortOrder" value="{{AttributeFile.sort_order}}"/>
+                <argument name="formToUse" value="Admin Checkout"/>
+                <argument name="formToUse1" value="Customer Account Edit"/>
+                <argument name="message" value="You saved the customer attribute."/>
+            </actionGroup>
+            <magentoCron groups="index" stepKey="reindex"/>
+        </before>
+        <after>
+            <!--Logout from storefront-->
+            <actionGroup ref="StorefrontCustomerLogoutActionGroup" stepKey="logoutFromStorefront"/>
+
+            <!--Delete product and category-->
+            <deleteData createDataKey="simpleProduct" stepKey="deleteSimpleProduct"/>
+
+            <!--Delete first customer-->
+            <deleteData createDataKey="createCustomerOne" stepKey="deleteCustomerOne"/>
+
+            <!-- Delete customer attribute -->
+            <actionGroup ref="AdminDeleteCustomerCustomAttributeByCodeActionGroup" stepKey="deleteCustomerAttribute">
+                <argument name="attributeCode" value="{{AttributeFile.attribute_code}}"/>
+            </actionGroup>
+            <actionGroup ref="ClearFiltersAdminDataGridActionGroup" stepKey="resetGridFilters"/>
+
+            <!-- Delete customer created from admin-->
+            <actionGroup ref="AdminDeleteCustomerActionGroup" stepKey="deleteCustomer">
+                <argument name="customerEmail" value="Simple_US_Customer.email"/>
+            </actionGroup>
+
+            <!--Delete customer created for order-->
+            <actionGroup ref="AdminDeleteCustomerActionGroup" stepKey="deleteCustomer2">
+                <argument name="customerEmail" value="Simple_US_Customer_CA.email"/>
+            </actionGroup>
+
+            <!--Clear customers grid filters-->
+            <actionGroup ref="ClearFiltersAdminDataGridActionGroup" stepKey="clickClearFilters"/>
+
+            <!-- Logout admin -->
+            <actionGroup ref="AdminLogoutActionGroup" stepKey="logoutFromAdmin"/>
+        </after>
+        <!--Create customer with file attribute from admin-->
+        <actionGroup ref="AdminNavigateNewCustomerActionGroup" stepKey="openAdminCreateCustomerPage"/>
+        <actionGroup ref="AdminFillCustomerMainDataActionGroup" stepKey="fillCustomerMainData"/>
+        <actionGroup ref="AdminAddFileAttributeValueToCustomerActionGroup" stepKey="attachFileAttribute"/>
+        <actionGroup ref="AdminVerifyImageAttributePreviewOnCustomerAccountActionGroup" stepKey="seeUploadedImage1"/>
+        <actionGroup ref="AdminCustomerSaveAndContinue" stepKey="saveAndContinueEditCustomer"/>
+
+        <!--Assert customer file attribute is present-->
+        <actionGroup ref="AdminOpenAccountInformationTabFromCustomerEditPageActionGroup" stepKey="clickTabAccountInfo"/>
+        <actionGroup ref="AdminVerifyImageAttributePreviewOnCustomerAccountActionGroup" stepKey="seeUploadedImage"/>
+
+        <!--Login as customer created without attribute-->
+        <actionGroup ref="LoginToStorefrontActionGroup" stepKey="loginAsCustomer">
+            <argument name="Customer" value="$createCustomerOne$" />
+        </actionGroup>
+
+        <!--Add customer attribute on storefront and save customer-->
+        <actionGroup ref="StorefrontNavigateToAccountInformationChangeActionGroup" stepKey="goToCustomerEditPage"/>
+        <actionGroup ref="StorefrontAttachFileToFileAttributeActionGroup" stepKey="attachFileOnStorefront">
+            <argument name="attributeCode" value="{{AttributeFile.attribute_code}}"/>
+            <argument name="fileName" value="{{TestImageAdobe.file}}"/>
+        </actionGroup>
+        <actionGroup ref="StorefrontAssertFileUploadedActionGroup" stepKey="assertThatFileIsUploaded"/>
+        <actionGroup ref="StorefrontVerifyImageAttributePreviewActionGroup" stepKey="verifyThatImageIsVisible"/>
+        <actionGroup ref="StorefrontCustomerSaveActionGroup" stepKey="saveCustomerOnStoreFront"/>
+
+        <!--Open customer created without attribute in admin-->
+        <actionGroup ref="OpenEditCustomerFromAdminActionGroup" stepKey="openEditCustomerPage">
+            <argument name="customer" value="$createCustomerOne$"/>
+        </actionGroup>
+
+        <!--Assert customer file attribute is present-->
+        <actionGroup ref="AdminOpenAccountInformationTabFromCustomerEditPageActionGroup" stepKey="clickTabAccountInfo2"/>
+        <actionGroup ref="AdminVerifyImageAttributePreviewOnCustomerAccountActionGroup" stepKey="seeUploadedImage2"/>
+
+
+        <!--Open new order from admin and add product-->
+        <actionGroup ref="NavigateToNewOrderPageNewCustomerActionGroup" stepKey="navigateToNewOrderPageNewCustomerActionGroup"/>
+        <actionGroup ref="AddSimpleProductToOrderActionGroup" stepKey="addSimpleProductToOrder">
+            <argument name="product" value="$simpleProduct$"/>
+            <argument name="productQty" value="{{SimpleProduct.quantity}}"/>
+        </actionGroup>
+
+        <!--Fill customer email and created attribute-->
+        <fillField selector="{{AdminOrderFormAccountSection.email}}" userInput="{{Simple_US_Customer_CA.email}}" stepKey="fillCustomerEmail"/>
+        <actionGroup ref="AdminAddFileAttributeValueToCustomerOrderActionGroup" stepKey="attachFile2">
+            <argument name="attributeCode" value="{{AttributeFile.attribute_code}}"/>
+            <argument name="fileName" value="{{TestImageAdobe.file}}"/>
+        </actionGroup>
+
+        <!--Fill customer address-->
+        <actionGroup ref="FillOrderCustomerInformationActionGroup" stepKey="fillCustomerInformation">
+            <argument name="customer" value="Simple_US_Customer_CA"/>
+            <argument name="address" value="US_Address_CA"/>
+        </actionGroup>
+
+        <!--Select order shipping method and submit order-->
+        <actionGroup ref="OrderSelectFlatRateShippingActionGroup" stepKey="orderSelectFlatRateShippingMethod"/>
+        <actionGroup ref="AdminSubmitOrderActionGroup" stepKey="submitOrder"/>
+
+        <actionGroup ref="CliIndexerReindexActionGroup" stepKey="reindex">
+            <argument name="indices" value="customer_grid "/>
+        </actionGroup>
+
+        <!--Open customer page in admin created during order creation-->
+        <actionGroup ref="OpenEditCustomerFromAdminActionGroup" stepKey="openEditCustomerPage2">
+            <argument name="customer" value="Simple_US_Customer_CA"/>
+        </actionGroup>
+
+        <!--Assert customer file attribute is present-->
+        <actionGroup ref="AdminOpenAccountInformationTabFromCustomerEditPageActionGroup" stepKey="clickTabAccountInfo3"/>
+        <actionGroup ref="AdminVerifyImageAttributePreviewOnCustomerAccountActionGroup" stepKey="seeUploadedImage3"/>
+    </test>
+</tests>

@@ -1,0 +1,29 @@
+<?xml version="1.0"?>
+<!--
+/**
+ * Copyright © Magento, Inc. All rights reserved.
+ * See COPYING.txt for license details.
+ */
+-->
+<config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="urn:magento:framework:Api/etc/extension_attributes.xsd">
+    <extension_attributes for="Magento\Quote\Api\Data\TotalSegmentInterface">
+        <attribute code="gift_cards" type="string" />
+    </extension_attributes>
+    <extension_attributes for="Magento\Sales\Api\Data\OrderInterface">
+        <attribute code="gift_cards" type="Magento\GiftCardAccount\Api\Data\GiftCardInterface[]" />
+        <attribute code="base_gift_cards_amount" type="float" />
+        <attribute code="gift_cards_amount" type="float" />
+        <attribute code="base_gift_cards_invoiced" type="float" />
+        <attribute code="gift_cards_invoiced" type="float" />
+        <attribute code="base_gift_cards_refunded" type="float" />
+        <attribute code="gift_cards_refunded" type="float" />
+    </extension_attributes>
+    <extension_attributes for="Magento\Sales\Api\Data\InvoiceInterface">
+        <attribute code="base_gift_cards_amount" type="float" />
+        <attribute code="gift_cards_amount" type="float" />
+    </extension_attributes>
+    <extension_attributes for="Magento\Sales\Api\Data\CreditmemoInterface">
+        <attribute code="base_gift_cards_amount" type="float" />
+        <attribute code="gift_cards_amount" type="float" />
+    </extension_attributes>
+</config>

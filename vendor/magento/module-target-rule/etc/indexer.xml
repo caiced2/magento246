@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+/**
+ * Copyright © Magento, Inc. All rights reserved.
+ * See COPYING.txt for license details.
+ */
+-->
+<config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="urn:magento:framework:Indexer/etc/indexer.xsd">
+    <indexer id="targetrule_product_rule" view_id="targetrule_product_rule" class="Magento\TargetRule\Model\Indexer\TargetRule\Product\Rule" shared_index="targetrule">
+        <title translate="true">Product/Target Rule</title>
+        <description translate="true">Indexed product/rule association</description>
+    </indexer>
+    <indexer id="targetrule_rule_product" view_id="targetrule_rule_product" class="Magento\TargetRule\Model\Indexer\TargetRule\Rule\Product" shared_index="targetrule">
+        <title translate="true">Target Rule/Product</title>
+        <description translate="true">Indexed rule/product association</description>
+    </indexer>
+</config>

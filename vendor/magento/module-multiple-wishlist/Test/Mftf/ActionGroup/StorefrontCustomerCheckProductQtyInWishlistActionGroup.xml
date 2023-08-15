@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+ /**
+  * Copyright © Magento, Inc. All rights reserved.
+  * See COPYING.txt for license details.
+  */
+-->
+
+<actionGroups xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+              xsi:noNamespaceSchemaLocation="urn:magento:mftf:Test/etc/actionGroupSchema.xsd">
+    <actionGroup name="StorefrontCustomerCheckProductQtyInWishlistActionGroup">
+        <annotations>
+            <description>Validates that the provided Product has the specified qty in the Storefront Customer Dashboard Wish List.</description>
+        </annotations>
+        <arguments>
+            <argument name="productName" type="string" defaultValue="{{_defaultProduct.name}}"/>
+            <argument name="productQty" type="string" defaultValue="{{CONST.one}}"/>
+        </arguments>
+
+        <moveMouseOver selector="{{StorefrontCustomerWishlistProductSection.ProductInfoByName(productName)}}" stepKey="wishlistMoveMouseOverProduct"/>
+        <waitForElementVisible selector="{{StorefrontCustomerWishlistProductSection.ProductQuantity(productName)}}" stepKey="waitForProductQtyVisible"/>
+        <grabValueFrom selector="{{StorefrontCustomerWishlistProductSection.ProductQuantity(productName)}}" stepKey="grabProductQty"/>
+        <assertEquals stepKey="assertWishlistProductQty">
+            <actualResult type="variable">grabProductQty</actualResult>
+            <expectedResult type="string">{{productQty}}</expectedResult>
+        </assertEquals>
+    </actionGroup>
+</actionGroups>

@@ -1,0 +1,79 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+ /**
+  * Copyright © Magento, Inc. All rights reserved.
+  * See COPYING.txt for license details.
+  */
+-->
+
+<tests xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xsi:noNamespaceSchemaLocation="urn:magento:mftf:Test/etc/testSchema.xsd">
+    <test name="CreateProductUpdateAndValidateUpdateInDefaultWebsiteTest">
+        <annotations>
+            <stories value="CatalogStaging"/>
+            <title value="Create product update and validate update in default website test"/>
+            <description value="Create product update and validate update in default website test"/>
+            <severity value="CRITICAL"/>
+            <testCaseId value="MC-15856"/>
+            <group value="CatalogStaging"/>
+            <group value="mtf_migrated"/>
+        </annotations>
+        <before>
+            <!-- Create category -->
+            <createData entity="_defaultCategory" stepKey="createCategory"/>
+
+            <!-- Create Simple Product -->
+            <createData entity="_defaultProduct" stepKey="createSimpleProduct">
+                <requiredEntity createDataKey="createCategory"/>
+            </createData>
+
+            <!-- Login as admin -->
+            <actionGroup ref="AdminLoginActionGroup" stepKey="login"/>
+        </before>
+        <after>
+            <!-- Delete product -->
+            <deleteData createDataKey="createSimpleProduct" stepKey="deleteSimpleProduct"/>
+
+            <!-- Delete category -->
+            <deleteData createDataKey="createCategory" stepKey="deleteCategory"/>
+
+            <!-- Log out -->
+            <actionGroup ref="AdminLogoutActionGroup" stepKey="logout"/>
+        </after>
+
+        <!-- Open product edit -->
+        <amOnPage url="{{AdminProductEditPage.url($$createSimpleProduct.id$$)}}" stepKey="goToEditProductPage"/>
+        <waitForPageLoad stepKey="waitForProductPageLoad"/>
+
+        <actionGroup ref="AdminStartCreateStagingUpdate" stepKey="startCreateScheduleUpdate"/>
+        <!-- Fill out the field to be changed in the staging update -->
+        <fillField selector="{{AdminStagingSlideOutSection.name}}" userInput="{{UpdateWithoutEnd.updateName}}" stepKey="fillNewName"/>
+        <fillField selector="{{AdminCatalogStagingSlideOutSection.productPrice}}" userInput="{{UpdateWithoutEnd.productPrice}}" stepKey="fillNewPrice"/>
+        <!-- fill dates and save staging update -->
+        <actionGroup ref="AdminFillDatesAndSaveProductStagingUpdate" stepKey="fillDatesAndSaveProductStagingUpdate"/>
+        <!-- run cron twice -->
+        <actionGroup ref="ApplyUpdatedRuleStagingByCron" stepKey="runCronTwice"/>
+        <!-- reindex and flush cache -->
+        <actionGroup ref="AdminReindexAndFlushCache" stepKey="reindexAndFlushCache"/>
+
+        <!-- Open category page on storefront -->
+        <amOnPage url="{{StorefrontHomePage.url}}" stepKey="amOnStorefrontPage"/>
+        <waitForPageLoad time="30" stepKey="waitForStorefrontPageLoad"/>
+        <click selector="{{StorefrontHeaderSection.NavigationCategoryByName($$createCategory.name$$)}}" stepKey="openCategoryPage"/>
+        <waitForPageLoad stepKey="waitForCategoryPageLoad"/>
+
+        <!-- Open the product -->
+        <click selector="{{StorefrontCategoryMainSection.productLink}}" stepKey="openProduct"/>
+        <waitForPageLoad  stepKey="waitForStorefrontProductPageLoad"/>
+
+        <!-- Assert product name and price correct after update -->
+        <see selector="{{StorefrontProductInfoMainSection.productName}}" userInput="{{UpdateWithoutEnd.updateName}}" stepKey="seeProductName"/>
+        <see selector="{{StorefrontProductInfoMainSection.productPrice}}" userInput="{{UpdateWithoutEnd.productPrice}}" stepKey="seeProductPrice"/>
+
+        <!-- Information about update is not displayed in 'Scheduled Changes' block -->
+        <amOnPage url="{{AdminProductEditPage.url($$createSimpleProduct.id$$)}}" stepKey="goToProductPage"/>
+        <waitForPageLoad stepKey="waitForProductPageLoadAfterUpdate"/>
+        <dontSeeElement selector="{{AdminScheduledChangesSection.scheduleDetails(_defaultStaging.name)}}" stepKey="dontSeeUpdateName"/>
+        <dontSeeElement selector="{{AdminScheduledChangesSection.scheduleDetails(_defaultStaging.description)}}" stepKey="dontSeeUpdateDescription"/>
+    </test>
+</tests>

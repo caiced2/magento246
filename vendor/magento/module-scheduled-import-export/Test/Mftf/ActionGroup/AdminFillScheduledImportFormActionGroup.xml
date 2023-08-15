@@ -1,0 +1,61 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+ /**
+  * Copyright © Magento, Inc. All rights reserved.
+  * See COPYING.txt for license details.
+  */
+-->
+
+<actionGroups xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+              xsi:noNamespaceSchemaLocation="urn:magento:mftf:Test/etc/actionGroupSchema.xsd">
+    <actionGroup name="AdminFillScheduledImportFormActionGroup">
+        <annotations>
+            <description>Fills the form on the System > Data Transfer > Scheduled Import/Export > Add Scheduled Import page.</description>
+        </annotations>
+        <arguments>
+            <argument name="name" defaultValue="" type="string"/>
+            <argument name="description" defaultValue="" type="string"/>
+            <argument name="entityType" defaultValue="Products" type="string"/>
+            <argument name="importBehavior" defaultValue="Add/Update" type="string"/>
+            <argument name="startTimeHour" defaultValue="00" type="string"/>
+            <argument name="startTimeMinute" defaultValue="00" type="string"/>
+            <argument name="startTimeSecond" defaultValue="00" type="string"/>
+            <argument name="frequency" defaultValue="Daily" type="string"/>
+            <argument name="onError" defaultValue="Stop Import" type="string" />
+            <argument name="status" defaultValue="Enabled" type="string" />
+            <argument name="fieldSeparator" defaultValue="," type="string" />
+            <argument name="multipleValueSeparator" defaultValue="," type="string" />
+            <argument name="serverType" defaultValue="Local Server" type="string"/>
+            <argument name="fileDirectory" defaultValue="" type="string"/>
+            <argument name="fileName" defaultValue="" type="string"/>
+            <argument name="imagesFileDirectory" defaultValue="" type="string"/>
+            <argument name="failedEmailReceiver" defaultValue="General Contact" type="string"/>
+            <argument name="failedEmailSender" defaultValue="General Contact" type="string"/>
+            <argument name="failedEmailTemplate" defaultValue="Import Failed (Default)" type="string"/>
+            <argument name="sendFailedEmailCopyTo" defaultValue="" type="string"/>
+            <argument name="sendFailedEmailCopyMethod" defaultValue="Bcc" type="string"/>
+        </arguments>
+        <waitForElementVisible selector="{{AdminNewScheduledImportSection.name}}" stepKey="waitForName"/>
+        <fillField userInput="{{name}}" selector="{{AdminNewScheduledImportSection.name}}" stepKey="fillName"/>
+        <fillField userInput="{{description}}" selector="{{AdminNewScheduledImportSection.description}}" stepKey="fillDescription"/>
+        <selectOption userInput="{{entityType}}" selector="{{AdminNewScheduledImportSection.entityType}}" stepKey="selectEntityType"/>
+        <selectOption userInput="{{importBehavior}}" selector="{{AdminNewScheduledImportSection.importBehavior}}" stepKey="selectImportBehavior"/>
+        <selectOption userInput="{{startTimeHour}}" selector="{{AdminNewScheduledImportSection.startTimeHour}}" stepKey="selectStartTimeHour"/>
+        <selectOption userInput="{{startTimeMinute}}" selector="{{AdminNewScheduledImportSection.startTimeMinute}}" stepKey="selectStartTimeMinute"/>
+        <selectOption userInput="{{startTimeSecond}}" selector="{{AdminNewScheduledImportSection.startTimeSecond}}" stepKey="selectStartTimeSecond"/>
+        <selectOption userInput="{{frequency}}" selector="{{AdminNewScheduledImportSection.frequency}}" stepKey="selectFrequency"/>
+        <selectOption userInput="{{onError}}" selector="{{AdminNewScheduledImportSection.onError}}" stepKey="selectOnError"/>
+        <selectOption userInput="{{status}}" selector="{{AdminNewScheduledImportSection.status}}" stepKey="selectStatus"/>
+        <fillField userInput="{{fieldSeparator}}" selector="{{AdminNewScheduledImportSection.fieldSeparator}}" stepKey="fillFieldSeparator"/>
+        <fillField userInput="{{multipleValueSeparator}}" selector="{{AdminNewScheduledImportSection.multipleValueSeparator}}" stepKey="fillMultipleValueSeparator"/>
+        <selectOption userInput="{{serverType}}" selector="{{AdminNewScheduledImportSection.serverType}}" stepKey="selectServerType"/>
+        <fillField userInput="{{fileDirectory}}" selector="{{AdminNewScheduledImportSection.fileDirectory}}" stepKey="fillFileDirectory"/>
+        <fillField userInput="{{fileName}}" selector="{{AdminNewScheduledImportSection.fileName}}" stepKey="fillFileName"/>
+        <fillField userInput="{{imagesFileDirectory}}" selector="{{AdminNewScheduledImportSection.imagesFileDirectory}}" stepKey="fillImagesFileDirectory"/>
+        <selectOption userInput="{{failedEmailReceiver}}" selector="{{AdminNewScheduledImportSection.failedEmailReceiver}}" stepKey="selectFailedEmailReceiver"/>
+        <selectOption userInput="{{failedEmailSender}}" selector="{{AdminNewScheduledImportSection.failedEmailSender}}" stepKey="selectFailedEmailSender"/>
+        <selectOption userInput="{{failedEmailTemplate}}" selector="{{AdminNewScheduledImportSection.failedEmailTemplate}}" stepKey="selectFailedEmailTemplate"/>
+        <fillField userInput="{{sendFailedEmailCopyTo}}" selector="{{AdminNewScheduledImportSection.sendFailedEmailCopyTo}}" stepKey="fillSendFailedEmailCopyTo"/>
+        <selectOption userInput="{{sendFailedEmailCopyMethod}}" selector="{{AdminNewScheduledImportSection.sendFailedEmailCopyMethod}}" stepKey="selectSendFailedEmailCopyMethod"/>
+    </actionGroup>
+</actionGroups>

@@ -1,0 +1,133 @@
+<?xml version="1.0"?>
+<!--
+/**
+ * Copyright © Magento, Inc. All rights reserved.
+ * See COPYING.txt for license details.
+ */
+-->
+<page xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="urn:magento:framework:View/Layout/etc/page_configuration.xsd">
+    <body>
+        <referenceContainer name="adminhtml.reward.history.customer.edit.tab.container">
+            <block class="Magento\Reward\Block\Adminhtml\Customer\Edit\Tab\Reward\History\Grid" name="adminhtml.reward.history.customer.edit.tab.grid" as="grid">
+                <arguments>
+                    <argument name="id" xsi:type="string">rewardPointsHistoryGrid</argument>
+                    <argument name="dataSource" xsi:type="object" shared="false">Magento\Reward\Model\ResourceModel\Reward\History\Grid\Collection</argument>
+                    <argument name="use_ajax" xsi:type="string">1</argument>
+                    <argument name="grid_url" xsi:type="url" path="*/*/historyGrid">
+                        <param name="_current">1</param>
+                    </argument>
+                </arguments>
+                <block class="Magento\Backend\Block\Widget\Grid\ColumnSet" name="adminhtml.reward.history.customer.edit.tab.grid.columnSet" as="grid.columnSet">
+                    <arguments>
+                        <argument name="rowUrl" xsi:type="array">
+                            <item name="path" xsi:type="string"/>
+                        </argument>
+                    </arguments>
+                    <block class="Magento\Backend\Block\Widget\Grid\Column" name="adminhtml.reward.history.customer.edit.tab.grid.columnSet.points_balance" as="points_balance">
+                        <arguments>
+                            <argument name="header" xsi:type="string" translate="true">Balance</argument>
+                            <argument name="type" xsi:type="string">number</argument>
+                            <argument name="index" xsi:type="string">points_balance</argument>
+                            <argument name="sortable" xsi:type="string">0</argument>
+                            <argument name="filter" xsi:type="string">0</argument>
+                            <argument name="width" xsi:type="string">1</argument>
+                        </arguments>
+                    </block>
+                    <block class="Magento\Backend\Block\Widget\Grid\Column" name="adminhtml.reward.history.customer.edit.tab.grid.columnSet.currency_amount" as="currency_amount">
+                        <arguments>
+                            <argument name="header" xsi:type="string" translate="true">Amount Balance</argument>
+                            <argument name="type" xsi:type="string">currency</argument>
+                            <argument name="currency" xsi:type="string">base_currency_code</argument>
+                            <argument name="rate" xsi:type="string">1</argument>
+                            <argument name="index" xsi:type="string">currency_amount</argument>
+                            <argument name="sortable" xsi:type="string">0</argument>
+                            <argument name="filter" xsi:type="string">0</argument>
+                            <argument name="width" xsi:type="string">1</argument>
+                        </arguments>
+                    </block>
+                    <block class="Magento\Backend\Block\Widget\Grid\Column" name="adminhtml.reward.history.customer.edit.tab.grid.columnSet.points_delta" as="points_delta">
+                        <arguments>
+                            <argument name="type" xsi:type="string">number</argument>
+                            <argument name="index" xsi:type="string">points_delta</argument>
+                            <argument name="header" xsi:type="string" translate="true">Points</argument>
+                            <argument name="sortable" xsi:type="string">0</argument>
+                            <argument name="filter" xsi:type="string">0</argument>
+                            <argument name="show_number_sign" xsi:type="string">1</argument>
+                            <argument name="width" xsi:type="string">1</argument>
+                        </arguments>
+                    </block>
+                    <block class="Magento\Backend\Block\Widget\Grid\Column" name="adminhtml.reward.history.customer.edit.tab.grid.columnSet.currency_delta" as="currency_delta">
+                        <arguments>
+                            <argument name="type" xsi:type="string">currency</argument>
+                            <argument name="currency" xsi:type="string">base_currency_code</argument>
+                            <argument name="rate" xsi:type="string">1</argument>
+                            <argument name="index" xsi:type="string">currency_delta</argument>
+                            <argument name="header" xsi:type="string" translate="true">Amount</argument>
+                            <argument name="sortable" xsi:type="string">0</argument>
+                            <argument name="filter" xsi:type="string">0</argument>
+                            <argument name="show_number_sign" xsi:type="string">1</argument>
+                            <argument name="width" xsi:type="string">1</argument>
+                        </arguments>
+                    </block>
+                    <block class="Magento\Backend\Block\Widget\Grid\Column" name="adminhtml.reward.history.customer.edit.tab.grid.columnSet.rate" as="rate">
+                        <arguments>
+                            <argument name="getter" xsi:type="string">getRateText</argument>
+                            <argument name="header" xsi:type="string" translate="true">Rate</argument>
+                            <argument name="sortable" xsi:type="string">0</argument>
+                            <argument name="filter" xsi:type="string">0</argument>
+                            <argument name="width" xsi:type="string">1</argument>
+                        </arguments>
+                    </block>
+                    <block class="Magento\Backend\Block\Widget\Grid\Column\Multistore" name="adminhtml.reward.history.customer.edit.tab.grid.columnSet.website" as="website">
+                        <arguments>
+                            <argument name="header" xsi:type="string" translate="true">Website</argument>
+                            <argument name="type" xsi:type="string">options</argument>
+                            <argument name="options" xsi:type="options" model="Magento\Reward\Model\ResourceModel\Reward\History\Grid\Options\Websites"/>
+                            <argument name="index" xsi:type="string">website_id</argument>
+                            <argument name="sortable" xsi:type="string">0</argument>
+                        </arguments>
+                    </block>
+                    <block class="Magento\Backend\Block\Widget\Grid\Column" name="adminhtml.reward.history.customer.edit.tab.grid.columnSet.message" as="message">
+                        <arguments>
+                            <argument name="index" xsi:type="string">message</argument>
+                            <argument name="header" xsi:type="string" translate="true">Reason</argument>
+                            <argument name="type" xsi:type="string">text</argument>
+                            <argument name="getter" xsi:type="string">getMessage</argument>
+                            <argument name="sortable" xsi:type="string">0</argument>
+                            <argument name="filter" xsi:type="string">0</argument>
+                            <argument name="renderer" xsi:type="string">Magento\Reward\Block\Adminhtml\Customer\Edit\Tab\Reward\History\Grid\Column\Renderer\Reason</argument>
+                        </arguments>
+                    </block>
+                    <block class="Magento\Backend\Block\Widget\Grid\Column" name="adminhtml.reward.history.customer.edit.tab.grid.columnSet.created_at" as="created_at">
+                        <arguments>
+                            <argument name="type" xsi:type="string">datetime</argument>
+                            <argument name="index" xsi:type="string">created_at</argument>
+                            <argument name="header" xsi:type="string" translate="true">Created</argument>
+                            <argument name="sortable" xsi:type="string">0</argument>
+                            <argument name="align" xsi:type="string">left</argument>
+                        </arguments>
+                    </block>
+                    <block class="Magento\Backend\Block\Widget\Grid\Column" name="adminhtml.reward.history.customer.edit.tab.grid.columnSet.expiration_date" as="expiration_date">
+                        <arguments>
+                            <argument name="type" xsi:type="string">datetime</argument>
+                            <argument name="getter" xsi:type="string">getExpiresAt</argument>
+                            <argument name="header" xsi:type="string" translate="true">Expires</argument>
+                            <argument name="sortable" xsi:type="string">0</argument>
+                            <argument name="filter" xsi:type="string">0</argument>
+                            <argument name="align" xsi:type="string">left</argument>
+                        </arguments>
+                    </block>
+                    <block class="Magento\Backend\Block\Widget\Grid\Column" name="adminhtml.reward.history.customer.edit.tab.grid.columnSet.comment" as="comment">
+                        <arguments>
+                            <argument name="index" xsi:type="string">comment</argument>
+                            <argument name="header" xsi:type="string" translate="true">Comment</argument>
+                            <argument name="sortable" xsi:type="string">0</argument>
+                            <argument name="filter" xsi:type="string">0</argument>
+                            <argument name="align" xsi:type="string">left</argument>
+                        </arguments>
+                    </block>
+                </block>
+            </block>
+        </referenceContainer>
+    </body>
+</page>

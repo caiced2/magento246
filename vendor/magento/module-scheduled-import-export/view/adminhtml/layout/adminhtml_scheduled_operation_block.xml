@@ -1,0 +1,153 @@
+<?xml version="1.0"?>
+<!--
+/**
+ * Copyright © Magento, Inc. All rights reserved.
+ * See COPYING.txt for license details.
+ */
+-->
+<page xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="urn:magento:framework:View/Layout/etc/page_configuration.xsd">
+    <body>
+        <referenceBlock name="adminhtml.block.scheduled.operation.grid.container">
+            <block class="Magento\Backend\Block\Widget\Grid" name="adminhtml.block.scheduled.operation.grid" as="grid">
+                <arguments>
+                    <argument name="id" xsi:type="string">operationGrid</argument>
+                    <argument name="dataSource" xsi:type="object" shared="false">Magento\ScheduledImportExport\Model\ResourceModel\Scheduled\Operation\Collection</argument>
+                    <argument name="use_ajax" xsi:type="string">1</argument>
+                    <argument name="default_sort" xsi:type="string">id</argument>
+                    <argument name="default_dir" xsi:type="string">DESC</argument>
+                    <argument name="grid_url" xsi:type="url" path="*/*/grid">
+                        <param name="_current">1</param>
+                    </argument>
+                </arguments>
+                <block class="Magento\Backend\Block\Widget\Grid\Massaction" name="adminhtml.block.scheduled.operation.massactions" as="grid.massaction">
+                    <arguments>
+                        <argument name="massaction_id_field" xsi:type="string">id</argument>
+                        <argument name="form_field_name" xsi:type="string">operation</argument>
+                        <argument name="use_select_all" xsi:type="string">1</argument>
+                        <argument name="options" xsi:type="array">
+                            <item name="delete" xsi:type="array">
+                                <item name="label" xsi:type="string" translate="true">Delete</item>
+                                <item name="url" xsi:type="string">*/*/massDelete</item>
+                                <item name="confirm" xsi:type="string" translate="true">Are you sure you want to delete the selected scheduled imports/exports?</item>
+                            </item>
+                            <item name="status" xsi:type="array">
+                                <item name="label" xsi:type="string" translate="true">Change Status</item>
+                                <item name="url" xsi:type="string">*/*/massChangeStatus</item>
+                                <item name="block_name" xsi:type="string">status</item>
+                            </item>
+                        </argument>
+                    </arguments>
+                    <block class="Magento\Backend\Block\Widget\Grid\Massaction\Additional" name="adminhtml.block.scheduled.operation.massactions.status" as="status">
+                        <arguments>
+                            <argument name="fields" xsi:type="array">
+                                <item name="visibility" xsi:type="array">
+                                    <item name="name" xsi:type="string">status</item>
+                                    <item name="type" xsi:type="string">select</item>
+                                    <item name="class" xsi:type="string">required-entry</item>
+                                    <item name="label" xsi:type="string" translate="true">Status</item>
+                                    <item name="values" xsi:type="string">Magento\ScheduledImportExport\Model\ResourceModel\Scheduled\Operation\Options\Statuses</item>
+                                </item>
+                            </argument>
+                        </arguments>
+                    </block>
+                </block>
+                <block class="Magento\Backend\Block\Widget\Grid\ColumnSet" name="adminhtml.block.scheduled.operation.grid.columnSet" as="grid.columnSet">
+                    <arguments>
+                        <argument name="id" xsi:type="string">operationGrid</argument>
+                        <argument name="rowUrl" xsi:type="array">
+                            <item name="path" xsi:type="string">*/*/edit</item>
+                            <item name="extraParamsTemplate" xsi:type="array">
+                                <item name="id" xsi:type="string">getId</item>
+                            </item>
+                        </argument>
+                    </arguments>
+                    <block class="Magento\Backend\Block\Widget\Grid\Column" name="adminhtml.block.scheduled.operation.grid.columnSet.name" as="name">
+                        <arguments>
+                            <argument name="header" xsi:type="string" translate="true">Name</argument>
+                            <argument name="index" xsi:type="string">name</argument>
+                            <argument name="type" xsi:type="string">text</argument>
+                            <argument name="escape" xsi:type="string">1</argument>
+                        </arguments>
+                    </block>
+                    <block class="Magento\Backend\Block\Widget\Grid\Column" name="adminhtml.block.scheduled.operation.grid.columnSet.operation_type" as="operation_type">
+                        <arguments>
+                            <argument name="header" xsi:type="string" translate="true">Operation</argument>
+                            <argument name="index" xsi:type="string">operation_type</argument>
+                            <argument name="type" xsi:type="string">options</argument>
+                            <argument name="options" xsi:type="options" model="Magento\ScheduledImportExport\Model\ResourceModel\Scheduled\Operation\Options\Operations"/>
+                        </arguments>
+                    </block>
+                    <block class="Magento\Backend\Block\Widget\Grid\Column" name="adminhtml.block.scheduled.operation.grid.columnSet.entity_type" as="entity_type">
+                        <arguments>
+                            <argument name="header" xsi:type="string" translate="true">Entity Type</argument>
+                            <argument name="index" xsi:type="string">entity_type</argument>
+                            <argument name="type" xsi:type="string">options</argument>
+                            <argument name="options" xsi:type="options" model="Magento\ScheduledImportExport\Model\ResourceModel\Scheduled\Operation\Options\Entities"/>
+                        </arguments>
+                    </block>
+                    <block class="Magento\Backend\Block\Widget\Grid\Column" name="adminhtml.block.scheduled.operation.grid.columnSet.last_run_date" as="last_run_date">
+                        <arguments>
+                            <argument name="header" xsi:type="string" translate="true">Last Run</argument>
+                            <argument name="index" xsi:type="string">last_run_date</argument>
+                            <argument name="type" xsi:type="string">datetime</argument>
+                            <argument name="column_css_class" xsi:type="string">col-date</argument>
+                            <argument name="header_css_class" xsi:type="string">col-date</argument>
+                        </arguments>
+                    </block>
+                    <block class="Magento\Backend\Block\Widget\Grid\Column" name="adminhtml.block.scheduled.operation.grid.columnSet.freq" as="freq">
+                        <arguments>
+                            <argument name="header" xsi:type="string" translate="true">Frequency</argument>
+                            <argument name="index" xsi:type="string">freq</argument>
+                            <argument name="type" xsi:type="string">options</argument>
+                            <argument name="options" xsi:type="options" model="Magento\ScheduledImportExport\Model\ResourceModel\Scheduled\Operation\Options\Frequency"/>
+                        </arguments>
+                    </block>
+                    <block class="Magento\Backend\Block\Widget\Grid\Column" name="adminhtml.block.scheduled.operation.grid.columnSet.status" as="status">
+                        <arguments>
+                            <argument name="header" xsi:type="string" translate="true">Status</argument>
+                            <argument name="index" xsi:type="string">status</argument>
+                            <argument name="type" xsi:type="string">options</argument>
+                            <argument name="options" xsi:type="options" model="Magento\ScheduledImportExport\Model\ResourceModel\Scheduled\Operation\Options\Statuses"/>
+                        </arguments>
+                    </block>
+                    <block class="Magento\Backend\Block\Widget\Grid\Column" name="adminhtml.block.scheduled.operation.grid.columnSet.is_success" as="is_success">
+                        <arguments>
+                            <argument name="header" xsi:type="string" translate="true">Last Outcome</argument>
+                            <argument name="index" xsi:type="string">is_success</argument>
+                            <argument name="type" xsi:type="string">options</argument>
+                            <argument name="options" xsi:type="options" model="Magento\ScheduledImportExport\Model\ResourceModel\Scheduled\Operation\Options\Result"/>
+                        </arguments>
+                    </block>
+                    <block class="Magento\Backend\Block\Widget\Grid\Column" name="adminhtml.block.scheduled.operation.grid.columnSet.action" as="action">
+                        <arguments>
+                            <argument name="header" xsi:type="string" translate="true">Action</argument>
+                            <argument name="index" xsi:type="string">id</argument>
+                            <argument name="type" xsi:type="string">action</argument>
+                            <argument name="getter" xsi:type="string">getId</argument>
+                            <argument name="column_css_class" xsi:type="string">col-actions</argument>
+                            <argument name="header_css_class" xsi:type="string">col-actions</argument>
+                            <argument name="filter" xsi:type="string">0</argument>
+                            <argument name="sortable" xsi:type="string">0</argument>
+                            <argument name="actions" xsi:type="array">
+                                <item name="edit_action" xsi:type="array">
+                                    <item name="caption" xsi:type="string" translate="true">Edit</item>
+                                    <item name="url" xsi:type="array">
+                                        <item name="base" xsi:type="string">*/*/edit</item>
+                                    </item>
+                                    <item name="field" xsi:type="string">id</item>
+                                </item>
+                                <item name="run_action" xsi:type="array">
+                                    <item name="caption" xsi:type="string" translate="true">Run</item>
+                                    <item name="url" xsi:type="array">
+                                        <item name="base" xsi:type="string">*/scheduled_operation/cron</item>
+                                    </item>
+                                    <item name="field" xsi:type="string">operation</item>
+                                </item>
+                            </argument>
+                        </arguments>
+                    </block>
+                </block>
+            </block>
+        </referenceBlock>
+    </body>
+</page>

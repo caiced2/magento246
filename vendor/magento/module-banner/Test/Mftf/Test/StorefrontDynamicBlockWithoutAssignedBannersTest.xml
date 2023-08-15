@@ -1,0 +1,60 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+ /**
+  * Copyright © Magento, Inc. All rights reserved.
+  * See COPYING.txt for license details.
+  */
+-->
+<tests xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xsi:noNamespaceSchemaLocation="urn:magento:mftf:Test/etc/testSchema.xsd">
+    <test name="StorefrontDynamicBlockWithoutAssignedBannersTest">
+        <annotations>
+            <title value="Dynamic block widget should show only assigned banners"/>
+            <description value="If none of the banners is assigned to a widget we should not show the banners on a storefront"/>
+            <stories value="MC-40327: Dynamic blocks are displayed on all pages."/>
+            <severity value="MAJOR"/>
+            <testCaseId value="MC-40327"/>
+            <useCaseId value="MC-40612"/>
+        </annotations>
+        <before>
+            <createData entity="ApiCategory" stepKey="createCategory"/>
+            <createData entity="ApiSimpleProduct" stepKey="createSimpleProduct">
+                <requiredEntity createDataKey="createCategory"/>
+            </createData>
+            <createData entity="_defaultDynamicBlock" stepKey="createDynamicBlock"/>
+            <actionGroup ref="AdminLoginActionGroup" stepKey="loginAsAdmin"/>
+            <actionGroup ref="AdminCreateDynamicBlocksRotatorWidgetActionGroup" stepKey="createDynamicBlocksRotatorWidget">
+                <argument name="widget" value="BannersNotSpecifiedDynamicBlocksRotatorWidget"/>
+            </actionGroup>
+            <actionGroup ref="CliIndexerReindexActionGroup" stepKey="reindex">
+                <argument name="indices" value=""/>
+            </actionGroup>
+            <actionGroup ref="CliCacheFlushActionGroup" stepKey="flushCache">
+                <argument name="tags" value=""/>
+            </actionGroup>
+        </before>
+        <after>
+            <deleteData createDataKey="createCategory" stepKey="deleteCreateCategory"/>
+            <deleteData createDataKey="createSimpleProduct" stepKey="deleteCreateSimpleProduct"/>
+            <actionGroup ref="AdminDeleteWidgetActionGroup" stepKey="deleteWidget">
+                <argument name="widget" value="BannersNotSpecifiedDynamicBlocksRotatorWidget"/>
+            </actionGroup>
+            <actionGroup ref="DeleteBanner2ActionGroup" stepKey="deleteBanner">
+                <argument name="bannerName" value="{{_defaultDynamicBlock.name}}" />
+            </actionGroup>
+            <actionGroup ref="CliIndexerReindexActionGroup" stepKey="reindexAfter">
+                <argument name="indices" value=""/>
+            </actionGroup>
+            <actionGroup ref="CliCacheFlushActionGroup" stepKey="flushCacheAfter">
+                <argument name="tags" value=""/>
+            </actionGroup>
+            <actionGroup ref="AdminLogoutActionGroup" stepKey="logoutAdmin"/>
+        </after>
+        <actionGroup ref="StorefrontOpenProductPageActionGroup" stepKey="openProductPage">
+            <argument name="productUrl" value="$createSimpleProduct.sku$"/>
+        </actionGroup>
+        <actionGroup ref="StorefrontVerifyDynamicBlockContentNotVisibleActionGroup" stepKey="verifyBannerDescriptionIsAbsent">
+            <argument name="dynamicBlockContent" value="{{_defaultDynamicBlock.default_contents}}"/>
+        </actionGroup>
+    </test>
+</tests>

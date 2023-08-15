@@ -1,0 +1,54 @@
+<!--
+/**
+ * Copyright © Magento, Inc. All rights reserved.
+ * See COPYING.txt for license details.
+ */
+-->
+<!--@subject {{trans "%store_name: Return #%increment_id update" store_name=$store.frontend_name increment_id=$rma.increment_id}} @-->
+<!--@vars {
+"store url=\"customer\/account\/\"":"Customer Account URL",
+"var comment|escape|nl2br":"Customer Comment",
+"template config_path=\"design\/email\/footer_template\"":"Email Footer Template",
+"template config_path=\"design\/email\/header_template\"":"Email Header Template",
+"var logo_alt":"Email Logo Image Alt",
+"var logo_url":"Email Logo Image URL",
+"var comment":"Order Comment",
+"var rma.increment_id":"Return Id",
+"var store.frontend_name":"Store Name",
+"var supportEmail": "Support Email",
+"store url=\"\"":"Store URL",
+"var order_data.customer_name":"Customer Name",
+"var this.getUrl($store, 'customer/account/',[_nosid:1])":"Account URL",
+"var this.getUrl($store, 'sales/guest/form/',[_nosid:1])":"Form URL"
+} @-->
+
+{{template config_path="design/email/header_template"}}
+
+<p class="greeting">{{trans "%name," name=$order_data.customer_name}}</p>
+
+<p>
+    {{trans
+        'You can check the status of your return by <a href="%account_url">logging into your account</a> or <a href="%form_url">using your order number</a>.'
+
+        account_url="$this.getUrl($store, 'customer/account/',[_nosid:1])"
+        form_url="$this.getUrl($store, 'sales/guest/form/',[_nosid:1])"
+    |raw}}
+</p>
+
+<table class="message-info" cellspacing="0" cellpadding="0" border="0">
+    <tr>
+        <td>
+            {{var comment|escape|nl2br}}
+        </td>
+    </tr>
+</table>
+<br />
+<p>
+    {{trans
+        'If you have any questions about your return, please contact us at <a href="mailto:%support_email">%support_email</a>.'
+
+        support_email="$supportEmail"
+    |raw}}
+</p>
+
+{{template config_path="design/email/footer_template"}}

@@ -1,0 +1,20 @@
+<?php
+/**
+ * Copyright © Magento, Inc. All rights reserved.
+ * See COPYING.txt for license details.
+ */
+
+/** @var $block \Magento\Backend\Block\Page\Header */
+?>
+<?php $edition = $block->hasEdition() ? 'data-edition="' . $block->escapeHtml($block->getEdition()) . '"' : ''; ?>
+<?php
+    $logoSrc = ($block->hasLogoImageSrc()) ? $block->escapeHtml($block->getLogoImageSrc()) : 'images/adobe-logo.svg'
+?>
+<a
+    href="<?= $block->escapeUrl($block->getHomeLink()) ?>"
+    <?= /* @noEscape */ $edition ?>
+    class="logo">
+    <img class="logo-img" src="<?= /* @noEscape */ $block->getViewFileUrl($logoSrc) ?>"
+         alt="<?= $block->escapeHtml(__('Adobe Commerce Admin Panel')) ?>"
+         title="<?= $block->escapeHtml(__('Adobe Commerce Admin Panel')) ?>"/>
+</a>

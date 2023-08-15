@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+ /**
+  * Copyright © Magento, Inc. All rights reserved.
+  * See COPYING.txt for license details.
+  */
+-->
+<operations xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+            xsi:noNamespaceSchemaLocation="urn:magento:mftf:DataGenerator/etc/dataOperation.xsd">
+    <operation name="CreateGiftWrapping" dataType="giftWrapping" type="create" auth="adminOauth" url="/V1/gift-wrappings" method="POST">
+        <contentType>application/json</contentType>
+        <object key="data" dataType="giftWrapping">
+            <field key="wrapping_id">integer</field>
+            <field key="design" required="true">string</field>
+            <field key="status" required="true">integer</field>
+            <field key="base_price" required="true">number</field>
+            <field key="image_name">string</field>
+            <field key="image_base64_content">string</field>
+            <field key="base_currency_code" required="true">string</field>
+            <array key="website_ids" required="true">
+                <value>integer</value>
+            </array>
+            <field key="image_url">string</field>
+            <field key="extension_attributes">empty_extension_attribute</field>
+        </object>
+    </operation>
+
+    <operation name="DeleteGiftWrapping" dataType="giftWrapping" type="delete" auth="adminOauth" url="/V1/gift-wrappings/{wrapping_id}" method="DELETE">
+        <contentType>application/json</contentType>
+    </operation>
+</operations>

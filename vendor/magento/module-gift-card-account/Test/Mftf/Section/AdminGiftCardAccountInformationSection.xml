@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+ /**
+  * Copyright © Magento, Inc. All rights reserved.
+  * See COPYING.txt for license details.
+  */
+-->
+
+<sections xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+          xsi:noNamespaceSchemaLocation="urn:magento:mftf:Page/etc/SectionObject.xsd">
+    <section name="AdminGiftCardAccountInformationSection">
+        <element name="giftCardCode" type="text" selector="div.field-code .control-value"/>
+        <element name="status" type="text" selector="div.field-state_text .control-value"/>
+        <element name="active" type="select" selector="select[name=status]"/>
+        <element name="website" type="select" selector="#_infowebsite_id"/>
+        <element name="balance" type="input" selector="#_infobalance"/>
+        <element name="saveGiftCardAccount" type="button" selector="#save"/>
+        <element name="giftCardType" type="select" selector="//select[@name='product[giftcard_type]']"/>
+    </section>
+</sections>

@@ -1,0 +1,19 @@
+<!--
+/**
+ * Copyright © Magento, Inc. All rights reserved.
+ * See COPYING.txt for license details.
+ */
+-->
+<!-- ko if: isAvailable() -->
+<tr class="totals rewardpoints">
+    <th class="mark" scope="row">
+        <button data-role="opc-remove-reward" class="action action-remove" data-bind="click: removeRewardPoints">
+            <span><!-- ko i18n: 'Remove'--><!-- /ko --></span>
+        </button>
+        <!-- ko text: getRewardPoints() + ' ' + $t(title)--><!-- /ko -->
+    </th>
+    <td class="amount">
+        <span data-bind="text: getValue(), attr: {'data-th': $t(title)}" class="price"></span>
+    </td>
+</tr>
+<!-- /ko -->

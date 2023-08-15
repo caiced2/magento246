@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+ /**
+  * Copyright © Magento, Inc. All rights reserved.
+  * See COPYING.txt for license details.
+  */
+-->
+
+<actionGroups xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+              xsi:noNamespaceSchemaLocation="urn:magento:mftf:Test/etc/actionGroupSchema.xsd">
+    <actionGroup name="AdminAssertStagingPreviewScopeActionGroup">
+        <annotations>
+            <description>Verify that provided store view is selected.</description>
+        </annotations>
+        <arguments>
+            <argument name="storeView" defaultValue="{{_defaultStore.name}}" type="string"/>
+        </arguments>
+
+        <conditionalClick selector="{{AdminStagingPreviewSection.scopeBtn}}" dependentSelector="{{AdminStagingPreviewSection.scopeBtnActive}}" visible="false" stepKey="openScopeTab"/>
+        <waitForElementVisible selector="{{AdminStagingPreviewSection.storeView}}" stepKey="waitForStoreViewSwitcher"/>
+        <seeOptionIsSelected selector="{{AdminStagingPreviewSection.storeView}}" userInput="{{storeView}}" stepKey="seeStoreViewInPreviewMode"/>
+    </actionGroup>
+</actionGroups>

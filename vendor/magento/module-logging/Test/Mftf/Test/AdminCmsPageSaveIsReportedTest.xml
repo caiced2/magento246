@@ -1,0 +1,57 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+ /**
+  * Copyright © Magento, Inc. All rights reserved.
+  * See COPYING.txt for license details.
+  */
+-->
+<tests xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:noNamespaceSchemaLocation="urn:magento:mftf:Test/etc/testSchema.xsd">
+    <test name="AdminCmsPageSaveIsReportedTest">
+        <annotations>
+            <features value="Admin Action Logs"/>
+            <title value="Changes to CMS pages reported to Action Log"/>
+            <description value="Changes to CMS pages reported to Action Log"/>
+            <stories value="As an Administrator I want CMS Page save to be reported in Action Log"/>
+            <skip>
+                <issueId value="magento/partners-magento2ee#171"/>
+            </skip>
+            <severity value="MAJOR"/>
+            <group value="pr_exclude"/>
+        </annotations>
+        <before>
+            <createData entity="_defaultCmsPage" stepKey="createCMSPage"/>
+            <actionGroup ref="AdminLoginActionGroup" stepKey="adminLogin"/>
+        </before>
+        <after>
+            <deleteData stepKey="deleteCMSPage" createDataKey="createCMSPage"/>
+            <actionGroup ref="AdminLogoutActionGroup" stepKey="adminLogout"/>
+        </after>
+
+        <actionGroup ref="AdminOpenCmsPageActionGroup" stepKey="openEditPage">
+            <argument name="page_id" value="$$createCMSPage.id$$"/>
+        </actionGroup>
+        <actionGroup ref="AdminCmsPageSetTitleActionGroup" stepKey="setPageTitle">
+            <argument name="newTitle" value="New Page Title"/>
+        </actionGroup>
+        <actionGroup ref="SaveAndContinueEditCmsPageActionGroup" stepKey="saveAndContinue"/>
+
+        <actionGroup ref="AdminOpenActionLogsReportPageActionGroup" stepKey="openActionLogsReportPage"/>
+        <actionGroup ref="AdminGridFilterResetActionGroup" stepKey="clearGridFilters"/>
+        <actionGroup ref="AdminFillInputFilterFieldActionGroup" stepKey="addCmsPagesFilter">
+            <argument name="filterInputName" value="fullaction"/>
+            <argument name="filterValue" value="adminhtml_cms_page"/>
+        </actionGroup>
+        <actionGroup ref="AdminFillInputFilterFieldActionGroup" stepKey="addPageIdFilter">
+            <argument name="filterInputName" value="info"/>
+            <argument name="filterValue" value="$$createCMSPage.id$$"/>
+        </actionGroup>
+        <actionGroup ref="AdminUiGridSelectFilterOptionActionGroup" stepKey="addOperationTypeFilter">
+            <argument name="filterName" value="action"/>
+            <argument name="filterValue" value="Save"/>
+        </actionGroup>
+        <actionGroup ref="AdminClickSearchInGridActionGroup" stepKey="applyGridFilter"/>
+
+        <actionGroup ref="AdminAssertGridNotEmptyActionGroup" stepKey="assertGridEmpty"/>
+    </test>
+</tests>

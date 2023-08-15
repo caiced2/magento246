@@ -1,0 +1,129 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+/**
+ * Copyright © Magento, Inc. All rights reserved.
+ * See COPYING.txt for license details.
+ */
+-->
+
+<tests xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xsi:noNamespaceSchemaLocation="urn:magento:mftf:Test/etc/testSchema.xsd">
+    <test name="AddConfigurableProductBySkuFromCustomerAccountTest">
+        <annotations>
+            <features value="AdvancedCheckout"/>
+            <stories value="Add Product By SKU"/>
+            <title value="Add configurable product by sku from customer account test"/>
+            <description value="Add configurable product by sku from customer account"/>
+            <severity value="CRITICAL"/>
+            <testCaseId value="MC-14029"/>
+            <group value="AdvancedCheckout"/>
+            <group value="mtf_migrated"/>
+        </annotations>
+        <before>
+            <!-- Create customer -->
+            <createData entity="Simple_US_Customer" stepKey="createCustomer"/>
+
+            <!-- Create configurable product with two options -->
+            <createData entity="ApiCategory" stepKey="createCategory"/>
+            <createData entity="ApiConfigurableProduct" stepKey="createConfigProduct">
+                <requiredEntity createDataKey="createCategory"/>
+            </createData>
+            <createData entity="productAttributeWithTwoOptions" stepKey="createConfigProductAttribute"/>
+            <createData entity="productAttributeOption1" stepKey="createConfigProductAttributeOptionOne">
+                <requiredEntity createDataKey="createConfigProductAttribute"/>
+            </createData>
+            <createData entity="productAttributeOption2" stepKey="createConfigProductAttributeOptionTwo">
+                <requiredEntity createDataKey="createConfigProductAttribute"/>
+            </createData>
+            <createData entity="AddToDefaultSet" stepKey="createConfigAddToAttributeSet">
+                <requiredEntity createDataKey="createConfigProductAttribute"/>
+            </createData>
+            <getData entity="ProductAttributeOptionGetter" index="1" stepKey="getConfigAttributeOptionOne">
+                <requiredEntity createDataKey="createConfigProductAttribute"/>
+            </getData>
+            <getData entity="ProductAttributeOptionGetter" index="2" stepKey="getConfigAttributeOptionTwo">
+                <requiredEntity createDataKey="createConfigProductAttribute"/>
+            </getData>
+            <createData entity="ApiSimpleOne" stepKey="createConfigChildProductOne">
+                <requiredEntity createDataKey="createConfigProductAttribute"/>
+                <requiredEntity createDataKey="getConfigAttributeOptionOne"/>
+                <requiredEntity createDataKey="createCategory"/>
+            </createData>
+            <createData entity="ApiSimpleTwo" stepKey="createConfigChildProductTwo">
+                <requiredEntity createDataKey="createConfigProductAttribute"/>
+                <requiredEntity createDataKey="getConfigAttributeOptionTwo"/>
+                <requiredEntity createDataKey="createCategory"/>
+            </createData>
+            <createData entity="ConfigurableProductTwoOptions" stepKey="createConfigProductOption">
+                <requiredEntity createDataKey="createConfigProduct"/>
+                <requiredEntity createDataKey="createConfigProductAttribute"/>
+                <requiredEntity createDataKey="getConfigAttributeOptionOne"/>
+                <requiredEntity createDataKey="getConfigAttributeOptionTwo"/>
+            </createData>
+            <createData entity="ConfigurableProductAddChild" stepKey="createConfigProductAddChildOne">
+                <requiredEntity createDataKey="createConfigProduct"/>
+                <requiredEntity createDataKey="createConfigChildProductOne"/>
+            </createData>
+            <createData entity="ConfigurableProductAddChild" stepKey="createConfigProductAddChildTwo">
+                <requiredEntity createDataKey="createConfigProduct"/>
+                <requiredEntity createDataKey="createConfigChildProductTwo"/>
+            </createData>
+        </before>
+        <after>
+            <!-- Delete customer -->
+            <deleteData createDataKey="createCustomer" stepKey="deleteCustomer"/>
+
+            <!-- Delete configurable product data -->
+            <deleteData createDataKey="createConfigChildProductOne" stepKey="deleteConfigChildProductOne"/>
+            <deleteData createDataKey="createConfigChildProductTwo" stepKey="deleteConfigChildProductTwo"/>
+            <deleteData createDataKey="createConfigProduct" stepKey="deleteConfigProduct"/>
+            <deleteData createDataKey="createConfigProductAttribute" stepKey="deleteConfigProductAttribute"/>
+            <deleteData createDataKey="createCategory" stepKey="deleteCategory"/>
+
+            <!-- Reindex invalidated indices after product attribute has been created/deleted -->
+           <magentoCron groups="index" stepKey="reindexInvalidatedIndices"/>
+        </after>
+
+        <!-- Login to Frontend -->
+        <actionGroup ref="LoginToStorefrontActionGroup" stepKey="loginAsCustomer">
+            <argument name="Customer" value="$$createCustomer$$"/>
+        </actionGroup>
+
+        <!-- Open My Account > Order by SKU -->
+        <amOnPage stepKey="goToMyAccountPage" url="{{StorefrontCustomerDashboardPage.url}}"/>
+        <waitForPageLoad stepKey="waitForPageLoad"/>
+        <actionGroup ref="StorefrontCustomerGoToSidebarMenu" stepKey="goToSidebarMenu">
+            <argument name="menu" value="Order by SKU"/>
+        </actionGroup>
+
+        <!-- Fill data according dataset -->
+        <actionGroup ref="FillProductSkuAndQtyActionGroup" stepKey="fillProductQtyAndSkuForOrderProduct">
+            <argument name="sku" value="$$createConfigProduct.sku$$"/>
+            <argument name="quantity" value="{{ApiSimpleSingleQty.quantity}}"/>
+            <argument name="index" value="0"/>
+        </actionGroup>
+
+        <!-- Add product to cart -->
+        <waitForElementClickable selector="{{StorefrontCustomerOrderBySkuSection.addToCart}}" stepKey="waitForAddToCart"/>
+        <click selector="{{StorefrontCustomerOrderBySkuSection.addToCart}}" stepKey="clickAddToCart"/>
+
+        <!-- Assert product fail messages -->
+        <waitForElementVisible selector="{{StorefrontCustomerOrderBySkuSection.requiredAttentionMessage}}" stepKey="waitForPageAppeared"/>
+        <see selector="{{StorefrontCustomerOrderBySkuSection.requiredAttentionMessage}}" userInput="1 product requires your attention." stepKey="seeFailMessage"/>
+        <see selector="{{StorefrontCustomerOrderBySkuSection.errorMessage}}" userInput="You need to choose options for your item." stepKey="assertProductFailMessage"/>
+
+        <!-- Assert specify product option link -->
+        <see selector="{{StorefrontCustomerOrderBySkuSection.optionsLink}}" userInput="Specify the product's options." stepKey="seeAddLink"/>
+
+        <!-- Assert cart is empty -->
+        <actionGroup ref="AssertMiniCartEmptyActionGroup" stepKey="seeMiniCartEmpty"/>
+
+        <!-- Add option and quantity to product -->
+        <click selector="{{StorefrontCustomerOrderBySkuSection.optionsLink}}" stepKey="goToAddLink"/>
+        <actionGroup ref="AddOptionAndQtyToProductBySkuFromMyAccountActionGroup" stepKey="addOptionAndQtyToProduct">
+            <argument name="label" value="$$createConfigProductAttributeOptionOne.option[store_labels][0][label]$$"/>
+            <argument name="quantity" value="{{ApiSimpleSingleQty.quantity}}"/>
+        </actionGroup>
+        <actionGroup ref="UpdateCartBySkuFromMyAccountActionGroup" stepKey="clickUpdateCart"/>
+    </test>
+</tests>

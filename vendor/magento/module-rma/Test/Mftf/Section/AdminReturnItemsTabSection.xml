@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+ /**
+  * Copyright © Magento, Inc. All rights reserved.
+  * See COPYING.txt for license details.
+  */
+-->
+
+<sections xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+          xsi:noNamespaceSchemaLocation="urn:magento:mftf:Page/etc/SectionObject.xsd">
+    <section name="AdminReturnItemsTabSection">
+        <element name="returnItemsGrid" type="text" selector="#edit_form #rma_info_tabs_items_section_content"/>
+        <element name="productName" type="text" selector="#magento_rma_item_edit_grid_table>tbody>tr:nth-of-type({{row}})>td.col-product_admin_name" parameterized="true"/>
+        <element name="productSku" type="text" selector="#magento_rma_item_edit_grid_table>tbody>tr:nth-of-type({{row}})>td.col-product_admin_sku" parameterized="true"/>
+        <element name="requested" type="text" selector="#magento_rma_item_edit_grid_table>tbody>tr:nth-of-type({{row}})>td.col-qty_requested" parameterized="true"/>
+        <element name="returnReason" type="text" selector="#magento_rma_item_edit_grid_table>tbody>tr:nth-of-type({{row}})>td.col-reason" parameterized="true"/>
+        <element name="itemCondition" type="text" selector="#magento_rma_item_edit_grid_table>tbody>tr:nth-of-type({{row}})>td.col-condition" parameterized="true"/>
+        <element name="resolution" type="select" selector="#magento_rma_item_edit_grid_table>tbody>tr:nth-of-type({{row}})>td.col-resolution>select" parameterized="true"/>
+        <element name="authorized" type="input" selector="#magento_rma_item_edit_grid_table>tbody>tr:nth-of-type({{row}})>td.col-qty_authorized>input" parameterized="true"/>
+        <element name="returned" type="input" selector="#magento_rma_item_edit_grid_table>tbody>tr:nth-of-type({{row}})>td.col-qty_returned>input" parameterized="true"/>
+        <element name="approved" type="input" selector="#magento_rma_item_edit_grid_table>tbody>tr:nth-of-type({{row}})>td.col-qty_approved>input" parameterized="true"/>
+        <element name="status" type="select" selector="#magento_rma_item_edit_grid_table>tbody>tr:nth-of-type({{row}})>td.col-status>select" parameterized="true"/>
+        <element name="itemDetails" type="button" selector="#magento_rma_item_edit_grid_table a.action-item-details" timeout="30"/>
+    </section>
+</sections>

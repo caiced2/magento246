@@ -1,0 +1,27 @@
+<?xml version="1.0"?><!--
+/**
+ * Copyright © Magento, Inc. All rights reserved.
+ * See COPYING.txt for license details.
+ */
+-->
+<config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:noNamespaceSchemaLocation="urn:magento:framework:ObjectManager/etc/config.xsd">
+    <preference for="Magento\SalesRule\Model\Rule\Condition\Combine"
+                type="Magento\AdvancedSalesRule\Model\Rule\Condition\Combine" />
+    <preference for="Magento\SalesRule\Model\Rule\Condition\Address"
+                type="Magento\AdvancedSalesRule\Model\Rule\Condition\Address" />
+    <preference for="Magento\SalesRule\Model\Rule\Condition\Product"
+                type="Magento\AdvancedSalesRule\Model\Rule\Condition\Product" />
+    <preference for="Magento\SalesRule\Model\Rule\Condition\Product\Combine"
+                type="Magento\AdvancedSalesRule\Model\Rule\Condition\Product\Combine" />
+    <preference for="Magento\SalesRule\Model\Rule\Condition\Product\Found"
+                type="Magento\AdvancedSalesRule\Model\Rule\Condition\Product\Found" />
+    <preference for="Magento\SalesRule\Model\Rule\Condition\Product\Subselect"
+                type="Magento\AdvancedSalesRule\Model\Rule\Condition\Product\Subselect" />
+    <type name="Magento\SalesRule\Model\Rule">
+        <plugin name="salesRuleAroundSave" type="Magento\AdvancedSalesRule\Model\Plugin\Rule" sortOrder="500"/>
+    </type>
+    <type name="Magento\SalesRule\Model\ResourceModel\Rule\Collection">
+        <plugin name="aroundSetValidationFilter" type="Magento\AdvancedSalesRule\Model\ResourceModel\Plugin\Rule\Collection" sortOrder="500"/>
+    </type>
+</config>

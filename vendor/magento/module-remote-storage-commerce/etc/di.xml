@@ -1,0 +1,27 @@
+<?xml version="1.0"?>
+<!--
+/**
+ * Copyright © Magento, Inc. All rights reserved.
+ * See COPYING.txt for license details.
+ */
+-->
+<config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="urn:magento:framework:ObjectManager/etc/config.xsd">
+    <type name="Magento\AdvancedCheckout\Model\Import">
+        <arguments>
+            <argument name="filesystem" xsi:type="object">fullRemoteFilesystem</argument>
+        </arguments>
+    </type>
+    <type name="Magento\ScheduledImportExport\Model\Scheduled\Operation">
+        <arguments>
+            <argument name="filesystem" xsi:type="object">fullRemoteFilesystem</argument>
+        </arguments>
+    </type>
+    <type name="Magento\ScheduledImportExport\Model\Scheduled\Operation\Data">
+        <plugin name="serverType" type="Magento\RemoteStorageCommerce\Plugin\ServerType"/>
+    </type>
+    <type name="Magento\Logging\Model\Archive\Collection">
+        <arguments>
+            <argument name="filesystem" xsi:type="object">customRemoteFilesystem</argument>
+        </arguments>
+    </type>
+</config>

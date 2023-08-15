@@ -1,0 +1,105 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+ /**
+  * Copyright © Magento, Inc. All rights reserved.
+  * See COPYING.txt for license details.
+  */
+-->
+
+<tests xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xsi:noNamespaceSchemaLocation="urn:magento:mftf:Test/etc/testSchema.xsd">
+    <test name="AdminReviewOrderWithOnlyReportsPermissionTest" deprecated="Use AdminReviewOrderWithReportsPermissionTest instead.">
+        <annotations>
+            <features value="Catalog"/>
+            <stories value="Check that user can review ordered products with only 'Reports' permissions"/>
+            <title value="DEPRECATED. User should be able to review ordered products with only 'Reports' permission"/>
+            <description value="DEPRECATED. User should be able to review ordered products with only 'Reports' permission"/>
+            <severity value="MAJOR"/>
+            <testCaseId value="MAGETWO-94317"/>
+            <group value="AdminGws"/>
+            <skip>
+                <issueId value="DEPRECATED">Use AdminReviewOrderWithReportsPermissionTest instead</issueId>
+            </skip>
+            <group value="pr_exclude"/>
+        </annotations>
+        <before>
+            <actionGroup ref="AdminLoginActionGroup" stepKey="loginAsAdmin"/>
+            <createData entity="ApiCategory" stepKey="createCategory"/>
+            <createData entity="ApiSimpleProduct" stepKey="createProduct">
+                <requiredEntity createDataKey="createCategory"/>
+            </createData>
+
+            <actionGroup ref="AdminCreateWebsiteActionGroup" stepKey="createWebsite">
+                <argument name="newWebsiteName" value="{{NewWebSiteData.name}}"/>
+                <argument name="websiteCode" value="{{NewWebSiteData.code}}"/>
+            </actionGroup>
+            <actionGroup ref="AdminCreateNewStoreGroupActionGroup" stepKey="createNewStore">
+                <argument name="website" value="{{NewWebSiteData.name}}"/>
+                <argument name="storeGroupName" value="{{NewStoreData.name}}"/>
+                <argument name="storeGroupCode" value="{{NewStoreData.code}}"/>
+            </actionGroup>
+            <actionGroup ref="AdminCreateStoreViewActionGroup" stepKey="createCustomStoreView">
+                <argument name="StoreGroup" value="NewStoreData"/>
+                <argument name="customStore" value="NewStoreViewData"/>
+            </actionGroup>
+            <magentoCron groups="index" stepKey="reindex"/>
+            <actionGroup ref="AdminCreateCustomerWithWebsiteAndStoreViewActionGroup" stepKey="createCustomerWithWebsiteAndStoreView">
+                <argument name="customerData" value="Simple_US_Customer"/>
+                <argument name="address" value="US_Address_NY"/>
+                <argument name="website" value="{{NewWebSiteData.name}}"/>
+                <argument name="storeView" value="{{NewStoreViewData.name}}"/>
+            </actionGroup>
+            <actionGroup ref="SearchForProductOnBackendActionGroup" stepKey="searchForProductOnAdmin">
+                <argument name="product" value="$$createProduct$$"/>
+            </actionGroup>
+            <actionGroup ref="CreatedProductConnectToWebsiteActionGroup" stepKey="productConnectToWebsite">
+                <argument name="website" value="NewWebSiteData"/>
+                <argument name="product" value="$$createProduct$$"/>
+            </actionGroup>
+            <actionGroup ref="CreateOrderInStoreChoosingPaymentMethodActionGroup" stepKey="createOrder">
+                <argument name="product" value="$$createProduct$$"/>
+                <argument name="customer" value="Simple_US_Customer"/>
+                <argument name="storeView" value="NewStoreViewData"/>
+            </actionGroup>
+            <actionGroup ref="AdminCreateUserRoleWithReportsActionGroup" stepKey="createRoleWithReports">
+                <argument name="role" value="RoleWithReports"/>
+                <argument name="store" value="NewStoreData"/>
+            </actionGroup>
+            <actionGroup ref="AdminCreateUserWithRoleActionGroup" stepKey="createUser">
+                <argument name="role" value="RoleWithReports"/>
+                <argument name="User" value="newAdmin"/>
+            </actionGroup>
+        </before>
+
+        <actionGroup ref="SignOut" stepKey="SignOut"/>
+        <actionGroup ref="AdminLoginActionGroup" stepKey="logAsNewUser">
+            <argument name="username" value="{{newAdmin.username}}"/>
+            <argument name="password" value="{{newAdmin.password}}"/>
+        </actionGroup>
+        <actionGroup ref="AdminReviewOrderActionGroup" stepKey="reviewOrder">
+            <argument name="productName" value="$$createProduct.name$$"/>
+        </actionGroup>
+
+        <after>
+            <actionGroup ref="SignOut" stepKey="SignOut"/>
+            <actionGroup ref="AdminLoginActionGroup" stepKey="loginAsAdmin"/>
+            <actionGroup ref="AdminDeleteCreatedUserActionGroup" stepKey="deleteUser">
+                <argument name="user" value="newAdmin"/>
+            </actionGroup>
+            <actionGroup ref="AdminDeleteUserRoleWithSpecifiedPermissionActionGroup" stepKey="deleteRole">
+                <argument name="role" value="RoleWithReports"/>
+            </actionGroup>
+            <actionGroup ref="AdminDeleteCustomerActionGroup" stepKey="deleteCustomer">
+                <argument name="customerEmail" value="Simple_US_Customer.email"/>
+            </actionGroup>
+            <deleteData createDataKey="createProduct" stepKey="deleteProduct"/>
+            <deleteData createDataKey="createCategory" stepKey="deleteCategory"/>
+            <actionGroup ref="AdminDeleteWebsiteActionGroup" stepKey="deleteWebsite">
+                <argument name="websiteName" value="{{NewWebSiteData.name}}"/>
+            </actionGroup>
+            <magentoCron groups="index" stepKey="reindex"/>
+            <actionGroup ref="AdminClearFiltersActionGroup" stepKey="clearProductFilters"/>
+            <actionGroup ref="AdminLogoutActionGroup" stepKey="logOut"/>
+        </after>
+    </test>
+</tests>

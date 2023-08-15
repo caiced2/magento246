@@ -1,0 +1,135 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+ /**
+  * Copyright © Magento, Inc. All rights reserved.
+  * See COPYING.txt for license details.
+  */
+-->
+
+<tests xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xsi:noNamespaceSchemaLocation="urn:magento:mftf:Test/etc/testSchema.xsd">
+    <test name="RestrictedAdminDoesntSeeBestsellersTest">
+        <annotations>
+            <features value="AdminGws"/>
+            <stories value="Restrict users"/>
+            <title value="Admin with restricted access should not see Bestsellers from restricted website"/>
+            <description value="Test creates custom Website/Store/View as well as restricted Admin user allowed to see custom website only.
+              Then product is bought and invoiced out of scope of the restricted Admin.
+              Purpose of the test is ensure that Admin with restricted access doesn't see Bestsellers from restricted website"/>
+            <severity value="MAJOR"/>
+            <testCaseId value="MC-36678"/>
+            <group value="userRole"/>
+        </annotations>
+        <before>
+            <actionGroup ref="AdminLoginActionGroup" stepKey="loginAsAdmin"/>
+            <!--Create new website, store and store view-->
+            <actionGroup ref="AdminCreateWebsiteActionGroup" stepKey="createSecondWebsite">
+                <argument name="newWebsiteName" value="{{secondCustomWebsite.name}}"/>
+                <argument name="websiteCode" value="{{secondCustomWebsite.code}}"/>
+            </actionGroup>
+            <actionGroup ref="AdminCreateNewStoreGroupActionGroup" stepKey="createSecondStoreGroup">
+                <argument name="website" value="{{secondCustomWebsite.name}}"/>
+                <argument name="storeGroupName" value="{{SecondStoreGroupUnique.name}}"/>
+                <argument name="storeGroupCode" value="{{SecondStoreGroupUnique.code}}"/>
+            </actionGroup>
+            <actionGroup ref="AdminCreateStoreViewActionGroup" stepKey="createSecondStoreView">
+                <argument name="StoreGroup" value="SecondStoreGroupUnique"/>
+                <argument name="customStore" value="SecondStoreUnique"/>
+            </actionGroup>
+            <magentoCron groups="index" stepKey="reindex"/>
+            <!--Create Category and Simple Product in it-->
+            <createData entity="SimpleSubCategory" stepKey="createCategory"/>
+            <createData entity="SimpleProduct" stepKey="createSimpleProduct">
+                <requiredEntity createDataKey="createCategory"/>
+            </createData>
+            <!--Create restricted role-->
+            <actionGroup ref="AdminAddNewUserRoleWithCustomRoleScopesActionGroup" stepKey="createRestrictedRole">
+                <argument name="role" value="limitedRole"/>
+                <argument name="customWebsiteName" value="{{secondCustomWebsite.name}}"/>
+            </actionGroup>
+            <!--Create user and assign restricted role to it-->
+            <actionGroup ref="AdminCreateUserActionGroup" stepKey="createCustomAdminUser">
+                <argument name="role" value="limitedRole"/>
+                <argument name="User" value="admin2"/>
+            </actionGroup>
+        </before>
+        <after>
+            <actionGroup ref="AdminLoginActionGroup" stepKey="loginAsAdminForCleanup"/>
+            <!--Remove product and category-->
+            <deleteData createDataKey="createCategory" stepKey="deleteCategory"/>
+            <deleteData createDataKey="createSimpleProduct" stepKey="deleteSimpleProduct"/>
+            <!--Delete created user-->
+            <actionGroup ref="AdminDeleteUserActionGroup" stepKey="deleteCustomAdminUser">
+                <argument name="user" value="admin2"/>
+            </actionGroup>
+            <!--Delete created restricted role-->
+            <actionGroup ref="AdminDeleteUserRoleActionGroup" stepKey="deleteRestrictedRole">
+                <argument name="roleName" value="{{limitedRole.rolename}}"/>
+            </actionGroup>
+            <!--Remove new website-->
+            <actionGroup ref="AdminDeleteWebsiteActionGroup" stepKey="deleteSecondWebsite">
+                <argument name="websiteName" value="{{secondCustomWebsite.name}}"/>
+            </actionGroup>
+            <magentoCron groups="index" stepKey="reindex"/>
+            <actionGroup ref="AdminLogoutActionGroup" stepKey="finalLogout"/>
+        </after>
+
+        <!--Find and open product for edit -->
+        <amOnPage url="{{AdminProductIndexPage.url}}" stepKey="goToProductGridPage"/>
+        <actionGroup ref="AdminGridFilterSearchResultsByInput" stepKey="filterSearchResultsForSimpleProduct">
+            <argument name="selector" value="AdminProductGridFilterSection.skuFilter"/>
+            <argument name="value" value="$$createSimpleProduct.product[sku]$$"/>
+        </actionGroup>
+        <actionGroup ref="OpenEditProductOnBackendActionGroup" stepKey="openProductEditPage">
+            <argument name="product" value="$$createSimpleProduct$$"/>
+        </actionGroup>
+        <!--Assign product to custom website save-->
+        <actionGroup ref="AdminAssignProductInWebsiteActionGroup" stepKey="assignProductToSecondWebsite">
+            <argument name="website" value="{{secondCustomWebsite.name}}"/>
+        </actionGroup>
+        <actionGroup ref="SaveProductFormActionGroup" stepKey="saveProduct"/>
+        <!--Open product on storefront and checkout-->
+        <amOnPage url="/$$createSimpleProduct.custom_attributes[url_key]$$.html" stepKey="navigateToProductPageOnStorefront"/>
+        <comment userInput="Qty of 100 is needed to make the product a bestseller" stepKey="commentAboutProductInCart"/>
+        <actionGroup ref="StorefrontEnterProductQuantityAndAddToTheCartActionGroup" stepKey="enterProductQuantityAndAddToTheCart">
+            <argument name="quantity" value="100"/>
+        </actionGroup>
+        <actionGroup ref="StorefrontClickOnMiniCartActionGroup" stepKey="clickMiniCart"/>
+        <click selector="{{StorefrontMinicartSection.goToCheckout}}" stepKey="goToCheckout"/>
+        <waitForElementVisible selector="{{StorefrontCustomerSignInPopupFormSection.email}}" stepKey="waitEmailFieldVisible"/>
+        <fillField selector="{{StorefrontCustomerSignInPopupFormSection.email}}" userInput="{{Simple_US_Customer.email}}" stepKey="fillCustomerEmail"/>
+        <!--Fill out the form with test data and click *Next* button-->
+        <actionGroup ref="LoggedInUserCheckoutFillingShippingSectionActionGroup" stepKey="loggedInUserFillAddressDuringCheckout">
+            <argument name="customerVar" value="Simple_US_Customer" />
+            <argument name="customerAddressVar" value="CustomerAddressSimple" />
+        </actionGroup>
+        <!-- Place order and Assert success message -->
+        <waitForElementVisible selector="{{CheckoutPaymentSection.placeOrder}}" time="30" stepKey="waitForPlaceOrderButton"/>
+        <actionGroup ref="ClickPlaceOrderActionGroup" stepKey="clickOnPlaceOrder"/>
+        <!-- Grab order id -->
+        <grabTextFrom selector="{{CheckoutSuccessMainSection.orderNumber}}" stepKey="grabOrderNumber"/>
+        <!-- Open created order -->
+        <actionGroup ref="AdminOrdersPageOpenActionGroup" stepKey="goToOrdersPage"/>
+        <actionGroup ref="FilterOrderGridByIdActionGroup" stepKey="filterOrdersGridById">
+            <argument name="orderId" value="{$grabOrderNumber}"/>
+        </actionGroup>
+        <click selector="{{AdminDataGridTableSection.firstRow}}" stepKey="clickCreatedOrderInGrid"/>
+        <click selector="{{AdminOrderDetailsMainActionsSection.invoice}}" stepKey="clickInvoiceAction"/>
+        <actionGroup ref="AdminInvoiceClickSubmitActionGroup" stepKey="clickSubmitInvoice"/>
+
+        <actionGroup ref="AdminReloadDashboardDataActionGroup" stepKey="reloadDashboardData" />
+        <see selector="{{AdminDashboardSection.productInBestsellers}}" userInput="$$createSimpleProduct.name$$"  stepKey="seeProductName"/>
+
+        <!--Log out and log in as restricted user-->
+        <actionGroup ref="AdminLogoutActionGroup" stepKey="logoutDefaultUser"/>
+        <actionGroup ref="AdminLoginActionGroup" stepKey="loginAsRestrictedUser">
+            <argument name="username" value="{{admin2.username}}"/>
+            <argument name="password" value="{{admin2.password}}"/>
+        </actionGroup>
+
+        <actionGroup ref="AdminReloadDashboardDataActionGroup" stepKey="reloadDashboardDataForRestrictedAdmin" />
+        <dontSee selector="{{AdminDashboardSection.productInBestsellers}}" userInput="S$$createSimpleProduct.product[sku]$$"  stepKey="dontSeeProductName"/>
+
+        <actionGroup ref="AdminLogoutActionGroup" stepKey="logoutRestrictedUser"/>
+    </test>
+</tests>

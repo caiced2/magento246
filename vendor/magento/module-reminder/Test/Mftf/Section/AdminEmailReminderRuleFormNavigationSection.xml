@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+ /**
+  * Copyright © Magento, Inc. All rights reserved.
+  * See COPYING.txt for license details.
+  */
+-->
+
+<sections xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+          xsi:noNamespaceSchemaLocation="urn:magento:mftf:Page/etc/SectionObject.xsd">
+    <section name="AdminEmailReminderRuleFormNavigationSection">
+        <element name="conditionsTab" type="button" selector="#magento_reminder_rule_tabs_conditions_section" timeout="30"/>
+        <element name="matchedCustomersTab" type="button" selector="#magento_reminder_rule_tabs_matched_customers" timeout="30"/>
+    </section>
+</sections>

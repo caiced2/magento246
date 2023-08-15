@@ -1,0 +1,200 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+ /**
+  * Copyright © Magento, Inc. All rights reserved.
+  * See COPYING.txt for license details.
+  */
+-->
+<tests xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:noNamespaceSchemaLocation="urn:magento:mftf:Test/etc/testSchema.xsd">
+    <test name="DynamicBlockProductFromDifferentWebsiteInsideDynamicBlockShowsOnStageDependingOnSelectedScopeTest">
+        <annotations>
+            <features value="PageBuilder"/>
+            <stories value="Dynamic Block"/>
+            <title value="Product from Different Website Inside Dynamic Block Shows on Stage Depending on Selected Scope"/>
+            <description value="As a product manager I want product visibility on stage to be dependent on the store view scope selected in admin so that I don't get worried that conditions are being applied incorrectly"/>
+            <severity value="BLOCKER"/>
+            <useCaseId value="MC-5373"/>
+            <testCaseId value="MC-11891"/>
+            <group value="pagebuilder"/>
+            <group value="pagebuilder-ee"/>
+            <group value="pagebuilder-dynamic-block"/>
+            <group value="pagebuilder-dynamic-block-content"/>
+            <group value="pagebuilder-storeView"/>
+            <group value="pagebuilder-products"/>
+        </annotations>
+        <before>
+            <magentoCLI command="config:set web/url/use_store 1" stepKey="turnOnStoreUrlUsage"/>
+            <createData entity="customWebsite" stepKey="createCustomWebsite"/>
+            <createData entity="_defaultDynamicBlock" stepKey="createDynamicBlock"/>
+            <createData entity="SimpleSubCategory" stepKey="createCategory"/>
+            <createData entity="SimpleProduct" stepKey="createProduct">
+                <requiredEntity createDataKey="createCategory"/>
+            </createData>
+            <actionGroup ref="AdminLoginActionGroup" stepKey="loginAsAdmin"/>
+            <actionGroup ref="AdminStoreGroupCreateActionGroup" stepKey="createNewStore">
+                <argument name="Website" value="customWebsite"/>
+                <argument name="storeGroup" value="customStoreGroup"/>
+            </actionGroup>
+            <actionGroup ref="AdminCreateStoreViewActionGroup" stepKey="createCustomStoreView">
+                <argument name="StoreGroup" value="customStoreGroup"/>
+                <argument name="customStore" value="customStore"/>
+            </actionGroup>
+            <magentoCron groups="index" stepKey="reindex"/>
+        </before>
+        <after>
+            <magentoCLI command="config:set web/url/use_store 0" stepKey="turnOffStoreUrlUsage"/>
+            <deleteData createDataKey="createCategory" stepKey="deleteCategory"/>
+            <deleteData createDataKey="createProduct" stepKey="deleteProduct"/>
+            <actionGroup ref="DeleteCustomWebsiteActionGroup" stepKey="deleteWebsite">
+                <argument name="websiteName" value="$createCustomWebsite.website[name]$"/>
+            </actionGroup>
+            <magentoCron groups="index" stepKey="reindex"/>
+            <actionGroup ref="DeleteBannerActionGroup" stepKey="deleteDynamicBlock">
+                <argument name="bannerName" value="$$createDynamicBlock.name$$"/>
+            </actionGroup>
+            <actionGroup ref="AdminLogoutActionGroup" stepKey="logoutOfAdmin"/>
+        </after>
+        <!-- Create product and assign to created store view -->
+        <comment userInput="Assign product to created store view" stepKey="commentAssignProductToCreatedStoreView"/>
+        <actionGroup ref="NavigateToCreatedProductEditPageActionGroup" stepKey="navigateToCreatedProductEditPage">
+            <argument name="product" value="$$createProduct$$"/>
+        </actionGroup>
+        <actionGroup ref="SelectProductInWebsitesActionGroup" stepKey="setWebsite2">
+            <argument name="website" value="$createCustomWebsite.website[name]$"/>
+        </actionGroup>
+        <uncheckOption selector="{{ProductInWebsitesSection.website('Main Website')}}" stepKey="uncheckMainWebsite"/>
+        <actionGroup ref="SaveProductFormActionGroup" stepKey="saveProductForm"/>
+        <!-- Create dynamic block with product inside -->
+        <comment userInput="Create dynamic block with product inside" stepKey="commentCreateDynamicBlockWithProductInside"/>
+        <actionGroup ref="NavigateToCreatedDynamicBlockActionGroup" stepKey="navigateToCreatedCMSBlockPage">
+            <argument name="Banner" value="$$createDynamicBlock$$"/>
+        </actionGroup>
+        <actionGroup ref="switchToPageBuilderStage" stepKey="switchToPageBuilderStage"/>
+        <actionGroup ref="dragContentTypeToStage" stepKey="dragRowToRootContainer">
+            <argument name="contentType" value="PageBuilderRowContentType"/>
+            <argument name="containerTargetType" value="PageBuilderRootContainerContentType"/>
+        </actionGroup>
+        <actionGroup ref="expandPageBuilderPanelMenuSection" stepKey="expandPageBuilderPanelGroup">
+            <argument name="contentType" value="PageBuilderProductsContentType"/>
+        </actionGroup>
+        <actionGroup ref="dragContentTypeToStage" stepKey="dragContentTypeToStage">
+            <argument name="contentType" value="PageBuilderProductsContentType"/>
+        </actionGroup>
+        <actionGroup ref="openPageBuilderEditPanel" stepKey="openEditAfterDrop">
+            <argument name="contentType" value="PageBuilderProductsContentType"/>
+        </actionGroup>
+        <actionGroup ref="chooseVisualSelectOption" stepKey="chooseSelectProductsBy">
+            <argument name="property" value="PageBuilderProductsSelectProductsByCondition"/>
+        </actionGroup>
+        <actionGroup ref="addConditionToProductConditions" stepKey="addCategory">
+            <argument name="conditionInput" value="$$createCategory.id$$"/>
+        </actionGroup>
+        <actionGroup ref="saveEditPanelSettings" stepKey="saveEditPanelSettings">
+            <argument name="baseContent" value="{{AdminBannerBasicActionSection.Save}}"/>
+        </actionGroup>
+        <!-- Validate Stage before save -->
+        <comment userInput="Validate Stage before save" stepKey="commentValidateStageBeforeSave"/>
+        <actionGroup ref="validateProductCountInProducts" stepKey="validateProductsCountStage">
+            <argument name="page" value="ProductsOnStage"/>
+            <argument name="count" value="1"/>
+        </actionGroup>
+        <actionGroup ref="validateProductInProducts" stepKey="validateProductsStage">
+            <argument name="product" value="SimpleProduct"/>
+        </actionGroup>
+        <actionGroup ref="exitPageBuilderFullScreen" stepKey="exitPageBuilderFullScreen"/>
+        <actionGroup ref="SaveAndContinueDynamicBlockActionGroup" stepKey="saveDynamicBlockForm"/>
+        <!-- Validate Stage -->
+        <comment userInput="Validate Stage after Save" stepKey="commentValidateStageAfterSave"/>
+        <actionGroup ref="validateProductCountInProducts" stepKey="validateProductsCountStageAfterSave">
+            <argument name="page" value="ProductsOnStage"/>
+            <argument name="count" value="1"/>
+        </actionGroup>
+        <actionGroup ref="validateProductInProducts" stepKey="validateProductsStageAfterSave">
+            <argument name="product" value="SimpleProduct"/>
+        </actionGroup>
+        <!-- Change scope to Default Store View -->
+        <comment userInput="Change scope to Default Store View" stepKey="commentChangeScopeToDefaultStoreView"/>
+        <scrollToTopOfPage stepKey="scrollToTopOfDynamicBlockPage"/>
+        <actionGroup ref="ChangeDynamicBlockScopeActionGroup" stepKey="changeScopeToDefault"/>
+        <!-- Validate Stage in Default Store View scope -->
+        <comment userInput="Validate Stage in Default Store View scope" stepKey="commentValidateStageInDefaultStoreViewScope"/>
+        <waitForElement selector="{{ProductsOnStage.emptyProductsPlaceholder('1')}}" stepKey="waitForEmptyProductsPlaceholder" />
+        <waitForText userInput="{{PageBuilderProductsMessage.noProductsFound}}" selector="{{ProductsOnStage.emptyProductsPlaceholder('1')}}" stepKey="seeEmptyProductsPlaceholder"/>
+        <!-- Change scope to the new store view we created -->
+        <comment userInput="Change scope to the new store view we created" stepKey="commentChangeScopeToNewStoreView"/>
+        <actionGroup ref="ChangeDynamicBlockScopeActionGroup" stepKey="changeScopeToNewStoreView">
+            <argument name="scope" value="customStore.name"/>
+        </actionGroup>
+        <!-- Validate Stage in scope of new store view we created -->
+        <comment userInput="Validate Stage in scope of new store view we created" stepKey="commentValidateStageInNewScope"/>
+        <actionGroup ref="validateProductCountInProducts" stepKey="validateProductsCountStageAfterSaveInNewScope">
+            <argument name="page" value="ProductsOnStage"/>
+            <argument name="count" value="1"/>
+        </actionGroup>
+        <actionGroup ref="validateProductInProducts" stepKey="validateProductsStageAfterSaveInNewScope">
+            <argument name="product" value="SimpleProduct"/>
+        </actionGroup>
+        <!-- Add dynamic block with product inside to CMS Page -->
+        <comment userInput="Add dynamic block with product inside to CMS Page" stepKey="commentAddDynamicBlockWithProductInsideToCmsPage"/>
+        <actionGroup ref="navigateToAPageWithPageBuilder" stepKey="navigateToAPageWithPageBuilder"/>
+        <actionGroup ref="addPageBuilderPageTitle" stepKey="enterPageTitle">
+            <argument name="contentType" value="PageBuilderDynamicBlockContentType"/>
+        </actionGroup>
+        <actionGroup ref="switchToPageBuilderStage" stepKey="switchToPageBuilderStage2"/>
+        <actionGroup ref="dragContentTypeToStage" stepKey="dragRowToRootContainer2">
+            <argument name="contentType" value="PageBuilderRowContentType"/>
+            <argument name="containerTargetType" value="PageBuilderRootContainerContentType"/>
+        </actionGroup>
+        <actionGroup ref="expandPageBuilderPanelMenuSection" stepKey="expandPageBuilderPanelGroup2">
+            <argument name="contentType" value="PageBuilderDynamicBlockContentType"/>
+        </actionGroup>
+        <actionGroup ref="dragContentTypeToStage" stepKey="dragBlockContentTypeToStage">
+            <argument name="contentType" value="PageBuilderDynamicBlockContentType"/>
+        </actionGroup>
+        <actionGroup ref="openPageBuilderEditPanel" stepKey="openEditAfterDrop2">
+            <argument name="contentType" value="PageBuilderDynamicBlockContentType"/>
+        </actionGroup>
+        <actionGroup ref="searchAndSelectDynamicBlockInGrid" stepKey="searchAndSelectDynamicBlockInGrid">
+            <argument name="block" value="$$createDynamicBlock$$"/>
+        </actionGroup>
+        <actionGroup ref="saveEditPanelSettings" stepKey="saveEditPanelSettings2"/>
+        <!-- Validate CMS Page Stage Before Save -->
+        <comment userInput="Validate CMS Page Stage Before Save" stepKey="commentValidateCMSPageStageBeforeSave"/>
+        <actionGroup ref="validateProductCountInProducts" stepKey="validateProductsCountStage2">
+            <argument name="page" value="ProductsOnStorefront"/>
+            <argument name="count" value="1"/>
+        </actionGroup>
+        <actionGroup ref="validateProductInProducts" stepKey="validateProductsStage2">
+            <argument name="page" value="ProductsOnStorefront"/>
+            <argument name="product" value="SimpleProduct"/>
+        </actionGroup>
+        <actionGroup ref="exitPageBuilderFullScreen" stepKey="exitPageBuilderFullScreen2"/>
+        <actionGroup ref="SaveAndContinueEditCmsPageActionGroup" stepKey="saveAndContinueEditCmsPage2"/>
+        <actionGroup ref="switchToPageBuilderStage" stepKey="switchToPageBuilderStage3"/>
+        <!-- Validate CMS Page Stage After Save -->
+        <comment userInput="Validate CMS Page Stage After Save" stepKey="commentValidateCMSPageStageAfterSave"/>
+        <actionGroup ref="validateProductCountInProducts" stepKey="validateProductsCountStage3">
+            <argument name="page" value="ProductsOnStorefront"/>
+            <argument name="count" value="1"/>
+        </actionGroup>
+        <actionGroup ref="validateProductInProducts" stepKey="validateProductsStage3">
+            <argument name="page" value="ProductsOnStorefront"/>
+            <argument name="product" value="SimpleProduct"/>
+        </actionGroup>
+        <!-- Validate Storefront with incorrect store view -->
+        <comment userInput="Validate Storefront with incorrect Store View does not show product" stepKey="commentValidateStorefrontWithIncorrectStoreView"/>
+        <actionGroup ref="navigateToStoreFront" stepKey="navigateToStoreFront">
+            <argument name="contentType" value="PageBuilderDynamicBlockContentType"/>
+        </actionGroup>
+        <seeNumberOfElements selector="{{ProductsOnStorefront.product('1')}}" userInput="0" stepKey="seeZeroProducts"/>
+        <!-- Validate Storefront with correct store view -->
+        <comment userInput="Validate Storefront with correct Store View shows product" stepKey="commentValidateStorefrontWithCorrectStoreView"/>
+        <wait time="30" stepKey="waitForBanners"/>
+        <actionGroup ref="navigateToStoreFrontWithStoreView" stepKey="navigateToStoreFrontWithStoreView">
+            <argument name="contentType" value="PageBuilderDynamicBlockContentType"/>
+            <argument name="storeView" value="customStore"/>
+        </actionGroup>
+        <seeNumberOfElements selector="{{ProductsOnStorefront.product('1')}}" userInput="1" stepKey="seeOneProduct"/>
+    </test>
+</tests>

@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+ /**
+  * Copyright © Magento, Inc. All rights reserved.
+  * See COPYING.txt for license details.
+  */
+-->
+<actionGroups xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+              xsi:noNamespaceSchemaLocation="urn:magento:mftf:Test/etc/actionGroupSchema.xsd">
+    <actionGroup name="VerifyStagingUpdateAndIncludedProductActionGroup">
+        <arguments>
+            <argument name="includedProduct"/>
+            <argument name="stagingUpdate"/>
+            <argument name="startDate" type="string"/>
+            <argument name="endDate" defaultValue="" type="string"/>
+            <argument name="productPosition" defaultValue="1" type="string"/>
+        </arguments>
+        <click selector="{{AdminContentStagingDashboardSection.stagingEventsActions(stagingUpdate.updateName, 'View/Edit')}}" stepKey="clickViewEditButton"/>
+        <seeInField selector="{{AdminStagingEditSection.updateName}}" userInput="{{stagingUpdate.updateName}}" stepKey="seeUpdateName"/>
+        <seeInField selector="{{AdminStagingEditSection.updateDescription}}" userInput="{{stagingUpdate.updateDescription}}" stepKey="seeUpdateDescription"/>
+        <seeInField selector="{{AdminStagingEditSection.startDate}}" userInput="{{startDate}}" stepKey="seeUpdateStartDate"/>
+        <seeInField selector="{{AdminStagingEditSection.endDate}}" userInput="{{endDate}}" stepKey="seeUpdateEndDate"/>
+        <scrollTo selector="{{AdminStagingEditSection.productsTab}}" stepKey="scrollToProductsTab"/>
+        <click selector="{{AdminStagingEditSection.productsTab}}" stepKey="clickProductsTab"/>
+        <waitForPageLoad stepKey="waitForLoad"/>
+        <scrollTo selector="{{AdminProductGridSection.productGridNameProduct(includedProduct.name)}}" stepKey="scrollToUpdateProduct"/>
+        <see selector="{{AdminProductGridSection.productGridNameProduct(includedProduct.name)}}" userInput="{{includedProduct.name}}"  stepKey="seeUpdateProduct"/>
+        <see selector="{{AdminStagingEditSection.selectButton(productPosition)}}" userInput="Select" stepKey="seeSelectForProduct"/>
+        <click selector="{{AdminStagingEditSection.selectButton(productPosition)}}" stepKey="clickSelect"/>
+        <see selector="{{AdminStagingEditSection.viewEditButton}}" userInput="View/Edit" stepKey="seeProductViewEditButton"/>
+    </actionGroup>
+</actionGroups>

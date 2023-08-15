@@ -1,0 +1,15 @@
+<?xml version="1.0"?>
+<!--
+/**
+ * Copyright © Magento, Inc. All rights reserved.
+ * See COPYING.txt for license details.
+ */
+-->
+<config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="urn:magento:framework:Event/etc/events.xsd">
+    <event name="collect_totals_failed_items">
+        <observer name="magento_advancedcheckout" instance="Magento\AdvancedCheckout\Model\Observer\CollectTotalsFailedItems" />
+    </event>
+    <event name="view_block_abstract_to_html_before">
+        <observer name="magento_advancedcheckout" instance="Magento\AdvancedCheckout\Model\Observer\AddCartLink" />
+    </event>
+</config>

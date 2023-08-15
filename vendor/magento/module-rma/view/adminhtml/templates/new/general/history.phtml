@@ -1,0 +1,38 @@
+<?php
+/**
+ * Copyright © Magento, Inc. All rights reserved.
+ * See COPYING.txt for license details.
+ */
+
+/** @var $block \Magento\Rma\Block\Adminhtml\Rma\Edit\Tab\General\History" */
+?>
+<div class="admin__page-section-item order-comments-history" id="rma-history-block">
+    <div class="admin__page-section-item-title">
+        <span class="title"><?= $block->escapeHtml(__('RMA History')) ?></span>
+    </div>
+    <div class="admin__page-section-item-content">
+        <div id="history_form" class="rma-history-form edit-order-comments">
+            <div class="admin__field">
+                <label class="admin__field-label" for="history_comment">
+                    <span><?= $block->escapeHtml(__('Comment Text')) ?></span></label>
+                <div class="admin__field-control">
+                    <textarea name="comment[comment]"
+                        class="admin__control-textarea"
+                        rows="3"
+                        cols="5"
+                        id="history_comment"></textarea>
+                </div>
+            </div>
+            <div class="admin__field admin__field-option">
+                <input name="comment[is_visible_on_front]"
+                       class="admin__control-checkbox"
+                       type="checkbox"
+                       id="history_visible"
+                       value="1" />
+                <label class="normal admin__field-label"
+                       for="history_visible">
+                    <span><?= $block->escapeHtml(__('Visible on Storefront')) ?></span></label>
+            </div>
+        </div>
+    </div>
+</div>

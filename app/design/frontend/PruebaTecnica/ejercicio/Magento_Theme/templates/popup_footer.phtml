@@ -1,0 +1,27 @@
+<?php
+/** @var \Magento\Theme\Block\Template $block */
+?>
+
+<a class="action" data-trigger="trigger">
+    <span data-bind="i18n: 'Information heinsohn'"></span>
+</a>
+<div data-bind="mageInit: {
+        'Magento_Ui/js/modal/modal':{
+            'type': 'popup',
+            'title': 'Heinsohn',
+            'trigger': '[data-trigger=trigger]',
+            'responsive': true,
+            'buttons': [{
+                text: jQuery.mage.__('Cerrar'),
+                class: 'action'
+            }]
+        }}">
+    <div class="content">       
+        <?php
+        echo $this->getLayout()
+        ->createBlock('Magento\Cms\Block\Block')
+        ->setBlockId('block_prueba')
+        ->toHtml();
+        ?>
+    </div>
+</div>

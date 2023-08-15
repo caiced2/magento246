@@ -1,0 +1,41 @@
+# Copyright © Magento, Inc. All rights reserved.
+# See COPYING.txt for license details.
+
+type Query {
+    dynamicBlocks(
+        input: DynamicBlocksFilterInput @doc(description: "Defines the filter for returning matching dynamic blocks.")
+        pageSize: Int = 20 @doc(description: "The maximum number of results to return at once. The default is 20.")
+        currentPage: Int = 1 @doc(description: "The page of results to return. The default is 1."),
+    ): DynamicBlocks! @resolver(class: "Magento\\BannerGraphQl\\Model\\Resolver\\DynamicBlocks") @doc(description: "Return a list of dynamic blocks filtered by type, location, or UIDs.")
+}
+
+type DynamicBlock @doc(description: "Contains a single dynamic block.") {
+    uid: ID! @doc(description: "The unique ID of a `DynamicBlock` object.")
+    content: ComplexTextValue! @doc(description: "The renderable HTML code of the dynamic block.")
+}
+
+type DynamicBlocks @doc(description: "Contains an array of dynamic blocks.") {
+    items: [DynamicBlock]! @doc(description: "An array containing individual dynamic blocks.")
+    page_info: SearchResultPageInfo @doc(description: "Metadata for pagination rendering.")
+    total_count: Int! @doc(description: "The number of returned dynamic blocks.")
+}
+
+input DynamicBlocksFilterInput @doc(description: "Defines the dynamic block filter. The filter can identify the block type, location and IDs to return.") {
+    type: DynamicBlockTypeEnum! @doc(description: "A value indicating the type of dynamic block to filter on.")
+    locations: [DynamicBlockLocationEnum!] @doc(description: "An array indicating the locations the dynamic block can be placed.")
+    dynamic_block_uids: [ID!] @doc(description: "An array of dynamic block UIDs to filter on.")
+}
+
+enum DynamicBlockTypeEnum @doc(description: "Indicates the selected Dynamic Blocks Rotator inline widget.") {
+    SPECIFIED
+    CART_PRICE_RULE_RELATED
+    CATALOG_PRICE_RULE_RELATED
+}
+
+enum DynamicBlockLocationEnum @doc(description: "Indicates the locations the dynamic block can be placed. If this field is not specified, the query returns all locations.") {
+    CONTENT
+    HEADER
+    FOOTER
+    LEFT
+    RIGHT
+}

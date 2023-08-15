@@ -1,0 +1,27 @@
+<?xml version="1.0"?>
+<!--
+/**
+ * Copyright © Magento, Inc. All rights reserved.
+ * See COPYING.txt for license details.
+ */
+-->
+<page xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="urn:magento:framework:View/Layout/etc/page_configuration.xsd">
+    <body>
+        <referenceContainer name="page.main.actions">
+            <block class="Magento\Backend\Block\Store\Switcher" name="scope_switcher" template="Magento_Backend::store/switcher.phtml">
+                <arguments>
+                    <argument name="get_data_from_request" xsi:type="string">1</argument>
+                    <argument name="switch_websites" xsi:type="string">1</argument>
+                    <argument name="switch_store_views" xsi:type="string">1</argument>
+                    <argument name="default_selection_name" xsi:type="string" translate="true">All Store Views</argument>
+                </arguments>
+            </block>
+        </referenceContainer>
+        <referenceContainer name="content">
+            <block class="Magento\VersionsCms\Block\Adminhtml\Cms\Hierarchy\Edit" name="magento_versionscms_hierarchy_edit_tree">
+                <block class="Magento\VersionsCms\Block\Adminhtml\Cms\Hierarchy\Manage" name="hierarchy_manage" template="Magento_VersionsCms::hierarchy/manage.phtml"/>
+                <block class="Magento\VersionsCms\Block\Adminhtml\Cms\Hierarchy\Edit\Form\Grid" name="cms_page_grid"/>
+            </block>
+        </referenceContainer>
+    </body>
+</page>

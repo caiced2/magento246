@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+/**
+ * Copyright © Magento, Inc. All rights reserved.
+ * See COPYING.txt for license details.
+ */
+-->
+<widgets xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:noNamespaceSchemaLocation="urn:magento:module:Magento_Widget:etc/widget.xsd">
+    <widget id="wishlist_search" class="Magento\MultipleWishlist\Block\Widget\Search" is_email_compatible="false">
+        <label translate="true">Wish List Search</label>
+        <description translate="true">Wish List Search Description</description>
+        <parameters>
+            <parameter name="types" xsi:type="multiselect" required="true" visible="true" sort_order="10"
+                       source_model="Magento\MultipleWishlist\Model\Config\Source\Search">
+                <label translate="true">Quick Search Form Types</label>
+            </parameter>
+            <parameter name="template" xsi:type="select" required="true" visible="true">
+                <label translate="true">Template</label>
+                <options>
+                    <option name="default_template" value="widget/search.phtml" selected="true">
+                        <label translate="true">Wish List Search Template</label>
+                    </option>
+                </options>
+            </parameter>
+        </parameters>
+        <containers>
+            <container name="sidebar.main">
+                <template name="default" value="default_template" />
+            </container>
+            <container name="sidebar.additional">
+                <template name="default" value="default_template" />
+            </container>
+        </containers>
+    </widget>
+</widgets>

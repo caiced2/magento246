@@ -1,0 +1,21 @@
+<?php
+/**
+ * Copyright © Magento, Inc. All rights reserved.
+ * See COPYING.txt for license details.
+ */
+
+/** @var $block \Magento\GiftWrapping\Block\Product\Info */
+?>
+<?php if ($block->getGiftWrappingInfo()) : ?>
+    <dl class="gift-wrapping">
+        <dt class="title"><?= $block->escapeHtml(__('Gift Wrapping')) ?></dt>
+        <dd class="content">
+            <?php if ($block->getGiftWrappingInfo()->getImageUrl()) : ?>
+            <img src="<?= $block->escapeUrl($block->getGiftWrappingInfo()->getImageUrl()) ?>"
+                 alt="<?= $block->escapeHtmlAttr($block->getGiftWrappingInfo()->getDesign()) ?>"
+                title="<?= $block->escapeHtmlAttr($block->getGiftWrappingInfo()->getDesign()) ?>" />
+            <?php endif ?>
+            <?= $block->escapeHtml($block->getGiftWrappingInfo()->getDesign()) ?>
+        </dd>
+    </dl>
+<?php endif; ?>

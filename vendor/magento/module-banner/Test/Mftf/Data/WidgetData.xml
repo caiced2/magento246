@@ -1,0 +1,82 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+ /**
+  * Copyright © Magento, Inc. All rights reserved.
+  * See COPYING.txt for license details.
+  */
+-->
+
+<entities xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+          xsi:noNamespaceSchemaLocation="urn:magento:mftf:DataGenerator/etc/dataProfileSchema.xsd">
+    <entity name="sampleBannerWidget" type="banner_widget">
+        <data key="title" unique="suffix">Sample Badget</data>
+        <data key="sort_order">0</data>
+        <data key="limit"/>
+        <data key="page"/>
+        <data key="banner_name"/>
+        <data key="visible_in"/>
+        <data key="banner_is_enabled"/>
+        <data key="theme_id">4</data>
+        <requiredEntity type="banner_widget_params">sampleBannerWidgetParams</requiredEntity>
+        <requiredEntity type="banner_widget_ids">sampleBannerWidgetIds</requiredEntity>
+    </entity>
+    <entity name="sampleBannerWidgetParams" type="banner_widget_params">
+        <data key="display_mode"/>
+        <data key="rotate"/>
+        <data key="banner_ids"/>
+        <data key="unique_id" unique="suffix">123</data>
+        <requiredEntity type="banner_widget_types">sampleBannerWidgetType</requiredEntity>
+    </entity>
+    <entity name="sampleBannerWidgetType" type="banner_widget_types">
+        <data key="0">1</data>
+    </entity>
+    <entity name="sampleBannerWidgetIds" type="banner_widget_ids">
+        <data key="from"/>
+        <data key="to"/>
+    </entity>
+    <entity name="DynamicBlockRotateWidget" type="widget">
+        <data key="type">Dynamic Blocks Rotator</data>
+        <data key="design_theme">Magento Luma</data>
+        <data key="name" unique="suffix">TestWidget</data>
+        <array key="store_ids">
+            <item>All Store Views</item>
+        </array>
+        <data key="sort_order">0</data>
+        <data key="display_on">Specified Page</data>
+        <data key="page">Shopping Cart</data>
+        <data key="container">After Page Header Top</data>
+        <data key="template">Dynamic Block Template</data>
+    </entity>
+    <entity name="DynamicBlockRotateWidgetOptions" type="widget">
+        <data key="blocks_to_display">Specified Dynamic Blocks</data>
+        <data key="restrict_types">-- None --</data>
+        <data key="rotation_mode">Display all instead of rotating</data>
+    </entity>
+    <entity name="DynamicBlockRotateWidgetOptions" type="widget">
+        <data key="blocks_to_display">Specified Dynamic Blocks</data>
+        <data key="restrict_types">-- None --</data>
+        <data key="rotation_mode">Display all instead of rotating</data>
+    </entity>
+    <entity name="DynamicBlockRotateWidgetOptionsWithCatalogRule" type="widget">
+        <data key="blocks_to_display">Catalog Price Rule Related</data>
+        <data key="restrict_types">-- None --</data>
+        <data key="rotation_mode">Display all instead of rotating</data>
+    </entity>
+    <entity name="DynamicBlockRotateWidgetWithCatalogRule" extends="DynamicBlockRotateWidget">
+        <data key="page">Catalog Product View (Any)</data>
+    </entity>
+    <entity name="BannersNotSpecifiedDynamicBlocksRotatorWidget" type="widget">
+        <data key="type">Dynamic Blocks Rotator</data>
+        <data key="design_theme">Magento Luma</data>
+        <data key="name" unique="suffix">Specified Blocks Widget</data>
+        <array key="store_ids">
+            <item>All Store Views</item>
+        </array>
+        <data key="sort_order">0</data>
+        <data key="display_mode">Specified Dynamic Blocks</data>
+        <data key="restrict_type">-- None --</data>
+        <data key="display_on">All Pages</data>
+        <data key="container">After Page Header Top</data>
+        <data key="template">Dynamic Block Template</data>
+    </entity>
+</entities>

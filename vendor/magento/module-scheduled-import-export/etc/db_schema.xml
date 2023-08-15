@@ -1,0 +1,38 @@
+<?xml version="1.0"?>
+<!--
+/**
+ * Copyright © Magento, Inc. All rights reserved.
+ * See COPYING.txt for license details.
+ */
+-->
+<schema xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:noNamespaceSchemaLocation="urn:magento:framework:Setup/Declaration/Schema/etc/schema.xsd">
+    <table name="magento_scheduled_operations" resource="default" engine="innodb"
+           comment="Scheduled Import/Export Table">
+        <column xsi:type="int" name="id" unsigned="true" nullable="false" identity="true" comment="Id"/>
+        <column xsi:type="varchar" name="name" nullable="false" length="255" comment="Operation Name"/>
+        <column xsi:type="varchar" name="operation_type" nullable="false" length="50" comment="Operation"/>
+        <column xsi:type="varchar" name="entity_type" nullable="false" length="50" comment="Entity"/>
+        <column xsi:type="varchar" name="behavior" nullable="true" length="15" comment="Behavior"/>
+        <column xsi:type="varchar" name="start_time" nullable="false" length="10" comment="Start Time"/>
+        <column xsi:type="varchar" name="freq" nullable="false" length="1" comment="Frequency"/>
+        <column xsi:type="smallint" name="force_import" unsigned="false" nullable="false" identity="false"
+                default="0" comment="Force Import"/>
+        <column xsi:type="text" name="file_info" nullable="true" comment="File Information"/>
+        <column xsi:type="varchar" name="details" nullable="true" length="255" comment="Operation Details"/>
+        <column xsi:type="text" name="entity_attributes" nullable="true" comment="Entity Attributes"/>
+        <column xsi:type="smallint" name="status" unsigned="false" nullable="false" identity="false"
+                comment="Status"/>
+        <column xsi:type="smallint" name="is_success" unsigned="false" nullable="false" identity="false"
+                default="2" comment="Is Success"/>
+        <column xsi:type="timestamp" name="last_run_date" on_update="false" nullable="true" comment="Last Run Date"/>
+        <column xsi:type="varchar" name="email_receiver" nullable="false" length="150" comment="Email Receiver"/>
+        <column xsi:type="varchar" name="email_sender" nullable="false" length="150" comment="Email Receiver"/>
+        <column xsi:type="varchar" name="email_template" nullable="false" length="250" comment="Email Template"/>
+        <column xsi:type="varchar" name="email_copy" nullable="true" length="255" comment="Email Copy"/>
+        <column xsi:type="varchar" name="email_copy_method" nullable="false" length="10" comment="Email Copy Method"/>
+        <constraint xsi:type="primary" referenceId="PRIMARY">
+            <column name="id"/>
+        </constraint>
+    </table>
+</schema>

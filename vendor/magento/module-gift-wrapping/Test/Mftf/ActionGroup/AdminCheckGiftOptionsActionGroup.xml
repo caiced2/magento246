@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+ /**
+  * Copyright © Magento, Inc. All rights reserved.
+  * See COPYING.txt for license details.
+  */
+-->
+
+<actionGroups xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+              xsi:noNamespaceSchemaLocation="urn:magento:mftf:Test/etc/actionGroupSchema.xsd">
+    <actionGroup name="AdminCheckGiftOptionsActionGroup" extends="FilterOrderGridByIdActionGroup">
+        <arguments>
+            <argument name="orderId" type="string"/>
+            <argument name="productName" type="string"/>
+            <argument name="expectedGiftMessage" type="string" defaultValue="Gift message for the item"/>
+            <argument name="expectedGiftWrapping" type="string" defaultValue="Test Design"/>
+        </arguments>
+        <click selector="{{AdminDataGridTableSection.firstRow}}" after="clickOrderApplyFilters" stepKey="openOrderViewPage"/>
+        <waitForPageLoad after="openOrderViewPage" stepKey="waitForOrderViewPageOpened"/>
+        <click selector="{{AdminOrderGiftSection.orderItemGiftOptionsLink(productName)}}" stepKey="clickGiftOptionsLink"/>
+        <waitForPageLoad stepKey="waitForGiftOptionsLoad"/>
+
+        <seeInField selector="{{AdminOrderGiftSection.orderItemGiftMessage}}" userInput="{{expectedGiftMessage}}" stepKey="checkGiftMessage"/>
+        <grabTextFrom selector="{{AdminOrderGiftOptionsConfigureSection.itemGiftWrappingDesignName}}" stepKey="actualGiftWrapping"/>
+        <assertStringContainsString stepKey="checkGiftWrapping">
+            <expectedResult type="string">{{expectedGiftWrapping}}</expectedResult>
+            <actualResult type="variable">actualGiftWrapping</actualResult>
+        </assertStringContainsString>
+    </actionGroup>
+</actionGroups>

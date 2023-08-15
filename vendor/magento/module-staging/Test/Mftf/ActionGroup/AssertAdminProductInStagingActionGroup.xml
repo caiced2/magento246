@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+ /**
+  * Copyright © Magento, Inc. All rights reserved.
+  * See COPYING.txt for license details.
+  */
+-->
+
+<actionGroups xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+              xsi:noNamespaceSchemaLocation="urn:magento:mftf:Test/etc/actionGroupSchema.xsd">
+    <actionGroup name="AssertAdminProductInStagingActionGroup">
+        <annotations>
+            <description>Admin assert product name and sku in staging</description>
+        </annotations>
+        <arguments>
+            <argument name="productName" type="string" defaultValue="{{_defaultProduct.name}}"/>
+            <argument name="productSku" type="string" defaultValue="{{_defaultProduct.sku}}"/>
+        </arguments>
+        <see selector="{{AdminStagingEditSection.productNameInProductsTab}}" userInput="{{productName}}" stepKey="assertProductNameInProductTab"/>
+        <see selector="{{AdminStagingEditSection.productSKUInProductsTab}}" userInput="{{productSku}}" stepKey="assertProductSKUInProductTab"/>
+    </actionGroup>
+</actionGroups>

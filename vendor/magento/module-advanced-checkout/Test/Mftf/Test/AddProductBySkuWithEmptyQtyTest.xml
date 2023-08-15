@@ -1,0 +1,105 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+/**
+ * Copyright © Magento, Inc. All rights reserved.
+ * See COPYING.txt for license details.
+ */
+-->
+
+<tests xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xsi:noNamespaceSchemaLocation="urn:magento:mftf:Test/etc/testSchema.xsd">
+    <test name="AddProductBySkuWithEmptyQtyTest">
+        <annotations>
+            <features value="AdvancedCheckout"/>
+            <stories value="MAGETWO-91596: Making order in admin with grouped product by adding it by sku with empty qty field leads to unability to order"/>
+            <title value="Updating grouped product after adding it by sku with empty qty"/>
+            <description value="Updating grouped product after adding it by sku with empty qty"/>
+            <severity value="AVERAGE"/>
+            <testCaseId value="MAGETWO-94388"/>
+            <group value="GroupedProduct"/>
+            <group value="AdvancedCheckout"/>
+        </annotations>
+
+        <before>
+            <createData entity="_defaultCategory" stepKey="createCategory"/>
+            <createData entity="ApiSimpleProduct" stepKey="createProductOne">
+                <requiredEntity createDataKey="createCategory"/>
+            </createData>
+            <createData entity="_defaultProduct" stepKey="createProductTwo">
+                <requiredEntity createDataKey="createCategory"/>
+            </createData>
+            <createData entity="Simple_US_Customer" stepKey="createCustomer"/>
+            <!--Log In-->
+            <actionGroup ref="AdminLoginActionGroup" stepKey="login"/>
+        </before>
+
+        <after>
+            <deleteData createDataKey="createProductOne" stepKey="deleteProductOne"/>
+            <deleteData createDataKey="createProductTwo" stepKey="deleteProductTwo"/>
+            <deleteData createDataKey="createCategory" stepKey="deleteCategory"/>
+            <deleteData createDataKey="createCustomer" stepKey="deleteCustomer"/>
+            <actionGroup ref="AdminLogoutActionGroup" stepKey="logout"/>
+        </after>
+
+        <!-- Create a grouped product, which consists of two products with default Qty = 0-->
+        <amOnPage url="{{AdminProductIndexPage.url}}" stepKey="amOnProductList"/>
+        <waitForPageLoad stepKey="waitForProductList"/>
+        <click selector="{{AdminProductGridActionSection.addProductToggle}}" stepKey="toggleAddProductButton"/>
+        <click selector="{{AdminProductGridActionSection.addGroupedProduct}}" stepKey="clickAddGroupedProduct"/>
+        <fillField selector="{{AdminProductFormSection.productName}}" userInput="{{_defaultProduct.name}}" stepKey="fillProductName"/>
+        <fillField selector="{{AdminProductFormSection.productSku}}" userInput="{{_defaultProduct.sku}}" stepKey="fillProductSku"/>
+        <conditionalClick selector="{{AdminProductFormGroupedProductsSection.toggleGroupedProduct}}" dependentSelector="{{AdminProductFormGroupedProductsSection.addProductsToGroup}}" visible="false" stepKey="openGroupedProductsSection"/>
+        <scrollTo selector="{{AdminProductFormGroupedProductsSection.addProductsToGroup}}" stepKey="scrollToAddProductsToGroup"/>
+        <click selector="{{AdminProductFormGroupedProductsSection.addProductsToGroup}}" stepKey="clickAddProductsToGroup"/>
+        <waitForElementVisible selector="{{AdminAddProductsToGroupPanel.filters}}" stepKey="waitForGroupedProductModal"/>
+        <actionGroup ref="FilterProductGridBySku2ActionGroup" stepKey="filterGroupedProducts">
+            <argument name="sku" value="api-simple-product"/>
+        </actionGroup>
+        <checkOption selector="{{AdminAddProductsToGroupPanel.nThCheckbox('0')}}" stepKey="checkFilterResult1"/>
+        <actionGroup ref="FilterProductGridBySku2ActionGroup" stepKey="filterGroupedProductsSecond">
+            <argument name="sku" value="$$createProductTwo.sku$$"/>
+        </actionGroup>
+        <checkOption selector="{{AdminAddProductsToGroupPanel.nThCheckbox('0')}}" stepKey="checkFilterResult2"/>
+        <click selector="{{AdminAddProductsToGroupPanel.addSelectedProducts}}" stepKey="clickAddSelectedGroupProducts"/>
+        <click selector="{{AdminProductFormActionSection.saveButton}}" stepKey="clickSaveProduct"/>
+        <see selector="You saved the product" stepKey="seeConfigurableSaveConfirmation"/>
+
+        <!--Proceed to Admin > SALES > Orders > Click on Create new Order button-->
+        <amOnPage stepKey="goToNewOrderPage" url="{{AdminOrderCreatePage.url}}"/>
+        <waitForPageLoad stepKey="waitForCustomerGridLoad"/>
+
+        <!--Select a customer account from the table.-->
+        <fillField userInput="$$createCustomer.email$$" selector="{{AdminOrderCustomersGridSection.emailInput}}" stepKey="filterEmail"/>
+        <click selector="{{AdminOrderCustomersGridSection.apply}}" stepKey="applyFilter"/>
+        <waitForPageLoad stepKey="waitForFilteredCustomerGridLoad"/>
+        <click selector="{{AdminOrderCustomersGridSection.firstRow}}" stepKey="clickOnCustomer"/>
+        <waitForPageLoad stepKey="waitForCreateOrderPageLoad" />
+
+        <!--Click on "Add products by SKU" button > Type SKU > And add it to order without qty value-->
+        <click selector="{{AdminOrderFormItemsOrderedSection.addProductsBySku}}" stepKey="clickAddProductsBySKUButton"/>
+        <waitForElementVisible stepKey="waitForElementVisible" selector="{{AdminOrderFormItemsSection.skuNumber('0')}}"/>
+        <fillField selector="{{AdminOrderFormItemsSection.skuNumber('0')}}" stepKey="typeCreatedProductGroupSKU" userInput="{{_defaultProduct.sku}}"/>
+        <pressKey selector="{{AdminOrderFormItemsSection.skuNumber('0')}}" parameterArray="[\Facebook\WebDriver\WebDriverKeys::ENTER]" stepKey="pressKey2"/>
+
+        <waitForElementVisible stepKey="waitForConfigureButtonBySkuAppeared" selector="{{AdminOrderFormItemsOrderedSection.configureButtonBySku}}"/>
+        <see userInput="You need to choose options for your item." stepKey="seeInformationMessage"/>
+
+        <click selector="{{AdminOrderFormItemsOrderedSection.configureButtonBySku}}" stepKey="clickConfigureButtonBySKUButton"/>
+
+        <waitForElementVisible stepKey="waitForConfigureProductFrameVisible" selector="{{AdminOrderFormItemsOrderedSection.configureProductOk}}"/>
+        <fillField selector="{{AdminOrderFormItemsOrderedSection.configureProductQtyField('1')}}" stepKey="typeConfigureProductFieldOne" userInput="1"/>
+        <fillField selector="{{AdminOrderFormItemsOrderedSection.configureProductQtyField('2')}}" stepKey="typeConfigureProductFieldSecond" userInput="1"/>
+        <click selector="{{AdminOrderFormItemsOrderedSection.configureProductOk}}" stepKey="clickConfigureProductFrameOkButton"/>
+        <waitForPageLoad stepKey="waitForSavedConfigure"/>
+
+        <click selector="{{AdminOrderFormItemsOrderedSection.addProductToOrder}}" stepKey="clickAddProductToOrderButton"/>
+        <waitForPageLoad stepKey="waitForProductAdded"/>
+
+        <!--Verify that product added correctly-->
+        <grabTextFrom selector="{{AdminOrderFormItemsOrderedSection.itemsOrderedSummaryText}}" stepKey="grabItemsOrderedSummaryText"/>
+        <assertEquals stepKey="assertToMakeSureThatProductsAddedCorrectly">
+            <actualResult type="variable">$grabItemsOrderedSummaryText</actualResult>
+            <expectedResult type="string">Total 2 product(s) Subtotal: $246.00 $0.00 $246.00  </expectedResult>
+        </assertEquals>
+    </test>
+</tests>

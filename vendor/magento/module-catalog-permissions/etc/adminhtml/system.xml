@@ -1,0 +1,63 @@
+<?xml version="1.0"?>
+<!--
+/**
+ * Copyright © Magento, Inc. All rights reserved.
+ * See COPYING.txt for license details.
+ */
+-->
+<config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="urn:magento:module:Magento_Config:etc/system_file.xsd">
+    <system>
+        <section id="catalog">
+            <group id="magento_catalogpermissions" translate="label" type="text" sortOrder="500" showInDefault="1" showInWebsite="1" showInStore="1">
+                <label>Category Permissions</label>
+                <field id="enabled" translate="label comment" type="select" sortOrder="1" showInDefault="1" showInWebsite="0" showInStore="0">
+                    <label>Enable</label>
+                    <source_model>Magento\Config\Model\Config\Source\Yesno</source_model>
+                    <backend_model>Magento\CatalogPermissions\Model\Indexer\System\Config\Mode</backend_model>
+                    <comment>
+                        <![CDATA[<strong class="warning-enable-permissions">Warning!</strong> By default this feature restricts all categories.]]>
+                    </comment>
+                </field>
+                <field id="grant_catalog_category_view" translate="label" type="select" sortOrder="2" showInDefault="1" showInWebsite="1" showInStore="0">
+                    <label>Allow Browsing Category</label>
+                    <frontend_class>magento-grant-select browsing-catagories</frontend_class>
+                    <source_model>Magento\CatalogPermissions\Model\Adminhtml\System\Config\Source\Grant\Landing</source_model>
+                </field>
+                <field id="grant_catalog_category_view_groups" translate="label" type="multiselect" sortOrder="3" showInDefault="1" showInWebsite="1" showInStore="0">
+                    <label>Customer Groups</label>
+                    <source_model>Magento\CatalogPermissions\Model\Adminhtml\System\Config\Source\Customer\Group</source_model>
+                    <can_be_empty>1</can_be_empty>
+                </field>
+                <field id="restricted_landing_page" translate="label" type="select" sortOrder="4" showInDefault="1" showInWebsite="1" showInStore="1">
+                    <label>Landing Page</label>
+                    <source_model>Magento\Cms\Model\Config\Source\Page</source_model>
+                </field>
+                <field id="grant_catalog_product_price" translate="label" type="select" sortOrder="5" showInDefault="1" showInWebsite="1" showInStore="0">
+                    <label>Display Product Prices</label>
+                    <frontend_class>magento-grant-select</frontend_class>
+                    <source_model>Magento\CatalogPermissions\Model\Adminhtml\System\Config\Source\Grant</source_model>
+                </field>
+                <field id="grant_catalog_product_price_groups" translate="label" type="multiselect" sortOrder="6" showInDefault="1" showInWebsite="1" showInStore="0">
+                    <label>Customer Groups</label>
+                    <source_model>Magento\CatalogPermissions\Model\Adminhtml\System\Config\Source\Customer\Group</source_model>
+                    <can_be_empty>1</can_be_empty>
+                </field>
+                <field id="grant_checkout_items" translate="label" type="select" sortOrder="7" showInDefault="1" showInWebsite="1" showInStore="0">
+                    <label>Allow Adding to Cart</label>
+                    <frontend_class>magento-grant-select</frontend_class>
+                    <source_model>Magento\CatalogPermissions\Model\Adminhtml\System\Config\Source\Grant</source_model>
+                </field>
+                <field id="grant_checkout_items_groups" translate="label" type="multiselect" sortOrder="8" showInDefault="1" showInWebsite="1" showInStore="0">
+                    <label>Customer Groups</label>
+                    <source_model>Magento\CatalogPermissions\Model\Adminhtml\System\Config\Source\Customer\Group</source_model>
+                    <can_be_empty>1</can_be_empty>
+                </field>
+                <field id="deny_catalog_search" translate="label" type="multiselect" sortOrder="9" showInDefault="1" showInWebsite="1" showInStore="0">
+                    <label>Disallow Catalog Search By</label>
+                    <source_model>Magento\CatalogPermissions\Model\Adminhtml\System\Config\Source\Customer\Group</source_model>
+                    <can_be_empty>1</can_be_empty>
+                </field>
+            </group>
+        </section>
+    </system>
+</config>

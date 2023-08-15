@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+ /**
+  * Copyright © Magento, Inc. All rights reserved.
+  * See COPYING.txt for license details.
+  */
+-->
+<sections xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:noNamespaceSchemaLocation="urn:magento:mftf:Page/etc/SectionObject.xsd">
+    <section name="AdminTargetRuleProductsToDisplaySection">
+        <element name="selectButton" type="button" selector="//*[@id='rule_actions_fieldset']/span[{{value}}]/a" parameterized="true" timeout="30"/>
+        <element name="selectCondition" type="button" selector="//*[@id='actions__1__children']/li[{{value1}}]/span[{{value2}}]/a" parameterized="true" timeout="30"/>
+        <element name="actionAggregator" type="select" selector="#actions__1__aggregator" timeout="30"/>
+        <element name="actionValue" type="select" selector="#actions__1__value" timeout="30"/>
+        <element name="newAction" type="select" selector="#actions__1__new_child" timeout="30"/>
+        <element name="newActionOperator" type="select" selector="#actions__1--1__operator" timeout="30"/>
+        <element name="selectCategoryToggle" type="select" selector="//select[@name='rule[actions][{{index}}][value_type]']" parameterized="true" timeout="30"/>
+        <element name="categoryDropdown" type="text" selector="//select[@name='rule[actions][{{index}}][value_type]']/option[contains(.,'{{value}}')]" parameterized="true"/>
+        <element name="targetEllipsis" type="input" selector="//ul[contains(@id, 'actions')]//a[.='...']"/>
+        <element name="ruleFieldByIndex" type="input" selector="#actions__{{index}}__value" parameterized="true"/>
+        <element name="openChooser" type="input" selector="//ul[contains(@id, 'actions')]//img[@title='Open Chooser']"/>
+        <element name="openChooserCategorySelect" type="checkbox" selector="//div[@class='x-tree-node-el folder active-category x-tree-node-leaf']//a/span[contains(., '{{category}}')]" parameterized="true"/>
+        <element name="apply" type="button" selector="//ul[contains(@id, 'actions')]//img[@title='Apply']" timeout="30"/>
+        <element name="remove" type="button" selector="//ul[contains(@id, 'actions')]//a[@title='Remove']" timeout="30"/>
+        <element name="ruleActionsFieldset" type="input" selector="#rule_actions_fieldset"/>
+    </section>
+</sections>

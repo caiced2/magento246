@@ -1,0 +1,71 @@
+<?xml version="1.0"?>
+<!--
+/**
+ * Copyright © Magento, Inc. All rights reserved.
+ * See COPYING.txt for license details.
+ */
+-->
+<config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="urn:magento:module:Magento_Config:etc/system_file.xsd">
+    <system>
+        <section id="giftcard" showInDefault="1" showInWebsite="1" showInStore="1" sortOrder="500">
+            <label>Gift Cards</label>
+            <tab>sales</tab>
+            <resource>Magento_GiftCard::giftcard</resource>
+            <group id="giftcardaccount_email" translate="label" type="text" sortOrder="300" showInDefault="1" showInWebsite="1" showInStore="1">
+                <label>Email Sent from Gift Card Account Management</label>
+                <field id="identity" translate="label" type="select" sortOrder="1" showInDefault="1" showInWebsite="1" showInStore="1">
+                    <label>Gift Card Email Sender</label>
+                    <source_model>Magento\Config\Model\Config\Source\Email\Identity</source_model>
+                </field>
+                <field id="template" translate="label" type="select" sortOrder="2" showInDefault="1" showInWebsite="1" showInStore="1">
+                    <label>Gift Card Template</label>
+                    <source_model>Magento\Config\Model\Config\Source\Email\Template</source_model>
+                </field>
+            </group>
+            <group id="giftcardaccount_general" translate="label" type="text" sortOrder="400" showInDefault="1" showInWebsite="0" showInStore="0">
+                <label>Gift Card Account General Settings</label>
+                <field id="code_length" translate="label comment" type="text" sortOrder="1" showInDefault="1" showInWebsite="0" showInStore="0">
+                    <label>Code Length</label>
+                    <backend_model>Magento\GiftCardAccount\Model\System\Config\Backend\Pool</backend_model>
+                    <comment>Excluding prefix, suffix and separators.</comment>
+                </field>
+                <field id="code_format" translate="label" type="select" sortOrder="2" showInDefault="1" showInWebsite="0" showInStore="0">
+                    <label>Code Format</label>
+                    <backend_model>Magento\GiftCardAccount\Model\System\Config\Backend\Pool</backend_model>
+                    <source_model>Magento\GiftCardAccount\Model\Source\Format</source_model>
+                </field>
+                <field id="code_prefix" translate="label" type="text" sortOrder="3" showInDefault="1" showInWebsite="0" showInStore="0">
+                    <label>Code Prefix</label>
+                    <backend_model>Magento\GiftCardAccount\Model\System\Config\Backend\Pool</backend_model>
+                </field>
+                <field id="code_suffix" translate="label" type="text" sortOrder="4" showInDefault="1" showInWebsite="0" showInStore="0">
+                    <label>Code Suffix</label>
+                    <backend_model>Magento\GiftCardAccount\Model\System\Config\Backend\Pool</backend_model>
+                </field>
+                <field id="code_split" translate="label comment" type="text" sortOrder="5" showInDefault="1" showInWebsite="0" showInStore="0">
+                    <label>Dash Every X Characters</label>
+                    <backend_model>Magento\GiftCardAccount\Model\System\Config\Backend\Pool</backend_model>
+                    <comment>if empty no separation</comment>
+                </field>
+                <field id="pool_size" translate="label comment" type="text" sortOrder="6" showInDefault="1" showInWebsite="0" showInStore="0">
+                    <label>New Pool Size</label>
+                </field>
+                <field id="pool_threshold" translate="label comment" type="text" sortOrder="7" showInDefault="1" showInWebsite="0" showInStore="0">
+                    <label>Low Code Pool Threshold</label>
+                </field>
+                <field id="generate" translate="label comment" sortOrder="8" showInDefault="1" showInWebsite="0" showInStore="0">
+                    <label></label>
+                    <frontend_model>Magento\GiftCardAccount\Block\Adminhtml\System\Config\Generate</frontend_model>
+                    <comment>IMPORTANT: Be sure to save your configuration before running generation process.</comment>
+                </field>
+            </group>
+        </section>
+        <section id="sales">
+            <group id="totals_sort">
+                <field id="giftcardaccount" translate="label" type="text" sortOrder="5" showInDefault="1" showInWebsite="1" showInStore="0">
+                    <label>Gift Cards</label>
+                </field>
+            </group>
+        </section>
+    </system>
+</config>

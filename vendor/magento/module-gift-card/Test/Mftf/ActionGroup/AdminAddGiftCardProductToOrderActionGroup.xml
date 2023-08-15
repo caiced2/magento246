@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+ /**
+  * Copyright © Magento, Inc. All rights reserved.
+  * See COPYING.txt for license details.
+  */
+-->
+
+<actionGroups xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+              xsi:noNamespaceSchemaLocation="urn:magento:mftf:Test/etc/actionGroupSchema.xsd">
+    <actionGroup name="AdminAddGiftCardProductToOrderActionGroup">
+        <arguments>
+            <argument name="customer" type="entity"/>
+            <argument name="orderData" type="entity"/>
+        </arguments>
+        <scrollTo selector="{{AdminOrderFormConfigureProductSection.downloadableInformation}}" stepKey="scroll"/>
+        <click selector="{{AdminOrderFormConfigureProductSection.downloadableInformation}}" stepKey="focusOnSideDialog"/>
+        <waitForAjaxLoad stepKey="waitForAjax"/>
+        <selectOption userInput="{{orderData.amount}}" selector="{{AdminOrderFormConfigureProductSection.amount}}" stepKey="selectAmount"/>
+        <fillField userInput="{{orderData.quantity}}" selector="{{AdminOrderFormConfigureProductSection.quantity}}" stepKey="fillQuantity"/>
+        <fillField userInput="{{customer.firstname}}" selector="{{AdminOrderFormConfigureProductSection.senderName}}" stepKey="fillSenderName"/>
+        <fillField userInput="{{customer.email}}" selector="{{AdminOrderFormConfigureProductSection.senderEmail}}" stepKey="fillSenderEmail"/>
+        <fillField userInput="{{orderData.recipientName}}" selector="{{AdminOrderFormConfigureProductSection.recipientName}}" stepKey="fillRecipientName"/>
+        <fillField userInput="{{orderData.recipientEmail}}" selector="{{AdminOrderFormConfigureProductSection.recipientEmail}}" stepKey="fillRecipientEmail"/>
+        <click selector="{{AdminOrderFormConfigureProductSection.ok}}" stepKey="clickOk"/>
+        <waitForLoadingMaskToDisappear stepKey="waitForLoadingMask"/>
+        <scrollTo selector="{{AdminOrderFormItemsSection.addSelected}}" x="0" y="-100" stepKey="scrollToAddSelectedButton"/>
+        <click selector="{{AdminOrderFormItemsSection.addSelected}}" stepKey="clickAddSelectedProducts"/>
+    </actionGroup>
+</actionGroups>
+
+
+
+

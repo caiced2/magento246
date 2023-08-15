@@ -1,0 +1,134 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+ /**
+  * Copyright © Magento, Inc. All rights reserved.
+  * See COPYING.txt for license details.
+  */
+-->
+
+<tests xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:noNamespaceSchemaLocation="urn:magento:mftf:Test/etc/testSchema.xsd">
+    <test name="AdminManageCategoryProductPositionsByUserWithPermissionFor1WebsiteTest">
+        <annotations>
+            <features value="Catalog"/>
+            <stories value="Restrict users"/>
+            <title value="Ability to drag&amp;drop category product positions by admin user with access only to a specific website"/>
+            <description value="Check that the drag&amp;drop of category product positions is disabled for a user with access to a specific website."/>
+            <severity value="CRITICAL"/>
+            <testCaseId value="AC-6313"/>
+            <useCaseId value="ACP2E-985"/>
+            <group value="Catalog"/>
+        </annotations>
+        <before>
+            <actionGroup ref="AdminLoginActionGroup" stepKey="loginAsAdmin"/>
+            <!--Create new website, store and store view-->
+            <actionGroup ref="AdminCreateWebsiteActionGroup" stepKey="createWebsite">
+                <argument name="newWebsiteName" value="{{customWebsite.name}}"/>
+                <argument name="websiteCode" value="{{customWebsite.code}}"/>
+            </actionGroup>
+
+            <waitForPageLoad time="60" stepKey="waitForPageLoad1"/>
+
+            <actionGroup ref="CreateCustomStoreActionGroup" stepKey="createCustomStore">
+                <argument name="website" value="{{customWebsite.name}}"/>
+                <argument name="store" value="{{customStoreGroup.name}}"/>
+                <argument name="rootCategory" value="Default Category"/>
+            </actionGroup>
+
+            <waitForPageLoad time="60" stepKey="waitForPageLoad2"/>
+
+            <actionGroup ref="AdminCreateStoreViewActionGroup" stepKey="createCustomStoreView">
+                <argument name="StoreGroup" value="customStoreGroup"/>
+                <argument name="customStore" value="customStoreEN"/>
+            </actionGroup>
+            <magentoCron groups="index" stepKey="reindex"/>
+
+            <waitForPageLoad time="60" stepKey="waitForPageLoad3"/>
+            <!--Create simple category and two products-->
+            <createData entity="_defaultCategory" stepKey="createCategory"/>
+            <createData entity="ApiSimpleProduct" stepKey="createProduct1">
+                <requiredEntity createDataKey="createCategory"/>
+            </createData>
+            <createData entity="ApiSimpleProduct" stepKey="createProduct2">
+                <requiredEntity createDataKey="createCategory"/>
+            </createData>
+            <!-- Assign product1 to the second website -->
+            <actionGroup ref="SearchForProductOnBackendActionGroup" stepKey="searchForProduct1OnAdmin1eee">
+                <argument name="product" value="$$createProduct1$$"/>
+            </actionGroup>
+
+            <waitForPageLoad time="60" stepKey="waitForPageLoad4"/>
+
+            <actionGroup ref="CreatedProductConnectToWebsiteActionGroup" stepKey="assignProduct1toWebsite">
+                <argument name="website" value="customWebsite"/>
+                <argument name="product" value="$$createProduct1$$"/>
+            </actionGroup>
+
+            <waitForPageLoad time="60" stepKey="waitForPageLoad5"/>
+            <!-- Assign product2 to the second website -->
+            <actionGroup ref="SearchForProductOnBackendActionGroup" stepKey="searchForProduct2OnAdmin1eee">
+                <argument name="product" value="$$createProduct2$$"/>
+            </actionGroup>
+
+            <waitForPageLoad time="60" stepKey="waitForPageLoad6"/>
+
+            <actionGroup ref="CreatedProductConnectToWebsiteActionGroup" stepKey="assignProduct2toWebsite">
+                <argument name="website" value="customWebsite"/>
+                <argument name="product" value="$$createProduct2$$"/>
+            </actionGroup>
+
+            <waitForPageLoad time="60" stepKey="waitForPageLoad7"/>
+            <!--Create restricted user role-->
+            <actionGroup ref="AdminCreateUserRoleWithScopeActionGroup" stepKey="createLimitedRole">
+                <argument name="role" value="RestrictedAdminRole"/>
+                <argument name="scopeName" value="{{customWebsite.name}}"/>
+            </actionGroup>
+            <!--Create admin user with restricted role-->
+            <actionGroup ref="AdminCreateUserWithRoleActionGroup" stepKey="createRestrictedAdmin">
+                <argument name="role" value="RestrictedAdminRole"/>
+                <argument name="user" value="Admin3"/>
+            </actionGroup>
+        </before>
+        <after>
+            <!--Delete product and category-->
+            <deleteData createDataKey="createCategory" stepKey="deleteCategory"/>
+            <deleteData createDataKey="createProduct1" stepKey="deleteProduct1"/>
+            <deleteData createDataKey="createProduct2" stepKey="deleteProduct2"/>
+            <actionGroup ref="AdminLogoutActionGroup" stepKey="logout"/>
+            <actionGroup ref="AdminLoginActionGroup" stepKey="loginAsAdmin"/>
+            <!-- Delete User-->
+            <actionGroup ref="AdminDeleteCreatedUserActionGroup" stepKey="deleteLimitedUser">
+                <argument name="user" value="Admin3"/>
+            </actionGroup>
+            <!--Delete users roles-->
+            <actionGroup ref="AdminDeleteUserRoleWithSpecifiedPermissionActionGroup" stepKey="deleteRestrictedRole">
+                <argument name="role" value="RestrictedAdminRole"/>
+            </actionGroup>
+            <!--Delete website-->
+            <actionGroup ref="AdminDeleteWebsiteActionGroup" stepKey="deleteWebsite">
+                <argument name="websiteName" value="{{customWebsite.name}}"/>
+            </actionGroup>
+
+            <magentoCron groups="index" stepKey="reindex"/>
+        </after>
+        <!--Login as restricted user and go to the category page-->
+        <actionGroup ref="AdminLogoutActionGroup" stepKey="logout"/>
+        <actionGroup ref="AdminLoginActionGroup" stepKey="loginAsAdmin">
+            <argument name="username" value="{{Admin3.username}}"/>
+            <argument name="password" value="{{Admin3.password}}"/>
+        </actionGroup>
+        <actionGroup ref="GoToAdminCategoryPageByIdActionGroup" stepKey="goToAdminCategoryPage0">
+            <argument name="id" value="$$createCategory.id$$"/>
+        </actionGroup>
+        <!--Expand products in category tab-->
+        <conditionalClick selector="{{AdminCategoryProductsSection.sectionHeader}}" dependentSelector="{{AdminCategoryProductsSection.sectionBody}}" visible="false" stepKey="openSectionIfHidden" />
+        <scrollTo selector="{{AdminCategoryProductsSection.sectionHeader}}" stepKey="scrollToSection" />
+        <waitForPageLoad stepKey="waitSectionFullyLoaded"/>
+        <!--Check that the ability to change product position is disabled in grid -->
+        <dontSeeElement selector="{{AdminCategoryProductsGridSection.draggablePositionColumn}}" stepKey="checkAbilityToDragnDropProductsIsDisabled"/>
+        <dontSeeElement selector="{{AdminCategoryProductsGridSection.sortableTable}}" stepKey="checkAbilityToSortProductsIsDisabled"/>
+        <!--Check that the ability to change product position is disabled in tile -->
+        <actionGroup ref="SwitchToTileModeProductInCategoryActionGroup" stepKey="switchToTile"/>
+        <dontSeeElement selector="AdminCategoryProductsTileSection.rowPositionUp" stepKey="checkPositionChangeButtonsDisabled"/>
+     </test>
+</tests>

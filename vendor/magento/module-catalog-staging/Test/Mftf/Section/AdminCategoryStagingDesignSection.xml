@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+ /**
+  * Copyright © Magento, Inc. All rights reserved.
+  * See COPYING.txt for license details.
+  */
+-->
+<sections xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:noNamespaceSchemaLocation="urn:magento:mftf:Page/etc/SectionObject.xsd">
+    <section name="AdminCategoryStagingDesignSection">
+        <element name="DesignTab" type="button" selector="//aside[contains(@class,'modal-slide')]//strong[@class='admin__collapsible-title']//span[text()='Design']" timeout="30"/>
+        <element name="LayoutDropdown" type="select" selector="//aside[contains(@class,'modal-slide')]//select[@name='page_layout']"/>
+        <element name="customDesign" type="select" selector="aside.modal-slide select[name='custom_design']"/>
+    </section>
+</sections>

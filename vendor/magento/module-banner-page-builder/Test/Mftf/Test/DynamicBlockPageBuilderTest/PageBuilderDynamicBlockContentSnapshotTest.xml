@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+ /**
+  * Copyright © Magento, Inc. All rights reserved.
+  * See COPYING.txt for license details.
+  */
+-->
+<tests xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xsi:noNamespaceSchemaLocation="urn:magento:mftf:Test/etc/testSchema.xsd">
+    <test name="PageBuilderDynamicBlockContentSnapshotTest" extends="PageBuilderCatalogCategoryContentSnapshotTest">
+        <annotations>
+            <features value="PageBuilder"/>
+            <stories value="Content Snapshot"/>
+            <title value="Dynamic Block - Verify PageBuilder Content Snapshot"/>
+            <description value="This test is to ensure that the PageBuilder Content Snapshot appears on stage in Dynamic Block Admin Page and PageBuilder works in full-screen mode."/>
+            <severity value="MAJOR"/>
+            <group value="pagebuilder"/>
+            <group value="pagebuilder-contentSnapshot"/>
+            <group value="pagebuilder-ee"/>
+            <group value="pagebuilder-dynamic-block"/>
+            <group value="pagebuilder-staging"/>
+        </annotations>
+        <before>
+            <createData entity="_defaultDynamicBlock" stepKey="createPreReqCategory"/>
+            <actionGroup ref="NavigateToCreatedDynamicBlockActionGroup" stepKey="navigateToAPageWithPageBuilder">
+                <argument name="Banner" value="$$createPreReqCategory$$"/>
+            </actionGroup>
+            <actionGroup ref="switchToPageBuilderStage" stepKey="expandContentSection"/>
+            <actionGroup ref="removeContentTypeFromStageByIndex" stepKey="removeHTMLContentType">
+                <argument name="contentType" value="PageBuilderHtmlContentType"/>
+                <argument name="contentTypeNumber" value="1"/>
+            </actionGroup>
+            <actionGroup ref="confirmRemovalModal" stepKey="confirmRemovalModal"/>
+            <actionGroup ref="exitPageBuilderFullScreen" stepKey="exitPageBuilderFullScreen"/>
+        </before>
+        <after>
+            <actionGroup ref="DeleteBannerActionGroup" stepKey="deleteCreatedCategory">
+                <argument name="bannerName" value="$$createPreReqCategory.name$$"/>
+            </actionGroup>
+        </after>
+    </test>
+</tests>

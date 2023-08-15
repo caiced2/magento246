@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+ /**
+  * Copyright © Magento, Inc. All rights reserved.
+  * See COPYING.txt for license details.
+  */
+-->
+
+<actionGroups xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:noNamespaceSchemaLocation="urn:magento:mftf:Test/etc/actionGroupSchema.xsd">
+    <actionGroup name="AdminAddCategoryPermissionsForWebsiteActionGroup" extends="AdminAddCategoryPermissionsActionGroup">
+        <annotations>
+            <description>EXTENDS: AdminAddCategoryPermissionsActionGroup. Adds Category Permissions with Website scope.</description>
+        </annotations>
+        <arguments>
+            <argument name="websiteName" type="string" defaultValue="{{_defaultWebsite.name}}"/>
+        </arguments>
+
+        <waitForElementVisible selector="{{AdminCategoryPermissionsSection.selectWebsite(permissionNumber)}}" after="clickOnNewPermissionButton" stepKey="waitForSelectWebsiteVisible"/>
+        <selectOption selector="{{AdminCategoryPermissionsSection.selectWebsite(permissionNumber)}}" userInput="{{websiteName}}" after="waitForSelectWebsiteVisible" stepKey="selectWebsite"/>
+    </actionGroup>
+</actionGroups>

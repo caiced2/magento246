@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+ /**
+  * Copyright © Magento, Inc. All rights reserved.
+  * See COPYING.txt for license details.
+  */
+-->
+
+<tests xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xsi:noNamespaceSchemaLocation="urn:magento:mftf:Test/etc/testSchema.xsd">
+    <test name="ValidateDropdownAttributeCodeOfCustomerAttributesTest" extends="ValidateTextFieldAttributeCodeOfCustomerAttributesTest">
+        <annotations>
+            <features value="CustomerCustomAttributes"/>
+            <stories value="Validation Attribute Code of Customer Custom Attribute"/>
+            <title value="Validate dropdown attribute code of customer attributes test"/>
+            <description value="Validate dropdown attribute code of customer attributes"/>
+            <severity value="MAJOR"/>
+            <testCaseId value="MC-14550"/>
+            <group value="CustomerCustomAttributes"/>
+            <group value="mtf_migrated"/>
+            <group value="pr_exclude"/>
+        </annotations>
+        <after>
+            <!-- Delete created attribute -->
+            <actionGroup ref="DeleteCustomerAttribute" stepKey="deleteCustomerAttribute">
+                <argument name="defaultLabel" value="{{AttributeDropDown.frontend_label}}"/>
+            </actionGroup>
+        </after>
+
+        <!-- Create customer dropdown attribute -->
+        <actionGroup ref="AdminCreateCustomerNewAttributeWithoutFormsSelected" stepKey="adminCreateCustomerAttribute">
+            <argument name="defaultLabel" value="{{AttributeDropDown.frontend_label}}"/>
+            <argument name="attributeCode" value="attribute_code_duplicate"/>
+            <argument name="inputType" value="{{AttributeDropDown.frontend_input}}"/>
+            <argument name="sortOrder" value="10"/>
+            <argument name="message" value="You saved the customer attribute."/>
+        </actionGroup>
+
+        <!-- Add new attribute with the same 'attributeCode' and assert error duplicate message -->
+        <actionGroup ref="AdminCreateCustomerNewAttributeWithoutFormsSelected" stepKey="createNewTextFieldAttribute">
+            <argument name="defaultLabel" value="{{AttributeDate.frontend_label}}"/>
+            <argument name="attributeCode" value="attribute_code_duplicate"/>
+            <argument name="inputType" value="{{AttributeDropDown.frontend_input}}"/>
+            <argument name="sortOrder" value="10"/>
+            <argument name="message" value="An attribute with this code already exists."/>
+        </actionGroup>
+    </test>
+</tests>

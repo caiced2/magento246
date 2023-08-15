@@ -1,0 +1,96 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+ /**
+  * Copyright © Magento, Inc. All rights reserved.
+  * See COPYING.txt for license details.
+  */
+-->
+
+<tests xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:noNamespaceSchemaLocation="urn:magento:mftf:Test/etc/testSchema.xsd">
+    <test name="AdminManageCategoriesByUserWithPermissionFor1StoreTest">
+        <annotations>
+            <features value="Catalog"/>
+            <stories value="Restrict users"/>
+            <title value="Ability to manage categories by admin user with permission for 1 store"/>
+            <description value="Ability to manage categories by admin user with permission for 1 store"/>
+            <severity value="CRITICAL"/>
+            <testCaseId value="MC-19264"/>
+            <useCaseId value="MC-16455"/>
+            <group value="Catalog"/>
+        </annotations>
+        <before>
+            <actionGroup ref="AdminLoginActionGroup" stepKey="loginAsAdmin"/>
+            <!--Create new store and store view-->
+            <actionGroup ref="AdminCreateNewStoreGroupActionGroup" stepKey="createStore1">
+                <argument name="website" value="Main Website"/>
+                <argument name="storeGroupName" value="{{SecondStoreGroupUnique.name}}"/>
+                <argument name="storeGroupCode" value="{{SecondStoreGroupUnique.code}}"/>
+            </actionGroup>
+            <actionGroup ref="AdminCreateStoreViewActionGroup" stepKey="createStoreView"/>
+            <magentoCron groups="index" stepKey="reindex"/>
+            <!--Create simple category and product-->
+            <createData entity="_defaultCategory" stepKey="createCategory"/>
+            <createData entity="ApiSimpleProduct" stepKey="createProduct">
+                <requiredEntity createDataKey="createCategory"/>
+            </createData>
+            <!--Create restricted user role-->
+            <actionGroup ref="AdminAddNewUserRoleWithCustomRoleScopesActionGroup" stepKey="createLimitedRole">
+                <argument name="role" value="restrictedRole"/>
+                <argument name="customWebsiteName" value="{{SecondStoreGroupUnique.name}}"/>
+            </actionGroup>
+            <!--Create admin user with restricted role-->
+            <actionGroup ref="AdminCreateUserWithRoleActionGroup" stepKey="createRestrictedAdmin">
+                <argument name="role" value="restrictedRole"/>
+                <argument name="user" value="Admin3"/>
+            </actionGroup>
+        </before>
+        <after>
+            <!--Delete product and category-->
+            <deleteData createDataKey="createCategory" stepKey="deleteCategory"/>
+            <deleteData createDataKey="createProduct" stepKey="deleteProduct"/>
+            <actionGroup ref="AdminLogoutActionGroup" stepKey="logout"/>
+            <actionGroup ref="AdminLoginActionGroup" stepKey="loginAsAdmin"/>
+            <!-- Delete User-->
+            <actionGroup ref="AdminDeleteCreatedUserActionGroup" stepKey="deleteLimitedUser">
+                <argument name="user" value="Admin3"/>
+            </actionGroup>
+            <!--Delete users roles-->
+            <actionGroup ref="AdminDeleteUserRoleWithSpecifiedPermissionActionGroup" stepKey="deleteRestrictedRole">
+                <argument name="role" value="restrictedRole"/>
+            </actionGroup>
+            <!--Delete store and store view-->
+            <actionGroup ref="AdminDeleteStoreViewActionGroup" stepKey="deleteFirstStoreView">
+                <argument name="customStore" value="customStore"/>
+            </actionGroup>
+            <actionGroup ref="AdminClearGridFiltersActionGroup" stepKey="resetSearchFilter"/>
+            <actionGroup ref="AdminDeleteStoreActionGroup" stepKey="deleteSecondStoreView">
+                <argument name="storeName" value="{{SecondStoreGroupUnique.name}}"/>
+            </actionGroup>
+            <magentoCron groups="index" stepKey="reindex"/>
+        </after>
+        <!--Login as restricted user-->
+        <actionGroup ref="AdminLogoutActionGroup" stepKey="logout"/>
+        <actionGroup ref="AdminLoginActionGroup" stepKey="loginAsAdmin">
+            <argument name="username" value="{{Admin3.username}}"/>
+            <argument name="password" value="{{Admin3.password}}"/>
+        </actionGroup>
+        <!--Open Product page-->
+        <amOnPage url="{{AdminProductEditPage.url($$createProduct.id$$)}}" stepKey="visitAdminProductPage"/>
+        <waitForPageLoad stepKey="waitForPageLoad"/>
+        <!--Check that ability to manage category is disabled-->
+        <grabAttributeFrom userInput="class" selector="{{AdminProductFormSection.categoriesDropdown}}" stepKey="grabAttributeFromInput"/>
+        <assertStringContainsString stepKey="assertCategoryIsDisabled">
+			<actualResult type="const">$grabAttributeFromInput</actualResult>
+			<expectedResult type="string">disabled</expectedResult>
+        </assertStringContainsString>
+        <!--Go to created category page-->
+        <actionGroup ref="GoToAdminCategoryPageByIdActionGroup" stepKey="goToAdminCategoryPage0">
+            <argument name="id" value="$$createCategory.id$$"/>
+        </actionGroup>
+        <!--Expand products in category tab-->
+        <conditionalClick selector="{{AdminCategoryProductsSection.sectionHeader}}" dependentSelector="{{AdminCategoryProductsSection.matchByRule}}" visible="false" stepKey="openProductsInCategoryTab"/>
+        <!--Check that the ability to add product is disabled-->
+        <seeElement selector="{{AdminCategoryProductsSection.addProductsDisabled}}" stepKey="checkAbilityToAddProductIsDisabled"/>
+    </test>
+</tests>

@@ -1,0 +1,75 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+ /**
+  * Copyright © Magento, Inc. All rights reserved.
+  * See COPYING.txt for license details.
+  */
+-->
+
+<tests xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:noNamespaceSchemaLocation="urn:magento:mftf:Test/etc/testSchema.xsd">
+    <test name="AdminPermanentUpdateWithStartDateAfterExistedRangeTest">
+        <annotations>
+            <stories value="Staging updates"/>
+            <title value="Permanent Update with start date after existed range"/>
+            <description value="Permanent Update with start date after existed range"/>
+            <severity value="BLOCKER"/>
+            <testCaseId value="MAGETWO-55019"/>
+            <group value="staging"/>
+        </annotations>
+        <before>
+            <!--Create Simple Product and Category-->
+            <createData entity="_defaultCategory" stepKey="createCategory"/>
+            <createData entity="ApiProductWithDescription" stepKey="createProduct">
+                <requiredEntity createDataKey="createCategory"/>
+                <field key="price">10</field>
+            </createData>
+            <actionGroup ref="AdminLoginActionGroup" stepKey="loginAsAdmin"/>
+            <!-- Create storeView -->
+            <actionGroup ref="AdminCreateStoreViewActionGroup" stepKey="createStoreView"/>
+            <magentoCron groups="index" stepKey="reindex"/>
+        </before>
+        <after>
+            <deleteData createDataKey="createProduct" stepKey="deleteProduct"/>
+            <deleteData createDataKey="createCategory" stepKey="deleteCategory"/>
+            <actionGroup ref="AdminDeleteStoreViewActionGroup" stepKey="deleteStoreView"/>
+            <magentoCron groups="index" stepKey="reindex"/>
+            <actionGroup ref="AdminClearFiltersActionGroup" stepKey="clearProductFilters"/>
+            <actionGroup ref="AdminLogoutActionGroup" stepKey="logout"/>
+        </after>
+        <!-- Open Product Grid, Filter product and open -->
+        <actionGroup ref="SearchForProductOnBackendActionGroup" stepKey="filterProduct1">
+            <argument name="product" value="$$createProduct$$"/>
+        </actionGroup>
+        <click selector="{{AdminProductGridSection.productGridNameProduct('$$createProduct.name$$')}}" stepKey="openProductForEdit"/>
+        <!-- Create Schedule New Update -->
+        <click selector="{{AdminStagingSlideOutSection.scheduleNewUpdateBtn}}" stepKey="clickButtonSheduleNewUpdate"/>
+        <click selector="{{AdminStagingSlideOutSection.changeStoreButton}}" stepKey="clickStoreSwitcher"/>
+        <click selector="{{AdminStagingSlideOutSection.selectStoreView(customStore.name)}}" stepKey="clickStoreView"/>
+        <click selector="{{AdminConfirmationModalSection.ok}}" stepKey="acceptMessage"/>
+        <generateDate date="+1 day" format="m/j/Y g:i A" stepKey="generateStartDate"/>
+        <generateDate date="+3 day" format="m/j/Y g:i A" stepKey="generateEndDate"/>
+        <actionGroup ref="FillScheduleUpdateWithCheckEndActionGroup" stepKey="createScheduleUpdate">
+            <argument name="staging" value="S5UpdateNameStaging"/>
+            <argument name="timeStart" value="{$generateStartDate}"/>
+            <argument name="timeEnd" value="{$generateEndDate}"/>
+            <argument name="productPrice" value="14"/>
+        </actionGroup>
+        <!-- Create Schedule New Update Without End -->
+        <generateDate date="+5 day" format="m/j/Y g:i A" stepKey="generateStartDateForUpdate"/>
+        <actionGroup ref="FillScheduleUpdateWithCheckActionGroup" stepKey="createScheduleUpdateWithoutDateEnd">
+            <argument name="staging" value="S8UpdateNameStaging"/>
+            <argument name="timeStart" value="{$generateStartDateForUpdate}"/>
+            <argument name="productPrice" value="15"/>
+        </actionGroup>
+        <click selector="{{AdminScheduledChangesSection.scheduleActions(S8UpdateNameStaging.updateName, 'Preview')}}" stepKey="clickPreview"/>
+        <switchToNextTab stepKey="switchToNextTab"/>
+        <waitForPageLoad time="30" stepKey="waitForPageLoad5"/>
+        <!--Set frame id because switchToIFrame requires ID as parameter-->
+        <executeJS function="jQuery('[data-role=\'preview-iframe\']').attr('id', 'preview-iframe')" stepKey="setPreviewFrameId"/>
+        <switchToIFrame userInput="preview-iframe" stepKey="switchToPreviewFrame"/>
+        <waitForPageLoad time="30" stepKey="waitForPageLoad6"/>
+        <see selector="{{StorefrontProductInfoMainSection.productPrice}}" userInput="$15.00" stepKey="seeProductPrice"/>
+        <closeTab stepKey="closeTab"/>
+    </test>
+</tests>

@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+ /**
+  * Copyright © Magento, Inc. All rights reserved.
+  * See COPYING.txt for license details.
+  */
+-->
+
+<sections xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+          xsi:noNamespaceSchemaLocation="urn:magento:mftf:Page/etc/SectionObject.xsd">
+    <section name="AdminEditCustomerStoreCreditSection">
+        <element name="storeCreditTab" type="button" selector="#tab_customerbalance_content" timeout="10"/>
+        <element name="websiteId" type="select" selector="#_customerbalancewebsite_id"/>
+        <element name="updateBalanceInput" type="input" selector="#_customerbalanceamount_delta"/>
+        <element name="customerBalanceCommentInput" type="input" selector="#_customerbalancecomment"/>
+        <element name="historyGridAdditionalInfoFilter" type="input" selector="#historyGrid_filter_additional_info"/>
+        <element name="applyHistoryFilter" type="button" selector="button[data-action='grid-filter-apply']"/>
+        <element name="customerLastBalanceChange" type="text" selector="#historyGrid_table tr td.col-balance_delta.a-left"/>
+        <element name="customerLastBalance" type="text" selector="#historyGrid_table tr td.col-balance_amount.a-left"/>
+    </section>
+</sections>

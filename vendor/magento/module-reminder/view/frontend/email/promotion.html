@@ -1,0 +1,74 @@
+<!--
+/**
+ * Copyright © Magento, Inc. All rights reserved.
+ * See COPYING.txt for license details.
+ */
+-->
+<!--@subject {{trans "Promotion reminder at %store_name" store_name=$store.frontend_name}} @-->
+<!--@vars {
+"var coupon.code|escape":"Coupon Code",
+"var coupon.usage_limit|escape":"Coupon Usage Limit",
+"var coupon.usage_per_customer|escape":"Coupon Usage Per Customer",
+"var customer_data.name|escape":"Customer Name",
+"template config_path=\"design\/email\/footer_template\"":"Email Footer Template",
+"template config_path=\"design\/email\/header_template\"":"Email Header Template",
+"var logo_alt":"Email Logo Image Alt",
+"var logo_url":"Email Logo Image URL",
+"var promotion_description|escape|nl2br":"Promotion Description",
+"var promotion_name|escape":"Promotion Name",
+"var store.frontend_name":"Store Name",
+"var this.getUrl($store,'customer/account/',[_nosid:1])":"Customer Account URL",
+"store url=\"\"":"Store URL"
+} @-->
+
+{{template config_path="design/email/header_template"}}
+
+<p class="greeting">{{trans "%name," name=$customer_data.name}}</p>
+
+{{if promotion_name}}
+<p>{{trans "Hurry up to take advantage of our %promotion_name promotion!" promotion_name=$promotion_name}}</p>
+{{else}}
+<p>{{trans "Hurry up to take advantage of this promotion!"}}</p>
+{{/if}}
+
+{{if promotion_description}}
+<table class="message-info" cellspacing="0" cellpadding="0" border="0">
+    <tr>
+        <td>
+            {{var promotion_description|escape|nl2br}}
+        </td>
+    </tr>
+</table>
+<br />
+{{/if}}
+
+{{if coupon.code}}
+<p>
+    {{trans
+        'To take advantage of the promotion you need to sign in at <a href="%account_url">%store_name</a> and apply the coupon "%coupon_code" in the shopping cart.'
+
+        store_name=$store.frontend_name
+        coupon_code=$coupon.code
+        account_url=$this.getUrl($store,'customer/account/',[_nosid:1])
+    |raw}}
+</p>
+{{else}}
+<p>
+    {{trans
+        'To take advantage of the promotion you need to sign in at <a href="%account_url">%store_name</a>'
+
+        store_name=$store.frontend_name
+        account_url=$this.getUrl($store,'customer/account/',[_nosid:1])
+    |raw}}
+</p>
+{{/if}}
+
+{{if coupon.usage_limit}}
+<p>{{trans "This coupon can be used only up to %coupon_limit time(s) by you or other customers." coupon_limit=$coupon.usage_limit}}</p>
+{{/if}}
+
+{{if coupon.usage_per_customer}}
+<p>{{trans "You can use this coupon up to %coupon_limit time(s)." coupon_limit=$coupon.usage_per_customer}}</p>
+{{/if}}
+
+{{template config_path="design/email/footer_template"}}

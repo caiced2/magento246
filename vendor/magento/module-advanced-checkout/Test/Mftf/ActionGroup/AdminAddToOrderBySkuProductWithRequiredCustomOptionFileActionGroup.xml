@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+ /**
+  * Copyright © Magento, Inc. All rights reserved.
+  * See COPYING.txt for license details.
+  */
+-->
+
+<actionGroups xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="urn:magento:mftf:Test/etc/actionGroupSchema.xsd">
+    <actionGroup name="AdminAddToOrderBySkuProductWithRequiredCustomOptionFileActionGroup" extends="AdminAddProductToOrderBySKU">
+        <annotations>
+            <description>Add Product to Order by Sku with required Custom Option type File.</description>
+        </annotations>
+        <arguments>
+            <argument name="file" type="string" defaultValue="{{TestImageNew.file}}"/>
+        </arguments>
+
+        <waitForPageLoad after="clickAddToOrder" stepKey="waitForAddToOrder"/>
+        <see selector="{{AdminMessagesSection.noticeMessage}}" userInput="You need to choose options for your item." after="waitForAddToOrder" stepKey="seeNeedChooseOptionsMessage"/>
+        <click selector="{{AdminOrderFormItemsOrderedSection.configureButtonBySku}}" after="seeNeedChooseOptionsMessage" stepKey="clickConfigureButton"/>
+        <waitForElementVisible selector="{{AdminOrderFormCustomOptionsSection.buttonOk}}" after="clickConfigureButton" stepKey="waitForConfigureProductFrameVisible"/>
+        <attachFile selector="{{AdminOrderFormCustomOptionsSection.file}}" userInput="{{file}}" after="waitForConfigureProductFrameVisible" stepKey="attachImageForCustomOption"/>
+        <click selector="{{AdminOrderFormCustomOptionsSection.buttonOk}}" after="attachImageForCustomOption" stepKey="clickSaveOptionButton"/>
+    </actionGroup>
+</actionGroups>

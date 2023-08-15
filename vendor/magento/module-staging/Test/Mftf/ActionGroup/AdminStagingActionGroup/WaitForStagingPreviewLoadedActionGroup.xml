@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+ /**
+  * Copyright © Magento, Inc. All rights reserved.
+  * See COPYING.txt for license details.
+  */
+-->
+<actionGroups xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:noNamespaceSchemaLocation="urn:magento:mftf:Test/etc/actionGroupSchema.xsd">
+    <actionGroup name="WaitForStagingPreviewLoadedActionGroup">
+        <seeInCurrentUrl url="{{AdminStagingPreviewPage.url}}" stepKey="seeInUrlUpdatePreview"/>
+        <executeJS function="jQuery('[data-role=\'preview-iframe\']').attr('id', 'preview-iframe')" stepKey="setPreviewIframeId"/>
+        <switchToIFrame userInput="preview-iframe" stepKey="switchToIFrameNow"/>
+        <waitForPageLoad time="60" stepKey="waitForPageLoad"/>
+        <switchToIFrame stepKey="returnToHostPage"/>
+        <waitForElement selector="{{AdminStagingPreviewSection.shareBtn}}" stepKey="waitStagingUpdateItemContentWrapper" time="60"/>
+    </actionGroup>
+</actionGroups>

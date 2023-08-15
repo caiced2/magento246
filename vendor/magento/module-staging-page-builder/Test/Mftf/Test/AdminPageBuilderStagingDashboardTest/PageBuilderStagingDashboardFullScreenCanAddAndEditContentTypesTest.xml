@@ -1,0 +1,76 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+ /**
+  * Copyright © Magento, Inc. All rights reserved.
+  * See COPYING.txt for license details.
+  */
+-->
+<tests xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:noNamespaceSchemaLocation="urn:magento:mftf:Test/etc/testSchema.xsd">
+    <test name="PageBuilderStagingDashboardFullScreenCanAddAndEditContentTypesTest" extends="PageBuilderFullScreenCanAddAndEditContentTypesTest">
+        <annotations>
+            <features value="PageBuilder"/>
+            <stories value="Staging Dashboard - CMS Page"/>
+            <title value="Can add and edit content types in full-screen mode from Staging Dashboard"/>
+            <description value="This test is to ensure that the user can successfully add and edit content types in full-screen mode when opened for Staging Dashboard."/>
+            <severity value="MAJOR"/>
+            <useCaseId value="MC-14992"/>
+            <testCaseId value="MC-15276"/>
+            <group value="pagebuilder"/>
+            <group value="pagebuilder-ee"/>
+            <group value="pagebuilder-staging"/>
+            <group value="pagebuilder-stagingDashboard"/>
+            <group value="pagebuilder-cms-page"/>
+            <group value="pagebuilder-buttons"/>
+            <group value="pagebuilder-fullScreen"/>
+        </annotations>
+        <before>
+            <createData entity="_emptyCmsPage" stepKey="createCMSPage" before="loginAsAdmin"/>
+            <actionGroup ref="navigateToCMSPage" stepKey="navigateToAPageWithPageBuilder">
+                <argument name="CMSPage" value="$$createCMSPage$$"/>
+            </actionGroup>
+            <actionGroup ref="navigateToStagingSlideout" stepKey="navigateToStagingSlideout" after="navigateToAPageWithPageBuilder"/>
+            <actionGroup ref="FillScheduleUpdateBasicActionGroup" stepKey="switchToPageBuilderStage">
+                <argument name="schedule" value="UpdateWithoutEndUnique_2MinutesAhead"/>
+            </actionGroup>
+            <!-- Open Content Staging Dashboard -->
+            <comment userInput="Open Content Staging Dashboard" stepKey="commentOpenContentStagingDashboard" after="switchToPageBuilderStage"/>
+            <actionGroup ref="navigateToViewStagingUpdateFromStagingDashboard" stepKey="navigateToViewStagingUpdateFromStagingDashboard" after="commentOpenContentStagingDashboard">
+                <argument name="update" value="UpdateWithoutEndUnique_2MinutesAhead"/>
+            </actionGroup>
+            <actionGroup ref="openEditSlideOutForCMSPagesStagingUpdateFromViewStagingUpdate" stepKey="openEditSlideOutForCMSPagesStagingUpdateFromViewStagingUpdate" after="navigateToViewStagingUpdateFromStagingDashboard"/>
+            <actionGroup ref="ExpandAdminProductSectionActionGroup" stepKey="clickContentSectionHeader" after="openEditSlideOutForCMSPagesStagingUpdateFromViewStagingUpdate">
+                <argument name="sectionSelector" value="{{AdminStagingDashboardSection.contentHeader}}"/>
+                <argument name="sectionDependentSelector" value="{{AdminStagingDashboardSection.contentHeaderActive}}"/>
+            </actionGroup>
+            <actionGroup ref="switchToPageBuilderStage" stepKey="switchToPageBuilderStage2" after="clickContentSectionHeader">
+                <argument name="sectionSelector" value="{{AdminStagingSlideOutSection.contentTab}}"/>
+                <argument name="sectionDependentSelector" value="{{AdminStagingSlideOutSection.stagingContentTab}}"/>
+            </actionGroup>
+        </before>
+        <after>
+            <deleteData createDataKey="createCMSPage" stepKey="deleteCreatedProduct" before="logout"/>
+            <amOnPage url="{{AdminStagingDashboardPage.url}}" stepKey="NavigateToAndResetProductGridToDefaultView" after="deleteCreatedProduct"/>
+            <actionGroup ref="ClearFiltersAdminDataGridActionGroup" stepKey="clearFilter" after="NavigateToAndResetProductGridToDefaultView"/>
+        </after>
+        <comment userInput="---merging to remove step---" stepKey="enterPageTitle"/>
+        <!-- Saving Staging Dashboard -->
+        <comment userInput="Saving Staging Dashboard" stepKey="commentSavePage"/>
+        <actionGroup ref="saveStagingDashboardSlideOutUpdateForm" stepKey="saveAndContinueEditCmsPage"/>
+        <actionGroup ref="saveStagingDashboardUpdateForm" stepKey="saveStagingDashboardUpdateForm" after="saveAndContinueEditCmsPage">
+            <argument name="updateName" value="UpdateWithoutEndUnique_2MinutesAhead.updateName"/>
+        </actionGroup>
+        <actionGroup ref="navigateToViewStagingUpdateFromStagingDashboard" stepKey="switchToPageBuilderStage">
+            <argument name="update" value="UpdateWithoutEndUnique_2MinutesAhead"/>
+        </actionGroup>
+        <actionGroup ref="openEditSlideOutForCMSPagesStagingUpdateFromViewStagingUpdate" stepKey="openPageBuilderForDescription" after="switchToPageBuilderStage"/>
+        <actionGroup ref="ExpandAdminProductSectionActionGroup" stepKey="clickContentSectionHeader" after="openPageBuilderForDescription">
+            <argument name="sectionSelector" value="{{AdminStagingDashboardSection.contentHeader}}"/>
+            <argument name="sectionDependentSelector" value="{{AdminStagingDashboardSection.contentHeaderActive}}"/>
+        </actionGroup>
+        <actionGroup ref="switchToPageBuilderStage" stepKey="switchToPageBuilderStage2" after="clickContentSectionHeader">
+            <argument name="sectionSelector" value="{{AdminStagingSlideOutSection.contentTab}}"/>
+            <argument name="sectionDependentSelector" value="{{AdminStagingSlideOutSection.stagingContentTab}}"/>
+        </actionGroup>
+    </test>
+</tests>

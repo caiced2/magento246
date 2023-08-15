@@ -1,0 +1,43 @@
+<?xml version="1.0"?>
+<!--
+/**
+ * Copyright © Magento, Inc. All rights reserved.
+ * See COPYING.txt for license details.
+ */
+-->
+<schema xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:noNamespaceSchemaLocation="urn:magento:framework:Setup/Declaration/Schema/etc/schema.xsd">
+    <table name="magento_salesrule_filter" resource="default" engine="innodb" comment="Enterprise SalesRule Filter">
+        <column xsi:type="int" name="rule_filter_id" unsigned="true" nullable="false" identity="true"
+                comment="Rule Filter Id"/>
+        <column xsi:type="int" name="rule_id" unsigned="true" nullable="false" identity="false"
+                comment="Rule Id"/>
+        <column xsi:type="int" name="group_id" unsigned="true" nullable="false" identity="false"
+                comment="Group Id"/>
+        <column xsi:type="float" name="weight" unsigned="false" nullable="false" default="1"
+                comment="Condition weight"/>
+        <column xsi:type="varchar" name="filter_text" nullable="false" length="255" comment="Filter text"/>
+        <column xsi:type="varchar" name="filter_text_generator_class" nullable="true" length="255"
+                comment="Filter text generator class name"/>
+        <column xsi:type="varchar" name="filter_text_generator_arguments" nullable="true" length="255"
+                comment="Filter text generator arguments"/>
+        <constraint xsi:type="primary" referenceId="PRIMARY">
+            <column name="rule_filter_id"/>
+        </constraint>
+        <constraint xsi:type="foreign" referenceId="MAGENTO_SALESRULE_FILTER_RULE_ID_SALESRULE_RULE_ID"
+                    table="magento_salesrule_filter" column="rule_id" referenceTable="salesrule"
+                    referenceColumn="rule_id" onDelete="CASCADE"/>
+        <index referenceId="IDX_0270DA9E161D3DE2428F005FE39B89C8" indexType="btree">
+            <column name="filter_text_generator_class"/>
+            <column name="filter_text_generator_arguments"/>
+        </index>
+        <index referenceId="MAGENTO_SALESRULE_FILTER_RULE_ID" indexType="btree">
+            <column name="rule_id"/>
+        </index>
+        <index referenceId="MAGENTO_SALESRULE_FILTER_FILTER_TEXT_RULE_ID_GROUP_ID" indexType="btree">
+            <column name="filter_text"/>
+            <column name="rule_id"/>
+            <column name="group_id"/>
+        </index>
+    </table>
+</schema>

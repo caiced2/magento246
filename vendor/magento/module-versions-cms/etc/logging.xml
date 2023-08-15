@@ -1,0 +1,29 @@
+<?xml version="1.0"?>
+<!--
+/**
+ * Copyright © Magento, Inc. All rights reserved.
+ * See COPYING.txt for license details.
+ */
+-->
+<logging xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:noNamespaceSchemaLocation="urn:magento:module:Magento_Logging:etc/logging.xsd">
+    <groups>
+        <group name="magento_versionscms_hierarchy">
+            <label translate="true">CMS Hierarchy</label>
+            <expected_models>
+                <expected_model class="Magento\VersionsCms\Model\Hierarchy\Node" />
+            </expected_models>
+            <events>
+                <event controller_action="adminhtml_cms_hierarchy_index"
+                       action_alias="view"
+                       post_dispatch="Magento\VersionsCms\Model\Logging::postDispatchCmsHierachyView">
+                </event>
+                <event controller_action="adminhtml_cms_hierarchy_save" action_alias="save">
+                    <skip_on_back>
+                        <controller_action name="adminhtml_cms_hierarchy_index" />
+                    </skip_on_back>
+                </event>
+            </events>
+        </group>
+    </groups>
+</logging>

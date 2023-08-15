@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+ /**
+  * Copyright © Magento, Inc. All rights reserved.
+  * See COPYING.txt for license details.
+  */
+-->
+
+<actionGroups xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+              xsi:noNamespaceSchemaLocation="urn:magento:mftf:Test/etc/actionGroupSchema.xsd">
+    <actionGroup name="AdminOrderCreateUseStoreCreditActionGroup">
+        <annotations>
+            <description>Show the payment methods and use Store Credit</description>
+        </annotations>
+        <click selector="{{AdminOrderFormPaymentSection.header}}" stepKey="unfocusAddressForm"/>
+        <click selector="{{AdminOrderFormPaymentSection.linkPaymentOptions}}" stepKey="getPaymentMethods"/>
+        <waitForElementVisible selector="{{AdminOrderFormPaymentSection.useCustomerBalanceOption}}" stepKey="waitForStoreCreditVisible"/>
+        <click selector="{{AdminOrderFormPaymentSection.useCustomerBalanceOption}}" stepKey="useCustomerBalance"/>
+    </actionGroup>
+</actionGroups>

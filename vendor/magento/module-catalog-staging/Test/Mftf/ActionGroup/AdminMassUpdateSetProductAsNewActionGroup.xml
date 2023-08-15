@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+ /**
+  * Copyright © Magento, Inc. All rights reserved.
+  * See COPYING.txt for license details.
+  */
+-->
+
+<actionGroups xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+              xsi:noNamespaceSchemaLocation="urn:magento:mftf:Test/etc/actionGroupSchema.xsd">
+    <actionGroup name="AdminMassUpdateSetProductAsNewActionGroup">
+        <annotations>
+            <description>Toggle "change" and set "Set Product as New" to Yes.</description>
+        </annotations>
+        <checkOption selector="{{AdminEditProductAttributesSection.toggleAttribute('news_from_date')}}" stepKey="toggleAttribute"/>
+        <selectOption selector="{{AdminEditProductAttributesSection.attributeInput('news_from_date')}}" userInput="1" stepKey="setAttributeValue"/>
+    </actionGroup>
+</actionGroups>

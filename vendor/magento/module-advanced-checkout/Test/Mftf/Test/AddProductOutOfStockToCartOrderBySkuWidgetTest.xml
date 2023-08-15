@@ -1,0 +1,80 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+ /**
+  * Copyright © Magento, Inc. All rights reserved.
+  * See COPYING.txt for license details.
+  */
+-->
+
+<tests xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="urn:magento:mftf:Test/etc/testSchema.xsd">
+    <test name="AddProductOutOfStockToCartOrderBySkuWidgetTest">
+        <annotations>
+            <title value="Check that shopping Cart is empty when Simple product Out Of Stock added by SKU from Widget to an Order"/>
+            <description value="Check that shopping Cart is empty when Simple product Out Of Stock added by SKU from Widget to an Order"/>
+            <severity value="CRITICAL"/>
+            <testCaseId value="MC-14051"/>
+            <group value="AdvancedCheckout"/>
+            <stories value="Add products to cart by sku from widget"/>
+            <group value="mtf_migrated"/>
+        </annotations>
+        <before>
+            <!--Register Customer-->
+            <createData entity="Simple_US_Customer" stepKey="createCustomer"/>
+
+            <!--Create Simple Product -->
+            <createData entity="_defaultCategory" stepKey="createCategory"/>
+            <createData entity="SimpleOutOfStockProduct" stepKey="createProduct">
+                <requiredEntity createDataKey="createCategory"/>
+            </createData>
+
+            <!--Create widget "Order by Sku" -->
+            <actionGroup ref="AdminLoginActionGroup" stepKey="loginAsAdmin"/>
+
+            <!-- Flush cache -->
+            <actionGroup ref="CliCacheFlushActionGroup" stepKey="flushCache">
+                <argument name="tags" value=""/>
+            </actionGroup>
+
+            <actionGroup ref="AdminCreateAndSaveWidgetActionGroup" stepKey="createWidget">
+                <argument name="widget" value="DefaultOrderBySKUWidget" />
+            </actionGroup>
+        </before>
+        <after>
+            <deleteData createDataKey="createCustomer" stepKey="deleteCustomer"/>
+            <deleteData createDataKey="createProduct" stepKey="deleteProduct"/>
+            <deleteData createDataKey="createCategory" stepKey="deleteCategory"/>
+            <actionGroup ref="AdminDeleteWidgetActionGroup" stepKey="deleteWidget">
+                <argument name="widget" value="DefaultOrderBySKUWidget"/>
+            </actionGroup>
+
+            <actionGroup ref="AdminLogoutActionGroup" stepKey="adminLogout"/>
+        </after>
+
+        <!--Login to Frontend-->
+        <actionGroup ref="LoginToStorefrontActionGroup" stepKey="customerLogin">
+            <argument name="Customer" value="$$createCustomer$$" />
+        </actionGroup>
+
+        <!--Navigate to My Account-->
+        <amOnPage url="{{StorefrontCustomerDashboardPage.url}}" stepKey="openCustomersAccount"/>
+        <waitForPageLoad time="30" stepKey="waitForWidgetLoad"/>
+        <scrollTo selector="{{StorefrontWidgetOrderBySKUSection.sku('0')}}" stepKey="scrollToWidget"/>
+
+        <!--Fill data in widget according to dataset-->
+        <actionGroup ref="StorefrontFillOrderBySkuWidgetActionGroup" stepKey="fillSimpleProductBySkuOnWidget">
+            <argument name="product" value="$$createProduct$$" />
+            <argument name="cartItem" value="SimpleCartItem" />
+            <argument name="rowNumber" value="0" />
+        </actionGroup>
+
+        <!--Click Add to Cart button-->
+        <actionGroup ref="StorefrontAddToCartOrderBySkuWidgetActionGroup" stepKey="addToCart"/>
+
+        <!--Perform all asserts-->
+        <waitForPageLoad time="30" stepKey="waitForPageLoad"/>
+        <actionGroup ref="StorefrontCheckoutCheckOutOfStockProductActionGroup" stepKey="checkProductInCart">
+            <argument name="product" value="$$createProduct$$" />
+        </actionGroup>
+        <actionGroup ref="StorefrontCheckThatCartIsEmptyActionGroup" stepKey="checkThatCartIsEmpty"/>
+    </test>
+</tests>

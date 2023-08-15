@@ -1,0 +1,131 @@
+<?xml version="1.0"?>
+<!--
+/**
+ * Copyright © Magento, Inc. All rights reserved.
+ * See COPYING.txt for license details.
+ */
+-->
+<config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="urn:magento:framework:ObjectManager/etc/config.xsd">
+    <preference for="Magento\AdobeCommerceEventsClient\Event\EventSubscriberInterface" type="Magento\AdobeCommerceEventsClient\Event\EventSubscriber" />
+    <preference for="Magento\AdobeCommerceEventsClient\Event\Validator\EventValidatorInterface" type="Magento\AdobeCommerceEventsClient\Event\Validator\CompositeEventValidator" />
+    <preference for="Magento\AdobeCommerceEventsClient\Event\DataFilterInterface" type="Magento\AdobeCommerceEventsClient\Event\Filter\CompositeFilter" />
+    <preference for="Magento\AdobeCommerceEventsClient\Api\EventRepositoryInterface" type="Magento\AdobeCommerceEventsClient\Model\EventRepository" />
+    <preference for="Magento\AdobeCommerceEventsClient\Event\Collector\CollectorInterface" type="Magento\AdobeCommerceEventsClient\Event\Collector\CompositeCollector" />
+    <preference for="Magento\AdobeCommerceEventsClient\Event\EventRetrieverInterface" type="Magento\AdobeCommerceEventsClient\Event\EventRetriever\WaitingEventRetriever" />
+    <preference for="Magento\AdobeCommerceEventsClient\Event\Rule\RuleInterface" type="Magento\AdobeCommerceEventsClient\Event\Rule\Rule" />
+    <type name="Magento\AdobeCommerceEventsClient\Event\Operator\OperatorFactory">
+        <arguments>
+            <argument name="operators" xsi:type="array">
+                <item name="lessThan" xsi:type="object">Magento\AdobeCommerceEventsClient\Event\Operator\LessOperator</item>
+                <item name="greaterThan" xsi:type="object">Magento\AdobeCommerceEventsClient\Event\Operator\GreaterOperator</item>
+                <item name="regex" xsi:type="object">Magento\AdobeCommerceEventsClient\Event\Operator\RegexOperator</item>
+                <item name="in" xsi:type="object">Magento\AdobeCommerceEventsClient\Event\Operator\InOperator</item>
+                <item name="equal" xsi:type="object">Magento\AdobeCommerceEventsClient\Event\Operator\EqualOperator</item>
+            </argument>
+        </arguments>
+    </type>
+    <type name="Magento\AdobeCommerceEventsClient\Event\Metadata\EventMetadataPool">
+        <arguments>
+            <argument name="metadata" xsi:type="array">
+                <item name="edition" xsi:type="object">Magento\AdobeCommerceEventsClient\Event\Metadata\CommerceEdition</item>
+                <item name="clientVersion" xsi:type="object">Magento\AdobeCommerceEventsClient\Event\Metadata\ClientVersion</item>
+                <item name="store" xsi:type="object">Magento\AdobeCommerceEventsClient\Event\Metadata\Store</item>
+            </argument>
+        </arguments>
+    </type>
+    <type name="Magento\Framework\Console\CommandListInterface">
+        <arguments>
+            <argument name="commands" xsi:type="array">
+                <item name="eventSubscribeCommand" xsi:type="object">Magento\AdobeCommerceEventsClient\Console\Command\EventSubscribeCommand</item>
+                <item name="eventUnsubscribeCommand" xsi:type="object">Magento\AdobeCommerceEventsClient\Console\Command\EventUnsubscribeCommand</item>
+                <item name="eventListCommand" xsi:type="object">Magento\AdobeCommerceEventsClient\Console\Command\EventListCommand</item>
+                <item name="eventInfoCommand" xsi:type="object">Magento\AdobeCommerceEventsClient\Console\Command\EventInfoCommand</item>
+                <item name="eventMetadataPopulate" xsi:type="object">Magento\AdobeCommerceEventsClient\Console\Command\EventMetadataPopulate</item>
+                <item name="eventCollectCommand" xsi:type="object">Magento\AdobeCommerceEventsClient\Console\Command\EventListAllCommand</item>
+            </argument>
+        </arguments>
+    </type>
+    <type name="Magento\AdobeCommerceEventsClient\Event\Collector\CompositeCollector">
+        <arguments>
+            <argument name="collectors" xsi:type="array">
+                <item name="apiServiceCollector" xsi:type="object">Magento\AdobeCommerceEventsClient\Event\Collector\ApiServiceCollector</item>
+                <item name="resourceModelCollector" xsi:type="object">Magento\AdobeCommerceEventsClient\Event\Collector\ResourceModelCollector</item>
+                <item name="observerEventsCollector" xsi:type="object">Magento\AdobeCommerceEventsClient\Event\Collector\ObserverEventsCollector</item>
+            </argument>
+        </arguments>
+    </type>
+    <type name="Magento\AdobeCommerceEventsClient\Event\Filter\CompositeFilter">
+        <arguments>
+            <argument name="filters" xsi:type="array">
+                <item name="fieldFilter" xsi:type="object">Magento\AdobeCommerceEventsClient\Event\Filter\EventFieldsFilter</item>
+                <item name="imageFilter" xsi:type="object">Magento\AdobeCommerceEventsClient\Event\Filter\ImageFieldFilter</item>
+            </argument>
+        </arguments>
+    </type>
+    <type name="Magento\AdobeCommerceEventsClient\Event\EventInfo">
+        <arguments>
+            <argument name="eventCodeValidator" xsi:type="object">Magento\AdobeCommerceEventsClient\Event\Validator\EventCode\PrefixValidator</argument>
+        </arguments>
+    </type>
+    <type name="Magento\AdobeCommerceEventsClient\Event\EventSubscriber">
+        <arguments>
+            <argument name="subscribeValidator" xsi:type="object">subscribeValidatorComposite</argument>
+            <argument name="unsubscribeValidator" xsi:type="object">unsubscribeValidatorComposite</argument>
+        </arguments>
+    </type>
+    <type name="Magento\AdobeCommerceEventsClient\Event\Collector\ObserverEventsCollector">
+        <arguments>
+            <argument name="filesystem" xsi:type="object">Magento\Framework\Filesystem\Driver\File</argument>
+        </arguments>
+    </type>
+    <type name="Magento\AdobeCommerceEventsClient\Event\Collector\ApiServiceCollector">
+        <arguments>
+            <argument name="filesystem" xsi:type="object">Magento\Framework\Filesystem\Driver\File</argument>
+        </arguments>
+    </type>
+    <type name="Magento\AdobeCommerceEventsClient\Event\Collector\ResourceModelCollector">
+        <arguments>
+            <argument name="filesystem" xsi:type="object">Magento\Framework\Filesystem\Driver\File</argument>
+        </arguments>
+    </type>
+    <type name="Magento\AdobeCommerceEventsClient\Event\Queue\Consumer\EventHandler">
+        <arguments>
+            <argument name="eventBatchSender" xsi:type="object">priorityEventBatchSender</argument>
+        </arguments>
+    </type>
+    <type name="Magento\AdobeCommerceEventsClient\Event\Queue\EventBatchConsumer">
+        <arguments>
+            <argument name="interval" xsi:type="number">1</argument>
+        </arguments>
+    </type>
+    <type name="Magento\Framework\MessageQueue\MergerFactory">
+        <arguments>
+            <argument name="mergers" xsi:type="array">
+                <item name="commerce.eventing.event.publish" xsi:type="string">Magento\AdobeCommerceEventsClient\Event\Queue\Merger</item>
+            </argument>
+        </arguments>
+    </type>
+    <virtualType name="subscribeValidatorComposite" type="Magento\AdobeCommerceEventsClient\Event\Validator\CompositeEventValidator">
+        <arguments>
+            <argument name="validators" xsi:type="array">
+                <item name="prefixValidator" xsi:type="object">Magento\AdobeCommerceEventsClient\Event\Validator\EventCode\PrefixValidator</item>
+                <item name="supportedValidator" xsi:type="object">Magento\AdobeCommerceEventsClient\Event\Validator\EventCode\EventCodeSupportedValidator</item>
+                <item name="subscribeValidator" xsi:type="object">Magento\AdobeCommerceEventsClient\Event\Validator\EventCode\SubscribeValidator</item>
+                <item name="ruleValidator" xsi:type="object">Magento\AdobeCommerceEventsClient\Event\Validator\Rule\EventRuleValidator</item>
+            </argument>
+        </arguments>
+    </virtualType>
+    <virtualType name="unsubscribeValidatorComposite" type="Magento\AdobeCommerceEventsClient\Event\Validator\CompositeEventValidator">
+        <arguments>
+            <argument name="validators" xsi:type="array">
+                <item name="prefixValidator" xsi:type="object">Magento\AdobeCommerceEventsClient\Event\Validator\EventCode\PrefixValidator</item>
+                <item name="unsubscribeValidator" xsi:type="object">Magento\AdobeCommerceEventsClient\Event\Validator\EventCode\UnsubscribeValidator</item>
+            </argument>
+        </arguments>
+    </virtualType>
+    <virtualType name="priorityEventBatchSender" type="Magento\AdobeCommerceEventsClient\Event\EventBatchSender">
+        <arguments>
+            <argument name="eventRetriever" xsi:type="object">Magento\AdobeCommerceEventsClient\Event\EventRetriever\PriorityWaitingEventRetriever</argument>
+        </arguments>
+    </virtualType>
+</config>

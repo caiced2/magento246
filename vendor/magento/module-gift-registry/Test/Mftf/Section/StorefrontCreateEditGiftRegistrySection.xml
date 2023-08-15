@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+ /**
+  * Copyright © Magento, Inc. All rights reserved.
+  * See COPYING.txt for license details.
+  */
+-->
+
+<sections xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+          xsi:noNamespaceSchemaLocation="urn:magento:mftf:Page/etc/SectionObject.xsd">
+    <section name="StorefrontCreateEditGiftRegistrySection">
+        <element name="eventType" type="text" selector="#maincontent .giftregistry-type strong"/>
+        <element name="eventName" type="input" selector=".form-giftregistry-edit #title"/>
+        <element name="message" type="input" selector=".form-giftregistry-edit #message"/>
+        <element name="privacySettings" type="select" selector=".form-giftregistry-edit #is_public"/>
+        <element name="status" type="select" selector=".form-giftregistry-edit #is_active"/>
+        <element name="countryRegion" type="select" selector=".form-giftregistry-edit #event_country_region"/>
+        <element name="eventCountry" type="select" selector="#form-validate #event_country"/>
+        <element name="firstNameByIndex" type="input" selector=".form-giftregistry-edit #registrant\:firstname{{index}}" parameterized="true"/>
+        <element name="lastNameByIndex" type="input" selector=".form-giftregistry-edit #registrant\:lastname{{index}}" parameterized="true"/>
+        <element name="emailByIndex" type="input" selector=".form-giftregistry-edit #registrant\:email{{index}}" parameterized="true"/>
+        <element name="shippingAddressSelect" type="select" selector=".form-giftregistry-edit #address_type_or_id"/>
+        <element name="saveButton" type="button" selector=".form-giftregistry-edit #submit\.save" timeout="30"/>
+    </section>
+</sections>

@@ -1,0 +1,231 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+/**
+ * Copyright © Magento, Inc. All rights reserved.
+ * See COPYING.txt for license details.
+ */
+-->
+
+<tests xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xsi:noNamespaceSchemaLocation="urn:magento:mftf:Test/etc/testSchema.xsd">
+    <test name="CheckCustomerAttributesDisabledFieldsTest">
+        <annotations>
+            <features value="CustomerCustomAttributes"/>
+            <stories value="Check disabled fields for system customer attributes"/>
+            <title value="Check customer attributes disabled fields test"/>
+            <description value="Check customer attributes disabled fields"/>
+            <severity value="MAJOR"/>
+            <testCaseId value="MC-14557"/>
+            <group value="CustomerCustomAttributes"/>
+            <group value="mtf_migrated"/>
+            <group value="pr_exclude"/>
+        </annotations>
+        <before>
+            <!-- Login as admin -->
+            <actionGroup ref="AdminLoginActionGroup" stepKey="LoginAsAdmin"/>
+        </before>
+        <after>
+            <!-- Logout admin -->
+            <actionGroup ref="AdminLogoutActionGroup" stepKey="logout"/>
+        </after>
+
+        <!-- Go to Stores > Customer -->
+        <amOnPage url="{{CustomerAttributesPage.url}}" stepKey="navigateToCustomerAttributes"/>
+        <waitForPageLoad stepKey="waitForAttributePageLoad"/>
+
+        <!-- Open 'created_at' attributes by its code -->
+        <actionGroup ref="FilterCustomerAttributesByAttributeCodeActionGroup" stepKey="findCreatedAtAttribute">
+            <argument name="attributeCode" value="created_at"/>
+        </actionGroup>
+        <click selector="{{AdminCustomerAttributeSection.firstAttribute}}" stepKey="clickOnCreatedAtAttribute"/>
+        <waitForPageLoad stepKey="waitForCreatedAtAttributePageLoad"/>
+
+        <!-- Check fields statuses for 'created_at' attribute -->
+        <seeElement selector="{{AttributeEditSection.isVisibleEnabled}}" stepKey="assertCreatedAtAttributeVisibility"/>
+        <seeElement selector="{{AttributeEditSection.sortOrderDisabled}}" stepKey="assertCreatedAtAttributeSortOrder"/>
+        <seeElement selector="{{AttributeEditSection.usedInFormsDisabled}}" stepKey="assertCreatedAtAttributeUsedInForms"/>
+        <click selector="{{AttributeEditSection.backBtn}}" stepKey="clickBackBtnOnCreatedAtAttributePage"/>
+
+        <!-- Open 'updated_at' attributes by its code -->
+        <actionGroup ref="FilterCustomerAttributesByAttributeCodeActionGroup" stepKey="findUpdatedAtAttribute">
+            <argument name="attributeCode" value="updated_at"/>
+        </actionGroup>
+        <click selector="{{AdminCustomerAttributeSection.firstAttribute}}" stepKey="clickOnUpdatedAtAttribute"/>
+        <waitForPageLoad stepKey="waitForUpdatedAtAttributePageLoad"/>
+
+        <!-- Check fields statuses for 'updated_at' attribute -->
+        <seeElement selector="{{AttributeEditSection.isVisibleEnabled}}" stepKey="assertUpdatedAtAttributeVisibility"/>
+        <seeElement selector="{{AttributeEditSection.sortOrderDisabled}}" stepKey="assertUpdatedAtAttributeSortOrder"/>
+        <seeElement selector="{{AttributeEditSection.usedInFormsDisabled}}" stepKey="assertUpdatedAtAttributeUsedInForms"/>
+        <click selector="{{AttributeEditSection.backBtn}}" stepKey="clickBackBtnOnUpdatedAtAttributePage"/>
+
+        <!-- Open 'website_id' attributes by its code -->
+        <actionGroup ref="FilterCustomerAttributesByAttributeCodeActionGroup" stepKey="findWebsiteIdAttribute">
+            <argument name="attributeCode" value="website_id"/>
+        </actionGroup>
+        <click selector="{{AdminCustomerAttributeSection.firstAttribute}}" stepKey="clickOnWebsiteIdAttribute"/>
+        <waitForPageLoad stepKey="waitForWebsiteIdAttributePageLoad"/>
+
+        <!-- Check fields statuses for 'website_id' attribute -->
+        <seeElement selector="{{AttributeEditSection.isVisibleDisabled}}" stepKey="assertWebsiteIdAttributeVisibility"/>
+        <seeElement selector="{{AttributeEditSection.sortOrderDisabled}}" stepKey="assertWebsiteIdAttributeSortOrder"/>
+        <seeElement selector="{{AttributeEditSection.usedInFormsDisabled}}" stepKey="assertWebsiteIdAttributeUsedInForms"/>
+        <click selector="{{AttributeEditSection.backBtn}}" stepKey="clickBackBtnOnWebsiteIdAttributePage"/>
+
+        <!-- Open 'created_in' attributes by its code -->
+        <actionGroup ref="FilterCustomerAttributesByAttributeCodeActionGroup" stepKey="findCreatedInAttribute">
+            <argument name="attributeCode" value="created_in"/>
+        </actionGroup>
+        <click selector="{{AdminCustomerAttributeSection.firstAttribute}}" stepKey="clickOnCreatedInAttribute"/>
+        <waitForPageLoad stepKey="waitForCreatedInAttributePageLoad"/>
+
+        <!-- Check fields statuses for 'created_in' attribute -->
+        <seeElement selector="{{AttributeEditSection.isVisibleDisabled}}" stepKey="assertCreatedInAttributeVisibility"/>
+        <seeElement selector="{{AttributeEditSection.sortOrderDisabled}}" stepKey="assertCreatedInAttributeSortOrder"/>
+        <seeElement selector="{{AttributeEditSection.usedInFormsDisabled}}" stepKey="assertCreatedInAttributeUsedInForms"/>
+        <click selector="{{AttributeEditSection.backBtn}}" stepKey="clickBackBtnOnCreatedInAttributePage"/>
+
+        <!-- Open 'group_id' attributes by its code -->
+        <actionGroup ref="FilterCustomerAttributesByAttributeCodeActionGroup" stepKey="findGroupIdAttribute">
+            <argument name="attributeCode" value="group_id"/>
+        </actionGroup>
+        <click selector="{{AdminCustomerAttributeSection.firstAttribute}}" stepKey="clickOnGroupIdAttribute"/>
+        <waitForPageLoad stepKey="waitForGroupIdAttributePageLoad"/>
+
+        <!-- Check fields statuses for 'group_id' attribute -->
+        <seeElement selector="{{AttributeEditSection.isVisibleDisabled}}" stepKey="assertGroupIdAttributeVisibility"/>
+        <seeElement selector="{{AttributeEditSection.sortOrderDisabled}}" stepKey="assertGroupIdAttributeSortOrder"/>
+        <seeElement selector="{{AttributeEditSection.usedInFormsDisabled}}" stepKey="assertGroupIdAttributeUsedInForms"/>
+        <click selector="{{AttributeEditSection.backBtn}}" stepKey="clickBackBtnOnGroupIdAttributePage"/>
+
+        <!-- Open 'disable_auto_group_change' attributes by its code -->
+        <actionGroup ref="FilterCustomerAttributesByAttributeCodeActionGroup" stepKey="findDisableAutoGroupChangeAttribute">
+            <argument name="attributeCode" value="disable_auto_group_change"/>
+        </actionGroup>
+        <click selector="{{AdminCustomerAttributeSection.firstAttribute}}" stepKey="clickOnDisableAutoGroupChangeAttribute"/>
+        <waitForPageLoad stepKey="waitForDisableAutoGroupChangeAttributePageLoad"/>
+
+        <!-- Check fields statuses for 'disable_auto_group_change' attribute -->
+        <seeElement selector="{{AttributeEditSection.isVisibleDisabled}}" stepKey="assertDisableAutoGroupChangeAttributeVisibility"/>
+        <seeElement selector="{{AttributeEditSection.sortOrderDisabled}}" stepKey="assertDisableAutoGroupChangeAttributeSortOrder"/>
+        <seeElement selector="{{AttributeEditSection.usedInFormsDisabled}}" stepKey="assertDisableAutoGroupChangeAttributeUsedInForms"/>
+        <click selector="{{AttributeEditSection.backBtn}}" stepKey="clickBackBtnOnDisableAutoGroupChangeAttributePage"/>
+
+        <!-- Open 'prefix' attributes by its code -->
+        <actionGroup ref="FilterCustomerAttributesByAttributeCodeActionGroup" stepKey="findPrefixAttribute">
+            <argument name="attributeCode" value="prefix"/>
+        </actionGroup>
+        <click selector="{{AdminCustomerAttributeSection.firstAttribute}}" stepKey="clickOnPrefixAttribute"/>
+        <waitForPageLoad stepKey="waitForPrefixAttributePageLoad"/>
+
+        <!-- Check fields statuses for 'prefix' attribute -->
+        <seeElement selector="{{AttributeEditSection.isVisibleEnabled}}" stepKey="assertPrefixAttributeVisibility"/>
+        <seeElement selector="{{AttributeEditSection.sortOrderDisabled}}" stepKey="assertPrefixAttributeSortOrder"/>
+        <seeElement selector="{{AttributeEditSection.usedInFormsDisabled}}" stepKey="assertPrefixAttributeUsedInForms"/>
+        <click selector="{{AttributeEditSection.backBtn}}" stepKey="clickBackBtnOnPrefixAttributePage"/>
+
+        <!-- Open 'firstname' attributes by its code -->
+        <actionGroup ref="FilterCustomerAttributesByAttributeCodeActionGroup" stepKey="findFirstNameAttribute">
+            <argument name="attributeCode" value="firstname"/>
+        </actionGroup>
+        <click selector="{{AdminCustomerAttributeSection.firstAttribute}}" stepKey="clickOnFirstNameAttribute"/>
+        <waitForPageLoad stepKey="waitForFirstNameAttributePageLoad"/>
+
+        <!-- Check fields statuses for 'firstname' attribute -->
+        <seeElement selector="{{AttributeEditSection.isVisibleDisabled}}" stepKey="assertFirstNameAttributeVisibility"/>
+        <seeElement selector="{{AttributeEditSection.sortOrderDisabled}}" stepKey="assertFirstNameAttributeSortOrder"/>
+        <seeElement selector="{{AttributeEditSection.usedInFormsDisabled}}" stepKey="assertFirstNameAttributeUsedInForms"/>
+        <click selector="{{AttributeEditSection.backBtn}}" stepKey="clickBackBtnOnFirstNameAttributePage"/>
+
+        <!-- Open 'middlename' attributes by its code -->
+        <actionGroup ref="FilterCustomerAttributesByAttributeCodeActionGroup" stepKey="findMiddleNameAttribute">
+            <argument name="attributeCode" value="middlename"/>
+        </actionGroup>
+        <click selector="{{AdminCustomerAttributeSection.firstAttribute}}" stepKey="clickOnMiddleNameAttribute"/>
+        <waitForPageLoad stepKey="waitForMiddleNameAttributePageLoad"/>
+
+        <!-- Check fields statuses for 'middlename' attribute -->
+        <seeElement selector="{{AttributeEditSection.isVisibleEnabled}}" stepKey="assertMiddleNameAttributeVisibility"/>
+        <seeElement selector="{{AttributeEditSection.sortOrderDisabled}}" stepKey="assertMiddleNameAttributeSortOrder"/>
+        <seeElement selector="{{AttributeEditSection.usedInFormsDisabled}}" stepKey="assertMiddleNameAttributeUsedInForms"/>
+        <click selector="{{AttributeEditSection.backBtn}}" stepKey="clickBackBtnOnMiddleNameAttributePage"/>
+
+        <!-- Open 'lastname' attributes by its code -->
+        <actionGroup ref="FilterCustomerAttributesByAttributeCodeActionGroup" stepKey="findLastNameAttribute">
+            <argument name="attributeCode" value="lastname"/>
+        </actionGroup>
+        <click selector="{{AdminCustomerAttributeSection.firstAttribute}}" stepKey="clickOnLastNameAttribute"/>
+        <waitForPageLoad stepKey="waitForLastNameAttributePageLoad"/>
+
+        <!-- Check fields statuses for 'lastname' attribute -->
+        <seeElement selector="{{AttributeEditSection.isVisibleDisabled}}" stepKey="assertLastNameAttributeVisibility"/>
+        <seeElement selector="{{AttributeEditSection.sortOrderDisabled}}" stepKey="assertLastNameAttributeSortOrder"/>
+        <seeElement selector="{{AttributeEditSection.usedInFormsDisabled}}" stepKey="assertLastNameAttributeUsedInForms"/>
+        <click selector="{{AttributeEditSection.backBtn}}" stepKey="clickBackBtnOnLastNameAttributePage"/>
+
+        <!-- Open 'suffix' attributes by its code -->
+        <actionGroup ref="FilterCustomerAttributesByAttributeCodeActionGroup" stepKey="findSuffixAttribute">
+            <argument name="attributeCode" value="suffix"/>
+        </actionGroup>
+        <click selector="{{AdminCustomerAttributeSection.firstAttribute}}" stepKey="clickOnSuffixAttribute"/>
+        <waitForPageLoad stepKey="waitForSuffixAttributePageLoad"/>
+
+        <!-- Check fields statuses for 'suffix' attribute -->
+        <seeElement selector="{{AttributeEditSection.isVisibleEnabled}}" stepKey="assertSuffixAttributeVisibility"/>
+        <seeElement selector="{{AttributeEditSection.sortOrderDisabled}}" stepKey="assertSuffixAttributeSortOrder"/>
+        <seeElement selector="{{AttributeEditSection.usedInFormsDisabled}}" stepKey="assertSuffixAttributeUsedInForms"/>
+        <click selector="{{AttributeEditSection.backBtn}}" stepKey="clickBackBtnOnSuffixAttributePage"/>
+
+        <!-- Open 'email' attributes by its code -->
+        <actionGroup ref="FilterCustomerAttributesByAttributeCodeActionGroup" stepKey="findEmailAttribute">
+            <argument name="attributeCode" value="email"/>
+        </actionGroup>
+        <click selector="{{AdminCustomerAttributeSection.firstAttribute}}" stepKey="clickOnEmailAttribute"/>
+        <waitForPageLoad stepKey="waitForEmailAttributePageLoad"/>
+
+        <!-- Check fields statuses for 'email' attribute -->
+        <seeElement selector="{{AttributeEditSection.isVisibleDisabled}}" stepKey="assertEmailAttributeVisibility"/>
+        <seeElement selector="{{AttributeEditSection.sortOrderDisabled}}" stepKey="assertEmailAttributeSortOrder"/>
+        <seeElement selector="{{AttributeEditSection.usedInFormsDisabled}}" stepKey="assertEmailAttributeUsedInForms"/>
+        <click selector="{{AttributeEditSection.backBtn}}" stepKey="clickBackBtnOnEmailAttributePage"/>
+
+        <!-- Open 'dob' attributes by its code -->
+        <actionGroup ref="FilterCustomerAttributesByAttributeCodeActionGroup" stepKey="findDobAttribute">
+            <argument name="attributeCode" value="dob"/>
+        </actionGroup>
+        <click selector="{{AdminCustomerAttributeSection.firstAttribute}}" stepKey="clickOnDobAttribute"/>
+        <waitForPageLoad stepKey="waitForDobAttributePageLoad"/>
+
+        <!-- Check fields statuses for 'dob' attribute -->
+        <seeElement selector="{{AttributeEditSection.isVisibleEnabled}}" stepKey="assertDobAttributeVisibility"/>
+        <seeElement selector="{{AttributeEditSection.sortOrderDisabled}}" stepKey="assertDobAttributeSortOrder"/>
+        <seeElement selector="{{AttributeEditSection.usedInFormsDisabled}}" stepKey="assertDobAttributeUsedInForms"/>
+        <click selector="{{AttributeEditSection.backBtn}}" stepKey="clickBackBtnOnDobAttributePage"/>
+
+        <!-- Open 'taxvat' attributes by its code -->
+        <actionGroup ref="FilterCustomerAttributesByAttributeCodeActionGroup" stepKey="findTaxVatAttribute">
+            <argument name="attributeCode" value="taxvat"/>
+        </actionGroup>
+        <click selector="{{AdminCustomerAttributeSection.firstAttribute}}" stepKey="clickOnTaxVatAttribute"/>
+        <waitForPageLoad stepKey="waitForTaxVatAttributePageLoad"/>
+
+        <!-- Check fields statuses for 'taxvat' attribute -->
+        <seeElement selector="{{AttributeEditSection.isVisibleEnabled}}" stepKey="assertTaxVatAttributeVisibility"/>
+        <seeElement selector="{{AttributeEditSection.sortOrderDisabled}}" stepKey="assertTaxVatAttributeSortOrder"/>
+        <seeElement selector="{{AttributeEditSection.usedInFormsDisabled}}" stepKey="assertTaxVatAttributeUsedInForms"/>
+        <click selector="{{AttributeEditSection.backBtn}}" stepKey="clickBackBtnOnTaxVatAttributePage"/>
+
+        <!-- Open 'gender' attributes by its code -->
+        <actionGroup ref="FilterCustomerAttributesByAttributeCodeActionGroup" stepKey="findGenderAttribute">
+            <argument name="attributeCode" value="gender"/>
+        </actionGroup>
+        <click selector="{{AdminCustomerAttributeSection.firstAttribute}}" stepKey="clickOnGenderAttribute"/>
+        <waitForPageLoad stepKey="waitForGenderAttributePageLoad"/>
+
+        <!-- Check fields statuses for 'gender' attribute -->
+        <seeElement selector="{{AttributeEditSection.isVisibleEnabled}}" stepKey="assertGenderAttributeVisibility"/>
+        <seeElement selector="{{AttributeEditSection.sortOrderDisabled}}" stepKey="assertGenderAttributeSortOrder"/>
+        <seeElement selector="{{AttributeEditSection.usedInFormsDisabled}}" stepKey="assertGenderAttributeUsedInForms"/>
+        <click selector="{{AttributeEditSection.backBtn}}" stepKey="clickBackBtnOnGenderAttributePage"/>
+    </test>
+</tests>

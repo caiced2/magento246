@@ -1,0 +1,32 @@
+<?xml version="1.0"?>
+<!--
+/**
+ * Copyright © Magento, Inc. All rights reserved.
+ * See COPYING.txt for license details.
+ */
+-->
+<page xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="urn:magento:framework:View/Layout/etc/page_configuration.xsd">
+    <update handle="customer_account_create"/>
+    <body>
+        <referenceContainer name="content">
+            <block class="Magento\Invitation\Block\Customer\Form\Register" name="customer_form_register_invitation" template="Magento_Customer::form/register.phtml" cacheable="false">
+                <container name="form.additional.info" as="form_additional_info"/>
+                <arguments>
+                    <argument name="create_account_button_view_model" xsi:type="object">Magento\Customer\ViewModel\CreateAccountButton</argument>
+                </arguments>
+            </block>
+            <block class="Magento\Cookie\Block\RequireCookie" name="require-cookie" template="Magento_Cookie::require_cookie.phtml">
+                <arguments>
+                    <argument name="triggers" xsi:type="array">
+                        <item name="createAccountInvitation" xsi:type="string">.action.submit</item>
+                    </argument>
+                </arguments>
+            </block>
+        </referenceContainer>
+        <move element="customer.form.register.newsletter" destination="customer_form_register_invitation"/>
+        <move element="customer.form.register.fields.before" destination="customer_form_register_invitation" as="form_fields_before"/>
+        <move element="customer_form_user_attributes" destination="customer_form_register_invitation"/>
+        <move element="customer_form_address_user_attributes" destination="customer_form_register_invitation"/>
+        <referenceBlock name="customer_form_register" remove="true"/>
+    </body>
+</page>

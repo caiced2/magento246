@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+ /**
+  * Copyright © Magento, Inc. All rights reserved.
+  * See COPYING.txt for license details.
+  */
+-->
+<actionGroups xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+              xsi:noNamespaceSchemaLocation="urn:magento:mftf:Test/etc/actionGroupSchema.xsd">
+    <actionGroup name="AdminRemoveCatalogPriceRuleFromUpdateActionGroup">
+        <annotations>
+            <description>Deletes the update for Catalog Price Rule.</description>
+        </annotations>
+        <arguments>
+            <argument name="updateName" type="string" defaultValue="{{_defaultStaging.name}}"/>
+        </arguments>
+
+        <waitForElementVisible selector="{{AdminScheduledChangesSection.scheduleViewEdit(updateName)}}" stepKey="waitForScheduleViewEditLinkVisible"/>
+        <click selector="{{AdminScheduledChangesSection.scheduleViewEdit(updateName)}}" stepKey="clickScheduleViewEditLink"/>
+        <waitForElementVisible selector="{{AdminStagingSlideOutSection.removeFromUpdate}}" stepKey="waitForRemoveFromUpdateButtonVisible"/>
+        <click selector="{{AdminStagingSlideOutSection.removeFromUpdate}}" stepKey="clickRemoveFromUpdateButton"/>
+        <see selector="{{AdminRemoveFromUpdateSection.title}}" userInput="Remove Catalog Price Rule from Update" stepKey="assertRemoveSectionTitle"/>
+        <click selector="{{AdminRemoveFromUpdateSection.deleteTheUpdate}}" stepKey="clickDeleteTheUpdate"/>
+        <waitForElementVisible selector="{{AdminRemoveFromUpdateSection.warningMessage}}" stepKey="waitForWarningMessageVisible"/>
+        <see selector="{{AdminRemoveFromUpdateSection.warningMessage}}" userInput="The catalog price rule will be removed from the update and all scheduled changes will be lost." stepKey="seeWarningMessage"/>
+        <click selector="{{AdminRemoveFromUpdateSection.done}}" stepKey="clickDoneButton"/>
+        <dontSeeElement selector="{{AdminRemoveFromUpdateSection.title}}" stepKey="dontSeeRemoveSectionTitle"/>
+        <dontSeeElement selector="{{AdminScheduledChangesSection.scheduleDetails(updateName)}}" stepKey="dontSeeDeletedUpdate"/>
+    </actionGroup>
+</actionGroups>

@@ -1,0 +1,781 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+/**
+ * Copyright © Magento, Inc. All rights reserved.
+ * See COPYING.txt for license details.
+ */
+-->
+<form xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="urn:magento:module:Magento_Ui:etc/ui_configuration.xsd">
+    <argument name="data" xsi:type="array">
+        <item name="js_config" xsi:type="array">
+            <item name="provider" xsi:type="string">catalogstaging_category_update_form.catalogstaging_category_update_form_data_source</item>
+        </item>
+        <item name="label" xsi:type="string" translate="true">Update Information</item>
+        <item name="template" xsi:type="string">templates/form/collapsible</item>
+        <item name="html_blocks" xsi:type="array">
+            <item name="switcher" xsi:type="array">
+                <item name="type" xsi:type="string">Magento\CatalogStaging\Block\Adminhtml\Store\Switcher</item>
+                <item name="name" xsi:type="string">category.store.switcher</item>
+                <item name="arguments" xsi:type="array"/>
+            </item>
+        </item>
+        <item name="reverseMetadataMerge" xsi:type="boolean">true</item>
+    </argument>
+    <settings>
+        <buttons>
+            <button name="save" class="Magento\Staging\Block\Adminhtml\Update\Entity\SaveButton"/>
+            <button name="remove" class="stagingCatalogCategoryUpdateRemoveButton"/>
+            <button name="preview" class="stagingCatalogCategoryUpdatePreviewButton"/>
+            <button name="cancel" class="stagingCatalogCategoryUpdateCancelButton"/>
+        </buttons>
+        <namespace>catalogstaging_category_update_form</namespace>
+        <ajaxSave>true</ajaxSave>
+        <ajaxSaveType>simple</ajaxSaveType>
+        <dataScope>data</dataScope>
+        <deps>
+            <dep>catalogstaging_category_update_form.catalogstaging_category_update_form_data_source</dep>
+        </deps>
+    </settings>
+    <dataSource name="catalogstaging_category_update_form_data_source">
+        <argument name="data" xsi:type="array">
+            <item name="js_config" xsi:type="array">
+                <item name="component" xsi:type="string">Magento_Ui/js/form/provider</item>
+            </item>
+        </argument>
+        <settings>
+            <submitUrl path="catalogstaging/category/update_save"/>
+        </settings>
+        <dataProvider class="Magento\CatalogStaging\Model\Category\DataProvider" name="catalogstaging_category_update_form_data_source">
+            <settings>
+                <requestFieldName>id</requestFieldName>
+                <primaryFieldName>entity_id</primaryFieldName>
+            </settings>
+        </dataProvider>
+    </dataSource>
+    <modal name="update_remove_form_modal">
+        <settings>
+            <options>
+                <option name="title" xsi:type="string">Remove Category from Update</option>
+            </options>
+        </settings>
+        <insertForm name="update_remove_form_loader">
+            <argument name="data" xsi:type="array">
+                <item name="config" xsi:type="array">
+                    <item name="source" xsi:type="string">staging</item>
+                </item>
+            </argument>
+            <settings>
+                <formSubmitType>ajax</formSubmitType>
+                <renderUrl path="mui/index/render_handle">
+                    <param name="handle">catalogstaging_category_update_remove</param>
+                    <param name="buttons">1</param>
+                </renderUrl>
+                <toolbarContainer>${ $.parentName }</toolbarContainer>
+                <externalProvider>${ $.ns }.catalogstaging_category_update_remove_form_data_source</externalProvider>
+                <ns>catalogstaging_category_update_remove_form</ns>
+            </settings>
+        </insertForm>
+    </modal>
+    <container name="messages" component="Magento_Ui/js/form/components/html">
+        <argument name="data" xsi:type="array">
+            <item name="config" xsi:type="array">
+                <item name="source" xsi:type="string">staging</item>
+                <item name="additionalClasses" xsi:type="string">message message-error</item>
+                <item name="visible" xsi:type="boolean">false</item>
+                <item name="imports" xsi:type="array">
+                    <item name="responseData" xsi:type="string">${ $.parentName}:responseData</item>
+                </item>
+                <item name="listens" xsi:type="array">
+                    <item name="responseData.error" xsi:type="string">visible</item>
+                    <item name="responseData.messages" xsi:type="string">content</item>
+                </item>
+            </item>
+        </argument>
+    </container>
+    <fieldset name="staging" sortOrder="10">
+        <settings>
+            <additionalClasses>
+                <class name="fieldset-schedule">true</class>
+            </additionalClasses>
+            <label translate="true">Schedule Update</label>
+            <dataScope/>
+        </settings>
+        <fieldset name="staging_save">
+            <settings>
+                <label/>
+                <dataScope>staging</dataScope>
+            </settings>
+            <field name="staging_save_mode" formElement="checkbox">
+                <argument name="data" xsi:type="array">
+                    <item name="config" xsi:type="array">
+                        <item name="source" xsi:type="string">staging</item>
+                        <item name="value" xsi:type="string">save</item>
+                    </item>
+                </argument>
+                <settings>
+                    <additionalClasses>
+                        <class name="admin__field-collapsible">true</class>
+                    </additionalClasses>
+                    <validation>
+                        <rule name="required-entry" xsi:type="boolean">true</rule>
+                    </validation>
+                    <dataType>radio</dataType>
+                    <dataScope>mode</dataScope>
+                </settings>
+                <formElements>
+                    <checkbox>
+                        <settings>
+                            <prefer>radio</prefer>
+                            <checked>true</checked>
+                        </settings>
+                    </checkbox>
+                </formElements>
+            </field>
+            <field name="staging_save_update_id" formElement="input">
+                <argument name="data" xsi:type="array">
+                    <item name="config" xsi:type="array">
+                        <item name="source" xsi:type="string">staging</item>
+                    </item>
+                </argument>
+                <settings>
+                    <dataType>text</dataType>
+                    <visible>false</visible>
+                    <dataScope>update_id</dataScope>
+                </settings>
+            </field>
+            <field name="staging_save_name" formElement="input">
+                <argument name="data" xsi:type="array">
+                    <item name="config" xsi:type="array">
+                        <item name="source" xsi:type="string">staging</item>
+                    </item>
+                </argument>
+                <settings>
+                    <validation>
+                        <rule name="required-entry" xsi:type="boolean">true</rule>
+                    </validation>
+                    <dataType>text</dataType>
+                    <label translate="true">Update Name</label>
+                    <dataScope>name</dataScope>
+                    <imports>
+                        <link name="visible">${ $.parentName }.staging_save_mode:checked</link>
+                    </imports>
+                </settings>
+            </field>
+            <field name="staging_save_description" formElement="textarea">
+                <argument name="data" xsi:type="array">
+                    <item name="config" xsi:type="array">
+                        <item name="source" xsi:type="string">staging</item>
+                    </item>
+                </argument>
+                <settings>
+                    <dataType>text</dataType>
+                    <label translate="true">Description</label>
+                    <dataScope>description</dataScope>
+                    <imports>
+                        <link name="visible">${ $.parentName }.staging_save_mode:checked</link>
+                    </imports>
+                </settings>
+            </field>
+            <field name="staging_save_start_date" formElement="date">
+                <argument name="data" xsi:type="array">
+                    <item name="config" xsi:type="array">
+                        <item name="source" xsi:type="string">staging</item>
+                    </item>
+                </argument>
+                <settings>
+                    <validation>
+                        <rule name="required-entry" xsi:type="boolean">true</rule>
+                    </validation>
+                    <dataType>text</dataType>
+                    <label translate="true">Start Date</label>
+                    <dataScope>start_time</dataScope>
+                    <imports>
+                        <link name="visible">${ $.parentName }.staging_save_mode:checked</link>
+                    </imports>
+                </settings>
+                <formElements>
+                    <date>
+                        <settings>
+                            <options>
+                                <option name="dateFormat" xsi:type="string">MMM d, y</option>
+                                <option name="showsTime" xsi:type="boolean">true</option>
+                                <option name="maxDate" xsi:type="string">+30y</option>
+                            </options>
+                        </settings>
+                    </date>
+                </formElements>
+            </field>
+            <field name="staging_save_end_time" formElement="date">
+                <argument name="data" xsi:type="array">
+                    <item name="config" xsi:type="array">
+                        <item name="source" xsi:type="string">staging</item>
+                    </item>
+                </argument>
+                <settings>
+                    <dataType>text</dataType>
+                    <label translate="true">End Date</label>
+                    <dataScope>end_time</dataScope>
+                    <imports>
+                        <link name="visible">${ $.parentName }.staging_save_mode:checked</link>
+                    </imports>
+                </settings>
+                <formElements>
+                    <date>
+                        <settings>
+                            <options>
+                                <option name="dateFormat" xsi:type="string">MMM d, y</option>
+                                <option name="showsTime" xsi:type="boolean">true</option>
+                                <option name="maxDate" xsi:type="string">+30y</option>
+                            </options>
+                        </settings>
+                    </date>
+                </formElements>
+            </field>
+        </fieldset>
+        <fieldset name="staging_select">
+            <settings>
+                <label/>
+                <dataScope>staging</dataScope>
+            </settings>
+            <field name="staging_select_mode" formElement="checkbox">
+                <argument name="data" xsi:type="array">
+                    <item name="config" xsi:type="array">
+                        <item name="source" xsi:type="string">staging</item>
+                        <item name="value" xsi:type="string">assign</item>
+                    </item>
+                </argument>
+                <settings>
+                    <additionalClasses>
+                        <class name="admin__field-collapsible">true</class>
+                    </additionalClasses>
+                    <dataType>radio</dataType>
+                    <dataScope>mode</dataScope>
+                </settings>
+                <formElements>
+                    <checkbox>
+                        <settings>
+                            <prefer>radio</prefer>
+                        </settings>
+                    </checkbox>
+                </formElements>
+            </field>
+            <field name="staging_select_update_id_validation" template="Magento_Staging/form/field" formElement="input">
+                <argument name="data" xsi:type="array">
+                    <item name="config" xsi:type="array">
+                        <item name="source" xsi:type="string">staging_select</item>
+                    </item>
+                </argument>
+                <settings>
+                    <validation>
+                        <rule name="required-entry" xsi:type="boolean">true</rule>
+                    </validation>
+                    <elementTmpl/>
+                    <dataType>text</dataType>
+                    <dataScope>select_id</dataScope>
+                    <imports>
+                        <link name="visible">${ $.parentName }.staging_select_mode:checked</link>
+                    </imports>
+                </settings>
+            </field>
+            <insertListing name="staging_select_update_id">
+                <argument name="data" xsi:type="array">
+                    <item name="config" xsi:type="array">
+                        <item name="source" xsi:type="string">staging</item>
+                    </item>
+                </argument>
+                <settings>
+                    <externalData>id</externalData>
+                    <externalProvider>${ $.ns }.catalogstaging_category_update_select_grid_data_source</externalProvider>
+                    <loading>false</loading>
+                    <selectionsProvider>${ $.ns }.${ $.ns }.columns.ids</selectionsProvider>
+                    <autoRender>true</autoRender>
+                    <dataScope>select_id</dataScope>
+                    <ns>catalogstaging_category_update_select_grid</ns>
+                    <exports>
+                        <link name="id">${ $.externalProvider }:params.id</link>
+                    </exports>
+                    <imports>
+                        <link name="id">${ $.provider }:data.entity_id</link>
+                        <link name="visible">${ $.parentName}.staging_select_mode:checked</link>
+                    </imports>
+                </settings>
+            </insertListing>
+        </fieldset>
+    </fieldset>
+    <fieldset name="general" sortOrder="20">
+        <settings>
+            <collapsible>false</collapsible>
+            <label/>
+        </settings>
+        <field name="id" formElement="hidden">
+            <argument name="data" xsi:type="array">
+                <item name="config" xsi:type="array">
+                    <item name="source" xsi:type="string">category</item>
+                </item>
+            </argument>
+            <settings>
+                <dataType>text</dataType>
+            </settings>
+        </field>
+        <field name="parent" formElement="hidden">
+            <argument name="data" xsi:type="array">
+                <item name="config" xsi:type="array">
+                    <item name="source" xsi:type="string">category</item>
+                </item>
+            </argument>
+            <settings>
+                <dataType>text</dataType>
+            </settings>
+        </field>
+        <field name="path" formElement="hidden">
+            <argument name="data" xsi:type="array">
+                <item name="config" xsi:type="array">
+                    <item name="source" xsi:type="string">category</item>
+                </item>
+            </argument>
+            <settings>
+                <dataType>text</dataType>
+            </settings>
+        </field>
+        <field name="store_id" formElement="hidden">
+            <argument name="data" xsi:type="array">
+                <item name="config" xsi:type="array">
+                    <item name="source" xsi:type="string">category</item>
+                </item>
+            </argument>
+            <settings>
+                <dataType>number</dataType>
+            </settings>
+        </field>
+        <field name="position" formElement="hidden">
+            <argument name="data" xsi:type="array">
+                <item name="config" xsi:type="array">
+                    <item name="source" xsi:type="string">category</item>
+                </item>
+            </argument>
+            <settings>
+                <dataType>number</dataType>
+            </settings>
+        </field>
+        <field name="is_active" sortOrder="10" formElement="checkbox">
+            <argument name="data" xsi:type="array">
+                <item name="config" xsi:type="array">
+                    <item name="source" xsi:type="string">category</item>
+                    <item name="default" xsi:type="number">1</item>
+                </item>
+            </argument>
+            <settings>
+                <validation>
+                    <rule name="required-entry" xsi:type="boolean">false</rule>
+                </validation>
+                <dataType>boolean</dataType>
+                <label translate="true">Enable Category</label>
+            </settings>
+            <formElements>
+                <checkbox>
+                    <settings>
+                        <valueMap>
+                            <map name="false" xsi:type="number">0</map>
+                            <map name="true" xsi:type="number">1</map>
+                        </valueMap>
+                        <prefer>toggle</prefer>
+                    </settings>
+                </checkbox>
+            </formElements>
+        </field>
+        <field name="include_in_menu" sortOrder="20" formElement="checkbox">
+            <argument name="data" xsi:type="array">
+                <item name="config" xsi:type="array">
+                    <item name="source" xsi:type="string">category</item>
+                    <item name="default" xsi:type="number">1</item>
+                </item>
+            </argument>
+            <settings>
+                <validation>
+                    <rule name="required-entry" xsi:type="boolean">false</rule>
+                </validation>
+                <dataType>boolean</dataType>
+                <label translate="true">Include in Menu</label>
+            </settings>
+            <formElements>
+                <checkbox>
+                    <settings>
+                        <valueMap>
+                            <map name="false" xsi:type="number">0</map>
+                            <map name="true" xsi:type="number">1</map>
+                        </valueMap>
+                        <prefer>toggle</prefer>
+                    </settings>
+                </checkbox>
+            </formElements>
+        </field>
+        <field name="name" sortOrder="30" formElement="input">
+            <settings>
+                <dataType>string</dataType>
+                <label translate="true">Category Name</label>
+            </settings>
+        </field>
+    </fieldset>
+    <fieldset name="content" sortOrder="30">
+        <settings>
+            <collapsible>true</collapsible>
+            <label translate="true">Content</label>
+        </settings>
+        <field name="image" sortOrder="40" formElement="imageUploader">
+            <argument name="data" xsi:type="array">
+                <item name="config" xsi:type="array">
+                    <item name="source" xsi:type="string">category</item>
+                </item>
+            </argument>
+            <settings>
+                <required>false</required>
+                <elementTmpl>ui/form/element/uploader/image</elementTmpl>
+                <dataType>string</dataType>
+                <label translate="true">Category Image</label>
+                <visible>true</visible>
+            </settings>
+            <formElements>
+                <imageUploader>
+                    <settings>
+                        <uploaderConfig>
+                            <param xsi:type="url" name="url" path="catalog/category_image/upload"/>
+                        </uploaderConfig>
+                        <previewTmpl>Magento_Catalog/image-preview</previewTmpl>
+                        <allowedExtensions>jpg jpeg gif png</allowedExtensions>
+                        <initialMediaGalleryOpenSubpath>catalog/category</initialMediaGalleryOpenSubpath>
+                    </settings>
+                </imageUploader>
+            </formElements>
+        </field>
+        <field name="description" template="ui/form/field" sortOrder="50" formElement="wysiwyg">
+            <argument name="data" xsi:type="array">
+                <item name="config" xsi:type="array">
+                    <item name="wysiwygConfigData" xsi:type="array">
+                        <item name="height" xsi:type="string">100px</item>
+                        <item name="add_variables" xsi:type="boolean">false</item>
+                        <item name="add_widgets" xsi:type="boolean">false</item>
+                        <item name="add_images" xsi:type="boolean">true</item>
+                        <item name="add_directives" xsi:type="boolean">true</item>
+                    </item>
+                    <item name="source" xsi:type="string">category</item>
+                </item>
+            </argument>
+            <settings>
+                <label translate="true">Description</label>
+                <dataScope>description</dataScope>
+            </settings>
+            <formElements>
+                <wysiwyg class="Magento\Catalog\Ui\Component\Category\Form\Element\Wysiwyg">
+                    <settings>
+                        <rows>8</rows>
+                        <wysiwyg>true</wysiwyg>
+                    </settings>
+                </wysiwyg>
+            </formElements>
+        </field>
+        <field name="landing_page" sortOrder="60" formElement="select">
+            <settings>
+                <dataType>string</dataType>
+                <label translate="true">Add CMS Block</label>
+            </settings>
+        </field>
+    </fieldset>
+    <fieldset name="display_settings" sortOrder="40">
+        <settings>
+            <collapsible>true</collapsible>
+            <label translate="true">Display Settings</label>
+        </settings>
+        <field name="display_mode" sortOrder="70" formElement="select">
+            <settings>
+                <dataType>string</dataType>
+            </settings>
+        </field>
+        <field name="is_anchor" sortOrder="80" formElement="checkbox">
+            <settings>
+                <dataType>boolean</dataType>
+                <label translate="true">Anchor</label>
+            </settings>
+            <formElements>
+                <checkbox>
+                    <settings>
+                        <valueMap>
+                            <map name="false" xsi:type="string">0</map>
+                            <map name="true" xsi:type="string">1</map>
+                        </valueMap>
+                        <prefer>toggle</prefer>
+                    </settings>
+                </checkbox>
+            </formElements>
+        </field>
+        <container name="available_sort_by_group" component="Magento_Ui/js/form/components/group" sortOrder="90">
+            <argument name="data" xsi:type="array">
+                <item name="type" xsi:type="string">group</item>
+                <item name="config" xsi:type="array">
+                    <item name="breakLine" xsi:type="boolean">true</item>
+                </item>
+            </argument>
+            <field name="available_sort_by" formElement="multiselect">
+                <argument name="data" xsi:type="array">
+                    <item name="config" xsi:type="array">
+                        <item name="source" xsi:type="string">category</item>
+                    </item>
+                </argument>
+                <settings>
+                    <label translate="true">Sort Products By</label>
+                    <required>true</required>
+                    <additionalClasses>
+                        <class name="admin__field-default">true</class>
+                    </additionalClasses>
+                </settings>
+            </field>
+            <field name="use_config.available_sort_by" formElement="checkbox">
+                <settings>
+                    <dataType>boolean</dataType>
+                    <exports>
+                        <link name="checked">ns = ${ $.ns }, index = available_sort_by :disabled</link>
+                    </exports>
+                </settings>
+                <formElements>
+                    <checkbox>
+                        <settings>
+                            <description translate="true">Use All</description>
+                            <valueMap>
+                                <map name="false" xsi:type="boolean">false</map>
+                                <map name="true" xsi:type="boolean">true</map>
+                            </valueMap>
+                        </settings>
+                    </checkbox>
+                </formElements>
+            </field>
+        </container>
+        <container name="default_sort_by_group" component="Magento_Ui/js/form/components/group" sortOrder="100">
+            <argument name="data" xsi:type="array">
+                <item name="type" xsi:type="string">group</item>
+                <item name="config" xsi:type="array">
+                    <item name="breakLine" xsi:type="boolean">true</item>
+                </item>
+            </argument>
+            <field name="default_sort_by" formElement="select">
+                <argument name="data" xsi:type="array">
+                    <item name="config" xsi:type="array">
+                        <item name="source" xsi:type="string">category</item>
+                    </item>
+                </argument>
+                <settings>
+                    <label translate="true">Default Product Sorting</label>
+                    <required>true</required>
+                    <additionalClasses>
+                        <class name="admin__field-default">true</class>
+                    </additionalClasses>
+                </settings>
+            </field>
+            <field name="use_config.default_sort_by" formElement="checkbox">
+                <settings>
+                    <dataType>boolean</dataType>
+                    <exports>
+                        <link name="checked">ns = ${ $.ns }, index = default_sort_by :disabled</link>
+                    </exports>
+                </settings>
+                <formElements>
+                    <checkbox>
+                        <settings>
+                            <description translate="true">Use Config Settings</description>
+                            <valueMap>
+                                <map name="false" xsi:type="boolean">false</map>
+                                <map name="true" xsi:type="boolean">true</map>
+                            </valueMap>
+                        </settings>
+                    </checkbox>
+                </formElements>
+            </field>
+        </container>
+        <container name="filter_price_range_group" component="Magento_Ui/js/form/components/group" sortOrder="110">
+            <argument name="data" xsi:type="array">
+                <item name="type" xsi:type="string">group</item>
+                <item name="config" xsi:type="array">
+                    <item name="breakLine" xsi:type="boolean">true</item>
+                </item>
+            </argument>
+            <field name="filter_price_range" formElement="input">
+                <argument name="data" xsi:type="array">
+                    <item name="config" xsi:type="array">
+                        <item name="source" xsi:type="string">category</item>
+                    </item>
+                </argument>
+                <settings>
+                    <label translate="true">Layered Navigation Price Step</label>
+                    <required>true</required>
+                    <additionalClasses>
+                        <class name="admin__field-small">true</class>
+                    </additionalClasses>
+                    <addBefore>$</addBefore>
+                </settings>
+            </field>
+            <field name="use_config.filter_price_range" formElement="checkbox">
+                <settings>
+                    <dataType>boolean</dataType>
+                    <exports>
+                        <link name="checked">ns = ${ $.ns }, index = filter_price_range :disabled</link>
+                    </exports>
+                </settings>
+                <formElements>
+                    <checkbox>
+                        <settings>
+                            <description translate="true">Use Config Settings</description>
+                            <valueMap>
+                                <map name="false" xsi:type="boolean">false</map>
+                                <map name="true" xsi:type="boolean">true</map>
+                            </valueMap>
+                        </settings>
+                    </checkbox>
+                </formElements>
+            </field>
+        </container>
+    </fieldset>
+    <fieldset name="search_engine_optimization" sortOrder="50">
+        <settings>
+            <collapsible>true</collapsible>
+            <label translate="true">Search Engine Optimization</label>
+        </settings>
+        <container name="url_key_group" component="Magento_Ui/js/form/components/group" sortOrder="120">
+            <argument name="data" xsi:type="array">
+                <item name="type" xsi:type="string">group</item>
+                <item name="config" xsi:type="array">
+                    <item name="required" xsi:type="boolean">false</item>
+                </item>
+            </argument>
+            <field name="url_key" sortOrder="10" formElement="input">
+                <argument name="data" xsi:type="array">
+                    <item name="config" xsi:type="array">
+                        <item name="source" xsi:type="string">category</item>
+                    </item>
+                </argument>
+                <settings>
+                    <label translate="true">URL Key</label>
+                </settings>
+            </field>
+        </container>
+        <field name="meta_title" sortOrder="130" formElement="input">
+            <settings>
+                <dataType>string</dataType>
+                <label translate="true">Meta Title</label>
+            </settings>
+        </field>
+        <field name="meta_keywords" sortOrder="140" formElement="textarea">
+            <settings>
+                <dataType>string</dataType>
+                <label translate="true">Meta Keywords</label>
+            </settings>
+        </field>
+        <field name="meta_description" sortOrder="150" formElement="textarea">
+            <settings>
+                <dataType>string</dataType>
+                <label translate="true">Meta Description</label>
+            </settings>
+        </field>
+    </fieldset>
+    <fieldset name="design" sortOrder="60">
+        <settings>
+            <collapsible>true</collapsible>
+            <label translate="true">Design</label>
+        </settings>
+        <field name="custom_use_parent_settings" sortOrder="170" formElement="checkbox">
+            <argument name="data" xsi:type="array">
+                <item name="config" xsi:type="array">
+                    <item name="default" xsi:type="number">0</item>
+                </item>
+            </argument>
+            <settings>
+                <additionalClasses>
+                    <class name="admin__field-no-label">true</class>
+                </additionalClasses>
+                <dataType>boolean</dataType>
+                <label/>
+            </settings>
+            <formElements>
+                <checkbox>
+                    <settings>
+                        <description translate="true">Use Parent Category Settings</description>
+                        <valueMap>
+                            <map name="false" xsi:type="number">0</map>
+                            <map name="true" xsi:type="number">1</map>
+                        </valueMap>
+                    </settings>
+                </checkbox>
+            </formElements>
+        </field>
+        <field name="custom_design" sortOrder="240" formElement="select">
+            <settings>
+                <dataType>string</dataType>
+                <label translate="true">New Theme</label>
+                <imports>
+                    <link name="disabled">${ $.parentName }.custom_use_parent_settings:checked || $.data.serviceDisabled</link>
+                </imports>
+            </settings>
+        </field>
+        <field name="page_layout" sortOrder="180" formElement="select">
+            <settings>
+                <dataType>string</dataType>
+                <label translate="true">New Theme</label>
+                <imports>
+                    <link name="disabled">${ $.parentName }.custom_use_parent_settings:checked || $.data.serviceDisabled</link>
+                </imports>
+            </settings>
+        </field>
+        <field name="page_layout" sortOrder="190" formElement="select">
+            <settings>
+                <dataType>string</dataType>
+                <label translate="true">Layout</label>
+                <imports>
+                    <link name="disabled">${ $.parentName }.custom_use_parent_settings:checked || $.data.serviceDisabled</link>
+                </imports>
+            </settings>
+        </field>
+        <field name="custom_layout_update" sortOrder="200" formElement="textarea">
+            <settings>
+                <dataType>string</dataType>
+                <label translate="true">Layout Update XML</label>
+                <imports>
+                    <link name="disabled">${ $.parentName }.custom_use_parent_settings:checked || $.data.serviceDisabled</link>
+                </imports>
+            </settings>
+        </field>
+        <field name="custom_layout_update_file" component="Magento_Catalog/js/components/use-parent-settings/select" sortOrder="205" formElement="select">
+            <settings>
+                <dataType>string</dataType>
+                <label translate="true">Custom Layout Update</label>
+                <imports>
+                    <link name="serviceDisabled">${ $.parentName }.custom_use_parent_settings:checked || $.data.serviceDisabled</link>
+                </imports>
+            </settings>
+        </field>
+        <field name="custom_apply_to_products" sortOrder="200" formElement="checkbox">
+            <argument name="data" xsi:type="array">
+                <item name="config" xsi:type="array">
+                    <item name="default" xsi:type="number">0</item>
+                </item>
+            </argument>
+            <settings>
+                <additionalClasses>
+                    <class name="admin__field-no-label">true</class>
+                </additionalClasses>
+                <dataType>boolean</dataType>
+                <label/>
+                <imports>
+                    <link name="disabled">${ $.parentName }.custom_use_parent_settings:checked || $.data.serviceDisabled</link>
+                </imports>
+            </settings>
+            <formElements>
+                <checkbox>
+                    <settings>
+                        <description translate="true">Apply Design to Products</description>
+                        <valueMap>
+                            <map name="false" xsi:type="number">0</map>
+                            <map name="true" xsi:type="number">1</map>
+                        </valueMap>
+                    </settings>
+                </checkbox>
+            </formElements>
+        </field>
+    </fieldset>
+</form>

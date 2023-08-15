@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+ /**
+  * Copyright © Magento, Inc. All rights reserved.
+  * See COPYING.txt for license details.
+  */
+-->
+
+<sections xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:noNamespaceSchemaLocation="urn:magento:mftf:Page/etc/SectionObject.xsd">
+    <section name="CheckoutBillingAddressSection">
+        <element name="selectedBillingAddress" type="text" selector=".billing-address-details"/>
+        <element name="editAddressButton" type="button" selector="//div[@class='billing-address-details']//button[contains(@data-bind, 'editAddress')]" timeout="30"/>
+        <element name="changeAddressButtonOnPaymentPage" type="button" selector="//div[@class='billing-address-details']//button[contains(@data-bind, 'openAddressSelection')]" timeout="30"/>
+        <element name="changeAddressButtonOnPaymentMethod" type="button" selector="//input[@id='{{var1}}']/../..//button[@data-bind='click: openAddressSelection']" timeout="30" parameterized="true"/>
+        <element name="newAddressButton" type="button" selector=".new-billing-address-button" timeout="30"/>
+        <element name="billingAndShippingAddressAreTheSameOnPaymentMethod" type="button" selector="input[id='billing-address-same-as-shipping-{{var1}}']" timeout="30" parameterized="true"/>
+        <element name="billingAndShippingAddressAreTheSame" type="checkbox" selector="input[name='billing-address-same-as-shipping']" timeout="30"/>
+        <element name="saveAddressButton" type="button" selector=".action-save-address" timeout="30"/>
+        <element name="selectButton" type="button" selector=".action-primary.action-select-billing-item"/>
+        <element name="changeAddressButton" type="button" selector=".payment-method._active .change-address-popup>button"/>
+    </section>
+</sections>

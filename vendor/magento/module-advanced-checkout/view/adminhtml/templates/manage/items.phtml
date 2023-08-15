@@ -1,0 +1,263 @@
+<?php
+/**
+ * Copyright © Magento, Inc. All rights reserved.
+ * See COPYING.txt for license details.
+ */
+// phpcs:disable Magento2.Files.LineLength
+// phpcs:disable Magento2.Templates.ThisInTemplate
+?>
+<?php
+/**
+ * @var $block \Magento\AdvancedCheckout\Block\Adminhtml\Manage\Items
+ * @var \Magento\Framework\View\Helper\SecureHtmlRenderer $secureRenderer
+ */
+?>
+<?php $canReadPrice = ($block->getCanReadPrice() !== false); ?>
+<?php $_items = $block->getItems() ?>
+<?php if (empty($_items)): ?>
+    <div class="admin__table-wrapper" id="order-items_grid">
+        <table class="data admin__table-primary order-tables">
+            <thead>
+                <tr class="headings">
+                    <th class="col-product no-link"><span><?= $block->escapeHtml(__('Product')) ?></span></th>
+                    <?php if ($canReadPrice): ?>
+                    <th class="col-price no-link"><span><?= $block->escapeHtml(__('Price')) ?></span></th>
+                    <?php endif; ?>
+                    <th class="col-qty no-link"><span><?= $block->escapeHtml(__('Qty')) ?></span></th>
+                    <?php if ($canReadPrice): ?>
+                    <th class="col-price no-link"><span><?= $block->escapeHtml(__('Subtotal')) ?></span></th>
+                    <?php endif; ?>
+                    <th class="col-price no-link"><span><?= $block->escapeHtml(__('Discount')) ?></span></th>
+                    <?php if ($canReadPrice): ?>
+                    <th class="col-price no-link"><span><?= $block->escapeHtml(__('Row Subtotal')) ?></span></th>
+                    <?php endif; ?>
+                    <?php if ($block->isAllowedActionColumn()): ?>
+                    <th class="col-action no-link"><span><?=$block->escapeHtml(__('Action')) ?></span></th>
+                    <?php endif; ?>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td class="empty-text" colspan="100"><?= $block->escapeHtml(__('No ordered items')) ?></td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+<?php else: ?>
+    <div class="admin__table-wrapper" id="order-items_grid">
+        <table class="data admin__table-primary order-tables">
+            <thead>
+                <tr class="headings">
+                    <th class="col-product no-link"><span><?= $block->escapeHtml(__('Product')) ?></span></th>
+                    <?php if ($canReadPrice): ?>
+                    <th class="col-price no-link"><span><?= $block->escapeHtml(__('Price')) ?></span></th>
+                    <?php endif; ?>
+                    <th class="col-qty no-link"><span><?= $block->escapeHtml(__('Qty')) ?></span></th>
+                    <?php if ($canReadPrice): ?>
+                    <th class="col-price no-link"><span><?= $block->escapeHtml(__('Subtotal')) ?></span></th>
+                    <?php endif; ?>
+                    <th class="col-price no-link"><span><?= $block->escapeHtml(__('Discount')) ?></span></th>
+                    <?php if ($canReadPrice): ?>
+                    <th class="col-price no-link"><span><?= $block->escapeHtml(__('Row Subtotal')) ?></span></th>
+                    <?php endif; ?>
+                    <?php if ($block->isAllowedActionColumn()): ?>
+                    <th class="col-action no-link last"><span><?= $block->escapeHtml(__('Action')) ?></span></th>
+                    <?php endif; ?>
+                </tr>
+            </thead>
+            <tfoot>
+                <tr>
+                    <td class="col-total"><?= $block->escapeHtml(__('Total %1 product(s)', count($_items))) ?></td>
+                    <?php if ($canReadPrice): ?>
+                    <td colspan="2" class="col-subtotal"><?= $block->escapeHtml(__('Subtotal:')) ?></td>
+                    <td class="col-price">
+                        <strong><?= /* @noEscape */ $block->formatPrice($block->getSubtotal()) ?></strong>
+                    </td>
+                    <td class="col-price">
+                        <strong><?= /* @noEscape */ $block->formatPrice($block->getDiscountAmount()) ?></strong>
+                    </td>
+                    <td class="col-price">
+                        <strong><?= /* @noEscape */ $block->formatPrice($block->getSubtotalWithDiscount()) ?></strong>
+                    </td>
+                        <?php if ($block->isAllowedActionColumn()): ?>
+                            <td>&nbsp;</td>
+                        <?php endif; ?>
+                    <?php else: ?>
+                        <td>&nbsp;</td>
+                        <td class="col-price">
+                            <strong><?= /* @noEscape */ $block->formatPrice($block->getDiscountAmount()) ?></strong>
+                        </td>
+                        <?php if ($block->isAllowedActionColumn()): ?>
+                            <td>&nbsp;</td>
+                        <?php endif; ?>
+                    <?php endif; ?>
+                </tr>
+            </tfoot>
+            <?php $i = 0; ?>
+            <?php foreach ($_items as $_item): ?>
+                <?php $i++; ?>
+                <tbody class="<?= ($i % 2) ? 'even' : 'odd' ?>">
+                    <tr>
+                        <td class="col-product">
+                            <span class="title"><?= $block->escapeHtml($_item->getName()) ?></span>
+                            <div class="product-sku-block">
+                                <span><?= $block->escapeHtml(__('SKU')) ?>:</span>
+                                <?php /** @var \Magento\Catalog\Helper\Data $catalogHelper */
+                                $catalogHelper = $block->getData('catalogHelper'); ?>
+                                <?= /* @noEscape */ implode(
+                                    '<br />',
+                                    $catalogHelper->splitSku($block->escapeHtml($_item->getSku()))
+                                ) ?>
+                            </div>
+                            <div class="product-configure-block"><?= $block->getConfigureButtonHtml($_item) ?></div>
+                        </td>
+                        <?php if ($canReadPrice): ?>
+                        <td class="col-price">
+                            <?= $block->getItemUnitPriceHtml($_item) ?>
+                        </td>
+                        <?php endif; ?>
+                        <td class="col-qty">
+                            <input name="item[<?= (int) $_item->getId() ?>][qty]"
+                                   class="input-text item-qty admin__control-text"
+                                   value="<?= $block->escapeHtmlAttr($_item->getQty() * 1) ?>"
+                                   maxlength="12">
+                        </td>
+                        <?php if ($canReadPrice): ?>
+                        <td class="col-price">
+                            <?= $block->getItemRowTotalHtml($_item) ?>
+                        </td>
+                        <?php endif; ?>
+                        <td class="col-price">
+                            <?= /* @noEscape */ $block->formatPrice(-$_item->getDiscountAmount()) ?><br />
+                        </td>
+                        <?php if ($canReadPrice): ?>
+                        <td class="col-price">
+                            <?= $block->getItemRowTotalWithDiscountHtml($_item) ?>
+                        </td>
+                        <?php endif; ?>
+                        <?php if ($block->isAllowedActionColumn()): ?>
+                        <td class="col-action">
+                            <select name="item[<?= (int)$_item->getId() ?>][action]" class="admin__control-select">
+                                <option value=""><?= $block->escapeHtml(__('Please select')) ?></option>
+                                <option value="remove"><?= $block->escapeHtml(__('Remove')) ?></option>
+                                <?php if ($block->isMoveToWishlistAllowed($_item)): ?>
+                                    <?php $wishlists = $block->getCustomerWishlists();?>
+                                    <?php if (count($wishlists) <= 1): ?>
+                                        <option value="wishlist">
+                                            <?= $block->escapeHtml(__('Move to Wish List')) ?>
+                                        </option>
+                                    <?php else: ?>
+                                        <optgroup label="<?= $block->escapeHtml(__('Move to Wish List')) ?>">
+                                        <?php foreach ($wishlists as $wishlist):?>
+                                            <option value="wishlist_<?= (int) $wishlist->getId() ?>">
+                                                <?= $block->escapeHtml($wishlist->getName()) ?>
+                                            </option>
+                                        <?php endforeach;?>
+                                        </optgroup>
+                                    <?php endif; ?>
+                                <?php endif; ?>
+                            </select>
+                        </td>
+                        <?php endif; ?>
+                    </tr>
+                    <?php if ($_item->getMessage(false)): ?>
+                        <tr class="row-messages-error">
+                            <?php foreach ($_item->getMessage(false) as $message): ?>
+                                <td colspan="100">
+                                    <div class="message <?= ($_item->getHasError() ? 'message-error' : '') ?>">
+                                        <?= $escaper->escapeHtml($message) ?>
+                                    </div>
+                                </td>
+                            <?php endforeach; ?>
+                        </tr>
+                    <?php endif; ?>
+                </tbody>
+            <?php endforeach; ?>
+        </table>
+    </div>
+<?php endif; ?>
+
+<?php
+$listType = $block->getJsObjectName();
+$listTypeEscaped = $block->escapeJs($listType);
+$noItemSpecifiedMessage = $block->escapeJs(__('No item specified.'));
+$confirmationMessage = $block->escapeJs(__('Are you sure you want to remove this item?'));
+$params = [
+    'customer' => $block->getCustomer()->getId(),
+    'store'    => $block->getStore()->getId(),
+];
+$configureItemsUrl = $block->escapeJs($block->getUrl('checkout/index/configureQuoteItems', $params));
+?>
+<?php $scriptString = <<<script
+require([
+    "Magento_Ui/js/modal/alert",
+    "Magento_Ui/js/modal/confirm",
+    "prototype",
+    "Magento_Catalog/catalog/product/composite/configure"
+], function(alert, confirm){
+
+    {$listTypeEscaped}cartControl = {
+        reload: function (params) {
+            if (!params) {
+                params = {};
+            }
+            {$listTypeEscaped}.reloadParams = params;
+            {$listTypeEscaped}.reload();
+            {$listTypeEscaped}.reloadParams = {};
+        },
+
+        configureItem: function (itemId) {
+            productConfigure.setOnLoadIFrameCallback('{$listTypeEscaped}', this.cbOnLoadIframe.bind(this));
+            productConfigure.showItemConfiguration('{$listTypeEscaped}', itemId);
+            return false;
+        },
+
+        cbOnLoadIframe: function (response) {
+            if (!response.ok) {
+                return;
+            }
+            this.reload();
+        },
+
+        removeItem: function (itemId) {
+            var self = this;
+
+            if (!itemId) {
+                alert({
+                    content: '{$noItemSpecifiedMessage}'
+                });
+
+                return false;
+            }
+
+            confirm({
+                content: '{$confirmationMessage}',
+                actions: {
+                    confirm: function() {
+                        self.reload({'delete':itemId});
+
+                        return false;
+                    }
+                }
+            });
+        }
+    };
+
+    function funcAddItemsListType() {
+        productConfigure.addListType('{$listTypeEscaped}', {
+            urlFetch:  '{$configureItemsUrl}',
+            urlSubmit: ''
+        });
+    }
+    if (typeof(productConfigure) != 'undefined') {
+        funcAddItemsListType()
+    } else {
+        Event.observe(window, 'load', function(){
+            setTimeout(funcAddItemsListType, 10);
+        })
+    }
+});
+script;
+?>
+
+<?= /* @noEscape */ $secureRenderer->renderTag('script', [], $scriptString, false); ?>

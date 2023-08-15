@@ -1,0 +1,32 @@
+<?php
+/**
+ * Copyright © Magento, Inc. All rights reserved.
+ * See COPYING.txt for license details.
+ */
+
+/**
+ * @var \Magento\Banner\Block\Widget\Banner $block
+ */
+?>
+<div class="widget block block-banners-inline" data-bind="scope: 'banner'" <?= /* @noEscape */  $block->getWidgetAttributes() ?>>
+    <ul class="banner-items" data-bind="afterRender: registerBanner">
+        <!-- ko foreach: getItems<?= $block->escapeHtml($block->getUniqueId()) ?>() -->
+        <li class="banner-item" data-bind="attr: {'data-banner-id': $data.bannerId}">
+            <div class="banner-item-content" data-bind="bindHtml: $data.html"></div>
+        </li>
+        <!-- /ko -->
+    </ul>
+</div>
+<script type="text/x-magento-init">
+    {
+        "*": {
+            "Magento_Ui/js/core/app": {
+                "components": {
+                    "banner": {
+                        "component": "Magento_Banner/js/view/banner"
+                    }
+                }
+            }
+        }
+    }
+</script>

@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+/**
+ * Copyright © Magento, Inc. All rights reserved.
+ * See COPYING.txt for license details.
+ */
+-->
+<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema">
+    <xs:redefine schemaLocation="urn:magento:module:Magento_VersionsCms:etc/menu_hierarchy.xsd">
+        <xs:complexType name="menuLayoutDeclaration">
+            <xs:complexContent>
+                <xs:restriction base="menuLayoutDeclaration">
+                    <xs:sequence>
+                        <xs:element minOccurs="0" maxOccurs="unbounded" name="pageLayout" type="pageLayoutDeclaration" />
+                    </xs:sequence>
+                    <xs:attribute name="label" type="xs:string" use="required" />
+                    <xs:attribute name="handle" type="handleName" use="required" />
+                </xs:restriction>
+            </xs:complexContent>
+        </xs:complexType>
+    </xs:redefine>
+</xs:schema>

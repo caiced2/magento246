@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+ /**
+  * Copyright © Magento, Inc. All rights reserved.
+  * See COPYING.txt for license details.
+  */
+-->
+<actionGroups xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:noNamespaceSchemaLocation="urn:magento:mftf:Test/etc/actionGroupSchema.xsd">
+    <actionGroup name="EditConditionsInCustomerSegmentForOrdersActionGroup" extends="EditConditionsInCustomerSegmentActionGroup">
+        <click selector="{{AdminCustomerSegmentConditionsEditSection.selectConditionType}}" stepKey="clickToSelectTheCondition" after="waitForConditionsToAppear"/>
+        <selectOption selector="{{AdminCustomerSegmentConditionsEditSection.selectConditionValue}}" userInput="{{conditionData.selectedCondition}}" stepKey="fillSelectedCondition" after="clickToSelectTheCondition"/>
+        <waitForPageLoad time="20" stepKey="waitForInputBoxToAppear" after="fillSelectedCondition"/>
+    </actionGroup>
+</actionGroups>

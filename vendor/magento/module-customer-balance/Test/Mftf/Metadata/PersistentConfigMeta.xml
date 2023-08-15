@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+ /**
+  * Copyright © Magento, Inc. All rights reserved.
+  * See COPYING.txt for license details.
+  */
+-->
+
+<operations xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="urn:magento:mftf:DataGenerator/etc/dataOperation.xsd">
+    <operation name="CreateStoreCreditConfig" dataType="store_credit_config" type="create" auth="adminFormKey" url="/admin/system_config/save/section/customer/" method="POST" successRegex="/messages-message-success/">
+        <object key="groups" dataType="store_credit_config">
+            <object key="magento_customerbalance" dataType="store_credit_config">
+                <object key="fields" dataType="store_credit_config">
+                    <object key="is_enabled" dataType="store_credit_enable">
+                        <field key="value">integer</field>
+                    </object>
+                    <object key="show_history" dataType="store_credit_show_history">
+                        <field key="value">integer</field>
+                    </object>
+                    <object key="refund_automatically" dataType="store_credit_refund_automatically">
+                        <field key="value">integer</field>
+                    </object>
+                    <object key="email_identity" dataType="store_credit_email_identity">
+                        <field key="value">string</field>
+                    </object>
+                    <object key="email_template" dataType="store_credit_email_template">
+                        <field key="value">string</field>
+                    </object>
+                </object>
+            </object>
+        </object>
+    </operation>
+</operations>

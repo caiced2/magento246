@@ -1,0 +1,34 @@
+<?php
+/**
+ * Copyright © Magento, Inc. All rights reserved.
+ * See COPYING.txt for license details.
+ */
+//phpcs:disable PSR2.Methods.FunctionCallSignature.SpaceBeforeOpenBracket
+//phpcs:disable Magento2.Security.IncludeFile.FoundIncludeFile
+/** @var $block \Magento\Rma\Block\Adminhtml\Rma\Edit\Tab\General\Shipping\Packaging */
+/** @var \Magento\Framework\View\Helper\SecureHtmlRenderer $secureRenderer */
+?>
+<?php
+$sizeSource = $block->getSourceSizeModel();
+$girthEnabled = $block->isGirthAllowed() ? 1 : 0;
+?>
+<?php $scriptString = <<<script
+require(['jquery', 'prototype', "Magento_Shipping/order/packaging"], function(jQuery) {
+    var initPopup =  function() {
+        window.packaging.changeContainerType($$('select[name=package_container]')[0]);
+        window.packaging.checkSizeAndGirthParameter(
+            $$('select[name=package_container]')[0],
+            {$girthEnabled}
+        );
+    };
+
+    if (jQuery(document).data('packagingInited')) {
+        initPopup();
+    } else {
+        jQuery(document).on('packaging:inited', initPopup);
+    }
+});
+script;
+?>
+<?= /* @noEscape */ $secureRenderer->renderTag('script', [], $scriptString, false); ?>
+<?php include ($block->getTemplateFile('Magento_Shipping::order/packaging/popup_content.phtml')) ?>

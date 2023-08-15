@@ -1,0 +1,87 @@
+<?php
+/**
+ * Copyright © Magento, Inc. All rights reserved.
+ * See COPYING.txt for license details.
+ */
+// phpcs:disable Magento2.Files.LineLength
+// phpcs:disable Generic.Files.LineLength.TooLong
+/* @var $block \Magento\CatalogPermissions\Block\Adminhtml\Catalog\Category\Tab\Permissions\Row */
+
+/**
+ * Permissions tab row template
+ *
+ * @see \Magento\CatalogPermissions\Block\Adminhtml\Catalog\Category\Tab\Permissions\Row
+ */
+
+$formName = "category_form";
+?>
+<?php if ($block->isReadonly()): ?>
+    <?php $_readonly = ' disabled="disabled"'; ?>
+<?php else: ?>
+    <?php $_readonly = ''; ?>
+<?php endif; ?>
+
+<div class="option-box permission-box" id="<%- data.html_id %>">
+    <?php if (!$block->canEditWebsites()): ?>
+        <input data-form-part="<?= /* @noEscape */ $formName ?>" type="hidden" value="<?= $block->escapeHtmlAttr($block->getDefaultWebsiteId()) ?>" class="<?= $block->escapeHtmlAttr($block->getFieldClassName('website_id')) ?>" name="permissions[<%- data.index %>][website_id]"/>
+    <?php endif; ?>
+    <input data-form-part="<?= /* @noEscape */ $formName ?>" type="hidden" value="" class="<?= $block->escapeHtmlAttr($block->getFieldClassName('id')) ?>" name="permissions[<%- data.index %>][id]"/>
+    <input data-form-part="<?= /* @noEscape */ $formName ?>" type="hidden" value="" class="<?= $block->escapeHtmlAttr($block->getFieldClassName('_deleted')) ?>" name="permissions[<%- data.index %>][_deleted]"/>
+    <div class="admin__control-table-wrapper">
+        <table class="admin__control-table">
+            <thead>
+            <tr>
+                <?php if ($block->canEditWebsites()): ?>
+                    <th class="col-website required"><?= $block->escapeHtml(__('Website')) ?></th>
+                <?php endif; ?>
+                <th class="col-group required"><?= $block->escapeHtml(__('Customer Group')) ?></th>
+                <?php foreach ($block->getGrants() as $_label): ?>
+                    <th class="col-grants"><?= $block->escapeHtml($_label) ?></th>
+                <?php endforeach; ?>
+                <th class="col-action"><?= $block->escapeHtml(__('Action')) ?></th>
+            </tr>
+            </thead>
+            <tbody>
+            <tr>
+                <?php if ($block->canEditWebsites()): ?>
+                    <td class="col-website"><select data-form-part="<?= /* @noEscape */ $formName ?>" <?= /* @noEscape */ $_readonly ?> class="<?= $block->escapeHtmlAttr($block->getFieldClassName('website_id')) ?> select is-unique required-entry" name="permissions[<%- data.index %>][website_id]" <%- data.website_id_disabled %>>
+                            <option value=""><?= $block->escapeHtml(__('-- Please Select --')) ?></option>
+                            <option value="<?= $block->escapeHtmlAttr($block->getOptionForSelectAll()) ?>"><?= $block->escapeHtml(__('All Websites')) ?></option>
+                            <?php foreach ($block->getWebsiteCollection() as $_website): ?>
+                                <option value="<?= $block->escapeHtmlAttr($_website->getId()) ?>"><?= $block->escapeHtml($_website->getName()) ?></option>
+                            <?php endforeach; ?>
+                        </select></td>
+                <?php endif; ?>
+                <td class="col-group">
+                    <select data-form-part="<?= /* @noEscape */ $formName ?>" <?= /* @noEscape */ $_readonly ?> class="<?= $block->escapeHtmlAttr($block->getFieldClassName('customer_group_id')) ?> select is-unique required-entry" name="permissions[<%- data.index %>][customer_group_id]">
+                        <option value=""><?= $block->escapeHtml(__('-- Please Select --')) ?></option>
+                        <option value="<?= $block->escapeHtmlAttr($block->getOptionForSelectAll()) ?>"><?= $block->escapeHtml(__('All Customer Groups')) ?></option>
+                        <?php foreach ($block->getCustomerGroupCollection() as $_customerGroup): ?>
+                            <option value="<?= $block->escapeHtmlAttr($_customerGroup->getId()) ?>"><?= $block->escapeHtml($_customerGroup->getCode()) ?></option>
+                        <?php endforeach; ?>
+                    </select>
+                </td>
+                <?php foreach ($block->getGrants() as $_fieldId => $_label): ?>
+                    <td class="col-grants">
+                        <input data-form-part="<?= /* @noEscape */ $formName ?>" <?= /* @noEscape */ $_readonly ?> type="radio" class="<?= $block->escapeHtmlAttr($block->getFieldClassName($_fieldId)) ?>" name="permissions[<%- data.index %>][<?= $block->escapeHtmlAttr($_fieldId) ?>]" id="category_permissions_<%- data.index %>_<?= $block->escapeHtmlAttr($_fieldId) ?>_allow" value="-1" <%- data["<?= $block->escapeHtmlAttr($_fieldId) ?>_-1"] %> <%- data.<?= $block->escapeHtmlAttr($_fieldId) ?>_disabled %>/><label for="category_permissions_<%- data.index %>_<?= $block->escapeHtmlAttr($_fieldId) ?>_allow">
+                            <span><?= $block->escapeHtml(__('Allow')) ?></span>
+                        </label><br />
+                        <input data-form-part="<?= /* @noEscape */ $formName ?>" <?= /* @noEscape */ $_readonly ?> type="radio" class="<?= $block->escapeHtmlAttr($block->getFieldClassName($_fieldId)) ?>" name="permissions[<%- data.index %>][<?= $block->escapeHtmlAttr($_fieldId) ?>]" id="category_permissions_<%- data.index %>_<?= $block->escapeHtmlAttr($_fieldId) ?>_deny" value="-2" <%- data["<?= $block->escapeHtmlAttr($_fieldId) ?>_-2"] %> <%- data.<?= $block->escapeHtmlAttr($_fieldId) ?>_disabled %>/><label for="category_permissions_<%- data.index %>_<?= $block->escapeHtmlAttr($_fieldId) ?>_deny">
+                            <span><?= $block->escapeHtml(__('Deny')) ?></span>
+                        </label><br />
+                        <input data-form-part="<?= /* @noEscape */ $formName ?>" <?= /* @noEscape */ $_readonly ?> type="radio" class="<?= $block->escapeHtmlAttr($block->getFieldClassName($_fieldId)) ?>" name="permissions[<%- data.index %>][<?= $block->escapeHtmlAttr($_fieldId) ?>]" id="category_permissions_<%- data.index %>_<?= $block->escapeHtmlAttr($_fieldId) ?>_default" value="0" <%- data["<?= $block->escapeHtmlAttr($_fieldId) ?>_0"] %> <%- data.<?= $block->escapeHtmlAttr($_fieldId) ?>_disabled %>/><label for="category_permissions_<%- data.index %>_<?= $block->escapeHtmlAttr($_fieldId) ?>_default">
+                            <span>
+                                <?= $block->escapeHtml(__('Use parent')) ?>
+                                <span class="permissions-use-parent <?= $block->escapeHtmlAttr($_fieldId) ?>"></span>
+                            </span>
+                        </label>
+                    </td>
+                <?php endforeach; ?>
+                <td class="col-action"><?= $block->getDeleteButtonHtml() ?></td>
+            </tr>
+            </tbody>
+        </table>
+    </div>
+
+    <input data-form-part="<?= /* @noEscape */ $formName ?>" type="hidden" value="" class="permission-duplicate" id="category_permissions_<%- data.index %>_duplicate"/>
+</div>

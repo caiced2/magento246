@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+ /**
+  * Copyright © Magento, Inc. All rights reserved.
+  * See COPYING.txt for license details.
+  */
+-->
+<actionGroups xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+              xsi:noNamespaceSchemaLocation="urn:magento:mftf:Test/etc/actionGroupSchema.xsd">
+    <actionGroup name="AdminProductScheduledUpdateFillMinimumAdvertisedPriceActionGroup">
+        <annotations>
+            <description>Fill the minimum advertised price for product scheduled update.</description>
+        </annotations>
+        <arguments>
+            <argument name="msrp" type="string" defaultValue="10"/>
+        </arguments>
+        <click selector="{{AdminProductScheduleUpdateSection.advancedPricing}}" stepKey="clickAdvancedPricingLinkInUpdate"/>
+        <waitForElementVisible selector="{{AdminProductFormAdvancedPricingSection.msrp}}" stepKey="waitMsrpInUpdate"/>
+        <fillField userInput="{{msrp}}" selector="{{AdminProductFormAdvancedPricingSection.msrp}}" stepKey="fillMsrpInUpdate"/>
+        <click selector="{{AdminProductScheduleUpdateSection.doneButton}}" stepKey="clickDoneInUpdate"/>
+        <waitForElementNotVisible selector="{{AdminProductFormAdvancedPricingSection.msrp}}" stepKey="waitForCloseModalWindowInUpdate"/>
+    </actionGroup>
+</actionGroups>

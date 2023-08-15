@@ -1,0 +1,27 @@
+<?xml version="1.0"?>
+<!--
+/**
+ * Copyright © Magento, Inc. All rights reserved.
+ * See COPYING.txt for license details.
+ */
+-->
+<logging xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:noNamespaceSchemaLocation="urn:magento:module:Magento_Logging:etc/logging.xsd">
+    <groups>
+        <group name="magento_targetrule">
+            <label translate="true">Rule-Based Product Relations</label>
+            <expected_models>
+                <expected_model class="Magento\TargetRule\Model\Rule" />
+            </expected_models>
+            <events>
+                <event controller_action="adminhtml_targetrule_edit" action_alias="view" />
+                <event controller_action="adminhtml_targetrule_save" action_alias="save">
+                    <skip_on_back>
+                        <controller_action name="adminhtml_targetrule_edit" />
+                    </skip_on_back>
+                </event>
+                <event controller_action="adminhtml_targetrule_delete" action_alias="delete" />
+            </events>
+        </group>
+    </groups>
+</logging>

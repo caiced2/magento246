@@ -1,0 +1,199 @@
+<?xml version="1.0"?>
+<!--
+/**
+ * Copyright © Magento, Inc. All rights reserved.
+ * See COPYING.txt for license details.
+ */
+-->
+<schema xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:noNamespaceSchemaLocation="urn:magento:framework:Setup/Declaration/Schema/etc/schema.xsd">
+    <table name="magento_catalogpermissions" resource="default" engine="innodb" comment="Enterprise Catalogpermissions">
+        <column xsi:type="int" name="permission_id" unsigned="true" nullable="false" identity="true"
+                comment="Permission Id"/>
+        <column xsi:type="int" name="category_id" unsigned="true" nullable="false" identity="false"
+                comment="Category Id"/>
+        <column xsi:type="smallint" name="website_id" unsigned="true" nullable="true" identity="false"
+                comment="Website Id"/>
+        <column xsi:type="int" name="customer_group_id" unsigned="true" nullable="true" identity="false"
+                comment="Customer Group Id"/>
+        <column xsi:type="smallint" name="grant_catalog_category_view" unsigned="false" nullable="false"
+                identity="false" comment="Grant Catalog Category View"/>
+        <column xsi:type="smallint" name="grant_catalog_product_price" unsigned="false" nullable="false"
+                identity="false" comment="Grant Catalog Product Price"/>
+        <column xsi:type="smallint" name="grant_checkout_items" unsigned="false" nullable="false"
+                identity="false" comment="Grant Checkout Items"/>
+        <constraint xsi:type="primary" referenceId="PRIMARY">
+            <column name="permission_id"/>
+        </constraint>
+        <constraint xsi:type="foreign" referenceId="MAGENTO_CATPERMISSIONS_CSTR_GROUP_ID_CSTR_GROUP_CSTR_GROUP_ID"
+                    table="magento_catalogpermissions" column="customer_group_id" referenceTable="customer_group"
+                    referenceColumn="customer_group_id" onDelete="CASCADE"/>
+        <constraint xsi:type="foreign" referenceId="MAGENTO_CATALOGPERMISSIONS_WEBSITE_ID_STORE_WEBSITE_WEBSITE_ID"
+                    table="magento_catalogpermissions" column="website_id" referenceTable="store_website"
+                    referenceColumn="website_id" onDelete="CASCADE"/>
+        <constraint xsi:type="foreign" referenceId="MAGENTO_CATPERMISSIONS_CTGR_ID_CAT_CTGR_ENTT_ENTT_ID"
+                    table="magento_catalogpermissions" column="category_id" referenceTable="catalog_category_entity"
+                    referenceColumn="entity_id" onDelete="CASCADE"/>
+        <constraint xsi:type="unique" referenceId="MAGENTO_CATPERMISSIONS_CTGR_ID_WS_ID_CSTR_GROUP_ID">
+            <column name="category_id"/>
+            <column name="website_id"/>
+            <column name="customer_group_id"/>
+        </constraint>
+        <index referenceId="MAGENTO_CATALOGPERMISSIONS_WEBSITE_ID" indexType="btree">
+            <column name="website_id"/>
+        </index>
+        <index referenceId="MAGENTO_CATALOGPERMISSIONS_CUSTOMER_GROUP_ID" indexType="btree">
+            <column name="customer_group_id"/>
+        </index>
+    </table>
+    <table name="magento_catalogpermissions_index" resource="default" engine="innodb"
+           comment="Enterprise Catalogpermissions Index">
+        <column xsi:type="int" name="category_id" unsigned="true" nullable="false" identity="false"
+                comment="Category Id"/>
+        <column xsi:type="smallint" name="website_id" unsigned="true" nullable="false" identity="false"
+                comment="Website Id"/>
+        <column xsi:type="int" name="customer_group_id" unsigned="true" nullable="false" identity="false"/>
+        <column xsi:type="smallint" name="grant_catalog_category_view" unsigned="false" nullable="true"
+                identity="false" comment="Grant Catalog Category View"/>
+        <column xsi:type="smallint" name="grant_catalog_product_price" unsigned="false" nullable="true"
+                identity="false" comment="Grant Catalog Product Price"/>
+        <column xsi:type="smallint" name="grant_checkout_items" unsigned="false" nullable="true"
+                identity="false" comment="Grant Checkout Items"/>
+        <constraint xsi:type="primary" referenceId="MAGENTO_CATPERMISSIONS_IDX_CTGR_ID_WS_ID_CSTR_GROUP_ID">
+            <column name="category_id"/>
+            <column name="website_id"/>
+            <column name="customer_group_id"/>
+        </constraint>
+        <index referenceId="MAGENTO_CATALOGPERMISSIONS_INDEX_WEBSITE_ID" indexType="btree">
+            <column name="website_id"/>
+        </index>
+        <index referenceId="MAGENTO_CATALOGPERMISSIONS_INDEX_CUSTOMER_GROUP_ID" indexType="btree">
+            <column name="customer_group_id"/>
+        </index>
+    </table>
+    <table name="magento_catalogpermissions_index_product" resource="default" engine="innodb"
+           comment="Enterprise Catalogpermissions Index Product">
+        <column xsi:type="int" name="product_id" unsigned="true" nullable="false" identity="false"
+                comment="Product Id"/>
+        <column xsi:type="smallint" name="store_id" unsigned="true" nullable="false" identity="false"
+                comment="Store Id"/>
+        <column xsi:type="int" name="customer_group_id" unsigned="true" nullable="false" identity="false"/>
+        <column xsi:type="smallint" name="grant_catalog_category_view" unsigned="false" nullable="true"
+                identity="false" comment="Grant Catalog Category View"/>
+        <column xsi:type="smallint" name="grant_catalog_product_price" unsigned="false" nullable="true"
+                identity="false" comment="Grant Catalog Product Price"/>
+        <column xsi:type="smallint" name="grant_checkout_items" unsigned="false" nullable="true"
+                identity="false" comment="Grant Checkout Items"/>
+        <column xsi:type="int" name="index_id" unsigned="true" nullable="false" identity="true"
+                comment="Index Id"/>
+        <constraint xsi:type="primary" referenceId="PRIMARY">
+            <column name="index_id"/>
+        </constraint>
+        <constraint xsi:type="unique" referenceId="MAGENTO_CATPERMISSIONS_IDX_PRD_PRD_ID_STORE_ID_CSTR_GROUP_ID">
+            <column name="product_id"/>
+            <column name="store_id"/>
+            <column name="customer_group_id"/>
+        </constraint>
+    </table>
+    <table name="magento_catalogpermissions_index_tmp" resource="default" engine="innodb"
+           comment="Catalog Category Permissions Temporary Index">
+        <column xsi:type="int" name="category_id" unsigned="true" nullable="false" identity="false"
+                comment="Category Id"/>
+        <column xsi:type="smallint" name="website_id" unsigned="true" nullable="false" identity="false"
+                comment="Website Id"/>
+        <column xsi:type="int" name="customer_group_id" unsigned="true" nullable="false" identity="false"/>
+        <column xsi:type="smallint" name="grant_catalog_category_view" unsigned="false" nullable="true"
+                identity="false" comment="Grant Catalog Category View"/>
+        <column xsi:type="smallint" name="grant_catalog_product_price" unsigned="false" nullable="true"
+                identity="false" comment="Grant Catalog Product Price"/>
+        <column xsi:type="smallint" name="grant_checkout_items" unsigned="false" nullable="true"
+                identity="false" comment="Grant Checkout Items"/>
+        <constraint xsi:type="primary" referenceId="MAGENTO_CATPERMISSIONS_IDX_TMP_CTGR_ID_WS_ID_CSTR_GROUP_ID">
+            <column name="category_id"/>
+            <column name="website_id"/>
+            <column name="customer_group_id"/>
+        </constraint>
+        <index referenceId="MAGENTO_CATALOGPERMISSIONS_INDEX_TMP_WEBSITE_ID" indexType="btree">
+            <column name="website_id"/>
+        </index>
+        <index referenceId="MAGENTO_CATALOGPERMISSIONS_INDEX_TMP_CUSTOMER_GROUP_ID" indexType="btree">
+            <column name="customer_group_id"/>
+        </index>
+    </table>
+    <table name="magento_catalogpermissions_index_product_tmp" resource="default" engine="innodb"
+           comment="Catalog Product Permissions Temporary Index">
+        <column xsi:type="int" name="product_id" unsigned="true" nullable="false" identity="false"
+                comment="Product Id"/>
+        <column xsi:type="smallint" name="store_id" unsigned="true" nullable="false" identity="false"
+                comment="Store Id"/>
+        <column xsi:type="int" name="customer_group_id" unsigned="true" nullable="false" identity="false"/>
+        <column xsi:type="smallint" name="grant_catalog_category_view" unsigned="false" nullable="true"
+                identity="false" comment="Grant Catalog Category View"/>
+        <column xsi:type="smallint" name="grant_catalog_product_price" unsigned="false" nullable="true"
+                identity="false" comment="Grant Catalog Product Price"/>
+        <column xsi:type="smallint" name="grant_checkout_items" unsigned="false" nullable="true"
+                identity="false" comment="Grant Checkout Items"/>
+        <constraint xsi:type="primary" referenceId="MAGENTO_CATPERMISSIONS_IDX_PRD_TMP_PRD_ID_STORE_ID_CSTR_GROUP_ID">
+            <column name="product_id"/>
+            <column name="store_id"/>
+            <column name="customer_group_id"/>
+        </constraint>
+        <index referenceId="MAGENTO_CATALOGPERMISSIONS_INDEX_PRODUCT_TMP_STORE_ID" indexType="btree">
+            <column name="store_id"/>
+        </index>
+        <index referenceId="MAGENTO_CATALOGPERMISSIONS_INDEX_PRODUCT_TMP_CUSTOMER_GROUP_ID" indexType="btree">
+            <column name="customer_group_id"/>
+        </index>
+    </table>
+    <table name="magento_catalogpermissions_index_replica" resource="default" engine="innodb"
+           comment="Enterprise Catalogpermissions Index">
+        <column xsi:type="int" name="category_id" unsigned="true" nullable="false" identity="false"
+                comment="Category Id"/>
+        <column xsi:type="smallint" name="website_id" unsigned="true" nullable="false" identity="false"
+                comment="Website Id"/>
+        <column xsi:type="int" name="customer_group_id" unsigned="true" nullable="false" identity="false"
+                comment="Customer Group Id"/>
+        <column xsi:type="smallint" name="grant_catalog_category_view" unsigned="false" nullable="true"
+                identity="false" comment="Grant Catalog Category View"/>
+        <column xsi:type="smallint" name="grant_catalog_product_price" unsigned="false" nullable="true"
+                identity="false" comment="Grant Catalog Product Price"/>
+        <column xsi:type="smallint" name="grant_checkout_items" unsigned="false" nullable="true"
+                identity="false" comment="Grant Checkout Items"/>
+        <constraint xsi:type="primary" referenceId="MAGENTO_CATPERMISSIONS_IDX_CTGR_ID_WS_ID_CSTR_GROUP_ID">
+            <column name="category_id"/>
+            <column name="website_id"/>
+            <column name="customer_group_id"/>
+        </constraint>
+        <index referenceId="MAGENTO_CATALOGPERMISSIONS_INDEX_WEBSITE_ID" indexType="btree">
+            <column name="website_id"/>
+        </index>
+        <index referenceId="MAGENTO_CATALOGPERMISSIONS_INDEX_CUSTOMER_GROUP_ID" indexType="btree">
+            <column name="customer_group_id"/>
+        </index>
+    </table>
+    <table name="magento_catalogpermissions_index_product_replica" resource="default" engine="innodb"
+           comment="Magento Catalogpermissions Index Product Replica">
+        <column xsi:type="int" name="product_id" unsigned="true" nullable="false" identity="false"
+                comment="Product Id"/>
+        <column xsi:type="smallint" name="store_id" unsigned="true" nullable="false" identity="false"
+                comment="Store Id"/>
+        <column xsi:type="int" name="customer_group_id" unsigned="true" nullable="false" identity="false"
+                comment="Customer Group Id"/>
+        <column xsi:type="smallint" name="grant_catalog_category_view" unsigned="false" nullable="true"
+                identity="false" comment="Grant Catalog Category View"/>
+        <column xsi:type="smallint" name="grant_catalog_product_price" unsigned="false" nullable="true"
+                identity="false" comment="Grant Catalog Product Price"/>
+        <column xsi:type="smallint" name="grant_checkout_items" unsigned="false" nullable="true"
+                identity="false" comment="Grant Checkout Items"/>
+        <column xsi:type="int" name="index_id" unsigned="true" nullable="false" identity="true"
+                comment="Index Id"/>
+        <constraint xsi:type="primary" referenceId="PRIMARY">
+            <column name="index_id"/>
+        </constraint>
+        <constraint xsi:type="unique" referenceId="MAGENTO_CATPERMISSIONS_IDX_PRD_PRD_ID_STORE_ID_CSTR_GROUP_ID">
+            <column name="product_id"/>
+            <column name="store_id"/>
+            <column name="customer_group_id"/>
+        </constraint>
+    </table>
+</schema>

@@ -1,0 +1,81 @@
+{
+    "magento_customersegment_segment": {
+        "column": {
+            "segment_id": true,
+            "name": true,
+            "description": true,
+            "is_active": true,
+            "conditions_serialized": true,
+            "processing_frequency": true,
+            "condition_sql": true,
+            "apply_to": true
+        },
+        "constraint": {
+            "PRIMARY": true
+        }
+    },
+    "magento_customersegment_website": {
+        "column": {
+            "segment_id": true,
+            "website_id": true
+        },
+        "index": {
+            "MAGENTO_CUSTOMERSEGMENT_WEBSITE_WEBSITE_ID": true
+        },
+        "constraint": {
+            "PRIMARY": true,
+            "FK_A519424B18F07BA7FB739ED68979A688": true,
+            "MAGENTO_CSTRSEGMENT_WS_WS_ID_STORE_WS_WS_ID": true
+        }
+    },
+    "magento_customersegment_customer": {
+        "column": {
+            "segment_id": true,
+            "customer_id": true,
+            "added_date": true,
+            "updated_date": true,
+            "website_id": true
+        },
+        "index": {
+            "MAGENTO_CUSTOMERSEGMENT_CUSTOMER_WEBSITE_ID": true,
+            "MAGENTO_CUSTOMERSEGMENT_CUSTOMER_CUSTOMER_ID": true
+        },
+        "constraint": {
+            "PRIMARY": true,
+            "MAGENTO_CSTRSEGMENT_CSTR_WS_ID_STORE_WS_WS_ID": true,
+            "MAGENTO_CSTRSEGMENT_CSTR_CSTR_ID_CSTR_ENTT_ENTT_ID": true,
+            "FK_EBEC494F27927B723C3896E3466DBF6B": true,
+            "MAGENTO_CSTRSEGMENT_CSTR_SEGMENT_ID_WS_ID_CSTR_ID": true
+        }
+    },
+    "magento_customersegment_event": {
+        "column": {
+            "segment_event_id": true,
+            "segment_id": true,
+            "event": true
+        },
+        "index": {
+            "MAGENTO_CUSTOMERSEGMENT_EVENT_EVENT": true,
+            "MAGENTO_CUSTOMERSEGMENT_EVENT_SEGMENT_ID": true
+        },
+        "constraint": {
+            "PRIMARY": true,
+            "FK_3E7684FB6181C81446A1567EA3D3975E": true
+        }
+    },
+    "customer_eav_attribute": {
+        "column": {
+            "is_used_for_customer_segment": true
+        }
+    },
+    "customer_entity": {
+        "index": {
+            "CUSTOMER_ENTITY_CREATED_AT": true,
+            "CUSTOMER_ENTITY_DOB": true,
+            "CUSTOMER_ENTITY_DEFAULT_BILLING": true,
+            "CUSTOMER_ENTITY_DEFAULT_SHIPPING": true,
+            "CUSTOMER_ENTITY_GENDER": true,
+            "CUSTOMER_ENTITY_GROUP_ID": true
+        }
+    }
+}

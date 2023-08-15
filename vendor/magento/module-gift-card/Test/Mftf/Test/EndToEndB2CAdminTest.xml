@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+ /**
+  * Copyright © Magento, Inc. All rights reserved.
+  * See COPYING.txt for license details.
+  */
+-->
+<tests xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xsi:noNamespaceSchemaLocation="urn:magento:mftf:Test/etc/testSchema.xsd">
+    <test name="EndToEndB2CAdminTest">
+        <!--Create Gift Card-->
+        <amOnPage url="{{AdminProductIndexPage.url}}" stepKey="visitAdminProductPageGiftCard" after="seeSimpleProductInGrid"/>
+        <waitForPageLoad stepKey="waitForProductPageLoadGiftCard" after="visitAdminProductPageGiftCard"/>
+        <actionGroup ref="GoToCreateProductPageActionGroup" stepKey="goToCreateGiftCard" after="waitForProductPageLoadGiftCard">
+            <argument name="product" value="GiftCard"/>
+        </actionGroup>
+        <fillField selector="{{AdminProductFormSection.productName}}" userInput="{{GiftCard.name}}" stepKey="fillProductSkuGiftCard" after="goToCreateGiftCard"/>
+        <fillField selector="{{AdminProductFormSection.productSku}}" userInput="{{GiftCard.sku}}" stepKey="fillProductNameGiftCard" after="fillProductSkuGiftCard"/>
+        <selectOption selector="{{AdminProductFormSection.cardType}}" userInput="{{GiftCard.card_type}}" stepKey="selectGiftCardType" after="fillProductNameGiftCard"/>
+        <actionGroup ref="addGiftCardAmount" stepKey="fillFirstGiftCardAmount" after="selectGiftCardType">
+            <argument name="giftCardAmount" value="GiftCard.amounts[0]"/>
+        </actionGroup>
+        <actionGroup ref="addGiftCardAmount" stepKey="fillSecondGiftCardAmount" after="fillFirstGiftCardAmount">
+            <argument name="giftCardAmount" value="GiftCard.amounts[1]"/>
+        </actionGroup>
+        <seeInField selector="{{AdminProductFormSection.cardAmount('1')}}" userInput="{{GiftCard.amounts[0]}}" stepKey="checkFirstCardAmountFilled" after="fillSecondGiftCardAmount"/>
+        <seeInField selector="{{AdminProductFormSection.cardAmount('2')}}" userInput="{{GiftCard.amounts[1]}}" stepKey="checkSecondCardAmountFilled" after="checkFirstCardAmountFilled"/>
+        <fillField selector="{{AdminProductFormSection.productQuantity}}" userInput="{{GiftCard.quantity}}" stepKey="fillGiftCardQuantity" after="checkSecondCardAmountFilled"/>
+
+        <actionGroup ref="SaveProductFormActionGroup" stepKey="saveGiftCard" after="fillGiftCardQuantity"/>
+        <click selector="{{AdminProductFormActionSection.backButton}}" stepKey="clickBackToGridGiftCard" after="saveGiftCard"/>
+        <actionGroup ref="viewGiftCardInAdminGrid" stepKey="seeGiftCardInGrid" after="clickBackToGridGiftCard">
+            <argument name="product" value="GiftCard"/>
+        </actionGroup>
+
+        <!--@TODO Move cleanup to "after" when MQE-830 is resolved-->
+        <comment userInput="Clean up gift card product" stepKey="cleanUpGiftCard" after="deleteSimpleProduct"/>
+        <actionGroup ref="DeleteProductUsingProductGridActionGroup" stepKey="deleteGiftCardProduct" after="cleanUpGiftCard">
+            <argument name="product" value="GiftCard"/>
+        </actionGroup>
+        <actionGroup ref="ResetAdminDataGridToDefaultViewActionGroup" stepKey="clearFilters" after="deleteGiftCardProduct"/>
+    </test>
+</tests>

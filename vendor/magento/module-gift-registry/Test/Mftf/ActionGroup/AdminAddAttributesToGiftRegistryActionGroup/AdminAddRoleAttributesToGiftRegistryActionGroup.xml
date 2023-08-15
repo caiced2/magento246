@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+ /**
+  * Copyright © Magento, Inc. All rights reserved.
+  * See COPYING.txt for license details.
+  */
+-->
+<actionGroups xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:noNamespaceSchemaLocation="urn:magento:mftf:Test/etc/actionGroupSchema.xsd">
+    <actionGroup name="AdminAddRoleAttributesToGiftRegistryActionGroup">
+        <arguments>
+            <argument name="number" type="string"/>
+            <argument name="secondNumber" type="string"/>
+        </arguments>
+        <!--Add Attribute-->
+        <click selector="{{AdminGiftRegistrySection.attributes}}" stepKey="goToAttributesTab"/>
+        <click selector="{{AdminGiftRegistrySection.addAttribute}}" stepKey="addNewAttribute"/>
+        <selectOption selector="{{AdminGiftRegistrySection.attributeInputType(number)}}" userInput="{{GiftRegistryAttributeRoleInputType.input_type}}" stepKey="selectInputType"/>
+        <fillField selector="{{AdminGiftRegistrySection.attributeLabel(number)}}" userInput="{{GiftRegistryAttributeRoleInputType.label}}" stepKey="inputAttributeLabel"/>
+        <click selector="{{AdminGiftRegistrySection.attributeAddNewOption(number)}}" stepKey="addOption"/>
+        <waitForPageLoad stepKey="wait1"/>
+        <click selector="{{AdminGiftRegistrySection.attributeAddNewOption(number)}}" stepKey="addSecondOption"/>
+        <waitForPageLoad stepKey="wait2"/>
+        <fillField selector="{{AdminGiftRegistrySection.attributeOptionCode(number,number)}}" stepKey="inputOptionCode" userInput="{{GiftRegistryAttributeRoleInputType.option_code}}"/>
+        <fillField selector="{{AdminGiftRegistrySection.attributeOptionLabel(number,number)}}" stepKey="inputOptionLabel" userInput="{{GiftRegistryAttributeRoleInputType.option_label}}"/>
+        <fillField selector="{{AdminGiftRegistrySection.attributeOptionCode(number,secondNumber)}}" stepKey="inputSecondOptionCode" userInput="{{GiftRegistryAttributeRoleInputType.option_code}}"/>
+        <fillField selector="{{AdminGiftRegistrySection.attributeOptionLabel(number,secondNumber)}}" stepKey="inputSecondOptionLabel" userInput="{{GiftRegistryAttributeRoleInputType.option_label}}"/>
+        <click selector="{{AdminGiftRegistrySection.saveAndContinue}}" stepKey="saveAndContinueGiftRegistry"/>
+        <waitForPageLoad stepKey="waitForSave"/>
+        <see userInput="You saved the gift registry type." stepKey="seeSaveMessage"/>
+    </actionGroup>
+</actionGroups>

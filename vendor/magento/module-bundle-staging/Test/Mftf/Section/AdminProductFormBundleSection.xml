@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+ /**
+  * Copyright © Magento, Inc. All rights reserved.
+  * See COPYING.txt for license details.
+  */
+-->
+
+<sections xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+          xsi:noNamespaceSchemaLocation="urn:magento:mftf:Page/etc/SectionObject.xsd">
+    <section name="AdminProductFormBundleSection">
+        <element name="rmaToggle" type="checkbox" selector="[data-index='is_returnable'] [data-role='switcher'] label"/>
+        <element name="rmaCheckbox" type="checkbox" selector="[data-index='container_is_returnable'] .admin__control-checkbox[type='checkbox']"/>
+        <element name="rmaUnchecked" type="checkbox" selector="[data-index='container_is_returnable'] div [value='0']"/>
+        <element name="rmaChecked" type="checkbox" selector="[data-index='container_is_returnable'] div [value='1']"/>
+        <element name="rmaOn" type="checkbox" selector="[data-index='is_returnable'] [data-role='switcher'] [value='1']"/>
+        <element name="rmaOff" type="checkbox" selector="[data-index='is_returnable'] [data-role='switcher'] [value='2']"/>
+    </section>
+</sections>

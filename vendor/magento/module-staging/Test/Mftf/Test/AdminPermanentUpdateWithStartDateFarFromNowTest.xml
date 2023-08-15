@@ -1,0 +1,106 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+ /**
+  * Copyright © Magento, Inc. All rights reserved.
+  * See COPYING.txt for license details.
+  */
+-->
+<tests xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xsi:noNamespaceSchemaLocation="urn:magento:mftf:Test/etc/testSchema.xsd">
+  <test name="AdminPermanentUpdateWithStartDateFarFromNowTest">
+    <annotations>
+      <features value="Staging"/>
+      <stories value="Staging updates"/>
+      <title value="Creating a permanent Update with start date far from now."/>
+      <description value="Creating a permanent Update with start date far from now."/>
+      <severity value="MAJOR"/>
+      <testCaseId value="AC-4025"/>
+    </annotations>
+    <before>
+      <!-- Login to Admin page -->
+      <actionGroup ref="AdminLoginActionGroup" stepKey="loginAsAdmin"/>
+      <!-- create category, simple product(keeping price as 10) -->
+      <createData entity="SimpleSubCategory" stepKey="createCategory"/>
+      <createData entity="SimpleProduct" stepKey="createSimpleProduct">
+        <field key="price">10</field>
+        <field key="qty">100</field>
+        <requiredEntity createDataKey="createCategory"/>
+      </createData>
+      <!-- Create website, Store and Store View -->
+      <actionGroup ref="AdminCreateWebsiteActionGroup" stepKey="createWebsite">
+        <argument name="newWebsiteName" value="{{NewWebSiteData.name}}"/>
+        <argument name="websiteCode" value="{{NewWebSiteData.code}}"/>
+      </actionGroup>
+      <actionGroup ref="AdminCreateNewStoreGroupActionGroup" stepKey="createNewStore">
+        <argument name="website" value="{{NewWebSiteData.name}}"/>
+        <argument name="storeGroupName" value="{{NewStoreData.name}}"/>
+        <argument name="storeGroupCode" value="{{NewStoreData.code}}"/>
+      </actionGroup>
+      <actionGroup ref="AdminCreateStoreViewActionGroup" stepKey="createCustomStoreView">
+        <argument name="StoreGroup" value="NewStoreData"/>
+        <argument name="customStore" value="NewStoreViewData"/>
+      </actionGroup>
+      <magentoCron groups="index" stepKey="reindex"/>
+    </before>
+    <after>
+      <!-- delete created data -->
+      <deleteData createDataKey="createCategory" stepKey="deleteCategory"/>
+      <deleteData createDataKey="createSimpleProduct" stepKey="deleteProduct"/>
+      <actionGroup ref="AdminDeleteWebsiteActionGroup" stepKey="deleteWebsite">
+        <argument name="websiteName" value="{{NewWebSiteData.name}}"/>
+      </actionGroup>
+      <magentoCron groups="index" stepKey="reindex"/>
+      <actionGroup ref="StagingDashboardClearFiltersActionGroup" stepKey="clearStagingFilters"/>
+      <actionGroup ref="AdminClearFiltersActionGroup" stepKey="clearProductFilters"/>
+      <actionGroup ref="AdminLogoutActionGroup" stepKey="logout"/>
+    </after>
+    <!-- open created product -->
+    <actionGroup ref="AdminProductPageOpenByIdActionGroup" stepKey="openProductForEdit">
+      <argument name="productId" value="$createSimpleProduct.id$"/>
+    </actionGroup>
+    <!-- Block "Scheduled Changes"  with no inside content is presented on product view page -->
+    <dontSeeElement selector="{{AdminStagingSlideOutSection.contentBlock}}" stepKey="dontSeeContentInScheduledChanges"/>
+    <!-- Create Schedule New Update -->
+    <conditionalClick selector="{{AdminStagingSlideOutSection.scheduleNewUpdateBtn}}" dependentSelector="{{AdminStagingSlideOutSection.updateName}}" visible="false" stepKey="clickNewUpdate"/>
+    <waitForPageLoad stepKey="waitForLoading"/>
+    <actionGroup ref="AdminSwitchStoreViewModalActionGroup" stepKey="switchStore">
+      <argument name="storeView" value="NewStoreViewData.name"/>
+    </actionGroup>
+    <generateDate date="+1 day" format="m/d/Y g:i A" stepKey="generateStartDate"/>
+    <generateDate date="+3 day" format="m/d/Y g:i A" stepKey="generateEndDate"/>
+    <fillField selector="{{AdminStagingSlideOutSection.updateName}}" userInput="s5UpdateName" stepKey="fillUpdateName"/>
+    <fillField selector="{{AdminStagingSlideOutSection.updateDescription}}" userInput="s5updateDescription" stepKey="fillDescription"/>
+    <fillField selector="{{AdminStagingSlideOutSection.startDate}}" userInput="{$generateStartDate}}" stepKey="fillStartDate"/>
+    <fillField selector="{{AdminStagingSlideOutSection.endDate}}" userInput="{$generateEndDate}" stepKey="fillEndDate"/>
+    <fillField selector="{{AdminCatalogStagingSlideOutSection.productPrice}}" userInput="14" stepKey="fillProductPrice"/>
+    <!-- Open date picker and collect date and time in format that we need for assertions -->
+    <!-- Start date First Staging S5 -->
+    <click selector="{{AdminStagingSlideOutSection.datepickerStartDate}}" stepKey="clickDatePickerStartDay"/>
+    <grabTextFrom selector="{{AdminStagingSlideOutSection.datapickerTime}}" stepKey="grabStartTimeS5"/>
+    <grabTextFrom selector="{{AdminStagingSlideOutSection.datapickerCurrentDay}}" stepKey="grabStartCurrentDayS5"/>
+    <grabTextFrom selector="{{AdminStagingSlideOutSection.datapickerMonth}}" stepKey="grabStartMonthS5"/>
+    <grabValueFrom selector="{{AdminStagingSlideOutSection.datapickerYear}}" stepKey="grabStartYearS5"/>
+    <click selector="{{AdminStagingSlideOutSection.datepickerClose}}" stepKey="clickClose"/>
+    <!-- End date First Staging S5-->
+    <click selector="{{AdminStagingSlideOutSection.datepickerEndDate}}" stepKey="clickDatePickerEndDay"/>
+    <grabTextFrom selector="{{AdminStagingSlideOutSection.datapickerTime}}" stepKey="grabEndTimeS5"/>
+    <grabTextFrom selector="{{AdminStagingSlideOutSection.datapickerCurrentDay}}" stepKey="grabEndCurrentDayS5"/>
+    <grabTextFrom selector="{{AdminStagingSlideOutSection.datapickerMonth}}" stepKey="grabEndMonthS5"/>
+    <grabValueFrom selector="{{AdminStagingSlideOutSection.datapickerYear}}" stepKey="grabEndYearS5"/>
+    <click selector="{{AdminStagingSlideOutSection.datepickerClose}}" stepKey="clickCloseDatePicker"/>
+    <click selector="{{AdminStagingSlideOutSection.save}}" stepKey="clickSave"/>
+    <!-- assert update details -->
+    <see selector="{{AdminScheduledChangesSection.scheduleItemName}}" userInput="s5UpdateName" stepKey="seeUpdateName"/>
+    <see selector="{{AdminScheduledChangesSection.scheduleItemDescription}}" userInput="s5updateDescription" stepKey="seeUpdateDescription"/>
+    <seeElement selector="{{AdminScheduledChangesSection.scheduleStartDate('{$grabStartMonthS5} {$grabStartCurrentDayS5}, {$grabStartYearS5}')}}" stepKey="seeStartDate"/>
+    <seeElement selector="{{AdminScheduledChangesSection.scheduleEndDate('{$grabEndMonthS5} {$grabEndCurrentDayS5}, {$grabEndYearS5}')}}" stepKey="seeEndDate"/>
+    <!-- Again create Schedule New Update -->
+    <generateDate date="+30 year" format="m/j/Y g:i A" stepKey="generateAnotherStartDate"/>
+    <actionGroup ref="FillScheduleUpdateRemovePriceActionGroup" stepKey="fillAnotherScheduleUpdate">
+      <argument name="staging" value="S8UpdateNameStaging"/>
+      <argument name="timeStart" value="{$generateAnotherStartDate}"/>
+    </actionGroup>
+    <see selector="{{AdminStagingSlideOutSection.scheduleErrorMessage}}" userInput="error: : The Future Update Start Time is invalid. It can't be later than current time + 15 years." stepKey="seeErrorMessage"/>
+  </test>
+</tests>
+

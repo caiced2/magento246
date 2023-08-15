@@ -1,0 +1,136 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+ /**
+  * Copyright © Magento, Inc. All rights reserved.
+  * See COPYING.txt for license details.
+  */
+-->
+
+<tests xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xsi:noNamespaceSchemaLocation="urn:magento:mftf:Test/etc/testSchema.xsd">
+    <test name="RestrictedAdminCategoryAddProductButtonAvailableTest">
+        <annotations>
+            <stories value="Restrict Website Categories"/>
+            <features value="AdminGws"/>
+            <title value="Add Product Button Is Available for Restricted Admin on Category Page"/>
+            <description value="Add Product Button Is Available for Restricted Admin on Category Page"/>
+            <severity value="MAJOR"/>
+            <testCaseId value="AC-1733"/>
+            <useCaseId value="ACP2E-136"/>
+            <group value="catalog"/>
+        </annotations>
+        <before>
+
+            <!-- Create Subcategory and Product -->
+            <createData entity="SimpleSubCategory" stepKey="createCategory"/>
+            <createData entity="SimpleProduct" stepKey="createSimpleProduct">
+                <requiredEntity createDataKey="createCategory"/>
+            </createData>
+
+            <!-- Login as Admin -->
+            <actionGroup ref="AdminLoginActionGroup" stepKey="loginMainAdmin1"/>
+
+            <!-- Create Website, Store and Store View -->
+            <actionGroup ref="AdminCreateWebsiteActionGroup" stepKey="createCustomWebsite">
+                <argument name="newWebsiteName" value="{{customWebsite.name}}"/>
+                <argument name="websiteCode" value="{{customWebsite.code}}"/>
+            </actionGroup>
+
+            <actionGroup ref="CreateCustomStoreActionGroup" stepKey="createCustomStore">
+                <argument name="website" value="{{customWebsite.name}}"/>
+                <argument name="store" value="{{customStoreGroup.name}}"/>
+                <argument name="rootCategory" value="Default Category"/>
+            </actionGroup>
+
+            <actionGroup ref="AdminCreateStoreViewActionGroup" stepKey="createCustomStoreView">
+                <argument name="StoreGroup" value="customStoreGroup"/>
+                <argument name="customStore" value="customStore"/>
+            </actionGroup>
+            <magentoCron groups="index" stepKey="reindex"/>
+
+            <!-- Create User Role and User for Restricted Admin -->
+            <actionGroup ref="AdminCreateUserRoleWithScopeActionGroup" stepKey="createRestrictedAdminRole">
+                <argument name="role" value="RestrictedAdminRole"/>
+                <argument name="scopeName" value="{{customWebsite.name}}"/>
+            </actionGroup>
+
+            <actionGroup ref="AdminCreateUserWithRoleActionGroup" stepKey="createRestrictedAdmin">
+                <argument name="role" value="RestrictedAdminRole"/>
+                <argument name="user" value="NewAdminUser"/>
+            </actionGroup>
+
+            <!-- Assign Product to Second Website and Unassign from the Default One -->
+            <actionGroup ref="SearchForProductOnBackendActionGroup" stepKey="searchForProductOnAdmin1">
+                <argument name="product" value="$$createSimpleProduct$$"/>
+            </actionGroup>
+            <actionGroup ref="AdminProcessProductWebsitesActionGroup" stepKey="processProductWebsites">
+                <argument name="website" value="customWebsite"/>
+                <argument name="websiteToUnassign" value="_defaultWebsite"/>
+                <argument name="product" value="$$createSimpleProduct$$"/>
+            </actionGroup>
+        </before>
+
+        <after>
+            <!-- Logout and Login as Main Admin -->
+            <actionGroup ref="AdminLogoutActionGroup" stepKey="logoutAnyAdmin"/>
+            <actionGroup ref="AdminLoginActionGroup" stepKey="loginMainAdmin2"/>
+
+            <!-- Reset Filter on Products Page Grid -->
+            <actionGroup ref="NavigateToAndResetProductGridToDefaultViewActionGroup" stepKey="resetGridToDefaultKeywordSearch"/>
+
+            <!-- Delete User and User Role for Restricted Admin -->
+            <actionGroup ref="AdminDeleteCreatedUserActionGroup" stepKey="deleteAdminUser">
+                <argument name="user" value="NewAdminUser"/>
+            </actionGroup>
+            <actionGroup ref="AdminDeleteUserRoleWithSpecifiedPermissionActionGroup" stepKey="deleteRole">
+                <argument name="role" value="RestrictedAdminRole"/>
+            </actionGroup>
+
+            <!-- Delete Created Website (Store and Store View Will Be Deleted Automatically) -->
+            <actionGroup ref="AdminDeleteWebsiteActionGroup" stepKey="deleteWebsite">
+                <argument name="websiteName" value="{{customWebsite.name}}"/>
+            </actionGroup>
+
+            <!-- Apply Changes by Running Reindex and Cleaning Cache -->
+            <magentoCLI stepKey="reindex" command="indexer:reindex"/>
+            <magentoCLI stepKey="flushCache" command="cache:flush"/>
+
+            <!-- Delete Created Product and Category -->
+            <deleteData createDataKey="createSimpleProduct" stepKey="deleteSimpleProduct"/>
+            <deleteData createDataKey="createCategory" stepKey="deleteSubCategory"/>
+
+            <!-- Logout from Admin Area -->
+            <actionGroup ref="AdminLogoutActionGroup" stepKey="logoutAdmin"/>
+        </after>
+
+        <!-- Logout from Admin Area -->
+        <actionGroup ref="AdminLogoutActionGroup" stepKey="logoutMainAdmin"/>
+
+        <!-- Login as Restricted Admin -->
+        <actionGroup ref="AdminLoginActionGroup" stepKey="loginAsAdminWithRestrictedAdminRole">
+            <argument name="username" value="{{NewAdminUser.username}}"/>
+            <argument name="password" value="{{NewAdminUser.password}}"/>
+        </actionGroup>
+
+        <!-- Open Category Page, Store View Scope is preselected -->
+        <comment userInput="Comment is added to preserve the step key for backward compatibility" stepKey="switchCategoryStoreView"/>
+        <amOnPage url="{{AdminCategoryPage.url}}" stepKey="goToCategoriesPage"/>
+        <waitForPageLoad stepKey="waitForCategoryPageLoad"/>
+        <click selector="{{AdminCategorySidebarTreeSection.categoryInTree($$createCategory.name$$)}}" stepKey="navigateToCreatedCategory"/>
+        <waitForPageLoad stepKey="waitForPageLoad2"/>
+        <waitForLoadingMaskToDisappear stepKey="waitForSpinner"/>
+
+        <!-- Check that Add Products Button Is Enabled -->
+        <click selector="{{AdminCategoryProductsSection.sectionHeader}}" stepKey="openProductsInCategorySection"/>
+        <actionGroup ref="AdminCheckAddProductButtonIsEnabledOnCategoryPageActionGroup" stepKey="checkAddProductButtonIsEnabled"/>
+        <click selector="{{AdminCategoryProductsSection.sectionHeader}}" stepKey="closeProductsInCategorySection"/>
+
+        <!-- Add Product to the Category to Check that Add Product Button Works -->
+        <actionGroup ref="AdminAddProductToCategoryVisualActionGroup" stepKey="addProductToCategory">
+            <argument name="product" value="$$createSimpleProduct$$"/>
+        </actionGroup>
+        <actionGroup ref="AdminSaveCategoryActionGroup" stepKey="clickSaveButton"/>
+        <actionGroup ref="AssertAdminCategorySaveSuccessMessageActionGroup" stepKey="assertCategorySaveSuccessMessage"/>
+
+    </test>
+</tests>

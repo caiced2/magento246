@@ -1,0 +1,173 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+ /**
+  * Copyright © Magento, Inc. All rights reserved.
+  * See COPYING.txt for license details.
+  */
+-->
+
+<tests xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xsi:noNamespaceSchemaLocation="urn:magento:mftf:Test/etc/testSchema.xsd">
+    <test name="StorefrontAssertCustomerAddressCustomAttributesAreVisibleOnCheckoutTest">
+        <annotations>
+            <features value="CustomerCustomAttributes"/>
+            <stories value="Checkout with customer custom address attributes"/>
+            <title value="Check that custom customer address attributes will be displayed properly on checkout"/>
+            <description value="Customer should be able to see custom address attributes values on checkout"/>
+            <severity value="MAJOR"/>
+            <testCaseId value="MC-42335"/>
+            <useCaseId value="MC-33705"/>
+            <group value="customerCustomAttributes"/>
+            <group value="checkout"/>
+        </annotations>
+        <before>
+            <createData entity="SimpleProduct2" stepKey="simpleProduct"/>
+            <actionGroup ref="AdminLoginActionGroup" stepKey="loginAsAdmin"/>
+            <amOnPage url="{{CustomerAddressAttributesPage.url}}" stepKey="navigateToCustomerAddressAttributesPage"/>
+            <waitForPageLoad stepKey="waitForCustomerAddressAttributePageLoad"/>
+            <actionGroup ref="AdminCreateCustomerNewAttribute" stepKey="createTextFieldAttribute">
+                <argument name="defaultLabel" value="{{AttributeTextField.frontend_label}}"/>
+                <argument name="attributeCode" value="{{AttributeTextField.attribute_code}}"/>
+                <argument name="inputType" value="{{AttributeTextField.frontend_input}}"/>
+                <argument name="sortOrder" value="1"/>
+            </actionGroup>
+            <actionGroup ref="AdminCreateCustomerNewAttribute" stepKey="createTextAreaAttribute">
+                <argument name="defaultLabel" value="{{AttributeTextArea.frontend_label}}"/>
+                <argument name="attributeCode" value="{{AttributeTextArea.attribute_code}}"/>
+                <argument name="inputType" value="{{AttributeTextArea.frontend_input}}"/>
+                <argument name="sortOrder" value="2"/>
+            </actionGroup>
+            <actionGroup ref="AdminCreateCustomerNewMultipleLineAttribute" stepKey="createMultiLineAttribute">
+                <argument name="customerAttribute" value="AttributeMultiLine"/>
+                <argument name="defaultLabel" value="{{AttributeMultipleLineData.label}}"/>
+                <argument name="attributeCode" value="{{AttributeMultipleLineData.code}}"/>
+                <argument name="inputType" value="{{AttributeMultipleLineData.inputType}}"/>
+                <argument name="sortOrder" value="3"/>
+                <argument name="multilineCount" value="{{AttributeMultipleLineData.multiline_count}}"/>
+                <argument name="formToUse" value="Customer Address Registration"/>
+                <argument name="message" value="You saved the customer address attribute."/>
+            </actionGroup>
+            <actionGroup ref="AdminCreateCustomerNewAttribute" stepKey="createDateAttribute">
+                <argument name="defaultLabel" value="{{AttributeDate.frontend_label}}"/>
+                <argument name="attributeCode" value="{{AttributeDate.attribute_code}}"/>
+                <argument name="inputType" value="{{AttributeDate.frontend_input}}"/>
+                <argument name="sortOrder" value="4"/>
+            </actionGroup>
+            <actionGroup ref="AdminAddOptionsCustomerAttribute" stepKey="createDropdownAttribute">
+                <argument name="defaultLabel" value="{{AttributeDropdownData.label}}"/>
+                <argument name="attributeCode" value="{{AttributeDropdownData.code}}"/>
+                <argument name="inputType" value="{{AttributeDropdownData.inputType}}"/>
+                <argument name="sortOrder" value="5"/>
+                <argument name="firstOption" value="{{AttributeDropdownData.firstOption}}"/>
+                <argument name="secondOption" value="{{AttributeDropdownData.secondOption}}"/>
+            </actionGroup>
+            <actionGroup ref="AdminAddOptionsCustomerAttribute" stepKey="createMultiSelectAttribute">
+                <argument name="defaultLabel" value="{{AttributeMultipleData.label}}"/>
+                <argument name="attributeCode" value="{{AttributeMultipleData.code}}"/>
+                <argument name="inputType" value="{{AttributeMultipleData.inputType}}"/>
+                <argument name="sortOrder" value="6"/>
+                <argument name="firstOption" value="{{AttributeMultipleData.firstOption}}"/>
+                <argument name="secondOption" value="{{AttributeMultipleData.secondOption}}"/>
+            </actionGroup>
+            <actionGroup ref="AdminCreateCustomerNewAttribute" stepKey="createYesNoAttribute">
+                <argument name="defaultLabel" value="{{AttributeYesNo.frontend_label}}"/>
+                <argument name="attributeCode" value="{{AttributeYesNo.attribute_code}}"/>
+                <argument name="inputType" value="{{AttributeYesNo.frontend_input}}"/>
+                <argument name="sortOrder" value="7"/>
+            </actionGroup>
+            <actionGroup ref="AdminCreateCustomerNewAttribute" stepKey="createFileAttribute">
+                <argument name="defaultLabel" value="{{AttributeFile.frontend_label}}"/>
+                <argument name="attributeCode" value="{{AttributeFile.attribute_code}}"/>
+                <argument name="inputType" value="{{AttributeFile.frontend_input}}"/>
+                <argument name="sortOrder" value="8"/>
+            </actionGroup>
+            <actionGroup ref="AdminCreateCustomerNewAttribute" stepKey="createImageFileAttribute">
+                <argument name="defaultLabel" value="{{AttributeImageFileData.label}}"/>
+                <argument name="attributeCode" value="{{AttributeImageFileData.code}}"/>
+                <argument name="inputType" value="{{AttributeImageFileData.inputType}}"/>
+                <argument name="sortOrder" value="9"/>
+            </actionGroup>
+        </before>
+        <after>
+            <deleteData stepKey="deleteProduct" createDataKey="simpleProduct"/>
+            <actionGroup ref="AdminDeleteCustomerAttribute" stepKey="adminDeleteTextFieldAttribute">
+                <argument name="defaultLabel" value="{{AttributeTextField.frontend_label}}"/>
+            </actionGroup>
+            <actionGroup ref="AdminDeleteCustomerAttribute" stepKey="adminDeleteTextAreaAttribute">
+                <argument name="defaultLabel" value="{{AttributeTextArea.frontend_label}}"/>
+            </actionGroup>
+            <actionGroup ref="AdminDeleteCustomerAttribute" stepKey="adminDeleteMultiLineAttribute">
+                <argument name="defaultLabel" value="{{AttributeMultipleLineData.label}}"/>
+            </actionGroup>
+            <actionGroup ref="AdminDeleteCustomerAttribute" stepKey="adminDeleteDateAttribute">
+                <argument name="defaultLabel" value="{{AttributeDate.frontend_label}}"/>
+            </actionGroup>
+            <actionGroup ref="AdminDeleteCustomerAttribute" stepKey="adminDeleteDropdownAttribute">
+                <argument name="defaultLabel" value="{{AttributeDropdownData.label}}"/>
+            </actionGroup>
+            <actionGroup ref="AdminDeleteCustomerAttribute" stepKey="adminDeleteMultiSelectAttribute">
+                <argument name="defaultLabel" value="{{AttributeMultipleData.label}}"/>
+            </actionGroup>
+            <actionGroup ref="AdminDeleteCustomerAttribute" stepKey="adminDeleteYesNoAttribute">
+                <argument name="defaultLabel" value="{{AttributeYesNo.frontend_label}}"/>
+            </actionGroup>
+            <actionGroup ref="AdminDeleteCustomerAttribute" stepKey="adminDeleteFileAttribute">
+                <argument name="defaultLabel" value="{{AttributeFile.frontend_label}}"/>
+            </actionGroup>
+            <actionGroup ref="AdminDeleteCustomerAttribute" stepKey="adminDeleteImageFileAttribute">
+                <argument name="defaultLabel" value="{{AttributeImageFileData.label}}"/>
+            </actionGroup>
+            <actionGroup ref="AdminLogoutActionGroup" stepKey="logoutFromAdmin"/>
+        </after>
+
+        <actionGroup ref="AddSimpleProductToCartActionGroup" stepKey="addProductToCart">
+            <argument name="product" value="$simpleProduct$"/>
+            <argument name="productCount" value="1"/>
+        </actionGroup>
+        <actionGroup ref="GoToCheckoutFromMinicartActionGroup" stepKey="goToCheckoutFromMinicart"/>
+
+        <see userInput="{{AttributeTextField.frontend_label}}" stepKey="seeTextFieldAttribute"/>
+        <see userInput="{{AttributeTextArea.frontend_label}}" stepKey="seeTextAreaAttribute"/>
+        <see userInput="{{AttributeMultipleLineData.label}}" stepKey="seeMultilineAttribute"/>
+        <see userInput="{{AttributeDate.frontend_label}}" stepKey="seeDateAttribute"/>
+        <see userInput="{{AttributeDropdownData.label}}" stepKey="seeDropdownAttribute"/>
+        <see userInput="{{AttributeMultipleData.label}}" stepKey="seeMultiSelectAttribute"/>
+        <see userInput="{{AttributeYesNo.frontend_label}}" stepKey="seeYesNoAttribute"/>
+        <see userInput="{{AttributeFile.frontend_label}}" stepKey="seeFileAttribute"/>
+        <see userInput="{{AttributeImageFileData.label}}" stepKey="seeImageFileAttribute"/>
+
+        <fillField selector="{{AttributeTextField.frontend_label}}" userInput="textFieldDefaultValue" stepKey="fillTextFieldAttribute"/>
+        <fillField selector="{{AttributeTextArea.frontend_label}}" userInput="textAreaDefaultValue" stepKey="fillTextAreaAttribute"/>
+        <fillField selector="{{CustomerAddressAttributesSection.multilineAttribute(AttributeMultipleLineData.code, '1')}}" userInput="firstLine" stepKey="fillMultilineAttribute"/>
+        <fillField selector="{{CustomerAddressAttributesSection.multilineAttribute(AttributeMultipleLineData.code, '2')}}" userInput="secondLine" stepKey="fillMultilineAttribute2"/>
+        <generateDate date="now" format="m/d/Y" stepKey="generateDate"/>
+        <fillField selector="{{CustomerAddressAttributesSection.dateAttribute(AttributeDate.attribute_code)}}" userInput="{$generateDate}" stepKey="fillDateAttribute"/>
+        <pressKey parameterArray="[\Facebook\WebDriver\WebDriverKeys::ENTER]" selector="{{CustomerAddressAttributesSection.dateAttribute(AttributeDate.attribute_code)}}" stepKey="pressEnterKey"/>
+        <selectOption selector="{{StorefrontCustomerAddressAttributeSection.dropdownField(AttributeDropdownData.code)}}" userInput="{{AttributeDropdownData.firstOption}}" stepKey="selectFirstOptionForDropdownAttribute"/>
+        <selectOption selector="{{AttributeMultipleData.label}}"
+                      parameterArray="[{{AttributeMultipleData.firstOption}},{{AttributeMultipleData.secondOption}}]"
+                      stepKey="selectFirstAndSecondOptionsOfMultiSelectAttribute"/>
+        <attachFile selector="{{AttributeFile.frontend_label}}" userInput="adobe-base.jpg" stepKey="fillFileAttribute"/>
+        <attachFile selector="{{AttributeImageFileData.label}}" userInput="adobe-small.jpg" stepKey="fillImageFileAttribute"/>
+
+        <actionGroup ref="GuestCheckoutFillingShippingSectionActionGroup" stepKey="guestCheckoutFillingShippingSection">
+            <argument name="customerVar" value="CustomerEntityOne" />
+            <argument name="customerAddressVar" value="CustomerAddressSimple" />
+        </actionGroup>
+        <actionGroup ref="CheckoutSelectCheckMoneyOrderPaymentActionGroup" stepKey="guestSelectCheckMoneyOrderPayment" />
+        <actionGroup ref="CheckBillingAddressInCheckoutActionGroup" stepKey="guestSeeAddress">
+            <argument name="customerVar" value="CustomerEntityOne" />
+            <argument name="customerAddressVar" value="CustomerAddressSimple" />
+        </actionGroup>
+
+        <see userInput="textFieldDefaultValue" selector="{{CheckoutPaymentSection.billingAddress}}" stepKey="assertTextFieldAttributeValue"/>
+        <see userInput="textAreaDefaultValue" selector="{{CheckoutPaymentSection.billingAddress}}" stepKey="assertTextAreaAttributeValue"/>
+        <see userInput="firstLine, secondLine" selector="{{CheckoutPaymentSection.billingAddress}}" stepKey="assertMultilineAttributeValue"/>
+        <see userInput="$generateDate" selector="{{CheckoutPaymentSection.billingAddress}}" stepKey="assertDateAttributeValue"/>
+        <see userInput="{{AttributeDropdownData.firstOption}}" selector="{{CheckoutPaymentSection.billingAddress}}" stepKey="assertDropdownAttributeValue"/>
+        <see userInput="{{AttributeMultipleData.firstOption}}, {{AttributeMultipleData.secondOption}}" selector="{{CheckoutPaymentSection.billingAddress}}" stepKey="assertMultiSelectAttributeValue"/>
+        <see userInput="Yes" selector="{{CheckoutPaymentSection.billingAddress}}" stepKey="assertYesNoAttributeValue"/>
+        <see userInput="/a/d/adobe-base" selector="{{CheckoutPaymentSection.billingAddress}}" stepKey="assertImageAttributeValue"/>
+        <see userInput="/a/d/adobe-small" selector="{{CheckoutPaymentSection.billingAddress}}" stepKey="assertFileAttributeValue"/>
+    </test>
+</tests>

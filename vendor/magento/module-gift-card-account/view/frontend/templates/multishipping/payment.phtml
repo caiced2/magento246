@@ -1,0 +1,36 @@
+<?php
+/**
+ * Copyright © Magento, Inc. All rights reserved.
+ * See COPYING.txt for license details.
+ */
+
+/**
+ * @var \Magento\GiftCardAccount\Block\Checkout\Onepage\Payment\Additional $block
+ */
+$url = $block->escapeUrl($block->getUrl('checkout/cart'));
+?>
+<div class="checkout-payment-giftcardaccount">
+    <p class="note">
+        <a href="<?= /* @noEscape */ $url ?>">
+            <?= $block->escapeHtml(__('Add or remove gift cards')) ?>
+        </a>
+        <br />
+
+        <?php if ((float)$block->getAppliedGiftCardAmount()) : ?>
+            <?php $amount = $this->helper(\Magento\Framework\Pricing\Helper\Data::class)
+                ->currency($block->getAppliedGiftCardAmount()); ?>
+            <?= $block->escapeHtml(__('Gift Card amount applied to order:')), ' ', $amount ?>
+        <?php endif; ?>
+
+        <?php if ($block->isFullyPaidAfterApplication()) : ?>
+            <script type="text/x-magento-init">
+                {
+                    "#multishipping-billing-form": {
+                        "paymentMethod": {}
+                    }
+                }
+            </script>
+            <input id="hidden-free" type="hidden" name="payment[method]" value="free">
+        <?php endif; ?>
+    </p>
+</div>

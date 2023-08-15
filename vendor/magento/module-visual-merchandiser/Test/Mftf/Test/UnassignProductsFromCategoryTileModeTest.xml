@@ -1,0 +1,96 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+ /**
+  * Copyright © Magento, Inc. All rights reserved.
+  * See COPYING.txt for license details.
+  */
+-->
+
+<tests xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:noNamespaceSchemaLocation="urn:magento:mftf:Test/etc/testSchema.xsd">
+    <test name="UnassignProductsFromCategoryTileModeTest">
+        <annotations>
+            <features value="VisualMerchandiser"/>
+            <stories value="[Visual Merchandiser] Assign/Unassign products to/from a category"/>
+            <title value="[Visual Merchandiser] Admin should be able to unassign products from category by clicking X button"/>
+            <description value="[Visual Merchandiser] Admin should be able to unassign products from category by clicking X button"/>
+            <severity value="CRITICAL"/>
+            <testCaseId value="MC-176"/>
+            <group value="VisualMerchandiser"/>
+        </annotations>
+        <before>
+            <actionGroup ref="AdminLoginActionGroup" stepKey="login"/>
+            <createData entity="_defaultCategory" stepKey="category"/>
+            <createData entity="ApiSimpleProduct" stepKey="product1">
+                <requiredEntity createDataKey="category"/>
+            </createData>
+            <createData entity="ApiSimpleProduct" stepKey="product2">
+                <requiredEntity createDataKey="category"/>
+            </createData>
+            <createData entity="ApiSimpleProduct" stepKey="product3">
+                <requiredEntity createDataKey="category"/>
+            </createData>
+        </before>
+        <after>
+            <actionGroup ref="GoToAdminCategoryPageByIdActionGroup" stepKey="goToAdminCategoryPage0">
+                <argument name="id" value="$$category.id$$"/>
+            </actionGroup>
+            <actionGroup ref="OpenProductsInCategorySectionActionGroup" stepKey="OpenProductsInCategorySection0"/>
+            <actionGroup ref="SwitchToGridModeProductInCategoryActionGroup" stepKey="switchToGrid"/>
+            <actionGroup ref="AdminLogoutActionGroup" stepKey="logout"/>
+            <deleteData createDataKey="product1" stepKey="deleteProduct1"/>
+            <deleteData createDataKey="product2" stepKey="deleteProduct2"/>
+            <deleteData createDataKey="product3" stepKey="deleteProduct3"/>
+            <deleteData createDataKey="category" stepKey="deleteCategory"/>
+        </after>
+
+        <!-- Prepare grid for testing -->
+
+        <actionGroup ref="GoToAdminCategoryPageByIdActionGroup" stepKey="goToAdminCategoryPage1">
+            <argument name="id" value="$$category.id$$"/>
+        </actionGroup>
+        <actionGroup ref="OpenProductsInCategorySectionActionGroup" stepKey="OpenProductsInCategorySection1"/>
+        <actionGroup ref="DisableMatchProductsByRuleActionGroup" stepKey="DisableMatchProductsByRule1"/>
+        <actionGroup ref="SortProductsByCriteriaInCategoryActionGroup" stepKey="SelectSortOrderInProductInCategory1">
+            <argument name="criteria" value="Newest products first"/>
+        </actionGroup>
+        <actionGroup ref="SwitchToTileModeProductInCategoryActionGroup" stepKey="switchToTile1"/>
+        <click selector="{{AdminCategoryMainActionsSection.SaveButton}}" stepKey="saveCategoryWithProducts1"/>
+        <see userInput="You saved the category" selector="{{AdminMessagesSection.nthSuccess('1')}}" stepKey="saveSuccess1"/>
+
+        <!-- Remove without saving -->
+
+        <actionGroup ref="OpenProductsInCategorySectionActionGroup" stepKey="OpenProductsInCategorySection12"/>
+        <!-- See total count 3 -->
+        <see userInput="3" selector="{{AdminCategoryProductsTileSection.totalCount}}" stepKey="seeTotalCount12"/>
+        <!-- Remove the 2nd product item -->
+        <click selector="{{AdminCategoryProductsTileSection.nThRemoveByX('2')}}" stepKey="removeProduct2"/>
+        <!-- See total count 2 -->
+        <see userInput="2" selector="{{AdminCategoryProductsTileSection.totalCount}}" stepKey="seeTotalCount22"/>
+        <actionGroup ref="GoToAdminCategoryPageByIdActionGroup" stepKey="goToAdminCategoryPage2">
+            <argument name="id" value="$$category.id$$"/>
+        </actionGroup>
+        <actionGroup ref="OpenProductsInCategorySectionActionGroup" stepKey="OpenProductsInCategorySection22"/>
+        <!-- See total count 3 after reload -->
+        <see userInput="3" selector="{{AdminCategoryProductsTileSection.totalCount}}" stepKey="seeTotalCount32"/>
+
+        <!-- Remove with saving -->
+
+        <!-- Remove the 2nd product item -->
+        <click selector="{{AdminCategoryProductsTileSection.nThRemoveByX('2')}}" stepKey="removeProduct23"/>
+        <!-- See total count 2 -->
+        <see userInput="2" selector="{{AdminCategoryProductsTileSection.totalCount}}" stepKey="seeTotalCount23"/>
+        <click selector="{{AdminCategoryMainActionsSection.SaveButton}}" stepKey="saveCategoryWithProducts"/>
+        <see userInput="You saved the category" selector="{{AdminMessagesSection.nthSuccess('1')}}" stepKey="saveSuccess3"/>
+        <actionGroup ref="OpenProductsInCategorySectionActionGroup" stepKey="OpenProductsInCategorySection3"/>
+        <scrollTo selector="{{AdminCategoryProductsSection.sort}}" stepKey="scrollToArea3" />
+        <waitForPageLoad stepKey="waitForPageLoad13"/>
+        <!-- Don't see product2 in category product tile -->
+        <see userInput="2" selector="{{AdminCategoryProductsTileSection.totalCount}}" stepKey="seeTotalCount223"/>
+        <dontSee selector="{{AdminCategoryProductsTileSection.productInfo}}" userInput="$$product2.name$$" stepKey="dontSeeProduct2Admin3"/>
+        <amOnPage url="{{StorefrontCategoryPage.url($$category.custom_attributes[url_key]$$)}}" stepKey="onCategoryPage3"/>
+        <waitForPageLoad stepKey="waitForPageLoad23"/>
+        <!-- Don't see product2 in storefront category -->
+        <dontSeeElement selector="{{StorefrontCategoryProductSection.ProductTitleByName($$product2.name$$)}}" stepKey="dontSeeProduct2Store3"/>
+    </test>
+</tests>

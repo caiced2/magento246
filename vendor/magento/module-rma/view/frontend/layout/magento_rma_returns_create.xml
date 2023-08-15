@@ -1,0 +1,31 @@
+<?xml version="1.0"?>
+<!--
+/**
+ * Copyright © Magento, Inc. All rights reserved.
+ * See COPYING.txt for license details.
+ */
+-->
+<page xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="urn:magento:framework:View/Layout/etc/page_configuration.xsd">
+    <update handle="customer_account"/>
+    <update handle="magento_rma_returns_create_handle"/>
+    <body>
+        <referenceBlock name="head.components">
+            <block class="Magento\Framework\View\Element\Js\Components" name="magento_rma_returns_create_head_components" template="Magento_Rma::js/components.phtml"/>
+        </referenceBlock>
+        <referenceBlock name="customer_account_navigation">
+            <action method="setActive">
+                <argument name="path" xsi:type="string">rma/returns/history/</argument>
+            </action>
+        </referenceBlock>
+        <referenceContainer name="content">
+            <block class="Magento\Rma\Block\Returns\Create" as="create" name="rma.returns.create" template="Magento_Rma::return/create.phtml" cacheable="false">
+                <action method="setFormCode">
+                    <argument name="code" xsi:type="string">default</argument>
+                </action>
+                <action method="setEntityModelClass">
+                    <argument name="code" xsi:type="string">Magento\Rma\Model\Item</argument>
+                </action>
+            </block>
+        </referenceContainer>
+    </body>
+</page>

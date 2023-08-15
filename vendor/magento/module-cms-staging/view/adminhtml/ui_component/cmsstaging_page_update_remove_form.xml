@@ -1,0 +1,304 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+/**
+ * Copyright © Magento, Inc. All rights reserved.
+ * See COPYING.txt for license details.
+ */
+-->
+<form xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="urn:magento:module:Magento_Ui:etc/ui_configuration.xsd">
+    <argument name="data" xsi:type="array">
+        <item name="js_config" xsi:type="array">
+            <item name="provider" xsi:type="string">cmsstaging_page_update_remove_form.cmsstaging_page_update_remove_form_data_source</item>
+        </item>
+        <item name="label" xsi:type="string" translate="true">Update Information</item>
+        <item name="template" xsi:type="string">templates/form/collapsible</item>
+    </argument>
+    <settings>
+        <buttons>
+            <button name="save" class="Magento\Staging\Block\Adminhtml\Update\Entity\Remove\DoneButton"/>
+            <button name="cancel" class="stagingCmsPageRemoveUpdateCancelButton"/>
+        </buttons>
+        <namespace>cmsstaging_page_update_remove_form</namespace>
+        <ajaxSave>true</ajaxSave>
+        <ajaxSaveType>simple</ajaxSaveType>
+        <dataScope>data</dataScope>
+        <deps>
+            <dep>cmsstaging_page_update_remove_form.cmsstaging_page_update_remove_form_data_source</dep>
+        </deps>
+    </settings>
+    <dataSource name="cmsstaging_page_update_remove_form_data_source">
+        <argument name="data" xsi:type="array">
+            <item name="js_config" xsi:type="array">
+                <item name="component" xsi:type="string">Magento_Ui/js/form/provider</item>
+            </item>
+        </argument>
+        <settings>
+            <submitUrl path="cmsstaging/page/update_delete"/>
+        </settings>
+        <dataProvider class="Magento\CmsStaging\Model\Page\Identifier\DataProvider" name="cmsstaging_page_update_remove_form_data_source">
+            <settings>
+                <requestFieldName>page_id</requestFieldName>
+                <primaryFieldName>page_id</primaryFieldName>
+            </settings>
+        </dataProvider>
+    </dataSource>
+    <container name="messages" component="Magento_Ui/js/form/components/html">
+        <argument name="data" xsi:type="array">
+            <item name="config" xsi:type="array">
+                <item name="source" xsi:type="string">staging</item>
+                <item name="additionalClasses" xsi:type="string">message message-error</item>
+                <item name="visible" xsi:type="boolean">false</item>
+                <item name="imports" xsi:type="array">
+                    <item name="responseData" xsi:type="string">${ $.parentName }:responseData</item>
+                </item>
+                <item name="listens" xsi:type="array">
+                    <item name="responseData.error" xsi:type="string">visible</item>
+                    <item name="responseData.messages" xsi:type="string">content</item>
+                </item>
+            </item>
+        </argument>
+    </container>
+    <fieldset name="staging_save">
+        <settings>
+            <additionalClasses>
+                <class name="fieldset-schedule">true</class>
+            </additionalClasses>
+            <label/>
+            <dataScope>staging</dataScope>
+        </settings>
+        <field name="staging_save_mode" formElement="checkbox">
+            <argument name="data" xsi:type="array">
+                <item name="config" xsi:type="array">
+                    <item name="source" xsi:type="string">staging</item>
+                    <item name="value" xsi:type="string">save</item>
+                </item>
+            </argument>
+            <settings>
+                <additionalClasses>
+                    <class name="admin__field-collapsible">true</class>
+                </additionalClasses>
+                <validation>
+                    <rule name="required-entry" xsi:type="boolean">true</rule>
+                </validation>
+                <dataType>radio</dataType>
+                <dataScope>mode</dataScope>
+            </settings>
+            <formElements>
+                <checkbox>
+                    <settings>
+                        <description translate="true">Save as a New Update</description>
+                        <prefer>radio</prefer>
+                    </settings>
+                </checkbox>
+            </formElements>
+        </field>
+        <field name="staging_save_name" formElement="input">
+            <argument name="data" xsi:type="array">
+                <item name="config" xsi:type="array">
+                    <item name="source" xsi:type="string">staging</item>
+                </item>
+            </argument>
+            <settings>
+                <validation>
+                    <rule name="required-entry" xsi:type="boolean">true</rule>
+                </validation>
+                <dataType>text</dataType>
+                <label translate="true">Update Name</label>
+                <dataScope>name</dataScope>
+                <imports>
+                    <link name="visible">${ $.parentName }.staging_save_mode:checked</link>
+                </imports>
+            </settings>
+        </field>
+        <field name="staging_save_description" formElement="textarea">
+            <argument name="data" xsi:type="array">
+                <item name="config" xsi:type="array">
+                    <item name="source" xsi:type="string">staging</item>
+                </item>
+            </argument>
+            <settings>
+                <dataType>text</dataType>
+                <label translate="true">Description</label>
+                <dataScope>description</dataScope>
+                <imports>
+                    <link name="visible">${ $.parentName }.staging_save_mode:checked</link>
+                </imports>
+            </settings>
+        </field>
+        <field name="staging_save_start_date" formElement="date">
+            <argument name="data" xsi:type="array">
+                <item name="config" xsi:type="array">
+                    <item name="source" xsi:type="string">staging</item>
+                </item>
+            </argument>
+            <settings>
+                <validation>
+                    <rule name="required-entry" xsi:type="boolean">true</rule>
+                </validation>
+                <dataType>text</dataType>
+                <label translate="true">Start Date</label>
+                <dataScope>start_time</dataScope>
+                <imports>
+                    <link name="visible">${ $.parentName }.staging_save_mode:checked</link>
+                </imports>
+            </settings>
+            <formElements>
+                <date>
+                    <settings>
+                        <options>
+                            <option name="dateFormat" xsi:type="string">MMM d, y</option>
+                            <option name="showsTime" xsi:type="boolean">true</option>
+                            <option name="maxDate" xsi:type="string">+30y</option>
+                        </options>
+                    </settings>
+                </date>
+            </formElements>
+        </field>
+        <field name="staging_save_end_time" formElement="date">
+            <argument name="data" xsi:type="array">
+                <item name="config" xsi:type="array">
+                    <item name="source" xsi:type="string">staging</item>
+                </item>
+            </argument>
+            <settings>
+                <dataType>text</dataType>
+                <label translate="true">End Date</label>
+                <dataScope>end_time</dataScope>
+                <imports>
+                    <link name="visible">${ $.parentName }.staging_save_mode:checked</link>
+                </imports>
+            </settings>
+            <formElements>
+                <date>
+                    <settings>
+                        <options>
+                            <option name="dateFormat" xsi:type="string">MMM d, y</option>
+                            <option name="showsTime" xsi:type="boolean">true</option>
+                            <option name="maxDate" xsi:type="string">+30y</option>
+                        </options>
+                    </settings>
+                </date>
+            </formElements>
+        </field>
+    </fieldset>
+    <fieldset name="staging_move">
+        <settings>
+            <additionalClasses>
+                <class name="fieldset-schedule">true</class>
+            </additionalClasses>
+            <label/>
+            <dataScope>staging</dataScope>
+        </settings>
+        <field name="staging_move_mode" formElement="checkbox">
+            <argument name="data" xsi:type="array">
+                <item name="config" xsi:type="array">
+                    <item name="source" xsi:type="string">staging</item>
+                    <item name="value" xsi:type="string">assign</item>
+                </item>
+            </argument>
+            <settings>
+                <additionalClasses>
+                    <class name="admin__field-collapsible">true</class>
+                </additionalClasses>
+                <dataType>radio</dataType>
+                <dataScope>mode</dataScope>
+            </settings>
+            <formElements>
+                <checkbox>
+                    <settings>
+                        <description translate="true">Move to Another Update</description>
+                        <prefer>radio</prefer>
+                    </settings>
+                </checkbox>
+            </formElements>
+        </field>
+        <field name="staging_move_update_id_validation" template="Magento_Staging/form/field" formElement="input">
+            <argument name="data" xsi:type="array">
+                <item name="config" xsi:type="array">
+                    <item name="source" xsi:type="string">staging_select</item>
+                </item>
+            </argument>
+            <settings>
+                <validation>
+                    <rule name="required-entry" xsi:type="boolean">true</rule>
+                </validation>
+                <elementTmpl/>
+                <dataType>text</dataType>
+                <dataScope>select_id</dataScope>
+                <imports>
+                    <link name="visible">${ $.parentName }.staging_move_mode:checked</link>
+                </imports>
+            </settings>
+        </field>
+        <insertListing name="staging_move_update_id">
+            <argument name="data" xsi:type="array">
+                <item name="config" xsi:type="array">
+                    <item name="source" xsi:type="string">staging</item>
+                </item>
+            </argument>
+            <settings>
+                <externalData>id</externalData>
+                <externalProvider>${ $.ns }.cmsstaging_page_update_remove_select_grid_data_source</externalProvider>
+                <loading>false</loading>
+                <selectionsProvider>${ $.ns }.${ $.ns }.columns.ids</selectionsProvider>
+                <autoRender>true</autoRender>
+                <dataScope>select_id</dataScope>
+                <ns>cmsstaging_page_update_remove_select_grid</ns>
+                <exports>
+                    <link name="update_id">${ $.externalProvider  }:params.update_id</link>
+                    <link name="pageId">${ $.externalProvider }:params.page_id</link>
+                </exports>
+                <imports>
+                    <link name="update_id">${ $.provider }:data.update_id</link>
+                    <link name="pageId">${ $.provider }:data.page_id</link>
+                    <link name="visible">${ $.parentName }.staging_move_mode:checked</link>
+                </imports>
+            </settings>
+        </insertListing>
+    </fieldset>
+    <fieldset name="staging_delete">
+        <settings>
+            <additionalClasses>
+                <class name="fieldset-schedule">true</class>
+            </additionalClasses>
+            <label/>
+            <dataScope>staging</dataScope>
+        </settings>
+        <field name="staging_delete_mode" formElement="checkbox">
+            <argument name="data" xsi:type="array">
+                <item name="config" xsi:type="array">
+                    <item name="source" xsi:type="string">staging</item>
+                    <item name="value" xsi:type="string">remove</item>
+                </item>
+            </argument>
+            <settings>
+                <additionalClasses>
+                    <class name="admin__field-collapsible">true</class>
+                </additionalClasses>
+                <dataType>radio</dataType>
+                <dataScope>mode</dataScope>
+            </settings>
+            <formElements>
+                <checkbox>
+                    <settings>
+                        <description translate="true">Delete the Update</description>
+                        <prefer>radio</prefer>
+                    </settings>
+                </checkbox>
+            </formElements>
+        </field>
+        <container name="staging_delete_hint" component="Magento_Ui/js/form/components/html">
+            <argument name="data" xsi:type="array">
+                <item name="config" xsi:type="array">
+                    <item name="source" xsi:type="string">staging</item>
+                    <item name="dataScope" xsi:type="string">staging_hint</item>
+                    <item name="additionalClasses" xsi:type="string">message message-warning</item>
+                    <item name="imports" xsi:type="array">
+                        <item name="visible" xsi:type="string">${ $.parentName }.staging_delete_mode:checked</item>
+                    </item>
+                    <item name="content" xsi:type="string" translate="true">The page will be removed from the update and all scheduled changes will be lost.</item>
+                </item>
+            </argument>
+        </container>
+    </fieldset>
+</form>

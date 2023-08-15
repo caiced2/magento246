@@ -1,0 +1,19 @@
+<?xml version="1.0"?>
+<!--
+/**
+ * Copyright © Magento, Inc. All rights reserved.
+ * See COPYING.txt for license details.
+ */
+-->
+<config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="urn:magento:module:Magento_Store:etc/config.xsd">
+    <default>
+        <checkout>
+            <options>
+                <address_search_page_size>50</address_search_page_size>
+                <enable_address_search>0</enable_address_search>
+                <display_billing_address_on>0</display_billing_address_on>
+                <customer_address_limit>10</customer_address_limit>
+            </options>
+        </checkout>
+    </default>
+</config>

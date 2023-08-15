@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+ /**
+  * Copyright © Magento, Inc. All rights reserved.
+  * See COPYING.txt for license details.
+  */
+-->
+
+<sections xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:noNamespaceSchemaLocation="urn:magento:mftf:Page/etc/SectionObject.xsd">
+    <section name="AdminCategoryProductsSection">
+        <element name="matchByRule" type="input" selector="[for='catalog_category_smart_category_onoff']"/>
+        <element name="addCondition" type="button" selector="#add_new_rule_button" timeout="30"/>
+        <element name="conditionAttribute" type="select" selector="#smart_category_table tr:nth-of-type({{row}}) [name='attribute_select']" parameterized="true"/>
+        <element name="conditionOperator" type="select" selector="#smart_category_table tr:nth-of-type({{row}}) [name='operator_select']" parameterized="true"/>
+        <element name="conditionValue" type="input" selector="#smart_category_table tr:nth-of-type({{row}}) [name='rule_value']" parameterized="true"/>
+        <element name="conditionLogic" type="select" selector="#smart_category_table tr:nth-of-type({{row}}) [name='logic_select']" parameterized="true"/>
+        <element name="conditionRemove" type="select" selector="#smart_category_table tr:nth-of-type({{row}}) .delete-rule" parameterized="true" timeout="30"/>
+        <element name="sortOrder" type="select" selector="[data-form-part='category_form'][name='sort_order']"/>
+        <element name="sort" type="button" selector="#catalog_category_sort_products_tabs" timeout="30"/>
+        <element name="automaticSort" type="select" selector="select[name=automatic_sorting]"/>
+        <element name="addProducts" type="button" selector="#catalog_category_add_product_tabs" timeout="30"/>
+        <element name="addProductsDisabled" type="button" selector="#catalog_category_add_product_tabs[disabled]" timeout="30"/>
+        <element name="productNameInAddProductsPopup" type="text" selector="table.data-grid tr.data-row:first-of-type > td:nth-of-type(3)"/>
+        <element name="productSKUInAddProductsPopup" type="text" selector="table.data-grid tr.data-row:first-of-type > td:nth-of-type(5)"/>
+        <element name="gridMode" type="button" selector="#mode-grid" timeout="30"/>
+        <element name="tileMode" type="button" selector="#mode-tile" timeout="30"/>
+        <element name="lastConditionAttribute" type="select" selector="#smart_category_table tbody tr:last-child [name='attribute_select']"/>
+        <element name="lastConditionOperator" type="select" selector="#smart_category_table tbody tr:last-child [name='operator_select']"/>
+        <element name="lastConditionValue" type="input" selector="#smart_category_table tbody tr:last-child [name='rule_value']"/>
+    </section>
+</sections>

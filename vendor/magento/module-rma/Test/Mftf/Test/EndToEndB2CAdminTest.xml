@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+ /**
+  * Copyright © Magento, Inc. All rights reserved.
+  * See COPYING.txt for license details.
+  */
+-->
+<tests xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:noNamespaceSchemaLocation="urn:magento:mftf:Test/etc/testSchema.xsd">
+    <test name="EndToEndB2CAdminTest">
+        <!--Admin process return-->
+        <comment userInput="Admin creates return (rma)" stepKey="adminCreateReturnComment" before="clickCreateReturns" />
+        <click selector="{{AdminOrderDetailsMainActionsSection.createReturn}}" stepKey="clickCreateReturns" before="createCreditMemoComment"/>
+        <seeInCurrentUrl url="{{AdminReturnNewPage.url}}" stepKey="seeNewReturnPage" after="clickCreateReturns"/>
+        <see selector="{{AdminNewReturnOrderInformationSection.customerName}}" userInput="{{Simple_US_Customer.firstname}}" stepKey="seeReturnCustomerName" after="seeNewReturnPage"/>
+        <see selector="{{AdminNewReturnOrderInformationSection.emailAddress}}" userInput="{{Simple_US_Customer.email}}" stepKey="seeReturnCustomerEmail" after="seeReturnCustomerName"/>
+        <see selector="{{AdminReturnAddressInformationSection.orderShippingAddress}}" userInput="{{US_Address_TX.street[0]}}" stepKey="seeReturnShippingAddress" after="seeReturnCustomerEmail"/>
+        <click selector="{{AdminReturnInformationSection.returnItems}}" stepKey="clickReturnItemsTab" after="seeReturnShippingAddress"/>
+        <click selector="{{AdminReturnItemsSection.addProducts}}" stepKey="clickAddReturnProducts" after="clickReturnItemsTab"/>
+        <fillField selector="{{AdminReturnItemsSection.productNameFilter}}" userInput="{{SimpleProduct.name}}" stepKey="filterReturnItemsGrid" after="clickAddReturnProducts"/>
+        <checkOption selector="{{AdminReturnItemsSection.selectRow('1')}}" stepKey="selectSimpleProductReturn" after="filterReturnItemsGrid"/>
+
+        <click selector="{{AdminReturnItemsSection.addSelectedProducts}}" stepKey="clickAddSelectedProductsToReturn" after="selectSimpleProductReturn"/>
+        <actionGroup ref="checkReturnItemRequiredFields" stepKey="checkReturnItemRequiredFields" after="clickAddSelectedProductsToReturn"/>
+        <fillField selector="{{AdminReturnItemsSection.requested('1')}}" userInput="{{SampleReturnItem.qty_requested}}" stepKey="fillRequestedReturnQty" after="checkReturnItemRequiredFields"/>
+        <selectOption selector="{{AdminReturnItemsSection.returnReason('1')}}" userInput="{{SampleReturnItem.reason}}" stepKey="selectReturnReason" after="fillRequestedReturnQty"/>
+        <fillField selector="{{AdminReturnItemsSection.returnReasonOther('1')}}" userInput="{{SampleReturnItem.reason_other}}" stepKey="fillReturnReason" after="selectReturnReason"/>
+        <selectOption selector="{{AdminReturnItemsSection.itemCondition('1')}}" userInput="{{SampleReturnItem.condition}}" stepKey="selectReturnItemCondition" after="fillReturnReason"/>
+        <selectOption selector="{{AdminReturnItemsSection.resolution('1')}}" userInput="{{SampleReturnItem.resolution}}" stepKey="selectReturnResolution" after="selectReturnItemCondition"/>
+        <click selector="{{AdminNewReturnMainActionsSection.submitReturns}}" stepKey="clickSubmitReturns" after="selectReturnResolution"/>
+        <!--View return in grid-->
+        <seeInCurrentUrl url="{{AdminReturnIndexPage.url}}" stepKey="seeOnRmaIndexPage" after="clickSubmitReturns"/>
+        <click selector="{{AdminReturnGridFilterSection.resetFilter}}" stepKey="clearExistingRmaFilters" after="seeOnRmaIndexPage"/>
+        <fillField selector="{{AdminReturnGridFilterSection.orderIdFilter}}" userInput="$orderNumber" stepKey="fillOrderIdRmaFilter" after="clearExistingRmaFilters"/>
+        <see selector="{{AdminReturnGridSection.rowOrderId('1')}}" userInput="$orderNumber" stepKey="seeReturnInGrid" after="fillOrderIdRmaFilter"/>
+        <see selector="{{AdminReturnGridSection.rowStatus('1')}}" userInput="Pending" stepKey="seeReturnStatusPending" after="seeReturnInGrid"/>
+        <click selector="{{AdminReturnGridSection.rowViewAction('1')}}" stepKey="clickViewReturnFromGrid" after="seeReturnStatusPending"/>
+        <seeInCurrentUrl url="{{AdminReturnEditPage.url}}" stepKey="seeOnRmaEditPage" after="clickViewReturnFromGrid"/>
+        <click selector="{{AdminEditReturnOrderInformationSection.orderId}}" stepKey="clickOrderIdFromReturn" after="seeOnRmaEditPage"/>
+    </test>
+</tests>

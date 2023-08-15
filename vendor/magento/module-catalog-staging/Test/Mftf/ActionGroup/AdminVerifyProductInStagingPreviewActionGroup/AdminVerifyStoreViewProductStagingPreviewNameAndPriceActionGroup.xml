@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+ /**
+  * Copyright © Magento, Inc. All rights reserved.
+  * See COPYING.txt for license details.
+  */
+-->
+<actionGroups xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:noNamespaceSchemaLocation="urn:magento:mftf:Test/etc/actionGroupSchema.xsd">
+    <actionGroup name="AdminVerifyStoreViewProductStagingPreviewNameAndPriceActionGroup" extends="AdminVerifyProductStagingPreviewNameAndPriceActionGroup">
+        <arguments>
+            <argument name="storeView" type="string"/>
+        </arguments>
+        <click selector="{{AdminStagingPreviewSection.scopeBtn}}" stepKey="clickScopeBtn"/>
+        <seeOptionIsSelected userInput="{{storeView}}" selector="{{AdminStagingPreviewSection.storeView}}" stepKey="seeStoreViewInPreviewMode"/>
+    </actionGroup>
+</actionGroups>

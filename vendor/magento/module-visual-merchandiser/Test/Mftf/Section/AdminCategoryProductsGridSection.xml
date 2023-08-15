@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+ /**
+  * Copyright © Magento, Inc. All rights reserved.
+  * See COPYING.txt for license details.
+  */
+-->
+
+<sections xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:noNamespaceSchemaLocation="urn:magento:mftf:Page/etc/SectionObject.xsd">
+    <section name="AdminCategoryProductsGridSection">
+        <element name="row" type="text" selector="#catalog_category_products_table tbody tr"/>
+        <element name="rowUnassign" type="button" selector="#catalog_category_products_table tbody tr:nth-of-type({{row}}) .col-action a[name='unassign']" timeout="30" parameterized="true"/>
+        <element name="rowPositionInput" type="input" selector="#catalog_category_products_table tbody tr:nth-of-type({{row}}) .col-position input" timeout="30" parameterized="true"/>
+        <element name="rowPositionUp" type="button" selector="#catalog_category_products_table tbody tr:nth-of-type({{row}}) .col-position .move-top" timeout="30" parameterized="true"/>
+        <element name="rowPositionDown" type="button" selector="#catalog_category_products_table tbody tr:nth-of-type({{row}}) .col-position .move-bottom" timeout="30" parameterized="true"/>
+        <element name="rowId" type="text" selector="#catalog_category_products_table tbody tr:nth-of-type({{row}}) .col-id" parameterized="true"/>
+        <element name="rowName" type="text" selector="#catalog_category_products_table tbody tr:nth-of-type({{row}}) .col-name" parameterized="true"/>
+        <element name="nameColumn" type="text" selector="#catalog_category_products_table tr>td.col-name"/>
+        <element name="skuColumn" type="text" selector="#catalog_category_products_table tr>td.col-sku"/>
+        <element name="priceColumn" type="text" selector="#catalog_category_products_table tr>td.col-price"/>
+        <element name="emptyText" type="text" selector=".empty-text"/>
+        <element name="totalCount" type="text" selector="//span[contains(@data-ui-id, 'grid-total-count')]"/>
+        <element name="nextPage" type="button" selector="#tab_grid .action-next" timeout="30"/>
+        <element name="previousPage" type="button" selector="#tab_grid .action-previous" timeout="30"/>
+        <element name="draggablePositionColumn" type="text" selector="#catalog_category_products_table tr>td.col-draggable-position"/>
+        <element name="sortableTable" type="text" selector="#catalog_category_products_table tbody.ui-sortable"/>
+    </section>
+</sections>

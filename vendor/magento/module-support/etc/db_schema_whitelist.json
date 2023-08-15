@@ -1,0 +1,49 @@
+{
+    "support_backup": {
+        "column": {
+            "backup_id": true,
+            "name": true,
+            "status": true,
+            "last_update": true,
+            "log": true
+        },
+        "index": {
+            "SUPPORT_BACKUP_STATUS": true
+        },
+        "constraint": {
+            "PRIMARY": true
+        }
+    },
+    "support_backup_item": {
+        "column": {
+            "item_id": true,
+            "status": true,
+            "type": true,
+            "size": true,
+            "backup_id": true
+        },
+        "index": {
+            "SUPPORT_BACKUP_ITEM_STATUS": true,
+            "SUPPORT_BACKUP_ITEM_TYPE": true
+        },
+        "constraint": {
+            "PRIMARY": true,
+            "SUPPORT_BACKUP_ITEM_BACKUP_ID_SUPPORT_BACKUP_BACKUP_ID": true,
+            "SUPPORT_BACKUP_BACKUP_ID_SUPPORT_BACKUP_ITEM_BACKUP_ID": true
+        }
+    },
+    "support_report": {
+        "column": {
+            "report_id": true,
+            "created_at": true,
+            "client_host": true,
+            "magento_version": true,
+            "report_groups": true,
+            "report_flags": true,
+            "report_data": true
+        },
+        "constraint": {
+            "PRIMARY": true
+        }
+    }
+}

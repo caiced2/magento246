@@ -1,0 +1,16 @@
+<?php
+/**
+ * Copyright © Magento, Inc. All rights reserved.
+ * See COPYING.txt for license details.
+ */
+?>
+
+<?php
+/** @var \Magento\QuickCheckout\Block\Sdk $block */
+/** @var \Magento\Framework\Escaper $escaper */
+?>
+
+<script id="bolt-embed"
+        src="<?= $escaper->escapeUrl($block->getSdkUrl()) ?>"
+        data-publishable-key="<?= $escaper->escapeHtmlAttr($block->getPublishableKey()); ?>">
+</script>

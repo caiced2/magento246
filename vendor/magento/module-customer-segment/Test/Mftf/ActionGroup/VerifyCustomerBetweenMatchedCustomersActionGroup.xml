@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+ /**
+  * Copyright © Magento, Inc. All rights reserved.
+  * See COPYING.txt for license details.
+  */
+-->
+<actionGroups xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+              xsi:noNamespaceSchemaLocation="urn:magento:mftf:Test/etc/actionGroupSchema.xsd">
+    <actionGroup name="VerifyCustomerBetweenMatchedCustomersActionGroup">
+        <arguments>
+            <argument name="emailValue" type="string"/>
+        </arguments>
+        <click selector="{{AdminCustomerSegmentEditSection.matchedCustomersTab}}" stepKey="proceedToMatchedCustomersTab"/>
+        <waitForPageLoad stepKey="waitForMatchedCustomersTab"/>
+        <click selector="{{AdminDataGridHeaderSection.clearFilters}}" stepKey="clearFilters"/>
+        <fillField selector="{{AdminCustomerSegmentMatchedCustomersSection.emailFilter}}" userInput="{{emailValue}}" stepKey="fillEmail"/>
+        <click selector="{{AdminDataGridHeaderSection.applyFilters}}" stepKey="applyFilters"/>
+        <see selector="{{AdminCustomerSegmentMatchedCustomersSection.gridColumn('1','email')}}" userInput="{{emailValue}}" stepKey="checkCustomer"/>
+        <click selector="{{AdminDataGridHeaderSection.clearFilters}}" stepKey="clearFilters1"/>
+    </actionGroup>
+</actionGroups>

@@ -1,0 +1,110 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+ /**
+  * Copyright © Magento, Inc. All rights reserved.
+  * See COPYING.txt for license details.
+  */
+-->
+
+<tests xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xsi:noNamespaceSchemaLocation="urn:magento:mftf:Test/etc/testSchema.xsd">
+    <test name="AdminAutomaticallySortSmartCategoryByPriceTest">
+        <annotations>
+            <features value="VisualMerchandiser"/>
+            <stories value="Smart Categories"/>
+            <title value="Merchant should be able to automatically sort smart category by price"/>
+            <description value="Merchant should be able to automatically sort smart category by price"/>
+            <severity value="CRITICAL"/>
+            <testCaseId value="MC-3289"/>
+            <group value="Merchant Tools"/>
+        </annotations>
+        <before>
+            <!--
+            Preconditions:
+            Create any Category, create three Products pencil, headphones, player with prices 1$, 20$, 300$
+            -->
+            <!-- Step 1. Login As Admin -->
+            <actionGroup ref="AdminLoginActionGroup" stepKey="loginAsAdmin"/>
+            <actionGroup ref="DeleteAllProductsUsingProductGridActionGroup" stepKey="deleteAllProducts"/>
+            <createData entity="_defaultCategory" stepKey="createCategory"/>
+            <createData entity="SimpleProduct2" stepKey="createPencilProduct">
+                <field key="price">1</field>
+                <field key="name">Pencil</field>
+            </createData>
+            <createData entity="SimpleProduct2" stepKey="createHeadphonesProduct">
+                <field key="price">20</field>
+                <field key="name">Headphones</field>
+            </createData>
+            <createData entity="SimpleProduct2" stepKey="createPlayerProduct">
+                <field key="price">300</field>
+                <field key="name">Player</field>
+            </createData>
+        </before>
+        <after>
+            <deleteData createDataKey="createPencilProduct" stepKey="deletePencilProduct"/>
+            <deleteData createDataKey="createHeadphonesProduct" stepKey="deleteHeadphonesProduct"/>
+            <deleteData createDataKey="createPlayerProduct" stepKey="deletePlayerProduct"/>
+            <deleteData createDataKey="createCategory" stepKey="deleteCategory"/>
+            <actionGroup ref="AdminLogoutActionGroup" stepKey="logout"/>
+        </after>
+        <!-- Step 2. Navigate to Categories Page -->
+        <!-- Step 3. Select created Category -->
+        <actionGroup ref="OpenCategoryFromCategoryTreeActionGroup" stepKey="getCategoryId">
+            <argument name="category" value="$$createCategory.name$$"/>
+        </actionGroup>
+        <!-- Step 4. Navigate to Products in Category selector and click on selector -->
+        <actionGroup ref="OpenProductsInCategorySectionActionGroup" stepKey="openProductsInCategorySectionBeforeSort"/>
+        <!-- Step 5. Assert Grid Products in Products in Category section -->
+        <actionGroup ref="AdminAssertProductsGridIsEmptyActionGroup" stepKey="gridIsEmpty"/>
+        <!-- Step 6. Match products by rule set to Yes -->
+        <actionGroup ref="EnableMatchProductsByRuleActionGroup" stepKey="enableMatchProductsByRule"/>
+        <!-- Step 7. Automatic Sorting Option set to Price: High to low -->
+        <actionGroup ref="AdminSortingProductsInCategoryPageActionGroup" stepKey="automaticSortingByPrice">
+            <argument name="sorting" value="{{SmartCategoryAutomaticSorting.price_high_to_low}}"/>
+        </actionGroup>
+        <!-- Step 8. Create Condition for matching to Category -->
+        <actionGroup ref="AdminAddSmartCategoryConditionActionGroup" stepKey="createCondition">
+            <argument name="condition" value="SmartCategoryConditionPriceLessEquals300"/>
+        </actionGroup>
+        <!-- Step 9. Click Save Button on Category Page -->
+        <actionGroup ref="AdminSaveCategoryFormActionGroup" stepKey="clickSaveButton"/>
+        <!-- Step 10. Navigate to Products in Category selector in Admin-->
+        <actionGroup ref="OpenProductsInCategorySectionActionGroup" stepKey="openProductsInCategorySectionAfterSort"/>
+        <!-- Step 11. Assert first position of product in Admin in Category Page-->
+        <actionGroup ref="AdminCheckProductPositionInCategoryProductsGridActionGroup" stepKey="assertAdminPlayerInGrid">
+            <argument name="productName" value="$$createPlayerProduct.name$$"/>
+            <argument name="position" value="1"/>
+        </actionGroup>
+        <!-- Step 12. Assert second position of product in Admin in Category Page-->
+        <actionGroup ref="AdminCheckProductPositionInCategoryProductsGridActionGroup" stepKey="assertAdminHeadphonesInGrid">
+            <argument name="productName" value="$$createHeadphonesProduct.name$$"/>
+            <argument name="position" value="2"/>
+        </actionGroup>
+        <!-- Step 13. Assert last position of product in Admin in Category Page-->
+        <actionGroup ref="AdminCheckProductPositionInCategoryProductsGridActionGroup" stepKey="assertAdminPencilInGrid">
+            <argument name="productName" value="$$createPencilProduct.name$$"/>
+            <argument name="position" value="3"/>
+        </actionGroup>
+        <!-- Step 14. Perform reindex and flush cache -->
+        <magentoCLI command="cron:run --group=index" stepKey="runCronReindex"/>
+        <!-- Step 15. Check storefront category page for products -->
+        <actionGroup ref="StorefrontNavigateCategoryPageActionGroup" stepKey="navigateToStorefrontCategoryPage">
+            <argument name="category" value="$$createCategory$$"/>
+        </actionGroup>
+        <!-- Step 16. Assert first position of product on Storefront in Category Page-->
+        <actionGroup ref="StorefrontCheckProductPositionActionGroup" stepKey="checkPositionStorefrontPlayerProduct">
+            <argument name="productName" value="$$createPlayerProduct.name$$"/>
+            <argument name="position" value="1"/>
+        </actionGroup>
+        <!-- Step 17. Assert second position of product on Storefront in Category Page-->
+        <actionGroup ref="StorefrontCheckProductPositionActionGroup" stepKey="checkPositionStorefrontHeadphonesProduct">
+            <argument name="productName" value="$$createHeadphonesProduct.name$$"/>
+            <argument name="position" value="2"/>
+        </actionGroup>
+        <!-- Step 18. Assert last position of product on Storefront in Category Page-->
+        <actionGroup ref="StorefrontCheckProductPositionActionGroup" stepKey="checkPositionStorefrontPencilProduct">
+            <argument name="productName" value="$$createPencilProduct.name$$"/>
+            <argument name="position" value="3"/>
+        </actionGroup>
+    </test>
+</tests>

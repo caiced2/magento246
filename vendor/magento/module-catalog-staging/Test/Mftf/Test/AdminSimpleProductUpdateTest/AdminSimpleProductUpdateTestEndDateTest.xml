@@ -1,0 +1,66 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+ /**
+  * Copyright © Magento, Inc. All rights reserved.
+  * See COPYING.txt for license details.
+  */
+-->
+<tests xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:noNamespaceSchemaLocation="urn:magento:mftf:Test/etc/testSchema.xsd">
+    <test name="AdminSimpleProductUpdateTestEndDateTest">
+        <annotations>
+            <features value="CatalogStaging"/>
+            <stories value="Admin manages staging update"/>
+            <title value="Admin should be able to create Single Future Update with end date from Simple Product Page"/>
+            <description value="Admin should be able to create Single Future Update with end date from Simple Product Page"/>
+            <severity value="CRITICAL"/>
+            <testCaseId value="MC-262"/>
+            <group value="CatalogStaging"/>
+        </annotations>
+        <before>
+            <actionGroup ref="AdminLoginActionGroup" stepKey="loginAsAdmin"/>
+            <createData entity="SimpleProduct2" stepKey="createSimpleProduct"/>
+
+            <magentoCLI command="cron:run --group=index" stepKey="runCronIndexer"/>
+        </before>
+        <after>
+            <amOnPage url="{{AdminStagingDashboardPage.url}}" stepKey="goToStagingDashboard"/>
+            <waitForPageLoad stepKey="waitForPageLoad"/>
+            <actionGroup ref="ClearFiltersAdminDataGridActionGroup" stepKey="clearFilter"/>
+            <amOnPage url="{{AdminLogoutPage.url}}" stepKey="amOnLogoutPage"/>
+            <deleteData createDataKey="createSimpleProduct" stepKey="deleteSimpleProduct1"/>
+        </after>
+
+        <!-- Go to the edit page of the simple product we just created -->
+        <amOnPage stepKey="visitAdminProductPage" url="{{AdminProductEditPage.url($$createSimpleProduct.id$$)}}"/>
+        <waitForPageLoad stepKey="waitForProductPageLoad1"/>
+
+        <!-- Create the new staging update -->
+        <generateDate stepKey="generateEndDate" date="+1 week" format="m/d/Y g:i A"/>
+        <actionGroup stepKey="fillOutNewStaging" ref="createEntityNameStagingUpdate">
+            <argument name="stagingUpdate" value="_defaultStaging"/>
+            <argument name="endDate" value="{$generateEndDate}"/>
+        </actionGroup>
+
+        <wait stepKey="waitBeforeIndexerStaging" time="60"/>
+        <magentoCLI command="cron:run --group=staging" stepKey="runCronStaging"/>
+
+        <!-- Go to product storefront page to see the change applied-->
+        <amOnPage stepKey="goToCreatedProductPage" url="$$createSimpleProduct.custom_attributes[url_key]$$.html"/>
+        <waitForPageLoad stepKey="waitForProductPageLoad2"/>
+        <see stepKey="seeNewTitle" selector="{{StorefrontProductInfoMainSection.productName}}" userInput="{{_defaultStaging.entityName}}"/>
+
+        <actionGroup stepKey="changeDashboardView" ref="changeStagingView">
+            <argument name="view" value="grid"/>
+        </actionGroup>
+
+        <actionGroup stepKey="filterByName" ref="FilterProductGridByName2ActionGroup">
+            <argument name="name" value="{{_defaultStaging.name}}"/>
+        </actionGroup>
+
+        <!-- Active permanent updates are no longer shown on the staging dashboard -->
+        <comment userInput="BIC workaround" stepKey="seeUpdateRow"/>
+        <comment userInput="BIC workaround" stepKey="seeUpcoming"/>
+        <comment userInput="BIC workaround" stepKey="seeUpdateTitle"/>
+    </test>
+</tests>

@@ -1,0 +1,156 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+ /**
+  * Copyright © Magento, Inc. All rights reserved.
+  * See COPYING.txt for license details.
+  */
+-->
+
+<tests xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xsi:noNamespaceSchemaLocation="urn:magento:mftf:Test/etc/testSchema.xsd">
+    <test name="CreditMemoOrderPaidWithRewardPointsTest">
+        <annotations>
+            <features value="Reward"/>
+            <stories value="Order with reward points"/>
+            <title value="Admin can create credit memo that refunds reward points."/>
+            <description value="Logged in customer places order and pays with reward points. Admin invoices and creates credit memo for order. Reward points are refunded."/>
+            <severity value="MAJOR"/>
+            <testCaseId value="MAGETWO-92930"/>
+            <group value="reward"/>
+        </annotations>
+
+        <before>
+            <!--Create category-->
+            <createData entity="_defaultCategory" stepKey="createCategory"/>
+            <!--Create Product-->
+            <createData entity="SimpleProduct" stepKey="createProduct">
+                <field key="price">100</field>
+                <requiredEntity createDataKey="createCategory"/>
+            </createData>
+            <!--Creating customer-->
+            <createData entity="Simple_US_Customer" stepKey="createCustomer" >
+                <field key="group_id">1</field>
+            </createData>
+            <magentoCLI command="cron:run --group=index" stepKey="runCronIndexer"/>
+        </before>
+
+        <after>
+            <!--Delete category-->
+            <deleteData createDataKey="createCategory" stepKey="deleteCategory"/>
+            <!--Delete product-->
+            <deleteData createDataKey="createProduct" stepKey="deleteProduct"/>
+            <!--Remove reward exchange rates-->
+            <actionGroup ref="AdminDeleteRewardExchangeRateActionGroup" stepKey="removeFirstExchangeRate"/>
+            <actionGroup ref="AdminDeleteRewardExchangeRateActionGroup" stepKey="removeSecondExchangeRate"/>
+            <!--Delete customer-->
+            <deleteData createDataKey="createCustomer" stepKey="deleteCustomer"/>
+        </after>
+
+        <!--Add reward points to customer-->
+        <actionGroup ref="AdminLoginActionGroup" stepKey="loginAsAdmin"/>
+        <actionGroup ref="AdminApplyRewardPointsActionGroup" stepKey="applyRewardPointsToCustomer">
+            <argument name="customerId" value="$$createCustomer.id$$"/>
+            <argument name="rewards" value="200"/>
+        </actionGroup>
+
+        <!--Creating exchange rate - Points to Currency-->
+        <actionGroup ref="AdminCreatePointsToCurrencyRateActionGroup" stepKey="createPointsToCurrencyRate">
+            <argument name="rate1" value="1"/>
+            <argument name="rate2" value="1"/>
+        </actionGroup>
+        <!--Creating exchange rate - Currency to Points-->
+        <actionGroup ref="AdminCreateCurrencyToPointsRateActionGroup" stepKey="createCurrencyToPointsRate">
+            <argument name="rate1" value="1"/>
+            <argument name="rate2" value="1"/>
+        </actionGroup>
+
+        <!--Login to storefront as previously created customer-->
+        <actionGroup ref="LoginToStorefrontActionGroup" stepKey="loginAsCustomer">
+            <argument name="Customer" value="$$createCustomer$$"/>
+        </actionGroup>
+        <!--Open the Product Page and Add the product to Cart-->
+        <amOnPage url="{{StorefrontProductPage.url($$createProduct.custom_attributes[url_key]$$)}}" stepKey="goToProductPage" />
+        <waitForPageLoad stepKey="waitForProductPageLoad"/>
+        <actionGroup ref="AddToCartFromStorefrontProductPageActionGroup" stepKey="addToCartFromStorefrontProductPage">
+            <argument name="productName" value="$$createProduct.name$$"/>
+        </actionGroup>
+        <!--Go to Checkout-->
+        <actionGroup ref="GoToCheckoutFromMinicartActionGroup" stepKey="goToCheckoutFromMinicart"/>
+        <waitForElement selector="{{CheckoutShippingSection.isShippingStep}}" stepKey="waitForShippingSectionLoaded"/>
+        <seeElement selector="{{CheckoutShippingSection.selectedShippingAddress}}" stepKey="seeSavedAddressSelected"/>
+        <checkOption selector="{{CheckoutShippingMethodsSection.shippingMethodFlatRate}}" stepKey="selectFlatRateShipping"/>
+        <actionGroup ref="StorefrontCheckoutClickNextButtonActionGroup" stepKey="clickNextOnCheckoutShipping"/>
+        <waitForElement selector="{{CheckoutPaymentSection.paymentSectionTitle}}" time="30" stepKey="waitForPaymentSectionLoadedTest"/>
+        <actionGroup ref="StorefrontCheckoutUsingRewardPointsActionGroup" stepKey="checkoutUseRewardPoints">
+            <argument name="rewards" value="200"/>
+            <argument name="rewardsUsing" value="105"/>
+        </actionGroup>
+        <!--Place order-->
+        <comment userInput="BIC workaround" stepKey="waitForPlaceOrderButton"/>
+        <actionGroup ref="ClickPlaceOrderActionGroup" stepKey="clickPlaceOrder"/>
+        <waitForElement selector="{{CheckoutSuccessMainSection.success}}" time="30" stepKey="waitForLoadSuccessPage"/>
+        <grabTextFrom selector="{{CheckoutSuccessMainSection.orderLink}}" stepKey="grabOrderNumber"/>
+        <!--Check order reward point information from StoreFront-->
+        <click selector="{{CheckoutSuccessMainSection.orderLink}}" stepKey="clickOrderLink"/>
+        <waitForElement selector="{{StorefrontCustomerOrderViewSection.orderTitle}}" time="30" stepKey="waitForLoadStoreFrontOrderPage"/>
+        <see selector="{{StorefrontCustomerOrderViewSection.rewardPoints}}" userInput="105 Reward points	-$105.00" stepKey="seeRewardPoint"/>
+
+        <!--Check customer reward point balance-->
+        <actionGroup ref="AdminVerifyCustomerRewardPointsAmountActionGroup" stepKey="verifyCustomerRewardPointsAmount">
+            <argument name="customerId" value="$$createCustomer.id$$"/>
+            <argument name="rewards" value="95"/>
+        </actionGroup>
+
+        <!--Check order reward point information from Admin-->
+        <actionGroup ref="CheckOrderRewardPointFromAdminActionGroup" stepKey="checkOrderRewardPointFromAdmin">
+            <argument name="rewardPointUsed" value="105"/>
+            <argument name="orderNumber" value="$grabOrderNumber"/>
+        </actionGroup>
+        <!--Invoice order-->
+        <click selector="{{AdminOrderDetailsMainActionsSection.invoice}}" stepKey="clickInvoiceAction"/>
+        <see selector="{{AdminHeaderSection.pageTitle}}" userInput="New Invoice" stepKey="seePageNameNewInvoicePage"/>
+        <click selector="{{AdminInvoiceMainActionsSection.submitInvoice}}" stepKey="clickSubmitInvoice"/>
+        <seeInCurrentUrl url="{{AdminOrderDetailsPage.url}}" stepKey="seeViewOrderPageInvoice"/>
+        <see selector="{{AdminOrderDetailsMessagesSection.successMessage}}" userInput="The invoice has been created." stepKey="seeInvoiceCreateSuccess"/>
+        <!--Create credit memo-->
+        <click selector="{{AdminOrderDetailsMainActionsSection.creditMemo}}" stepKey="clickCreateCreditMemo"/>
+        <see selector="{{AdminHeaderSection.pageTitle}}" userInput="New Memo" stepKey="seeNewMemoInPageTitle"/>
+        <see selector="{{AdminCreditMemoTotalSection.total('105 Reward points')}}" userInput="-$105.00" stepKey="seeRewardsPointsApplied"/>
+        <!--Submit credit memo with refund greater than subtotal-->
+        <comment userInput="Submit credit memo; expect failure" stepKey="expectFailCreditMemoComment"/>
+        <checkOption selector="{{AdminCreditMemoTotalSection.refundStoreCredit}}" stepKey="selectRefundToCredit"/>
+        <seeInField selector="{{AdminCreditMemoTotalSection.refundStoreCreditAmount}}" userInput="0" stepKey="seeCorrectPrefillInRefundStoreCreditAmount"/>
+        <fillField selector="{{AdminCreditMemoTotalSection.refundStoreCreditAmount}}" userInput="105" stepKey="fillRefundStoreCreditAmount"/>
+        <checkOption selector="{{AdminCreditMemoTotalSection.refundRewardPointsEnable}}" stepKey="checkRefundRewardPoints"/>
+        <seeInField selector="{{AdminCreditMemoTotalSection.refundRewardPointsAmount}}" userInput="105" stepKey="seeCorrectPrefillRefundRewardPoints"/>
+        <click selector="{{AdminCreditMemoTotalSection.submitRefundOffline}}" stepKey="submitCreditMemoFailure"/>
+        <waitForText selector="{{AdminMessagesSection.error}}" userInput="You can't use more store credit than the order amount." time="60" stepKey="seeErrorMessage"/>
+
+        <!--Submit credit memo; refund all reward points-->
+        <comment userInput="Submit credit memo with full reward point refund" stepKey="expectSuccessCreditMemoComment"/>
+        <dontSeeCheckboxIsChecked selector="{{AdminCreditMemoTotalSection.refundStoreCredit}}" stepKey="refundStoreCreditNotChecked"/>
+        <seeInField selector="{{AdminCreditMemoTotalSection.refundStoreCreditAmount}}" userInput="0" stepKey="seeCorrectPrefillInRefundStoreCreditAmount2"/>
+        <checkOption selector="{{AdminCreditMemoTotalSection.refundRewardPointsEnable}}" stepKey="checkRefundRewardPoints2"/>
+        <seeInField selector="{{AdminCreditMemoTotalSection.refundRewardPointsAmount}}" userInput="105" stepKey="seeCorrectPrefillRefundRewardPoints2"/>
+        <click selector="{{AdminCreditMemoTotalSection.submitRefundOffline}}" stepKey="submitCreditMemoSuccess"/>
+        <waitForElementVisible selector="{{AdminMessagesSection.success}}" stepKey="waitForSuccessMessage"/>
+        <see selector="{{AdminMessagesSection.success}}" userInput="You created the credit memo." stepKey="seeSuccessMessage"/>
+        <see selector="{{AdminOrderDetailsInformationSection.orderStatus}}" userInput="Closed" stepKey="seeOrderComplete"/>
+        <!--Credit memo action is not available after full refund-->
+        <dontSee selector="{{AdminOrderDetailsMainActionsSection.creditMemo}}" stepKey="creditMemoActionNotAvailable"/>
+
+        <!--Check refund amount in credit memo-->
+        <click selector="{{AdminOrderDetailsOrderViewSection.creditMemos}}" stepKey="goToCreditMemoTab"/>
+        <see selector="{{AdminOrderCreditMemosTabSection.gridRowCell('1', 'Order')}}" userInput="$grabOrderNumber" stepKey="seeCreditMemoInGrid"/>
+        <see selector="{{AdminOrderCreditMemosTabSection.gridRowCell('1', 'Status')}}" userInput="Refunded" stepKey="seeCreditMemoStatusInGrid"/>
+        <click selector="{{AdminOrderCreditMemosTabSection.viewGridRow('1')}}" stepKey="clickMemoInGrid"/>
+        <see selector="{{AdminCreditMemoTotalSection.total('Adjustment Refund')}}" userInput="$0.00" stepKey="seeZeroAdjustmentRefund"/>
+        <see selector="{{AdminOrderFormTotalSection.rewardPointsRefunded}}" userInput="105" stepKey="seeRewardPointsRefundedTotal"/>
+
+        <!--Check customer has correct reward point after refund-->
+        <actionGroup ref="AdminVerifyCustomerRewardPointsAmountActionGroup" stepKey="verifyCustomerRewardPointsAmountAfterRefund">
+            <argument name="customerId" value="$$createCustomer.id$$"/>
+            <argument name="rewards" value="200"/>
+        </actionGroup>
+    </test>
+</tests>

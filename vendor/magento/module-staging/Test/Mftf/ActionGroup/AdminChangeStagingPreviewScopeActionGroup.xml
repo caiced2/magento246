@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+ /**
+  * Copyright © Magento, Inc. All rights reserved.
+  * See COPYING.txt for license details.
+  */
+-->
+
+<actionGroups xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+              xsi:noNamespaceSchemaLocation="urn:magento:mftf:Test/etc/actionGroupSchema.xsd">
+    <actionGroup name="AdminChangeStagingPreviewScopeActionGroup">
+        <annotations>
+            <description>Change scope in staging preview.</description>
+        </annotations>
+        <arguments>
+            <argument name="storeViewCode" type="string"/>
+        </arguments>
+
+        <conditionalClick selector="{{AdminStagingPreviewSection.scopeBtn}}" dependentSelector="{{AdminStagingPreviewSection.scopeBtnActive}}" visible="false" stepKey="openScopeTab"/>
+        <selectOption userInput="{{storeViewCode}}" selector="{{AdminStagingPreviewSection.storeView}}" stepKey="selectStoreView"/>
+        <click selector="{{AdminStagingPreviewSection.previewScopeBtn}}" stepKey="clickButtonPreview"/>
+        <waitForPageLoad stepKey="waitForRefreshPage"/>
+        <seeInCurrentUrl url="preview_store={{storeViewCode}}" stepKey="assertPreviewScopeChanged"/>
+    </actionGroup>
+</actionGroups>

@@ -1,0 +1,96 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+/**
+ * Copyright © Magento, Inc. All rights reserved.
+ * See COPYING.txt for license details.
+ */
+-->
+<listing xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="urn:magento:module:Magento_Ui:etc/ui_configuration.xsd">
+    <argument name="data" xsi:type="array">
+        <item name="js_config" xsi:type="array">
+            <item name="provider" xsi:type="string">staging_update_salesrule_grid.staging_update_salesrule_grid_data_source</item>
+        </item>
+    </argument>
+    <settings>
+        <spinner>staging_update_salesrule_columns</spinner>
+        <deps>
+            <dep>staging_update_salesrule_grid.staging_update_salesrule_grid_data_source</dep>
+        </deps>
+    </settings>
+    <dataSource name="staging_update_salesrule_grid_data_source" component="Magento_Ui/js/grid/provider">
+        <settings>
+            <storageConfig>
+                <param name="indexField" xsi:type="string">id</param>
+            </storageConfig>
+            <updateUrl path="mui/index/render"/>
+        </settings>
+        <aclResource>Magento_SalesRule::quote</aclResource>
+        <dataProvider class="Magento\SalesRuleStaging\Model\Staging\Updates\DataProvider" name="staging_update_salesrule_grid_data_source">
+            <settings>
+                <requestFieldName>id</requestFieldName>
+                <primaryFieldName>id</primaryFieldName>
+            </settings>
+        </dataProvider>
+    </dataSource>
+    <listingToolbar name="listing_top">
+        <settings>
+            <sticky>false</sticky>
+        </settings>
+        <paging name="listing_paging"/>
+    </listingToolbar>
+    <columns name="staging_update_salesrule_columns">
+        <column name="rule_id">
+            <settings>
+                <filter>textRange</filter>
+                <label translate="true">ID</label>
+            </settings>
+        </column>
+        <column name="name">
+            <settings>
+                <filter>text</filter>
+                <label translate="true">Rule</label>
+                <sorting>asc</sorting>
+            </settings>
+        </column>
+        <column name="code">
+            <settings>
+                <filter>text</filter>
+                <label translate="true">Coupon Code</label>
+            </settings>
+        </column>
+        <column name="sort_order">
+            <settings>
+                <filter>text</filter>
+                <label translate="true">Priority</label>
+            </settings>
+        </column>
+        <column name="is_active" component="Magento_Ui/js/grid/columns/select">
+            <settings>
+                <options>
+                    <option name="inactive" xsi:type="array">
+                        <item name="value" xsi:type="string">0</item>
+                        <item name="label" xsi:type="string" translate="true">Inactive</item>
+                    </option>
+                    <option name="active" xsi:type="array">
+                        <item name="value" xsi:type="string">1</item>
+                        <item name="label" xsi:type="string" translate="true">Active</item>
+                    </option>
+                </options>
+                <dataType>select</dataType>
+                <label translate="true">Status</label>
+            </settings>
+        </column>
+        <column name="website_ids" component="Magento_Ui/js/grid/columns/select">
+            <settings>
+                <options class="Magento\Store\Model\ResourceModel\Website\Collection"/>
+                <dataType>select</dataType>
+                <label translate="true">Websites</label>
+            </settings>
+        </column>
+        <actionsColumn name="actions" class="stagingUpdateSalesRuleGridActions">
+            <settings>
+                <indexField>id</indexField>
+            </settings>
+        </actionsColumn>
+    </columns>
+</listing>

@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+ /**
+  * Copyright © Magento, Inc. All rights reserved.
+  * See COPYING.txt for license details.
+  */
+-->
+
+<sections xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:noNamespaceSchemaLocation="urn:magento:mftf:Page/etc/SectionObject.xsd">
+    <section name="AdminGiftCardFormSection">
+        <element name="treatAsStoreCreditCheckbox" type="checkbox" selector="input[name='product[is_redeemable]']"/>
+        <element name="treatAsStoreCreditUseConfig" type="checkbox" selector="input[name='product[use_config_is_redeemable]']"/>
+        <element name="lifetimeInput" type="input" selector="input[name='product[lifetime]']"/>
+        <element name="lifetimeUseConfig" type="checkbox" selector="input[name='product[use_config_lifetime]']"/>
+        <element name="allowMessageCheckbox" type="checkbox" selector="input[name='product[allow_message]']"/>
+        <element name="allowMessageUseConfig" type="checkbox" selector="input[name='product[use_config_allow_message]']"/>
+        <element name="emailTemplateSelect" type="select" selector="select[name='product[email_template]']"/>
+        <element name="emailTemplateUseConfig" type="checkbox" selector="input[name='product[use_config_email_template]']"/>
+    </section>
+</sections>

@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+ /**
+  * Copyright © Magento, Inc. All rights reserved.
+  * See COPYING.txt for license details.
+  */
+-->
+<sections xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="urn:magento:mftf:Page/etc/SectionObject.xsd">
+    <section name="AdminInvoicePaymentShippingSection">
+        <element name="orderMethods" selector="#order-methods" type="block"/>
+        <element name="pQuickCheckout" selector="#p_method_quick_checkout" timeout="60" type="radio"/>
+        <element name="getAvailablePaymentMethods" selector="//span[text()='Get available payment methods']" timeout="60" type="button"/>
+    </section>
+</sections>

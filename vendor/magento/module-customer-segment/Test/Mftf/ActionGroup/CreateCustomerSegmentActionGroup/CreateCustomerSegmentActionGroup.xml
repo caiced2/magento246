@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+ /**
+  * Copyright © Magento, Inc. All rights reserved.
+  * See COPYING.txt for license details.
+  */
+-->
+<actionGroups xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:noNamespaceSchemaLocation="urn:magento:mftf:Test/etc/actionGroupSchema.xsd">
+    <actionGroup name="CreateCustomerSegmentActionGroup">
+        <arguments>
+            <argument name="customerSegment" defaultValue="CustomerSegmentForNoorders" type="entity"/>
+        </arguments>
+        <amOnPage url="{{AdminCustomerSegmentIndexPage.url}}" stepKey="goToCustomerSegments"/>
+        <click selector="{{AdminMainActionsSection.add}}" stepKey="addNewSegment"/>
+        <fillField selector="{{AdminCustomerSegmentEditSection.segmentName}}" userInput="{{customerSegment.name}}" stepKey="inputSegmentName"/>
+        <selectOption selector="{{AdminCustomerSegmentEditSection.assignToWebsite}}" userInput="{{customerSegment.assigned_website}}" stepKey="assignToWebsite"/>
+        <selectOption selector="{{AdminCustomerSegmentEditSection.status}}" userInput="{{customerSegment.is_active}}" stepKey="setStatusActive"/>
+        <selectOption selector="{{AdminCustomerSegmentEditSection.applyTo}}" userInput="{{customerSegment.apply_to}}" stepKey="setApplyTo"/>
+        <click selector="{{AdminMainActionsSection.save}}" stepKey="saveSegment"/>
+        <see selector="{{AdminMessagesSection.success}}" userInput="You saved the segment." stepKey="seeSuccessMessage"/>
+    </actionGroup>
+</actionGroups>

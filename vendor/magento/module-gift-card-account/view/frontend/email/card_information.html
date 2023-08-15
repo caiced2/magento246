@@ -1,0 +1,31 @@
+<!--
+/**
+ * Copyright © Magento, Inc. All rights reserved.
+ * See COPYING.txt for license details.
+ */
+-->
+<!--@subject {{trans "You've been sent a gift from %store_name" store_name=$store.frontend_name |raw}} @-->
+<!--@vars {
+"template config_path=\"design\/email\/footer_template\"":"Email Footer Template",
+"template config_path=\"design\/email\/header_template\"":"Email Header Template",
+"var logo_alt":"Email Logo Image Alt",
+"var logo_url":"Email Logo Image URL",
+"var balance":"Gift Card Balance",
+"var code|escape":"Gift Card Code",
+"var name|escape":"Recipient Name",
+"var store.frontend_name":"Store Name",
+"store url=\"\"":"Store URL",
+"var store_name":"Store Name for Card Balance"
+} @-->
+
+{{template config_path="design/email/header_template"}}
+
+<p class="greeting">{{trans "%name," name=$name}}</p>
+<p>{{trans "You've been sent a gift card for use at %store_name and it is now ready to be used for purchases." store_name=$store.frontend_name}}</p>
+<p>{{trans "Gift Card Code: %code" code=$code}}</p>
+<p>
+    {{trans 'The card has a balance of %balance and can be used at ' balance=$balance}}
+    <a href="{{store_url}}">{{trans '%store_name' store_name=$store_name}}</a>.
+</p>
+
+{{template config_path="design/email/footer_template"}}

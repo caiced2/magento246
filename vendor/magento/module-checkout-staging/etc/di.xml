@@ -1,0 +1,25 @@
+<?xml version="1.0"?>
+<!--
+/**
+ * Copyright © Magento, Inc. All rights reserved.
+ * See COPYING.txt for license details.
+ */
+-->
+<config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="urn:magento:framework:ObjectManager/etc/config.xsd">
+    <type name="Magento\Checkout\Api\PaymentInformationManagementInterface">
+        <plugin name="disable-place-order" type="Magento\CheckoutStaging\Plugin\PaymentInformationManagementPlugin"/>
+    </type>
+    <type name="Magento\Checkout\Api\GuestPaymentInformationManagementInterface">
+        <plugin name="disable-guest-place-order" type="Magento\CheckoutStaging\Plugin\GuestPaymentInformationManagementPlugin"/>
+    </type>
+    <type name="Magento\Quote\Api\CartRepositoryInterface">
+        <plugin name="save_fake_quota_in_preview" type="Magento\CheckoutStaging\Plugin\SavePreviewQuotaPlugin"/>
+    </type>
+    <type name="Magento\ScalableCheckout\Console\Command\SplitQuote">
+        <arguments>
+            <argument name="tables" xsi:type="array">
+                <item name="quote_preview" xsi:type="string">quote_preview</item>
+            </argument>
+        </arguments>
+    </type>
+</config>

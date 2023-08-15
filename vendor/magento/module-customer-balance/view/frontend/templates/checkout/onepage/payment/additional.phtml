@@ -1,0 +1,39 @@
+<?php
+/**
+ * Copyright © Magento, Inc. All rights reserved.
+ * See COPYING.txt for license details.
+ */
+
+// phpcs:disable Magento2.Templates.ThisInTemplate
+
+/* @var $block \Magento\CustomerBalance\Block\Checkout\Onepage\Payment\Additional */
+?>
+<?php
+/**
+ * @see \Magento\CustomerBalance\Block\Checkout\Onepage\Payment\Additional
+ */
+?>
+<?php if ($block->isDisplayContainer()) : ?>
+<div class="opc-payment-additional customerbalance" id="customerbalance-placer">
+    <input type="hidden" name="payment[use_customer_balance]" value="0"/>
+    <div class="field choice payment">
+        <input type="checkbox" class="checkbox" name="payment[use_customer_balance]" value="1"
+               id="use-customer-balance"
+               data-mage-init='{"checkoutBalance":{
+                   "amountSubstracted":"<?php if ($block->isCustomerBalanceUsed()) : ?>true<?php else : ?>false<?php endif; ?>",
+                   "usedAmount":"<?= (float)$block->getQuote()->getBaseCustomerBalAmountUsed() ?>",
+                   "balance":"<?= (float)$block->getBalance() ?>"
+               }}'
+               <?= ($block->isCustomerBalanceUsed() ? 'checked' : '') ?>/>
+
+        <?php $balance = $this->helper(Magento\Framework\Pricing\Helper\Data)->currency($block->getBalance()); ?>
+        <label for="use-customer-balance" class="label">
+            <span>
+                <?= $block->escapeHtml(__('Use Store Credit')) ?>
+                (<span id="customerbalance-available-amount"><?= /* @noEscape */ $balance ?></span>
+                <?= $block->escapeHtml(__('available')) ?>)
+            </span>
+        </label>
+    </div>
+</div>
+<?php endif; ?>

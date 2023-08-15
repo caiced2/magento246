@@ -1,0 +1,86 @@
+<?php
+/**
+ * Copyright © Magento, Inc. All rights reserved.
+ * See COPYING.txt for license details.
+ */
+
+/** @var \Magento\Framework\View\Helper\SecureHtmlRenderer $secureRenderer */
+?>
+<?php /** @var \Magento\VisualMerchandiser\Block\Adminhtml\Category\Merchandiser $block */ ?>
+<?php
+/** @var \Magento\VisualMerchandiser\ViewModel\MerchandiserViewModel $merchandiserViewModel */
+$merchandiserViewModel = $block->getMerchandiserViewModel();
+?>
+<div id="merchandiser-app" class="merchandiser-app" data-role="merchandiser-app">
+    <?= $block->getChildHtml('smart_category') ?>
+    <div id="regular-category-settings" class="regular-category-settings">
+        <div class="actions">
+            <?= $block->getChildHtml('add_products_button') ?>
+        </div>
+        <div class="merchandiser-toolbar">
+            <?= $block->getChildHtml('sort_order') ?>
+            <?= $block->getChildHtml('sort_products_button') ?>
+        </div>
+    </div>
+    <div class="merchandiser-tabs" data-role="merchandiser-tabs">
+        <ul role="tablist" class="tabs">
+            <li role="tab">
+                <a href="#tab_grid"
+                   id="mode-grid"
+                   class="modes-mode mode-grid"
+                   data-role="mode-switcher"
+                   data-value="grid"
+                   title="<?= $block->escapeHtmlAttr(__('Grid')) ?>">
+                    <span><?= $block->escapeHtml(__('Grid')) ?></span>
+                </a>
+            </li>
+            <li role="tab">
+                <a href="#tab_tile"
+                   id="mode-tile"
+                   class="modes-mode mode-tile"
+                   data-role="mode-switcher"
+                   data-value="tile"
+                   title="<?= $block->escapeHtmlAttr(__('Tile')) ?>">
+                    <span><?= $block->escapeHtml(__('Tile')) ?></span>
+                </a>
+            </li>
+        </ul>
+
+        <div id="tab_grid" class="tabs-tab-grid merchandiser-tab" role="tabpanel">
+            <?= $block->getChildHtml('grid') ?>
+        </div>
+        <div id="tab_tile" class="tabs-tab-tile merchandiser-tab" role="tabpanel">
+            <?= $block->getChildHtml('tile') ?>
+        </div>
+        <div class="no-display">
+            <input type="hidden"
+                   data-form-part="category_form"
+                   name="vm_category_products"
+                   id="vm_category_products"
+                   value="<?= $block->escapeHtml($block->getPositionDataJson()) ?>" />
+        </div>
+    </div>
+</div>
+<script type="text/x-magento-init">
+    {
+        "[data-role=merchandiser-app]": {
+            "Magento_VisualMerchandiser/js/merchandiser": {
+                "addProductsUrl": "<?= $block->escapeJs($block->escapeUrl($block->getDialogUrl())) ?>",
+                "savePositionsUrl": "<?= $block->escapeJs($block->escapeUrl($block->getSavePositionsUrl())) ?>",
+                "getPositionsUrl": "<?= $block->escapeJs($block->escapeUrl($block->getProductsPositionsUrl())) ?>",
+                "currentCategoryId": "<?= $block->escapeJs($block->getCategoryId()) ?>",
+                "positionCacheKey": "<?= $block->escapeJs($block->getPositionCacheKey()) ?>",
+                "positionCacheKeyName": "<?= $block->escapeJs($block->getPositionCacheKeyName()) ?>",
+                "formName": "category_form",
+                "sortable": "<?= $block->escapeJs($merchandiserViewModel->getSortable()) ?>"
+            }
+        }
+    }
+</script>
+<!-- @todo remove when "UI components" will support such initialization -->
+<?php $scriptString = <<<script
+    require('mage/apply/main').apply();
+script;
+?>
+<?= /* @noEscape */ $secureRenderer->renderTag('script', [], $scriptString, false); ?>
+

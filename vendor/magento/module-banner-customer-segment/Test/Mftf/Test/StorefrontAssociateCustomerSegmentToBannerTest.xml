@@ -1,0 +1,126 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+ /**
+  * Copyright © Magento, Inc. All rights reserved.
+  * See COPYING.txt for license details.
+  */
+-->
+
+<tests xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xsi:noNamespaceSchemaLocation="urn:magento:mftf:Test/etc/testSchema.xsd">
+    <test name="StorefrontAssociateCustomerSegmentToBannerTest">
+        <annotations>
+            <features value="Banner"/>
+            <stories value="Display Dynamic Block"/>
+            <title value="Dynamic Block display for customer segment"/>
+            <description value="Dynamic Block display only for customer segment it is created for"/>
+            <severity value="CRITICAL"/>
+            <testCaseId value="MC-25966"/>
+            <useCaseId value="MC-23938"/>
+            <group value="Banner"/>
+            <group value="customer_segment"/>
+            <group value="WYSIWYGDisabled"/>
+        </annotations>
+        <before>
+            <createData entity="ApiSalesRule" stepKey="createSalesRule"/>
+            <createData entity="ApiSalesRuleCoupon" stepKey="createSalesRuleCoupon">
+                <requiredEntity createDataKey="createSalesRule"/>
+            </createData>
+            <createData entity="customerSegmentForGuests" stepKey="createCustomerSegment"/>
+            <createData entity="_defaultCategory" stepKey="createCategory"/>
+            <createData entity="_defaultProduct" stepKey="createProduct">
+                <requiredEntity createDataKey="createCategory"/>
+            </createData>
+            <createData entity="Simple_US_Customer" stepKey="createCustomer"/>
+            <actionGroup ref="AdminLoginActionGroup" stepKey="loginAsAdmin"/>
+            <actionGroup ref="EnabledWYSIWYGActionGroup" stepKey="enableWYSIWYG"/>
+            <actionGroup ref="CliEnableTinyMCEActionGroup" stepKey="enableTinyMCE"/>
+            <amOnPage url="{{AdminNewWidgetPage.url}}" stepKey="amOnAdminNewWidgetPage"/>
+            <selectOption selector="{{AdminNewWidgetSection.widgetType}}" userInput="Dynamic Blocks Rotator" stepKey="setWidgetType"/>
+            <selectOption selector="{{AdminNewWidgetSection.widgetDesignTheme}}" userInput="Magento Luma" stepKey="setWidgetDesignTheme"/>
+            <click selector="{{AdminNewWidgetSection.continue}}" stepKey="clickContinue"/>
+            <grabFromCurrentUrl regex="~/theme_id/(\d+)/~" stepKey="themeId"/>
+            <createData entity="sampleBannerWidget" stepKey="createPreReqWidget">
+                <field key="theme_id">{$themeId}</field>
+            </createData>
+        </before>
+        <after>
+            <actionGroup ref="DisabledWYSIWYGActionGroup" stepKey="disableWYSIWYG"/>
+            <actionGroup ref="DeleteWidgetActionGroup" stepKey="deleteWidget"/>
+            <deleteData createDataKey="createSalesRuleCoupon" stepKey="deleteSalesRuleCoupon"/>
+            <deleteData createDataKey="createSalesRule" stepKey="deleteSalesRule"/>
+            <deleteData createDataKey="createCategory" stepKey="deleteCategory"/>
+            <deleteData createDataKey="createProduct" stepKey="deleteProduct"/>
+            <deleteData createDataKey="createCustomer" stepKey="deleteCustomer"/>
+            <actionGroup ref="DeleteBannerByNameActionGroup" stepKey="deleteBanner">
+                <argument name="bannerName" value="{{sampleBanner.Name}}"/>
+            </actionGroup>
+            <actionGroup ref="AdminLogoutActionGroup" stepKey="logoutFromAdmin"/>
+            <magentoCron groups="index" stepKey="reindex"/>
+        </after>
+
+        <!-- Create Banner -->
+        <actionGroup ref="CreateBannerActionGroup" stepKey="createBanner">
+            <argument name="Banner" value="sampleBanner"/>
+        </actionGroup>
+
+        <!-- Assign Banner to Widget and clean Cache -->
+        <actionGroup ref="AssignBannerToWidgetActionGroup" stepKey="assignBannerToWidget">
+            <argument name="Banner" value="sampleBanner"/>
+            <argument name="Widget" value="$createPreReqWidget$"/>
+        </actionGroup>
+        <actionGroup ref="CliCacheCleanActionGroup" stepKey="cleanLayoutCache">
+            <argument name="tags" value="layout"/>
+        </actionGroup>
+
+        <!-- Go to Banner edit page and choose Customer Segment -->
+        <actionGroup ref="NavigateToCreatedDynamicBlockActionGroup" stepKey="navigateToBanner">
+            <argument name="Banner" value="sampleBanner"/>
+        </actionGroup>
+        <actionGroup ref="AdminSelectCustomerSegmentForDynamicBlockActionGroup" stepKey="chooseCustomerSegment">
+            <argument name="customerSegmentName" value="$createCustomerSegment.name$"/>
+        </actionGroup>
+
+        <!-- Assign Cart Rule To Banner -->
+        <actionGroup ref="AssignRelatedCartPriceRuleToBannerActionGroup" stepKey="assignCartPriceRuleToBanner">
+            <argument name="Banner" value="sampleBanner"/>
+            <argument name="CartPriceRule" value="$createSalesRule$"/>
+        </actionGroup>
+        <waitForPageLoad stepKey="waitForBannerSave"/>
+        <see selector="{{AdminMessagesSection.success}}" userInput="{{dynamicBlockSystemOutput.successfulSaveMessage}}" stepKey="seeSuccessMessage"/>
+
+        <!-- Go to Storefront, apply Cart Rule and verify Banner is visible to guest -->
+        <actionGroup ref="StorefrontOpenProductPageActionGroup" stepKey="openProductPage">
+            <argument name="productUrl" value="$createProduct.custom_attributes[url_key]$"/>
+        </actionGroup>
+        <actionGroup ref="ApplyCartRuleOnStorefrontActionGroup" stepKey="applyCartRule">
+            <argument name="product" value="$createProduct$"/>
+            <argument name="couponCode" value="$createSalesRuleCoupon.code$"/>
+        </actionGroup>
+        <actionGroup ref="StorefrontVerifyDynamicBlockContentActionGroup" stepKey="verifyBannerDescriptionToGuest">
+            <argument name="dynamicBlockContent" value="Hello World from banner!"/>
+        </actionGroup>
+
+        <!-- Login as Customer and verify Banner is NOT visible -->
+        <actionGroup ref="LoginToStorefrontActionGroup" stepKey="loginToStoreFront">
+            <argument name="Customer" value="$createCustomer$"/>
+        </actionGroup>
+        <dontSee selector="{{StorefrontProductPageDynamicBlockSection.dynamicBlockContent}}" userInput="Hello World from banner!" stepKey="dontSeeCreatedBanner"/>
+
+        <!-- Delete Customer Segment for guests and verify Banner is visible to all types of customers -->
+        <actionGroup ref="FindAndDeleteCustomerSegmentActionGroup" stepKey="deleteCustomerSegment">
+            <argument name="segmentName" value="$createCustomerSegment.name$"/>
+        </actionGroup>
+        <actionGroup ref="CliCacheCleanActionGroup" stepKey="cleanLayoutCacheAgain">
+            <argument name="tags" value="layout"/>
+        </actionGroup>
+        <actionGroup ref="StorefrontOpenHomePageActionGroup" stepKey="goToStoreFront"/>
+        <actionGroup ref="StorefrontVerifyDynamicBlockContentActionGroup" stepKey="verifyBannerDescriptionToRegisteredCustomer">
+            <argument name="dynamicBlockContent" value="Hello World from banner!"/>
+        </actionGroup>
+        <actionGroup ref="StorefrontCustomerLogoutActionGroup" stepKey="logoutCustomer"/>
+        <actionGroup ref="StorefrontVerifyDynamicBlockContentActionGroup" stepKey="verifyBannerDescriptionToGuestAgain">
+            <argument name="dynamicBlockContent" value="Hello World from banner!"/>
+        </actionGroup>
+    </test>
+</tests>

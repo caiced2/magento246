@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+ /**
+  * Copyright © Magento, Inc. All rights reserved.
+  * See COPYING.txt for license details.
+  */
+-->
+<actionGroups xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:noNamespaceSchemaLocation="urn:magento:mftf:Test/etc/actionGroupSchema.xsd">
+    <actionGroup name="EditConditionsInCustomerSegmentActionGroup">
+        <arguments>
+            <argument name="conditionData"/>
+        </arguments>
+        <click selector="{{AdminCustomerSegmentEditSection.conditionsTab}}" stepKey="proceedToConditionsTab"/>
+        <click selector="{{AdminCustomerSegmentConditionsEditSection.addCondition}}" stepKey="clickAddCondition"/>
+        <selectOption selector="{{AdminCustomerSegmentConditionsEditSection.conditions}}" userInput="{{conditionData.condition}}" stepKey="selectCondition"/>
+        <waitForPageLoad time="10" stepKey="waitForConditionsToAppear"/>
+        <click selector="{{AdminCustomerSegmentConditionsEditSection.conditionValueChooser}}" stepKey="clickToInputOrdersNumber"/>
+        <fillField selector="{{AdminCustomerSegmentConditionsEditSection.conditionValue}}" userInput="{{conditionData.ordersNumber}}" stepKey="fillOrdersNumber"/>
+        <!--Click to Focus out the Cursor-->
+        <click selector="{{AdminCustomerSegmentConditionsEditSection.conditionType}}" stepKey="clickToFocusOutCursor"/>
+        <!--Click to Change Condition Type-->
+        <click selector="{{AdminCustomerSegmentConditionsEditSection.conditionType}}" stepKey="clickToChangeConditionType"/>
+        <selectOption selector="{{AdminCustomerSegmentConditionsEditSection.conditionTypeValue}}" userInput="{{conditionData.conditionType}}" stepKey="selectConditionType"/>
+        <click selector="{{AdminMainActionsSection.save}}" stepKey="saveSegment"/>
+        <see selector="{{AdminMessagesSection.success}}" userInput="You saved the segment." stepKey="seeSuccessMessage"/>
+    </actionGroup>
+</actionGroups>

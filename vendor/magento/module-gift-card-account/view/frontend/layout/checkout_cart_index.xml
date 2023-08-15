@@ -1,0 +1,54 @@
+<?xml version="1.0"?>
+<!--
+/**
+ * Copyright © Magento, Inc. All rights reserved.
+ * See COPYING.txt for license details.
+ */
+-->
+<page xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="urn:magento:framework:View/Layout/etc/page_configuration.xsd">
+    <body>
+        <referenceBlock name="checkout.cart.totals">
+            <arguments>
+                <argument name="jsLayout" xsi:type="array">
+                    <item name="components" xsi:type="array">
+                        <item name="block-totals" xsi:type="array">
+                            <item name="children" xsi:type="array">
+                                <item name="giftCardAccount" xsi:type="array">
+                                    <item name="component" xsi:type="string">Magento_GiftCardAccount/js/view/cart/totals/gift-card-account</item>
+                                    <item name="sortOrder" xsi:type="string">30</item>
+                                    <item name="config" xsi:type="array">
+                                        <item name="title" translate="true" xsi:type="string">Gift Card</item>
+                                    </item>
+                                </item>
+                            </item>
+                        </item>
+                    </item>
+                </argument>
+            </arguments>
+        </referenceBlock>
+        <referenceContainer name="cart.summary">
+            <block class="Magento\GiftCardAccount\Block\Checkout\Cart\Giftcardaccount"
+                   template="Magento_GiftCardAccount::cart/block.phtml"
+                   name="checkout.cart.giftcardaccount"
+                   as="giftcards"
+                   before="checkout.cart.methods.bottom">
+                <block class="Magento\Captcha\Block\Captcha" name="captcha" cacheable="false">
+                    <action method="setFormId">
+                        <argument name="formId" xsi:type="string">gift_code_request</argument>
+                    </action>
+                    <action method="setImgWidth">
+                        <argument name="width" xsi:type="string">230</argument>
+                    </action>
+                    <action method="setImgHeight">
+                        <argument name="width" xsi:type="string">50</argument>
+                    </action>
+                </block>
+            </block>
+        </referenceContainer>
+        <referenceBlock name="head.components">
+            <block class="Magento\Framework\View\Element\Js\Components"
+                   name="captcha_page_head_components"
+                   template="Magento_Captcha::js/components.phtml"/>
+        </referenceBlock>
+    </body>
+</page>

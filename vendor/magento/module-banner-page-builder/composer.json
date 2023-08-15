@@ -1,0 +1,32 @@
+{
+    "name": "magento/module-banner-page-builder",
+    "description": "Banner Page Builder module",
+    "type": "magento2-module",
+    "license": [
+        "proprietary"
+    ],
+    "config": {
+        "sort-packages": true
+    },
+    "version": "2.2.4",
+    "require": {
+        "magento/module-page-builder": "2.2.*",
+        "magento/module-backend": "*",
+        "magento/module-banner": "101.2.*",
+        "magento/module-sales-rule": "*",
+        "magento/module-catalog-rule": "*",
+        "magento/module-customer-segment": "102.1.*",
+        "magento/module-banner-customer-segment": "100.4.*",
+        "magento/framework": "*",
+        "php": "~8.1.0||~8.2.0"
+    },
+    "autoload": {
+        "files": [
+            "registration.php"
+        ],
+        "psr-4": {
+            "Magento\\BannerPageBuilder\\": ""
+        }
+    }
+}
+

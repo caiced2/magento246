@@ -1,0 +1,37 @@
+<?xml version="1.0"?>
+<!--
+/**
+ * Copyright © Magento, Inc. All rights reserved.
+ * See COPYING.txt for license details.
+ */
+-->
+<config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="urn:magento:module:Magento_Config:etc/system_file.xsd">
+    <system>
+        <section id="wishlist">
+            <group id="general">
+                <field id="multiple_enabled" translate="label" type="select" sortOrder="2" showInDefault="1" showInWebsite="1" showInStore="1">
+                    <label>Enable Multiple Wish Lists</label>
+                    <source_model>Magento\Config\Model\Config\Source\Yesno</source_model>
+                    <depends>
+                        <field id="active">1</field>
+                    </depends>
+                </field>
+                <field id="multiple_wishlist_number" translate="label comment" type="text" sortOrder="3" showInDefault="1" showInWebsite="1" showInStore="1">
+                    <label>Number of Multiple Wish Lists</label>
+                    <depends>
+                        <field id="active">1</field>
+                        <field id="multiple_enabled">1</field>
+                    </depends>
+                    <comment>The number of multiple wish lists should be equal to or more than 2.</comment>
+                    <frontend_class>required-entry validate-number-range number-range-2-100000</frontend_class>
+                </field>
+            </group>
+            <group id="wishlist_link" translate="label">
+                <label>My Wish Lists Link</label>
+                <field id="use_qty" translate="label">
+                    <label>Display Wish Lists Summary</label>
+                </field>
+            </group>
+        </section>
+    </system>
+</config>

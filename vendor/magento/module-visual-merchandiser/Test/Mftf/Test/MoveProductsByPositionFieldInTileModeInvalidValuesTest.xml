@@ -1,0 +1,116 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+ /**
+  * Copyright © Magento, Inc. All rights reserved.
+  * See COPYING.txt for license details.
+  */
+-->
+
+<tests xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:noNamespaceSchemaLocation="urn:magento:mftf:Test/etc/testSchema.xsd">
+    <test name="MoveProductsByPositionFieldInTileModeInvalidValuesTest">
+        <annotations>
+            <features value="VisualMerchandiser"/>
+            <stories value="[Visual Merchandiser] Assign/Unassign products to/from a category"/>
+            <title value="[Visual Merchandiser] Admin should be able to move assigned product position in the category by editing Position field in tile mode - invalid values"/>
+            <description value="[Visual Merchandiser] Admin should be able to move assigned product position in the category by editing Position field in tile mode - invalid values"/>
+            <severity value="MAJOR"/>
+            <testCaseId value="MC-3098"/>
+            <group value="VisualMerchandiser"/>
+            <group value="pr_exclude"/>
+        </annotations>
+        <before>
+            <actionGroup ref="AdminLoginActionGroup" stepKey="login"/>
+            <createData entity="_defaultCategory" stepKey="category"/>
+            <createData entity="ApiSimpleProduct" stepKey="product1">
+                <requiredEntity createDataKey="category"/>
+            </createData>
+            <createData entity="ApiSimpleProduct" stepKey="product2">
+                <requiredEntity createDataKey="category"/>
+            </createData>
+            <createData entity="ApiSimpleProduct" stepKey="product3">
+                <requiredEntity createDataKey="category"/>
+            </createData>
+            <createData entity="ApiSimpleProduct" stepKey="product4">
+                <requiredEntity createDataKey="category"/>
+            </createData>
+            <createData entity="ApiSimpleProduct" stepKey="product5">
+                <requiredEntity createDataKey="category"/>
+            </createData>
+        </before>
+        <after>
+            <actionGroup ref="GoToAdminCategoryPageByIdActionGroup" stepKey="goToAdminCategoryPage0">
+                <argument name="id" value="$$category.id$$"/>
+            </actionGroup>
+            <actionGroup ref="OpenProductsInCategorySectionActionGroup" stepKey="OpenProductsInCategorySection0"/>
+            <actionGroup ref="SwitchToGridModeProductInCategoryActionGroup" stepKey="switchToGrid"/>
+            <actionGroup ref="AdminLogoutActionGroup" stepKey="logout"/>
+            <deleteData createDataKey="product1" stepKey="deleteProduct1"/>
+            <deleteData createDataKey="product2" stepKey="deleteProduct2"/>
+            <deleteData createDataKey="product3" stepKey="deleteProduct3"/>
+            <deleteData createDataKey="product4" stepKey="deleteProduct4"/>
+            <deleteData createDataKey="product5" stepKey="deleteProduct5"/>
+            <deleteData createDataKey="category" stepKey="deleteCategory"/>
+        </after>
+
+        <actionGroup ref="GoToAdminCategoryPageByIdActionGroup" stepKey="goToAdminCategoryPage1">
+            <argument name="id" value="$$category.id$$"/>
+        </actionGroup>
+        <actionGroup ref="OpenProductsInCategorySectionActionGroup" stepKey="OpenProductsInCategorySection1"/>
+        <actionGroup ref="DisableMatchProductsByRuleActionGroup" stepKey="DisableMatchProductsByRule1"/>
+        <actionGroup ref="SortProductsByCriteriaInCategoryActionGroup" stepKey="SelectSortOrderInProductInCategory1">
+            <argument name="criteria" value="Newest products first"/>
+        </actionGroup>
+        <actionGroup ref="SwitchToTileModeProductInCategoryActionGroup" stepKey="switchToTile1"/>
+        <click selector="{{AdminCategoryMainActionsSection.SaveButton}}" stepKey="saveCategoryWithProducts1"/>
+
+        <!-- Invalid position "One" -->
+        <actionGroup ref="OpenProductsInCategorySectionActionGroup" stepKey="OpenProductsInCategorySection21"/>
+        <actionGroup ref="MoveProductByPositionFieldTileModeActionGroup" stepKey="MoveProductByPositionFieldTileMode2">
+            <argument name="tileFrom" value="3"/>
+            <argument name="tileTo" value="One"/>
+        </actionGroup>
+        <click selector="{{AdminCategoryMainActionsSection.SaveButton}}" stepKey="saveCategoryWithProducts2"/>
+        <actionGroup ref="OpenProductsInCategorySectionActionGroup" stepKey="OpenProductsInCategorySection22"/>
+        <!-- Assert no change in position -->
+        <see userInput="$$product4.name$$" selector="{{AdminCategoryProductsTileSection.nThProductInfo('2')}}" stepKey="seeTile21"/>
+        <see userInput="$$product3.name$$" selector="{{AdminCategoryProductsTileSection.nThProductInfo('3')}}" stepKey="seeTile22"/>
+        <see userInput="$$product2.name$$" selector="{{AdminCategoryProductsTileSection.nThProductInfo('4')}}" stepKey="seeTile23"/>
+
+        <!-- Invalid position "-1" -->
+        <actionGroup ref="MoveProductByPositionFieldTileModeActionGroup" stepKey="MoveProductByPositionFieldTileMode3">
+            <argument name="tileFrom" value="3"/>
+            <argument name="tileTo" value="-1"/>
+        </actionGroup>
+        <click selector="{{AdminCategoryMainActionsSection.SaveButton}}" stepKey="saveCategoryWithProducts3"/>
+        <actionGroup ref="OpenProductsInCategorySectionActionGroup" stepKey="OpenProductsInCategorySection3"/>
+        <!-- Assert no change in position -->
+        <see userInput="$$product4.name$$" selector="{{AdminCategoryProductsTileSection.nThProductInfo('2')}}" stepKey="seeTile31"/>
+        <see userInput="$$product3.name$$" selector="{{AdminCategoryProductsTileSection.nThProductInfo('3')}}" stepKey="seeTile32"/>
+        <see userInput="$$product2.name$$" selector="{{AdminCategoryProductsTileSection.nThProductInfo('4')}}" stepKey="seeTile33"/>
+
+        <!-- Invalid position "1.2" -->
+        <actionGroup ref="MoveProductByPositionFieldTileModeActionGroup" stepKey="MoveProductByPositionFieldTileMode4">
+            <argument name="tileFrom" value="3"/>
+            <argument name="tileTo" value="1.2"/>
+        </actionGroup>
+        <click selector="{{AdminCategoryMainActionsSection.SaveButton}}" stepKey="saveCategoryWithProducts4"/>
+        <actionGroup ref="OpenProductsInCategorySectionActionGroup" stepKey="OpenProductsInCategorySection4"/>
+        <!-- Assert no change in position -->
+        <see userInput="$$product4.name$$" selector="{{AdminCategoryProductsTileSection.nThProductInfo('2')}}" stepKey="seeTile41"/>
+        <see userInput="$$product3.name$$" selector="{{AdminCategoryProductsTileSection.nThProductInfo('3')}}" stepKey="seeTile42"/>
+        <see userInput="$$product2.name$$" selector="{{AdminCategoryProductsTileSection.nThProductInfo('4')}}" stepKey="seeTile43"/>
+
+        <!-- Invalid position "<script>alert('Injected!');</script>" -->
+        <actionGroup ref="MoveProductByPositionFieldTileModeActionGroup" stepKey="MoveProductByPositionFieldTileMode5">
+            <argument name="tileFrom" value="3"/>
+            <argument name="tileTo" value="&lt;script&gt;alert(&apos;Injected!&apos;);&lt;/script&gt;"/>
+        </actionGroup>
+        <click selector="{{AdminCategoryMainActionsSection.SaveButton}}" stepKey="saveCategoryWithProducts5"/>
+        <actionGroup ref="OpenProductsInCategorySectionActionGroup" stepKey="OpenProductsInCategorySection5"/>
+        <!-- Assert no change in position -->
+        <see userInput="$$product4.name$$" selector="{{AdminCategoryProductsTileSection.nThProductInfo('2')}}" stepKey="seeTile51"/>
+        <see userInput="$$product3.name$$" selector="{{AdminCategoryProductsTileSection.nThProductInfo('3')}}" stepKey="seeTile52"/>
+        <see userInput="$$product2.name$$" selector="{{AdminCategoryProductsTileSection.nThProductInfo('4')}}" stepKey="seeTile53"/>
+    </test>
+</tests>

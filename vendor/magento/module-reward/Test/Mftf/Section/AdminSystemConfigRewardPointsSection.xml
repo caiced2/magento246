@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+ /**
+  * Copyright © Magento, Inc. All rights reserved.
+  * See COPYING.txt for license details.
+  */
+-->
+
+<sections xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+          xsi:noNamespaceSchemaLocation="urn:magento:mftf:Page/etc/SectionObject.xsd">
+    <section name="AdminSystemConfigRewardPointsSection">
+        <element name="enableRewardPointsFunctionality" type="select" selector="#magento_reward_general_is_enabled"/>
+        <element name="enableRewardPointsFunctionalityOnStorefront" type="select" selector="#magento_reward_general_is_enabled_on_front"/>
+        <element name="customersMaySeeRewardPointsHistory" type="select" selector="#magento_reward_general_publish_history"/>
+        <element name="rewardPointsTab" type="button" selector="#magento_reward_general-head"/>
+    </section>
+</sections>

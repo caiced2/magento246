@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+ /**
+  * Copyright © Magento, Inc. All rights reserved.
+  * See COPYING.txt for license details.
+  */
+-->
+<actionGroups xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:noNamespaceSchemaLocation="urn:magento:mftf:Test/etc/actionGroupSchema.xsd">
+    <actionGroup name="AdminCreateCustomerNewAttribute">
+        <arguments>
+            <argument name="defaultLabel" type="string"/>
+            <argument name="attributeCode" type="string"/>
+            <argument name="inputType" type="string" defaultValue="TextField"/>
+            <argument name="sortOrder" type="string" defaultValue="0"/>
+            <argument name="formToUse" type="string" defaultValue="Customer Account Address"/>
+            <argument name="formToUse1" type="string" defaultValue="Customer Address Registration"/>
+            <argument name="message" type="string" defaultValue="You saved the customer address attribute."/>
+        </arguments>
+        <click selector="{{CustomerAccountSection.newAttribute}}" stepKey="clickToCreateAttribute"/>
+        <waitForPageLoad stepKey="waitForNewAttributePageLoaded"/>
+        <fillField selector="{{CustomerAccountSection.label}}" userInput="{{defaultLabel}}" stepKey="TypeDefaultLabel"/>
+        <fillField selector="{{CustomerAccountSection.code}}" userInput="{{attributeCode}}" stepKey="TypeAttributeCode"/>
+        <selectOption selector="{{CustomerAccountSection.inputType}}" userInput="{{inputType}}" stepKey="selectInputType"/>
+        <selectOption selector="{{CustomerAccountSection.valuesRequired}}" userInput="No" stepKey="setValuesRequired"/>
+        <selectOption selector="{{CustomerAccountSection.showInSF}}" userInput="Yes" stepKey="setSFOption"/>
+        <fillField selector="{{CustomerAccountSection.sortOrder}}" userInput="{{sortOrder}}" stepKey="TypeSortOrder"/>
+        <selectOption selector="{{CustomerAccountSection.selectFormToUse}}" parameterArray="[{{formToUse}},{{formToUse1}}]" stepKey="selectFormsToUse"/>
+        <click selector="{{CustomerAccountSection.save}}" stepKey="saveAttribute"/>
+        <waitForPageLoad stepKey="WaitForAttributeSaved"/>
+        <waitForText userInput="{{message}}" stepKey="waitForAttributeCreated" time="30"/>
+        <see userInput="{{message}}" stepKey="verifyAttributeCreated"/>
+    </actionGroup>
+</actionGroups>

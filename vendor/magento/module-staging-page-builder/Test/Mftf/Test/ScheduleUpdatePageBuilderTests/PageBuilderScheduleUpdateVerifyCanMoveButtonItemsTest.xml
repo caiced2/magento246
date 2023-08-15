@@ -1,0 +1,56 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+ /**
+  * Copyright © Magento, Inc. All rights reserved.
+  * See COPYING.txt for license details.
+  */
+-->
+<tests xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:noNamespaceSchemaLocation="urn:magento:mftf:Test/etc/testSchema.xsd">
+    <test name="PageBuilderScheduleUpdateVerifyCanMoveButtonItemsTest" extends="ButtonItemMoveButtonStackedAppearanceTest">
+        <annotations>
+            <features value="PageBuilder"/>
+            <stories value="Schedule Update - CMS Page"/>
+            <title value="Verify that user can move button items from Schedule Update"/>
+            <description value="This test is intended to ensure that users can move button items within the PageBuilder stage for Schedule Update."/>
+            <severity value="MAJOR"/>
+            <useCaseId value="MC-5773"/>
+            <testCaseId value="MC-13866"/>
+            <group value="pagebuilder"/>
+            <group value="pagebuilder-ee"/>
+            <group value="pagebuilder-staging"/>
+            <group value="pagebuilder-cms-page"/>
+            <group value="pagebuilder-buttons"/>
+            <group value="pagebuilder-move"/>
+        </annotations>
+        <before>
+            <createData entity="_emptyCmsPage" stepKey="createCMSPage" before="loginAsAdmin"/>
+            <actionGroup ref="navigateToCMSPage" stepKey="navigateToAPageWithPageBuilder">
+                <argument name="CMSPage" value="$$createCMSPage$$"/>
+            </actionGroup>
+            <actionGroup ref="navigateToStagingSlideout" stepKey="navigateToStagingSlideout" after="navigateToAPageWithPageBuilder"/>
+            <actionGroup ref="switchToPageBuilderStage" stepKey="switchToPageBuilderStage">
+                <argument name="sectionSelector" value="{{AdminStagingSlideOutSection.contentTab}}"/>
+                <argument name="sectionDependentSelector" value="{{AdminStagingSlideOutSection.stagingContentTab}}"/>
+            </actionGroup>
+        </before>
+        <after>
+            <deleteData createDataKey="createCMSPage" stepKey="deleteCreatedProduct" before="logout"/>
+        </after>
+        <comment userInput="---merging to remove step---" stepKey="enterPageTitle"/>
+        <actionGroup ref="createAndSaveScheduleUpdateOneDayInFuture" stepKey="saveAndContinueEditCmsPage">
+            <argument name="stagingUpdate" value="_defaultStaging"/>
+        </actionGroup>
+        <actionGroup ref="openEditFormForStagingSlideOut" stepKey="openEditFormForStagingSlideOut" after="saveAndContinueEditCmsPage">
+            <argument name="schedule" value="_defaultStaging"/>
+        </actionGroup>
+        <actionGroup ref="switchToPageBuilderStage" stepKey="switchToPageBuilderStage">
+            <argument name="sectionSelector" value="{{AdminStagingSlideOutSection.contentTab}}"/>
+            <argument name="sectionDependentSelector" value="{{AdminStagingSlideOutSection.stagingContentTab}}"/>
+        </actionGroup>
+        <!-- Validate staging preview -->
+        <comment userInput="Validate staging preview" stepKey="commentValidateStorefront"/>
+        <actionGroup ref="exitPageBuilderFullScreen" stepKey="exitPageBuilderFullScreen2" before="navigateToStoreFront"/>
+        <actionGroup ref="openPreviewForScheduledUpdateFromSlideOut" stepKey="navigateToStoreFront"/>
+    </test>
+</tests>

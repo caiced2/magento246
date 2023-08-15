@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+ /**
+  * Copyright © Magento, Inc. All rights reserved.
+  * See COPYING.txt for license details.
+  */
+-->
+<tests xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xsi:noNamespaceSchemaLocation="urn:magento:mftf:Test/etc/testSchema.xsd">
+    <test name="AdminVerifyCMSPageAssignedToWebsiteRootHierarchyTest">
+        <annotations>
+            <features value="VersionsCms"/>
+            <stories value="CMS Pages"/>
+            <title value="Verify CMS page gets saved with same url key with hierarchy for multi stores"/>
+            <description value="Verify CMS page gets saved with same url key with hierarchy for multi stored"/>
+            <severity value="CRITICAL"/>
+            <testCaseId value="MC-25792d"/>
+            <group value="cmsf"/>
+            <group value="versionsCmsg"/>
+        </annotations>
+        <before>
+            <actionGroup ref="AdminLoginActionGroup" stepKey="login"/>
+        </before>
+        <after>
+            <actionGroup ref="AdminDeleteCMSPageByUrlKeyActionGroup" stepKey="deletePage">
+                <argument name="pageUrlKey" value="{{_newDefaultCmsPage.identifier}}"/>
+            </actionGroup>
+            <conditionalClick selector="{{CmsPagesPageActionsSection.clearAllButton}}" dependentSelector="{{CmsPagesPageActionsSection.activeFilters}}" visible="true" stepKey="clickToResetFilter"/>
+            <waitForPageLoad stepKey="waitForPageLoadAfterClearFilters"/>
+            <actionGroup ref="AdminLogoutActionGroup" stepKey="adminLogout"/>
+        </after>
+        <actionGroup ref="CreateNewPageWithAllValuesActionGroup" stepKey="createNewPage">
+            <argument name="PageTitle" value="{{_newDefaultCmsPage.title}}"/>
+            <argument name="ContentHeading" value="{{_newDefaultCmsPage.content_heading}}"/>
+            <argument name="URLKey" value="{{_newDefaultCmsPage.identifier}}"/>
+            <argument name="selectStoreViewOpt" value="Default Store View"/>
+            <argument name="selectHierarchyOpt" value="Website Root"/>
+        </actionGroup>
+        <click selector="{{CmsNewPagePageActionsSection.expandSplitButton}}" stepKey="expandButtonMenu"/>
+        <waitForElementVisible selector="{{CmsNewPagePageActionsSection.splitButtonMenu}}" stepKey="waitForSplitButtonMenuVisible"/>
+        <click selector="{{CmsNewPagePageActionsSection.savePage}}" stepKey="clickSavePage"/>
+        <waitForElementVisible selector="{{AdminMessagesSection.success}}" stepKey="waitForPageSave"/>
+        <amOnPage url="{{CmsNewPagePage.url}}" stepKey="amOnCMSNewPage"/>
+        <waitForPageLoad stepKey="waitForNewPageOpen"/>
+        <click selector="{{CmsNewPageHierarchySection.header}}" stepKey="clickHierarchy"/>
+        <seeElement selector="{{CmsNewPageHierarchySection.selectHierarchy(_newDefaultCmsPage.title)}}" stepKey="clickPageCheckBoxes"/>
+    </test>
+</tests>

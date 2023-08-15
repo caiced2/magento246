@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+ /**
+  * Copyright © Magento, Inc. All rights reserved.
+  * See COPYING.txt for license details.
+  */
+-->
+
+<sections xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:noNamespaceSchemaLocation="urn:magento:mftf:Page/etc/SectionObject.xsd">
+    <section name="AdminEditReturnOrderInformationSection">
+        <element name="rmaId" type="text" selector="#rma_info_tabs_general_section_content > section:nth-child(1) table tr:nth-child(1) > td" timeout="30" />
+        <element name="orderId" type="text" selector="#rma_info_tabs_general_section_content > section:nth-child(1) table tr:nth-child(2) > td > a" timeout="30" />
+        <element name="customerName" type="text" selector="#rma_info_tabs_general_section_content > section:nth-child(1) table tr:nth-child(3) > td > a" timeout="30" />
+        <element name="emailAddress" type="text" selector="#rma_info_tabs_general_section_content > section:nth-child(1) table tr:nth-child(4) > td > a" timeout="30" />
+        <element name="contactEmailAddress" type="input" selector="#rma_info_tabs_general_section_content > section:nth-child(1) table tr:nth-child(5) > td" timeout="30" />
+    </section>
+</sections>

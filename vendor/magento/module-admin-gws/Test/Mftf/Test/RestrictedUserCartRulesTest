@@ -1,0 +1,278 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+ /**
+  * Copyright © Magento, Inc. All rights reserved.
+  * See COPYING.txt for license details.
+  */
+-->
+
+<tests xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xsi:noNamespaceSchemaLocation="urn:magento:mftf:Test/etc/testSchema.xsd">
+    <test name="RestrictedUserCartRulesTest">
+        <annotations>
+            <features value="SalesRule"/>
+            <stories value="Check Cart Rule Grid and Pagination for second Website"/>
+            <title value="User with permissions only for Second Website able to see correct count of Cart Rules and right pagination"/>
+            <description value="User with permissions only for Second Website able to see correct count of Cart Rules and right pagination"/>
+            <severity value="CRITICAL"/>
+            <testCaseId value="MAGETWO-96379"/>
+            <group value="SalesRule"/>
+        </annotations>
+
+        <before>
+            <!--Login as Admin User-->
+            <actionGroup ref="LoginAsAdmin" stepKey="loginAsAdmin"/>
+
+            <!--Go to all stores page-->
+            <actionGroup ref="GoToAllStores" stepKey="GoToAllStoresPage"/>
+
+            <!--Create new Website-->
+            <actionGroup ref="AdminCreateWebsiteActionGroup" stepKey="createWebsite">
+                <argument name="newWebsiteName" value="Second Website"/>
+                <argument name="websiteCode" value="second_website"/>
+            </actionGroup>
+
+            <!--Create new Store-->
+            <actionGroup ref="AdminCreateNewStoreGroupActionGroup" stepKey="createNewStore">
+                <argument name="website" value="Second Website"/>
+                <argument name="storeGroupName" value="NewStore"/>
+                <argument name="storeGroupCode" value="Base12"/>
+            </actionGroup>
+
+            <!--Create new Store View-->
+            <actionGroup ref="AdminCreateStoreViewActionGroup" stepKey="createNewStoreView">
+                <argument name="StoreGroup" value="staticStoreGroup"/>
+                <argument name="customStore" value="staticStore"/>
+            </actionGroup>
+
+            <!--Go to User Roles-->
+            <actionGroup ref="GoToUserRoles" stepKey="GoToUserRoles"/>
+
+            <!--Create new user role-->
+            <actionGroup ref="AdminCreateRole" stepKey="AdminCreateNewUserRole">
+                <argument name="role" value="{{role.name}}"/>
+                <argument name="websites" value="Second Website"/>
+            </actionGroup>
+
+            <!--Go to All Users-->
+            <amOnPage url="{{AdminUsersPage.url}}" stepKey="goToAllUsersPage"/>
+
+            <!--Create new User-->
+            <actionGroup ref="AdminCreateUser" stepKey="AdminCreateUser">
+                <argument name="role" value="role"/>
+            </actionGroup>
+
+            <!--Create 18 Cart Rules for Main Website-->
+            <createData entity="ApiCartRule" stepKey="createCartRule1"/>
+            <createData entity="ApiCartRule" stepKey="createCartRule2"/>
+            <createData entity="ApiCartRule" stepKey="createCartRule3"/>
+            <createData entity="ApiCartRule" stepKey="createCartRule4"/>
+            <createData entity="ApiCartRule" stepKey="createCartRule5"/>
+            <createData entity="ApiCartRule" stepKey="createCartRule6"/>
+            <createData entity="ApiCartRule" stepKey="createCartRule7"/>
+            <createData entity="ApiCartRule" stepKey="createCartRule8"/>
+            <createData entity="ApiCartRule" stepKey="createCartRule9"/>
+            <createData entity="ApiCartRule" stepKey="createCartRule10"/>
+            <createData entity="ApiCartRule" stepKey="createCartRule11"/>
+            <createData entity="ApiCartRule" stepKey="createCartRule12"/>
+            <createData entity="ApiCartRule" stepKey="createCartRule13"/>
+            <createData entity="ApiCartRule" stepKey="createCartRule14"/>
+            <createData entity="ApiCartRule" stepKey="createCartRule15"/>
+            <createData entity="ApiCartRule" stepKey="createCartRule16"/>
+            <createData entity="ApiCartRule" stepKey="createCartRule17"/>
+            <createData entity="ApiCartRule" stepKey="createCartRule18"/>
+
+            <!--Create 12 Cart Rules for Second Website -->
+            <actionGroup ref="CreateCartPriceRuleSecondWebsiteActionGroup" stepKey="createCartRule19">
+                <argument name="ruleName" value="{{ApiCartRule.name}}"/>
+            </actionGroup>
+            <actionGroup ref="selectNotLoggedInCustomerGroup" stepKey="selectCustomerGroup19"/>
+            <click selector="{{AdminCartPriceRulesFormSection.save}}" stepKey="clickSaveButton19"/>
+
+            <actionGroup ref="CreateCartPriceRuleSecondWebsiteActionGroup" stepKey="createCartRule20">
+                <argument name="ruleName" value="{{ApiCartRule.name}}"/>
+            </actionGroup>
+            <actionGroup ref="selectNotLoggedInCustomerGroup" stepKey="selectCustomerGroup20"/>
+            <click selector="{{AdminCartPriceRulesFormSection.save}}" stepKey="clickSaveButton20"/>
+
+            <actionGroup ref="CreateCartPriceRuleSecondWebsiteActionGroup" stepKey="createCartRule21">
+                <argument name="ruleName" value="{{ApiCartRule.name}}"/>
+            </actionGroup>
+            <actionGroup ref="selectNotLoggedInCustomerGroup" stepKey="selectCustomerGroup21"/>
+            <click selector="{{AdminCartPriceRulesFormSection.save}}" stepKey="clickSaveButton21"/>
+
+            <actionGroup ref="CreateCartPriceRuleSecondWebsiteActionGroup" stepKey="createCartRule22">
+                <argument name="ruleName" value="{{ApiCartRule.name}}"/>
+            </actionGroup>
+            <actionGroup ref="selectNotLoggedInCustomerGroup" stepKey="selectCustomerGroup22"/>
+            <click selector="{{AdminCartPriceRulesFormSection.save}}" stepKey="clickSaveButton22"/>
+
+            <actionGroup ref="CreateCartPriceRuleSecondWebsiteActionGroup" stepKey="createCartRule23">
+                <argument name="ruleName" value="{{ApiCartRule.name}}"/>
+            </actionGroup>
+            <actionGroup ref="selectNotLoggedInCustomerGroup" stepKey="selectCustomerGroup23"/>
+            <click selector="{{AdminCartPriceRulesFormSection.save}}" stepKey="clickSaveButton23"/>
+
+            <actionGroup ref="CreateCartPriceRuleSecondWebsiteActionGroup" stepKey="createCartRule24">
+                <argument name="ruleName" value="{{ApiCartRule.name}}"/>
+            </actionGroup>
+            <actionGroup ref="selectNotLoggedInCustomerGroup" stepKey="selectCustomerGroup24"/>
+            <click selector="{{AdminCartPriceRulesFormSection.save}}" stepKey="clickSaveButton24"/>
+
+            <actionGroup ref="CreateCartPriceRuleSecondWebsiteActionGroup" stepKey="createCartRule25">
+                <argument name="ruleName" value="{{ApiCartRule.name}}"/>
+            </actionGroup>
+            <actionGroup ref="selectNotLoggedInCustomerGroup" stepKey="selectCustomerGroup25"/>
+            <click selector="{{AdminCartPriceRulesFormSection.save}}" stepKey="clickSaveButton25"/>
+
+            <actionGroup ref="CreateCartPriceRuleSecondWebsiteActionGroup" stepKey="createCartRule26">
+                <argument name="ruleName" value="{{ApiCartRule.name}}"/>
+            </actionGroup>
+            <actionGroup ref="selectNotLoggedInCustomerGroup" stepKey="selectCustomerGroup26"/>
+            <click selector="{{AdminCartPriceRulesFormSection.save}}" stepKey="clickSaveButton26"/>
+
+            <actionGroup ref="CreateCartPriceRuleSecondWebsiteActionGroup" stepKey="createCartRule27">
+                <argument name="ruleName" value="{{ApiCartRule.name}}"/>
+            </actionGroup>
+            <actionGroup ref="selectNotLoggedInCustomerGroup" stepKey="selectCustomerGroup27"/>
+            <click selector="{{AdminCartPriceRulesFormSection.save}}" stepKey="clickSaveButton27"/>
+
+            <actionGroup ref="CreateCartPriceRuleSecondWebsiteActionGroup" stepKey="createCartRule28">
+                <argument name="ruleName" value="{{ApiCartRule.name}}"/>
+            </actionGroup>
+            <actionGroup ref="selectNotLoggedInCustomerGroup" stepKey="selectCustomerGroup28"/>
+            <click selector="{{AdminCartPriceRulesFormSection.save}}" stepKey="clickSaveButton28"/>
+
+            <actionGroup ref="CreateCartPriceRuleSecondWebsiteActionGroup" stepKey="createCartRule29">
+                <argument name="ruleName" value="{{ApiCartRule.name}}"/>
+            </actionGroup>
+            <actionGroup ref="selectNotLoggedInCustomerGroup" stepKey="selectCustomerGroup29"/>
+            <click selector="{{AdminCartPriceRulesFormSection.save}}" stepKey="clickSaveButton29"/>
+
+            <actionGroup ref="CreateCartPriceRuleSecondWebsiteActionGroup" stepKey="createCartRule30">
+                <argument name="ruleName" value="{{ApiCartRule.name}}"/>
+            </actionGroup>
+            <actionGroup ref="selectNotLoggedInCustomerGroup" stepKey="selectCustomerGroup30"/>
+            <click selector="{{AdminCartPriceRulesFormSection.save}}" stepKey="clickSaveButton30"/>
+
+            <!--Log out-->
+            <actionGroup ref="SignOut" stepKey="SignOut"/>
+        </before>
+
+        <after>
+            <!--Logout from admin panel-->
+            <actionGroup ref="SignOut" stepKey="signOut"/>
+
+            <!--Login as Admin-->
+            <actionGroup ref="LoginAsAdmin" stepKey="loginAsAdmin"/>
+
+            <!--Delete created Cart Rules-->
+            <deleteData createDataKey="createCartRule1" stepKey="deleteCartRule1"/>
+            <deleteData createDataKey="createCartRule2" stepKey="deleteCartRule2"/>
+            <deleteData createDataKey="createCartRule3" stepKey="deleteCartRule3"/>
+            <deleteData createDataKey="createCartRule4" stepKey="deleteCartRule4"/>
+            <deleteData createDataKey="createCartRule5" stepKey="deleteCartRule5"/>
+            <deleteData createDataKey="createCartRule6" stepKey="deleteCartRule6"/>
+            <deleteData createDataKey="createCartRule7" stepKey="deleteCartRule7"/>
+            <deleteData createDataKey="createCartRule8" stepKey="deleteCartRule8"/>
+            <deleteData createDataKey="createCartRule9" stepKey="deleteCartRule9"/>
+            <deleteData createDataKey="createCartRule10" stepKey="deleteCartRule10"/>
+            <deleteData createDataKey="createCartRule11" stepKey="deleteCartRule11"/>
+            <deleteData createDataKey="createCartRule12" stepKey="deleteCartRule12"/>
+            <deleteData createDataKey="createCartRule13" stepKey="deleteCartRule13"/>
+            <deleteData createDataKey="createCartRule14" stepKey="deleteCartRule14"/>
+            <deleteData createDataKey="createCartRule15" stepKey="deleteCartRule15"/>
+            <deleteData createDataKey="createCartRule16" stepKey="deleteCartRule16"/>
+            <deleteData createDataKey="createCartRule17" stepKey="deleteCartRule17"/>
+            <deleteData createDataKey="createCartRule18" stepKey="deleteCartRule18"/>
+
+            <!--Delete Cart Rules for Second Website-->
+            <actionGroup ref="DeleteCartPriceRuleByName" stepKey="deleteCartRule19">
+                <argument name="ruleName" value="{{ApiCartRule.name}}"/>
+            </actionGroup>
+            <actionGroup ref="DeleteCartPriceRuleByName" stepKey="deleteCartRule20">
+                <argument name="ruleName" value="{{ApiCartRule.name}}"/>
+            </actionGroup>
+            <actionGroup ref="DeleteCartPriceRuleByName" stepKey="deleteCartRule21">
+                <argument name="ruleName" value="{{ApiCartRule.name}}"/>
+            </actionGroup>
+            <actionGroup ref="DeleteCartPriceRuleByName" stepKey="deleteCartRule22">
+                <argument name="ruleName" value="{{ApiCartRule.name}}"/>
+            </actionGroup>
+            <actionGroup ref="DeleteCartPriceRuleByName" stepKey="deleteCartRule23">
+                <argument name="ruleName" value="{{ApiCartRule.name}}"/>
+            </actionGroup>
+            <actionGroup ref="DeleteCartPriceRuleByName" stepKey="deleteCartRule24">
+                <argument name="ruleName" value="{{ApiCartRule.name}}"/>
+            </actionGroup>
+            <actionGroup ref="DeleteCartPriceRuleByName" stepKey="deleteCartRule25">
+                <argument name="ruleName" value="{{ApiCartRule.name}}"/>
+            </actionGroup>
+            <actionGroup ref="DeleteCartPriceRuleByName" stepKey="deleteCartRule26">
+                <argument name="ruleName" value="{{ApiCartRule.name}}"/>
+            </actionGroup>
+            <actionGroup ref="DeleteCartPriceRuleByName" stepKey="deleteCartRule27">
+                <argument name="ruleName" value="{{ApiCartRule.name}}"/>
+            </actionGroup>
+            <actionGroup ref="DeleteCartPriceRuleByName" stepKey="deleteCartRule28">
+                <argument name="ruleName" value="{{ApiCartRule.name}}"/>
+            </actionGroup>
+            <actionGroup ref="DeleteCartPriceRuleByName" stepKey="deleteCartRule29">
+                <argument name="ruleName" value="{{ApiCartRule.name}}"/>
+            </actionGroup>
+            <actionGroup ref="DeleteCartPriceRuleByName" stepKey="deleteCartRule30">
+                <argument name="ruleName" value="{{ApiCartRule.name}}"/>
+            </actionGroup>
+
+            <!--Go to all stores page-->
+            <actionGroup ref="GoToAllStores" stepKey="goToAllStoresPage1"/>
+
+            <!--Delete Website, store, store view-->
+            <actionGroup ref="AdminDeleteWebsite" stepKey="deleteWebsite">
+                <argument name="websiteName" value="Second Website"/>
+            </actionGroup>
+
+            <!--Go to all users-->
+            <actionGroup ref="GoToAllUsers" stepKey="goToAllUser2"/>
+
+            <!--Delete created user-->
+            <actionGroup ref="AdminDeleteUserActionGroup" stepKey="AdminDeleteUserActionGroup">
+                <argument name="role" value="role"/>
+            </actionGroup>
+
+            <!--Go to user roles-->
+            <actionGroup ref="GoToUserRoles" stepKey="goToUserRoles1"/>
+
+            <!--Delete created role-->
+            <actionGroup ref="AdminDeleteRoleActionGroup" stepKey="AdminDeleteRoleActionGroup">
+                <argument name="role" value="{{role.name}}"/>
+            </actionGroup>
+
+            <!--Logout from admin-->
+            <actionGroup ref="logout" stepKey="logOut"/>
+
+            <!--Do reindex and flush cache-->
+            <magentoCLI command="indexer:reindex" stepKey="reindex"/>
+            <magentoCLI command="cache:flush" stepKey="flushCache"/>
+        </after>
+
+        <!--Login as New User-->
+        <actionGroup ref="LoginAsAnyUser" stepKey="logAsNewUser">
+            <argument name="uname" value="{{newAdmin.username}}"/>
+            <argument name="passwd" value="{{newAdmin.password}}"/>
+        </actionGroup>
+
+        <!--Open Cart Rule page-->
+        <click selector="{{AdminMenuSection.marketing}}" stepKey="clickOnMarketing" />
+        <waitForPageLoad stepKey="waitForMarketing"/>
+        <click selector="{{CartPriceRulesSubmenuSection.cartPriceRules}}" stepKey="clickOnCartPriceRules"/>
+
+
+        <!--See 12 Cart Rules-->
+        <seeNumberOfElements selector="{{AdminCartPriceRulesSection.rulesRow}}" userInput="12" stepKey="seeCartRulesOnPage"/>
+        <see selector="{{AdminCartPriceRulesSection.totalCount}}" userInput="12" stepKey="totalCartRulesCount"/>
+
+        <!--See number of pages-->
+        <seeElement selector="{{AdminCartPriceRulesSection.pageCurrent}}" userInput="1" stepKey="currentPage"/>
+    </test>
+</tests>

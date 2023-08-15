@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+ /**
+  * Copyright © Magento, Inc. All rights reserved.
+  * See COPYING.txt for license details.
+  */
+-->
+
+<actionGroups xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+              xsi:noNamespaceSchemaLocation="urn:magento:mftf:Test/etc/actionGroupSchema.xsd">
+    <actionGroup name="CreateCustomConfigurableProductActionGroup" extends="CreateConfigurableProductActionGroup">
+        <arguments>
+            <argument name="product" defaultValue="_defaultProduct"/>
+            <argument name="category" defaultValue="_defaultCategory"/>
+        </arguments>
+        <remove keyForRemoval="fillFieldForNewAttribute1"/>
+        <remove keyForRemoval="fillFieldForNewAttribute2"/>
+        <remove keyForRemoval="fillFieldForNewAttribute3"/>
+        <remove keyForRemoval="clickOnApplySingleQuantityToEachSku"/>
+        <remove keyForRemoval="enterAttributeQuantity"/>
+        <fillField userInput="{{product.optionName1}}" selector="{{AdminCreateProductConfigurationsPanel.attributeName}}" after="clickOnCreateNewValue1" stepKey="fillFieldForNewAttribute1"/>
+        <fillField userInput="{{product.optionName2}}" selector="{{AdminCreateProductConfigurationsPanel.attributeName}}" after="clickOnCreateNewValue2" stepKey="fillFieldForNewAttribute2"/>
+        <fillField userInput="{{product.optionName3}}" selector="{{AdminCreateProductConfigurationsPanel.attributeName}}" after="clickOnCreateNewValue3" stepKey="fillFieldForNewAttribute3"/>
+        <click selector="{{AdminCreateProductConfigurationsPanel.applyUniqueQuantityToEachSkus}}" after="fillAttributePrice3" stepKey="clickOnApplyUniqueQuantityToEachSkus"/>
+        <selectOption selector="{{AdminCreateProductConfigurationsPanel.selectQuantity}}" userInput="{{colorProductAttribute.default_label}}" after="clickOnApplyUniqueQuantityToEachSkus" stepKey="selectOption"/>
+        <fillField selector="{{AdminCreateProductConfigurationsPanel.applyUniqueQuantity(product.optionName1)}}" userInput="{{product.quantityForOption1}}" after="selectOption" stepKey="enterAttributeQuantity1"/>
+        <fillField selector="{{AdminCreateProductConfigurationsPanel.applyUniqueQuantity(product.optionName2)}}" userInput="{{product.quantityForOption2}}" after="enterAttributeQuantity1" stepKey="enterAttributeQuantity2"/>
+        <fillField selector="{{AdminCreateProductConfigurationsPanel.applyUniqueQuantity(product.optionName3)}}" userInput="{{product.quantityForOption3}}" after="enterAttributeQuantity2" stepKey="enterAttributeQuantity3"/>
+    </actionGroup>
+</actionGroups>

@@ -1,0 +1,75 @@
+<?php
+/**
+ * Copyright © Magento, Inc. All rights reserved.
+ * See COPYING.txt for license details.
+ */
+
+/**
+ * @var \Magento\Framework\View\Helper\SecureHtmlRenderer $secureRenderer
+ */
+?>
+<?php $websites = $block->getWebsites(); ?>
+<?php if ($websites): ?>
+<div class="field field-store-switcher">
+    <label class="label" for="website_switcher"><?= $block->escapeHtml(__('Choose Website:')) ?></label>
+    <div class="control">
+        <select name="website_switcher" id="website_switcher">
+        <?php if ($block->hasDefaultOption()): ?>
+            <option value=""><?= $block->escapeHtml($block->getDefaultStoreName()) ?></option>
+        <?php endif; ?>
+            <?php foreach ($websites as $website): ?>
+                <option value="<?= $block->escapeHtmlAttr($website->getId()) ?>"
+                    <?php if ($block->getStoreId() == $website->getId()): ?> selected="selected"<?php endif; ?>>
+                    <?= $block->escapeHtml($website->getName()) ?>
+                </option>
+            <?php endforeach; ?>
+        </select>
+        <?= /* @noEscape */
+        $secureRenderer->renderEventListenerAsTag(
+            'onchange',
+            "return switchWebsite(this);",
+            '#website_switcher'
+        );
+        ?>
+    </div>
+    <?= $block->getHintHtml() ?>
+</div>
+    <?php $scriptString = <<<script
+    require(['prototype'], function(){
+        window.switchWebsite = function(obj){
+            var storeParam = obj.value ? 'website/'+obj.value + '/' : '';
+            if(obj.switchParams){
+                storeParam+= obj.switchParams;
+            }
+script;
+    $switchUrl = $block->escapeJs($block->getSwitchUrl());
+
+    if ($block->getUseConfirm()) {
+        $confirmationMessage = $block->escapeHtml(
+            __('Please confirm site switching. All data that hasn\'t been saved will be lost.')
+        );
+        $escapedStoreId = $block->escapeJs($block->getStoreId());
+
+        $scriptString .= <<<script
+            if(confirm("{$confirmationMessage}")) {
+                setLocation('{$switchUrl}'+storeParam);
+            return true;
+        }
+        else {
+            obj.value = '{$escapedStoreId}';
+        }
+        return false;
+script;
+    } else {
+        $scriptString .= <<<script
+            setLocation('{$switchUrl}'+storeParam);
+script;
+    }
+
+    $scriptString .= <<<script
+        }
+    });
+script;
+    ?>
+    <?= /* @noEscape */ $secureRenderer->renderTag('script', [], $scriptString, false); ?>
+<?php endif; ?>

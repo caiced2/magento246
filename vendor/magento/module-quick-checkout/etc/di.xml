@@ -1,0 +1,288 @@
+<?xml version="1.0"?>
+<!--
+/**
+ * Copyright © Magento, Inc. All rights reserved.
+ * See COPYING.txt for license details.
+ */
+-->
+<config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="urn:magento:framework:ObjectManager/etc/config.xsd">
+    <preference for="Magento\QuickCheckout\Api\AccountRepositoryInterface" type="Magento\QuickCheckout\Model\AccountRepository"/>
+    <preference for="Magento\QuickCheckout\Api\StorefrontAccountRepositoryInterface" type="Magento\QuickCheckout\Model\StorefrontAccountRepository"/>
+    <preference for="Magento\QuickCheckout\Api\Data\AccountInterface" type="Magento\QuickCheckout\Model\Data\Account"/>
+    <preference for="Magento\QuickCheckout\Api\Data\AddressInterface" type="Magento\QuickCheckout\Model\Data\Address"/>
+    <preference for="Magento\QuickCheckout\Api\Data\PaymentMethodInterface" type="Magento\QuickCheckout\Model\Data\PaymentMethod"/>
+    <!-- Payment method configuration facade -->
+    <virtualType name="QuickCheckoutFacade" type="Magento\Payment\Model\Method\Adapter">
+        <arguments>
+            <argument name="code" xsi:type="const">Magento\QuickCheckout\Model\ConfigProvider::CODE</argument>
+            <argument name="formBlockType" xsi:type="string">Magento\QuickCheckout\Block\Adminhtml\Payment\Form</argument>
+            <argument name="infoBlockType" xsi:type="string">Magento\Payment\Block\ConfigurableInfo</argument>
+            <argument name="valueHandlerPool" xsi:type="object">QuickCheckoutValueHandlerPool</argument>
+            <argument name="commandPool" xsi:type="object">QuickCheckoutCommandPool</argument>
+        </arguments>
+    </virtualType>
+    <!-- Configuration -->
+    <virtualType name="QuickCheckoutConfig" type="Magento\Payment\Gateway\Config\Config">
+        <arguments>
+            <argument name="methodCode" xsi:type="const">Magento\QuickCheckout\Model\ConfigProvider::CODE</argument>
+        </arguments>
+    </virtualType>
+    <!-- Logger -->
+    <virtualType name="QuickCheckoutLogger" type="Magento\Payment\Model\Method\Logger">
+        <arguments>
+            <argument name="config" xsi:type="object">QuickCheckoutConfig</argument>
+        </arguments>
+    </virtualType>
+    <!-- Commands -->
+    <virtualType name="QuickCheckoutCommandPool" type="Magento\Payment\Gateway\Command\CommandPool">
+        <arguments>
+            <argument name="commands" xsi:type="array">
+                <item name="authorize" xsi:type="string">QuickCheckoutAuthorizeCommand</item>
+                <item name="sale" xsi:type="string">QuickCheckoutAuthorizeAndCaptureCommand</item>
+                <item name="capture" xsi:type="string">QuickCheckoutCaptureCommand</item>
+                <item name="refund" xsi:type="string">QuickCheckoutRefundCommand</item>
+                <item name="cancel" xsi:type="string">QuickCheckoutVoidCommand</item>
+                <item name="void" xsi:type="string">QuickCheckoutVoidCommand</item>
+            </argument>
+        </arguments>
+    </virtualType>
+    <!-- Gateway request for authorization and capture -->
+    <virtualType name="Magento\QuickCheckout\Gateway\Request\AuthorizationAndCaptureRequest" type="Magento\QuickCheckout\Gateway\Request\AuthorizationRequest">
+        <arguments>
+            <argument name="autoCapture" xsi:type="boolean">true</argument>
+        </arguments>
+    </virtualType>
+    <!-- Authorize command -->
+    <type name="Magento\QuickCheckout\Gateway\Request\AuthorizationRequest">
+        <arguments>
+            <argument name="productMapping" xsi:type="array">
+                <item name="physical" xsi:type="array">
+                    <item name="0" xsi:type="const">Magento\Catalog\Model\Product\Type::TYPE_SIMPLE</item>
+                    <item name="1" xsi:type="const">Magento\GroupedProduct\Model\Product\Type\Grouped::TYPE_CODE</item>
+                </item>
+                <item name="virtual" xsi:type="array">
+                    <item name="0" xsi:type="const">Magento\Catalog\Model\Product\Type::TYPE_VIRTUAL</item>
+                    <item name="1" xsi:type="const">Magento\Downloadable\Model\Product\Type::TYPE_DOWNLOADABLE</item>
+                </item>
+                <item name="bundled" xsi:type="array">
+                    <item name="0" xsi:type="const">Magento\Catalog\Model\Product\Type::TYPE_BUNDLE</item>
+                </item>
+            </argument>
+        </arguments>
+    </type>
+    <virtualType name="QuickCheckoutAuthorizeCommand" type="Magento\Payment\Gateway\Command\GatewayCommand">
+        <arguments>
+            <argument name="requestBuilder" xsi:type="object">QuickCheckoutAuthorizationRequest</argument>
+            <argument name="handler" xsi:type="object">QuickCheckoutAuthorizationResponseHandlerComposite</argument>
+            <argument name="transferFactory" xsi:type="object">Magento\QuickCheckout\Gateway\Http\TransferFactory</argument>
+            <argument name="client" xsi:type="object">Magento\QuickCheckout\Gateway\Http\BoltServiceClient</argument>
+        </arguments>
+    </virtualType>
+    <!-- Authorize and capture command -->
+    <virtualType name="QuickCheckoutAuthorizeAndCaptureCommand" type="Magento\Payment\Gateway\Command\GatewayCommand">
+        <arguments>
+            <argument name="requestBuilder" xsi:type="object">QuickCheckoutAuthorizationAndCaptureRequest</argument>
+            <argument name="handler" xsi:type="object">QuickCheckoutAuthorizationResponseHandlerComposite</argument>
+            <argument name="transferFactory" xsi:type="object">Magento\QuickCheckout\Gateway\Http\TransferFactory</argument>
+            <argument name="client" xsi:type="object">Magento\QuickCheckout\Gateway\Http\BoltServiceClient</argument>
+        </arguments>
+    </virtualType>
+    <!-- Capture command -->
+    <virtualType name="QuickCheckoutCaptureCommand" type="Magento\Payment\Gateway\Command\GatewayCommand">
+        <arguments>
+            <argument name="requestBuilder" xsi:type="object">QuickCheckoutCaptureRequest</argument>
+            <argument name="handler" xsi:type="object">QuickCheckoutCaptureResponseHandlerComposite</argument>
+            <argument name="transferFactory" xsi:type="object">Magento\QuickCheckout\Gateway\Http\TransferFactory</argument>
+            <argument name="client" xsi:type="object">Magento\QuickCheckout\Gateway\Http\BoltServiceClient</argument>
+        </arguments>
+    </virtualType>
+    <!-- Refund command -->
+    <virtualType name="QuickCheckoutRefundCommand" type="Magento\Payment\Gateway\Command\GatewayCommand">
+        <arguments>
+            <argument name="requestBuilder" xsi:type="object">QuickCheckoutRefundRequest</argument>
+            <argument name="handler" xsi:type="object">QuickCheckoutRefundResponseHandlerComposite</argument>
+            <argument name="transferFactory" xsi:type="object">Magento\QuickCheckout\Gateway\Http\TransferFactory</argument>
+            <argument name="client" xsi:type="object">Magento\QuickCheckout\Gateway\Http\BoltServiceClient</argument>
+        </arguments>
+    </virtualType>
+    <!-- Void command -->
+    <virtualType name="QuickCheckoutVoidCommand" type="Magento\Payment\Gateway\Command\GatewayCommand">
+        <arguments>
+            <argument name="requestBuilder" xsi:type="object">QuickCheckoutVoidRequest</argument>
+            <argument name="handler" xsi:type="object">QuickCheckoutVoidResponseHandlerComposite</argument>
+            <argument name="transferFactory" xsi:type="object">Magento\QuickCheckout\Gateway\Http\TransferFactory</argument>
+            <argument name="client" xsi:type="object">Magento\QuickCheckout\Gateway\Http\BoltServiceClient</argument>
+        </arguments>
+    </virtualType>
+    <!-- Authorization request -->
+    <virtualType name="QuickCheckoutAuthorizationRequest" type="Magento\Payment\Gateway\Request\BuilderComposite">
+        <arguments>
+            <argument name="builders" xsi:type="array">
+                <item name="transaction" xsi:type="string">Magento\QuickCheckout\Gateway\Request\AuthorizationRequest</item>
+            </argument>
+        </arguments>
+    </virtualType>
+    <!-- Authorization and capture request -->
+    <virtualType name="QuickCheckoutAuthorizationAndCaptureRequest" type="Magento\Payment\Gateway\Request\BuilderComposite">
+        <arguments>
+            <argument name="builders" xsi:type="array">
+                <item name="transaction" xsi:type="string">Magento\QuickCheckout\Gateway\Request\AuthorizationAndCaptureRequest</item>
+            </argument>
+        </arguments>
+    </virtualType>
+    <!-- Capture request -->
+    <virtualType name="QuickCheckoutCaptureRequest" type="Magento\Payment\Gateway\Request\BuilderComposite">
+        <arguments>
+            <argument name="builders" xsi:type="array">
+                <item name="transaction" xsi:type="string">Magento\QuickCheckout\Gateway\Request\CaptureRequest</item>
+            </argument>
+        </arguments>
+    </virtualType>
+    <!-- Refund request -->
+    <virtualType name="QuickCheckoutRefundRequest" type="Magento\Payment\Gateway\Request\BuilderComposite">
+        <arguments>
+            <argument name="builders" xsi:type="array">
+                <item name="transaction" xsi:type="string">Magento\QuickCheckout\Gateway\Request\RefundRequest</item>
+            </argument>
+        </arguments>
+    </virtualType>
+    <!-- Void request -->
+    <virtualType name="QuickCheckoutVoidRequest" type="Magento\Payment\Gateway\Request\BuilderComposite">
+        <arguments>
+            <argument name="builders" xsi:type="array">
+                <item name="transaction" xsi:type="string">Magento\QuickCheckout\Gateway\Request\VoidRequest</item>
+            </argument>
+        </arguments>
+    </virtualType>
+    <!-- Response handlers -->
+    <virtualType name="QuickCheckoutAuthorizationResponseHandlerComposite" type="Magento\Payment\Gateway\Response\HandlerChain">
+        <arguments>
+            <argument name="handlers" xsi:type="array">
+                <item name="transaction_id" xsi:type="string">Magento\QuickCheckout\Gateway\Response\AuthorizationTransactionHandler</item>
+            </argument>
+        </arguments>
+    </virtualType>
+    <virtualType name="QuickCheckoutCaptureResponseHandlerComposite" type="Magento\Payment\Gateway\Response\HandlerChain">
+        <arguments>
+            <argument name="handlers" xsi:type="array">
+                <item name="transaction_id" xsi:type="string">Magento\QuickCheckout\Gateway\Response\CaptureTransactionHandler</item>
+            </argument>
+        </arguments>
+    </virtualType>
+    <virtualType name="QuickCheckoutRefundResponseHandlerComposite" type="Magento\Payment\Gateway\Response\HandlerChain">
+        <arguments>
+            <argument name="handlers" xsi:type="array">
+                <item name="transaction_id" xsi:type="string">Magento\QuickCheckout\Gateway\Response\RefundTransactionHandler</item>
+            </argument>
+        </arguments>
+    </virtualType>
+    <virtualType name="QuickCheckoutVoidResponseHandlerComposite" type="Magento\Payment\Gateway\Response\HandlerChain">
+        <arguments>
+            <argument name="handlers" xsi:type="array">
+                <item name="transaction_id" xsi:type="string">Magento\QuickCheckout\Gateway\Response\VoidTransactionHandler</item>
+            </argument>
+        </arguments>
+    </virtualType>
+    <!-- Value handlers -->
+    <virtualType name="QuickCheckoutValueHandlerPool" type="Magento\Payment\Gateway\Config\ValueHandlerPool">
+        <arguments>
+            <argument name="handlers" xsi:type="array">
+                <item name="default" xsi:type="string">QuickCheckoutConfigValueHandler</item>
+            </argument>
+        </arguments>
+    </virtualType>
+    <virtualType name="QuickCheckoutConfigValueHandler" type="Magento\Payment\Gateway\Config\ConfigValueHandler">
+        <arguments>
+            <argument name="configInterface" xsi:type="object">QuickCheckoutConfig</argument>
+        </arguments>
+    </virtualType>
+    <type name="Magento\QuickCheckout\Block\Info">
+        <arguments>
+            <argument name="config" xsi:type="object">QuickCheckoutConfig</argument>
+        </arguments>
+    </type>
+    <virtualType name="Magento\QuickCheckout\Gateway\Http\BoltServiceClient" type="Magento\QuickCheckout\Gateway\Http\ServiceClient">
+        <arguments>
+            <argument name="paymentsLogger" xsi:type="object">QuickCheckoutLogger</argument>
+        </arguments>
+    </virtualType>
+    <type name="Magento\QuickCheckout\Model\AccountRepository">
+        <arguments>
+            <argument name="serviceClient" xsi:type="object">Magento\QuickCheckout\Gateway\Http\BoltServiceClient</argument>
+            <argument name="shippingAddressValidator" xsi:type="object">Magento\QuickCheckout\Model\AddressValidator\Shipping</argument>
+            <argument name="billingAddressValidator" xsi:type="object">Magento\QuickCheckout\Model\AddressValidator\Billing</argument>
+        </arguments>
+    </type>
+    <type name="Magento\QuickCheckout\Model\PaymentMethodService">
+        <arguments>
+            <argument name="serviceClient" xsi:type="object">Magento\QuickCheckout\Gateway\Http\BoltServiceClient</argument>
+        </arguments>
+    </type>
+    <type name="Magento\QuickCheckout\Model\AddressService">
+        <arguments>
+            <argument name="serviceClient" xsi:type="object">Magento\QuickCheckout\Gateway\Http\BoltServiceClient</argument>
+        </arguments>
+    </type>
+    <virtualType name="Magento\QuickCheckout\Model\AddressValidator\Shipping" type="Magento\QuickCheckout\Model\AddressValidator\Composite">
+        <arguments>
+            <argument name="validators" xsi:type="array">
+                <item name="fields" xsi:type="object">Magento\QuickCheckout\Model\AddressValidator\Fields</item>
+                <item name="shipping_rates" xsi:type="object">Magento\QuickCheckout\Model\AddressValidator\Shipping\ShippingRates</item>
+            </argument>
+        </arguments>
+    </virtualType>
+    <virtualType name="Magento\QuickCheckout\Model\AddressValidator\Billing" type="Magento\QuickCheckout\Model\AddressValidator\Composite">
+        <arguments>
+            <argument name="validators" xsi:type="array">
+                <item name="fields" xsi:type="object">Magento\QuickCheckout\Model\AddressValidator\Fields</item>
+            </argument>
+        </arguments>
+    </virtualType>
+    <type name="Magento\Config\Model\Config\TypePool">
+        <arguments>
+            <argument name="sensitive" xsi:type="array">
+                <item name="payment/quick_checkout/publishable_key" xsi:type="string">1</item>
+                <item name="payment/quick_checkout/signing_secret" xsi:type="string">1</item>
+                <item name="payment/quick_checkout/api_key" xsi:type="string">1</item>
+            </argument>
+        </arguments>
+    </type>
+    <type name="Magento\QuickCheckout\Model\Config">
+        <arguments>
+            <argument name="creditCardComponentConfig" xsi:type="array">
+                <item name="renderSeparateFields" xsi:type="boolean">true</item>
+                <item name="styles" xsi:type="array">
+                    <item name="backgroundColor" xsi:type="string">#FFFFFF</item>
+                    <item name="borderColor" xsi:type="string">#C2C2C2</item>
+                    <item name="borderColorOnFocus" xsi:type="string">#C2C2C2</item>
+                    <item name="borderRadius" xsi:type="string">0</item>
+                    <item name="borderWidth" xsi:type="string">1px</item>
+                    <item name="fontColor" xsi:type="string">#3A3A3A</item>
+                    <item name="fontColorOnFocus" xsi:type="string">#3A3A3A</item>
+                    <item name="fontSize" xsi:type="string">14px</item>
+                    <item name="fontWeight" xsi:type="string">600</item>
+                </item>
+            </argument>
+        </arguments>
+    </type>
+    <!-- Bolt auth -->
+    <preference for="Magento\QuickCheckout\Model\Bolt\Auth\JwtManagerInterface" type="Magento\QuickCheckout\Model\Bolt\Auth\JwtManager"/>
+    <type name="Magento\QuickCheckout\Model\Bolt\Auth\OauthTokenResolver">
+        <arguments>
+            <argument name="transferFactory" xsi:type="object">Magento\QuickCheckout\Gateway\Http\TransferFactory</argument>
+            <argument name="serviceClient" xsi:type="object">Magento\QuickCheckout\Gateway\Http\BoltServiceClient</argument>
+        </arguments>
+    </type>
+    <type name="Magento\QuickCheckout\Model\Bolt\Auth\OauthTokenRenovator">
+        <arguments>
+            <argument name="transferFactory" xsi:type="object">Magento\QuickCheckout\Gateway\Http\TransferFactory</argument>
+            <argument name="serviceClient" xsi:type="object">Magento\QuickCheckout\Gateway\Http\BoltServiceClient</argument>
+        </arguments>
+    </type>
+    <type name="Magento\QuickCheckout\Model\Bolt\Auth\IdTokenDecoder">
+        <arguments>
+            <argument name="transferFactory" xsi:type="object">Magento\QuickCheckout\Gateway\Http\TransferFactory</argument>
+            <argument name="serviceClient" xsi:type="object">Magento\QuickCheckout\Gateway\Http\BoltServiceClient</argument>
+        </arguments>
+    </type>
+</config>

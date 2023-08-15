@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+ /**
+  * Copyright © Magento, Inc. All rights reserved.
+  * See COPYING.txt for license details.
+  */
+-->
+<tests xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:noNamespaceSchemaLocation="urn:magento:mftf:Test/etc/testSchema.xsd">
+    <test name="PageBuilderTemplateGridPageGridFunctionality">
+        <after>
+            <actionGroup ref="clearFiltersPageBuilderTemplateGrid" stepKey="clearFiltersPageBuilderTemplateGrid6" after="deletePageBuilderTemplate5"/>
+            <actionGroup ref="searchByKeywordPageBuilderTemplateGrid" stepKey="searchByKeywordPageBuilderTemplateGrid6" after="clearFiltersPageBuilderTemplateGrid6">
+                <argument name="keyword" value="{{PageBuilderTemplateName_Sorting.zzz}}"/>
+            </actionGroup>
+            <actionGroup ref="deletePageBuilderTemplate" stepKey="deletePageBuilderTemplate6" after="searchByKeywordPageBuilderTemplateGrid6">
+                <argument name="templateIdentifier" value="{{PageBuilderTemplateName_Sorting.zzz}}"/>
+            </actionGroup>
+        </after>
+        <actionGroup ref="openPageBuilderSaveTemplateModal" stepKey="openPageBuilderSaveTemplateModal6" after="savePageBuilderTemplate5"/>
+        <actionGroup ref="fillPageBuilderSaveTemplateForm" stepKey="fillPageBuilderSaveTemplateForm6" after="openPageBuilderSaveTemplateModal6">
+            <argument name="templateName" value="{{PageBuilderTemplateName_Sorting.zzz}}"/>
+            <argument name="createdFor" value="{{PageBuilderTemplateCreatedFor.dynamicBlock}}"/>
+        </actionGroup>
+        <actionGroup ref="savePageBuilderTemplate" stepKey="savePageBuilderTemplate6" after="fillPageBuilderSaveTemplateForm6"/>
+        <actionGroup ref="validateTotalRecordsFoundInPageBuilderTemplateGrid" stepKey="validateTotalRecordsFoundInPageBuilderTemplateGrid0">
+            <argument name="total" value="6"/>
+        </actionGroup>
+        <actionGroup ref="validateTotalRecordsFoundInPageBuilderTemplateGrid" stepKey="validateTotalRecordsFoundInPageBuilderTemplateGrid">
+            <argument name="total" value="6"/>
+        </actionGroup>
+        <see userInput="{{PageBuilderTemplateName_Sorting.zzz}}" selector="{{PageBuilderTemplatesPageGrid.templateName('6')}}" stepKey="seeTemplateName6" after="seeTemplateName5"/>
+        <see userInput="{{PageBuilderTemplateCreatedFor.dynamicBlock}}" selector="{{PageBuilderTemplatesPageGrid.createdFor('4')}}" stepKey="seeTemplateCreatedForDynamicBlock" after="seeTemplateCreatedFor3"/>
+        <see userInput="{{PageBuilderTemplateCreatedFor.page}}" selector="{{PageBuilderTemplatesPageGrid.createdFor('5')}}" stepKey="seeTemplateCreatedFor4"/>
+        <see userInput="{{PageBuilderTemplateCreatedFor.product}}" selector="{{PageBuilderTemplatesPageGrid.createdFor('6')}}" stepKey="seeTemplateCreatedFor5"/>
+        <actionGroup ref="validateTotalRecordsFoundInPageBuilderTemplateGrid" stepKey="validateTotalRecordsFoundInPageBuilderTemplateGrid3">
+            <argument name="total" value="6"/>
+        </actionGroup>
+        <actionGroup ref="validateTotalRecordsFoundInPageBuilderTemplateGrid" stepKey="validateTotalRecordsFoundInPageBuilderTemplateGrid5">
+            <argument name="total" value="6"/>
+        </actionGroup>
+    </test>
+</tests>

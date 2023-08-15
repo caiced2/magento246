@@ -1,0 +1,109 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+ /**
+  * Copyright © Magento, Inc. All rights reserved.
+  * See COPYING.txt for license details.
+  */
+-->
+
+<tests xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xsi:noNamespaceSchemaLocation="urn:magento:mftf:Test/etc/testSchema.xsd">
+    <test name="AdminCreateDateTypeCustomCustomerAttributeTest">
+        <annotations>
+            <group value="Customer Custom Attribute"/>
+            <stories value="Create Customer Custom Attribute"/>
+            <title value="Create date type custom customer attribute"/>
+            <description value="Create date type Custom Customer Attribute and verify in custom attribute grid, customer segment and order"/>
+            <severity value="MAJOR"/>
+            <testCaseId value="MC-14582"/>
+            <group value="mtf_migrated"/>
+        </annotations>
+
+        <before>
+            <!--Login as admin-->
+            <actionGroup ref="AdminLoginActionGroup" stepKey="LoginAsAdmin"/>
+            <!-- Create Customers -->
+            <createData entity="Simple_US_Customer_CA" stepKey="simpleCustomer"/>
+            <createData entity="Simple_US_Customer_NY" stepKey="CreateNewYorkCustomer"/>
+            <createData entity="Simple_GB_Customer" stepKey="CreateBritishCustomer"/>
+            <createData entity="Simple_US_Customer" stepKey="CreateGeneralCustomer"/>
+        </before>
+        <after>
+            <!--Delete customer attributes -->
+            <amOnPage url="{{CustomerAttributesPage.url}}" stepKey="navigateToCustomerAttributePage"/>
+            <actionGroup ref="DeleteCustomerAttribute" stepKey="adminDeleteFileAttribute">
+                <argument name="defaultLabel" value="{{AttributeDateData.label}}"/>
+            </actionGroup>
+            <!-- Navigate to Customers -> Segments -> filter created segment and delete the segment -->
+            <actionGroup ref="FindAndDeleteCustomerSegmentActionGroup" stepKey="deleteSegment">
+                <argument name="segmentName" value="{{CustomerSegmentDefault.name}}"/>
+            </actionGroup>
+            <!--Delete Customers -->
+            <deleteData createDataKey="simpleCustomer" stepKey="deleteCustomer"/>
+            <deleteData createDataKey="CreateNewYorkCustomer" stepKey="DeleteNewYorkCustomer"/>
+            <deleteData createDataKey="CreateBritishCustomer" stepKey="DeleteBritishCustomer"/>
+            <deleteData createDataKey="CreateGeneralCustomer" stepKey="DeleteGeneralCustomer"/>
+
+            <!--Log out-->
+            <actionGroup ref="AdminLogoutActionGroup" stepKey="logOut"/>
+            <magentoCron groups="index" stepKey="reindexAfterTest"/>
+        </after>
+
+        <!-- Navigate to Stores -> Customers -> select 'AddNewAttribute' button and  Create Date Customer Custom Attribute -->
+        <actionGroup ref="AdminCreateDateCustomCustomerAttribute" stepKey="createTextAreaCustomAttribute">
+            <argument name="customerAttribute" value="AttributeDateData"/>
+            <argument name="generateMinDate" value="-3 day"/>
+            <argument name="generateMaxDate" value="now"/>
+        </actionGroup>
+        <magentoCron groups="index" stepKey="reindex"/>
+        <actionGroup ref="AdminClearCustomersFiltersActionGroup" stepKey="GoToCustomerPageAndResetFilters"/>
+
+        <actionGroup ref="AdminAddColumnToAdminGridActionGroup"  stepKey="addColumnInGrid">
+            <argument name="columnName" value="{{AttributeDateData.label}}"/>
+        </actionGroup>
+
+        <!-- Assert that grid is not broken and customer data (for example email) is present on page -->
+        <see userInput="{{Simple_US_Customer_CA.email}}" stepKey="assertCaliforniaCustomerEmail"/>
+        <see userInput="{{Simple_US_Customer_NY.email}}" stepKey="assertNewYorkCustomerEmail"/>
+        <see userInput="{{Simple_GB_Customer.email}}" stepKey="assertBritishCustomerEmail"/>
+        <see userInput="{{Simple_US_Customer.email}}" stepKey="assertGeneralCustomerEmail"/>
+
+        <!-- Navigate to Stores -> Customers ->Filter the created attribute -->
+        <amOnPage url="{{CustomerAttributesPage.url}}" stepKey="navigateToCustomerAttributes"/>
+        <waitForPageLoad stepKey="waitForAttributePageLoad"/>
+        <click selector="{{CustomerAccountSection.reset}}" stepKey="clickResetFilter"/>
+        <waitForElementVisible selector="{{AdminCustomerAttributeSection.searchDefaultLabel}}" stepKey="waitForDefaultLabelToVisible"/>
+        <fillField selector="{{AdminCustomerAttributeSection.searchDefaultLabel}}" userInput="{{AttributeDateData.label}}" stepKey="TypeAttributeName"/>
+        <click selector="{{CustomerAccountSection.search}}" stepKey="clickToSearchButton"/>
+        <waitForPageLoad stepKey="waitForResult"/>
+
+        <!-- Assert attribute in Customer Attribute in  grid -->
+        <see selector="{{CustomerAccountSection.firstRowInGrid}}" userInput="{{AttributeDateData.label}}" stepKey="seeAttributeLabelInGrid"/>
+        <see selector="{{CustomerAccountSection.firstRowInGrid}}" userInput="{{AttributeDateData.code}}" stepKey="seeAttributeCodeInGrid"/>
+
+        <!--Navigate to Customers -> Segment > Click 'Add Segment' button-->
+        <actionGroup ref="CreateCustomerSegmentWithContinueEditActionGroup" stepKey="createCustomerSegment">
+            <argument name="customerSegment" value="CustomerSegmentDefault"/>
+        </actionGroup>
+
+        <!-- Assert created attribute present in Customer Segment -->
+        <click selector="{{AdminCustomerSegmentEditSection.conditionsTab}}" stepKey="clickToConditionsTab"/>
+        <waitForLoadingMaskToDisappear stepKey="waitForLoadingMaskToDisappear"/>
+        <waitForElementVisible selector="{{AdminCustomerSegmentConditionsEditSection.addCondition}}" stepKey="waitForAddCondition"/>
+        <click selector="{{AdminCustomerSegmentConditionsEditSection.addCondition}}" stepKey="clickToAddCondition" />
+        <waitForElementVisible selector="{{AdminCustomerSegmentConditionsEditSection.conditions}}" stepKey="waitForCondition"/>
+        <grabMultiple selector="{{AdminCustomerSegmentConditionsEditSection.conditionOptions}}" stepKey="grabConditionOptions" />
+        <assertContains stepKey="assertCustomerSegmentInOptions">
+            <actualResult type="variable">grabConditionOptions</actualResult>
+            <expectedResult type="string">{{AttributeDateData.label}}</expectedResult>
+        </assertContains>
+
+        <!-- Navigate to Sales -> Orders -> select created customer -> select Edit  -->
+        <actionGroup ref="NavigateToNewOrderPageExistingCustomerActionGroup" stepKey="navigateToNewOrderWithExistingCustomer">
+            <argument name="customer" value="$$simpleCustomer$$"/>
+        </actionGroup>
+
+        <!--Assert Attribute is present in Orders-->
+        <seeElement selector="{{AdminOrderDetailsInformationSection.attributeLabel(AttributeDateData.label)}}" stepKey="seeAttributeLabelInOrder"/>
+    </test>
+</tests>

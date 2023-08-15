@@ -1,0 +1,105 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+/**
+ * Copyright © Magento, Inc. All rights reserved.
+ * See COPYING.txt for license details.
+ */
+-->
+<listing xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="urn:magento:module:Magento_Ui:etc/ui_configuration.xsd">
+    <argument name="data" xsi:type="array">
+        <item name="js_config" xsi:type="array">
+            <item name="provider" xsi:type="string">related_catalogrule_banners_grid.related_catalogrule_banners_grid_data_source</item>
+        </item>
+    </argument>
+    <settings>
+        <spinner>related_catalogrule_banners_columns</spinner>
+        <deps>
+            <dep>related_catalogrule_banners_grid.related_catalogrule_banners_grid_data_source</dep>
+        </deps>
+    </settings>
+    <dataSource name="related_catalogrule_banners_grid_data_source" component="Magento_Ui/js/grid/provider">
+        <argument name="dataProvider" xsi:type="configurableObject">
+            <argument name="data" xsi:type="array">
+                <item name="config" xsi:type="array">
+                    <item name="params" xsi:type="array"/>
+                </item>
+            </argument>
+        </argument>
+        <settings>
+            <storageConfig>
+                <param name="indexField" xsi:type="string">id</param>
+            </storageConfig>
+            <updateUrl path="mui/index/render"/>
+        </settings>
+        <aclResource>Magento_Banner::magento_banner</aclResource>
+        <dataProvider class="Magento\Banner\Ui\DataProvider\CatalogRule\DataProvider" name="related_catalogrule_banners_grid_data_source">
+            <settings>
+                <requestFieldName>id</requestFieldName>
+                <primaryFieldName>banner_id</primaryFieldName>
+            </settings>
+        </dataProvider>
+    </dataSource>
+    <listingToolbar name="listing_top">
+        <settings>
+            <sticky>false</sticky>
+        </settings>
+        <columnsControls name="columns_controls"/>
+        <paging name="listing_paging"/>
+    </listingToolbar>
+    <columns name="related_catalogrule_banners_columns">
+        <settings>
+            <childDefaults>
+                <param name="storageConfig" xsi:type="array">
+                    <item name="provider" xsi:type="string">related_catalogrule_banners_grid.related_catalogrule_banners_grid.listing_top.bookmarks</item>
+                    <item name="root" xsi:type="string">columns.${ $.index }</item>
+                    <item name="namespace" xsi:type="string">current.${ $.storageConfig.root}</item>
+                </param>
+                <param name="clickAction" xsi:type="string">view</param>
+                <param name="actionField" xsi:type="string">actions</param>
+                <param name="controlVisibility" xsi:type="boolean">true</param>
+            </childDefaults>
+            <storageConfig>
+                <namespace>current</namespace>
+                <provider>related_catalogrule_banners_grid.related_catalogrule_banners_grid.listing_top.bookmarks</provider>
+            </storageConfig>
+        </settings>
+        <column name="banner_id">
+            <settings>
+                <filter>textRange</filter>
+                <label translate="true">ID</label>
+                <sorting>asc</sorting>
+            </settings>
+        </column>
+        <column name="name">
+            <settings>
+                <filter>text</filter>
+                <label translate="true">Dynamic Block</label>
+            </settings>
+        </column>
+        <column name="types" component="Magento_Ui/js/grid/columns/select">
+            <settings>
+                <options class="Magento\Banner\Model\Config"/>
+                <dataType>select</dataType>
+                <label translate="true">Dynamic Block Type</label>
+            </settings>
+        </column>
+        <column name="stores" class="storeColumn">
+            <settings>
+                <label translate="true">Visibility</label>
+                <bodyTmpl>ui/grid/cells/html</bodyTmpl>
+                <sortable>false</sortable>
+            </settings>
+        </column>
+        <column name="is_enabled" component="Magento_Ui/js/grid/columns/select">
+            <settings>
+                <filter>select</filter>
+                <options class="Magento\Banner\Model\Rule\Source\IsEnabled"/>
+                <editor>
+                    <editorType>select</editorType>
+                </editor>
+                <dataType>select</dataType>
+                <label translate="true">Status</label>
+            </settings>
+        </column>
+    </columns>
+</listing>

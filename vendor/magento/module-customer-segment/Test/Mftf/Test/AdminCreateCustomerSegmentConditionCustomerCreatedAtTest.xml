@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+ /**
+  * Copyright © Magento, Inc. All rights reserved.
+  * See COPYING.txt for license details.
+  */
+-->
+
+<tests xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xsi:noNamespaceSchemaLocation="urn:magento:mftf:Test/etc/testSchema.xsd">
+    <test name="AdminCreateCustomerSegmentConditionCustomerCreatedAtTest">
+        <annotations>
+            <features value="CustomerSegment"/>
+            <stories value="ACP2E-558: [Magento Cloud] Customer segment conditions not matching the customer created date"/>
+            <title value="Finding customers in Customer Segments based on created date equals or less than today"/>
+            <description value="Verify that there is matched customer in Customer Segments based on created date equals or less than today"/>
+            <severity value="AVERAGE"/>
+            <testCaseId value="ACP2E-672"/>
+            <group value="CustomerSegment"/>
+        </annotations>
+        <before>
+            <magentoCLI command="config:set general/locale/timezone UTC" stepKey="setTimezone"/>
+            <createData entity="Simple_US_Customer" stepKey="createCustomer"/>
+            <actionGroup ref="AdminLoginActionGroup" stepKey="LoginAsAdmin"/>
+        </before>
+        <after>
+	    <magentoCLI command="config:set general/locale/timezone America/Los_Angeles" stepKey="setTimezone"/>
+            <actionGroup ref="FindAndDeleteCustomerSegmentActionGroup" stepKey="deleteSegment">
+                <argument name="segmentName" value="{{CustomerSegmentRetailer.name}}"/>
+            </actionGroup>
+            <deleteData createDataKey="createCustomer" stepKey="deleteCustomer"/>
+            <actionGroup ref="ClearFiltersAdminDataGridActionGroup" stepKey="clearFilterOnCustomerSegmentPage"/>
+            <actionGroup ref="AdminLogoutActionGroup" stepKey="logout"/>
+        </after>
+        <!--Navigate to CUSTOMERS->Segment > Click 'Add Segment' button > Fill all fields according to dataset and click 'Save and Continue Edit' button -->
+        <actionGroup ref="CreateCustomerSegmentWithContinueEditActionGroup" stepKey="createCustomerSegment">
+            <argument name="customerSegment" value="CustomerSegmentRetailer"/>
+        </actionGroup>
+        <!--Navigate to Conditions tab and Add specific test condition according to dataset -->
+        <actionGroup ref="SetCustomerConditionWithCreatedAtActionGroup" stepKey="setSegmentConditions">
+            <argument name="conditionData" value="CustomerSegmentCustomerCreatedAtConditionData" />
+        </actionGroup>
+        <actionGroup ref="CliConsumerStartActionGroup" stepKey="startMessageQueue">
+            <argument name="consumerName" value="{{AdminCustomerSegmentConsumerData.consumerName}}"/>
+            <argument name="maxMessages" value="{{AdminCustomerSegmentConsumerData.messageLimit}}"/>
+        </actionGroup>
+        <reloadPage stepKey="refreshPage"/>
+        <waitForPageLoad stepKey="waitForPageLoaded"/>
+        <!-- Verify created customer is in Matched Customers tab -->
+        <actionGroup ref="AdminCheckCustomerInSegmentActionGroup" stepKey="checkCustomerInSegment">
+            <argument name="customer" value="$$createCustomer$$"/>
+        </actionGroup>
+    </test>
+</tests>

@@ -1,0 +1,30 @@
+<?php
+/**
+ * Copyright © Magento, Inc. All rights reserved.
+ * See COPYING.txt for license details.
+ */
+
+/** @var \Magento\GoogleTagManager\Block\ListJson $block */
+
+use Magento\GoogleTagManager\Model\Config\TagManagerConfig;
+use Magento\GoogleTagManager\Helper\CookieData;
+
+/**
+ * @var array $blockNames
+ */
+$blockNames = json_encode(array_values((array)$block->getData('impression_block_list')));
+?>
+
+<script type="text/x-magento-init">
+    {
+        "*": {
+            "Magento_GoogleTagManager/js/google-tag-manager-cart": {
+                "blockNames": <?= /* @noEscape */ $blockNames ?>,
+                "cookieAddToCart": "<?= /* @noEscape */ TagManagerConfig::GOOGLE_ANALYTICS_COOKIE_NAME ?>",
+                "cookieRemoveFromCart":
+                    "<?= /* @noEscape */ TagManagerConfig::GOOGLE_ANALYTICS_COOKIE_REMOVE_FROM_CART ?>",
+                "advancedAddToCart": "<?= /* @noEscape */ CookieData::GOOGLE_ANALYTICS_COOKIE_ADVANCED_NAME ?>"
+            }
+        }
+    }
+</script>

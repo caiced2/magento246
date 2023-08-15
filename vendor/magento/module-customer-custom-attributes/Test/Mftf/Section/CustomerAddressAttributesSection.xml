@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+ /**
+  * Copyright © Magento, Inc. All rights reserved.
+  * See COPYING.txt for license details.
+  */
+-->
+
+<sections xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+          xsi:noNamespaceSchemaLocation="urn:magento:mftf:Page/etc/SectionObject.xsd">
+    <section name="CustomerAddressAttributesSection">
+        <element name="addressSimpleAttribute" type="text" selector="[name='{{attribute}}']" parameterized="true"/>
+        <element name="dropDownAttribute" type="select" selector="//select[@name='custom_attributes[{{attribute}}]']" parameterized="true"/>
+        <element name="dateAttribute" type="text" selector="//input[contains(@name,'{{attributeCode}}') and contains(@class, '_has-datepicker')]" parameterized="true"/>
+        <element name="multilineAttribute" type="text" selector="(//input[contains(@name,'{{attributeCode}}')])[{{line}}]" parameterized="true"/>
+    </section>
+</sections>

@@ -1,0 +1,65 @@
+// /**
+//  * Copyright © Magento, Inc. All rights reserved.
+//  * See COPYING.txt for license details.
+//  */
+@import './_mobile.less';
+
+//
+//  Default appearance styles
+//  _____________________________________________
+
+//  This can appear in regular blocks so don't scope it just to dynamic block
+.dynamic-block-placeholder {
+    align-items: center;
+    background-color: @color-gray-darken0;
+    color: @color-gray60;
+    display: flex;
+    flex-direction: column;
+    font-size: 16px;
+    font-weight: lighter;
+    justify-content: center;
+    min-height: 40px;
+    padding: 15px;
+    text-align: center;
+
+    .segment-name {
+        font-size: 14px;
+    }
+}
+.pagebuilder-dynamic-block {
+    .pagebuilder-dynamic-block-placeholder {
+        align-items: center;
+        background-color: @color-gray98;
+        display: flex;
+        justify-content: center;
+        min-height: 300px;
+
+        .placeholder-text {
+            color: @color-gray65-lighten;
+            font-size: 20px;
+            font-weight: lighter;
+        }
+    }
+    .rendered-content {
+        min-height: 50px;
+        pointer-events: none;
+    }
+}
+:not(.pagebuilder-content-type-hidden) {
+    > .pagebuilder-dynamic-block.pagebuilder-content-type.pagebuilder-dynamic-block-overlay {
+        &:before {
+            content: '';
+            opacity: 0;
+            visibility: hidden;
+        }
+
+        &:hover:before {
+            opacity: 1;
+            visibility: visible;
+        }
+    }
+}
+
+.pagebuilder-dynamic-block-modal {
+    margin-top: 15px;
+}

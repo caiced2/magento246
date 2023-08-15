@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+ /**
+  * Copyright © Magento, Inc. All rights reserved.
+  * See COPYING.txt for license details.
+  */
+-->
+
+<tests xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xsi:noNamespaceSchemaLocation="urn:magento:mftf:Test/etc/testSchema.xsd">
+    <test name="AdminLoginAsCustomerLogNotShownInMenuTest">
+        <annotations>
+            <features value="Login as Customer"/>
+            <stories value="'Login as Customer Log' absent in menu"/>
+            <title value="Verify that 'Login as Customer Log' item is not in the Magento menu"/>
+            <description value="'Login as Customer Log' is not in the Magento menu"/>
+            <severity value="CRITICAL"/>
+            <group value="login_as_customer"/>
+            <group value="pr_exclude"/>
+        </annotations>
+        <before>
+            <magentoCLI command="config:set {{LoginAsCustomerConfigDataEnabled.path}} 1" stepKey="enableLoginAsCustomer"/>
+            <actionGroup ref="CliCacheFlushActionGroup" stepKey="flushConfigCache">
+                <argument name="tags" value="config"/>
+            </actionGroup>
+
+            <actionGroup ref="AdminLoginActionGroup" stepKey="login"/>
+        </before>
+        <after>
+            <actionGroup ref="AdminLogoutActionGroup" stepKey="logout"/>
+
+            <magentoCLI command="config:set {{LoginAsCustomerConfigDataEnabled.path}} 0" stepKey="disableLoginAsCustomer"/>
+            <actionGroup ref="CliCacheFlushActionGroup" stepKey="flushConfigCache">
+                <argument name="tags" value="config"/>
+            </actionGroup>
+        </after>
+
+        <actionGroup ref="AdminLoginAsCustomerLogAbsentInMenuActionGroup" stepKey="verifyLoginAsCustomerLogAbsentInMenu"/>
+    </test>
+</tests>

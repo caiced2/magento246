@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+ /**
+  * Copyright © Magento, Inc. All rights reserved.
+  * See COPYING.txt for license details.
+  */
+-->
+
+<tests xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xsi:noNamespaceSchemaLocation="urn:magento:mftf:Test/etc/testSchema.xsd">
+    <test name="AdminShouldBeAbleToCreateSingleFutureUpdateWithEndDateFromCMSBlockPageTest">
+        <annotations>
+            <stories value="Staging update management"/>
+            <title value="Admin should be able to create Single Future Update with end date from CMS Block Page"/>
+            <description value="Admin should be able to create Single Future Update with end date from CMS Block Page"/>
+            <severity value="BLOCKER"/>
+            <testCaseId value="MC-3268"/>
+            <group value="cmsStaging"/>
+        </annotations>
+        <before>
+            <!-- Create Cms Block -->
+            <createData entity="_defaultBlock" stepKey="createCmsBlock"/>
+            <!-- Login to Admin -->
+            <actionGroup ref="AdminLoginActionGroup" stepKey="loginToAdmin"/>
+        </before>
+        <after>
+            <!-- Delete Cms Block -->
+            <deleteData createDataKey="createCmsBlock" stepKey="deleteCmsBlock"/>
+            <!-- Clear filter Dashboard Staging -->
+            <actionGroup ref="StagingDashboardClearFiltersActionGroup" stepKey="clearFilterDashboardStaging"/>
+            <!-- Logout admin panel -->
+            <actionGroup ref="AdminLogoutActionGroup" stepKey="logout"/>
+        </after>
+        <!-- Open Cms Block for Edit -->
+        <actionGroup ref="AdminOpenCmsBlockActionGroup" stepKey="openCmsBlock">
+            <argument name="block_id" value="$$createCmsBlock.id$$"/>
+        </actionGroup>
+        <!-- Create the new staging update -->
+        <generateDate date="+1 day" format="m/d/Y g:i A" stepKey="generateStartDate"/>
+        <generateDate date="+1 week" format="m/d/Y g:i A" stepKey="generateEndDate"/>
+        <actionGroup ref="FillScheduleUpdateRemovePriceActionGroup" stepKey="createStagingUpdate">
+            <argument name="staging" value="S18UpdateNameStaging"/>
+            <argument name="timeStart" value="{$generateStartDate}"/>
+            <argument name="timeEnd" value="{$generateEndDate}"/>
+        </actionGroup>
+        <!-- See in dashboard staging update -->
+        <actionGroup ref="StagingDashboardSearchUpdateActionGroup" stepKey="seeUpdateInDashboard">
+            <argument name="staging" value="S18UpdateNameStaging"/>
+        </actionGroup>
+    </test>
+</tests>

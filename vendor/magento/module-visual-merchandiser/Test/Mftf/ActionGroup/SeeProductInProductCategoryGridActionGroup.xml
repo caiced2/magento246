@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+ /**
+  * Copyright © Magento, Inc. All rights reserved.
+  * See COPYING.txt for license details.
+  */
+-->
+
+<actionGroups xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:noNamespaceSchemaLocation="urn:magento:mftf:Test/etc/actionGroupSchema.xsd">
+    <actionGroup name="SeeProductInProductCategoryGridActionGroup">
+        <arguments>
+            <argument name="product"/>
+            <argument name="categoryEntity"/>
+        </arguments>
+
+        <seeInCurrentUrl url="{{AdminCategoryPage.url}}" stepKey="seeOnCategoryPage"/>
+        <click selector="{{AdminCategorySidebarTreeSection.categoryInTree(categoryEntity.name)}}" stepKey="clickCategoryLink"/>
+        <click selector="{{AdminCategoryProductsSection.sectionHeader}}" stepKey="openProductsInCategorySection"/>
+        <see selector="{{AdminCategoryProductsGridSection.nameColumn}}" userInput="{{product.name}}" stepKey="seeProductNameInGrid"/>
+        <see selector="{{AdminCategoryProductsGridSection.skuColumn}}" userInput="{{product.sku}}" stepKey="seeProductSkuInGrid"/>
+        <see selector="{{AdminCategoryProductsGridSection.priceColumn}}" userInput="{{product.price}}" stepKey="seeProductPriceInGrid"/>
+    </actionGroup>
+</actionGroups>

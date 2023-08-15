@@ -1,0 +1,297 @@
+/**
+ * Copyright © Magento, Inc. All rights reserved.
+ * See COPYING.txt for license details.
+ */
+
+@color-white: #fff;
+@color-grey: #ccc;
+@color-dark-grey: #777;
+@color-light-grey: #eee;
+@button-background-color: #006bb7;
+@button-border-color: #006bb4;
+
+//
+//  Common
+//  _____________________________________________
+
+& when (@media-common = true) {
+    .checkout-container {
+        .change-shipping-address-button,
+        .change-billing-address-button {
+            display: block;
+            margin-bottom: 15px;
+        }
+
+        .edit-shipping-address-button,
+        .edit-billing-address-button {
+            display: block;
+        }
+
+        .action-additional {
+            &:extend(.abs-action-button-as-link all);
+        }
+
+        .checkout-shipping-address,
+        .checkout-payment-method {
+            div.new-address-popup {
+                margin: 0 35px 20px 0;
+                position: relative;
+            }
+
+            div.change-address-popup {
+                margin: 5px 0 -5px 0;
+            }
+
+            div.edit-address-popup {
+                float: left;
+                margin: 5px 35px -5px 0;
+            }
+
+            div.shipping-address-item.selected,
+            .checkout-billing-address {
+                margin: 0;
+                padding-left: 0;
+            }
+
+            .new-billing-address-button {
+                display: block;
+                margin: 20px 35px 0 20px;
+                position: relative;
+            }
+        }
+    }
+
+    .shipping-address-modal.modal-popup.modal-slide,
+    .billing-address-modal.modal-popup.modal-slide {
+        .modal-inner-wrap[class] {
+            background-color: @color-white;
+        }
+    }
+
+    .shipping-address-modal,
+    .billing-address-modal {
+
+        .modal-inner-wrap {
+
+            h1.modal-title {
+                border: none;
+            }
+
+            .admin__action-multiselect-search {
+                width: 250px;
+            }
+
+            .block.block-search {
+                left: 20px;
+                position: absolute;
+                top: 81px;
+            }
+
+            .admin__action-select-shipping-addressmultiselect-search-count {
+                border-bottom: 1px solid @color-grey;
+                font-family: 'Open Sans', 'Helvetica Neue', Helvetica, Arial, sans-serif;
+                font-size: 13px;
+                margin: 5px -30px 10px -30px;
+                padding: 0 0 5px 30px;
+            }
+
+            .admin__action-multiselect-empty-area {
+                font-family: 'Open Sans', 'Helvetica Neue', Helvetica, Arial, sans-serif;
+                padding-top: 5px;
+            }
+
+            .admin__action-multiselect-menu-inner ._root {
+                border-bottom: 1px solid @color-grey;
+                clear: both;
+                float: left;
+                margin-bottom: 10px;
+                padding-bottom: 15px;
+                position: relative;
+                width: 100%;
+
+                .address-details {
+                    float: left;
+                }
+
+                .edit-address,
+                .ship-here,
+                .select-address,
+                .address-selected {
+                    float: right;
+                    margin-right: 20px;
+                    margin-top: 20px;
+
+                    button {
+                        background: @button-background-color;
+                        border: 1px solid @button-border-color;
+                        box-shadow: none;
+                        color: @color-white;
+                        outline: 0;
+                    }
+                }
+
+                .address-selected button {
+                    background-color: @color-light-grey;
+                    border: none;
+                    box-shadow: none;
+                    color: @color-dark-grey;
+
+                    &:hover {
+                        cursor: auto;
+                        background-color: @color-light-grey;
+                        border: none;
+                        box-shadow: none;
+                        color: @color-dark-grey;
+                    }
+                }
+
+                .default-address,
+                .edit-address {
+                    float: right;
+                    margin-right: 20px;
+                    margin-top: 20px;
+
+                    button {
+                        background-color: Transparent;
+                        border: none;
+                        box-shadow: none;
+                    }
+                }
+
+                .default-address button.action-primary {
+                    color: @color-dark-grey;
+                    text-transform: uppercase;
+
+                    &:hover {
+                        cursor: auto;
+                    }
+                }
+
+                .edit-address button.action-primary {
+                    color: @button-border-color;
+                }
+            }
+
+            .admin__action-multiselect-menu-inner {
+                margin-top: 10px;
+                overflow-y: auto;
+            }
+
+            ul {
+                list-style-type: none;
+                padding-left: 0;
+            }
+        }
+    }
+
+    .admin__data-grid-loading-mask {
+        background: rgba(255, 255, 255, .5);
+        bottom: 0;
+        left: 0;
+        position: fixed;
+        right: 0;
+        top: 0;
+        width: 100%;
+        z-index: 4;
+
+        .spinner {
+            background: url('@{baseDir}images/loader-2.gif') 50% 50% no-repeat;
+            display: inline-block;
+            font-size: 4rem;
+            height: 1em;
+            left: 50%;
+            margin-left: -2rem;
+            margin-right: 1.5rem;
+            position: absolute;
+            top: 50%;
+            width: 1em;
+
+            .ie9 & {
+                background: url('@{baseDir}images/loader-2.gif') 50% 50% no-repeat;
+                bottom: 0;
+                height: 149px;
+                left: 0;
+                margin: auto;
+                position: absolute;
+                right: 0;
+                top: 0;
+                width: 218px;
+            }
+        }
+    }
+}
+
+//
+//  Mobile
+//  _____________________________________________________
+.media-width(@extremum, @break) when (@extremum = 'max') and (@break = @screen__m) {
+
+    .shipping-address-modal.modal-popup.modal-slide,
+    .billing-address-modal.modal-popup.modal-slide {
+        left: 0;
+    }
+
+    .shipping-address-modal,
+    .billing-address-modal {
+
+        .modal-inner-wrap {
+            min-height: 400px;
+
+            h1.modal-title {
+                border: none;
+            }
+
+            .admin__action-multiselect-menu-inner ._root {
+                .edit-address,
+                .ship-here,
+                .select-address,
+                .address-selected {
+                    clear: left;
+                    float: left;
+                    margin-top: 5px;
+                    position: relative;
+                    top: 5px;
+                }
+
+                .default-address {
+                    margin-top: 5px;
+                    position: absolute;
+                    right: 1rem;
+                    top: 0;
+                }
+            }
+        }
+    }
+
+    .address-loading-mask {
+        top: 105px;
+    }
+}
+
+//
+//  Desktop
+//  _____________________________________________
+
+.media-width(@extremum, @break) when (@extremum = 'min') and (@break = @screen__m) {
+
+    .shipping-address-modal,
+    .billing-address-modal {
+
+        .modal-inner-wrap {
+            min-height: 620px;
+            width: 700px;
+
+            .modal-popup .modal-title {
+                border: none;
+            }
+
+            .admin__action-multiselect-menu-inner {
+                max-height: 438px;
+            }
+        }
+    }
+
+    .address-loading-mask {
+        top: 115px;
+    }
+}

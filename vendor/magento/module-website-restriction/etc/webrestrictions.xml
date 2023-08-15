@@ -1,0 +1,34 @@
+<?xml version="1.0"?>
+<!--
+/**
+ * Copyright © Magento, Inc. All rights reserved.
+ * See COPYING.txt for license details.
+ */
+-->
+<config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="urn:magento:module:Magento_WebsiteRestriction:etc/webrestrictions.xsd">
+    <action path="captcha_refresh_index" type="generic" />
+    <action path="customer_account_login" type="generic" />
+    <action path="customer_account_loginPost" type="generic" />
+    <action path="customer_account_forgotPassword" type="generic" />
+    <action path="customer_account_forgotPasswordPost" type="generic" />
+    <action path="customer_account_confirm" type="generic" />
+    <action path="customer_account_confirmation" type="generic" />
+    <action path="customer_account_createPassword" type="generic" />
+    <action path="customer_account_resetPasswordPost" type="generic" />
+    <action path="customer_section_load" type="generic" />
+    <action path="cookie_index_noCookies" type="generic" />
+    <action path="paypal_ipn_standard" type="generic" />
+    <action path="paypal_ipn_express" type="generic" />
+    <action path="paypal_ipn_direct" type="generic" />
+    <action path="paypal_ipn_index" type="generic" />
+    <action path="paypal_payflow_silentPost" type="generic" />
+    <action path="paypal_payflowadvanced_silentPost" type="generic" />
+    <action path="paypal_transparent_response" type="generic" />
+    <action path="paypal_transparent_redirect" type="generic" />
+    <action path="magento_pagecache_block_esi" type="generic" />
+    <action path="customer_account_create" type="register" />
+    <action path="customer_account_createPost" type="register" />
+    <action path="shipping_tracking_popup" type="generic"/>
+    <action path="stores_store_redirect" type="generic"/>
+    <action path="stores_store_switch" type="generic"/>
+</config>

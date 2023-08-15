@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+ /**
+  * Copyright © Magento, Inc. All rights reserved.
+  * See COPYING.txt for license details.
+  */
+-->
+
+<tests xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xsi:noNamespaceSchemaLocation="urn:magento:mftf:Test/etc/testSchema.xsd">
+    <test name="AdminImportGiftCardTest">
+
+        <!-- S3 scheduled import/export artifacts in a different path than the local file system.
+        This test is used to merge with the local file system test and allows the resulting merged test
+        to use the correct path when Magento is either installed with S3 enabled or with S3 disabled -->
+
+        <before>
+            <!-- Copy Images to Import Directory for Product Images -->
+            <helper class="Magento\AwsS3\Test\Mftf\Helper\FileAssertions" method="createDirectory" stepKey="createDirectoryForImportImages">
+                <argument name="path">var/import/images/{{ImportProduct_GiftCard.name}}</argument>
+            </helper>
+            <helper class="Magento\AwsS3\Test\Mftf\Helper\FileAssertions" method="copyFromLocal" stepKey="copyProductBaseImage">
+                <argument name="source">dev/tests/acceptance/tests/_data/{{ImportProduct_GiftCard.baseImage}}</argument>
+                <argument name="destination">var/import/images/{{ImportProduct_GiftCard.name}}/{{ImportProduct_GiftCard.baseImage}}</argument>
+            </helper>
+            <helper class="Magento\AwsS3\Test\Mftf\Helper\FileAssertions" method="copyFromLocal" stepKey="copyProductSmallImage">
+                <argument name="source">dev/tests/acceptance/tests/_data/{{ImportProduct_GiftCard.smallImage}}</argument>
+                <argument name="destination">var/import/images/{{ImportProduct_GiftCard.name}}/{{ImportProduct_GiftCard.smallImage}}</argument>
+            </helper>
+            <helper class="Magento\AwsS3\Test\Mftf\Helper\FileAssertions" method="copyFromLocal" stepKey="copyProductThumbnailImage">
+                <argument name="source">dev/tests/acceptance/tests/_data/{{ImportProduct_GiftCard.thumbnailImage}}</argument>
+                <argument name="destination">var/import/images/{{ImportProduct_GiftCard.name}}/{{ImportProduct_GiftCard.thumbnailImage}}</argument>
+            </helper>
+        </before>
+
+        <after>
+            <helper class="Magento\AwsS3\Test\Mftf\Helper\FileAssertions" method="deleteDirectory" stepKey="deleteProductImageDirectory">
+                <argument name="path">var/import/images/{{ImportProduct_GiftCard.name}}</argument>
+            </helper>
+        </after>
+    </test>
+</tests>

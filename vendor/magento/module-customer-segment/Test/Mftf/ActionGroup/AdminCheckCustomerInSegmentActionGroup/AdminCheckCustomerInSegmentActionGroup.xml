@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+ /**
+  * Copyright © Magento, Inc. All rights reserved.
+  * See COPYING.txt for license details.
+  */
+-->
+<actionGroups xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:noNamespaceSchemaLocation="urn:magento:mftf:Test/etc/actionGroupSchema.xsd">
+    <actionGroup name="AdminCheckCustomerInSegmentActionGroup">
+        <arguments>
+            <argument name="customer" defaultValue="createCustomer" type="entity"/>
+        </arguments>
+        <!--Check that Customer is in the Segment -->
+        <click selector="{{AdminCustomerSegmentEditSection.matchedCustomersTab}}" stepKey="openMatchedTab"/>
+        <waitForPageLoad stepKey="waitForGridToAppear"/>
+        <fillField userInput="{{customer.email}}" selector="{{AdminCustomerSegmentMatchedCustomersSection.emailFilter}}" stepKey="searchCustomer"/>
+        <click selector="{{AdminCustomerSegmentMatchedCustomersSection.searchButton}}" stepKey="startSearch"/>
+        <waitForPageLoad stepKey="waitForResults"/>
+        <see userInput="{{customer.email}}" selector="{{AdminCustomerSegmentMatchedCustomersSection.gridEmailColumn}}" stepKey="assertCustomerInSegment"/>
+    </actionGroup>
+</actionGroups>

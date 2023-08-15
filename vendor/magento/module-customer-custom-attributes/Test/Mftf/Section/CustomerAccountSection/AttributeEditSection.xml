@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+ /**
+  * Copyright © Magento, Inc. All rights reserved.
+  * See COPYING.txt for license details.
+  */
+-->
+<sections xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:noNamespaceSchemaLocation="urn:magento:mftf:Page/etc/SectionObject.xsd">
+    <section name="AttributeEditSection">
+        <element name="storeView" type="button" selector="#store-change-button"/>
+        <element name="mainWebsiteStoreView" type="text" selector="//a[contains(text(), '{{args}}')]" parameterized="true"/>
+        <element name="saveAttribute" type="button" selector="#save"/>
+        <element name="saveAndContinue" type="button" selector="#save_and_edit_button"/>
+        <element name="useDefaultForRequiredValues" type="checkbox" selector="#is_required_default"/>
+        <element name="backBtn" type="button" selector="#back" timeout="30"/>
+        <!-- Enable/disable Storefront Properties -->
+        <element name="isVisibleEnabled" type="select" selector="//select[contains(@id, 'is_visible') and not(contains(@disabled, 'disabled'))]"/>
+        <element name="isVisibleDisabled" type="select" selector="//select[contains(@id, 'is_visible') and contains(@disabled, 'disabled')]"/>
+        <element name="sortOrderEnabled" type="input" selector="//input[contains(@id, 'sort_order') and not(contains(@disabled, 'disabled'))]"/>
+        <element name="sortOrderDisabled" type="input" selector="//input[contains(@id, 'sort_order') and contains(@disabled, 'disabled')]"/>
+        <element name="usedInFormsEnabled" type="select" selector="//select[contains(@id, 'used_in_forms') and not(contains(@disabled, 'disabled'))]"/>
+        <element name="usedInFormsDisabled" type="select" selector="//select[contains(@id, 'used_in_forms') and contains(@disabled, 'disabled')]"/>
+    </section>
+</sections>

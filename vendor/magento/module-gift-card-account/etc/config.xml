@@ -1,0 +1,45 @@
+<?xml version="1.0"?>
+<!--
+/**
+ * Copyright © Magento, Inc. All rights reserved.
+ * See COPYING.txt for license details.
+ */
+-->
+<config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="urn:magento:module:Magento_Store:etc/config.xsd">
+    <default>
+        <giftcard>
+            <giftcardaccount_email>
+                <identity>general</identity>
+                <template>giftcard_giftcardaccount_email_template</template>
+            </giftcardaccount_email>
+            <giftcardaccount_general>
+                <code_length>12</code_length>
+                <code_format>alphanum</code_format>
+                <code_split>0</code_split>
+                <pool_size>1000</pool_size>
+                <pool_threshold>100</pool_threshold>
+            </giftcardaccount_general>
+        </giftcard>
+        <sales>
+            <totals_sort>
+                <giftcardaccount>90</giftcardaccount>
+            </totals_sort>
+        </sales>
+        <captcha>
+            <frontend>
+                <areas>
+                    <gift_code_request>
+                        <label>Add Gift Card Code</label>
+                    </gift_code_request>
+                </areas>
+            </frontend>
+        </captcha>
+        <customer>
+            <captcha>
+                <shown_to_logged_in_user>
+                    <gift_code_request>1</gift_code_request>
+                </shown_to_logged_in_user>
+            </captcha>
+        </customer>
+    </default>
+</config>

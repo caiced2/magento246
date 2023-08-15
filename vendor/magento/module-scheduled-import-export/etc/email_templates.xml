@@ -1,0 +1,12 @@
+<?xml version="1.0"?>
+<!--
+/**
+ * Copyright © Magento, Inc. All rights reserved.
+ * See COPYING.txt for license details.
+ */
+-->
+<config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="urn:magento:module:Magento_Email:etc/email_templates.xsd">
+    <template id="magento_scheduledimportexport_import_failed" label="Import Failed" file="import_failed.html" type="html" module="Magento_ScheduledImportExport" area="adminhtml"/>
+    <template id="magento_scheduledimportexport_export_failed" label="Export Failed" file="export_failed.html" type="html" module="Magento_ScheduledImportExport" area="adminhtml"/>
+    <template id="system_magento_scheduled_import_export_log_error_email_template" label="File History Clean Failed" file="file_history_clean_failed.html" type="html" module="Magento_ScheduledImportExport" area="adminhtml"/>
+</config>

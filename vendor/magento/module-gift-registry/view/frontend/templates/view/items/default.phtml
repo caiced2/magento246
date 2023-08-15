@@ -1,0 +1,97 @@
+<?php
+/**
+ * Copyright © Magento, Inc. All rights reserved.
+ * See COPYING.txt for license details.
+ */
+
+// phpcs:disable Squiz.ControlStructures.ControlSignature.NewlineAfterOpenBrace
+// phpcs:disable Squiz.WhiteSpace.ScopeClosingBrace.ContentBefore
+?>
+<?php
+    $_item = $block->getItem();
+    $productNameEscapedHtml = $block->escapeHtml($block->getProductName());
+    $escapedProductUrl = $block->escapeUrl($block->getProductUrl());
+?>
+<tr>
+    <td class="col product" data-th="<?= $block->escapeHtml(__('Product Name')) ?>">
+        <?php if ($block->hasProductUrl()) :?>
+            <a href="<?= /** @noEscape */$escapedProductUrl ?>"
+               class="product photo product-item-photo"
+               title="<?= $block->escapeHtmlAttr($block->getProductName()) ?>"
+            >
+        <?php else :?>
+            <span class="product photo product-item-photo">
+        <?php endif; ?>
+    <?= $block->getImage($block->getProductForThumbnail(), 'cart_page_product_thumbnail')->toHtml() ?>
+    <?php if ($block->hasProductUrl()) :?>
+        </a>
+    <?php else :?>
+        </span>
+    <?php endif; ?>
+        <div class="product details product-item-details">
+            <strong class="product name product-item-name">
+                <?php if ($block->hasProductUrl()) :?>
+                    <a href="<?= /** @noEscape */$escapedProductUrl ?>"><?= /** @noEscape */$productNameEscapedHtml ?>
+                    </a>
+                <?php else :?>
+                    <?= /** @noEscape */$productNameEscapedHtml ?>
+                <?php endif; ?>
+            </strong>
+            <?php if ($_options = $block->getOptionList()) :?>
+                <dl class="item-options">
+                    <?php foreach ($_options as $_option) :?>
+                        <?php $_formatedOptionValue = $block->getFormatedOptionValue($_option) ?>
+                        <dt><?= $block->escapeHtml($_option['label']) ?></dt>
+                        <dd
+                            <?php if (isset($_formatedOptionValue['full_view'])) :?>
+                                class="tooltip wrapper"
+                            <?php endif; ?>
+                        >
+                            <?= $block->escapeHtml($_formatedOptionValue['value']) ?>
+                            <?php if (isset($_formatedOptionValue['full_view'])) :?>
+                                <div class="tooltip content">
+                                    <dl class="item options">
+                                        <dt><?= $block->escapeHtml($_option['label']) ?></dt>
+                                        <dd><?= $block->escapeHtml($_formatedOptionValue['full_view']) ?></dd>
+                                    </dl>
+                                </div>
+                            <?php endif; ?>
+                        </dd>
+                    <?php endforeach; ?>
+                </dl>
+            <?php endif;?>
+        </div>
+
+        <?php if ($messages = $block->getMessages()) :?>
+            <?php foreach ($messages as $message) :?>
+                <p class="item message <?= $block->escapeHtmlAttr($message['type']) ?>">
+                    <?= $block->escapeHtml($message['text']) ?>
+                </p>
+            <?php endforeach; ?>
+        <?php endif; ?>
+    </td>
+    <td class="col registered" data-th="<?= $block->escapeHtml(__('Requested')) ?>">
+        <?= $_item->getQty()*1 ?>
+    </td>
+    <td class="col fulfilled" data-th="<?= $block->escapeHtml(__('Fulfilled')) ?>">
+        <?= $_item->getQtyFulfilled()*1 ?>
+    </td>
+    <td class="col remaining" data-th="<?= $block->escapeHtml(__('Remaining')) ?>">
+        <?= $_item->getRemainingQty()*1 ?>
+    </td>
+    <td class="col price" data-th="<?= $block->escapeHtml(__('Unit Price')) ?>">
+        <?= $block->getProductPriceHtml($_item->getProduct()) ?>
+    </td>
+    <td class="col qty" data-th="<?= $block->escapeHtml(__('Qty')) ?>">
+        <?php if ($_item->getRemainingQty() < 1) :?>
+            <?= $block->escapeHtml(__('Fulfilled')) ?>
+        <?php else :?>
+            <input type="number"
+                   name="items[<?= $block->escapeHtmlAttr($_item->getItemId()) ?>][qty]"
+                   value="0"
+                   size="4"
+                   title="<?= $block->escapeHtmlAttr(__('Qty')) ?>"
+                   class="input-text qty">
+        <?php endif;?>
+    </td>
+</tr>

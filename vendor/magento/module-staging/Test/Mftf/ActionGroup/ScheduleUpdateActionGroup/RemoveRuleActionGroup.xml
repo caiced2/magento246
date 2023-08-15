@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+ /**
+  * Copyright © Magento, Inc. All rights reserved.
+  * See COPYING.txt for license details.
+  */
+-->
+<actionGroups xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:noNamespaceSchemaLocation="urn:magento:mftf:Test/etc/actionGroupSchema.xsd">
+    <actionGroup name="RemoveRule">
+        <arguments>
+            <argument name="ruleName" type="string" defaultValue="{{ScheduleData.Name}}"/>
+        </arguments>
+        <click selector="{{MarketingSection.marketing}}" stepKey="GoToMarketing"/>
+        <waitForPageLoad stepKey="WaitForMarketingPageLoaded"/>
+        <click selector="{{MarketingSection.catalogPriceRule}}" stepKey="GoToCatalogPriceRule"/>
+        <waitForPageLoad stepKey="WaitForCatalogPriceRulePageLoaded"/>
+        <fillField userInput="{{ruleName}}" selector="{{MarketingSection.gridSearchPriceRule}}" stepKey="fillSearchField"/>
+        <click selector="{{AdminCatalogSearchTermIndexSection.searchButton}}" stepKey="clickSearch"/>
+        <click selector="{{ScheduleUpdateSection.selectRule(ruleName)}}" stepKey="GoToEditUpdate"/>
+        <waitForPageLoad stepKey="WaitForPageOpened"/>
+        <click selector="{{ScheduleUpdateSection.removeUpdate}}" stepKey="ClickToRemoveUpdate"/>
+        <waitForPageLoad stepKey="waitForConfirm"/>
+        <click selector="{{ScheduleUpdateSection.confirm}}" stepKey="ClickToConfirm"/>
+        <waitForPageLoad stepKey="WaitForRuleIsDeleted"/>
+        <see userInput="You deleted the rule." stepKey="VerifyRuleIsDeleted"/>
+    </actionGroup>
+</actionGroups>

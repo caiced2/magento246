@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+ /**
+  * Copyright © Magento, Inc. All rights reserved.
+  * See COPYING.txt for license details.
+  */
+-->
+<actionGroups xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:noNamespaceSchemaLocation="urn:magento:mftf:Test/etc/actionGroupSchema.xsd">
+    <actionGroup name="scheduleNewUpdateActionGroup" extends="FillScheduleUpdateActionGroup">
+        <generateDate date="{{timeStart}}" format="m/j/Y g:i A" stepKey="generateStartDate" before="fillUpdateName"/>
+        <generateDate date="{{timeEnd}}" format="m/j/Y g:i A" stepKey="generateEndDate" after="generateStartDate"/>
+        <fillField selector="{{AdminStagingSlideOutSection.startDate}}" userInput="{$generateStartDate}" stepKey="fillStartDate"/>
+        <fillField selector="{{AdminStagingSlideOutSection.endDate}}" userInput="{$generateEndDate}" stepKey="fillEndDate"/>
+        <remove keyForRemoval="fillProductPrice"/>
+        <waitForPageLoad stepKey="waitForPageLoad" after="clickSave"/>
+    </actionGroup>
+</actionGroups>

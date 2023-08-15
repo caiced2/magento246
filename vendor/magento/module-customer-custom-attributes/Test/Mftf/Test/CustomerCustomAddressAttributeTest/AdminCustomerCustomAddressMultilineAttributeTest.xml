@@ -1,0 +1,74 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+ /**
+  * Copyright © Magento, Inc. All rights reserved.
+  * See COPYING.txt for license details.
+  */
+-->
+<tests xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:noNamespaceSchemaLocation="urn:magento:mftf:Test/etc/testSchema.xsd">
+    <test name="AdminCustomerCustomAddressMultilineAttributeTest">
+        <annotations>
+            <features value="CustomerCustomAttributes"/>
+            <stories value="MAGETWO-95770: Saved multi line attribute data displayed incorrectly on customer edit address page"/>
+            <title value="Multiline customer address attribute will load correctly"/>
+            <description value="Check that a multiline customer custom address attribute will correctly load saved data in the admin"/>
+            <severity value="MAJOR"/>
+            <testCaseId value="MC-5813"/>
+            <useCaseId value="MC-5562"/>
+            <group value="customer"/>
+        </annotations>
+        <before>
+            <!--Login as admin-->
+            <createData entity="Simple_US_Customer" stepKey="customer"/>
+            <magentoCron groups="index" stepKey="reindex"/>
+            <actionGroup ref="AdminLoginActionGroup" stepKey="LoginAsAdmin"/>
+        </before>
+        <after>
+            <amOnPage url="{{CustomerAddressAttributesPage.url}}" stepKey="navigateToCustomerAddress"/>
+            <actionGroup ref="AdminDeleteCustomerAttribute" stepKey="adminDeleteCustomerAttribute">
+                <argument name="defaultLabel" value="{{Attribute.label}}"/>
+            </actionGroup>
+            <deleteData createDataKey="customer" stepKey="deleteCustomer"/>
+            <actionGroup ref="AdminLogoutActionGroup" stepKey="logOut"/>
+        </after>
+        <!--Create new Customer attribute-->
+        <amOnPage url="{{CustomerAddressAttributesPage.url}}" stepKey="navigateToCustomerAddress"/>
+        <waitForPageLoad stepKey="waitForCustomerAttributePageLoaded"/>
+        <actionGroup ref="AdminCreateCustomerNewMultilineAttribute" stepKey="createMultilineAttribute"/>
+
+        <actionGroup ref="OpenEditCustomerFromAdminActionGroup" stepKey="editCustomer">
+            <argument name="customer" value="$$customer$$"/>
+        </actionGroup>
+        <actionGroup ref="OpenEditCustomerAddressFromAdminActionGroup" stepKey="editCustomerAddress">
+            <argument name="address" value="US_Address_TX"/>
+        </actionGroup>
+        <fillField selector="//input[contains(@name,'{{Attribute.code}}[0]')]" userInput="field1" stepKey="fillField1"/>
+        <fillField selector="//input[contains(@name,'{{Attribute.code}}[1]')]" userInput="field2" stepKey="fillField2"/>
+        <fillField selector="//input[contains(@name,'{{Attribute.code}}[2]')]" userInput="field3" stepKey="fillField3"/>
+        <click selector="{{AdminCustomerAddressesSection.saveAddress}}" stepKey="saveAttribute"/>
+        <waitForLoadingMaskToDisappear stepKey="waitForGridLoad"/>
+        <actionGroup ref="OpenEditCustomerFromAdminActionGroup" stepKey="editCustomer2">
+            <argument name="customer" value="$$customer$$"/>
+        </actionGroup>
+        <actionGroup ref="OpenEditCustomerAddressFromAdminActionGroup" stepKey="editCustomerAddress2">
+            <argument name="address" value="US_Address_TX"/>
+        </actionGroup>
+        <grabValueFrom selector="//input[contains(@name,'{{Attribute.code}}[0]')]" stepKey="grabbedField1"/>
+        <grabValueFrom selector="//input[contains(@name,'{{Attribute.code}}[1]')]" stepKey="grabbedField2"/>
+        <grabValueFrom selector="//input[contains(@name,'{{Attribute.code}}[2]')]" stepKey="grabbedField3"/>
+
+        <assertSame stepKey="verifyValue1">
+            <expectedResult type="string">field1</expectedResult>
+            <actualResult type="variable">grabbedField1</actualResult>
+        </assertSame>
+        <assertSame stepKey="verifyValue2">
+            <expectedResult type="string">field2</expectedResult>
+            <actualResult type="variable">grabbedField2</actualResult>
+        </assertSame>
+        <assertSame stepKey="verifyValue3">
+            <expectedResult type="string">field3</expectedResult>
+            <actualResult type="variable">grabbedField3</actualResult>
+        </assertSame>
+    </test>
+</tests>

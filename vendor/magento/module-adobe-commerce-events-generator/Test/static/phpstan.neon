@@ -1,0 +1,14 @@
+parameters:
+    level: 5
+    fileExtensions:
+        - php
+    paths:
+        - ../../
+    excludePaths:
+        - ../../vendor/*
+        - ../../etc/*
+    ignoreErrors:
+        - message: '#Call to an undefined method ReflectionType::getName\(\).#'
+          path: ../../Generator/Collector/Reflection/MethodParametersCollector.php
+        - message: '#Call to static method .*? on an unknown class Magento\\TestFramework\\Helper\\Bootstrap.#'
+          path: ../Integration/Generator/GenerateModuleCommandTest.php

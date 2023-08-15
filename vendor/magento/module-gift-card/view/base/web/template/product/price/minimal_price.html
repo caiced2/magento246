@@ -1,0 +1,17 @@
+<!--
+/**
+ * Copyright © Magento, Inc. All rights reserved.
+ * See COPYING.txt for license details.
+ */
+-->
+<span class="price-container">
+    <span if="label && !isMinEqualToMax($row())"
+          class="price-label"
+          text="label"></span>
+
+    <span if="hasMinValue($row()) || isMinEqualToMax($row())"
+          class="price-wrapper"
+          css="priceWrapperCssClasses"
+          attr="priceWrapperAttr"
+          html="getMinValueUnsanitizedHtml($row())"></span>
+</span>

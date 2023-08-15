@@ -1,0 +1,150 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+ /**
+  * Copyright © Magento, Inc. All rights reserved.
+  * See COPYING.txt for license details.
+  */
+-->
+
+<tests xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xsi:noNamespaceSchemaLocation="urn:magento:mftf:Test/etc/testSchema.xsd">
+    <test name="OnePageCheckoutAsRegisteredUSCustomerUsingStoreCreditAndGiftCardTest">
+        <annotations>
+            <features value="OnePageCheckout"/>
+            <stories value="OnePageCheckout within Offline Payment Methods"/>
+            <title value="OnePageCheckout as a registered US customer using store credit and gift card test"/>
+            <description value="Checkout as a registered US customer using store credit and gift card"/>
+            <severity value="CRITICAL"/>
+            <testCaseId value="MC-14734"/>
+            <group value="GiftCardAccount"/>
+            <group value="mtf_migrated"/>
+        </annotations>
+        <before>
+            <magentoCLI command="config:set checkout/options/enable_guest_checkout_login 1" stepKey="EnablingGuestCheckoutLogin"/>
+            <!-- Create Simple Product -->
+            <createData entity="SimpleProduct2" stepKey="createSimpleProduct">
+                <field key="price">560</field>
+            </createData>
+
+            <!-- Create Virtual Product -->
+            <createData entity="VirtualProduct" stepKey="createVirtualProduct">
+                <field key="price">10</field>
+            </createData>
+
+            <!-- Create gift card code pool -->
+            <createData entity="GiftCardCodePool" stepKey="createCodePool"/>
+
+            <!-- Create gift card account -->
+            <createData entity="GiftCardAccount100" stepKey="createGiftCard"/>
+
+            <!-- Create customer -->
+            <createData entity="Simple_Customer_Without_Address" stepKey="createCustomer"/>
+        </before>
+        <after>
+            <!-- Logout customer -->
+            <actionGroup ref="StorefrontCustomerLogoutActionGroup" stepKey="customerLogoutStorefront"/>
+
+            <!-- Logout admin -->
+            <actionGroup ref="AdminLogoutActionGroup" stepKey="logout"/>
+
+            <!-- Delete created products -->
+            <deleteData createDataKey="createVirtualProduct" stepKey="deleteVirtualProduct"/>
+            <deleteData createDataKey="createSimpleProduct" stepKey="deleteSimpleProduct"/>
+
+            <!-- Delete customer -->
+            <deleteData createDataKey="createCustomer" stepKey="deleteCustomer"/>
+            <magentoCLI command="config:set checkout/options/enable_guest_checkout_login 0" stepKey="DisablingGuestCheckoutLogin"/>
+        </after>
+
+        <actionGroup ref="AdminLoginActionGroup" stepKey="loginAsAdmin"/>
+
+        <!-- Add store credit balance to customer -->
+        <actionGroup ref="AdminOpenCustomerEditPageActionGroup" stepKey="openCustomerEditPage">
+            <argument name="customerId" value="$$createCustomer.id$$"/>
+        </actionGroup>
+        <actionGroup ref="UpdateCustomerStoreCreditBalanceAdminActionGroup" stepKey="updateStoreCreditFromAdmin">
+            <argument name="storeCredit" value="5" />
+        </actionGroup>
+
+        <!-- Grab gift card code -->
+        <amOnPage url="{{AdminGiftCardAccountGridPage.url}}" stepKey="goToAccountGrid"/>
+        <waitForPageLoad stepKey="waitForGiftCardAccountPageLoad"/>
+        <actionGroup ref="SortByIdDescendingActionGroup" stepKey="sortAccountsByIdDesc"/>
+        <click selector="{{AdminGridTableSection.row('1')}}" stepKey="clickPrereqAccount"/>
+        <waitForPageLoad stepKey="waitForAccountEditPage"/>
+        <grabTextFrom selector="{{AdminGiftCardAccountInformationSection.giftCardCode}}" stepKey="giftCardAccountCode"/>
+
+        <!-- Add Simple Product to cart -->
+        <amOnPage url="{{StorefrontProductPage.url($$createSimpleProduct.custom_attributes[url_key]$$)}}" stepKey="navigateToSimpleProductPage"/>
+        <waitForPageLoad stepKey="waitForSimpleProductPageLoad"/>
+        <actionGroup ref="AddToCartFromStorefrontProductPageActionGroup" stepKey="addToCartFromStorefrontProductPage">
+            <argument name="productName" value="$$createSimpleProduct.name$$"/>
+        </actionGroup>
+
+        <!-- Add Virtual Product to cart -->
+        <amOnPage url="{{StorefrontProductPage.url($$createVirtualProduct.custom_attributes[url_key]$$)}}" stepKey="navigateToVirtualProductPage"/>
+        <waitForPageLoad stepKey="waitForVirtualProductPageLoad"/>
+        <actionGroup ref="AddToCartFromStorefrontProductPageActionGroup" stepKey="addToCartFromStorefrontProductPage3">
+            <argument name="productName" value="$$createVirtualProduct.name$$"/>
+        </actionGroup>
+
+        <!-- Go to shopping cart -->
+        <actionGroup ref="ClickViewAndEditCartFromMiniCartActionGroup" stepKey="goToShoppingCartFromMinicart"/>
+        <actionGroup ref="FillShippingZipForm" stepKey="fillShippingZipForm">
+            <argument name="address" value="US_Address_CA" />
+        </actionGroup>
+
+        <!-- Apply gift card to order -->
+        <actionGroup ref="AddGiftCardToOrderFromCartActionGroup" stepKey="applyGiftCardToOrder">
+            <argument name="code" value="$giftCardAccountCode"/>
+        </actionGroup>
+        <click selector="{{CheckoutCartSummarySection.proceedToCheckout}}" stepKey="clickProceedToCheckout"/>
+        <waitForPageLoad stepKey="waitForProceedToCheckout"/>
+
+        <!-- Login as customer on checkout page -->
+        <actionGroup ref="LoginAsCustomerOnCheckoutPageActionGroup" stepKey="customerLogin">
+            <argument name="customer" value="$$createCustomer$$"/>
+        </actionGroup>
+
+        <!-- Fill customer new shipping address -->
+        <actionGroup ref="CustomerCheckoutFillNewShippingAddressActionGroup" stepKey="fillShippingAddress">
+            <argument name="address" value="US_Address_TX"/>
+        </actionGroup>
+
+        <!-- Click next button to open payment section -->
+        <actionGroup ref="StorefrontCheckoutClickNextButtonActionGroup" stepKey="clickNext"/>
+        <comment userInput="BIC workaround" stepKey="waitForShipmentPageLoad"/>
+
+         <!-- Use store credit -->
+        <actionGroup ref="UseStoreCreditPaymentSectionActionGroup" stepKey="useStoreCredit"/>
+
+        <!-- Check order summary in checkout -->
+        <comment userInput="BIC workaround" stepKey="waitForPaymentSectionLoaded"/>
+        <actionGroup ref="ClickPlaceOrderActionGroup" stepKey="clickPlaceOrderButton"/>
+        <seeElement selector="{{CheckoutSuccessMainSection.success}}" stepKey="orderIsSuccessfullyPlaced"/>
+        <grabTextFrom selector="{{CheckoutSuccessMainSection.orderNumber22}}" stepKey="grabOrderNumber"/>
+
+        <!-- Check that the mini cart is empty -->
+        <actionGroup ref="AssertMiniCartEmptyActionGroup" stepKey="assertMiniCartEmpty"/>
+
+        <!-- Open created order in backend -->
+        <amOnPage url="{{AdminOrdersPage.url}}" stepKey="goToOrders"/>
+        <waitForPageLoad stepKey="waitForPageLoad"/>
+        <actionGroup ref="OpenOrderByIdActionGroup" stepKey="filterOrderGridById">
+            <argument name="orderId" value="$grabOrderNumber"/>
+        </actionGroup>
+
+        <!-- Assert order status is correct -->
+        <see selector="{{AdminOrderDetailsInformationSection.orderStatus}}" userInput="Pending" stepKey="seeOrderStatus"/>
+
+        <!-- Go to customer order history and assert order total -->
+        <amOnPage url="{{StorefrontCustomerDashboardPage.url}}" stepKey="navigateToCustomerDashboardPage"/>
+        <waitForPageLoad stepKey="waitForCustomerDashboardPageLoad"/>
+        <see selector="{{StorefrontCustomerRecentOrdersSection.orderTotal}}" userInput="$470.00" stepKey="checkOrderTotalInStorefront"/>
+
+        <!-- Delete gift card account -->
+        <actionGroup ref="DeleteGiftCardAccountActionGroup" stepKey="deleteGiftCardAccount">
+            <argument name="giftCardAccountCode" value="$giftCardAccountCode"/>
+        </actionGroup>
+    </test>
+</tests>

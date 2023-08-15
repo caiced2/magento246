@@ -1,0 +1,119 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+ /**
+  * Copyright © Magento, Inc. All rights reserved.
+  * See COPYING.txt for license details.
+  */
+-->
+
+<tests xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xsi:noNamespaceSchemaLocation="urn:magento:mftf:Test/etc/testSchema.xsd">
+    <test name="AdminCreateOrderBySkuWithRestrictScopePermissionTest">
+        <annotations>
+            <features value="AdvancedCheckout"/>
+            <title value="Validating restricted SKU get appropriate response to user"/>
+            <stories value="Validating restricted SKU get appropriate response to user"/>
+            <testCaseId value="AC-2227"/>
+            <useCaseId value="ACP2E-245"/>
+            <severity value="MAJOR"/>
+            <description value="Admin with restricted website access if tries to create order By SKU of other website product should get appropriate response."/>
+            <group value="AdvancedCheckout"/>
+        </annotations>
+        <before>
+            <actionGroup ref="AdminLoginActionGroup" stepKey="login"/>
+
+            <!-- Create product -->
+            <createData entity="SimpleProduct2" stepKey="createSimpleProduct"/>
+
+            <!-- Create new website,store and store view -->
+            <comment userInput="Create new website,store and store view" stepKey="createWebsite"/>
+            <actionGroup ref="AdminSystemStoreOpenPageActionGroup" stepKey="goToAdminSystemStorePage"/>
+            <actionGroup ref="AdminCreateWebsiteActionGroup" stepKey="adminCreateNewWebsite">
+                <argument name="newWebsiteName" value="{{NewWebSiteData.name}}"/>
+                <argument name="websiteCode" value="{{NewWebSiteData.code}}"/>
+            </actionGroup>
+            <actionGroup ref="AdminCreateNewStoreGroupActionGroup" stepKey="adminCreateNewStore">
+                <argument name="website" value="{{NewWebSiteData.name}}"/>
+                <argument name="storeGroupName" value="{{NewStoreData.name}}"/>
+                <argument name="storeGroupCode" value="{{NewStoreData.code}}"/>
+            </actionGroup>
+            <actionGroup ref="AdminCreateStoreViewActionGroup" stepKey="adminCreateNewStoreView">
+                <argument name="StoreGroup" value="NewStoreData"/>
+                <argument name="customStore" value="NewStoreData"/>
+            </actionGroup>
+
+            <!-- Create user role with restricted one website access -->
+            <actionGroup ref="AdminCreateUserRoleWithScopeActionGroup" stepKey="createRestrictedAdminRole">
+                <argument name="role" value="RestrictedAdminRole"/>
+                <argument name="scopeName" value="{{NewWebSiteData.name}}"/>
+            </actionGroup>
+            <waitForPageLoad time="60" stepKey="waitForPageLoad"/>
+
+            <!-- Create new user with restricted user role created in previous step -->
+            <actionGroup ref="AdminCreateUserWithRoleActionGroup" stepKey="createRestrictedAdmin">
+                <argument name="role" value="RestrictedAdminRole"/>
+                <argument name="user" value="NewAdminUser"/>
+            </actionGroup>
+
+            <!-- Logout and login with newly created restricted user -->
+            <actionGroup ref="AdminLogoutActionGroup" stepKey="logout"/>
+            <actionGroup ref="AdminLoginActionGroup" stepKey="loginLimitedAdmin">
+                <argument name="username" value="{{NewAdminUser.username}}"/>
+                <argument name="password" value="{{NewAdminUser.password}}"/>
+            </actionGroup>
+
+            <!-- Create customer -->
+            <actionGroup ref="AdminCreateCustomerWithWebSiteAndGroupActionGroup" stepKey="createCustomer">
+                <argument name="website" value="{{NewWebSiteData.name}}"/>
+                <argument name="storeView" value="{{NewStoreData.name}}"/>
+            </actionGroup>
+        </before>
+        <after>
+            <actionGroup ref="AdminLogoutActionGroup" stepKey="logout"/>
+            <actionGroup ref="AdminLoginActionGroup" stepKey="login"/>
+
+            <!-- Delete product -->
+            <deleteData createDataKey="createSimpleProduct" stepKey="deleteSimpleProduct"/>
+
+            <!-- Delete customer -->
+            <actionGroup ref="AdminDeleteCustomerActionGroup" stepKey="deleteCustomer">
+                <argument name="customerEmail" value="Simple_US_Customer.email"/>
+            </actionGroup>
+
+            <!-- Delete Admin user and role -->
+            <actionGroup ref="AdminDeleteCreatedUserActionGroup" stepKey="deleteAdminUser">
+                <argument name="user" value="NewAdminUser"/>
+            </actionGroup>
+            <actionGroup ref="AdminDeleteUserRoleWithSpecifiedPermissionActionGroup" stepKey="deleteRole">
+                <argument name="role" value="RestrictedAdminRole"/>
+            </actionGroup>
+
+            <!-- Delete test website -->
+            <actionGroup ref="AdminDeleteWebsiteActionGroup" stepKey="deleteTestWebsite">
+                <argument name="websiteName" value="{{NewWebSiteData.name}}"/>
+            </actionGroup>
+
+            <actionGroup ref="AdminLogoutActionGroup" stepKey="logout1"/>
+        </after>
+        <!-- Log out of admin and login with newly created user -->
+
+        <!-- Open Create New Order page -->
+        <actionGroup ref="NavigateToNewOrderPageExistingCustomerActionGroup" stepKey="navigateToNewOrderPageWithExistingCustomer">
+            <argument name="customer" value="Simple_US_Customer"/>
+            <argument name="storeView" value="NewStoreData"/>
+        </actionGroup>
+
+        <comment userInput="Adding product to order for existing customer" stepKey="createOrder"/>
+
+        <!-- Add Product to Order by Sku -->
+        <actionGroup ref="AdminAddProductToOrderBySKU" stepKey="addProductToOrderBySku">
+            <argument name="productSKU" value="$$createSimpleProduct.sku$$"/>
+            <argument name="productNumber" value="0"/>
+        </actionGroup>
+
+        <comment userInput="Added product to order for existing customer" stepKey="addedProductToOrder"/>
+
+        <!-- Validate and confirm error message -->
+        <see selector="{{AdminMessagesSection.noticeMessage}}" after="addedProductToOrder" userInput="The SKU was not found in the catalog." stepKey="seeErrorMessage"/>
+    </test>
+</tests>

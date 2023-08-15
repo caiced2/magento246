@@ -1,0 +1,283 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+ /**
+  * Copyright © Magento, Inc. All rights reserved.
+  * See COPYING.txt for license details.
+  */
+-->
+<tests xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="urn:magento:mftf:Test/etc/testSchema.xsd">
+    <test name="DynamicBlockVerifyEachCustomerSegmentTypeTest">
+        <annotations>
+            <features value="PageBuilder"/>
+            <stories value="Dynamic Block"/>
+            <title value="Verify Dynamic Block Content Renders For Guests and Registered Customers Depending on Customer Segment"/>
+            <description value="Verify that Dynamic Block content renders for guest customers when dynamic block is tied
+            to All Segments, a customer segment for 'Visitors and Registered Customers', or a customer segment for
+            'Visitors'. Verify that Dynamic Block content renders for registered customers when dynamic block is tied to
+            All Segments, a customer segment for 'Visitors and Registered Customers', or a customer segment for
+            'Registered Customers'. Verify that Dynamic Block content does not render for guests when dynamic block is
+            tied to a customer segment for 'Registered Customers'. Verify that Dynamic Block content does not render for
+            registered customers when dynamic block is tied to a customer segment for 'Visitors'."/>
+            <severity value="BLOCKER"/>
+            <testCaseId value="MC-15309"/>
+            <useCaseId value="PB-720"/>
+            <group value="pagebuilder"/>
+            <group value="pagebuilder-ee"/>
+            <group value="pagebuilder-dynamic-block"/>
+            <group value="pagebuilder-dynamic-block-content"/>
+        </annotations>
+
+        <before>
+            <!-- Create 1 Customer, 1 Page, 4 Dynamic Blocks, & 3 Segments (Visitors, Registered Customers, Visitors & Registered Customers) -->
+            <actionGroup ref="AdminLoginActionGroup" stepKey="LoginAsAdmin"/>
+            <createData entity="Simple_US_Customer" stepKey="createCustomer"/>
+            <createData entity="_emptyCmsPage" stepKey="createCMSPage"/>
+            <createData entity="_defaultDynamicBlock" stepKey="dynamicBlockAllSegments"/>
+            <createData entity="_defaultDynamicBlock" stepKey="dynamicBlockVisitorsAndRegisteredCustomers"/>
+            <createData entity="_defaultDynamicBlock" stepKey="dynamicBlockRegisteredCustomers"/>
+            <createData entity="_defaultDynamicBlock" stepKey="dynamicBlockVisitors"/>
+            <createData entity="customerSegmentForGuests" stepKey="customerSegmentVisitorsAndRegisteredCustomers">
+                <field key="apply_to">0</field>
+            </createData>
+            <createData entity="customerSegmentForGuests" stepKey="customerSegmentRegisteredCustomers">
+                <field key="apply_to">1</field>
+            </createData>
+            <createData entity="customerSegmentForGuests" stepKey="customerSegmentVisitors"/>
+        </before>
+
+        <after>
+            <!-- Delete Data -->
+            <deleteData createDataKey="createCustomer" stepKey="deleteCustomer"/>
+            <deleteData createDataKey="createCMSPage" stepKey="deleteCMSPage"/>
+            <actionGroup ref="DeleteBannerActionGroup" stepKey="deleteDynamicBlockAllSegments">
+                <argument name="bannerName" value="$dynamicBlockAllSegments.name$"/>
+            </actionGroup>
+            <actionGroup ref="DeleteBannerActionGroup" stepKey="deleteDynamicBlockVisitorsAndRegisteredCustomers">
+                <argument name="bannerName" value="$dynamicBlockVisitorsAndRegisteredCustomers.name$"/>
+            </actionGroup>
+            <actionGroup ref="DeleteBannerActionGroup" stepKey="deleteDynamicBlockRegisteredCustomers">
+                <argument name="bannerName" value="$dynamicBlockRegisteredCustomers.name$"/>
+            </actionGroup>
+            <actionGroup ref="DeleteBannerActionGroup" stepKey="deleteDynamicBlockVisitors">
+                <argument name="bannerName" value="$dynamicBlockVisitors.name$"/>
+            </actionGroup>
+            <actionGroup ref="FindAndDeleteCustomerSegmentActionGroup" stepKey="deleteCustomerSegmentVisitorsAndRegisteredCustomers">
+                <argument name="segmentName" value="$customerSegmentVisitorsAndRegisteredCustomers.name$"/>
+            </actionGroup>
+            <actionGroup ref="FindAndDeleteCustomerSegmentActionGroup" stepKey="deleteCustomerSegmentRegisteredCustomers">
+                <argument name="segmentName" value="$customerSegmentRegisteredCustomers.name$"/>
+            </actionGroup>
+            <actionGroup ref="FindAndDeleteCustomerSegmentActionGroup" stepKey="deleteCustomerSegmentVisitors">
+                <argument name="segmentName" value="$customerSegmentVisitors.name$"/>
+            </actionGroup>
+            <magentoCron groups="index" stepKey="reindex"/>
+            <actionGroup ref="AdminLogoutActionGroup" stepKey="logout"/>
+        </after>
+
+        <!-- Add Heading to Dynamic Block for All Segments -->
+        <actionGroup ref="NavigateToCreatedDynamicBlockActionGroup" stepKey="openDynamicBlockAllSegments">
+            <argument name="Banner" value="$dynamicBlockAllSegments$"/>
+        </actionGroup>
+        <actionGroup ref="switchToPageBuilderStage" stepKey="switchToPageBuilderStageAllSegments"/>
+        <actionGroup ref="removeContentTypeFromStageByIndex" stepKey="removeHTMLContentTypeAllSegments">
+            <argument name="contentType" value="PageBuilderHtmlContentType"/>
+            <argument name="contentTypeNumber" value="1"/>
+        </actionGroup>
+        <actionGroup ref="confirmRemovalModal" stepKey="confirmRemovalModalAllSegments"/>
+        <actionGroup ref="dragContentTypeToContainer" stepKey="dragRowToContainerAllSegments">
+            <argument name="contentType" value="PageBuilderRowContentType"/>
+            <argument name="containerTargetType" value="PageBuilderRootContainerContentType"/>
+        </actionGroup>
+        <actionGroup ref="expandPageBuilderPanelMenuSection" stepKey="expandPageBuilderPanelMenuSectionAllSegments">
+            <argument name="contentType" value="PageBuilderHeadingContentType"/>
+        </actionGroup>
+        <actionGroup ref="dragContentTypeToContainer" stepKey="dragHeadingToRowAllSegments">
+            <argument name="contentType" value="PageBuilderHeadingContentType"/>
+            <argument name="containerTargetType" value="PageBuilderRowContentType"/>
+        </actionGroup>
+        <actionGroup ref="enterHeadingOnStage" stepKey="enterHeadingOnStageAllSegments">
+            <argument name="headingText" value="{{PageBuilderHeading_AllSegments.value}}"/>
+        </actionGroup>
+        <actionGroup ref="clickOutsideLiveEditHeading" stepKey="clickOutsideLiveEditHeadingAllSegments">
+            <argument name="index" value="1"/>
+        </actionGroup>
+        <actionGroup ref="exitPageBuilderFullScreen" stepKey="exitPageBuilderFullScreenAllSegments"/>
+        <actionGroup ref="SaveDynamicBlockActionGroup" stepKey="saveDynamicBlockAllSegments"/>
+
+        <!-- Add Heading to Dynamic Block for Visitors and Registered Customers -->
+        <actionGroup ref="NavigateToCreatedDynamicBlockActionGroup" stepKey="openDynamicBlockVisitorsAndRegisteredCustomers">
+            <argument name="Banner" value="$dynamicBlockVisitorsAndRegisteredCustomers$"/>
+        </actionGroup>
+        <actionGroup ref="AdminSelectCustomerSegmentForDynamicBlockActionGroup" stepKey="selectCustomerSegmentVisitorsAndRegisteredCustomers">
+            <argument name="customerSegmentName" value="$customerSegmentVisitorsAndRegisteredCustomers.name$"/>
+        </actionGroup>
+        <actionGroup ref="switchToPageBuilderStage" stepKey="switchToPageBuilderStageVisitorsAndRegisteredCustomers"/>
+        <actionGroup ref="removeContentTypeFromStageByIndex" stepKey="removeHTMLContentTypeVisitorsAndRegisteredCustomers">
+            <argument name="contentType" value="PageBuilderHtmlContentType"/>
+            <argument name="contentTypeNumber" value="1"/>
+        </actionGroup>
+        <actionGroup ref="confirmRemovalModal" stepKey="confirmRemovalModalVisitorsAndRegisteredCustomers"/>
+        <actionGroup ref="dragContentTypeToContainer" stepKey="dragRowToContainerVisitorsAndRegisteredCustomers">
+            <argument name="contentType" value="PageBuilderRowContentType"/>
+            <argument name="containerTargetType" value="PageBuilderRootContainerContentType"/>
+        </actionGroup>
+        <actionGroup ref="expandPageBuilderPanelMenuSection" stepKey="expandPageBuilderPanelMenuSectionVisitorsAndRegisteredCustomers">
+            <argument name="contentType" value="PageBuilderHeadingContentType"/>
+        </actionGroup>
+        <actionGroup ref="dragContentTypeToContainer" stepKey="dragHeadingToRowVisitorsAndRegisteredCustomers">
+            <argument name="contentType" value="PageBuilderHeadingContentType"/>
+            <argument name="containerTargetType" value="PageBuilderRowContentType"/>
+        </actionGroup>
+        <actionGroup ref="enterHeadingOnStage" stepKey="enterHeadingOnStageVisitorsAndRegisteredCustomers">
+            <argument name="headingText" value="{{PageBuilderHeading_VisitorsAndRegisteredCustomers.value}}"/>
+        </actionGroup>
+        <actionGroup ref="clickOutsideLiveEditHeading" stepKey="clickOutsideLiveEditHeadingVisitorsAndRegisteredCustomers">
+            <argument name="index" value="1"/>
+        </actionGroup>
+        <actionGroup ref="exitPageBuilderFullScreen" stepKey="exitPageBuilderFullScreenVisitorsAndRegisteredCustomers"/>
+        <actionGroup ref="SaveDynamicBlockActionGroup" stepKey="saveDynamicBlock"/>
+
+        <!-- Add Heading to Dynamic Block for Registered Customers -->
+        <actionGroup ref="NavigateToCreatedDynamicBlockActionGroup" stepKey="openDynamicBlockRegisteredCustomers">
+            <argument name="Banner" value="$dynamicBlockRegisteredCustomers$"/>
+        </actionGroup>
+        <actionGroup ref="AdminSelectCustomerSegmentForDynamicBlockActionGroup" stepKey="selectCustomerSegmentRegisteredCustomers">
+            <argument name="customerSegmentName" value="$customerSegmentRegisteredCustomers.name$"/>
+        </actionGroup>
+        <actionGroup ref="switchToPageBuilderStage" stepKey="switchToPageBuilderStageRegisteredCustomers"/>
+        <actionGroup ref="removeContentTypeFromStageByIndex" stepKey="removeHTMLContentTypeRegisteredCustomers">
+            <argument name="contentType" value="PageBuilderHtmlContentType"/>
+            <argument name="contentTypeNumber" value="1"/>
+        </actionGroup>
+        <actionGroup ref="confirmRemovalModal" stepKey="confirmRemovalModalRegisteredCustomers"/>
+        <actionGroup ref="dragContentTypeToContainer" stepKey="dragRowToContainerRegisteredCustomers">
+            <argument name="contentType" value="PageBuilderRowContentType"/>
+            <argument name="containerTargetType" value="PageBuilderRootContainerContentType"/>
+        </actionGroup>
+        <actionGroup ref="expandPageBuilderPanelMenuSection" stepKey="expandPageBuilderPanelMenuSectionRegisteredCustomers">
+            <argument name="contentType" value="PageBuilderHeadingContentType"/>
+        </actionGroup>
+        <actionGroup ref="dragContentTypeToContainer" stepKey="dragHeadingToRowRegisteredCustomers">
+            <argument name="contentType" value="PageBuilderHeadingContentType"/>
+            <argument name="containerTargetType" value="PageBuilderRowContentType"/>
+        </actionGroup>
+        <actionGroup ref="enterHeadingOnStage" stepKey="enterHeadingOnStageRegisteredCustomers">
+            <argument name="headingText" value="{{PageBuilderHeading_RegisteredCustomers.value}}"/>
+        </actionGroup>
+        <actionGroup ref="clickOutsideLiveEditHeading" stepKey="clickOutsideLiveEditHeadingRegisteredCustomers">
+            <argument name="index" value="1"/>
+        </actionGroup>
+        <actionGroup ref="exitPageBuilderFullScreen" stepKey="exitPageBuilderFullScreenRegisteredCustomers"/>
+        <actionGroup ref="SaveDynamicBlockActionGroup" stepKey="saveDynamicBlockRegisteredCustomers"/>
+
+        <!-- Add Heading to Dynamic Block for Visitors -->
+        <actionGroup ref="NavigateToCreatedDynamicBlockActionGroup" stepKey="openDynamicBlockVisitors">
+            <argument name="Banner" value="$dynamicBlockVisitors$"/>
+        </actionGroup>
+        <actionGroup ref="AdminSelectCustomerSegmentForDynamicBlockActionGroup" stepKey="selectCustomerSegmentVisitors">
+            <argument name="customerSegmentName" value="$customerSegmentVisitors.name$"/>
+        </actionGroup>
+        <actionGroup ref="switchToPageBuilderStage" stepKey="switchToPageBuilderStageVisitors"/>
+        <actionGroup ref="removeContentTypeFromStageByIndex" stepKey="removeHTMLContentTypeVisitors">
+            <argument name="contentType" value="PageBuilderHtmlContentType"/>
+            <argument name="contentTypeNumber" value="1"/>
+        </actionGroup>
+        <actionGroup ref="confirmRemovalModal" stepKey="confirmRemovalModalVisitors"/>
+        <actionGroup ref="dragContentTypeToContainer" stepKey="dragRowToContainerVisitors">
+            <argument name="contentType" value="PageBuilderRowContentType"/>
+            <argument name="containerTargetType" value="PageBuilderRootContainerContentType"/>
+        </actionGroup>
+        <actionGroup ref="expandPageBuilderPanelMenuSection" stepKey="expandPageBuilderPanelMenuSectionVisitors">
+            <argument name="contentType" value="PageBuilderHeadingContentType"/>
+        </actionGroup>
+        <actionGroup ref="dragContentTypeToContainer" stepKey="dragHeadingToRowVisitors">
+            <argument name="contentType" value="PageBuilderHeadingContentType"/>
+            <argument name="containerTargetType" value="PageBuilderRowContentType"/>
+        </actionGroup>
+        <actionGroup ref="enterHeadingOnStage" stepKey="enterHeadingOnStageVisitors">
+            <argument name="headingText" value="{{PageBuilderHeading_Visitors.value}}"/>
+        </actionGroup>
+        <actionGroup ref="clickOutsideLiveEditHeading" stepKey="clickOutsideLiveEditHeadingVisitors">
+            <argument name="index" value="1"/>
+        </actionGroup>
+        <actionGroup ref="exitPageBuilderFullScreen" stepKey="exitPageBuilderFullScreenVisitors"/>
+        <actionGroup ref="SaveDynamicBlockActionGroup" stepKey="saveDynamicBlockVisitors"/>
+
+        <!-- Add Dynamic Blocks to CMS Page -->
+        <actionGroup ref="NavigateToCreatedCMSPageActionGroup" stepKey="navigateToCMSPage">
+            <argument name="CMSPage" value="$createCMSPage$"/>
+        </actionGroup>
+        <actionGroup ref="switchToPageBuilderStage" stepKey="switchToPageBuilderStage"/>
+        <actionGroup ref="expandPageBuilderPanelMenuSection" stepKey="expandMenuSectionAddContent">
+            <argument name="contentType" value="PageBuilderDynamicBlockContentType"/>
+        </actionGroup>
+        <actionGroup ref="dragContentTypeToContainer" stepKey="dragDynamicBlockToStage">
+            <argument name="contentType" value="PageBuilderDynamicBlockContentType"/>
+            <argument name="containerTargetType" value="PageBuilderRootContainerContentType"/>
+        </actionGroup>
+        <actionGroup ref="duplicateContentType" stepKey="duplicateContentType1">
+            <argument name="contentType" value="PageBuilderDynamicBlockContentType"/>
+        </actionGroup>
+        <actionGroup ref="duplicateContentType" stepKey="duplicateContentType2">
+            <argument name="contentType" value="PageBuilderDynamicBlockContentType"/>
+        </actionGroup>
+        <actionGroup ref="duplicateContentType" stepKey="duplicateContentType3">
+            <argument name="contentType" value="PageBuilderDynamicBlockContentType"/>
+        </actionGroup>
+        <actionGroup ref="openPageBuilderEditPanel" stepKey="openEditPanelAllSegments">
+            <argument name="contentType" value="PageBuilderDynamicBlockContentType"/>
+            <argument name="contentTypeIndex" value="1"/>
+        </actionGroup>
+        <actionGroup ref="searchAndSelectDynamicBlockInGrid" stepKey="searchAndSelectDynamicBlockInGridAllSegments">
+            <argument name="block" value="$dynamicBlockAllSegments$"/>
+        </actionGroup>
+        <actionGroup ref="saveEditPanelSettings" stepKey="saveEditPanelSettingsAllSegments"/>
+        <actionGroup ref="openPageBuilderEditPanelByIndex" stepKey="openEditPanelVisitorsAndRegisteredCustomers">
+            <argument name="contentType" value="PageBuilderDynamicBlockContentType"/>
+            <argument name="contentTypeIndex" value="2"/>
+        </actionGroup>
+        <actionGroup ref="searchAndSelectDynamicBlockInGrid" stepKey="searchAndSelectDynamicBlockInGridVisitorsAndRegisteredCustomers">
+            <argument name="block" value="$dynamicBlockVisitorsAndRegisteredCustomers$"/>
+        </actionGroup>
+        <actionGroup ref="saveEditPanelSettings" stepKey="saveEditPanelSettingsVisitorsAndRegisteredCustomers"/>
+        <actionGroup ref="openPageBuilderEditPanelByIndex" stepKey="openEditPanelRegisteredCustomers">
+            <argument name="contentType" value="PageBuilderDynamicBlockContentType"/>
+            <argument name="contentTypeIndex" value="3"/>
+        </actionGroup>
+        <actionGroup ref="searchAndSelectDynamicBlockInGrid" stepKey="searchAndSelectDynamicBlockInGridRegisteredCustomers">
+            <argument name="block" value="$dynamicBlockRegisteredCustomers$"/>
+        </actionGroup>
+        <actionGroup ref="saveEditPanelSettings" stepKey="saveEditPanelSettingsRegisteredCustomers"/>
+        <actionGroup ref="openPageBuilderEditPanelByIndex" stepKey="openEditPanelVisitors">
+            <argument name="contentType" value="PageBuilderDynamicBlockContentType"/>
+            <argument name="contentTypeIndex" value="4"/>
+        </actionGroup>
+        <actionGroup ref="searchAndSelectDynamicBlockInGrid" stepKey="searchAndSelectDynamicBlockInGridVisitors">
+            <argument name="block" value="$dynamicBlockVisitors$"/>
+        </actionGroup>
+        <actionGroup ref="saveEditPanelSettings" stepKey="saveEditPanelSettingsVisitors"/>
+        <actionGroup ref="exitPageBuilderFullScreen" stepKey="exitPageBuilderFullScreenCMSPage"/>
+        <actionGroup ref="SaveAndContinueEditCmsPageActionGroup" stepKey="saveAndContinueEditCmsPage"/>
+
+        <!-- Verify Guest Customer Can See Content in Each Dynamic Block on Storefront Except Content in Dynamic Block Tied to 'Registered Customers' Segment -->
+        <actionGroup ref="StorefrontGoToCMSPageActionGroup" stepKey="goToCMSPageOnStorefrontAsGuest">
+            <argument name="identifier" value="$createCMSPage.identifier$"/>
+        </actionGroup>
+        <seeElement selector="{{HeadingOnStorefront.headingText(PageBuilderHeadingTypeProperty_H2.value, PageBuilderHeading_AllSegments.value, '1')}}" stepKey="seeHeadingAllSegmentsStorefrontAsGuest"/>
+        <seeElement selector="{{HeadingOnStorefront.headingText(PageBuilderHeadingTypeProperty_H2.value, PageBuilderHeading_VisitorsAndRegisteredCustomers.value, '1')}}" stepKey="seeHeadingVisitorsAndRegisteredCustomersStorefrontAsGuest"/>
+        <seeElement selector="{{HeadingOnStorefront.headingText(PageBuilderHeadingTypeProperty_H2.value, PageBuilderHeading_Visitors.value, '1')}}" stepKey="seeHeadingVisitorsStorefrontAsGuest"/>
+        <dontSeeElement selector="{{HeadingOnStorefront.headingText(PageBuilderHeadingTypeProperty_H2.value, PageBuilderHeading_RegisteredCustomers.value, '1')}}" stepKey="dontSeeHeadingRegisteredCustomersStorefrontAsGuest"/>
+
+        <!-- Verify Registered Customer Can See Content in Each Dynamic Block on Storefront Except Content in Dynamic Block Tied to 'Visitors' Segment -->
+        <actionGroup ref="LoginToStorefrontActionGroup" stepKey="loginAsCustomer">
+            <argument name="Customer" value="$$createCustomer$$"/>
+        </actionGroup>
+        <actionGroup ref="StorefrontGoToCMSPageActionGroup" stepKey="goToCMSPageOnStorefrontAsRegisteredCustomer">
+            <argument name="identifier" value="$createCMSPage.identifier$"/>
+        </actionGroup>
+        <seeElement selector="{{HeadingOnStorefront.headingText(PageBuilderHeadingTypeProperty_H2.value, PageBuilderHeading_AllSegments.value, '1')}}" stepKey="seeHeadingAllSegmentsStorefrontAsRegisteredCustomer"/>
+        <seeElement selector="{{HeadingOnStorefront.headingText(PageBuilderHeadingTypeProperty_H2.value, PageBuilderHeading_VisitorsAndRegisteredCustomers.value, '1')}}" stepKey="seeHeadingVisitorsAndRegisteredCustomersStorefrontAsRegisteredCustomer"/>
+        <dontSeeElement selector="{{HeadingOnStorefront.headingText(PageBuilderHeadingTypeProperty_H2.value, PageBuilderHeading_Visitors.value, '1')}}" stepKey="dontSeeHeadingVisitorsStorefrontAsRegisteredCustomer"/>
+        <seeElement selector="{{HeadingOnStorefront.headingText(PageBuilderHeadingTypeProperty_H2.value, PageBuilderHeading_RegisteredCustomers.value, '1')}}" stepKey="seeHeadingRegisteredCustomersStorefrontAsRegisteredCustomer"/>
+    </test>
+</tests>

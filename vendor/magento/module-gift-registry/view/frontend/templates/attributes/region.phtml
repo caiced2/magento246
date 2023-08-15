@@ -1,0 +1,11 @@
+<?php
+/**
+ * Copyright © Magento, Inc. All rights reserved.
+ * See COPYING.txt for license details.
+ */
+
+?>
+
+<select id="<?= $block->escapeHtmlAttr($block->getSelectRegionId()) ?>" name="<?= $block->escapeHtmlAttr($block->getSelectRegionName()) ?>" title="<?= $block->escapeHtmlAttr(__('State/Province')) ?>" class="<?= $block->escapeHtmlAttr($block->getSelectRegionClass()) ?>" <?= /* @noEscape */ $block->getSelectRegionParams() ?>>
+    <option value=""><?= $block->escapeHtml($block->getSelectRegionDefault()) ?></option>
+</select>

@@ -1,0 +1,23 @@
+<?xml version="1.0"?>
+<!--
+/**
+ * Copyright © Magento, Inc. All rights reserved.
+ * See COPYING.txt for license details.
+ */
+-->
+<config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="urn:magento:framework:Acl/etc/acl.xsd">
+    <acl>
+        <resources>
+            <resource id="Magento_Backend::admin">
+                <resource id="Magento_Backend::stores">
+                    <resource id="Magento_Backend::stores_attributes">
+                        <resource id="Magento_CustomerCustomAttributes::attributes" title="Customer Attributes" translate="title" sortOrder="10">
+                            <resource id="Magento_CustomerCustomAttributes::customer_attributes" title="Customer" translate="title" sortOrder="10" />
+                            <resource id="Magento_CustomerCustomAttributes::customer_address_attributes" title="Customer Address" translate="title" sortOrder="20" />
+                        </resource>
+                    </resource>
+                </resource>
+            </resource>
+        </resources>
+    </acl>
+</config>

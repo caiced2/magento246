@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+ /**
+  * Copyright © Magento, Inc. All rights reserved.
+  * See COPYING.txt for license details.
+  */
+-->
+
+<sections xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+          xsi:noNamespaceSchemaLocation="urn:magento:mftf:Page/etc/SectionObject.xsd">
+    <section name="AdminGiftRegistrySection">
+        <element name="allStoreViews" type="button" selector="#store-change-button"/>
+        <element name="addedStoreView" type="button" selector="//ul[@data-role='stores-list']//a[contains(text(),{{arg}})]" parameterized="true"/>
+
+        <element name="saveGiftRegistry" type="button" selector="#save"/>
+        <element name="saveAndContinue" type="button" selector="#save_and_continue_edit"/>
+        <element name="deleteGiftRegistry" type="button" selector="#delete"/>
+        <element name="confirm" type="button" selector=".action-primary.action-accept"/>
+        <element name="code" type="text" selector="#code"/>
+        <element name="label" type="text" selector="#label"/>
+
+        <element name="attributes" type="button" selector="#magento_giftregistry_tabs_registry_attributes"/>
+        <element name="addAttribute" type="button" selector="#registry_add_new_attribute"/>
+        <element name="attributeCode" type="text" selector="#registry_attribute_{{var1}}_code" parameterized="true"/>
+        <element name="attributeInputType" type="select" selector="#registry_attribute_{{var1}}_type" parameterized="true"/>
+        <element name="attributeGroup" type="select" selector="#registry_attribute_{{var1}}_group" parameterized="true"/>
+        <element name="attributeLabel" type="text" selector="#registry_attribute_{{var1}}_label" parameterized="true"/>
+        <element name="attributeAddNewOption" type="button" selector="#registry_add_select_row_button_{{var1}}" parameterized="true"/>
+        <element name="attributeOptionCode" type="text" selector="#registry_attribute_{{var1}}_select_{{var2}}_code" parameterized="true"/>
+        <element name="attributeOptionLabel" type="text" selector="#registry_attribute_{{var1}}_select_{{var2}}_label" parameterized="true"/>
+        <element name="attributeOptionUseDefault" type="select" selector="#registry_attribute_{{var1}}_select_{{var2}}_label_use_default" parameterized="true"/>
+        <element name="deleteAttribute" type="button" selector="//*[@id='registry_option_{{var}}']//button[@title='Delete Attribute']" parameterized="true"/>
+    </section>
+</sections>

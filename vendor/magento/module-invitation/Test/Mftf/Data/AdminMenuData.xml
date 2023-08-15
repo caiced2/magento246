@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+ /**
+  * Copyright © Magento, Inc. All rights reserved.
+  * See COPYING.txt for license details.
+  */
+-->
+
+<entities xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+          xsi:noNamespaceSchemaLocation="urn:magento:mftf:DataGenerator/etc/dataProfileSchema.xsd">
+    <entity name="AdminMenuMarketingPrivateSalesInvitations">
+        <data key="pageTitle">Invitations</data>
+        <data key="title">Invitations</data>
+        <data key="dataUiId">magento-invitation-customer-magento-invitation</data>
+    </entity>
+    <entity name="AdminMenuReportsPrivateSalesConversions">
+        <data key="pageTitle">Conversion Rate Report</data>
+        <data key="title">Conversions</data>
+        <data key="dataUiId">magento-invitation-report-magento-invitation-order</data>
+    </entity>
+    <entity name="AdminMenuReportsPrivateSalesInvitations">
+        <data key="pageTitle">Invitations Report</data>
+        <data key="title">Invitations</data>
+        <data key="dataUiId">magento-invitation-report-magento-invitation-general</data>
+    </entity>
+    <entity name="AdminMenuReportsPrivateSalesInvitedCustomers">
+        <data key="pageTitle">Invited Customers Report</data>
+        <data key="title">Invited Customers</data>
+        <data key="dataUiId">magento-invitation-report-magento-invitation-customer</data>
+    </entity>
+</entities>

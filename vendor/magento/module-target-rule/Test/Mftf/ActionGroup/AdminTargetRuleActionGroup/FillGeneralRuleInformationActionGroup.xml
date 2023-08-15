@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+ /**
+  * Copyright © Magento, Inc. All rights reserved.
+  * See COPYING.txt for license details.
+  */
+-->
+<actionGroups xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:noNamespaceSchemaLocation="urn:magento:mftf:Test/etc/actionGroupSchema.xsd">
+    <actionGroup name="FillGeneralRuleInformation">
+        <arguments>
+            <argument name="information" defaultValue="SimpleTargetRuleGeneralInformation"/>
+        </arguments>
+        <click selector="{{AdminTargetRuleSection.ruleInformationTab}}" stepKey="clickOnTab"/>
+        <fillField selector="{{AdminTargetRuleInformationSection.ruleName}}" userInput="{{information.ruleName}}" stepKey="fillRuleName"/>
+        <selectOption selector="{{AdminTargetRuleInformationSection.status}}" userInput="{{information.status}}" stepKey="selectStatus"/>
+        <selectOption selector="{{AdminTargetRuleInformationSection.applyTo}}" userInput="{{information.applyTo}}" stepKey="selectApplyTo"/>
+    </actionGroup>
+</actionGroups>

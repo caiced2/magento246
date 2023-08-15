@@ -1,0 +1,75 @@
+<?xml version="1.0"?>
+<!--
+/**
+ * Copyright © Magento, Inc. All rights reserved.
+ * See COPYING.txt for license details.
+ */
+-->
+<page xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" layout="1column" xsi:noNamespaceSchemaLocation="urn:magento:framework:View/Layout/etc/page_configuration.xsd">
+    <head>
+        <title>Wish List Info</title>
+    </head>
+    <body>
+        <referenceContainer name="content">
+            <block class="Magento\MultipleWishlist\Block\Info" name="customer.wishlist.info" template="Magento_MultipleWishlist::info.phtml" cacheable="false">
+                <block class="Magento\Wishlist\Block\Rss\Link" name="wishlist.rss.link" template="Magento_Wishlist::rss/wishlist.phtml"/>
+                <block class="Magento\Wishlist\Block\Customer\Wishlist\Items" name="wishlist.view.items" as="items" template="Magento_Wishlist::item/list.phtml" cacheable="false">
+                    <block class="Magento\Wishlist\Block\Customer\Wishlist\Item\Column\Image" name="customer.wishlist.item.image" template="Magento_Wishlist::item/column/image.phtml" cacheable="false">
+                        <action method="setColClass">
+                            <argument name="value" xsi:type="string">photo</argument>
+                        </action>
+                    </block>
+                    <block class="Magento\MultipleWishlist\Block\Customer\Wishlist\Item\Column\Selector\Cart" name="customer.wishlist.item.selector" after="-" template="Magento_MultipleWishlist::item/column/selector.phtml" cacheable="false">
+                        <action method="setIsEnabled">
+                            <argument name="isEnabled" xsi:type="string">true</argument>
+                        </action>
+                        <action method="setColClass">
+                            <argument name="value" xsi:type="string">check</argument>
+                        </action>
+                    </block>
+                    <block class="Magento\Wishlist\Block\Customer\Wishlist\Item\Column" name="customer.wishlist.item.details" template="Magento_MultipleWishlist::item/column/details.phtml" cacheable="false">
+                        <action method="setTitle">
+                            <argument translate="true" name="title" xsi:type="string">Product Info</argument>
+                        </action>
+                        <action method="setColClass">
+                            <argument name="value" xsi:type="string">item</argument>
+                        </action>
+                        <block class="Magento\Wishlist\Block\Customer\Wishlist\Item\Options" name="customer.wishlist.item.options" cacheable="false"/>
+                    </block>
+                    <block class="Magento\Wishlist\Block\Customer\Wishlist\Item\Column" name="customer.wishlist.item.comment" template="Magento_MultipleWishlist::item/column/comment.phtml" cacheable="false">
+                        <action method="setTitle">
+                            <argument translate="true" name="title" xsi:type="string">Comment</argument>
+                        </action>
+                        <action method="setColClass">
+                            <argument name="value" xsi:type="string">comment</argument>
+                        </action>
+                    </block>
+                    <block class="Magento\Wishlist\Block\Customer\Wishlist\Item\Column" name="customer.wishlist.item.price" template="Magento_MultipleWishlist::item/column/price.phtml" cacheable="false">
+                        <action method="setTitle">
+                            <argument translate="true" name="title" xsi:type="string">Unit Price</argument>
+                        </action>
+                        <action method="setColClass">
+                            <argument name="value" xsi:type="string">price</argument>
+                        </action>
+                    </block>
+                    <block class="Magento\Wishlist\Block\Customer\Wishlist\Item\Column" name="customer.wishlist.item.to_cart_qty" template="Magento_MultipleWishlist::item/column/qty_input.phtml" cacheable="false">
+                        <action method="setTitle">
+                            <argument translate="true" name="title" xsi:type="string">Qty</argument>
+                        </action>
+                        <action method="setColClass">
+                            <argument name="value" xsi:type="string">qty</argument>
+                        </action>
+                    </block>
+                    <block class="Magento\MultipleWishlist\Block\Customer\Wishlist\Item\Column\Copy" name="customer.wishlist.item.to_wishlist" template="Magento_MultipleWishlist::item/column/copy.phtml" cacheable="false">
+                        <action method="setTitle">
+                            <argument translate="true" name="title" xsi:type="string">Add to Wish List</argument>
+                        </action>
+                        <action method="setColClass">
+                            <argument name="value" xsi:type="string">actions</argument>
+                        </action>
+                    </block>
+                </block>
+            </block>
+        </referenceContainer>
+    </body>
+</page>

@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+ /**
+  * Copyright © Magento, Inc. All rights reserved.
+  * See COPYING.txt for license details.
+  */
+-->
+<actionGroups xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+              xsi:noNamespaceSchemaLocation="urn:magento:mftf:Test/etc/actionGroupSchema.xsd">
+  <actionGroup name="SortContentDashboardGridColumnActionGroup">
+    <annotations>
+      <description>Clicks a column header in the Content Dashboard data grid to sort the column.</description>
+    </annotations>
+    <arguments>
+      <argument name="section" defaultValue="ContentDashboardPageGridSection"/>
+      <argument name="columnName" defaultValue="{{ContentDashboardGridColumns.status}}" type="string"/>
+    </arguments>
+    <waitForPageLoad stepKey="waitForGridLoad"/>
+    <waitForElementVisible selector="{{section.columnHeader(columnName)}}" stepKey="waitForGridColumn"/>
+    <click selector="{{section.columnHeader(columnName)}}" stepKey="clickGridColumnForAscending"/>
+    <click selector="{{section.columnHeader(columnName)}}" stepKey="clickGridColumnForDescending"/>
+    <waitForPageLoad stepKey="waitForGridSort"/>
+  </actionGroup>
+</actionGroups>

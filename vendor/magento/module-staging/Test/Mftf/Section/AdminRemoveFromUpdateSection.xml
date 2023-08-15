@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+/**
+   * Copyright © Magento, Inc. All rights reserved.
+   * See COPYING.txt for license details.
+   */
+-->
+<sections xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+          xsi:noNamespaceSchemaLocation="urn:magento:mftf:Page/etc/SectionObject.xsd">
+    <section name="AdminRemoveFromUpdateSection">
+        <element name="moveToAnotherUpdate" type="input" selector="input[data-index='staging_move_mode']" timeout="30"/>
+        <element name="selectMoveToAnotherUpdate" type="button" selector="//div[@data-index='staging_move']//div[text()='{{updateName}}']/../..//label[span[@style='display: none;']]/button" parameterized="true"/>
+        <element name="selectButtonDisabled" type="button" selector="//div[@data-index='staging_move']//tr[contains(@class, 'disabled')]//div[text()='{{updateName}}']" parameterized="true" timeout="30"/>
+        <element name="done" type="button" selector="aside[class*=remove]._show #save" timeout="30"/>
+        <element name="updateName" type="text" selector="//div[@data-index='staging_move']//tbody//tr//div[text()='{{var1}}']" parameterized="true"/>
+        <element name="title" type="text" selector="aside[class*=remove]._show h1"/>
+        <element name="scheduleSummaryName" type="text" selector=".schedule-summary-name>span"/>
+        <element name="gridCellTime" type="text" selector="//div[contains(@class, 'remove')]//span[contains(., 'Start Time')]"/>
+        <element name="gridCellTimeAscSort" type="text" selector="//div[contains(@class, 'remove')]//th[contains(., 'Start Time') and contains(@class, '_ascend')]"/>
+        <element name="searchStagingName" type="input" selector="//div[@data-index='staging_move_mode']/parent::fieldset//div[@class='data-grid-search-control-wrap']//input"/>
+        <element name="submitSearch" type="button" selector="//div[@data-index='staging_move_mode']/parent::fieldset//div[@class='data-grid-search-control-wrap']//button" timeout="20"/>
+        <element name="selectButtonAreDisabled" type="button" selector="//div[@data-index='staging_move']//tbody//tr//div[text()='{{var1}}']/parent::td/parent::tr" parameterized="true" timeout="20"/>
+        <element name="selectedUpdateName" type="text" selector=".schedule-summary-name"/>
+        <element name="deleteTheUpdate" type="button" selector="input[data-index='staging_delete_mode']"/>
+        <element name="warningMessage" type="text" selector="div[data-index='staging_delete'] .message-warning"/>
+    </section>
+</sections>

@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+ /**
+  * Copyright © Magento, Inc. All rights reserved.
+  * See COPYING.txt for license details.
+  */
+-->
+
+<actionGroups xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+              xsi:noNamespaceSchemaLocation="urn:magento:mftf:Test/etc/actionGroupSchema.xsd">
+    <actionGroup name="StorefrontFillGiftRegistryFieldsActionGroup">
+        <annotations>
+            <description>On the Gift Registry create/edit page set parameters</description>
+        </annotations>
+        <arguments>
+            <argument name="firstname" type="string" defaultValue="{{Simple_US_Customer.firstname}}"/>
+            <argument name="lastname" type="string" defaultValue="{{Simple_US_Customer.lastname}}"/>
+            <argument name="email" type="string" defaultValue="{{Simple_US_Customer.email}}"/>
+            <argument name="country" type="string" defaultValue="{{US_Address_TX.country}}"/>
+            <argument name="state" type="string" defaultValue="{{US_Address_TX.state}}"/>
+            <argument name="index" type="string" defaultValue="0"/>
+            <argument name="eventTitle" type="string" defaultValue="{{GiftRegistryBirthday.title}}"/>
+            <argument name="eventMessage" type="string" defaultValue="{{GiftRegistryBirthday.message}}"/>
+            <argument name="eventPrivacy" type="string" defaultValue="{{GiftRegistryBirthday.is_public}}"/>
+            <argument name="eventStatus" type="string" defaultValue="{{GiftRegistryBirthday.is_active}}"/>
+        </arguments>
+        <waitForElementVisible selector="{{StorefrontCreateEditGiftRegistrySection.eventName}}" stepKey="waitForElementLoad"/>
+        <fillField selector="{{StorefrontCreateEditGiftRegistrySection.eventName}}" userInput="{{eventTitle}}" stepKey="fillEventName"/>
+        <fillField selector="{{StorefrontCreateEditGiftRegistrySection.message}}" userInput="{{eventMessage}}" stepKey="fillEventMessage"/>
+        <selectOption selector="{{StorefrontCreateEditGiftRegistrySection.privacySettings}}" userInput="{{eventPrivacy}}" stepKey="setPrivacy"/>
+        <selectOption selector="{{StorefrontCreateEditGiftRegistrySection.status}}" userInput="{{eventStatus}}" stepKey="setStatus"/>
+        <selectOption selector="{{StorefrontCreateEditGiftRegistrySection.eventCountry}}" userInput="{{country}}" stepKey="setCountry"/>
+        <selectOption selector="{{StorefrontCreateEditGiftRegistrySection.countryRegion}}" userInput="{{state}}" stepKey="setState"/>
+        <fillField selector="{{StorefrontCreateEditGiftRegistrySection.firstNameByIndex(index)}}" userInput="{{firstname}}" stepKey="enterFirstName"/>
+        <fillField selector="{{StorefrontCreateEditGiftRegistrySection.lastNameByIndex(index)}}" userInput="{{lastname}}" stepKey="enterLastName"/>
+        <fillField selector="{{StorefrontCreateEditGiftRegistrySection.emailByIndex(index)}}" userInput="{{email}}" stepKey="enterEmail"/>
+        <selectOption selector="{{StorefrontCreateEditGiftRegistrySection.shippingAddressSelect}}" userInput="{{firstname}}" stepKey="setShippingAddress"/>
+    </actionGroup>
+</actionGroups>

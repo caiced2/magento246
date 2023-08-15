@@ -1,0 +1,117 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+/**
+ * Copyright © Magento, Inc. All rights reserved.
+ * See COPYING.txt for license details.
+ */
+-->
+<listing xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="urn:magento:module:Magento_Ui:etc/ui_configuration.xsd">
+    <argument name="data" xsi:type="array">
+        <item name="js_config" xsi:type="array">
+            <item name="provider" xsi:type="string">pagebuilder_dynamic_block_select_grid.pagebuilder_dynamic_block_select_grid_data_source</item>
+        </item>
+    </argument>
+    <settings>
+        <spinner>columns</spinner>
+        <deps>
+            <dep>pagebuilder_dynamic_block_select_grid.pagebuilder_dynamic_block_select_grid_data_source</dep>
+        </deps>
+    </settings>
+    <dataSource name="pagebuilder_dynamic_block_select_grid_data_source">
+        <argument name="data" xsi:type="array">
+            <item name="js_config" xsi:type="array">
+                <item name="component" xsi:type="string">Magento_Ui/js/grid/provider</item>
+            </item>
+        </argument>
+        <settings>
+            <storageConfig>
+                <param name="indexField" xsi:type="string">banner_id</param>
+            </storageConfig>
+            <updateUrl path="mui/index/render"/>
+        </settings>
+        <aclResource>Magento_Banner::magento_banner</aclResource>
+        <dataProvider class="Magento\Framework\View\Element\UiComponent\DataProvider\DataProvider" name="pagebuilder_dynamic_block_select_grid_data_source">
+            <settings>
+                <requestFieldName>banner_id</requestFieldName>
+                <primaryFieldName>banner_id</primaryFieldName>
+            </settings>
+        </dataProvider>
+    </dataSource>
+    <listingToolbar name="listing_top">
+        <filterSearch name="name"/>
+        <paging name="listing_paging"/>
+    </listingToolbar>
+    <columns name="columns">
+        <settings>
+            <childDefaults>
+                <param name="clickAction" xsi:type="string">view</param>
+                <param name="actionField" xsi:type="string">actions</param>
+                <param name="controlVisibility" xsi:type="boolean">true</param>
+            </childDefaults>
+        </settings>
+        <column name="banner_id" sortOrder="10">
+            <settings>
+                <label translate="true">ID</label>
+                <filter>textRange</filter>
+                <sorting>asc</sorting>
+            </settings>
+        </column>
+        <column name="name">
+            <settings>
+                <dataType>text</dataType>
+                <filter>text</filter>
+                <label translate="true">Dynamic Block Name</label>
+            </settings>
+        </column>
+        <column name="types" component="Magento_Ui/js/grid/columns/select">
+            <settings>
+                <options class="Magento\BannerPageBuilder\Ui\Component\Listing\Column\Options\Types"/>
+                <dataType>select</dataType>
+                <label translate="true">Dynamic Block Type</label>
+            </settings>
+        </column>
+        <column name="customer_segments">
+            <settings>
+                <sortable>false</sortable>
+                <dataType>text</dataType>
+                <label translate="true">Customer Segments</label>
+            </settings>
+        </column>
+        <column name="stores" class="storeColumn">
+            <settings>
+                <sortable>false</sortable>
+                <dataType>select</dataType>
+                <bodyTmpl>ui/grid/cells/html</bodyTmpl>
+                <label translate="true">Visibility</label>
+            </settings>
+        </column>
+        <column name="is_enabled" component="Magento_Ui/js/grid/columns/select">
+            <settings>
+                <label translate="true">Status</label>
+                <filter>select</filter>
+                <dataType>select</dataType>
+                <options>
+                    <option name="inactive" xsi:type="array">
+                        <item name="value" xsi:type="string">0</item>
+                        <item name="label" xsi:type="string" translate="true">Disabled</item>
+                    </option>
+                    <option name="active" xsi:type="array">
+                        <item name="value" xsi:type="string">1</item>
+                        <item name="label" xsi:type="string" translate="true">Enabled</item>
+                    </option>
+                </options>
+            </settings>
+        </column>
+        <column name="is_enabled_label" class="Magento\PageBuilder\Ui\Component\Listing\Columns\BlockStatus">
+            <settings>
+                <label translate="true">Status</label>
+                <visible>false</visible>
+            </settings>
+        </column>
+        <selectionsColumn name="ids" component="Magento_PageBuilder/js/grid/cells/single-select">
+            <settings>
+                <indexField>banner_id</indexField>
+            </settings>
+        </selectionsColumn>
+    </columns>
+</listing>

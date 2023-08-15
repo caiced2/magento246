@@ -1,0 +1,85 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+ /**
+  * Copyright © Magento, Inc. All rights reserved.
+  * See COPYING.txt for license details.
+  */
+-->
+<tests xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:noNamespaceSchemaLocation="urn:magento:mftf:Test/etc/testSchema.xsd">
+    <test name="DynamicBlockGetDisabledFromDynamicBlockEntityTest">
+        <annotations>
+            <features value="PageBuilder"/>
+            <stories value="Dynamic Block"/>
+            <title value="Dynamic Block - Entity Disabling"/>
+            <description value="Verify that disabled dynamic block entity appears disabled in grid and in form, and has disabled placeholder message on stage"/>
+            <severity value="MAJOR"/>
+            <testCaseId value="MC-3828"/>
+            <useCaseId value="MC-1413"/>
+            <group value="pagebuilder"/>
+            <group value="pagebuilder-ee"/>
+            <group value="pagebuilder-dynamic-block"/>
+        </annotations>
+        <before>
+            <createData entity="_defaultCmsPage" stepKey="createCMSPage"/>
+            <createData entity="_defaultDynamicBlock" stepKey="createDynamicBlock"/>
+            <actionGroup ref="AdminLoginActionGroup" stepKey="loginAsAdmin"/>
+        </before>
+        <after>
+            <deleteData createDataKey="createCMSPage" stepKey="deletePreReqCMSPage"/>
+            <actionGroup ref="DeleteBannerActionGroup" stepKey="deleteDynamicBlock">
+                <argument name="bannerName" value="$$createDynamicBlock.name$$"/>
+            </actionGroup>
+            <actionGroup ref="AdminLogoutActionGroup" stepKey="logout"/>
+        </after>
+        <actionGroup ref="NavigateToCreatedCMSPageActionGroup" stepKey="navigateToCreatedCMSPage">
+            <argument name="CMSPage" value="$$createCMSPage$$"/>
+        </actionGroup>
+        <actionGroup ref="switchToPageBuilderStage" stepKey="switchToPageBuilderStage"/>
+        <actionGroup ref="dragContentTypeToStage" stepKey="dragRowToRootContainer">
+            <argument name="contentType" value="PageBuilderRowContentType"/>
+            <argument name="containerTargetType" value="PageBuilderRootContainerContentType"/>
+        </actionGroup>
+        <actionGroup ref="expandPageBuilderPanelMenuSection" stepKey="expandMenuSectionAddContent">
+            <argument name="contentType" value="PageBuilderDynamicBlockContentType"/>
+        </actionGroup>
+        <actionGroup ref="dragContentTypeToStage" stepKey="dragBlockIntoStage">
+            <argument name="contentType" value="PageBuilderDynamicBlockContentType"/>
+        </actionGroup>
+        <actionGroup ref="openPageBuilderEditPanel" stepKey="openEditMenuOnStageAfterDrop">
+            <argument name="contentType" value="PageBuilderDynamicBlockContentType"/>
+        </actionGroup>
+        <actionGroup ref="searchAndSelectDynamicBlockInGrid" stepKey="searchBlockInGrid">
+            <argument name="block" value="$$createDynamicBlock$$"/>
+        </actionGroup>
+        <actionGroup ref="saveEditPanelSettings" stepKey="saveAndCloseSlideEditPanel"/>
+        <seeElementInDOM selector="{{DynamicBlockOnStage.title('1', $$createDynamicBlock.name$$)}}" stepKey="seeCreatedDynamicBlockTitleOnStage"/>
+        <actionGroup ref="exitPageBuilderFullScreen" stepKey="exitPageBuilderFullScreen"/>
+        <actionGroup ref="SaveCmsPageActionGroup" stepKey="saveCmsPage"/>
+        <comment userInput="Disable Dynamic Block" stepKey="commentDisableDynamicBlock"/>
+        <actionGroup ref="NavigateToCreatedDynamicBlockActionGroup" stepKey="navigateToCreatedDynamicBlockEditPage">
+            <argument name="Banner" value="$$createDynamicBlock$$"/>
+        </actionGroup>
+        <click selector="{{AdminBannerBasicActionSection.EnableBanner}}" stepKey="disableDynamicBlock"/>
+        <actionGroup ref="SaveAndContinueDynamicBlockActionGroup" stepKey="saveDynamicBlock"/>
+        <comment userInput="See Dynamic Block disabled on stage" stepKey="commentSeeDynamicBlockDisabledOnStage"/>
+        <actionGroup ref="NavigateToCreatedCMSPageActionGroup" stepKey="navigateToCreatedCMSPage2">
+            <argument name="CMSPage" value="$$createCMSPage$$"/>
+        </actionGroup>
+        <actionGroup ref="switchToPageBuilderStage" stepKey="switchToPageBuilderStage1"/>
+        <actionGroup ref="expandPageBuilderPanelMenuSection" stepKey="expandMenuSectionAddContent2">
+            <argument name="contentType" value="PageBuilderDynamicBlockContentType"/>
+        </actionGroup>
+        <waitForElementVisible selector="{{DynamicBlockOnStage.status('1', 'Dynamic Block disabled')}}" stepKey="seeDisabledDynamicBlockPlaceholder"/>
+        <comment userInput="See Dynamic Block disabled on form" stepKey="commentSeeDynamicBlockDisabledOnForm"/>
+        <actionGroup ref="openPageBuilderEditPanelByIndex" stepKey="openEditPanel">
+            <argument name="contentType" value="PageBuilderDynamicBlockContentType"/>
+        </actionGroup>
+        <waitForElementVisible selector="{{DynamicBlockOnForm.blockTitle('$$createDynamicBlock.name$$')}}" stepKey="seeSelectedDynamicBlockTitleOnFormInSlideout"/>
+        <waitForElementVisible selector="{{DynamicBlockOnForm.status('Disabled')}}" stepKey="waitForDisabledStatusInDynamicBlockForm"/>
+        <comment userInput="See Dynamic Block disabled in grid" stepKey="commentSeeDynamicBlockDisabledInGrid"/>
+        <click selector="{{DynamicBlockOnForm.selectBlockBtn}}" stepKey="clickSelectBlockBtn2"/>
+        <waitForElementVisible selector="{{DynamicBlockOnGrid.searchBox}}" stepKey="waitForBlockGrid2"/>
+        <seeElement selector="{{DynamicBlockOnGrid.status($$createDynamicBlock.name$$, 'Disabled')}}" stepKey="waitForDisabledStatusInDynamicBlockGrid"/>
+    </test>
+</tests>

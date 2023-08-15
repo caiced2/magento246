@@ -1,0 +1,24 @@
+<?xml version="1.0"?>
+<!--
+/**
+ * Copyright © Magento, Inc. All rights reserved.
+ * See COPYING.txt for license details.
+ */
+-->
+<page xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="urn:magento:framework:View/Layout/etc/page_configuration.xsd">
+    <update handle="merchandiser"/>
+    <body>
+        <referenceContainer name="content">
+            <block class="Magento\Framework\View\Element\Template" name="catalog.category.add.product.content" template="Magento_VisualMerchandiser::category/add_product.phtml">
+                <block class="Magento\VisualMerchandiser\Block\Adminhtml\Category\AddProduct\Tabs" name="catalog.category.add.product.tabs" as="catalog_category_add_product_tabs" template="Magento_Backend::widget/tabshoriz.phtml">
+                    <arguments>
+                        <argument name="id" xsi:type="string">catalog_category_add_product</argument>
+                        <argument name="dest_element_id" xsi:type="string">catalog_category_add_product_tabs_content</argument>
+                    </arguments>
+                    <block class="Magento\Framework\View\Element\Template" name="catalog.category.add.product.tabs.nametab" template="Magento_VisualMerchandiser::category/add_product/tabs/nametab.phtml" />
+                    <block class="Magento\VisualMerchandiser\Block\Adminhtml\Category\AddProduct\Tabs\SkuTab" name="catalog.category.add.product.tabs.skutab" template="Magento_VisualMerchandiser::category/add_product/tabs/skutab.phtml" />
+                </block>
+            </block>
+        </referenceContainer>
+    </body>
+</page>

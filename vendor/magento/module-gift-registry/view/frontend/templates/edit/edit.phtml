@@ -1,0 +1,30 @@
+<?php
+/**
+ * Copyright © Magento, Inc. All rights reserved.
+ * See COPYING.txt for license details.
+ */
+
+?>
+
+<form action="<?= $block->escapeUrl($block->getUrl('*/*/editPost')) ?>"
+      method="post"
+      id="form-validate"
+      class="form form-giftregistry-edit validation"
+      data-hasrequired="<?= $block->escapeHtmlAttr(__('* Required Fields')) ?>"
+      data-mage-init='{"validation":{}}'>
+    <?= $block->getBlockHtml('formkey') ?>
+    <?= $block->getChildHtml() ?>
+
+    <div class="actions-toolbar">
+        <div class="primary">
+            <button type="submit" id="submit.save" title="<?= $block->escapeHtmlAttr(__('Save')) ?>" class="action primary save">
+                <span><?= $block->escapeHtml(__('Save')) ?></span>
+            </button>
+        </div>
+        <div class="secondary">
+            <a href="<?= $block->escapeUrl($block->getBackUrl()) ?>" class="action back">
+                <span><?= $block->escapeHtml(__('Back')) ?></span>
+            </a>
+        </div>
+    </div>
+</form>

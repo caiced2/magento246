@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+ /**
+  * Copyright © Magento, Inc. All rights reserved.
+  * See COPYING.txt for license details.
+  */
+-->
+
+<actionGroups xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+              xsi:noNamespaceSchemaLocation="urn:magento:mftf:Test/etc/actionGroupSchema.xsd">
+    <actionGroup name="AdminProductsInCategoryAddProductsOpenAddBySKUTabActionGroup">
+        <annotations>
+            <description>Switch to 'Add Product by SKU' tab in 'Add Products' popup from 'Products on Category' section on category page in Admin.</description>
+        </annotations>
+
+        <waitForElementVisible selector="{{AdminCategoryAddProductsModalSection.addProductBySku}}" stepKey="waitTabButtonAppears"/>
+        <conditionalClick selector="{{AdminCategoryAddProductsModalSection.addProductBySku}}" dependentSelector="{{AdminCategoryAddProductsModalSection.productSkuInput}}" visible="false" stepKey="openAddBySKUTab"/>
+        <waitForElementVisible selector="{{AdminCategoryAddProductsModalSection.productSkuInput}}" stepKey="waitAddBySKUTabOpened"/>
+    </actionGroup>
+</actionGroups>

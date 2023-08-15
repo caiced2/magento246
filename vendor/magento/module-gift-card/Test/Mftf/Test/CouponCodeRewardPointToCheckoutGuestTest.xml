@@ -1,0 +1,93 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+ /**
+  * Copyright © Magento, Inc. All rights reserved.
+  * See COPYING.txt for license details.
+  */
+-->
+
+<tests xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xsi:noNamespaceSchemaLocation="urn:magento:mftf:Test/etc/testSchema.xsd">
+    <test name="CouponCodeRewardPointToCheckoutGuestTest">
+        <annotations>
+            <features value="Reward"/>
+            <stories value="MAGETWO-95803: Rewards points earned from coupon code are not applied to guests that create accounts after checking out"/>
+            <title value="Coupon code Reward points applying to guests that create accounts after checking out"/>
+            <description value="Check Reward points from purchase using the coupon code are added to the account."/>
+            <severity value="MAJOR"/>
+            <testCaseId value="MAGETWO-95889"/>
+            <group value="reward"/>
+        </annotations>
+
+        <before>
+            <magentoCLI command="config:set {{EnableFlatRateConfigData.path}} {{EnableFlatRateConfigData.value}}" stepKey="enableFlatRate"/>
+            <actionGroup ref="AdminLoginActionGroup" stepKey="loginAsAdmin"/>
+            <!-- Create a cart price rule -->
+            <actionGroup ref="AdminOpenCartPriceRulesPageActionGroup" stepKey="amOnCartPriceList"/>
+            <click selector="{{AdminCartPriceRulesSection.addNewRuleButton}}" stepKey="clickAddNewRule"/>
+            <fillField selector="{{AdminCartPriceRulesFormSection.ruleName}}" userInput="{{_defaultCoupon.code}}" stepKey="fillRuleName"/>
+            <selectOption selector="{{AdminCartPriceRulesFormSection.websites}}" userInput="Main Website" stepKey="selectWebsites"/>
+            <selectOption selector="{{AdminCartPriceRulesFormSection.customerGroups}}" userInput="NOT LOGGED IN" stepKey="selectCustomerGroup"/>
+            <selectOption selector="{{AdminCartPriceRulesFormSection.coupon}}" userInput="Specific Coupon" stepKey="selectCouponType"/>
+            <fillField selector="{{AdminCartPriceRulesFormSection.couponCode}}" userInput="123456789" stepKey="fillCouponCode"/>
+            <click selector="{{AdminCartPriceRulesFormSection.actionsHeader}}" stepKey="clickToExpandActions"/>
+            <selectOption selector="{{AdminCartPriceRulesFormSection.apply}}" userInput="Fixed amount discount for whole cart" stepKey="selectActionType"/>
+            <fillField selector="{{AdminCartPriceRulesFormSection.discountAmount}}" userInput="0.99" stepKey="fillDiscountAmount"/>
+            <fillField selector="{{AdminCartPriceRulesFormSection.addRewardPoints}}" userInput="22" stepKey="fillRewardPoints"/>
+            <click selector="{{AdminCartPriceRulesFormSection.saveAndContinue}}" stepKey="clickSaveAndContinueButton"/>
+            <!--Create category-->
+            <createData entity="_defaultCategory" stepKey="createCategory"/>
+            <!--Create Product-->
+            <createData entity="SimpleProduct" stepKey="product">
+                <field key="price">100</field>
+                <requiredEntity createDataKey="createCategory"/>
+            </createData>
+            <!--Add created product to the cart from frontend-->
+            <amOnPage url="/$$product.custom_attributes[url_key]$$.html" stepKey="goToProduct"/>
+            <actionGroup ref="StorefrontAddToCartCustomOptionsProductPageActionGroup" stepKey="AddProductToCard">
+                <argument name="productName" value="$$product.name$$"/>
+            </actionGroup>
+        </before>
+        <after>
+            <!--Delete category-->
+            <deleteData createDataKey="createCategory" stepKey="deleteCategory"/>
+            <!--Delete product-->
+            <deleteData createDataKey="product" stepKey="deleteProduct"/>
+
+            <!--Delete cart price rule-->
+            <actionGroup ref="DeleteCartPriceRuleByName" stepKey="deleteCartPriceRule">
+                <argument name="ruleName" value="{{_defaultCoupon.code}}"/>
+            </actionGroup>
+            <actionGroup ref="AdminLogoutActionGroup" stepKey="logout"/>
+        </after>
+        <!--Proceed to checkout-->
+        <click selector="{{StorefrontMinicartSection.showCart}}" stepKey="clickCart"/>
+        <click selector="{{StorefrontMinicartSection.goToCheckout}}" stepKey="goToCheckout"/>
+        <waitForPageLoad stepKey="waitForPageLoad"/>
+        <actionGroup ref="GuestCheckoutFillingShippingSectionActionGroup" stepKey="guestCheckoutFillingShippingSection">
+            <argument name="customerVar" value="CustomerEntityOne" />
+            <argument name="customerAddressVar" value="CustomerAddressSimple" />
+        </actionGroup>
+        <click selector="{{DiscountSection.DiscountTab}}" stepKey="clickToAddDiscount"/>
+        <fillField selector="{{DiscountSection.DiscountInput}}" userInput="123456789" stepKey="TypeDiscountCode"/>
+        <click selector="{{DiscountSection.ApplyCodeBtn}}" stepKey="clickToApplyDiscount"/>
+        <waitForPageLoad stepKey="WaitForDiscountToBeAdded"/>
+        <see userInput="Your coupon was successfully applied." stepKey="verifyText"/>
+        <comment userInput="BIC workaround" stepKey="waitForPlaceOrderButton"/>
+        <actionGroup ref="ClickPlaceOrderActionGroup" stepKey="clickPlaceOrder"/>
+        <click selector="{{CheckoutSuccessMainSection.createAnAccount}}" stepKey="createAnAccount"/>
+        <fillField selector="{{StorefrontCustomerCreateFormSection.passwordField}}" stepKey="fillPassword" userInput="anyPassword1"/>
+        <fillField selector="{{StorefrontCustomerCreateFormSection.confirmPasswordField}}" stepKey="fillConfirmationPassword" userInput="anyPassword1"/>
+        <click selector="{{StorefrontCustomerCreateFormSection.createAccountButton}}" stepKey="clickToCreateAnAccount"/>
+        <see stepKey="seeThankYouMessage" userInput="Thank you for registering with Main Website Store."/>
+        <see stepKey="seeFirstNameAfterCreation" userInput="{{CustomerEntityOne.firstname}}" selector="{{StorefrontCustomerDashboardAccountInformationSection.ContactInformation}}" />
+        <see stepKey="seeLastNameAfterCreation" userInput="{{CustomerEntityOne.lastname}}" selector="{{StorefrontCustomerDashboardAccountInformationSection.ContactInformation}}" />
+        <see stepKey="seeEmailAfterCreation" userInput="{{CustomerEntityOne.email}}" selector="{{StorefrontCustomerDashboardAccountInformationSection.ContactInformation}}" />
+        <click selector="{{StorefrontCustomerSidebarSection.sidebarTab('Reward Points')}}" stepKey="clickToOpenRewardPoints"/>
+        <grabTextFrom selector="td[data-th='Points']" stepKey="grabRewardPoint"/>
+        <assertEquals stepKey="checkRewardPoints">
+            <expectedResult type="string">+22</expectedResult>
+            <actualResult type="string">{$grabRewardPoint}</actualResult>
+        </assertEquals>
+    </test>
+</tests>

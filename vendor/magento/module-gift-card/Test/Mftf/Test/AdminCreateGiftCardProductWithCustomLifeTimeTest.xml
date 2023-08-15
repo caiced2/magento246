@@ -1,0 +1,115 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+ /**
+  * Copyright © Magento, Inc. All rights reserved.
+  * See COPYING.txt for license details.
+  */
+-->
+
+<tests xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xsi:noNamespaceSchemaLocation="urn:magento:mftf:Test/etc/testSchema.xsd">
+    <test name="AdminCreateGiftCardProductWithCustomLifeTimeTest">
+        <annotations>
+            <features value="GiftCard"/>
+            <stories value="Create gift card product"/>
+            <title value="Admin create gift card product cart of physical type with custom life time test"/>
+            <description value="Admin should be able to create gift cart of physical type with custom life time"/>
+            <severity value="CRITICAL"/>
+            <testCaseId value="MC-14494"/>
+            <group value="mtf_migrated"/>
+            <group value="GiftCard"/>
+        </annotations>
+        <before>
+            <!-- Create category -->
+            <createData entity="SimpleSubCategory" stepKey="createCategory"/>
+
+            <!-- Login as admin -->
+            <actionGroup ref="AdminLoginActionGroup" stepKey="loginAsAdmin"/>
+        </before>
+        <after>
+            <!-- Delete category -->
+            <deleteData createDataKey="createCategory" stepKey="deleteCategory"/>
+
+            <!-- Delete product -->
+            <actionGroup ref="DeleteProductBySkuActionGroup" stepKey="deleteProduct">
+                <argument name="sku" value="{{GiftCard.sku}}"/>
+            </actionGroup>
+            <actionGroup ref="ResetAdminDataGridToDefaultViewActionGroup" stepKey="clearFilters"/>
+
+            <!-- Log out -->
+            <actionGroup ref="AdminLogoutActionGroup" stepKey="logout"/>
+        </after>
+
+        <!-- Create  gift card product -->
+        <amOnPage url="{{AdminProductIndexPage.url}}" stepKey="navigateToCatalogProductGrid"/>
+        <waitForPageLoad stepKey="waitForCatalogProductGrid"/>
+        <actionGroup ref="GoToSpecifiedCreateProductPageActionGroup" stepKey="openProductFillForm">
+            <argument name="productType" value="giftcard"/>
+        </actionGroup>
+
+        <!-- Fill gift card product values -->
+        <actionGroup ref="AdminFillGiftCardProductFieldsActionGroup" stepKey="fillGiftCardProductFields">
+            <argument name="product" value="GiftCard"/>
+        </actionGroup>
+
+        <!-- Add amounts to gift card product -->
+        <actionGroup ref="addGiftCardAmount" stepKey="addFirstAmountToGiftCard">
+            <argument name="giftCardAmount" value="GiftCard.amounts[0]"/>
+        </actionGroup>
+        <actionGroup ref="addGiftCardAmount" stepKey="addSecondAmountToGiftCard">
+            <argument name="giftCardAmount" value="GiftCard.amounts[1]"/>
+        </actionGroup>
+
+        <!-- Add lifetime to gift card product -->
+        <click selector="{{AdminProductFormSection.sectionHeader}}" stepKey="openGiftCardInformationSection"/>
+        <actionGroup ref="AdminAddLifetimeToGiftCardProductActionGroup" stepKey="addLifetimeToGiftCard">
+            <argument name="lifetime" value="{{giftCardLifetime.value}}"/>
+        </actionGroup>
+
+        <!-- Add gift card product to category -->
+        <searchAndMultiSelectOption selector="{{AdminProductFormSection.categoriesDropdown}}" parameterArray="[$$createCategory.name$$]" stepKey="fillCategory"/>
+
+        <!-- Save gift card product -->
+        <actionGroup ref="SaveProductFormActionGroup" stepKey="saveProduct"/>
+
+        <!-- Assert  gift card product in grid -->
+        <actionGroup ref="viewGiftCardInAdminGrid" stepKey="seeGiftCardInGrid">
+            <argument name="product" value="GiftCard"/>
+        </actionGroup>
+
+        <!-- Assert  gift card product searchable by sku -->
+        <actionGroup ref="FilterProductGridBySku2ActionGroup" stepKey="filterProductGridBySku">
+            <argument name="sku" value="{{GiftCard.sku}}"/>
+        </actionGroup>
+        <click selector="{{AdminProductGridSection.firstRow}}" stepKey="clickOnGiftCardPage"/>
+        <waitForPageLoad stepKey="waitForGiftCardPageLoad"/>
+
+        <!-- Assert gift card product amount -->
+        <seeInField selector="{{AdminProductFormSection.cardAmount('1')}}" userInput="{{GiftCard.amounts[0]}}" stepKey="checkGiftCardFirstAmountFilled"/>
+        <seeInField selector="{{AdminProductFormSection.cardAmount('2')}}" userInput="{{GiftCard.amounts[1]}}" stepKey="checkGiftCardSecondAmountFilled"/>
+
+        <!-- Assert  gift card product in stock -->
+        <seeOptionIsSelected selector="{{AdminProductFormSection.productStockStatus}}" userInput="In Stock" stepKey="seeStockStatusInput"/>
+
+        <!-- Go to storefront page -->
+        <amOnPage url="{{StorefrontHomePage.url}}" stepKey="goToStorefrontPage"/>
+        <waitForPageLoad stepKey="waitForStorefrontPageLoad"/>
+
+        <!-- Quick search gift card product -->
+        <actionGroup ref="StorefrontCheckQuickSearchActionGroup" stepKey="quickSearchForGiftCardProduct">
+            <argument name="phrase" value="GiftCard.sku"/>
+        </actionGroup>
+
+        <!-- Go to gift card product page on storefront -->
+        <seeElement selector="{{StorefrontCategoryMainSection.productLink}}" stepKey="seeProductsInCategory"/>
+        <click selector="{{StorefrontCategoryMainSection.productLink}}" stepKey="openProduct"/>
+        <waitForPageLoad  stepKey="waitForProductToLoad"/>
+
+        <!-- Assert gift card product add to cart form -->
+        <seeElement selector="{{StorefrontProductInfoMainSection.giftCardAmountOption(GiftCard.amountsInteger[0])}}" stepKey="seeFirstAmounts"/>
+        <seeElement selector="{{StorefrontProductInfoMainSection.giftCardAmountOption(GiftCard.amountsInteger[1])}}" stepKey="seeSecondAmounts"/>
+        <seeElement selector="{{StorefrontProductInfoMainSection.giftCardSenderName}}" stepKey="seeSenderNameField"/>
+        <seeElement selector="{{StorefrontProductInfoMainSection.giftCardRecipientName}}" stepKey="seeRecipientNameField"/>
+        <seeElement selector="{{StorefrontProductInfoMainSection.giftCardMessage}}" stepKey="seeGiftCardMessageField"/>
+    </test>
+</tests>

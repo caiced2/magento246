@@ -1,0 +1,92 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+ /**
+  * Copyright © Magento, Inc. All rights reserved.
+  * See COPYING.txt for license details.
+  */
+-->
+<tests xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="urn:magento:mftf:Test/etc/testSchema.xsd">
+    <test name="AdminProceedToCheckoutWithBundleProductOnStagingPreviewTest">
+        <annotations>
+            <features value="BundleStaging"/>
+            <stories value="Admin manages staging update"/>
+            <title value="Proceed To Checkout with Bundle Product from Cart page during Staging Review"/>
+            <description value="Verify that Admin can Proceed To Checkout from Cart page during Staging Review"/>
+            <severity value="AVERAGE"/>
+            <testCaseId value="MC-40813"/>
+            <useCaseId value="MC-40271"/>
+            <group value="bundle"/>
+            <group value="bundleStaging"/>
+        </annotations>
+        <before>
+            <!-- Create Bundle Product with Drop-down Option and two Simple Products -->
+            <createData entity="SimpleProduct2" stepKey="createFirstProduct"/>
+            <createData entity="SimpleProduct2" stepKey="createSecondProduct"/>
+            <createData entity="ApiBundleProduct" stepKey="createBundleProduct"/>
+            <createData entity="DropDownBundleOption" stepKey="createBundleOption">
+                <requiredEntity createDataKey="createBundleProduct"/>
+            </createData>
+            <createData entity="ApiBundleLink" stepKey="LinkOptionToFirstProduct">
+                <requiredEntity createDataKey="createBundleProduct"/>
+                <requiredEntity createDataKey="createBundleOption"/>
+                <requiredEntity createDataKey="createFirstProduct"/>
+            </createData>
+            <createData entity="ApiBundleLink" stepKey="LinkOptionToSecondProduct">
+                <requiredEntity createDataKey="createBundleProduct"/>
+                <requiredEntity createDataKey="createBundleOption"/>
+                <requiredEntity createDataKey="createSecondProduct"/>
+            </createData>
+
+            <!-- Run reindex stock status -->
+            <actionGroup ref="CliIndexerReindexActionGroup" stepKey="reindex">
+                <argument name="indices" value="cataloginventory_stock"/>
+            </actionGroup>
+
+            <!-- Login as Admin -->
+            <actionGroup ref="AdminLoginActionGroup" stepKey="loginAsAdmin"/>
+        </before>
+        <after>
+            <deleteData createDataKey="createFirstProduct" stepKey="deleteFirstProduct"/>
+            <deleteData createDataKey="createSecondProduct" stepKey="deleteSecondProduct"/>
+            <deleteData createDataKey="createBundleProduct" stepKey="deleteBundleProduct"/>
+
+            <!-- Logout from Admin -->
+            <actionGroup ref="AdminLogoutActionGroup" stepKey="logoutFromAdmin"/>
+        </after>
+
+        <!-- Open Product edit page -->
+        <actionGroup ref="AdminProductPageOpenByIdActionGroup" stepKey="goToProductEditPage">
+            <argument name="productId" value="$createBundleProduct.id$"/>
+        </actionGroup>
+
+        <!-- Create Schedule Update -->
+        <generateDate date="+1 day" format="m/d/Y g:i A" stepKey="generateStartDate"/>
+        <generateDate date="+1 week" format="m/d/Y g:i A" stepKey="generateEndDate"/>
+        <actionGroup ref="FillScheduleUpdateRemovePriceActionGroup" stepKey="createNewStagingUpdate">
+            <argument name="staging" value="S5UpdateNameStaging"/>
+            <argument name="timeStart" value="{$generateStartDate}"/>
+            <argument name="timeEnd" value="{$generateEndDate}"/>
+        </actionGroup>
+
+        <!-- Open Product Staging preview -->
+        <actionGroup ref="GoToProductStagingPreview" stepKey="openStagingPreviewPage">
+            <argument name="productId" value="$createBundleProduct.id$"/>
+            <argument name="updateName" value="{{S5UpdateNameStaging.updateName}}"/>
+        </actionGroup>
+        <actionGroup ref="FocusOnStagingPreviewIframe" stepKey="focusOnStagedProductPreview"/>
+
+        <!-- Add Bundle Product to Cart -->
+        <actionGroup ref="StorefrontAddBundleProductToTheCartActionGroup" stepKey="addBundleProductToCart">
+            <argument name="productName" value="$createSecondProduct.name$"/>
+            <argument name="quantity" value="1"/>
+        </actionGroup>
+
+        <!-- Go to Cart and click 'Proceed To Checkout' button -->
+        <actionGroup ref="StorefrontOpenCartFromMinicartActionGroup" stepKey="openCartPage"/>
+        <actionGroup ref="StorefrontClickProceedToCheckoutActionGroup" stepKey="clickProceedToCheckout"/>
+        <waitForElement selector="{{CheckoutShippingSection.shippingTab}}" stepKey="waitForCheckoutPage"/>
+
+        <!-- Close Preview tab -->
+        <closeTab stepKey="closePreviewTab"/>
+    </test>
+</tests>

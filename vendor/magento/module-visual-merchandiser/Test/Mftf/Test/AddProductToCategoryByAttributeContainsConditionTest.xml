@@ -1,0 +1,112 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+ /**
+  * Copyright © Magento, Inc. All rights reserved.
+  * See COPYING.txt for license details.
+  */
+-->
+
+<tests xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xsi:noNamespaceSchemaLocation="urn:magento:mftf:Test/etc/testSchema.xsd">
+    <test name="AddProductToCategoryByAttributeContainsConditionTest">
+        <annotations>
+            <features value="VisualMerchandiser"/>
+            <stories value="Contains condition"/>
+            <group value="VisualMerchandiser"/>
+            <title value="Products assigned by rule: 'contains' condition should use fuzzy match"/>
+            <description value="Using Visual Merchandiser; When matching products by condition, the 'contains' condition should act like fuzzy match."/>
+            <severity value="AVERAGE"/>
+            <testCaseId value="MAGETWO-92779"/>
+        </annotations>
+
+        <before>
+            <!--Create category-->
+            <createData entity="SimpleSubCategory" stepKey="createCategory"/>
+            <!--Create Attribute-->
+            <createData entity="productDropDownAttribute" stepKey="productAttribute"/>
+            <createData entity="productAttributeOption" stepKey="attributeOptionCircle">
+                <field key="label">Circle</field>
+                <requiredEntity createDataKey="productAttribute"/>
+            </createData>
+            <createData  entity="productAttributeOption" stepKey="attributeOptionSquare">
+                <field key="label">Square</field>
+                <requiredEntity createDataKey="productAttribute"/>
+            </createData>
+             <createData entity="AddToDefaultSet" stepKey="addToAttributeSetHandle">
+                <requiredEntity createDataKey="productAttribute"/>
+            </createData>
+            <!--Get attribute options-->
+            <getData entity="ProductAttributeOptionGetter" index="1" stepKey="getAttributeOptionCircle">
+                <requiredEntity createDataKey="productAttribute"/>
+            </getData>
+            <getData entity="ProductAttributeOptionGetter" index="2" stepKey="getAttributeOptionSquare">
+                <requiredEntity createDataKey="productAttribute"/>
+            </getData>
+            <!--Create products-->
+            <createData entity="SimpleOne" stepKey="circleProduct">
+                <requiredEntity createDataKey="productAttribute"/>
+                <requiredEntity createDataKey="getAttributeOptionCircle"/>
+            </createData>
+            <createData entity="SimpleOne" stepKey="squareProduct">
+                <requiredEntity createDataKey="productAttribute"/>
+                <requiredEntity createDataKey="getAttributeOptionSquare"/>
+            </createData>
+        </before>
+
+        <after>
+            <!--Delete category-->
+            <deleteData createDataKey="createCategory" stepKey="deleteCategory"/>
+            <!--Delete products-->
+            <deleteData createDataKey="circleProduct" stepKey="deleteCircleProduct"/>
+            <deleteData createDataKey="squareProduct" stepKey="deleteSquareProduct"/>
+            <!--Delete attribute-->
+            <deleteData createDataKey="productAttribute" stepKey="deleteProductAttribute"/>
+            <actionGroup ref="CliIndexerReindexActionGroup" stepKey="reindex">
+                <argument name="indices" value=""/>
+            </actionGroup>
+        </after>
+
+        <!--Login-->
+        <actionGroup ref="AdminLoginActionGroup" stepKey="loginToAdminArea"/>
+
+        <!--Set config so that new attribute is available for smart category rules-->
+        <comment userInput="Update VM system config: Visible Attributes for Category Rules" stepKey="editSystemConfigComment"/>
+        <amOnPage url="{{AdminConfigVisualMerchandiserPage.url}}" stepKey="goToSystemConfig"/>
+        <waitForPageLoad stepKey="waitForSystemConfigPage"/>
+        <executeJS function="document.querySelector('{{VisualMerchandiserGeneralOptionsSection.attributesForRules}} option[value=$$productAttribute.attribute_code$$]').setAttribute('selected', 'selected')" stepKey="addNewAttributeForRule"/>
+        <click selector="{{AdminConfigSection.saveButton}}" stepKey="saveConfig"/>
+        <waitForPageLoad stepKey="waitForConfigSave"/>
+
+        <!--Configure smart category-->
+        <comment userInput="Configure condition for smart category" stepKey="configureCategoryComment"/>
+        <amOnPage url="{{AdminCategoryPage.url}}" stepKey="goToCategoryIndexPage"/>
+        <waitForPageLoad stepKey="waitForCategoryIndexPage"/>
+        <click selector="{{AdminCategorySidebarTreeSection.categoryInTree($$createCategory.name$$)}}" stepKey="clickCategoryInTree"/>
+        <click selector="{{AdminCategoryProductsSection.sectionHeader}}" stepKey="openProductInCategorySection"/>
+        <waitForElementVisible selector="{{AdminCategoryProductsSection.matchByRule}}" stepKey="seeMatchProductsToggle"/>
+        <click selector="{{AdminCategoryProductsSection.matchByRule}}" stepKey="checkMatchProductsByRule"/>
+        <waitForElementVisible selector="{{AdminCategoryProductsSection.automaticSort}}" stepKey="seeAutomaticSortingSelect"/>
+        <waitForElementVisible selector="{{AdminCategoryProductsSection.addCondition}}" stepKey="seeAddConditionButton"/>
+        <!--Set condition-->
+        <click selector="{{AdminCategoryProductsSection.addCondition}}" stepKey="clickAddConditionButton"/>
+        <selectOption selector="{{AdminCategoryProductsSection.conditionAttribute('1')}}" userInput="$$productAttribute.attribute_code$$" stepKey="selectAttributeForCondition"/>
+        <selectOption selector="{{AdminCategoryProductsSection.conditionOperator('1')}}" userInput="{{SmartCategoryConditionOperators.contains}}" stepKey="selectContainsOperator"/>
+        <fillField selector="{{AdminCategoryProductsSection.conditionValue('1')}}" userInput="quar" stepKey="fillConditionValue"/>
+        <actionGroup ref="AdminSaveCategoryFormActionGroup" stepKey="saveCategoryWithCondition"/>
+        <see selector="{{AdminCategoryMessagesSection.SuccessMessage}}" userInput="Category rules applied"  stepKey="seeConditionCreatedMessage"/>
+        <magentoCLI command="cron:run --group=index" stepKey="runCronReindex"/>
+        <!--Check admin category page for product in table-->
+        <click selector="{{AdminCategoryProductsSection.sectionHeader}}" stepKey="openProductCategoryGrid"/>
+        <waitForElementVisible selector="{{AdminCategoryProductsGridSection.row}}" stepKey="waitForGridToLoad"/>
+        <see selector="{{AdminCategoryProductsGridSection.rowProductName('1')}}" userInput="$$squareProduct.name$$" stepKey="seeCorrectProductInGrid"/>
+        <dontSee selector="{{AdminCategoryProductsGridSection.nameColumn}}" userInput="$$circleProduct.name$$" stepKey="dontSeeOtherProductInGrid"/>
+        <!--Check storefront category page for product in grid-->
+        <amOnPage url="$$createCategory.custom_attributes[url_key]$$.html" stepKey="goToStorefrontCategory"/>
+        <waitForPageLoad stepKey="waitForStorefrontCategory"/>
+        <seeElement selector="{{StorefrontCategoryProductSection.ProductTitleByName($$squareProduct.name$$)}}" stepKey="seeCorrectProductInStorefrontGrid"/>
+        <dontSeeElement selector="{{StorefrontCategoryProductSection.ProductTitleByName($$circleProduct.name$$)}}" stepKey="dontSeeOtherProductInStorefrontGrid"/>
+
+        <!--Logout-->
+        <actionGroup ref="AdminLogoutActionGroup" stepKey="logout"/>
+    </test>
+</tests>

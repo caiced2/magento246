@@ -1,0 +1,121 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+ /**
+  * Copyright © Magento, Inc. All rights reserved.
+  * See COPYING.txt for license details.
+  */
+-->
+
+<tests xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xsi:noNamespaceSchemaLocation="urn:magento:mftf:Test/etc/testSchema.xsd">
+    <test name="StorefrontCustomerCheckoutWithEnabledAddressSearchAndCodPaymentForSpecificCountryTest">
+        <annotations>
+            <title value="Checkout with search address enabled and cash on delivery payment method allowed for that specific Country."/>
+            <description value="Cash on delivery payment method visible for the allowed Countries only when admin settings search address enabled for checkout."/>
+            <stories value="Cash on delivery payment method visible for the allowed Countries only when admin settings search address enabled for checkout."/>
+            <features value="OnePageCheckout"/>
+            <severity value="AVERAGE"/>
+            <testCaseId value="AC-3513"/>
+            <useCaseId value="ACP2E-862"/>
+            <group value="checkout"/>
+        </annotations>
+        <before>
+            <!--Create Simple Product-->
+            <createData entity="SimpleProduct" stepKey="simpleProduct"/>
+            <!--Create Customer-->
+            <createData entity="Simple_US_Customer_US_UK_Addresses" stepKey="simpleUsCustomer"/>
+
+            <!--Enable address search setting-->
+            <magentoCLI command="config:set {{EnableCustomerAddressSearch.path}} {{EnableCustomerAddressSearch.value}}" stepKey="enableCustomerAddressSearch"/>
+            <magentoCLI command="config:set {{AddressSearchLimitTwo.path}} {{AddressSearchLimitTwo.value}}" stepKey="setAddressSearchLimitTwo"/>
+            <magentoCLI command="config:set {{DisplayBillingAddressOnPaymentPage.path}} {{DisplayBillingAddressOnPaymentPage.value}}" stepKey="displayBillingAddressOnPaymentPage"/>
+
+            <!--Enable Cash On Delivery payment method-->
+            <actionGroup ref="CashOnDeliverySpecificCountryActionGroup" stepKey="enableCashOnDelivery">
+                <argument name="path" value="{{CashOnDeliveryEnableConfigData.path}}"/>
+                <argument name="value" value="{{CashOnDeliveryEnableConfigData.value}}"/>
+                <argument name="allowSpecific" value="{{CashOnDeliveryApplicableSpecificCountryConfigData.value}}"/>
+                <argument name="specificCountry" value="GB"/>
+            </actionGroup>
+        </before>
+        <after>
+            <!--Customer log out-->
+            <actionGroup ref="StorefrontCustomerLogoutActionGroup" stepKey="customerLogout"/>
+            <!--Delete created product-->
+            <deleteData createDataKey="simpleProduct" stepKey="deleteProduct"/>
+            <!--Delete Customer-->
+            <deleteData createDataKey="simpleUsCustomer" stepKey="deleteCustomer"/>
+
+            <!--Disable address search setting-->
+            <magentoCLI command="config:set {{DisableCustomerAddressSearch.path}} {{DisableCustomerAddressSearch.value}}" stepKey="disableCustomerAddressSearch"/>
+            <magentoCLI command="config:set {{DefaultAddressSearchLimit.path}} {{DefaultAddressSearchLimit.value}}" stepKey="setAddressSearchLimitTen"/>
+            <magentoCLI command="config:set {{DisplayBillingAddressOnPaymentMethod.path}} {{DisplayBillingAddressOnPaymentMethod.value}}" stepKey="displayBillingAddressOnPaymentMethod"/>
+
+            <!--Disable Cash On Delivery method-->
+            <actionGroup ref="CashOnDeliverySpecificCountryActionGroup" stepKey="disableCashOnDelivery"/>
+        </after>
+
+        <!--Login to storefront-->
+        <actionGroup ref="LoginToStorefrontActionGroup" stepKey="customerLogin">
+            <argument name="Customer" value="$$simpleUsCustomer$$" />
+        </actionGroup>
+
+        <!--Add Simple Product to Shopping Cart and Proceed to checkout-->
+        <amOnPage url="{{StorefrontProductPage.url($$simpleProduct.custom_attributes[url_key]$$)}}" stepKey="amOnSimpleProductPage"/>
+        <actionGroup ref="StorefrontAddProductToCartActionGroup" stepKey="addProductToCart">
+            <argument name="product" value="$$simpleProduct$$"/>
+            <argument name="productCount" value="1"/>
+        </actionGroup>
+        <actionGroup ref="GoToCheckoutFromMinicartActionGroup" stepKey="goToCheckoutFromMiniCart" />
+
+        <!--Verify default address data-->
+        <actionGroup ref="CheckSelectedShippingAddressInCheckoutWithSearchActionGroup" stepKey="checkDefaultShippingAddressSelected">
+            <argument name="customerVar" value="$$simpleUsCustomer$$" />
+            <argument name="customerAddressVar" value="US_Address_AE" />
+        </actionGroup>
+
+        <!--Check that "Change Address" button is visible-->
+        <seeElement selector="{{CheckoutShippingAddressSection.changeAddressButton}}" stepKey="CheckIfChangeAddressButtonIsVisible"/>
+        <!--Select first shipping method-->
+        <click selector="{{CheckoutShippingMethodsSection.firstShippingMethod}}" stepKey="SelectFirstShippingMethod"/>
+        <actionGroup ref="StorefrontCheckoutClickNextButtonActionGroup" stepKey="ProceedToBillingStep"/>
+
+        <!--Review & Payments step of checkout is opened-->
+        <!--Verify Billing address is correct-->
+        <actionGroup ref="CheckShipToInformationInCheckoutActionGroup" stepKey="checkThatBillingAddressHasChangedToTheNewlyCreatedOne">
+            <argument name="customerVar" value="$$simpleUsCustomer$$" />
+            <argument name="customerAddressVar" value="US_Address_AE" />
+        </actionGroup>
+        <!-- Check that checkbox Billing and Shipping Address Are The Same is checked -->
+        <seeCheckboxIsChecked selector="{{CheckoutBillingAddressSection.billingAndShippingAddressAreTheSame}}" stepKey="checkBillingAndShippingAddressAreTheSameCheckboxIsChecked"/>
+
+        <!--Click on "Change Address" link-->
+        <click selector="{{CheckoutBillingAddressSection.changeAddressButtonOnPaymentPage}}" stepKey="ClickChangeAddressButtonOnPaymentMethod"/>
+        <!--Search customer address in 'Select Billing Address' popup on the Storefront Checkout on the 'Payment' step-->
+        <actionGroup ref="StorefrontSearchAddressInSelectBillingAddressPopupOnPaymentStepOnCheckoutActionGroup" stepKey="searchFirstAddressByPostcode">
+            <argument name="addressSearchTerm" value="{{UK_Not_Default_Address.postcode}}"/>
+        </actionGroup>
+        <!--Selects the specified address after 'Change Address' pop up has been opened on the Storefront Checkout page on the 'Payment' step-->
+        <actionGroup ref="StorefrontSelectCustomerAddressOnPaymentStepInCheckoutActionGroup" stepKey="selectFirstSpecifiedAddress">
+            <argument name="address" value="{{UK_Not_Default_Address.postcode}}"/>
+        </actionGroup>
+        <!--Assert COD payment method is available for the specific allowed Country-->
+        <seeElement selector="{{StorefrontCheckoutPaymentMethodsSection.cashOnDelivery}}" stepKey="seeCodPaymentMethod"/>
+
+        <!--Click on "Change Address" link back to default address-->
+        <click selector="{{CheckoutBillingAddressSection.changeAddressButtonOnPaymentPage}}" stepKey="ClickChangeAddressButtonOnPaymentMethodForUKAddress"/>
+        <!--Search customer address in 'Select Billing Address' popup on the Storefront Checkout on the 'Payment' step-->
+        <actionGroup ref="StorefrontSearchAddressInSelectBillingAddressPopupOnPaymentStepOnCheckoutActionGroup" stepKey="searchSecondAddressByPostCode">
+            <argument name="addressSearchTerm" value="{{US_Address_AE.postcode}}"/>
+        </actionGroup>
+        <!--Selects the specified address after 'Change Address' pop up has been opened on the Storefront Checkout page on the 'Payment' step-->
+        <actionGroup ref="StorefrontSelectCustomerAddressOnPaymentStepInCheckoutActionGroup" stepKey="selectSecondSpecifiedAddress">
+            <argument name="address" value="{{US_Address_AE.postcode}}"/>
+        </actionGroup>
+        <!--Assert COD payment method not available anymore-->
+        <dontSeeElement selector="{{StorefrontCheckoutPaymentMethodsSection.cashOnDelivery}}" stepKey="dontSeeCodPaymentMethod"/>
+
+        <!-- Place order -->
+        <actionGroup ref="ClickPlaceOrderActionGroup" stepKey="PlaceOrder" />
+    </test>
+</tests>

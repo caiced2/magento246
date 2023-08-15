@@ -1,0 +1,60 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+ /**
+  * Copyright © Magento, Inc. All rights reserved.
+  * See COPYING.txt for license details.
+  */
+-->
+
+<tests xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xsi:noNamespaceSchemaLocation="urn:magento:mftf:Test/etc/testSchema.xsd">
+    <test name="CreationScheduledUpdateForStagingDashboardTest" deprecated="Use AdminChangeScheduleUpdateFromStagingDashboardTest instead.">
+        <annotations>
+            <features value="Staging"/>
+            <stories value="MAGETWO-68894 - [Magento Cloud] - Staging Dashboard Page Crashing"/>
+            <title value="DEPRECATED. creating scheduled update for staging dashboard with max year value"/>
+            <description value="creating scheduled update for staging dashboard with max year value"/>
+            <severity value="AVERAGE"/>
+            <testCaseId value="MAGETWO-93965"/>
+            <group value="scheduledUpdate"/>
+            <group value="staging"/>
+            <skip>
+                <issueId value="DEPRECATED">Use AdminChangeScheduleUpdateFromStagingDashboardTest instead.</issueId>
+            </skip>
+            <group value="pr_exclude"/>
+        </annotations>
+
+        <!--Login as admin-->
+        <actionGroup ref="AdminLoginActionGroup" stepKey="LoginAsAdmin"/>
+
+        <!-- Perform reindex and flush cache -->
+        <magentoCLI command="cron:run --group=index" stepKey="runCronReindex"/>
+
+        <!--<Create Catalog Price Rule-->
+        <actionGroup ref="CreateCatalogPriceRuleForStagingActionGroup" stepKey="CreateCatalogPriceRule">
+            <argument name="scheduleData" value="ScheduleData"/>
+        </actionGroup>
+        <!--Update rule from staging dashboard-->
+        <actionGroup stepKey="changeDashboardView" ref="changeStagingView">
+            <argument name="view" value="timeline"/>
+        </actionGroup>
+
+        <actionGroup stepKey="filterByName" ref="FilterProductGridByName2ActionGroup">
+            <argument name="name" value="{{ScheduleData.newName}}"/>
+        </actionGroup>
+        <actionGroup ref="ScheduleUpdate" stepKey="ScheduleUpdate">
+            <argument name="ruleName" value="{{ScheduleData.newName}}"/>
+        </actionGroup>
+        <!--Verify update saved-->
+        <see userInput="{{ScheduleData.newName}}" stepKey="updateIsPresent"/>
+
+        <after>
+            <!--Remove update-->
+            <actionGroup ref="RemoveRule" stepKey="RemoveRule"/>
+            <amOnPage url="{{AdminStagingDashboardPage.url}}" stepKey="goToStagingDashboard"/>
+            <waitForPageLoad stepKey="waitForPageLoad"/>
+            <actionGroup ref="ClearFiltersAdminDataGridActionGroup" stepKey="clearFilter"/>
+        </after>
+
+    </test>
+</tests>

@@ -1,0 +1,41 @@
+<?php
+/**
+ * Copyright © Magento, Inc. All rights reserved.
+ * See COPYING.txt for license details.
+ */
+?>
+<?php if ($block->getSearchResults() && $block->getSearchResults()->getSize()) : ?>
+    <div class="block block-wishlist-search-results">
+        <div class="block-title">
+            <strong><?= $block->escapeHtml(__('Search Results')) ?></strong>
+        </div>
+        <div class="block-content">
+            <div class="table-wrapper">
+                <table class="wishlist data table" id="wishlist-search-results">
+                    <caption class="table-caption"><?= $block->escapeHtml(__('Search Results')) ?></caption>
+                    <thead>
+                    <tr>
+                        <th class="col name" scope="col"><?= $block->escapeHtml(__('Name')) ?></th>
+                        <th class="col list" scope="col"><?= $block->escapeHtml(__('Wish List Name')) ?></th>
+                        <th class="col actions" scope="col"><?= $block->escapeHtml(__('Actions')) ?></th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    <?php foreach ($block->getSearchResults() as $item) : ?>
+                        <tr>
+                            <td class="col name" data-th="<?= $block->escapeHtml(__('Name')) ?>"><?= $block->escapeHtml($item->getCustomer()->getName()) ?></td>
+                            <td class="col list" data-th="<?= $block->escapeHtml(__('Wish List Name')) ?>"><?= $block->escapeHtml($item->getName()) ?></td>
+                            <td class="col actions" data-th="<?= $block->escapeHtml(__('Actions')) ?>"><a href="<?= /* @noEscape */ $block->getWishlistLink($item) ?>" title="<?= $block->escapeHtmlAttr(__('View')) ?>" class="action view"><?= $block->escapeHtml(__('View')) ?></a></td>
+                        </tr>
+                    <?php endforeach; ?>
+                    </tbody>
+                </table>
+            </div>
+            <?php if ($block->getChildHtml('pager')) : ?>
+                <div class="toolbar toolbar-wishlist-results bottom"><?= $block->getChildHtml('pager') ?></div>
+            <?php endif; ?>
+        </div>
+    </div>
+<?php else : ?>
+    <div class="message error"><div><?= $block->escapeHtml(__('Your search returned no results.')) ?></div></div>
+<?php endif; ?>

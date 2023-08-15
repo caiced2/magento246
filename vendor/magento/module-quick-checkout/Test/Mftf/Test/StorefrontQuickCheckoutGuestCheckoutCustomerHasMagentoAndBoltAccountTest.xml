@@ -1,0 +1,86 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+ /**
+  * Copyright © Magento, Inc. All rights reserved.
+  * See COPYING.txt for license details.
+  */
+-->
+
+<tests xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xsi:noNamespaceSchemaLocation="urn:magento:mftf:Test/etc/testSchema.xsd">
+    <test name="StorefrontQuickCheckoutGuestCheckoutCustomerHasMagentoAndBoltAccountTest">
+        <annotations>
+            <features value="MagentoQuickCheckout"/>
+            <stories value="Customer enters email address that has account on the store and in Bolt"/>
+            <title value="Customer enters email address that has account on the store and in Bolt"/>
+            <description value="Customer has Magento and Bolt account, no OTP popup displayed and can continue to checkout as guest"/>
+            <severity value="CRITICAL"/>
+            <testCaseId value="customer-has-magento-and-bolt-account-no-otp-popup-displayed"/>
+            <group value="quick-checkout"/>
+        </annotations>
+        <before>
+            <magentoCLI command="config:set {{EnableFreeShippingConfigData.path}} {{EnableFreeShippingConfigData.value}}" stepKey="enableFreeShipping"/>
+            <!-- Login -->
+            <actionGroup ref="AdminLoginActionGroup" stepKey="login"/>
+            <actionGroup ref="AdminConfigureQuickCheckoutActionGroup" stepKey="configurePaymentMethod">
+                <argument name="methodAction" value="authorize_capture"/>
+            </actionGroup>
+            <!-- Create Product -->
+            <createData entity="_defaultCategory" stepKey="createCategory"/>
+            <createData entity="_defaultProduct" stepKey="createProduct">
+                <requiredEntity createDataKey="createCategory"/>
+            </createData>
+            <!-- Create Customer -->
+            <createData entity="Customer_With_Existing_Bolt_Account" stepKey="createCustomer"/>
+        </before>
+        <after>
+            <magentoCLI command="config:set {{DisableFreeShippingMethod.path}} {{DisableFreeShippingMethod.value}}" stepKey="disableFreeShipping"/>
+            <actionGroup ref="AdminDisableQuickCheckoutActionGroup" stepKey="disablePaymentMethod" />
+            <!-- Delete product -->
+            <deleteData stepKey="deleteCategory" createDataKey="createCategory"/>
+            <deleteData stepKey="deleteProduct" createDataKey="createProduct"/>
+            <!--Delete customer -->
+            <deleteData stepKey="deleteCustomer" createDataKey="createCustomer"/>
+            <!-- Logout -->
+            <actionGroup ref="AdminLogoutActionGroup" stepKey="logoutFromAdmin"/>
+        </after>
+
+        <!-- Navigate to storefront as a guest -->
+        <amOnPage url="{{StorefrontCategoryPage.url($$createCategory.name$$)}}" stepKey="navigateToCategoryPage"/>
+        <actionGroup ref="StorefrontAddProductToCartFromCategoryActionGroup" stepKey="addProductToCart">
+            <argument name="productName" value="$$createProduct.name$$"/>
+        </actionGroup>
+        <actionGroup ref="GoToCheckoutFromMinicartActionGroup" stepKey="goToCheckoutFromMinicart"/>
+
+        <!-- Fill email field with an existing customer email that has a bolt account and assert that password input appears -->
+        <waitForPageLoad stepKey="waitForCheckoutShippingSectionToLoad"/>
+        <fillField selector="{{CheckoutShippingSection.email}}" userInput="{{Customer_With_Existing_Bolt_Account.email}}" stepKey="fillEmail"/>
+        <!-- Close Bolt otp modal -->
+        <actionGroup ref="CloseOtpModalActionGroup" stepKey="closeBoltOtpModal"/>
+        <waitForElementVisible selector="{{CheckoutShippingSection.password}}" stepKey="waitForPasswordInput"/>
+
+        <!-- Fill in the guest customer's shipping information -->
+        <actionGroup ref="GuestCheckoutFillingShippingSectionNoEmailActionGroup" stepKey="guestCheckoutFillingShippingSection">
+            <argument name="customerVar" value="CustomerEntityOne"/>
+            <argument name="customerAddressVar" value="CustomerAddressSimple"/>
+        </actionGroup>
+
+        <!-- Click on Magento Payments radio button -->
+        <waitForElement selector="{{CheckoutPaymentSection.paymentSectionTitle}}" stepKey="waitForPlaceOrderButton"/>
+        <click selector="{{CheckoutPaymentSection.MagentoPaymentsHostedFieldsRadio}}" stepKey="clickMagentoPaymentsRadio"/>
+
+        <dontSeeElement selector="{{CheckoutPaymentSection.saveCreditCardCheckbox}}" stepKey="assertSaveCreditCardCheckboxVisible"/>
+        <dontSeeElement selector="{{CheckoutPaymentSection.boltConsentCheckbox}}" stepKey="assertBoltConsentCheckboxIsNotVisible"/>
+
+        <!-- Fill credit card form and submit -->
+        <actionGroup ref="StorefrontFillCreditCardFormActionGroup" stepKey="fillCreditCardForm"/>
+        <waitForElementVisible selector="{{CheckoutPaymentSection.MagentoPaymentsHostedFieldsPlaceOrderButton}}" stepKey="waitPlaceOrderButton"/>
+        <click selector="{{CheckoutPaymentSection.MagentoPaymentsHostedFieldsPlaceOrderButton}}" stepKey="clickPlaceOrderButton"/>
+
+        <!-- I see order successful page -->
+        <waitForLoadingMaskToDisappear stepKey="waitForLoadingMaskToDisappear"/>
+        <waitForElement selector="{{CheckoutSuccessMainSection.successTitle}}" stepKey="waitForLoadSuccessPageTitle"/>
+        <waitForElement selector="{{CheckoutSuccessMainSection.success}}" time="30" stepKey="waitForLoadSuccessPage"/>
+        <see selector="{{CheckoutSuccessMainSection.successTitle}}" userInput="Thank you for your purchase!" stepKey="checkOrderSuccessPageTitle"/>
+    </test>
+</tests>

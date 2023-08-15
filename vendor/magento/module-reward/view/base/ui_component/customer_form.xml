@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+/**
+ * Copyright © Magento, Inc. All rights reserved.
+ * See COPYING.txt for license details.
+ */
+-->
+<form xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="urn:magento:module:Magento_Ui:etc/ui_configuration.xsd">
+    <htmlContent name="customer_edit_tab_reward_content">
+        <block class="Magento\Reward\Block\Adminhtml\Customer\Edit\Tab\Reward" name="customer_edit_tab_reward" template="Magento_Reward::customer/reward.phtml">
+            <block class="Magento\Reward\Block\Adminhtml\Customer\Edit\Tab\Reward\Management" name="reward_management">
+                <arguments>
+                    <argument name="target_form" xsi:type="string">customer_form</argument>
+                </arguments>
+            </block>
+        </block>
+    </htmlContent>
+</form>

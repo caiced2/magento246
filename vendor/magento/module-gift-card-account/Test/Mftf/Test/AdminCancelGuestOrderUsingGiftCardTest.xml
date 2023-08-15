@@ -1,0 +1,115 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+ /**
+  * Copyright © Magento, Inc. All rights reserved.
+  * See COPYING.txt for license details.
+  */
+-->
+
+<tests xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xsi:noNamespaceSchemaLocation="urn:magento:mftf:Test/etc/testSchema.xsd">
+    <test name="AdminCancelGuestOrderUsingGiftCardTest">
+        <annotations>
+            <features value="GiftCardAccount"/>
+            <stories value="Guest gift card"/>
+            <title value="Cancel guest order placed using gift card"/>
+            <description value="A guest customer places an order using a gift card. Order is cancelled by admin. Amount is refunded to gift card"/>
+            <severity value="MAJOR"/>
+            <testCaseId value="MAGETWO-92855"/>
+            <group value="GiftCardAccount"/>
+        </annotations>
+        <before>
+            <magentoCLI command="config:set {{EnableFlatRateConfigData.path}} {{EnableFlatRateConfigData.value}}" stepKey="enableFlatRate"/>
+            <!--Create category-->
+            <createData entity="_defaultCategory" stepKey="createCategory"/>
+            <!--Create product-->
+            <createData entity="SimpleProduct" stepKey="createProduct">
+                <field key="price">55</field>
+                <requiredEntity createDataKey="createCategory"/>
+            </createData>
+            <!--Create gift card code pool-->
+            <createData entity="GiftCardCodePool" stepKey="createCodePool"/>
+            <!--Create gift card account-->
+            <createData entity="GiftCardAccount100" stepKey="createGiftCard"/>
+        </before>
+
+        <after>
+            <!--Delete product-->
+            <deleteData createDataKey="createProduct" stepKey="deleteProduct"/>
+            <!--Delete category-->
+            <deleteData createDataKey="createCategory" stepKey="deleteCategory"/>
+        </after>
+
+        <!--Check gift card and grab generated code-->
+        <comment userInput="Check gift card account is active and grab code." stepKey="checkAccountBeforeOrderComment"/>
+        <actionGroup ref="AdminLoginActionGroup" stepKey="loginToAdminArea"/>
+        <amOnPage url="{{AdminGiftCardAccountGridPage.url}}" stepKey="goToAccountGrid"/>
+        <actionGroup ref="SortByIdDescendingActionGroup" stepKey="sortAccountsByIdDesc"/>
+        <click selector="{{AdminGridTableSection.row('1')}}" stepKey="clickPrereqAccount"/>
+        <waitForPageLoad stepKey="waitForAccountEditPage"/>
+        <grabTextFrom selector="{{AdminGiftCardAccountInformationSection.giftCardCode}}" stepKey="giftCardAccountCode"/>
+        <see selector="{{AdminGiftCardAccountInformationSection.status}}" userInput="Available" stepKey="seeAccountAvailable"/>
+        <seeOptionIsSelected selector="{{AdminGiftCardAccountInformationSection.active}}" userInput="Yes" stepKey="seeAccountActive"/>
+        <!--Place order using gift card-->
+        <comment userInput="Customer places order using gift card for payment" stepKey="placeOrderComment"/>
+        <amOnPage url="{{StorefrontProductPage.url($$createProduct.custom_attributes[url_key]$$)}}" stepKey="goToProductPageStorefront"/>
+        <waitForPageLoad stepKey="waitForProductPageLoad"/>
+        <waitForElementClickable selector="{{StorefrontProductActionSection.addToCart}}" stepKey="waitForAddToCartButton"/>
+        <click selector="{{StorefrontProductActionSection.addToCart}}" stepKey="addProductToCart"/>
+        <waitForPageLoad stepKey="waitForProductToAdd"/>
+        <waitForElementVisible selector="{{StorefrontMessagesSection.success}}" stepKey="waitForSuccessMessage"/>
+        <amOnPage url="{{CheckoutPage.url}}/" stepKey="goToCheckout"/>
+        <waitForPageLoad stepKey="waitForCheckoutPage"/>
+        <actionGroup ref="GuestCheckoutFillingShippingSectionActionGroup" stepKey="fillOrderShippingInfo">
+            <argument name="customerVar" value="Simple_US_Customer"/>
+            <argument name="customerAddressVar" value="US_Address_TX"/>
+        </actionGroup>
+        <actionGroup ref="ApplyGiftCardToOrderActionGroup" stepKey="applyGiftCardToOrder">
+            <argument name="code" value="$giftCardAccountCode"/>
+        </actionGroup>
+        <actionGroup ref="CheckoutPlaceOrderActionGroup" stepKey="placeOrder">
+            <argument name="orderNumberMessage" value="CONST.successGuestCheckoutOrderNumberMessage" />
+            <argument name="emailYouMessage" value="CONST.successCheckoutEmailYouMessage"/>
+        </actionGroup>
+        <!--Admin cancels order-->
+        <comment userInput="Cancel order from admin area" stepKey="cancelOrderComment"/>
+        <amOnPage url="{{AdminOrdersPage.url}}" stepKey="goToOrdersIndexPage"/>
+        <waitForPageLoad stepKey="waitForOrderIndexPage"/>
+        <actionGroup ref="ResetAdminDataGridToDefaultViewActionGroup" stepKey="resetOrderIndexGrid"/>
+        <click selector="{{AdminDataGridTableSection.rowViewAction('1')}}" stepKey="clickCreatedOrderInGrid"/>
+        <see selector="{{AdminOrderDetailsInformationSection.orderStatus}}" userInput="Pending" stepKey="seeOrderPending"/>
+        <see selector="{{AdminOrderTotalSection.giftCardAccountDiscount}}" userInput="-$60.00" stepKey="seeGiftCardAppliedAmountInOrderTotals"/>
+        <see selector="{{AdminOrderTotalSection.grandTotal}}" userInput="$0.00" stepKey="seeTotalIsZero"/>
+        <actionGroup ref="CancelPendingOrderActionGroup" stepKey="cancelOrder"/>
+
+        <!--Check gift card balance and history-->
+        <comment userInput="Check gift card account after order canceled" stepKey="checkAccountAfterOrderComment"/>
+        <amOnPage url="{{AdminGiftCardAccountGridPage.url}}" stepKey="goToAccountGridAfterCancel"/>
+        <actionGroup ref="SortByIdDescendingActionGroup" stepKey="sortAccountsByIdDescAfterCancel"/>
+        <click selector="{{AdminGridTableSection.row('1')}}" stepKey="clickPrereqAccountAfterCancel"/>
+        <waitForPageLoad stepKey="waitForAccountEditPageAfterCancel"/>
+        <see selector="{{AdminGiftCardAccountInformationSection.giftCardCode}}" userInput="$giftCardAccountCode" stepKey="seeCorrectGiftCardCode"/>
+        <seeInField selector="{{AdminGiftCardAccountInformationSection.balance}}" userInput="{{GiftCardAccount100.balance}}" stepKey="seeCorrectBalanceAfterCancel"/>
+        <comment userInput="Check gift card account history" stepKey="checkHistoryComment"/>
+        <click selector="{{AdminGiftCardAccountTabSection.history}}" stepKey="openHistoryTab"/>
+        <!--See "created" in history-->
+        <see selector="{{AdminGiftCardAccountHistoryGridSection.rowAction('3')}}" userInput="Created" stepKey="seeHistoryCreatedAction"/>
+        <see selector="{{AdminGiftCardAccountHistoryGridSection.rowBalance('3')}}" userInput="${{GiftCardAccount100.balance}}" stepKey="seeHistoryCreatedBalance"/>
+        <see selector="{{AdminGiftCardAccountHistoryGridSection.rowBalanceChange('3')}}" userInput="${{GiftCardAccount100.balance}}" stepKey="seeHistoryCreatedBalanceChange"/>
+        <!--See "used" in history-->
+        <see selector="{{AdminGiftCardAccountHistoryGridSection.rowAction('2')}}" userInput="Used" stepKey="seeHistoryUsedAction"/>
+        <see selector="{{AdminGiftCardAccountHistoryGridSection.rowBalance('2')}}" userInput="$40.00" stepKey="seeHistoryUsedBalance"/>
+        <see selector="{{AdminGiftCardAccountHistoryGridSection.rowBalanceChange('2')}}" userInput="-$60.00" stepKey="seeHistoryUsedBalanceChange"/>
+        <!--See "updated" in history; from order cancel-->
+        <see selector="{{AdminGiftCardAccountHistoryGridSection.rowAction('1')}}" userInput="Updated" stepKey="seeHistoryUpdatedAction"/>
+        <see selector="{{AdminGiftCardAccountHistoryGridSection.rowBalance('1')}}" userInput="${{GiftCardAccount100.balance}}" stepKey="seeHistoryUpdatedBalance"/>
+        <see selector="{{AdminGiftCardAccountHistoryGridSection.rowBalanceChange('1')}}" userInput="$60.00" stepKey="seeHistoryUpdatedBalanceChange"/>
+
+        <!--Delete gift card account-->
+        <comment userInput="Delete gift card account" stepKey="deleteGiftCardComment"/>
+        <click selector="{{AdminMainActionsSection.delete}}" stepKey="deleteGiftCardAccount"/>
+        <waitForElementVisible selector="{{AdminConfirmationModalSection.ok}}" stepKey="waitForDeleteConfirmationModal"/>
+        <click selector="{{AdminConfirmationModalSection.ok}}" stepKey="clickConfirmDelete"/>
+        <see selector="{{AdminMessagesSection.success}}" userInput="This gift card account has been deleted." stepKey="seeDeleteSuccessMessage"/>
+    </test>
+</tests>

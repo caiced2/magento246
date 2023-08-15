@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+ /**
+  * Copyright © Magento, Inc. All rights reserved.
+  * See COPYING.txt for license details.
+  */
+-->
+<actionGroups xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:noNamespaceSchemaLocation="urn:magento:mftf:Test/etc/actionGroupSchema.xsd">
+    <actionGroup name="ShipmentFormActionGroup">
+        <fillField selector="{{StorefrontCheckoutCheckoutCustomerLoginSection.email}}" userInput="{{ShippingFormData.email}}" stepKey="setCustomerEmail"/>
+        <fillField selector="{{FillShipmentFormSection.firstname}}" userInput="{{ShippingFormData.fname}}" stepKey="SetCustomerFirstName"/>
+        <fillField selector="{{FillShipmentFormSection.lastname}}" userInput="{{ShippingFormData.lname}}" stepKey="SetCustomerLastName"/>
+        <fillField selector="{{FillShipmentFormSection.street}}" userInput="{{ShippingFormData.street}}" stepKey="SetCustomerStreetAddress"/>
+        <fillField selector="{{FillShipmentFormSection.city}}" userInput="{{ShippingFormData.city}}" stepKey="SetCustomerCity"/>
+        <fillField selector="{{FillShipmentFormSection.postcode}}" userInput="{{ShippingFormData.postcode}}" stepKey="SetCustomerZipCode"/>
+        <fillField selector="{{FillShipmentFormSection.telephone}}" userInput="{{ShippingFormData.telephone}}" stepKey="SetCustomerPhoneNumber"/>
+        <click selector="{{FillShipmentFormSection.region}}" stepKey="clickToSetState"/>
+        <click selector="{{FillShipmentFormSection.state}}" stepKey="clickToChooseState"/>
+        <click selector="{{FillShipmentFormSection.next}}" stepKey="clickToSaveShippingInfo"/>
+        <waitForPageLoad time="5" stepKey="waitForReviewAndPaymentsPageIsLoaded"/>
+        <seeInCurrentUrl url="payment" stepKey="reviewAndPaymentIsShown"/>
+    </actionGroup>
+</actionGroups>

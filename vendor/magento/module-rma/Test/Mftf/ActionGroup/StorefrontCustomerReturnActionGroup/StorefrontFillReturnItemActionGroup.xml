@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+ /**
+  * Copyright © Magento, Inc. All rights reserved.
+  * See COPYING.txt for license details.
+  */
+-->
+<actionGroups xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:noNamespaceSchemaLocation="urn:magento:mftf:Test/etc/actionGroupSchema.xsd">
+    <actionGroup name="StorefrontFillReturnItemActionGroup">
+        <arguments>
+            <argument name="attributeCode" type="string"/>
+            <argument name="item"/>
+        </arguments>
+        <fillField selector="{{StorefrontCustomerReturnSection.quantityToReturn('0')}}" userInput="{{item.qty}}" stepKey="fillFieldQuantityReturn"/>
+        <selectOption selector="{{StorefrontCustomerReturnSection.resolution('0')}}" userInput="{{item.resolution}}" stepKey="selectResolution"/>
+        <selectOption selector="{{StorefrontCustomerReturnSection.condition('0')}}" userInput="{{item.condition}}" stepKey="selectCondition"/>
+        <selectOption selector="{{StorefrontCustomerReturnSection.reason('0')}}" userInput="{{item.reason}}" stepKey="selectReason"/>
+        <selectOption selector="{{StorefrontCustomerReturnSection.newAttribute('0', attributeCode)}}" userInput="{{item.new_attribute}}" stepKey="selectNewAttribute"/>
+        <click selector="{{StorefrontCustomerReturnSection.submit}}" stepKey="clickSubmit"/>
+    </actionGroup>
+</actionGroups>

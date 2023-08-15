@@ -1,0 +1,216 @@
+<?php
+/**
+ * Copyright © Magento, Inc. All rights reserved.
+ * See COPYING.txt for license details.
+ */
+
+/** @var $block \Magento\GiftRegistry\Block\Search\Form */
+/** @var \Magento\Framework\View\Helper\SecureHtmlRenderer $secureRenderer */
+?>
+<span id="gr-please-wait"
+      class="please-wait load indicator"
+      data-text="<?= $block->escapeHtmlAttr(__('This won\'t take long . . .')) ?>">
+    <span><?= $block->escapeHtml(__('This won\'t take long . . .')) ?></span>
+</span>
+<?= /* @noEscape */ $secureRenderer->renderTag(
+    'style',
+    [],
+    '#gr-please-wait { display:none; }',
+    false
+); ?>
+
+<form action="<?= $block->escapeUrl($block->getActionUrl()) ?>"
+      method="post"
+      id="gr-search-form"
+      class="form form-giftregistry-search"
+      data-hasrequired="* <?= $block->escapeHtmlAttr(__('Required Fields')) ?>"
+>
+    <fieldset class="fieldset">
+        <?= $block->getBlockHtml('formkey') ?>
+        <legend class="legend"><span><?= $block->escapeHtml(__('Search Options')) ?></span></legend><br>
+        <div class="field type">
+            <label for="params-type-id" class="label">
+                <span><?= $block->escapeHtml(__('Gift Registry Type')) ?></span>
+            </label>
+            <div class="control">
+                <?= $block->getTypeSelectHtml() ?>
+                <div class="note">
+                    <?= $block->escapeHtml(
+                        __(
+                            'For better search results, first choose a gift registry type.'
+                            . ' By default, we search all registry types.'
+                        )
+                    ) ?>
+                </div>
+            </div>
+        </div>
+        <div class="field name required">
+            <label for="params_firstname" class="label">
+                <span><?= $block->escapeHtml(__('First Name')) ?></span>
+            </label>
+             <div class="control">
+                <input name="params[firstname]"
+                       id="params_firstname"
+                       type="text"
+                       value="<?= /* @noEscape */ $block->getFormData('firstname') ?>"
+                       class="input-text required-entry"
+                />
+            </div>
+        </div>
+        <div class="field lastname required">
+            <label for="params_lastname" class="label"><span><?= $block->escapeHtml(__('Last Name')) ?></span></label>
+            <div class="control">
+                <input name="params[lastname]"
+                       id="params_lastname"
+                       type="text"
+                       value="<?= /* @noEscape */ $block->getFormData('lastname') ?>"
+                       class="input-text required-entry"
+                />
+            </div>
+        </div>
+    </fieldset>
+
+    <fieldset class="fieldset" id="gr-type-specific-fieldset">
+        <legend class="legend"><span><?= $block->escapeHtml(__('Type Specific Options')) ?></span></legend><br>
+        <div class="fields fields-specific-options" id="gr-type-specific-options"></div>
+    </fieldset>
+    <?= /* @noEscape */ $secureRenderer->renderTag(
+        'style',
+        [],
+        '#gr-type-specific-fieldset { display:none; }',
+        false
+    ); ?>
+
+    <div class="actions-toolbar">
+        <input type="hidden" name="params[search]" value="type" />
+        <button type="submit" class="action search" title="<?= $block->escapeHtmlAttr(__('Search')) ?>">
+            <span><?= $block->escapeHtml(__('Search')) ?></span>
+        </button>
+    </div>
+</form>
+
+<form action="<?= $block->escapeUrl($block->getActionUrl()) ?>"
+      method="post"
+      id="gr-search-email-form"
+      class="form form-giftregistry-search"
+      data-hasrequired="* <?= $block->escapeHtmlAttr(__('Required Fields')) ?>"
+>
+    <fieldset class="fieldset">
+        <div class="field email required">
+             <label for="params_email" class="label">
+                 <span><?= $block->escapeHtml(__('Registrant Email')) ?></span>
+             </label>
+             <div class="control">
+                 <input name="params[email]"
+                        id="params_email"
+                        type="text"
+                        value="<?= $block->escapeHtmlAttr($block->getFormData('email')) ?>"
+                        class="input-text required-entry validate-email"
+                 />
+             </div>
+        </div>
+    </fieldset>
+    <div class="actions-toolbar">
+        <input type="hidden" name="params[search]" value="email" />
+        <button type="submit"
+                class="action search"
+                title="<?= $block->escapeHtmlAttr(__('Search')) ?>"
+        >
+            <span><?= $block->escapeHtml(__('Search')) ?></span>
+        </button>
+    </div>
+</form>
+
+<form action="<?= $block->escapeUrl($block->getActionUrl()) ?>"
+      method="post"
+      id="gr-search-id-form"
+      class="form form-giftregistry-search"
+      data-hasrequired="* <?= $block->escapeHtmlAttr(__('Required Fields')) ?>"
+>
+    <fieldset class="fieldset">
+        <div class="field id required">
+             <label for="params_id" class="label"><span><?= $block->escapeHtml(__('Gift Registry ID')) ?></span></label>
+             <div class="control">
+                 <input name="params[id]"
+                        id="params_id"
+                        type="text"
+                        value="<?= $block->escapeHtmlAttr($block->getFormData('id')) ?>"
+                        class="input-text required-entry"
+                 />
+             </div>
+        </div>
+    </fieldset>
+    <div class="actions-toolbar">
+        <input type="hidden" name="params[search]" value="id" />
+        <button type="submit" class="action search" title="<?= $block->escapeHtml(__('Search')) ?>">
+            <span><?= $block->escapeHtml(__('Search')) ?></span>
+        </button>
+    </div>
+</form>
+
+<?php if ($block->getSearchResults() && $block->getSearchResults()->getSize()): ?>
+<div class="block block-giftregistry-results">
+    <div class="block-title"><strong><?= $block->escapeHtml(__('Search Results')) ?></strong></div>
+    <div class="block-content">
+        <div class="table-wrapper">
+            <table class="data table" id="giftregistry-search-results">
+                <caption class="table-caption"><?= $block->escapeHtml(__('Search Results')) ?></caption>
+                <thead>
+                <tr>
+                    <th class="col name" scope="col"><?= $block->escapeHtml(__('Name')) ?></th>
+                    <th class="col location" scope="col"><?= $block->escapeHtml(__('Location')) ?></th>
+                    <th class="col event" scope="col"><?= $block->escapeHtml(__('Event')) ?></th>
+                    <th class="col type" scope="col"><?= $block->escapeHtml(__('Type')) ?></th>
+                    <th class="col date" scope="col"><?= $block->escapeHtml(__('Event Date')) ?></th>
+                    <th class="col actions" scope="col"></th>
+                </tr>
+                </thead>
+                <tbody>
+                <?php foreach ($block->getSearchResults() as $item): ?>
+                    <tr>
+                        <td class="col name" data-th="<?= $block->escapeHtml(__('Name')) ?>">
+                            <?= $block->escapeHtml($item->getRegistrant()) ?>
+                        </td>
+                        <td class="col location" data-th="<?= $block->escapeHtml(__('Location')) ?>">
+                            <?= $block->escapeHtml($item->getEventLocation()) ?>
+                        </td>
+                        <td class="col event" data-th="<?= $block->escapeHtml(__('Event')) ?>">
+                            <?= $block->escapeHtml($item->getTitle()) ?>
+                        </td>
+                        <td class="col type" data-th="<?= $block->escapeHtml(__('Type')) ?>">
+                            <?= $block->escapeHtml($item->getType()) ?>
+                        </td>
+                        <td class="col date" data-th="<?= $block->escapeHtml(__('Event Date')) ?>">
+                            <?= $block->escapeHtml($block->getFormattedDate($item)) ?>
+                        </td>
+                        <td class="col actions" data-th="<?= $block->escapeHtml(__('Actions')) ?>">
+                            <a href="<?= $block->escapeUrl($block->getRegistryLink($item)) ?>" class="action view">
+                                <span><?= $block->escapeHtml(__('View')) ?></span>
+                            </a>
+                        </td>
+                    </tr>
+                <?php endforeach; ?>
+                </tbody>
+            </table>
+        </div>
+        <div class="toolbar toolbar-giftregistry-results bottom"><?= $block->getChildHtml('pager') ?></div>
+    </div>
+</div>
+<?php elseif ($block->getSearchResults()): ?>
+    <div class="message error"><div><?= $block->escapeHtml(__('Your search returned no results.')) ?></div></div>
+<?php endif; ?>
+
+<script type="text/x-magento-init">
+    {
+        "form[id^='gr-search']": {
+            "validation": {}
+        },
+        "#params-type-id": {
+            "advancedSearch": {
+                "url": "<?= $block->escapeJs($block->escapeUrl($block->getAdvancedUrl())) ?>",
+                "selectedOption": "<?= (
+                        $block->getFormData('type_id') ? $block->escapeJs($block->getFormData('type_id')) : null) ?>"
+            }
+        }
+    }
+</script>

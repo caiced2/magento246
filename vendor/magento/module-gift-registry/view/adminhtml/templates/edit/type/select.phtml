@@ -1,0 +1,143 @@
+<?php
+/**
+ * Copyright © Magento, Inc. All rights reserved.
+ * See COPYING.txt for license details.
+ */
+
+// phpcs:disable Magento2.Templates.ThisInTemplate
+// phpcs:disable Magento2.Files.LineLength.MaxExceeded
+
+/** @var $block Magento\GiftRegistry\Block\Adminhtml\Giftregistry\Edit\Attribute\Type\Select */
+/** @var \Magento\Framework\View\Helper\SecureHtmlRenderer $secureRenderer */
+?>
+<div id="option-controls">
+    <div id="ui:button:add"><?= $block->getAddButtonHtml() ?></div>
+    <div id="ui:button:delete"><?= $block->getDeleteButtonHtml() ?></div>
+    <div id="ui:button:delete-title"><?= $block->escapeHtml(__('Delete Option')) ?></div>
+</div>
+<?= /* @noEscape */ $secureRenderer->renderTag(
+    'style',
+    [],
+    '#option-controls { display:none; visibility: hidden;}',
+    false
+); ?>
+<?php
+    $codeText = $block->escapeJs(__('Code'));
+    $labelText = $block->escapeJs(__('Label'));
+    $isDefaultText = $block->escapeJs(__('Is Default'));
+    $fieldPrefix = $block->escapeJs($block->getFieldPrefix());
+?>
+<?php $scriptString = <<<script
+require([
+    'mage/template',
+    'prototype',
+    'Magento_GiftRegistry/edit/validation-rules'
+], function(mageTemplate){
+
+//<![CDATA[
+OptionTemplateSelect =
+    '<table class="data-table">'+
+        '<thead>'+
+        '<tr>'+
+            '<th class="required">' + '{$codeText}' + '</th>'+
+            '<th class="required">' + '{$labelText}' + '</th>'+
+            '<th>' + '{$isDefaultText}' +'</th>'+
+            '<th class="type-butt scope-item">&nbsp;</th>'+
+        '</tr>'+
+        '</thead>'+
+        '<tbody id="{$fieldPrefix}_select_option_type_row_<%- data.id %>"></tbody>'+
+        '<tfoot>'+
+            '<tr><td colspan="10" class="scope-item">' + $('ui\:button\:add').innerHTML + '</td></tr>'+
+        '</tfoot>'+
+    '</table>'+
+    '<input type="hidden" class="required-option-select-rows" name="validation_<%- data.id %>_result" value="" >';
+
+OptionTemplateSelectRow =
+    '<tr id="<%- data.prefix %>_attribute_<%- data.id %>_select_<%- data.select_id %>">'+
+       '<td>'+
+        '<input type="hidden" class="hidden-code"' +
+            ' name="attributes[<%- data.prefix %>][<%- data.id %>][options][<%- data.select_id %>][code]"' +
+            ' value="<%- data.code %>" disabled="disabled">'+
+        '<input type="hidden"' +
+            ' id="<%- data.prefix %>_attribute_<%- data.id %>_select_<%- data.select_id %>_is_deleted"' +
+            ' name="attributes[<%- data.prefix %>][<%- data.id %>][options][<%- data.select_id %>][is_deleted]">'+
+        '<input type="text" class="required-entry validate-code input-text global-scope select-option-code"' +
+            ' id="<%- data.prefix %>_attribute_<%- data.id %>_select_<%- data.select_id %>_code"' +
+            ' name="attributes[<%- data.prefix %>][<%- data.id %>][options][<%- data.select_id %>][code]"' +
+            ' value="<%- data.code %>"></td>'+
+        '<td><input type="text" class="required-entry input-text"' +
+            ' id="<%- data.prefix %>_attribute_<%- data.id %>_select_<%- data.select_id %>_label"' +
+            ' name="attributes[<%- data.prefix %>][<%- data.id %>][options][<%- data.select_id %>][label]"' +
+            ' value="<%- data.label %>"><%= data.checkbox_scope %></td>'+
+        '<td><input type="radio" class="input-radio global-scope"' +
+            ' id="<%- data.prefix %>_attribute_<%- data.id %>_select_<%- data.select_id %>_default"' +
+            ' name="attributes[<%- data.prefix %>][<%- data.id %>][default]" value="<%- data.select_id %>"' +
+            ' <%- data.checked %>></td>'+
+        '<td class="scope-item"><span title="'+$('ui\:button\:delete-title').innerHTML.toString().stripTags()+'">' +
+            $('ui\:button\:delete').innerHTML +'</span></td>'+
+    '</tr>';
+
+selectOptionType = {
+    div : 'select_option_type_row',
+    selectId : 0,
+    templateText : OptionTemplateSelectRow,
+    prefix : '{$fieldPrefix}',
+    add : function(data) {
+        this.template = mageTemplate(this.templateText);
+
+        if (data.target || data.srcElement) {
+            element = $(Event.findElement(data, 'button'));
+            data = {};
+            data.id = element.readAttribute('id').sub(this.prefix+'_add_select_row_button_', '');
+            data.select_id = this.selectId;
+        }
+        this.selectId++;
+        data.prefix = this.prefix;
+            Element.insert($(this.prefix + '_' + this.div + '_' + data.id), {
+                'bottom': this.template({
+                    data: data
+                })
+            });
+
+        if (data.checkbox_scope) {
+            if ($(this.prefix+'_attribute_'+data.id+'_select_'+data.select_id+'_label') && data.label_disabled) {
+                $(this.prefix+'_attribute_'+data.id+'_select_'+data.select_id+'_label').disable();
+            }
+        }
+        this.bindRemoveButtons();
+    },
+    remove : function(event){
+        var element = $(Event.findElement(event, 'tr'));
+
+        if(element){
+            $(element.readAttribute('id')+'_is_deleted').value = '1';
+            element.addClassName('no-display');
+            element.addClassName('ignore-validate');
+            element.hide();
+        }
+    },
+    bindRemoveButtons : function(){
+        var buttons = $$('.delete-select-row');
+        for(var i=0;i<buttons.length;i++){
+            if(!$(buttons[i]).binded){
+                $(buttons[i]).binded = true;
+                Event.observe(buttons[i], 'click', this.remove.bind(this));
+            }
+        }
+    },
+    bindAddButton : function(){
+        var buttons = $$('.add-select-row');
+        for(var i=0;i<buttons.length;i++){
+            if(!$(buttons[i]).binded){
+                $(buttons[i]).binded = true;
+                Event.observe(buttons[i], 'click', this.add.bind(this));
+            }
+        }
+    }
+};
+//]]>
+
+});
+script;
+?>
+<?= /* @noEscape */ $secureRenderer->renderTag('script', [], $scriptString, false); ?>

@@ -1,0 +1,209 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+ /**
+  * Copyright © Magento, Inc. All rights reserved.
+  * See COPYING.txt for license details.
+  */
+-->
+
+<tests xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xsi:noNamespaceSchemaLocation="urn:magento:mftf:Test/etc/testSchema.xsd">
+    <test name="AdminCreateGiftCardProductOfCombinedTypeWithCustomOptionsTest">
+        <annotations>
+            <features value="GiftCard"/>
+            <stories value="Create gift card product"/>
+            <title value="Admin create gift card product cart of combined type with custom options test"/>
+            <description value="Admin should be able to create gift cart of combined type with custom options"/>
+            <severity value="CRITICAL"/>
+            <testCaseId value="MC-14496"/>
+            <group value="mtf_migrated"/>
+            <group value="GiftCard"/>
+            <group value="cloud_smoke"/>
+        </annotations>
+        <before>
+            <!-- Create category -->
+            <createData entity="SimpleSubCategory" stepKey="createCategory"/>
+
+            <!-- Login as admin -->
+            <actionGroup ref="AdminLoginActionGroup" stepKey="loginAsAdmin"/>
+        </before>
+        <after>
+            <!-- Delete category -->
+            <deleteData createDataKey="createCategory" stepKey="deleteCategory"/>
+
+            <!-- Delete product -->
+            <actionGroup ref="DeleteProductBySkuActionGroup" stepKey="deleteProduct">
+                <argument name="sku" value="{{CombinedGiftCard.sku}}"/>
+            </actionGroup>
+            <actionGroup ref="ResetAdminDataGridToDefaultViewActionGroup" stepKey="clearFilters"/>
+
+            <!-- Log out -->
+            <actionGroup ref="AdminLogoutActionGroup" stepKey="logout"/>
+        </after>
+
+        <!-- Create  gift card product -->
+        <actionGroup ref="AdminOpenProductIndexPageActionGroup" stepKey="navigateToCatalogProductGrid"/>
+        <waitForPageLoad stepKey="waitForCatalogProductGrid"/>
+        <actionGroup ref="GoToSpecifiedCreateProductPageActionGroup" stepKey="openProductFillForm">
+            <argument name="productType" value="giftcard"/>
+        </actionGroup>
+
+        <!-- Fill gift card product values -->
+        <actionGroup ref="AdminFillGiftCardProductFieldsActionGroup" stepKey="fillGiftCardProductFields">
+            <argument name="product" value="CombinedGiftCard"/>
+        </actionGroup>
+
+        <!-- Add amount to gift card product -->
+        <actionGroup ref="addGiftCardAmount" stepKey="addAmountToGiftCard">
+            <argument name="giftCardAmount" value="CombinedGiftCard.amounts[0]"/>
+        </actionGroup>
+
+        <!-- Add gift card product to category -->
+        <searchAndMultiSelectOption selector="{{AdminProductFormSection.categoriesDropdown}}" parameterArray="[$$createCategory.name$$]" stepKey="fillCategory" after="addAmountToGiftCard"/>
+
+        <!-- Add custom option file -->
+        <actionGroup ref="AddProductCustomOptionFileActionGroup" stepKey="addCustomFileOptionToProduct"/>
+
+        <!--Add custom option field -->
+         <actionGroup ref="AdminAddProductCustomOptionActionGroup" stepKey="addProductCustomFieldOption">
+             <argument name="customOptionTitle" value="{{ProductOptionField.title}}"/>
+             <argument name="customOptionType" value="Field"/>
+         </actionGroup>
+
+        <!--Add custom option area -->
+        <actionGroup ref="AdminAddProductCustomOptionActionGroup" stepKey="addProductCustomAreaOption">
+            <argument name="customOptionTitle" value="{{ProductOptionArea.title}}"/>
+            <argument name="customOptionType" value="Area"/>
+        </actionGroup>
+
+        <!-- Add custom option drop down -->
+        <actionGroup ref="AdminAddProductCustomOptionActionGroup" stepKey="addProductCustomDropDownOption">
+            <argument name="customOptionTitle" value="{{ProductOptionDropDown.title}}"/>
+            <argument name="customOptionType" value="Drop-down"/>
+        </actionGroup>
+        <actionGroup ref="AdminAddTitleAndPriceValueToCustomOptionActionGroup" stepKey="addTitleAndPriceValueToCustomDropDownOption">
+            <argument name="optionValue" value="ProductOptionValueDropdown1"/>
+        </actionGroup>
+
+        <!-- Add custom option checkbox -->
+        <actionGroup ref="AdminAddProductCustomOptionActionGroup" stepKey="addProductCustomCheckboxOption">
+            <argument name="customOptionTitle" value="{{ProductOptionCheckbox.title}}"/>
+            <argument name="customOptionType" value="Checkbox"/>
+        </actionGroup>
+        <actionGroup ref="AdminAddTitleAndPriceValueToCustomOptionActionGroup" stepKey="addTitleAndPriceValueToCustomCheckboxOption">
+            <argument name="optionValue" value="ProductOptionValueCheckbox"/>
+        </actionGroup>
+
+        <!-- Add custom option multiple select -->
+        <actionGroup ref="AdminAddProductCustomOptionActionGroup" stepKey="addProductCustomMultiSelectOption">
+            <argument name="customOptionTitle" value="{{ProductOptionMultiSelect.title}}"/>
+            <argument name="customOptionType" value="Multiple Select"/>
+        </actionGroup>
+        <actionGroup ref="AdminAddTitleAndPriceValueToCustomOptionActionGroup" stepKey="addTitleAndPriceValueToCustomMultiSelectOption">
+            <argument name="optionValue" value="ProductOptionValueMultiSelect1"/>
+        </actionGroup>
+
+        <!-- Add custom option radio buttons -->
+        <actionGroup ref="AdminAddProductCustomOptionActionGroup" stepKey="addProductCustomRadiobuttonOption">
+            <argument name="customOptionTitle" value="{{ProductOptionRadiobutton.title}}"/>
+            <argument name="customOptionType" value="Radio Buttons"/>
+        </actionGroup>
+        <actionGroup ref="AdminAddTitleAndPriceValueToCustomOptionActionGroup" stepKey="addTitleAndPriceValueToCustomRadiobuttonOption">
+            <argument name="optionValue" value="ProductOptionValueRadioButtons1"/>
+        </actionGroup>
+
+        <!-- Add custom option date -->
+        <actionGroup ref="AdminAddProductCustomOptionActionGroup" stepKey="addProductCustomDateOption">
+            <argument name="customOptionTitle" value="{{ProductOptionDate.title}}"/>
+            <argument name="customOptionType" value="Date"/>
+        </actionGroup>
+
+        <!-- Add custom option date & time -->
+        <actionGroup ref="AdminAddProductCustomOptionActionGroup" stepKey="addProductCustomDateTimeOption">
+            <argument name="customOptionTitle" value="{{ProductOptionDateTime.title}}"/>
+            <argument name="customOptionType" value="Date &amp; Time"/>
+        </actionGroup>
+
+        <!-- Add custom option time -->
+        <actionGroup ref="AdminAddProductCustomOptionActionGroup" stepKey="addProductCustomTimeOption">
+            <argument name="customOptionTitle" value="{{ProductOptionTime.title}}"/>
+            <argument name="customOptionType" value="Time"/>
+        </actionGroup>
+
+         <!--Save gift card product -->
+        <actionGroup ref="SaveProductFormActionGroup" stepKey="saveProduct"/>
+
+        <!-- Assert  gift card product in grid -->
+        <actionGroup ref="viewGiftCardInAdminGrid" stepKey="seeGiftCardInGrid">
+            <argument name="product" value="CombinedGiftCard"/>
+        </actionGroup>
+
+        <!-- Assert  gift card product searchable by sku -->
+        <actionGroup ref="FilterProductGridBySku2ActionGroup" stepKey="filterProductGridBySku">
+            <argument name="sku" value="{{CombinedGiftCard.sku}}"/>
+        </actionGroup>
+        <click selector="{{AdminProductGridSection.firstRow}}" stepKey="clickOnGiftCardPage"/>
+        <waitForPageLoad stepKey="waitForGiftCardPageLoad"/>
+
+        <!-- Assert gift card product amount in product form-->
+        <seeInField selector="{{AdminProductFormSection.cardAmount('1')}}" userInput="{{CombinedGiftCard.amounts[0]}}" stepKey="checkGiftCardFirstAmountFilled"/>
+
+        <!-- Assert  gift card product stock status in product form -->
+        <seeOptionIsSelected selector="{{AdminProductFormSection.productStockStatus}}" userInput="In Stock" stepKey="seeStockStatusInput"/>
+
+        <!-- Go to storefront page -->
+        <amOnPage url="{{StorefrontHomePage.url}}" stepKey="goToStorefrontPage"/>
+        <waitForPageLoad stepKey="waitForStorefrontPageLoad"/>
+
+        <!-- Quick search gift card product -->
+        <actionGroup ref="StorefrontCheckQuickSearchActionGroup" stepKey="quickSearchForGiftCardProduct">
+            <argument name="phrase" value="CombinedGiftCard.sku"/>
+        </actionGroup>
+
+        <!-- Go to gift card product -->
+        <seeElement selector="{{StorefrontCategoryMainSection.productLink}}" stepKey="seeProductsInCategory"/>
+        <click selector="{{StorefrontCategoryMainSection.productLink}}" stepKey="openProduct"/>
+        <waitForPageLoad  stepKey="waitForProductToLoad"/>
+
+        <!-- Assert gift card product custom options on storefront -->
+        <actionGroup ref="StorefrontAssertCustomOptionByTitleActionGroup" stepKey="assertFieldOptionByTitleOnStorefront">
+            <argument name="title" value="{{ProductOptionFile.title}}"/>
+        </actionGroup>
+
+        <actionGroup ref="StorefrontAssertCustomOptionByTitleActionGroup" stepKey="assertFileOptionByTitleOnStorefront">
+            <argument name="title" value="{{ProductOptionField.title}}"/>
+        </actionGroup>
+
+        <actionGroup ref="StorefrontAssertCustomOptionByTitleActionGroup" stepKey="assertAreaOptionByTitleOnStorefront">
+            <argument name="title" value="{{ProductOptionArea.title}}"/>
+        </actionGroup>
+
+        <actionGroup ref="StorefrontAssertCustomOptionByTitleActionGroup" stepKey="assertDropDownOptionByTitleOnStorefront">
+            <argument name="title" value="{{ProductOptionDropDown.title}}"/>
+        </actionGroup>
+
+        <actionGroup ref="StorefrontAssertCustomOptionByTitleActionGroup" stepKey="assertCheckboxOptionByTitleOnStorefront">
+            <argument name="title" value="{{ProductOptionCheckbox.title}}"/>
+        </actionGroup>
+
+        <actionGroup ref="StorefrontAssertCustomOptionByTitleActionGroup" stepKey="assertMultiSelectOptionByTitleOnStorefront">
+            <argument name="title" value="{{ProductOptionMultiSelect.title}}"/>
+        </actionGroup>
+
+        <actionGroup ref="StorefrontAssertCustomOptionByTitleActionGroup" stepKey="assertRadiobuttonOptionByTitleOnStorefront">
+            <argument name="title" value="{{ProductOptionRadiobutton.title}}"/>
+        </actionGroup>
+
+        <actionGroup ref="StorefrontAssertCustomOptionByTitleActionGroup" stepKey="assertDateOptionByTitleOnStorefront">
+            <argument name="title" value="{{ProductOptionDate.title}}"/>
+        </actionGroup>
+
+        <actionGroup ref="StorefrontAssertCustomOptionByTitleActionGroup" stepKey="assertDateTimeOptionByTitleOnStorefront">
+            <argument name="title" value="{{ProductOptionDateTime.title}}"/>
+        </actionGroup>
+
+        <actionGroup ref="StorefrontAssertCustomOptionByTitleActionGroup" stepKey="assertTimeOptionByTitleOnStorefront">
+            <argument name="title" value="{{ProductOptionTime.title}}"/>
+        </actionGroup>
+    </test>
+</tests>

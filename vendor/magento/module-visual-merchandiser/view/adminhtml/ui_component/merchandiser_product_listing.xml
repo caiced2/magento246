@@ -1,0 +1,95 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+/**
+ * Copyright © Magento, Inc. All rights reserved.
+ * See COPYING.txt for license details.
+ */
+-->
+<listing xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="urn:magento:module:Magento_Ui:etc/ui_configuration.xsd">
+    <argument name="data" xsi:type="array">
+        <item name="js_config" xsi:type="array">
+            <item name="provider" xsi:type="string">merchandiser_product_listing.merchandiser_product_listing_data_source</item>
+        </item>
+    </argument>
+    <settings>
+        <buttons/>
+        <spinner>merchandiser_product_columns</spinner>
+        <deps>
+            <dep>merchandiser_product_listing.merchandiser_product_listing_data_source</dep>
+        </deps>
+    </settings>
+    <dataSource name="merchandiser_product_listing_data_source" component="Magento_Ui/js/grid/provider">
+        <settings>
+            <filterUrlParams>
+                <param name="cache_key">*</param>
+            </filterUrlParams>
+            <updateUrl path="mui/index/render"/>
+        </settings>
+        <aclResource>Magento_Catalog::products</aclResource>
+        <dataProvider class="Magento\VisualMerchandiser\Model\Product\DataProvider" name="merchandiser_product_listing_data_source">
+            <settings>
+                <requestFieldName>id</requestFieldName>
+                <primaryFieldName>entity_id</primaryFieldName>
+            </settings>
+        </dataProvider>
+    </dataSource>
+    <listingToolbar name="listing_top">
+        <bookmark name="bookmarks"/>
+        <columnsControls name="columns_controls"/>
+        <filterSearch name="fulltext"/>
+        <filters name="listing_filters"/>
+        <paging name="listing_paging"/>
+    </listingToolbar>
+    <columns name="merchandiser_product_columns">
+        <selectionsColumn name="ids" component="Magento_VisualMerchandiser/js/grid/columns/onoff">
+            <settings>
+                <controlVisibility>false</controlVisibility>
+                <indexField>entity_id</indexField>
+            </settings>
+        </selectionsColumn>
+        <column name="thumbnail" class="Magento\Catalog\Ui\Component\Listing\Columns\Thumbnail" component="Magento_Ui/js/grid/columns/thumbnail">
+            <settings>
+                <altField>name</altField>
+                <hasPreview>1</hasPreview>
+                <addField>true</addField>
+                <label translate="true">Thumbnail</label>
+                <sortable>false</sortable>
+            </settings>
+        </column>
+        <column name="name" component="Magento_Ui/js/grid/cells/sanitizedHtml">
+            <settings>
+                <filter>text</filter>
+                <bodyTmpl>ui/grid/cells/sanitizedHtml</bodyTmpl>
+                <label translate="true">Name</label>
+            </settings>
+        </column>
+        <column name="price" class="Magento\Catalog\Ui\Component\Listing\Columns\Price">
+            <settings>
+                <filter>textRange</filter>
+                <dataType>price</dataType>
+                <label translate="true">Price</label>
+            </settings>
+        </column>
+        <column name="sku" component="Magento_Ui/js/grid/cells/sanitizedHtml">
+            <settings>
+                <filter>text</filter>
+                <bodyTmpl>ui/grid/cells/sanitizedHtml</bodyTmpl>
+                <label translate="true">SKU</label>
+            </settings>
+        </column>
+        <column name="qty">
+            <settings>
+                <filter>textRange</filter>
+                <dataType>number</dataType>
+                <label translate="true">Stock</label>
+            </settings>
+        </column>
+        <column name="position">
+            <settings>
+                <dataType>number</dataType>
+                <label translate="true">Position</label>
+                <sortable>false</sortable>
+            </settings>
+        </column>
+    </columns>
+</listing>

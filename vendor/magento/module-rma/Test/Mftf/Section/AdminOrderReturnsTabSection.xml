@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+ /**
+  * Copyright © Magento, Inc. All rights reserved.
+  * See COPYING.txt for license details.
+  */
+-->
+
+<sections xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:noNamespaceSchemaLocation="urn:magento:mftf:Page/etc/SectionObject.xsd">
+    <section name="AdminOrderReturnsTabSection">
+        <element name="returnSearchFilter" type="input" selector="#order_rma_filter_increment_id"/>
+        <element name="orderReturnGrid" type="text" selector="#order_rma"/>
+        <element name="firstRow" type="text" selector="#order_rma_table > tbody > tr:nth-of-type(1)"/>
+        <element name="returnIdRow" type="text" selector=" #order_rma_table > tbody > tr > td.col-rma-number.col-increment_id"/>
+        <element name="search" type="button" selector=".admin__filter-actions>button[title='Search']" timeout="10"/>
+    </section>
+</sections>

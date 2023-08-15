@@ -1,0 +1,28 @@
+<?xml version="1.0"?>
+<!--
+/**
+ * Copyright © Magento, Inc. All rights reserved.
+ * See COPYING.txt for license details.
+ */
+-->
+<routes xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:noNamespaceSchemaLocation="urn:magento:module:Magento_Webapi:etc/webapi.xsd">
+
+    <!-- Customer async place order with payment information saving -->
+    <route url="/V1/carts/mine/payment-information" method="POST">
+        <service class="Magento\AsyncOrder\Api\AsyncPaymentInformationCustomerPublisherInterface" method="savePaymentInformationAndPlaceOrder"/>
+        <resources>
+            <resource ref="self" />
+        </resources>
+        <data>
+            <parameter name="cartId" force="true">%cart_id%</parameter>
+        </data>
+    </route>
+    <!-- Guest async place order with payment information saving -->
+    <route url="/V1/guest-carts/:cartId/payment-information" method="POST">
+        <service class="Magento\AsyncOrder\Api\AsyncPaymentInformationGuestPublisherInterface" method="savePaymentInformationAndPlaceOrder"/>
+        <resources>
+            <resource ref="anonymous" />
+        </resources>
+    </route>
+</routes>

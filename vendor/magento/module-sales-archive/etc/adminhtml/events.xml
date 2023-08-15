@@ -1,0 +1,24 @@
+<?xml version="1.0"?>
+<!--
+/**
+ * Copyright © Magento, Inc. All rights reserved.
+ * See COPYING.txt for license details.
+ */
+-->
+<config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="urn:magento:framework:Event/etc/events.xsd">
+    <event name="sales_order_load_after">
+        <observer name="magento_salesarchive" instance="Magento\SalesArchive\Observer\SalesObjectAfterLoadObserver" />
+    </event>
+    <event name="sales_order_invoice_load_after">
+        <observer name="magento_salesarchive" instance="Magento\SalesArchive\Observer\SalesObjectAfterLoadObserver" />
+    </event>
+    <event name="sales_order_shipment_load_after">
+        <observer name="magento_salesarchive" instance="Magento\SalesArchive\Observer\SalesObjectAfterLoadObserver" />
+    </event>
+    <event name="sales_order_creditmemo_load_after">
+        <observer name="magento_salesarchive" instance="Magento\SalesArchive\Observer\SalesObjectAfterLoadObserver" />
+    </event>
+    <event name="sales_order_grid_collection_load_before">
+        <observer name="magento_salesarchive" instance="Magento\SalesArchive\Observer\SalesObjectAfterLoadObserver" />
+    </event>
+</config>

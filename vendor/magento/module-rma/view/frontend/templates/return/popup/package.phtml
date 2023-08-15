@@ -1,0 +1,140 @@
+<?php
+/**
+ * Copyright © Magento, Inc. All rights reserved.
+ * See COPYING.txt for license details.
+ */
+
+/** @var \Magento\Framework\View\Helper\SecureHtmlRenderer $secureRenderer */
+
+/** @var \Magento\Shipping\Helper\Carrier $shippingHelper */
+$shippingHelper = $block->getData('shippingHelper');
+?>
+<?php /** @var $block \Magento\Rma\Block\Returns\Tracking\Package */ ?>
+<?php  $_results = $block->getPackageInfo() ?>
+<div class="page-title-wrapper">
+    <h1 class="page-title"><span class="base"><?= $block->escapeHtml(__('Packages')) ?></span></h1>
+    <div class="actions actions-in-title">
+        <button class="action print" type="button" title="<?= $block->escapeHtmlAttr(__('Print')) ?>">
+            <span><?= $block->escapeHtml(__('Print')) ?></span>
+        </button>
+        <button class="action close" type="button" title="<?= $block->escapeHtmlAttr(__('Close Window')) ?>">
+            <span><?= $block->escapeHtml(__('Close Window')) ?></span>
+        </button>
+    </div>
+    <?= /* @noEscape */
+    $secureRenderer->renderEventListenerAsTag(
+        'onclick',
+        "location='" . $block->escapeJs($block->getPrintPackageUrl()) . "';return false",
+        '.actions-in-title .action.print'
+    ); ?>
+    <?= /* @noEscape */
+    $secureRenderer->renderEventListenerAsTag(
+        'onclick',
+        'window.close(); window.opener.focus()',
+        '.actions-in-title .action.close'
+    ); ?>
+</div>
+<div class="packed content">
+<?php foreach ($block->getPackages() as $packageId => $package): ?>
+        <?php $package = new \Magento\Framework\DataObject($package) ?>
+        <?php $params = new \Magento\Framework\DataObject($package->getParams()) ?>
+        <div class="block package info">
+            <div class="title"><strong><?= $block->escapeHtml(__('Package') . ' ' . $packageId) ?></strong></div>
+            <div class="table-wrapper">
+                <table class="tracking popup data table">
+                    <caption class="table-caption"><?= $block->escapeHtml(__('Package') . ' ' . $packageId) ?></caption>
+                    <tbody>
+                    <tr>
+                        <th class="col type" scope="row"><?= $block->escapeHtml(__('Type')) ?></th>
+                        <td class="col type">
+                            <?= $block->escapeHtml($block->getContainerTypeByCode($params->getContainer())) ?>
+                        </td>
+                        <th class="col length" scope="row"><?= $block->escapeHtml(__('Length')) ?></th>
+                        <td class="col length">
+                            <?= $block->escapeHtml(
+                                $params->getLength() . ' '
+                                . $shippingHelper->getMeasureDimensionName($params->getDimensionUnits())
+                            ) ?>
+                        </td>
+                    </tr>
+                    <tr>
+                        <th class="col weight" scope="row"><?= $block->escapeHtml(__('Total Weight')) ?></th>
+                        <td class="col weight">
+                            <?= $block->escapeHtml(
+                                $params->getWeight() . ' '
+                                . $shippingHelper->getMeasureWeightName($params->getWeightUnits())
+                            ) ?>
+                        </td>
+                        <th class="col width" scope="row"><?= $block->escapeHtml(__('Width')) ?></th>
+                        <td class="col width">
+                            <?= $block->escapeHtml(
+                                $params->getWidth() . ' '
+                                . $shippingHelper->getMeasureDimensionName($params->getDimensionUnits())
+                            ) ?>
+                        </td>
+                    </tr>
+                    <tr>
+                        <th scope="row">&nbsp;</th>
+                        <td>&nbsp;</td>
+                        <th class="col height" scope="row"><?= $block->escapeHtml(__('Height')) ?></th>
+                        <td class="col height">
+                            <?= $block->escapeHtml(
+                                $params->getHeight() . ' '
+                                . $shippingHelper->getMeasureDimensionName($params->getDimensionUnits())
+                            ) ?>
+                        </td>
+                    </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+        <div class="block package items">
+            <div class="title"><strong><?= $block->escapeHtml(__('Items in the Package')) ?></strong></div>
+            <div class="table-wrapper">
+                <table class="tracking popup data table">
+                    <caption class="table-caption"><?= $block->escapeHtml(__('Items in the Package')) ?></caption>
+                    <tr>
+                        <th class="col product" scope="col"><?= $block->escapeHtml(__('Product')) ?></th>
+                        <th class="col weight" scope="col"><?= $block->escapeHtml(__('Weight')) ?></th>
+                        <th class="col qty" scope="col"><?= $block->escapeHtml(__('Qty')) ?></th>
+                    </tr>
+                    <?php foreach ($package->getItems() as $itemId => $item): ?>
+                        <?php $item = new \Magento\Framework\DataObject($item) ?>
+                        <tr title="#">
+                            <td data-th="<?= $block->escapeHtml(__('Product')) ?>"class="col product">
+                                <?= $block->escapeHtml($item->getName()) ?>
+                            </td>
+                            <td data-th="<?= $block->escapeHtml(__('Weight')) ?>" class="col weight">
+                                <?= $block->escapeHtml($item->getWeight()) ?>
+                            </td>
+                            <td data-th="<?= $block->escapeHtml(__('Qty')) ?>" class="col qty">
+                                <?= /* @noEscape */ $item->getQty()*1 ?>
+                            </td>
+                        </tr>
+                    <?php endforeach; ?>
+                </table>
+            </div>
+        </div>
+    </div>
+<?php endforeach; ?>
+</div>
+<div class="actions actions-in-content">
+    <button class="action close" type="button" title="<?= $block->escapeHtmlAttr(__('Close Window')) ?>">
+        <span><?= $block->escapeHtml(__('Close Window')) ?></span>
+    </button>
+    <button class="action print" type="button" title="<?= $block->escapeHtmlAttr(__('Print')) ?>">
+        <span><?= $block->escapeHtml(__('Print')) ?></span>
+    </button>
+</div>
+<?= /* @noEscape */
+$secureRenderer->renderEventListenerAsTag(
+    'onclick',
+    "location='" . $block->escapeJs($block->getPrintPackageUrl()) . "';return false",
+    '.actions-in-content .action.print'
+); ?>
+<?= /* @noEscape */
+$secureRenderer->renderEventListenerAsTag(
+    'onclick',
+    'window.close(); window.opener.focus()',
+    '.actions-in-content .action.close'
+); ?>

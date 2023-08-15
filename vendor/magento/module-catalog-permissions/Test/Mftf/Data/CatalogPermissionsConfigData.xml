@@ -1,0 +1,66 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+ /**
+  * Copyright © Magento, Inc. All rights reserved.
+  * See COPYING.txt for license details.
+  */
+-->
+
+<entities xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+          xsi:noNamespaceSchemaLocation="urn:magento:mftf:DataGenerator/etc/dataProfileSchema.xsd">
+    <!--Enable Category Permissions-->
+    <entity name="CategoryPermissionsEnableConfigData">
+        <data key="path">catalog/magento_catalogpermissions/enabled</data>
+        <data key="label">Yes</data>
+        <data key="value">1</data>
+    </entity>
+
+    <!--Disable Category Permissions-->
+    <entity name="CategoryPermissionsDisableConfigData">
+        <data key="path">catalog/magento_catalogpermissions/enabled</data>
+        <data key="label">No</data>
+        <data key="value">0</data>
+    </entity>
+
+    <!--Allow Browsing Category-->
+    <entity name="CategoryPermissionsAllowBrowsingCategoryForEveryoneConfigData">
+        <data key="path">catalog/magento_catalogpermissions/grant_catalog_category_view</data>
+        <data key="label">Yes, for Everyone</data>
+        <data key="value">1</data>
+    </entity>
+    <entity name="CategoryPermissionsAllowBrowsingCategoryDefaultConfigData">
+        <data key="path">catalog/magento_catalogpermissions/grant_catalog_category_view</data>
+        <data key="label">No, Redirect to Landing Page</data>
+        <data key="value">0</data>
+    </entity>
+
+    <!--Display Product Prices-->
+    <entity name="CategoryPermissionsDisplayProductPricesForEveryoneConfigData">
+        <data key="path">catalog/magento_catalogpermissions/grant_catalog_product_price</data>
+        <data key="label">Yes, for Everyone</data>
+        <data key="value">1</data>
+    </entity>
+    <entity name="CategoryPermissionsDisplayProductPricesDefaultConfigData">
+        <data key="path">catalog/magento_catalogpermissions/grant_catalog_product_price</data>
+        <data key="label">No</data>
+        <data key="value">0</data>
+    </entity>
+
+    <!--Allow Adding to Cart-->
+    <entity name="CategoryPermissionsAllowAddingToCartForEveryoneConfigData">
+        <data key="path">catalog/magento_catalogpermissions/grant_checkout_items</data>
+        <data key="label">Yes, for Everyone</data>
+        <data key="value">1</data>
+    </entity>
+    <entity name="CategoryPermissionsAllowAddingToCartDefaultConfigData">
+        <data key="path">catalog/magento_catalogpermissions/grant_checkout_items</data>
+        <data key="label">No</data>
+        <data key="value">0</data>
+    </entity>
+
+    <entity name="CategoryPermissionsDenyCatalogSearchForGeneralCustomerGroupConfigData">
+        <data key="path">catalog/magento_catalogpermissions/deny_catalog_search</data>
+        <data key="label">General</data>
+        <data key="value">1</data>
+    </entity>
+</entities>

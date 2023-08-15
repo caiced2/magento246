@@ -1,0 +1,59 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+ /**
+  * Copyright © Magento, Inc. All rights reserved.
+  * See COPYING.txt for license details.
+  */
+-->
+<tests xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="urn:magento:mftf:Test/etc/testSchema.xsd">
+    <test name="StorefrontGiftCardValidationTest">
+        <annotations>
+            <features value="GiftCard"/>
+            <stories value="GiftCard"/>
+            <title value="Storefront Open Virtual GiftCard form validation"/>
+            <description value="Should see validation errors when storefront form is invalid"/>
+            <severity value="AVERAGE"/>
+            <testCaseId value="MC-28587"/>
+            <group value="catalog"/>
+            <group value="giftCard"/>
+        </annotations>
+
+        <before>
+            <createData entity="OpenVirtualGiftCard" stepKey="openVirtualGiftCard"/>
+        </before>
+
+        <after>
+            <!-- Reindex invalidated indexes -->
+            <deleteData createDataKey="openVirtualGiftCard" stepKey="deleteGiftCard"/>
+            <magentoCron groups="index" stepKey="reindexInvalidatedIndices"/>
+        </after>
+
+        <amOnPage url="{{StorefrontProductPage.url($openVirtualGiftCard.custom_attributes[url_key]$)}}" stepKey="goToGiftCardProductPageOnStorefront"/>
+        <waitForElementVisible selector="{{StorefrontProductInfoMainSection.addToCartEnabled}}" stepKey="waitAddToCartButtonAppearAndEnabled"/>
+        <!-- required fields -->
+        <click selector="{{StorefrontProductInfoMainSection.AddToCart}}" stepKey="clickAddToCartButton"/>
+        <see selector="{{StorefrontProductInfoMainSection.giftCardAmountInputError}}" userInput="This is a required field." stepKey="seeAmountRequired"/>
+        <see selector="{{StorefrontProductInfoMainSection.giftCardSenderNameError}}" userInput="This is a required field." stepKey="seeSenderNameRequired"/>
+        <see selector="{{StorefrontProductInfoMainSection.giftCardSenderEmailError}}" userInput="This is a required field." stepKey="seeSenderEmailRequired"/>
+        <see selector="{{StorefrontProductInfoMainSection.giftCardRecipientNameError}}" userInput="This is a required field." stepKey="seeRecipientNameRequired"/>
+        <see selector="{{StorefrontProductInfoMainSection.giftCardRecipientEmailError}}" userInput="This is a required field." stepKey="seeRecipientEmailRequired"/>
+
+        <actionGroup ref="AssertStorefrontGiftCardFieldValidationActionGroup" stepKey="validateNegativeAmount"/>
+        <actionGroup ref="AssertStorefrontGiftCardFieldValidationActionGroup" stepKey="validateExceededAmount">
+            <argument name="fieldValue" value="1000"/>
+            <argument name="validationMessage" value="Please enter a value less than or equal to 999."/>
+        </actionGroup>
+        <actionGroup ref="AssertStorefrontGiftCardFieldValidationActionGroup" stepKey="validateSenderEmail">
+            <argument name="fieldSelector" value="{{StorefrontProductInfoMainSection.giftCardSenderEmail}}"/>
+            <argument name="fieldValidationSelector" value="{{StorefrontProductInfoMainSection.giftCardSenderEmailError}}"/>
+            <argument name="fieldValue" value="incorrectSenderEmail.com"/>
+            <argument name="validationMessage" value="Please enter a valid email address (Ex: johndoe@domain.com)."/>
+        </actionGroup>
+        <actionGroup ref="AssertStorefrontGiftCardFieldValidationActionGroup" stepKey="validateRecipientEmail">
+            <argument name="fieldSelector" value="{{StorefrontProductInfoMainSection.giftCardRecipientEmail}}"/>
+            <argument name="fieldValidationSelector" value="{{StorefrontProductInfoMainSection.giftCardSenderEmailError}}"/>
+            <argument name="fieldValue" value="incorrectRecipientEmail.com"/>
+            <argument name="validationMessage" value="Please enter a valid email address (Ex: johndoe@domain.com)."/>
+        </actionGroup>
+    </test>
+</tests>

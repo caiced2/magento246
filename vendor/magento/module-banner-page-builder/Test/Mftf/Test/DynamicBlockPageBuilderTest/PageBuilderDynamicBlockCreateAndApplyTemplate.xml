@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+ /**
+  * Copyright © Magento, Inc. All rights reserved.
+  * See COPYING.txt for license details.
+  */
+-->
+<tests xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:noNamespaceSchemaLocation="urn:magento:mftf:Test/etc/testSchema.xsd">
+    <test name="PageBuilderDynamicBlockCreateAndApplyTemplate" extends="PageBuilderCMSPageCreateAndApplyTemplate">
+        <annotations>
+            <features value="PageBuilder"/>
+            <stories value="Dynamic Block"/>
+            <title value="Create and Apply Page Builder Template to Dynamic Block"/>
+            <description value="Verify that user can create and apply a Page Builder template to a Dynamic Block"/>
+            <severity value="CRITICAL"/>
+            <useCaseId value="PB-341"/>
+            <testCaseId value="MC-30608"/>
+            <group value="pagebuilder"/>
+            <group value="pagebuilder-ee"/>
+            <group value="pagebuilder-dynamic-block"/>
+            <group value="pagebuilder-templates"/>
+        </annotations>
+        <before>
+            <createData entity="_defaultDynamicBlock" stepKey="createCMSPage"/>
+            <actionGroup ref="NavigateToCreatedDynamicBlockActionGroup" stepKey="navigateToCreatedCMSPage">
+                <argument name="Banner" value="$$createCMSPage$$"/>
+            </actionGroup>
+            <actionGroup ref="removeContentTypeFromStageByIndex" stepKey="removeHTMLContentType" after="dragRowToRootContainer">
+                <argument name="contentType" value="PageBuilderHtmlContentType"/>
+                <argument name="contentTypeNumber" value="1"/>
+            </actionGroup>
+            <actionGroup ref="confirmRemovalModal" stepKey="confirmRemovalModal" after="removeHTMLContentType"/>
+            <actionGroup ref="exitPageBuilderFullScreen" stepKey="exitPageBuilderFullScreen" after="confirmRemovalModal"/>
+            <actionGroup ref="SaveAndContinueDynamicBlockActionGroup" stepKey="saveAndContinueEditCmsPage" after="exitPageBuilderFullScreen"/>
+            <actionGroup ref="switchToPageBuilderStage" stepKey="switchToPageBuilderStage2" after="saveAndContinueEditCmsPage"/>
+        </before>
+        <after>
+            <actionGroup ref="DeleteBannerActionGroup" stepKey="deleteCMSPage">
+                <argument name="bannerName" value="$$createCMSPage.name$$"/>
+            </actionGroup>
+        </after>
+        <actionGroup ref="savePageBuilderTemplate" stepKey="savePageBuilderTemplate">
+            <argument name="baseContent" value="{{AdminBannerBasicActionSection.Save}}"/>
+        </actionGroup>
+        <actionGroup ref="NavigateToCreatedDynamicBlockActionGroup" stepKey="navigateToCreatedCMSPage">
+            <argument name="Banner" value="$$createCMSPage$$"/>
+        </actionGroup>
+        <remove keyForRemoval="verifyEmptyStage"/>
+        <actionGroup ref="confirmApplyFromPageBuilderApplyTemplateSlideOut" stepKey="confirmApplyFromPageBuilderApplyTemplateSlideOut">
+            <argument name="baseContent" value="{{AdminBannerBasicActionSection.Save}}"/>
+        </actionGroup>
+    </test>
+</tests>

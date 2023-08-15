@@ -1,0 +1,59 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+ /**
+  * Copyright © Magento, Inc. All rights reserved.
+  * See COPYING.txt for license details.
+  */
+-->
+
+<tests xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xsi:noNamespaceSchemaLocation="urn:magento:mftf:Test/etc/testSchema.xsd">
+    <test name="AdminDeleteTextFieldTypeCustomerCustomAttributeTest">
+        <annotations>
+            <group value="Customer Custom Attribute"/>
+            <stories value="Delete Customer Attribute"/>
+            <title value="Delete text field type customer custom attribute"/>
+            <description value="Delete text field type customer custom attribute, verify in customer attribute grid and customer segment"/>
+            <severity value="MAJOR"/>
+            <testCaseId value="MC-14566"/>
+            <group value="mtf_migrated"/>
+        </annotations>
+
+        <before>
+            <actionGroup ref="AdminLoginActionGroup" stepKey="loginAsAdmin"/>
+            <!-- Navigate to Stores -> Customers and click 'Add New Attribute' button and create customer Text Field attribute -->
+            <actionGroup ref="AdminCreateCustomerCustomAttribute" stepKey="createAttribute">
+                <argument name="customerAttribute" value="AttributeTextFieldData"/>
+            </actionGroup>
+            <magentoCron groups="index" stepKey="reindex"/>
+        </before>
+        <after>
+            <!-- Navigate to Customers -> Segments -> created segment and delete the segment -->
+            <actionGroup ref="FindAndDeleteCustomerSegmentActionGroup" stepKey="deleteSegment">
+                <argument name="segmentName" value="{{CustomerSegmentDefault.name}}"/>
+            </actionGroup>
+            <magentoCron groups="index" stepKey="reindex"/>
+            <actionGroup ref="AdminLogoutActionGroup" stepKey="logout"/>
+        </after>
+
+        <!-- Select and Delete created Customer Attribute -->
+        <actionGroup ref="AdminDeleteCustomerCustomAttributeActionGroup" stepKey="delete">
+            <argument name="attributeLabel" value="{{AttributeTextFieldData.label}}"/>
+        </actionGroup>
+
+        <!-- Assert deleted attribute is not present in grid -->
+        <actionGroup ref="AssertDeletedCustomerAttributeNotInGridActionGroup" stepKey="assertCustomerAttributeNotInGrid">
+            <argument name="attributeLabel" value="{{AttributeTextFieldData.label}}"/>
+        </actionGroup>
+
+        <!--Navigate to CUSTOMERS -> Segment > Click 'Add Segment' button-->
+        <actionGroup ref="CreateCustomerSegmentWithContinueEditActionGroup" stepKey="createCustomerSegment">
+            <argument name="customerSegment" value="CustomerSegmentDefault"/>
+        </actionGroup>
+
+        <!-- Click on Conditions and assert customer attribute is not present in customer segment-->
+        <actionGroup ref="AssertDeletedCustomerAttributeNotInCustomerSegmentActionGroup" stepKey="verifyAttributeIsNotPresentInSegment">
+            <argument name="attributeLabel" value="{{AttributeTextFieldData.label}}"/>
+        </actionGroup>
+    </test>
+</tests>

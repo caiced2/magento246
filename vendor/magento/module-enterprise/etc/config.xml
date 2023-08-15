@@ -1,0 +1,27 @@
+<?xml version="1.0"?>
+<!--
+/**
+ * Copyright © Magento, Inc. All rights reserved.
+ * See COPYING.txt for license details.
+ */
+-->
+<config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="urn:magento:module:Magento_Store:etc/config.xsd">
+    <default>
+        <design>
+            <head>
+                <default_title>Magento Enterprise Edition</default_title>
+                <default_keywords>Magento, Varien, E-commerce</default_keywords>
+            </head>
+        </design>
+        <system>
+            <media_storage_configuration>
+                <allowed_resources>
+                    <enterprise_folder>enterprise</enterprise_folder>
+                </allowed_resources>
+            </media_storage_configuration>
+            <adminnotification>
+                <feed_url>notifications.magentocommerce.com/magento2/enterprise/notifications.rss</feed_url>
+            </adminnotification>
+        </system>
+    </default>
+</config>

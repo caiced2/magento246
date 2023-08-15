@@ -1,0 +1,53 @@
+<?php
+/**
+ * Copyright © Magento, Inc. All rights reserved.
+ * See COPYING.txt for license details.
+ */
+/**
+ * @var Magento\Reward\Block\Adminhtml\Sales\Order\Creditmemo\Reward $block
+ * @var \Magento\Framework\View\Helper\SecureHtmlRenderer $secureRenderer
+ */
+$rewardData = $block->getRewardData();
+?>
+<?php if ($block->canRefundRewardPoints()): ?>
+    <div class="admin__field admin__field-option field-refund-reward-points">
+        <input type="checkbox"
+               class="admin__control-checkbox"
+               name="creditmemo[refund_reward_points_enable]"
+               value="1"
+               <?php if ($block->isAutoRefundEnabled()
+                   || $rewardData->isRefundRewardBalanceChecked($block->getCreditmemo())
+               ):?>
+                   checked="checked"
+                <?php endif; ?>
+               id="creditmemo_refund_reward_points_enable">
+        <label for="creditmemo_refund_reward_points_enable" class="admin__field-label">
+            <span><?= $block->escapeHtml(__('Refund Reward Points')); ?></span>
+        </label>
+        <input type="text"
+               class="input-text admin__control-text not-negative-amount"
+               name="creditmemo[refund_reward_points]"
+               value="<?= /* @noEscape */ $block->getCreditmemo()->getRewardPointsBalance(); ?>"
+               id="creditmemo_refund_reward_points">
+
+    <?php $scriptString = <<<script
+            require(['jquery', 'domReady!'], function($) {
+                $(function ($) {
+                    var toggleRewardPointsRefundAmount = function (e) {
+                        var refundReturn = $('#creditmemo_refund_reward_points');
+                        if ($(e.target).prop('checked')) {
+                            refundReturn.prop('disabled', false);
+                        } else {
+                            refundReturn.prop('disabled', true);
+                        }
+                    };
+                    var refundRewardPointsEnable = $('#creditmemo_refund_reward_points_enable');
+                    refundRewardPointsEnable.change(toggleRewardPointsRefundAmount);
+                    toggleRewardPointsRefundAmount({target:refundRewardPointsEnable});
+                });
+            });
+script;
+    ?>
+        <?= /* @noEscape */ $secureRenderer->renderTag('script', [], $scriptString, false); ?>
+    </div>
+<?php endif; ?>

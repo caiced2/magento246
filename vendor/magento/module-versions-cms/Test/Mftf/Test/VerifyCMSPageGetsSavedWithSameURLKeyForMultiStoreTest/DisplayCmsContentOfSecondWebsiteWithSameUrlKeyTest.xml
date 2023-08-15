@@ -1,0 +1,67 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+ /**
+  * Copyright © Magento, Inc. All rights reserved.
+  * See COPYING.txt for license details.
+  */
+-->
+<tests xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:noNamespaceSchemaLocation="urn:magento:mftf:Test/etc/testSchema.xsd">
+    <test name="DisplayCmsContentOfSecondWebsiteWithSameUrlKeyTest" deprecated="Use AdminDisplayCmsContentOfSecondWebsiteWithSameUrlKeyTest" extends="VerifyCMSPageGetsSavedWithSameURLKeyForMultiStoreTest">
+        <annotations>
+            <title value="DEPRECATED. Displaying content on CMS page of second website with same URL key as first website"/>
+            <description value="Displaying content on CMS page of second website with same URL key as first website"/>
+            <features value="VersionsCms"/>
+            <stories value="MultiStore"/>
+            <severity value="CRITICAL"/>
+            <testCaseId value="MC-17166"/>
+            <useCaseId value="MAGETWO-93061"/>
+            <group value="versionsCms"/>
+            <group value="WYSIWYGDisabled"/>
+            <skip>
+                <issueId value="DEPRECATED">Use AdminDisplayCmsContentOfSecondWebsiteWithSameUrlKeyTest instead.</issueId>
+            </skip>
+            <group value="pr_exclude"/>
+        </annotations>
+        <before>
+            <!-- Create new Cms Page with certain url key -->
+            <comment userInput="Create new Cms Page with certain url key" stepKey="createFirstCmsPage"/>
+            <actionGroup ref="CreateNewPageWithAllValuesAndContentActionGroup" stepKey="createNewPage">
+                <argument name="PageTitle" value="{{customCmsPage.title}}"/>
+                <argument name="ContentHeading" value="{{customCmsPage.content_heading}}"/>
+                <argument name="pageContent" value="{{customCmsPage.content}}"/>
+                <argument name="URLKey" value="{{customCmsPage.identifier}}"/>
+                <argument name="selectStoreViewOpt" value="Default Store View"/>
+                <argument name="selectHierarchyOpt" value="Website Root"/>
+            </actionGroup>
+        </before>
+        <after>
+            <!-- Delete created node, website and Cms pages -->
+            <comment userInput="Delete created node, website and Cms pages" stepKey="deleteAllCreated"/>
+            <actionGroup ref="DeletePageByUrlKeyActionGroup" stepKey="deletePage">
+                <argument name="UrlKey" value="{{customCmsPage.identifier}}"/>
+            </actionGroup>
+            <actionGroup ref="DeletePageByUrlKeyActionGroup" stepKey="deletePage1">
+                <argument name="UrlKey" value="{{customCmsPage2.identifier}}"/>
+            </actionGroup>
+        </after>
+        <!-- Create second Cms Page with the same url key as the first one -->
+        <comment userInput="Create second Cms Page with the same url key as the first one" stepKey="createSecondWebsite"/>
+        <actionGroup ref="CreateNewPageWithAllValuesAndContentActionGroup" stepKey="createNewPage">
+            <argument name="PageTitle" value="{{customCmsPage2.title}}"/>
+            <argument name="ContentHeading" value="{{customCmsPage2.content_heading}}"/>
+            <argument name="pageContent" value="{{customCmsPage2.content}}"/>
+            <argument name="URLKey" value="{{customCmsPage2.identifier}}"/>
+            <argument name="selectStoreViewOpt" value="Second Store View"/>
+            <argument name="selectHierarchyOpt" value="Website Root"/>
+        </actionGroup>
+        <!-- Go to second website page and make sure that corresponding content is displayed -->
+        <comment userInput="Go to second website page and make sure that corresponding content is displayed" stepKey="seeIfCorrectContentIsDisplayed"/>
+        <amOnPage url="{{CmsPagesPage.url}}" stepKey="amOnCMSNewPage" after="seeSuccessMessage"/>
+        <waitForPageLoad stepKey="waitForPageLoad1"/>
+        <click selector="{{CmsPagesPageActionsSection.select(customCmsPage2.title)}}" stepKey="clickSelect"/>
+        <click selector="{{CmsPagesPageActionsSection.preview(customCmsPage2.title)}}" stepKey="goToSecondPagePreview"/>
+        <waitForPageLoad stepKey="waitForCMSPage"/>
+        <see userInput="{{customCmsPage2.content}}" stepKey="seeIfSecondPageContentIsDisplayed"/>
+    </test>
+</tests>

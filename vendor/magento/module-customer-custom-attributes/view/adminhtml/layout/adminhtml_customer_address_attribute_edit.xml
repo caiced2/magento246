@@ -1,0 +1,35 @@
+<?xml version="1.0"?>
+<!--
+/**
+ * Copyright © Magento, Inc. All rights reserved.
+ * See COPYING.txt for license details.
+ */
+-->
+<page xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" layout="admin-2columns-left" xsi:noNamespaceSchemaLocation="urn:magento:framework:View/Layout/etc/page_configuration.xsd">
+    <update handle="scope_switcher"/>
+    <body>
+        <referenceContainer name="page.messages">
+            <block class="Magento\CustomerCustomAttributes\Block\Adminhtml\Customer\ValidationMessages" name="customer.address.attribute.validationmessages"/>
+        </referenceContainer>
+        <referenceContainer name="content">
+            <block class="Magento\CustomerCustomAttributes\Block\Adminhtml\Customer\Address\Attribute\Edit" name="magento_customercustomattributes_address_attribute_edit"/>
+        </referenceContainer>
+        <referenceContainer name="left">
+            <block class="Magento\CustomerCustomAttributes\Block\Adminhtml\Customer\Address\Attribute\Edit\Tabs" name="magento_customercustomattributes_address_attribute_edit_tabs">
+                <block class="Magento\CustomerCustomAttributes\Block\Adminhtml\Customer\Address\Attribute\Edit\Tab\General" name="magento_customercustomattributes_address_attribute_edit_tab_general"/>
+                <action method="addTab">
+                    <argument name="name" xsi:type="string">general</argument>
+                    <argument name="block" xsi:type="string">magento_customercustomattributes_address_attribute_edit_tab_general</argument>
+                </action>
+                <block class="Magento\CustomerCustomAttributes\Block\Adminhtml\Customer\Address\Attribute\Edit\Tab\Options" name="magento_customercustomattributes_address_attribute_edit_tab_options"/>
+                <action method="addTab">
+                    <argument name="name" xsi:type="string">options</argument>
+                    <argument name="block" xsi:type="string">magento_customercustomattributes_address_attribute_edit_tab_options</argument>
+                </action>
+            </block>
+        </referenceContainer>
+        <referenceContainer name="js">
+            <block class="Magento\CustomerCustomAttributes\Block\Adminhtml\Customer\Attribute\Edit\Js" name="js.customer_custom_attributes_attribute" template="Magento_CustomerCustomAttributes::attribute/js.phtml"/>
+        </referenceContainer>
+    </body>
+</page>

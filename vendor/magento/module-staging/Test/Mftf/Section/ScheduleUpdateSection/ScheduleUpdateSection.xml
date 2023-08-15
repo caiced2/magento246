@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+ /**
+  * Copyright © Magento, Inc. All rights reserved.
+  * See COPYING.txt for license details.
+  */
+-->
+<sections xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:noNamespaceSchemaLocation="urn:magento:mftf:Page/etc/SectionObject.xsd">
+    <section name="ScheduleUpdateSection">
+        <element name="catalog" type="button" selector="#menu-magento-catalog-catalog"/>
+        <element name="category" type="button" selector="//li[@data-ui-id='menu-magento-catalog-catalog-categories']//span"/>
+        <element name="scheduleUpdate" type="button" selector="#staging_update_new" timeout="30"/>
+        <element name="updateName" type="input" selector="//input[@name='staging[name]']"/>
+        <element name="startDate" type="date" selector="//div[@class='admin__field _required']//button"/>
+        <element name="startDateValue" type="date" selector="//td[contains(@class, 'ui-datepicker-today')]/following-sibling::td" timeout="30"/>
+        <element name="endDate" type="date" selector="//input[@name='staging[end_time]']/parent::div/button"/>
+        <element name="year" type="select" selector=".ui-datepicker-year"/>
+        <element name="yearValue" type="select" selector="//select[@class='ui-datepicker-year']/option[text()='{{args}}']" parameterized="true"/>
+        <element name="close" type="button" selector="//button[text()='Close']"/>
+        <element name="preview" type="button" selector="//div[contains(@class,'page-actions')]/button[@id='preview']"/>
+        <element name="previewLink" type="button" selector="//a[contains(@href,'staging/update/preview')]"/>
+        <element name="save" type="button" selector="//div[@class='page-actions']/button[@id='save']"/>
+        <element name="selectUpdate" type="text" selector="//a[text()='View/Edit']"/>
+        <element name="removeUpdate" type="button" selector="#delete"/>
+        <element name="confirm" type="button" selector=".modal-footer .action-primary.action-accept"/>
+        <element name="done" type="button" selector="//div[@class='page-actions']/button[@title='Done']"/>
+        <element name="update" type="button" selector="//div[@class='timeline']//strong[text()='{{arg3}}']/parent::div//div[@class='timeline-event-summary']" parameterized="true"/>
+        <element name="edit" type="button" selector="//span[text()='View/Edit']"/>
+        <element name="endTime" type="input" selector="//input[@name='general[end_time]']/parent::div/button"/>
+        <element name="selectRule" type="text" selector="//td[contains(text(), '{{arg3}}')]" parameterized="true"/>
+        <element name="removeFromUpdate" type="button" selector="#remove" timeout="30"/>
+        <element name="deleteTheUpdate" type="radio" selector="//label[text()='Delete the Update']"/>
+        <element name="buttonDone" type="button" selector="//*[@title='Done']"/>
+        <element name="isActive" type="select" selector=".modals-wrapper input[name='is_active']+label"/>
+    </section>
+</sections>

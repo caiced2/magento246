@@ -1,0 +1,109 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+ /**
+  * Copyright © Magento, Inc. All rights reserved.
+  * See COPYING.txt for license details.
+  */
+-->
+<tests xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xsi:noNamespaceSchemaLocation="urn:magento:mftf:Test/etc/testSchema.xsd">
+    <test name="InsertDefaultMagentoVariableIntoWYSIWYGOnBannerPagesTest">
+        <annotations>
+            <title value="Insert default Magento variable into content of WYSIWYG on Banner"/>
+            <description value="Insert default Magento variable into content of WYSIWYG on Banner"/>
+            <severity value="CRITICAL"/>
+            <testCaseId value="MAGETWO-85880"/>
+            <features value="MAGETWO-36659-[CMS] WYSIWYG update"/>
+            <stories value="MAGETWO-42047-Apply new WYSIWYG to Banner add/edit"/>
+            <group value="Banner"/>
+        </annotations>
+        <before>
+            <actionGroup ref="AdminLoginActionGroup" stepKey="loginGetFromGeneralFile"/>
+            <actionGroup ref="EnabledWYSIWYGActionGroup" stepKey="enableWYSIWYG"/>
+            <actionGroup ref="CliEnableTinyMCEActionGroup" stepKey="enableTinyMCE" />
+            <amOnPage url="{{AdminNewWidgetPage.url}}" stepKey="amOnAdminNewWidgetPage"/>
+            <selectOption selector="{{AdminNewWidgetSection.widgetType}}" userInput="Dynamic Blocks Rotator" stepKey="setWidgetType"/>
+            <selectOption selector="{{AdminNewWidgetSection.widgetDesignTheme}}" userInput="Magento Luma" stepKey="setWidgetDesignTheme"/>
+            <click selector="{{AdminNewWidgetSection.continue}}" stepKey="clickContinue"/>
+            <grabFromCurrentUrl regex="~/theme_id/(\d+)/~" stepKey="themeId"/>
+            <createData entity="sampleBannerWidget" stepKey="createPreReqWidget">
+                <field key="theme_id">{$themeId}</field>
+            </createData>
+        </before>
+        <after>
+            <actionGroup ref="DeleteWidgetActionGroup" stepKey="deleteWidget"/>
+            <actionGroup ref="DisabledWYSIWYGActionGroup" stepKey="disableWYSIWYG"/>
+            <actionGroup ref="AdminLogoutActionGroup" stepKey="logout"/>
+        </after>
+        <actionGroup ref="CreateBannerActionGroup" stepKey="createPreReqBanner">
+            <argument name="Banner" value="sampleBanner" />
+        </actionGroup>
+        <!--Create new Banner and Widget-->
+        <actionGroup ref="AssignBannerToWidgetActionGroup" stepKey="createPreReqWidget">
+            <argument name="Banner" value="sampleBanner"/>
+            <argument name="Widget" value="$$createPreReqWidget$$"/>
+        </actionGroup>
+        <!--Create Custom Variable-->
+        <actionGroup ref="CreateCustomVariableActionGroup" stepKey="createCustomVariable" />
+        <!--Setup Store information-->
+        <waitForPageLoad stepKey="wait" />
+        <amOnPage url="{{AdminBannerPage.url}}" stepKey="navigateToNewBanner"/>
+        <waitForPageLoad stepKey="waitForPageLoad1"/>
+        <!--Enable Banner-->
+        <amOnPage url="{{AdminDynamicBlockGridPage.url}}" stepKey="goToBannerGrid"/>
+        <waitForPageLoad stepKey="waitForPageLoad2"/>
+        <click selector="{{AdminWidgetGridSection.title(sampleBanner.Name)}}" stepKey="navigateToPreReqBanner" />
+        <waitForPageLoad stepKey="waitForPageLoad3"/>
+        <conditionalClick selector="{{AdminBannerBasicActionSection.ContentTab}}" dependentSelector="{{TinyMCESection.checkIfContentTabOpen}}" stepKey="clickIfContentTabCloses" visible="true"/>
+        <waitForElementVisible selector="{{TinyMCESection.TinyMCE}}" stepKey="waitForTinyMCE" />
+        <actionGroup ref="VerifyTinyMCEActionGroup" stepKey="verifyTinyMCE"/>
+        <actionGroup ref="VerifyMagentoEntityActionGroup" stepKey="verifyMagentoEntities"/>
+        <seeElement selector="{{TinyMCESection.InsertVariableIcon}}" stepKey="seeInsertVariableIcon" />
+        <click selector="{{TinyMCESection.InsertVariableIcon}}" stepKey="clickInsertVariableIcon1" />
+        <waitForLoadingMaskToDisappear stepKey="waitForPageLoad4"/>
+        <waitForText userInput="Insert Variable" stepKey="waitForSlideOutOpen"/>
+        <!--see Insert Variable button disabled-->
+        <see selector="{{VariableSection.InsertVariableBtnDisabled}}" userInput="Insert Variable" stepKey="seeInsertWidgetDisabled" />
+        <!--see Cancel button enabed-->
+        <see selector="{{VariableSection.CancelBtnEnabled}}" userInput="Cancel" stepKey="seeCancelBtnEnabled" />
+        <!--see 4 colums-->
+        <see selector="{{VariableSection.ColName('Select')}}" userInput="Select" stepKey="selectCol" />
+        <see selector="{{VariableSection.ColName('Variable Name')}}" userInput="Variable Name" stepKey="variableCol" />
+        <see selector="{{VariableSection.ColName('Type')}}" userInput="Type" stepKey="typeCol" />
+        <see selector="{{VariableSection.ColName('Code')}}" userInput="Code" stepKey="codeCol" />
+        <!--select default variable-->
+        <click selector="{{VariableSection.Radio('city')}}" stepKey="selectDefaultVariable"/>
+        <see selector="{{VariableSection.InsertVariableBtnEnabled}}" userInput="Insert Variable" stepKey="seeInsertVarialeEnabled" />
+        <click selector="{{VariableSection.InsertVariableBtnEnabled}}" stepKey="save1" />
+        <waitForPageLoad stepKey="waitForPageLoad5" />
+        <click selector="{{TinyMCESection.InsertVariableIcon}}" stepKey="clickInsertVariableIcon2" />
+        <waitForPageLoad stepKey="waitForPageLoad6"/>
+        <!--see custom variable-->
+        <see userInput="{{customVariable.code}}"  stepKey="seeCustomVariable"/>
+        <seeElement selector="{{VariableSection.SearchTxtbox}}"  stepKey="searchBox"/>
+        <!--press Enter-->
+        <pressKey selector="{{VariableSection.SearchTxtbox}}" parameterArray="['Test Variable',\Facebook\WebDriver\WebDriverKeys::ENTER]" stepKey="pressKeyEnter"/>
+        <waitForPageLoad stepKey="waitForPageLoad7" />
+        <!--see result-->
+        <see selector="{{VariableSection.searchResult(customVariable.code)}}" userInput="{{customVariable.code}}" stepKey="seeResult" />
+        <!--Insert custom variable-->
+        <click selector="{{VariableSection.VariableRadio(customVariable.code)}}" stepKey="selectCustomVariable1"/>
+        <waitForPageLoad stepKey="waitForPageLoad8"/>
+        <click selector="{{VariableSection.InsertVariableBtnEnabled}}" stepKey="save2" />
+        <waitForElementNotVisible selector="{{VariableSection.VariableTitle}}" stepKey="waitForSlideOutClose" />
+        <click selector="{{BannerContentSection.ShowHideBtn}}" stepKey="clickShowHideBtn"/>
+        <waitForElementVisible selector="{{TinyMCESection.InsertVariableBtn}}"  stepKey="waitForInsertVariableBtn" />
+        <seeElement selector="{{TinyMCESection.InsertVariableBtn}}"  stepKey="InsertVariableBtn" />
+        <waitForLoadingMaskToDisappear stepKey="waitForLoading" />
+        <!--Save banner with variable-->
+        <click selector="{{AdminBannerBasicActionSection.Save}}" stepKey="saveBanner" />
+        <waitForPageLoad stepKey="waitForPageLoad9" />
+        <see userInput="You saved the dynamic block." stepKey="seeSuccessMessage"/>
+        <actionGroup ref="ClearCacheActionGroup" stepKey="clearMagentoCache"/>
+        <!-- Go to storefront banner page, assert banner content -->
+        <amOnPage url="/" stepKey="goToBannerFrontPage" />
+        <waitForPageLoad stepKey="waitForPageLoad10"/>
+        <waitForText userInput="Sample Variable Hello World from banner!" stepKey="waitForText"/>
+        <see userInput="Sample Variable Hello World from banner!" stepKey="assertBannerDescription"/>
+    </test>
+</tests>

@@ -1,0 +1,68 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+ /**
+  * Copyright © Magento, Inc. All rights reserved.
+  * See COPYING.txt for license details.
+  */
+-->
+
+<tests xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xsi:noNamespaceSchemaLocation="urn:magento:mftf:Test/etc/testSchema.xsd">
+    <test name="StorefrontApplyCategoryPermissionsToProductListWidgetTest">
+        <annotations>
+            <features value="CatalogWidget"/>
+            <stories value="Product list widget"/>
+            <title value="Checking stock status of a product"/>
+            <description value="Check that product status is in stock"/>
+            <severity value="CRITICAL"/>
+            <testCaseId value="MC-40873"/>
+            <useCaseId value="MC-41102"/>
+            <group value="catalogWidget"/>
+            <group value="WYSIWYGDisabled"/>
+            <group value="catalog_permissions"/>
+        </annotations>
+        <before>
+            <createData entity="SimpleSubCategory" stepKey="createCategory"/>
+            <createData entity="SimpleProduct" stepKey="createProduct">
+                <requiredEntity createDataKey="createCategory"/>
+                <field key="price">10</field>
+            </createData>
+            <createData entity="_defaultCmsPage" stepKey="createCmsPage"/>
+            <actionGroup ref="AdminLoginActionGroup" stepKey="loginAsAdmin"/>
+            <actionGroup ref="EnableCatalogCategoryPermissionActionGroup" stepKey="enableCatalogCategoryPermission"/>
+        </before>
+        <after>
+            <deleteData createDataKey="createCmsPage" stepKey="deleteCmsPage"/>
+            <deleteData createDataKey="createCategory" stepKey="deleteCategory"/>
+            <deleteData createDataKey="createProduct" stepKey="deleteProduct"/>
+            <actionGroup ref="DisableCatalogCategoryPermissionActionGroup" stepKey="disableCatalogCategoryPermission"/>
+            <actionGroup ref="AdminLogoutActionGroup" stepKey="logoutFromAdmin"/>
+        </after>
+        <actionGroup ref="OpenCategoryFromCategoryTreeActionGroup" stepKey="goToCategoryAdminPage">
+            <argument name="category" value="$createCategory.name$"/>
+        </actionGroup>
+        <actionGroup ref="AdminAddCategoryPermissionsActionGroup" stepKey="addCategoryPermissionsForNotLoggedInGroup">
+            <argument name="permissionNumber" value="1"/>
+            <argument name="customerGroup" value="NOT LOGGED IN"/>
+            <argument name="browsingCategoryPermission" value="allow"/>
+            <argument name="displayProductPricesPermission" value="deny"/>
+        </actionGroup>
+        <actionGroup ref="AdminSaveCategoryFormActionGroup" stepKey="saveCategoryPermissions"/>
+        <actionGroup ref="NavigateToCreatedCMSPageActionGroup" stepKey="navigateToCreatedCmsPage">
+            <argument name="CMSPage" value="$createCmsPage$"/>
+        </actionGroup>
+        <actionGroup ref="AdminInsertWidgetToCmsPageContentActionGroup" stepKey="insertWidgetToCmsPageContentActionGroup">
+            <argument name="widgetType" value="Catalog Products List"/>
+        </actionGroup>
+        <actionGroup ref="AdminFillCatalogProductsListWidgetCategoryActionGroup" stepKey="fillCatalogProductsListWidgetOptions">
+            <argument name="categoryName" value="$createCategory.name$"/>
+        </actionGroup>
+        <actionGroup ref="AdminClickInsertWidgetActionGroup" stepKey="clickInsertWidgetButton"/>
+        <actionGroup ref="SaveCmsPageActionGroup" stepKey="clickSaveButton"/>
+        <actionGroup ref="NavigateToStorefrontForCreatedPageActionGroup" stepKey="navigateToTheStoreFront1">
+            <argument name="page" value="$createCmsPage.identifier$"/>
+        </actionGroup>
+        <waitForElementVisible selector="{{InsertWidgetSection.checkElementStorefrontByName('1','$createProduct.name$')}}" stepKey="waitForProductVisible"/>
+        <see userInput="In stock" selector="{{StorefrontProductInfoMainSection.stock}}" stepKey="assertProductStock"/>
+    </test>
+</tests>

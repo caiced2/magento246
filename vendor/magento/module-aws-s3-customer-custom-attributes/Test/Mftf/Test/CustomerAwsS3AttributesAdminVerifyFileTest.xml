@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+ /**
+  * Copyright © Magento, Inc. All rights reserved.
+  * See COPYING.txt for license details.
+  */
+-->
+
+<tests xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xsi:noNamespaceSchemaLocation="urn:magento:mftf:Test/etc/testSchema.xsd">
+    <test name="CustomerAwsS3AttributesAdminVerifyFileTest" extends="AdminVerifyCustomerCustomFileAttributeUploadTest">
+        <annotations>
+            <features value="CustomerCustomAttribute"/>
+            <stories value="Custom Customer Attributes can correctly upload and store a file"/>
+            <title value="Custom Customer Attributes can correctly upload and store a file and Aws S3 remote filestorage enabled"/>
+            <description value="Custom Customer Attributes can correctly upload and store a file and Aws S3 remote filestorage enabled"/>
+            <severity value="MAJOR"/>
+            <testCaseId value="MC-11849"/>
+            <useCaseId value="MC-15020"/>
+            <group value="customer"/>
+            <group value="aws-s3"/>
+            <group value="remote_storage_aws_s3"/>
+            <group value="skip_in_cloud_native_s3"/>
+        </annotations>
+        <before>
+            <comment userInput="BIC workaround" stepKey="enableRemoteStorage"/>
+        </before>
+        <after>
+            <comment userInput="BIC workaround" stepKey="disableRemoteStorage"/>
+        </after>
+    </test>
+</tests>

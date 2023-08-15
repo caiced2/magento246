@@ -1,0 +1,212 @@
+<?php
+/**
+ * Copyright © Magento, Inc. All rights reserved.
+ * See COPYING.txt for license details.
+ */
+
+use Magento\Customer\Block\Widget\Name;
+?>
+<?php
+/* @var $block \Magento\GiftRegistry\Block\Customer\Address\Edit */
+/** @var \Magento\Framework\View\Helper\SecureHtmlRenderer $secureRenderer */
+
+/** @var \Magento\Customer\Helper\Address $addressHelper */
+$addressHelper = $block->getData('addressHelper');
+/** @var \Magento\Directory\Helper\Data $directoryHelper */
+$directoryHelper = $block->getData('directoryHelper');
+/** @var \Magento\GiftRegistry\ViewModel\Address\RegionProvider $regionProvider */
+$regionProvider = $block->getRegionProvider();
+
+?>
+
+<fieldset class="fieldset shipping_address">
+    <legend class="legend"><span><?= $block->escapeHtml(__('Shipping Address')) ?></span></legend>
+    <br />
+
+    <?php if ($block->customerHasAddresses()): ?>
+        <div class="field address">
+            <label for="address_type_or_id" class="label">
+                <span>
+                    <?= $block->escapeHtml(
+                        __('Select a shipping address from your address book or enter a new address.')
+                    ) ?>
+                </span>
+            </label>
+            <div class="control"
+                 data-shipping-address="<?= $block->getEntity()->getShippingAddress() ? 'true' : 'false' ?>">
+                <?= $block->getAddressHtmlSelect('address_type_or_id') ?>
+            </div>
+        </div>
+    <?php endif ?>
+
+    <fieldset class="fieldset" id="shipping-new-address-form">
+        <?php if ($block->customerHasAddresses()): ?>
+            <?= /* @noEscape */
+            $secureRenderer->renderTag(
+                'style',
+                [],
+                '#shipping-new-address-form { display: none; }',
+                true
+            );
+            ?>
+        <?php endif ?>
+        <?= $block->getLayout()
+            ->createBlock(Name::class)
+            ->setObject($block->getAddress())
+            ->setFieldNameFormat('address[%s]')
+            ->toHtml()
+        ?>
+
+        <div class="field company">
+            <label for="address:company" class="label"><span><?= $block->escapeHtml(__('Company')) ?></span></label>
+            <div class="control">
+                <?php $companyValidationClass = $addressHelper->getAttributeValidationClass('company') ?>
+                <input type="text"
+                       id="address:company"
+                       name="address[company]"
+                       value="<?= $block->escapeHtml($block->getAddress()->getCompany()) ?>"
+                       title="<?= $block->escapeHtmlAttr(__('Company')) ?>"
+                       class="input-text <?= $block->escapeHtmlAttr($companyValidationClass) ?>"/>
+            </div>
+        </div>
+
+        <?php $_streetValidationClass = $block->escapeHtmlAttr($addressHelper->getAttributeValidationClass('street'));?>
+        <div class="field address street required">
+            <label for="address:street1" class="label"><span><?= $block->escapeHtml(__('Address')) ?></span></label>
+            <div class="control">
+                <input type="text"
+                       title="<?= $block->escapeHtmlAttr(__('Street Address')) ?>"
+                       name="address[street][]"
+                       id="address:street1"
+                       value="<?= $block->escapeHtml($block->getAddress()->getStreetLine(1)) ?>"
+                       class="input-text <?= /* @noEscape */ $_streetValidationClass ?>" />
+                <div class="nested">
+                    <?php $_streetValidationClass = trim(str_replace('required-entry', '', $_streetValidationClass)); ?>
+                    <?php for ($_i = 2, $_n = $addressHelper->getStreetLines(); $_i <= $_n; $_i++): ?>
+                        <div class="field additional no-label">
+                            <div class="control">
+                                <input type="text"
+                                       title="<?= $block->escapeHtmlAttr(__('Street Address %1', $_i)) ?>"
+                                       name="address[street][]"
+                                       id="address:street<?= /* @noEscape */ $_i ?>"
+                                       value="<?= $block->escapeHtml($block->getAddress()->getStreetLine($_i)) ?>"
+                                       class="input-text <?= /* @noEscape */ $_streetValidationClass ?>"/>
+                            </div>
+                        </div>
+                    <?php endfor; ?>
+                </div>
+            </div>
+        </div>
+
+        <div class="field address city required">
+            <label for="address:city" class="label"><span><?= $block->escapeHtml(__('City')) ?></span></label>
+            <?php $cityValidationClass = $addressHelper->getAttributeValidationClass('city');?>
+            <div class="control">
+                <input type="text"
+                       title="<?= $block->escapeHtmlAttr(__('City')) ?>"
+                       name="address[city]"
+                       value="<?= $block->escapeHtml($block->getAddress()->getCity()) ?>"
+                       class="input-text <?= $block->escapeHtmlAttr($cityValidationClass) ?>" id="address:city"/>
+            </div>
+        </div>
+        <div class="field address region required">
+            <label for="address:region" class="label">
+                <span><?= $block->escapeHtml(__('State/Province')) ?></span>
+            </label>
+            <div class="control">
+                <select id="address:region_id"
+                        name="address[region_id]"
+                        title="<?= $block->escapeHtmlAttr(__('State/Province')) ?>"
+                        class="validate-select">
+                    <option value="">
+                        <?= $block->escapeHtml(__('Please select a region, state or province.')) ?>
+                    </option>
+                </select>
+                <?php $regionValidationClass = $addressHelper->getAttributeValidationClass('region'); ?>
+                <input type="text"
+                       id="address:region"
+                       name="address[region]"
+                       value="<?= $block->escapeHtml($block->getAddress()->getRegion()) ?>"
+                       title="<?= $block->escapeHtmlAttr(__('State/Province')) ?>"
+                       class="input-text <?= $block->escapeHtmlAttr($regionValidationClass) ?>"/>
+            </div>
+        </div>
+        <?= /* @noEscape */
+        $secureRenderer->renderTag(
+            'style',
+            [],
+            '
+                #address:region_id { display: none; }
+                #address:region { display: none; }
+            ',
+            true
+        ); ?>
+
+        <div class="field address postcode required">
+            <label for="address:postcode" class="label">
+                <span><?= $block->escapeHtml(__('Zip/Postal Code')) ?></span>
+            </label>
+            <div class="control">
+                <?php $zipValidationClass = $addressHelper->getAttributeValidationClass('postcode'); ?>
+                <input type="text"
+                       title="<?= $block->escapeHtmlAttr(__('Zip/Postal Code')) ?>"
+                       name="address[postcode]"
+                       id="address:postcode"
+                       value="<?= $block->escapeHtml($block->getAddress()->getPostcode()) ?>"
+                       class="input-text validate-zip-international <?= $block->escapeHtmlAttr($zipValidationClass) ?>"
+                       data-validate="{'required':true, 'validate-zip-international':true}"/>
+            </div>
+        </div>
+        <div class="field address country required">
+            <label for="address:country_id" class="label"><span><?= $block->escapeHtml(__('Country')) ?></span></label>
+            <div class="control">
+                <?= $block->getCountryHtmlSelect(
+                    $block->getAddress()->getCountryId(),
+                    'address[country_id]',
+                    'address:country_id'
+                ) ?>
+            </div>
+        </div>
+
+        <div class="field address telephone required">
+            <label for="address:telephone" class="label">
+                <span><?= $block->escapeHtml(__('Phone Number')) ?></span>
+            </label>
+            <div class="control">
+                <?php $phoneValidationClass =  $addressHelper->getAttributeValidationClass('telephone'); ?>
+                <input type="text"
+                       name="address[telephone]"
+                       value="<?= $block->escapeHtml($block->getAddress()->getTelephone()) ?>"
+                       title="<?= $block->escapeHtmlAttr(__('Phone Number')) ?>"
+                       class="input-text <?= $block->escapeHtmlAttr($phoneValidationClass) ?>"
+                       id="address:telephone"/>
+            </div>
+        </div>
+        <div class="field address fax">
+            <label for="address:fax" class="label"><span><?= $block->escapeHtml(__('Fax')) ?></span></label>
+            <div class="control">
+                <?php $faxValidationClass = $addressHelper->getAttributeValidationClass('fax'); ?>
+                <input type="text"
+                       name="address[fax]"
+                       value="<?= $block->escapeHtml($block->getAddress()->getFax()) ?>"
+                       title="<?= $block->escapeHtmlAttr(__('Fax')) ?>"
+                       class="input-text <?= $block->escapeHtmlAttr($faxValidationClass) ?>"
+                       id="address:fax"/>
+            </div>
+        </div>
+    </fieldset>
+</fieldset>
+<script type="text/x-magento-init">
+    {
+        "#address\\:country_id": {
+            "directoryRegionUpdater": {
+                "optionalRegionAllowed": <?= ($block->getConfig('general/region/display_all') ? 'true' : 'false') ?>,
+                "regionListId": "#address\\:region_id",
+                "regionInputId": "#address\\:region",
+                "postcodeId": "#address\\:postcode",
+                "regionJson": <?= /* @noEscape */ $regionProvider->getRegionJson() ?>,
+                "defaultRegion": "<?= /* @noEscape */ $block->getAddress()->getRegionId() ?>"
+            }
+        }
+    }
+</script>

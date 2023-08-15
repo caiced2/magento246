@@ -1,0 +1,27 @@
+<?php
+/**
+ * Copyright © Magento, Inc. All rights reserved.
+ * See COPYING.txt for license details.
+ */
+
+?>
+<?php $entity = $block->getEntity() ?>
+
+<?php if ($entity) :?>
+    <div class="block block-giftregistry-shared">
+        <div class="block-content">
+            <dl class="item-options giftregistry-description">
+                <?php foreach ($block->getAttributesToDisplay() as $attributeInfo) :?>
+                    <dt class="item-title"><?= $block->escapeHtml($attributeInfo['title']) ?></dt>
+                    <dd class="item-value"><?= $block->escapeHtml($attributeInfo['value']) ?></dd>
+                <?php endforeach; ?>
+            </dl>
+        </div>
+    </div>
+    <?= $block->getChildHtml('giftregistry_items') ?>
+<?php endif; ?>
+<div class="actions-toolbar">
+    <div class="secondary">
+        <a href="<?= $block->escapeUrl($block->getSearchBackUrl()) ?>" class="action back"><span><?= $block->escapeHtml(__('Back')) ?></span></a>
+    </div>
+</div>

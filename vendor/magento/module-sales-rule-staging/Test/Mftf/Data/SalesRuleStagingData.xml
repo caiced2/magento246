@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+ /**
+  * Copyright © Magento, Inc. All rights reserved.
+  * See COPYING.txt for license details.
+  */
+-->
+
+<entities xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+          xsi:noNamespaceSchemaLocation="urn:magento:mftf:DataGenerator/etc/dataProfileSchema.xsd">
+    <entity name="Update006" type="SalesRuleStaging">
+        <data key="name" unique="suffix">Update006</data>
+        <data key="description">Some description for Update006</data>
+        <data key="startDate">08/20/2025 6:42 AM</data>
+        <data key="viewedit">View/Edit</data>
+    </entity>
+    <entity name="Update007" type="SalesRuleStaging">
+        <data key="updateName" unique="suffix">Update007</data>
+        <data key="updateDescription">Some description for Update007</data>
+        <data key="viewedit">View/Edit</data>
+    </entity>
+    <entity name="UpdateDataFor1CPR" type="SalesRuleStaging">
+        <data key="updateName" unique="suffix">UN1</data>
+        <data key="updateDescription">test update</data>
+    </entity>
+    <entity name="UpdateDataFor2CPR" type="SalesRuleStaging">
+        <data key="updateName" unique="suffix">Test_Update_1</data>
+        <data key="updateDescription">Test description</data>
+    </entity>
+</entities>

@@ -1,0 +1,107 @@
+<?xml version="1.0"?>
+<!--
+/**
+ * Copyright © Magento, Inc. All rights reserved.
+ * See COPYING.txt for license details.
+ */
+-->
+<schema xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:noNamespaceSchemaLocation="urn:magento:framework:Setup/Declaration/Schema/etc/schema.xsd">
+    <table name="sequence_cms_page" resource="default" engine="innodb">
+        <column xsi:type="smallint" name="sequence_value" unsigned="false" nullable="false" identity="true"
+                onCreate="migrateSequneceColumnData(cms_page,page_id)"/>
+        <constraint xsi:type="primary" referenceId="PRIMARY">
+            <column name="sequence_value"/>
+        </constraint>
+    </table>
+    <table name="cms_page_store" resource="default" comment="CMS Page To Store Linkage Table">
+        <column xsi:type="smallint" name="page_id" disabled="true"/>
+        <column xsi:type="smallint" name="row_id" unsigned="false" nullable="false" identity="false"
+                onCreate="migrateDataFrom(page_id)" comment="Version Id"/>
+        <constraint xsi:type="foreign" referenceId="CMS_PAGE_STORE_PAGE_ID_CMS_PAGE_PAGE_ID" disabled="1"/>
+        <constraint xsi:type="foreign" referenceId="CMS_PAGE_STORE_ROW_ID_CMS_PAGE_ROW_ID" table="cms_page_store"
+                    column="row_id" referenceTable="cms_page" referenceColumn="row_id" onDelete="CASCADE"/>
+        <constraint xsi:type="primary" referenceId="PRIMARY" disabled="1"/>
+        <constraint xsi:type="primary" referenceId="STAGING_PRIMARY">
+            <column name="row_id"/>
+            <column name="store_id"/>
+        </constraint>
+    </table>
+    <table name="cms_page" resource="default" comment="CMS Page Table">
+        <column xsi:type="smallint" name="page_id" unsigned="false" nullable="false" identity="false"
+                comment="Entity Id"/>
+        <column xsi:type="smallint" name="row_id" unsigned="false" nullable="false" identity="true"
+                onCreate="migrateDataFrom(page_id)" comment="Version Id"/>
+        <column xsi:type="bigint" name="created_in" unsigned="true" nullable="false" identity="false"
+                default="1" comment="Update Id"/>
+        <column xsi:type="bigint" name="updated_in" unsigned="true" default="2147483647" nullable="false" identity="false"
+                comment="Next Update Id"/>
+        <constraint xsi:type="primary" referenceId="PRIMARY" disabled="1"/>
+        <constraint xsi:type="primary" referenceId="STAGING_PRIMARY">
+            <column name="row_id"/>
+        </constraint>
+        <index referenceId="CMS_PAGE_PAGE_ID" indexType="btree">
+            <column name="page_id"/>
+        </index>
+        <constraint xsi:type="foreign" referenceId="CMS_PAGE_PAGE_ID_SEQUENCE_CMS_PAGE_SEQUENCE_VALUE" table="cms_page"
+                    column="page_id" referenceTable="sequence_cms_page" referenceColumn="sequence_value"
+                    onDelete="CASCADE"/>
+        <index referenceId="CMS_PAGE_CREATED_IN" indexType="btree">
+            <column name="created_in"/>
+        </index>
+        <index referenceId="CMS_PAGE_UPDATED_IN" indexType="btree">
+            <column name="updated_in"/>
+        </index>
+    </table>
+    <table name="sequence_cms_block" resource="default" engine="innodb">
+        <column xsi:type="smallint" name="sequence_value" unsigned="false" nullable="false" identity="true"
+                onCreate="migrateSequneceColumnData(cms_block,block_id)"/>
+        <constraint xsi:type="primary" referenceId="PRIMARY">
+            <column name="sequence_value"/>
+        </constraint>
+    </table>
+    <table name="cms_block_store" resource="default" comment="CMS Block To Store Linkage Table">
+        <column xsi:type="smallint" name="block_id" disabled="true"/>
+        <column xsi:type="smallint" name="row_id" unsigned="false" nullable="false" identity="false"
+                onCreate="migrateDataFrom(block_id)" comment="Version Id"/>
+        <constraint xsi:type="foreign" referenceId="CMS_BLOCK_STORE_BLOCK_ID_CMS_BLOCK_BLOCK_ID" disabled="1"/>
+        <constraint xsi:type="foreign" referenceId="CMS_BLOCK_STORE_ROW_ID_CMS_BLOCK_ROW_ID" table="cms_block_store"
+                    column="row_id" referenceTable="cms_block" referenceColumn="row_id" onDelete="CASCADE"/>
+        <constraint xsi:type="primary" referenceId="PRIMARY" disabled="1"/>
+        <constraint xsi:type="primary" referenceId="STAGING_PRIMARY">
+            <column name="row_id"/>
+            <column name="store_id"/>
+        </constraint>
+    </table>
+    <table name="cms_block" resource="default" comment="CMS Block Table">
+        <column xsi:type="smallint" name="block_id" unsigned="false" nullable="false" identity="false"
+                comment="Entity Id"/>
+        <column xsi:type="smallint" name="row_id" unsigned="false" nullable="false" identity="true"
+                onCreate="migrateDataFrom(block_id)" comment="Version Id"/>
+        <column xsi:type="bigint" name="created_in" unsigned="true" nullable="false" identity="false"
+                default="1" comment="Update Id"/>
+        <column xsi:type="bigint" name="updated_in" default="2147483647" unsigned="true" nullable="false" identity="false"
+                comment="Next Update Id"/>
+        <constraint xsi:type="primary" referenceId="PRIMARY" disabled="1"/>
+        <constraint xsi:type="primary" referenceId="STAGING_PRIMARY">
+            <column name="row_id"/>
+            <column name="row_id"/>
+        </constraint>
+        <constraint xsi:type="foreign" referenceId="CMS_BLOCK_BLOCK_ID_SEQUENCE_CMS_BLOCK_SEQUENCE_VALUE" table="cms_block"
+                    column="block_id" referenceTable="sequence_cms_block" referenceColumn="sequence_value"
+                    onDelete="CASCADE"/>
+        <index referenceId="CMS_BLOCK_CREATED_IN" indexType="btree">
+            <column name="created_in"/>
+        </index>
+        <index referenceId="CMS_BLOCK_UPDATED_IN" indexType="btree">
+            <column name="updated_in"/>
+        </index>
+    </table>
+    <table name="magento_versionscms_hierarchy_node">
+        <constraint xsi:type="foreign" referenceId="MAGENTO_VERSIONSCMS_HIERARCHY_NODE_PAGE_ID_CMS_PAGE_PAGE_ID"
+                    disabled="true"/>
+        <constraint xsi:type="foreign" referenceId="FK_12C2962523CC7EF2EA73AD4121B5DBFF"
+                    table="magento_versionscms_hierarchy_node" column="page_id" referenceTable="sequence_cms_page"
+                    referenceColumn="sequence_value" onDelete="CASCADE"/>
+    </table>
+</schema>

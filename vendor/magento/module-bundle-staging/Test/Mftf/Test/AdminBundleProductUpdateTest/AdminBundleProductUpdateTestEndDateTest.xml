@@ -1,0 +1,91 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+ /**
+  * Copyright © Magento, Inc. All rights reserved.
+  * See COPYING.txt for license details.
+  */
+-->
+<tests xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:noNamespaceSchemaLocation="urn:magento:mftf:Test/etc/testSchema.xsd">
+    <test name="AdminBundleProductUpdateTestEndDateTest">
+        <annotations>
+            <features value="BundleStaging"/>
+            <stories value="Admin manages staging update"/>
+            <title value="Admin should be able to create Single Future Update with end date from Bundle Product Page"/>
+            <description value="Admin should be able to create Single Future Update with end date from Bundle Product Page"/>
+            <severity value="CRITICAL"/>
+            <testCaseId value="MC-3261"/>
+            <group value="BundleStaging"/>
+        </annotations>
+        <before>
+            <actionGroup ref="AdminLoginActionGroup" stepKey="loginAsAdmin"/>
+            <createData entity="SimpleProduct2" stepKey="simpleProduct1"/>
+            <createData entity="SimpleProduct2" stepKey="simpleProduct2"/>
+        </before>
+        <after>
+            <deleteData createDataKey="simpleProduct1" stepKey="deleteSimpleProduct1"/>
+            <deleteData createDataKey="simpleProduct2" stepKey="deleteSimpleProduct2"/>
+            <amOnPage url="{{AdminStagingDashboardPage.url}}" stepKey="goToStagingDashboard"/>
+            <waitForPageLoad stepKey="waitForPageLoad"/>
+            <actionGroup ref="ClearFiltersAdminDataGridActionGroup" stepKey="clearFilter"/>
+            <actionGroup ref="AdminLogoutActionGroup" stepKey="logout"/>
+        </after>
+
+        <!-- Go to bundle product creation page -->
+        <amOnPage url="{{AdminProductCreatePage.url(BundleProduct.set, BundleProduct.type)}}" stepKey="goToBundleProductCreationPage"/>
+        <waitForPageLoad stepKey="waitForBundleProductCreationPage"/>
+
+        <!-- Fill out ancillary data on bundle product -->
+        <actionGroup ref="AncillaryPrepBundleProductActionGroup" stepKey="createBundledProductForTwoSimpleProducts"/>
+
+        <!-- Create bundle product options -->
+        <conditionalClick selector="{{AdminProductFormBundleSection.bundleItemsToggle}}" dependentSelector="{{AdminProductFormBundleSection.bundleItemsToggle}}" visible="false" stepKey="conditionallyOpenSectionBundleItems"/>
+        <click selector="{{AdminProductFormBundleSection.addOption}}" stepKey="clickAddOption3"/>
+        <waitForElementVisible selector="{{AdminProductFormBundleSection.bundleOptionXTitle('0')}}" stepKey="waitForBundleOptions"/>
+        <fillField selector="{{AdminProductFormBundleSection.bundleOptionXTitle('0')}}" userInput="{{BundleProduct.optionTitle1}}" stepKey="fillOptionTitle"/>
+        <selectOption selector="{{AdminProductFormBundleSection.bundleOptionXInputType('0')}}" userInput="{{BundleProduct.optionInputType1}}" stepKey="selectInputType"/>
+        <waitForElementVisible selector="{{AdminProductFormBundleSection.addProductsToOption}}" stepKey="waitForAddProductsToBundle"/>
+        <click selector="{{AdminProductFormBundleSection.addProductsToOption}}" stepKey="clickAddProductsToOption"/>
+        <waitForPageLoad stepKey="waitForPageLoadAfterBundleProducts"/>
+        <actionGroup ref="FilterProductGridBySkuActionGroup" stepKey="filterBundleProductOptions">
+            <argument name="product" value="$$simpleProduct1$$"/>
+        </actionGroup>
+        <checkOption selector="{{AdminAddProductsToOptionPanel.firstCheckbox}}" stepKey="selectFirstGridRow"/>
+        <actionGroup ref="FilterProductGridBySkuActionGroup" stepKey="filterBundleProductOptions2">
+            <argument name="product" value="$$simpleProduct2$$"/>
+        </actionGroup>
+        <checkOption selector="{{AdminAddProductsToOptionPanel.firstCheckbox}}" stepKey="selectFirstGridRow2"/>
+        <click selector="{{AdminAddProductsToOptionPanel.addSelectedProducts}}" stepKey="clickAddSelectedBundleProducts"/>
+        <fillField selector="{{AdminProductFormBundleSection.bundleOptionXProductYQuantity('0', '0')}}" userInput="{{BundleProduct.defaultQuantity}}" stepKey="fillProductDefaultQty1"/>
+        <fillField selector="{{AdminProductFormBundleSection.bundleOptionXProductYQuantity('0', '1')}}" userInput="{{BundleProduct.defaultQuantity}}" stepKey="fillProductDefaultQty2"/>
+
+        <!--Save the product-->
+        <click selector="{{AdminProductFormActionSection.saveButton}}" stepKey="clickSaveButton"/>
+        <seeElement selector="{{AdminCategoryMessagesSection.SuccessMessage}}" stepKey="messageYouSavedTheProductIsShown"/>
+
+        <!-- Create the new staging update -->
+        <generateDate stepKey="generateEndDate" date="+1 week" format="m/d/Y g:i A"/>
+        <actionGroup stepKey="fillOutNewStaging" ref="createEntityNameStagingUpdate">
+            <argument name="stagingUpdate" value="_defaultStaging"/>
+            <argument name="endDate" value="{$generateEndDate}"/>
+        </actionGroup>
+
+        <!-- Go to product storefront page to see the change applied-->
+        <amOnPage stepKey="goToCreatedProductPage" url="{{BundleProduct.sku}}.html"/>
+        <waitForPageLoad stepKey="waitForProductPageLoad2"/>
+        <see stepKey="seeNewTitle" selector="{{StorefrontProductInfoMainSection.productName}}" userInput="{{_defaultStaging.entityName}}"/>
+
+        <actionGroup stepKey="changeDashboardView" ref="changeStagingView">
+            <argument name="view" value="grid"/>
+        </actionGroup>
+
+        <actionGroup stepKey="filterByName" ref="FilterProductGridByName2ActionGroup">
+            <argument name="name" value="{{_defaultStaging.name}}"/>
+        </actionGroup>
+
+        <!-- Active permanent updates are no longer shown on the staging dashboard -->
+        <comment userInput="BIC workaround" stepKey="seeUpdateRow"/>
+        <comment userInput="BIC workaround" stepKey="seeUpcoming"/>
+        <comment userInput="BIC workaround" stepKey="seeUpdateTitle"/>
+    </test>
+</tests>

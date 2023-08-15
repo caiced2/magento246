@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+ /**
+  * Copyright © Magento, Inc. All rights reserved.
+  * See COPYING.txt for license details.
+  */
+-->
+<actionGroups xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+              xsi:noNamespaceSchemaLocation="urn:magento:mftf:Test/etc/actionGroupSchema.xsd">
+    <actionGroup name="AdminApplyRewardPointsActionGroup">
+        <arguments>
+            <argument name="customerId"/>
+            <argument name="rewards" type="string"/>
+        </arguments>
+        <amOnPage url="{{AdminEditCustomerPage.url(customerId)}}" stepKey="amOnCustomersPage" />
+        <waitForPageLoad stepKey="waitForPageLoad" />
+        <click selector="{{AdminCustomerRewardsSection.customerRewardsTab}}" stepKey="clickRewardTab"/>
+        <waitForLoadingMaskToDisappear stepKey="waitForLoading" />
+        <fillField userInput="{{rewards}}" selector="{{AdminCustomerRewardsSection.customerRewardsField}}"  stepKey="fillRewards"/>
+        <click selector="{{AdminCustomerMainActionsSection.saveButton}}" stepKey="clickRewardsSave"/>
+        <waitForElement selector="{{AdminCustomerMessagesSection.successMessage}}" stepKey="waitSuccessMessage"/>
+    </actionGroup>
+</actionGroups>

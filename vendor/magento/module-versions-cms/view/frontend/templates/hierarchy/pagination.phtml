@@ -1,0 +1,80 @@
+<?php
+/**
+ * Copyright © Magento, Inc. All rights reserved.
+ * See COPYING.txt for license details.
+ */
+
+/* @var \Magento\VersionsCms\Block\Hierarchy\Pagination $block */
+?>
+<div class="pager only">
+    <div class="pages">
+        <strong class="label" id="paging-label"><?= $block->escapeHtml(__('Page:')) ?></strong>
+        <ul class="items" aria-labelledby="paging-label">
+        <?php if ($block->canShowSequence()) : ?>
+            <?php if ($block->canShowPrevious()) : ?>
+            <li class="item">
+                <a class="action previous" href="<?= $block->escapeUrl($block->getPreviousNode()->getUrl()) ?>">
+                    <span class="label"><?= $block->escapeHtml(__('Page')) ?></span>
+                    <span><?= $block->escapeHtml(__('Previous')) ?></span>
+                </a>
+            </li>
+            <?php endif;?>
+        <?php endif;?>
+
+        <?php if ($block->canShowOuter() && $block->canShowFirst()) : ?>
+            <li class="item">
+                <a class="page first" title="<?= $block->escapeHtmlAttr($block->getFirstNode()->getLabel()) ?>" href="<?= $block->escapeUrl($block->getFirstNode()->getUrl()) ?>">
+                    <span class="label"><?= $block->escapeHtml(__('Page')) ?></span>
+                    <span><?= $block->escapeHtml($block->getNodeLabel($block->getFirstNode())) ?></span>
+                </a>
+            </li>
+        <?php endif;?>
+
+        <?php if ($block->canShowPreviousJump()) : ?>
+            <li class="item"><a class="page action previous jump" title="<?= $block->escapeHtmlAttr($block->getPreviousJumpNode()->getLabel()) ?>" href="<?= $block->escapeUrl($block->getPreviousJumpNode()->getUrl()) ?>"><span>...</span></a></li>
+        <?php endif;?>
+
+        <?php foreach ($block->getNodesInRange() as $node) : ?>
+            <?php if ($node->getIsCurrent()) : ?>
+                <li class="item current">
+                    <strong>
+                        <span class="label"><?= $block->escapeHtml(__('You\'re currently reading page')) ?></span>
+                        <span><?= $block->escapeHtml($block->getNodeLabel($node)) ?></span>
+                    </strong>
+                </li>
+            <?php else : ?>
+                <li class="item">
+                    <a title="<?= $block->escapeHtmlAttr($node->getLabel()) ?>" href="<?= $block->escapeUrl($node->getUrl()) ?>" class="page">
+                        <span class="label"><?= $block->escapeHtml(__('Page')) ?></span>
+                        <span><?= $block->escapeHtml($block->getNodeLabel($node)) ?></span>
+                    </a>
+                </li>
+            <?php endif; ?>
+        <?php endforeach;?>
+
+        <?php if ($block->canShowNextJump()) : ?>
+            <li class="item"><a class="page action forward jump" title="<?= $block->escapeHtmlAttr($block->getNextJumpNode()->getLabel()) ?>" href="<?= $block->escapeUrl($block->getNextJumpNode()->getUrl()) ?>"><span>...</span></a></li>
+        <?php endif;?>
+
+        <?php if ($block->canShowOuter() && $block->canShowLast()) : ?>
+          <li class="item">
+              <a class="page last" title="<?= $block->escapeHtmlAttr($block->getLastNode()->getLabel()) ?>" href="<?= $block->escapeUrl($block->getLastNode()->getUrl()) ?>">
+                  <span class="label"><?= $block->escapeHtml(__('Page')) ?></span>
+                  <span><?= $block->escapeHtml($block->getNodeLabel($block->getLastNode())) ?></span>
+              </a>
+          </li>
+        <?php endif;?>
+
+        <?php if ($block->canShowSequence()) : ?>
+            <?php if ($block->canShowNext()) : ?>
+            <li class="item">
+                <a class="action next" href="<?= $block->escapeUrl($block->getNextNode()->getUrl()) ?>">
+                    <span class="label"><?= $block->escapeHtml(__('Page')) ?></span>
+                    <span><?= $block->escapeHtml(__('Next')) ?></span>
+                </a>
+            </li>
+            <?php endif;?>
+        <?php endif;?>
+        </ul>
+    </div>
+</div>

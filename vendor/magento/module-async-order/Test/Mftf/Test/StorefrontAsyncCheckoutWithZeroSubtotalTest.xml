@@ -1,0 +1,166 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+ /**
+  * Copyright © Magento, Inc. All rights reserved.
+  * See COPYING.txt for license details.
+  */
+-->
+<tests xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xsi:noNamespaceSchemaLocation="urn:magento:mftf:Test/etc/testSchema.xsd">
+    <test name="StorefrontAsyncCheckoutWithZeroSubtotalTest">
+        <annotations>
+            <features value="Checkout"/>
+            <stories value="Checkout via Guest Async Checkout"/>
+            <title value="Guest should be able to place an order with zero subtotal asynchronously"/>
+            <description value="Guest should be able to place an order with zero subtotal asynchronously"/>
+            <severity value="CRITICAL"/>
+            <testCaseId value="MC-42951"/>
+            <group value="checkout"/>
+            <group value="async_checkout"/>
+        </annotations>
+        <before>
+            <comment userInput="BIC workaround" stepKey="enableAsyncCheckout"/>
+
+            <!-- Create Product and Category for Order placement -->
+            <createData entity="_defaultCategory" stepKey="createCategory"/>
+            <createData entity="ApiSimpleProduct" stepKey="createProduct">
+                <requiredEntity createDataKey="createCategory"/>
+            </createData>
+
+            <!-- Enable Free Shipping -->
+            <createData entity="PaymentMethodsSettingConfig" stepKey="paymentMethodsSettingConfig"/>
+            <createData entity="FreeShippingMethodsSettingConfig" stepKey="freeShippingMethodsSettingConfig"/>
+
+            <actionGroup ref="AdminLoginActionGroup" stepKey="loginAsAdmin"/>
+        </before>
+        <after>
+            <createData entity="DefaultShippingMethodsConfig" stepKey="defaultShippingMethodsConfig"/>
+            <createData entity="DisableFreeShippingConfig" stepKey="disableFreeShippingConfig"/>
+            <actionGroup ref="AdminLogoutActionGroup" stepKey="adminLogout"/>
+            <deleteData createDataKey="createCategory" stepKey="deleteCategory"/>
+            <deleteData createDataKey="createProduct" stepKey="deleteProduct"/>
+            <comment userInput="BIC workaround" stepKey="disableAsyncCheckout"/>
+        </after>
+
+        <actionGroup ref="AdminOpenCartPriceRulesPageActionGroup" stepKey="amOnCartPriceList"/>
+
+        <!--Add New Rule-->
+        <click selector="{{AdminCartPriceRulesSection.addNewRuleButton}}" stepKey="clickAddNewRule"/>
+        <fillField selector="{{AdminCartPriceRulesFormSection.ruleName}}" userInput="{{ApiSalesRule.name}}" stepKey="fillRuleName"/>
+        <selectOption selector="{{AdminCartPriceRulesFormSection.websites}}" userInput="Main Website" stepKey="selectWebsite"/>
+        <actionGroup ref="SelectNotLoggedInCustomerGroupActionGroup" stepKey="chooseNotLoggedInCustomerGroup"/>
+        <selectOption selector="{{AdminCartPriceRulesFormSection.coupon}}" userInput="Specific Coupon" stepKey="selectCouponType"/>
+        <fillField selector="{{AdminCartPriceRulesFormSection.couponCode}}" userInput="{{_defaultCoupon.code}}" stepKey="fillCouponCode"/>
+        <fillField selector="{{AdminCartPriceRulesFormSection.userPerCoupon}}" userInput="99" stepKey="fillUserPerCoupon"/>
+        <click selector="{{AdminCartPriceRulesFormSection.actionsHeader}}" stepKey="clickToExpandActions"/>
+        <selectOption selector="{{AdminCartPriceRulesFormSection.apply}}" userInput="Percent of product price discount" stepKey="selectActionType"/>
+        <fillField selector="{{AdminCartPriceRulesFormSection.discountAmount}}" userInput="100" stepKey="fillDiscountAmount"/>
+        <click selector="{{AdminCartPriceRulesFormSection.save}}" stepKey="clickSaveButton"/>
+        <see selector="{{AdminCartPriceRulesSection.messages}}" userInput="You saved the rule." stepKey="seeSuccessMessage"/>
+
+        <!--Proceed to Storefront and Place an Order with Free Shipping Using Created Coupon-->
+        <!--Add Product to Cart-->
+        <actionGroup ref="AddSimpleProductToCartActionGroup" stepKey="AddProductToCard">
+            <argument name="product" value="$$createProduct$$"/>
+        </actionGroup>
+
+        <!--Proceed to Shipment-->
+        <actionGroup ref="StorefrontClickOnMiniCartActionGroup" stepKey="clickToOpenCard"/>
+        <click selector="{{StorefrontMinicartSection.goToCheckout}}" stepKey="clickToProceedToCheckout"/>
+        <waitForPageLoad stepKey="waitForTheFormIsOpened"/>
+
+        <!--Fill Shipping Form-->
+        <actionGroup ref="ShipmentFormFreeShippingActionGroup" stepKey="shipmentFormFreeShippingActionGroup"/>
+
+        <click selector="{{DiscountSection.DiscountTab}}" stepKey="clickToAddDiscount"/>
+        <fillField selector="{{DiscountSection.DiscountInput}}" userInput="{{_defaultCoupon.code}}" stepKey="TypeDiscountCode"/>
+        <click selector="{{DiscountSection.ApplyCodeBtn}}" stepKey="clickToApplyDiscount"/>
+        <waitForPageLoad stepKey="WaitForDiscountToBeAdded"/>
+
+
+        <comment userInput="Comment is added to preserve the step key for backward compatibility" stepKey="waitForPlaceOrderButton"/>
+        <actionGroup ref="ClickPlaceOrderActionGroup" stepKey="clickPlaceOrder"/>
+        <grabTextFrom selector="{{CheckoutSuccessMainSection.orderNumber}}" stepKey="grabOrderNumber1"/>
+
+        <!-- Get Order id -->
+        <grabTextFrom selector="{{CheckoutSuccessMainSection.orderNumber}}" stepKey="grabOrderNumber"/>
+
+        <!-- Assert Cart is Empty -->
+        <actionGroup ref="AssertShoppingCartIsEmptyActionGroup" stepKey="seeEmptyShoppingCartForFirstCustomer"/>
+
+        <!-- Check that Order is not Available in Orders & Returns-->
+        <!-- Find the Order on frontend > Navigate to: Orders and Returns -->
+        <amOnPage url="{{StorefrontGuestOrderSearchPage.url}}" stepKey="amOnOrdersAndReturns"/>
+        <waitForPageLoad stepKey="waiForStorefrontPage"/>
+
+        <!-- Fill the Form with Correspondent Order Data -->
+        <actionGroup ref="StorefrontFillOrdersAndReturnsFormActionGroup" stepKey="fillOrder">
+            <argument name="orderNumber" value="$grabOrderNumber"/>
+            <argument name="customer" value="CustomerEntityOne"/>
+        </actionGroup>
+
+        <!-- Click on the "Continue" Button -->
+        <click selector="{{StorefrontGuestOrdersReturnsSearchSection.continue}}" stepKey="clickContinue"/>
+        <waitForPageLoad stepKey="waitForPageLoad1"/>
+        <!-- Check that Order is not Available -->
+        <actionGroup ref="AssertMessageOrderSearchActionGroup" stepKey="seeOrderIsNotAvailableErrorMessage">
+            <argument name="messageType" value="error"/>
+            <argument name="message" value="Order information is not available yet. Try again in a couple of minutes."/>
+        </actionGroup>
+
+        <!-- Check that Order is Absent in admin Orders Grid -->
+        <amOnPage url="{{AdminOrdersPage.url}}" stepKey="onOrdersPage"/>
+        <waitForLoadingMaskToDisappear stepKey="waitForLoadingMaskToDisappearOnOrdersPage"/>
+        <actionGroup ref="ClearFiltersAdminDataGridActionGroup" stepKey="clearGridFilter"/>
+        <fillField selector="{{AdminOrdersGridSection.search}}" userInput="{$grabOrderNumber}" stepKey="fillOrderNum"/>
+        <click selector="{{AdminOrdersGridSection.submitSearch}}" stepKey="submitSearchOrderNum"/>
+        <waitForLoadingMaskToDisappear stepKey="waitForLoadingMaskToDisappearOnSearch"/>
+        <see selector="{{AdminDataGridTableSection.dataGridEmpty}}" userInput="We couldn't find any records." stepKey="assertDataGridEmptyMessage"/>
+        <click selector="{{AdminProductAttributeGridSection.ResetFilter}}" stepKey="clearExistingFilters"/>
+
+        <!-- Check that Product Quantity is not Changed -->
+        <actionGroup ref="SearchForProductOnBackendActionGroup" stepKey="searchForProduct">
+            <argument name="product" value="$$createProduct$$"/>
+        </actionGroup>
+        <actionGroup ref="OpenEditProductOnBackendActionGroup" stepKey="openEditProduct">
+            <argument name="product" value="$$createProduct$$"/>
+        </actionGroup>
+        <seeInField selector="{{AdminProductFormSection.productQuantity}}" userInput="1000" stepKey="seeProductQuantity"/>
+
+        <!-- Trigger Async Place Order Consumer-->
+        <actionGroup ref="CliConsumerStartActionGroup" stepKey="startMessageQueueConsumer">
+            <argument name="consumerName" value="{{AsyncPlaceOrderConsumerData.consumerName}}"/>
+            <argument name="maxMessages" value="{{AsyncPlaceOrderConsumerData.messageLimit}}"/>
+        </actionGroup>
+
+        <!-- Wait 30s for Order Processing-->
+        <wait time="30" stepKey="conditionalWait"/>
+
+        <!-- Check that order is Available -->
+        <!-- Find the Order on storefront > Navigate to: Orders and Returns -->
+        <amOnPage url="{{StorefrontGuestOrderSearchPage.url}}" stepKey="amOnOrdersAndReturns1"/>
+        <waitForPageLoad stepKey="waiForStorefrontPage1"/>
+        <!-- Fill the Form with Correspondent Order Data -->
+        <actionGroup ref="StorefrontFillOrdersAndReturnsFormActionGroup" stepKey="fillOrder1">
+            <argument name="orderNumber" value="$grabOrderNumber"/>
+            <argument name="customer" value="CustomerEntityOne"/>
+        </actionGroup>
+        <!-- Click on the "Continue" button -->
+        <click selector="{{StorefrontGuestOrdersReturnsSearchSection.continue}}" stepKey="clickContinue1"/>
+        <waitForPageLoad stepKey="waitForPageLoad2"/>
+        <!-- Check that Ordered Product is Available -->
+        <actionGroup ref="AssertOrderAvailableActionGroup" stepKey="checkIfOrderAvailable">
+            <argument name="product" value="$$createProduct$$"/>
+            <argument name="price" value="$0.00"/>
+            <argument name="status" value="Processing"/>
+        </actionGroup>
+
+        <!--Assert Order is in Orders Grid -->
+        <actionGroup ref="AdminOrderFilterByOrderIdAndStatusActionGroup" stepKey="seeFirstOrder">
+            <argument name="orderId" value="$grabOrderNumber"/>
+            <argument name="orderStatus" value="Processing"/>
+        </actionGroup>
+        <see userInput="{$grabOrderNumber}" selector="{{AdminOrdersGridSection.gridCell('1','ID')}}" stepKey="assertOrderID"/>
+        <see userInput="Processing" selector="{{AdminOrdersGridSection.gridCell('1','Status')}}" stepKey="assertOrderStatus"/>
+    </test>
+</tests>

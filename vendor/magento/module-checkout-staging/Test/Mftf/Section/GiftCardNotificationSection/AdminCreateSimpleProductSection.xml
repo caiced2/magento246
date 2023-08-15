@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+ /**
+  * Copyright © Magento, Inc. All rights reserved.
+  * See COPYING.txt for license details.
+  */
+-->
+<sections xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:noNamespaceSchemaLocation="urn:magento:mftf:Page/etc/SectionObject.xsd">
+    <section name="AdminCreateSimpleProductSection">
+        <!--Click to create product-->
+        <element name="add" type="button" selector="#add_new_product-button"/>
+        <!--Fill required fields-->
+        <!--<element name="simpleProduct" type="button" selector="//ul/li/span[contains(text(), 'Simple Product')]"/>-->
+        <element name="name" type="input" selector="//input[contains(@name,'name')]"/>
+        <element name="sku" type="input" selector="//input[contains(@name,'sku')]"/>
+        <element name="price" type="input" selector="//input[contains(@name,'price')]"/>
+        <element name="quantity" type="input" selector="//input[contains(@name,'quantity_and_stock_status')]"/>
+        <element name="search" type="button" selector="//*[contains(text(),'Search Engine Optimization')]"/>
+        <element name="urlKey" type="input" selector="//input[contains(@name,'url_key')]"/>
+        <!--Save the product-->
+        <element name="saveButton" type="button" selector="#save-button"/>
+        <!--Make sure the product is created-->
+        <element name="successMessage" type="text" selector=".message-success"/>
+    </section>
+</sections>

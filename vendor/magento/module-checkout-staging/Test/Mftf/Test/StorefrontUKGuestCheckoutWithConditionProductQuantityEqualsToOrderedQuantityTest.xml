@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+ /**
+  * Copyright © Magento, Inc. All rights reserved.
+  * See COPYING.txt for license details.
+  */
+-->
+<tests xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xsi:noNamespaceSchemaLocation="urn:magento:mftf:Test/etc/testSchema.xsd">
+    <test name="StorefrontUKGuestCheckoutWithConditionProductQuantityEqualsToOrderedQuantityTest" insertAfter="waitForPageToLoad">
+        <remove keyForRemoval="fillGuestForm"/>
+        <fillField selector="{{CheckoutShippingSection.email}}" userInput="{{UKCustomer.email}}" stepKey="setCustomerEmail"/>
+        <fillField selector="{{CheckoutShippingSection.firstName}}" userInput="{{UKCustomer.firstname}}" stepKey="SetCustomerFirstName"/>
+        <fillField selector="{{CheckoutShippingSection.lastName}}" userInput="{{UKCustomer.lastname}}" stepKey="SetCustomerLastName"/>
+        <fillField selector="{{CheckoutShippingSection.street}}" userInput="{{updateCustomerUKAddress.street[0]}}" stepKey="SetCustomerStreetAddress"/>
+        <fillField selector="{{CheckoutShippingSection.city}}" userInput="{{updateCustomerUKAddress.city}}" stepKey="SetCustomerCity"/>
+        <fillField selector="{{CheckoutShippingSection.postcode}}" userInput="{{updateCustomerUKAddress.postcode}}" stepKey="SetCustomerZipCode"/>
+        <fillField selector="{{CheckoutShippingSection.telephone}}" userInput="{{updateCustomerUKAddress.telephone}}" stepKey="SetCustomerPhoneNumber"/>
+        <selectOption selector="{{CheckoutShippingSection.country}}" userInput="{{updateCustomerUKAddress.country_id}}" stepKey="selectCountry" after="SetCustomerCity"/>
+    </test>
+</tests>

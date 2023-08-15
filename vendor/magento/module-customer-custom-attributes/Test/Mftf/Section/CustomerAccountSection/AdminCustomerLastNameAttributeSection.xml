@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+ /**
+  * Copyright © Magento, Inc. All rights reserved.
+  * See COPYING.txt for license details.
+  */
+-->
+<sections xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:noNamespaceSchemaLocation="urn:magento:mftf:Page/etc/SectionObject.xsd">
+    <section name="AdminCustomerLastNameAttributeSection">
+        <element name="defautView" type="input" selector="//tbody//td[@class='col-store-view'][1]//input"/>
+        <element name="secondLastNameInput" type="input" selector="//tbody//td[@class='col-store-view'][2]//input"/>
+        <element name="thirdLastNameInput" type="input" selector="//tbody//td[@class='col-store-view'][3]//input"/>
+    </section>
+</sections>

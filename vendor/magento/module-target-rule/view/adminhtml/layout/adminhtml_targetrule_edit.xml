@@ -1,0 +1,33 @@
+<?xml version="1.0"?>
+<!--
+/**
+ * Copyright © Magento, Inc. All rights reserved.
+ * See COPYING.txt for license details.
+ */
+-->
+<page xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" layout="admin-2columns-left" xsi:noNamespaceSchemaLocation="urn:magento:framework:View/Layout/etc/page_configuration.xsd">
+    <body>
+        <referenceContainer name="content">
+            <block class="Magento\TargetRule\Block\Adminhtml\Targetrule\Edit" name="magento_targetrule_edit"/>
+        </referenceContainer>
+        <referenceContainer name="left">
+            <block class="Magento\TargetRule\Block\Adminhtml\Targetrule\Edit\Tabs" name="magento_targetrule_edit_tabs">
+                <block class="Magento\TargetRule\Block\Adminhtml\Targetrule\Edit\Tab\Main" name="magento_targetrule_edit_tab_main"/>
+                <block class="Magento\TargetRule\Block\Adminhtml\Targetrule\Edit\Tab\Conditions" name="magento_targetrule_edit_tab_conditions"/>
+                <block class="Magento\TargetRule\Block\Adminhtml\Targetrule\Edit\Tab\Actions" name="magento_targetrule_edit_tab_actions"/>
+                <action method="addTab">
+                    <argument name="name" xsi:type="string">magento_targetrule_edit_tab_main</argument>
+                    <argument name="block" xsi:type="string">magento_targetrule_edit_tab_main</argument>
+                </action>
+                <action method="addTab">
+                    <argument name="name" xsi:type="string">magento_targetrule_edit_tab_conditions</argument>
+                    <argument name="block" xsi:type="string">magento_targetrule_edit_tab_conditions</argument>
+                </action>
+                <action method="addTab">
+                    <argument name="name" xsi:type="string">magento_targetrule_edit_tab_actions</argument>
+                    <argument name="block" xsi:type="string">magento_targetrule_edit_tab_actions</argument>
+                </action>
+            </block>
+        </referenceContainer>
+    </body>
+</page>

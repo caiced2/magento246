@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+ /**
+  * Copyright © Magento, Inc. All rights reserved.
+  * See COPYING.txt for license details.
+  */
+-->
+
+<entities xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+          xsi:noNamespaceSchemaLocation="urn:magento:mftf:DataGenerator/etc/dataProfileSchema.xsd">
+    <entity name="SmartCategoryConditionOperators" type="operator">
+        <data key="equal">Equal</data>
+        <data key="notEqual">Not equal</data>
+        <data key="greaterThan">Greater than</data>
+        <data key="greaterThanOrEqual">Greater than or equal to</data>
+        <data key="lessThan">Less than</data>
+        <data key="lessThanOrEqual">Less than or equal to</data>
+        <data key="contains">Contains</data>
+    </entity>
+    <entity name="SmartCategoryConditionPriceGreaterEquals50">
+        <data key="attribute">Price</data>
+        <data key="operator">Greater than or equal to</data>
+        <data key="value">50</data>
+    </entity>
+    <entity name="SmartCategoryConditionTierPrice" type="operator">
+        <data key="attribute">Tier Price</data>
+        <data key="operator">Greater than</data>
+        <data key="value">0</data>
+    </entity>
+    <entity name="SmartCategoryAutomaticSorting">
+        <data key="none">None</data>
+        <data key="move_low_stock_to_top">Move low stock to top</data>
+        <data key="move_out_of_stock_to_bottom">Move out of stock to bottom</data>
+        <data key="special_price_to_top">Special price to top</data>
+        <data key="special_price_to_bottom">Special price to bottom</data>
+        <data key="newest_products_first">Newest products first</data>
+        <data key="sort_by_color">Sort by color</data>
+        <data key="name_a_z">Name: A - Z</data>
+        <data key="name_z_a">Name: Z - A</data>
+        <data key="sku_ascending">SKU: Ascending</data>
+        <data key="sku_descending">SKU: Descending</data>
+        <data key="price_high_to_low">Price: High to low</data>
+        <data key="price_low_to_high">Price: Low to high</data>
+    </entity>
+    <entity name="SmartCategoryConditionPriceLessEquals300">
+        <data key="attribute">Price</data>
+        <data key="operator">Less than or equal to</data>
+        <data key="value">300</data>
+    </entity>
+    <entity name="SmartCategoryConditionPriceGreater50" extends="SmartCategoryConditionPriceGreaterEquals50">
+        <data key="operator">Greater than</data>
+    </entity>
+</entities>

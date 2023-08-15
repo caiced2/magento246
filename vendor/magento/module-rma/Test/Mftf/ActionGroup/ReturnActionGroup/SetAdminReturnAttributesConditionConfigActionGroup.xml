@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+ /**
+  * Copyright © Magento, Inc. All rights reserved.
+  * See COPYING.txt for license details.
+  */
+-->
+<actionGroups xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:noNamespaceSchemaLocation="urn:magento:mftf:Test/etc/actionGroupSchema.xsd">
+    <actionGroup name="SetAdminReturnAttributesConditionConfig">
+        <arguments>
+            <argument name="valueRequiredItem" type="string"/>
+            <argument name="showOnStorefrontItem" type="string"/>
+        </arguments>
+        <!--Add wait option to avoid some issue with getting access to RMA attribute page-->
+        <wait stepKey="waitForRMAPageLoaded" time="60"/>
+        <amOnPage url="{{AdminReturnAttributesPage.url}}" stepKey="amOnAdminReturnAttributesPage"/>
+        <waitForPageLoad stepKey="waitForReturnsAttributePageLoaded"/>
+        <click selector="{{AdminReturnAttributesPageSection.conditionItem}}" stepKey="openConditionAttribute"/>
+        <waitForPageLoad stepKey="waitForConditionAttributePageOpened"/>
+        <selectOption selector="{{AdminReturnAttrItemConditionSection.valueRequired}}" userInput="{{valueRequiredItem}}" stepKey="selectValueRequiredNo"/>
+        <selectOption selector="{{AdminReturnAttrItemConditionSection.showOnStorefront}}" userInput="{{showOnStorefrontItem}}" stepKey="selectShowOnStorefrontNo"/>
+        <click stepKey="clickSaveAttributeButton" selector="{{AdminReturnAttrItemConditionSection.saveAttribute}}"/>
+        <waitForPageLoad stepKey="waitForSavingAttribute"/>
+        <see userInput="You saved the RMA item attribute." stepKey="seeSuccessSavingMessage"/>
+    </actionGroup>
+</actionGroups>

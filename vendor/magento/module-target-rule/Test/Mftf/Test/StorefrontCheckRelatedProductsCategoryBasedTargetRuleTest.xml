@@ -1,0 +1,88 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+ /**
+  * Copyright © Magento, Inc. All rights reserved.
+  * See COPYING.txt for license details.
+  */
+-->
+<tests xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xsi:noNamespaceSchemaLocation="urn:magento:mftf:Test/etc/testSchema.xsd">
+    <test name="StorefrontCheckRelatedProductsCategoryBasedTargetRuleTest">
+        <annotations>
+            <stories value="Create Target Rule"/>
+            <title value="Admin Create Category Based Target Rule And Verify Frontend Test"/>
+            <description value="Test Category Based Target Rule targets only Products from Category that is declared in the Rule"/>
+            <testCaseId value="AC-2243"/>
+            <severity value="AVERAGE"/>
+            <group value="targetRule"/>
+        </annotations>
+        <before>
+            <createData entity="_defaultCategory" stepKey="createCategory1"/>
+            <createData entity="SimpleSubCategory" stepKey="createCategory2"/>
+
+            <!--Create Product assigned to both Categories, and two Products assigned to each Category-->
+            <createData entity="SimpleProduct" stepKey="createSimpleProductAssignedBothCategories">
+                <requiredEntity createDataKey="createCategory1"/>
+                <requiredEntity createDataKey="createCategory2"/>
+            </createData>
+            <createData entity="_defaultProduct" stepKey="createSimpleProductAssignedFirstCategory">
+                <requiredEntity createDataKey="createCategory1"/>
+            </createData>
+            <createData entity="_defaultProduct" stepKey="createSimpleProductAssignedSecondCategory">
+                <requiredEntity createDataKey="createCategory2"/>
+            </createData>
+
+            <actionGroup ref="AdminLoginActionGroup" stepKey="LoginAsAdmin"/>
+
+            <!-- Open Category Page and Get Category ID -->
+            <actionGroup ref="OpenCategoryFromCategoryTreeActionGroup" stepKey="getCategoryId">
+                <argument name="category"  value="$$createCategory2.name$$"/>
+            </actionGroup>
+            <grabFromCurrentUrl stepKey="categoryId" regex="#\/([0-9]*)?\/$#"/>
+        </before>
+        <after>
+            <deleteData createDataKey="createCategory1" stepKey="deleteCategory1"/>
+            <deleteData createDataKey="createCategory2" stepKey="deleteCategory2"/>
+            <deleteData createDataKey="createSimpleProductAssignedBothCategories" stepKey="deleteCreateSimpleProductAssignedBothCategories"/>
+            <deleteData createDataKey="createSimpleProductAssignedSecondCategory" stepKey="deleteCreateSimpleProductAssignedSecondCategory"/>
+            <deleteData createDataKey="createSimpleProductAssignedFirstCategory" stepKey="deleteCreateSimpleProductAssignedFirstCategory"/>
+            <actionGroup ref="DeleteTargetRuleByNameActionGroup" stepKey="deleteCreatedTargetRule">
+                <argument name="ruleName" value="TargetRuleRelatedProductsCategorySameAsMatchedProductCategories.ruleName"/>
+            </actionGroup>
+            <actionGroup ref="AdminLogoutActionGroup" stepKey="logout"/>
+        </after>
+
+        <!--Create target rule related products as per data -->
+        <actionGroup ref="GoToTargetRulePage" stepKey="openTargetRulePage"/>
+        <actionGroup ref="ClickAddNewTargetRule" stepKey="clickAddRule"/>
+        <actionGroup ref="FillGeneralRuleInformation" stepKey="fillRuleFields">
+            <argument name="information" value="TargetRuleRelatedProductsCategorySameAsMatchedProductCategories"/>
+        </actionGroup>
+
+        <!-- Fill values in Product To Match tab based on Category -->
+        <click selector="{{AdminTargetRuleSection.productToMatchTab}}" stepKey="clickProductToMatchTab"/>
+        <click selector="{{AdminTargetRuleProductsToMatchSection.selectCondition('1','1')}}" stepKey="clickOnSelectCondition"/>
+        <selectOption selector="{{AdminTargetRuleProductsToMatchSection.conditionSelect('1')}}" userInput="Category" stepKey="selectNewCondition"/>
+        <waitForPageLoad stepKey="waitForCategoryConditionLoad1"/>
+        <click selector="{{AdminTargetRuleProductsToMatchSection.targetEllipsis}}" stepKey="clickTheEllipsis"/>
+        <fillField selector="{{AdminTargetRuleProductsToMatchSection.ruleFieldByIndex('1--1')}}" userInput="$$createCategory1.id$$" stepKey="fillCategoryId"/>
+
+        <!-- Fill values in Product To Display tab -->
+        <click selector="{{AdminTargetRuleSection.productToDisplayTab}}" stepKey="clickProductToDisplayTab"/>
+        <click selector="{{AdminTargetRuleProductsToDisplaySection.selectCondition('1','1')}}" stepKey="clickToSelectCondition"/>
+        <selectOption selector="{{AdminTargetRuleProductsToDisplaySection.newAction}}" userInput="Category" stepKey="selectCategoryInNewCondition"/>
+
+        <!-- Save target rule and verify AssertTargetRuleSuccessSaveMessage-->
+        <actionGroup ref="SaveTargetRule" stepKey="AssertTargetRuleSuccessSaveMessage"/>
+
+        <!-- Go to storefront Product assigned to both Categories -->
+        <actionGroup ref="AssertProductNameAndSkuInStorefrontProductPageByCustomAttributeUrlKeyActionGroup" stepKey="openProductPageAndVerifyProduct">
+            <argument name="product" value="$$createSimpleProductAssignedBothCategories$$"/>
+        </actionGroup>
+
+        <!-- Verify that only Products from Category that is declared in the Rule are visible -->
+        <scrollTo selector="{{StorefrontProductRelatedProductsSection.relatedProductsActionsHeaderText}}" stepKey="scrollToStorefrontProductRelatedProductsSectionHeader"/>
+        <dontSeeElement selector="{{StorefrontProductRelatedProductsSection.relatedProductName($$createSimpleProductAssignedSecondCategory.name$$)}}" stepKey="dontSeeProductsInCategoriesNotStatedInRule"/>
+        <seeElement selector="{{StorefrontProductRelatedProductsSection.relatedProductName($$createSimpleProductAssignedFirstCategory.name$$)}}" stepKey="seeProductsInCategoriesStatedInRule"/>
+    </test>
+</tests>

@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+ /**
+  * Copyright © Magento, Inc. All rights reserved.
+  * See COPYING.txt for license details.
+  */
+-->
+
+<actionGroups xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+              xsi:noNamespaceSchemaLocation="urn:magento:mftf:Test/etc/actionGroupSchema.xsd">
+    <actionGroup name="AdminClickPreviewStagingFromPreviewGridActionGroup">
+        <annotations>
+            <description>Click preview staging in preview staging grid.</description>
+        </annotations>
+
+        <arguments>
+            <argument name="updateName" type="string"/>
+        </arguments>
+
+        <!-- Click on "Select" in "Action" list for update with updateName -->
+        <click selector="{{AdminDataGridTableSection.rowSelectActionByName(updateName)}}" stepKey="clickSelectButton"/>
+        <scrollTo selector="{{AdminDataGridTableSection.rowPreviewActionByName(updateName)}}" stepKey="scrollToPreviewButton"/>
+        <!-- Click on "Preview" link  in "Action" option -->
+        <click selector="{{AdminDataGridTableSection.rowPreviewActionByName(updateName)}}" stepKey="clickPreviewButton"/>
+        <waitForPageLoad stepKey="waiForPreviewPageLoad"/>
+    </actionGroup>
+</actionGroups>
+

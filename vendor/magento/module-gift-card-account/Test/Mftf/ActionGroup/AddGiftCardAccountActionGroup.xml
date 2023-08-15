@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+ /**
+  * Copyright © Magento, Inc. All rights reserved.
+  * See COPYING.txt for license details.
+  */
+-->
+
+<actionGroups xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+              xsi:noNamespaceSchemaLocation="urn:magento:mftf:Test/etc/actionGroupSchema.xsd">
+    <actionGroup name="AddGiftCardAccountActionGroup">
+        <arguments>
+            <argument name="website" defaultValue="Main Website" type="string"/>
+            <argument name="balanceAmount" defaultValue="10" type="string"/>
+        </arguments>
+        <amOnPage url="{{AdminNewGiftCardAccountPage.url}}" stepKey="amOnGiftCardAccountCreatedPage"/>
+        <waitForPageLoad stepKey="waitForGiftCardAccountCreatedPage"/>
+        <selectOption selector="{{AdminGiftCardAccountInformationSection.website}}" userInput="{{website}}" stepKey="selectMainWebsite"/>
+        <fillField selector="{{AdminGiftCardAccountInformationSection.balance}}" userInput="{{balanceAmount}}" stepKey="addBalance"/>
+        <click selector="{{AdminGiftCardAccountInformationSection.saveGiftCardAccount}}" stepKey="clickSaveGiftCardAccount"/>
+        <waitForPageLoad stepKey="waitForSave"/>
+        <see stepKey="seeSuccessMessage" userInput="You saved the gift card account."/>
+    </actionGroup>
+</actionGroups>

@@ -1,0 +1,28 @@
+<?xml version="1.0"?>
+<!--
+/**
+ * Copyright © Magento, Inc. All rights reserved.
+ * See COPYING.txt for license details.
+ */
+-->
+<config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="urn:magento:module:Magento_Backend:etc/menu.xsd">
+    <menu>
+        <add
+            id="Magento_AdobeCommerceEventsClient::menu"
+            title="Events"
+            module="Magento_AdobeCommerceEventsClient"
+            sortOrder="100"
+            parent="Magento_Backend::system"
+            resource="Magento_AdobeCommerceEventsClient::menu"
+        />
+        <add
+            id="Magento_AdobeCommerceEventsClient::event_list"
+            title="Events"
+            module="Magento_AdobeCommerceEventsClient"
+            parent="Magento_AdobeCommerceEventsClient::menu"
+            action="adminhtml/events"
+            sortOrder="10"
+            resource="Magento_AdobeCommerceEventsClient::event_list"
+        />
+    </menu>
+</config>

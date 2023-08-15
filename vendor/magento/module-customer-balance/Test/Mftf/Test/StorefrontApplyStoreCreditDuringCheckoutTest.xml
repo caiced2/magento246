@@ -1,0 +1,103 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+ /**
+  * Copyright © Magento, Inc. All rights reserved.
+  * See COPYING.txt for license details.
+  */
+-->
+
+<tests xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xsi:noNamespaceSchemaLocation="urn:magento:mftf:Test/etc/testSchema.xsd">
+    <test name="StorefrontApplyStoreCreditDuringCheckoutTest">
+        <annotations>
+            <features value="CustomerBalance"/>
+            <stories value="Apply Store Credit"/>
+            <title value="Apply Store Credit during Checkout that covers all amount"/>
+            <description value="Apply Store Credit during Checkout that covers all amount"/>
+            <severity value="CRITICAL"/>
+            <testCaseId value="MC-28594"/>
+            <group value="customerBalance"/>
+            <group value="create"/>
+        </annotations>
+        <before>
+            <createData entity="EnablePersistentConfigSettings" stepKey="enablePersistentConfigSettings"/>
+            <createData entity="VirtualProduct" stepKey="createVirtualProduct">
+                <field key="price">40.00</field>
+            </createData>
+            <createData entity="Simple_US_Customer" stepKey="createSimpleUsCustomer"/>
+
+            <magentoCron groups="index" stepKey="reindexInvalidatedIndices"/>
+            <actionGroup ref="AdminLoginActionGroup" stepKey="loginAsAdmin"/>
+            <actionGroup ref="OpenEditCustomerFromAdminActionGroup" stepKey="openCustomerEdit">
+                <argument name="customer" value="$createSimpleUsCustomer$" />
+            </actionGroup>
+            <actionGroup ref="UpdateCustomerStoreCreditBalanceAdminActionGroup" stepKey="updateStoreCreditFromAdmin">
+                <argument name="storeCredit" value="50" />
+            </actionGroup>
+        </before>
+        <after>
+            <!--Logout from customer account-->
+            <actionGroup ref="StorefrontCustomerLogoutActionGroup" stepKey="customerLogoutStorefront"/>
+            <actionGroup ref="AdminLogoutActionGroup" stepKey="logoutFromAdmin"/>
+            <deleteData createDataKey="createSimpleUsCustomer" stepKey="deleteCustomer"/>
+            <deleteData createDataKey="createVirtualProduct" stepKey="deleteVirtualProduct"/>
+        </after>
+        <!--Log in to Storefront as Customer-->
+        <actionGroup ref="LoginToStorefrontActionGroup" stepKey="signUpNewUser">
+            <argument name="Customer" value="$createSimpleUsCustomer$"/>
+        </actionGroup>
+
+        <!--Go to product page-->
+        <actionGroup ref="OpenStoreFrontProductPageActionGroup" stepKey="openProductFromCategory">
+            <argument name="productUrlKey" value="$createVirtualProduct.custom_attributes[url_key]$"/>
+        </actionGroup>
+
+        <!--Add Product to Shopping Cart-->
+        <actionGroup ref="AddToCartFromStorefrontProductPageActionGroup" stepKey="addToCartFromStorefrontProductPage">
+            <argument name="productName" value="$createVirtualProduct.name$"/>
+        </actionGroup>
+
+        <!--Go to Checkout-->
+        <actionGroup ref="GoToCheckoutFromMinicartActionGroup" stepKey="goToCheckoutFromMinicart"/>
+        <!-- Checkout select Check/Money Order payment -->
+        <actionGroup ref="CheckoutSelectCheckMoneyOrderPaymentActionGroup" stepKey="selectCheckMoneyPayment"/>
+        <actionGroup ref="AssertStorefrontStoreCreditInformationActionGroup" stepKey="assertStorefrontStoreCreditInformation">
+            <argument name="storeCredit" value="50.00"/>
+        </actionGroup>
+
+        <!--Click Use Store Credit button-->
+        <actionGroup ref="StorefrontCheckoutUseStoreCreditActionGroup" stepKey="useStoreCredit">
+            <argument name="storeCredit" value="40" />
+        </actionGroup>
+        <see userInput="No Payment Information Required" selector="{{CheckoutPaymentSection.paymentMethodTitle}}" stepKey="seePaymentMethod"/>
+
+        <!--Click Place Order button-->
+        <actionGroup ref="ClickPlaceOrderActionGroup" stepKey="placeOrder"/>
+        <grabTextFrom selector="{{CheckoutSuccessMainSection.orderLink}}" stepKey="grabOrderNumber"/>
+
+        <actionGroup ref="CheckOrderStoreCreditFromStoreFrontActionGroup" stepKey="checkOrderInfStoreCreditFromStoreFront">
+            <argument name="storeCreditUsed" value="40"/>
+        </actionGroup>
+        <grabFromCurrentUrl regex="~/order_id/(\d+)/~" stepKey="grabOrderId"/>
+
+        <actionGroup ref="CheckCustomerStoreCreditFromStoreFrontActionGroup" stepKey="checkCustomerInfStoreCreditFromStoreFront">
+            <argument name="storeCreditUsed" value="40"/>
+            <argument name="storeCreditLeft" value="10"/>
+        </actionGroup>
+
+        <actionGroup ref="AdminOpenOrderByEntityIdActionGroup" stepKey="openOrderById">
+            <argument name="entityId" value="$grabOrderId"/>
+        </actionGroup>
+        <see userInput="-$40.00" selector="{{AdminOrderFormTotalSection.storeCredit}}" stepKey="seeStoreCreditInOrder"/>
+
+        <actionGroup ref="OpenEditCustomerFromAdminActionGroup" stepKey="openEditCustomerOne">
+            <argument name="customer" value="$createSimpleUsCustomer$" />
+        </actionGroup>
+
+        <actionGroup ref="CheckCustomerStoreCreditFromAdminActionGroup" stepKey="checkCustomerInfStoreCreditFromAdmin">
+            <argument name="storeCreditUsed" value="40"/>
+            <argument name="storeCreditLeft" value="10"/>
+            <argument name="orderNumber" value="$grabOrderNumber"/>
+        </actionGroup>
+    </test>
+</tests>

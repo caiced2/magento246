@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+/**
+   * Copyright © Magento, Inc. All rights reserved.
+   * See COPYING.txt for license details.
+   */
+-->
+<sections xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+          xsi:noNamespaceSchemaLocation="urn:magento:mftf:Page/etc/SectionObject.xsd">
+    <section name="AdminCustomerSegmentConditionsEditSection">
+        <element name="addCondition" type="text" selector=".rule-param-add.v-middle"/>
+        <element name="conditions" type="select" selector="#conditions__1__new_child"/>
+        <element name="conditionOptions" type="select" selector="#conditions__1__new_child option"/>
+        <element name="conditionValueChooser" type="button" selector="//a[text()='...']"/>
+        <element name="conditionValue" type="text" selector="#conditions__1--1__value"/>
+        <element name="conditionType" type="button" selector="//li/span/a[text()='ALL']"/>
+        <element name="conditionTypeValue" type="select" selector="#conditions__1--1__aggregator"/>
+        <element name="ruleCondition" type="button" selector="//li[contains(., '{{attributeName}}')]//a[contains(., '{{attributeType}}')]" parameterized="true"/>
+        <element name="attributeEditSelect" type="select" selector="span.rule-param-edit select"/>
+        <element name="fieldFillAttribute" type="input" selector="//input[contains(@class,'element-value-changer')]"/>
+        <element name="selectGender" type="select" selector="select#conditions__{{set}}__value" parameterized="true"/>
+        <element name="selectConditionType" type="button" selector="//li/span/a[text()='is']"/>
+        <element name="selectConditionValue" type="select" selector="#conditions__1--1__operator"/>
+
+        <!--Data Picker -->
+        <element name="iconData" type="button" selector="//*[@id='conditions__1__children']//span[2]/a"/>
+        <element name="dataPicker" type="button" selector="button.ui-datepicker-trigger.v-middle"/>
+        <element name="selectYear" type="select" selector=".ui-datepicker-year"/>
+        <element name="selectMonth" type="select" selector=".ui-datepicker-month"/>
+        <element name="selectDay" type="text" selector="//a[@class='ui-state-default' and contains(text(), {{day}})]" parameterized="true"/>
+
+        <!--Parameterized selectors -->
+        <element name="addNextConditionParam" type="button" selector="//*[@id='conditions__{{stage}}__children']/li[{{num}}]//a" parameterized="true"/>
+        <element name="conditionsParam" type="select" selector="#conditions__{{stage1}}__new_child" parameterized="true"/>
+        <element name="conditionValueChooserParam" type="select" selector="//*[@id='conditions__{{stage2}}__children']//a[text()='{{text}}']" parameterized="true"/>
+        <element name="conditionValueParam" type="select" selector="#conditions__{{stage3}}__value" parameterized="true"/>
+        <element name="conditionOperatorParam" type="select" selector="#conditions__{{stage4}}__operator" parameterized="true"/>
+        <element name="conditionInputOperatorParam" type="input" selector="input#conditions__{{stage4}}__operator" parameterized="true"/>
+        <element name="conditionAggregatorParam" type="select" selector="#conditions__{{stage}}__aggregator" parameterized="true"/>
+        <element name="conditionRuleParam" type="button" selector="//*[@id='conditions__{{stage}}__type']/parent::li//a[text()='{{text}}']" parameterized="true"/>
+        <element name="addConditionParam" type="button" selector="//*[@id='conditions__{{stage}}__children']/li[last()]//a" parameterized="true"/>
+    </section>
+</sections>

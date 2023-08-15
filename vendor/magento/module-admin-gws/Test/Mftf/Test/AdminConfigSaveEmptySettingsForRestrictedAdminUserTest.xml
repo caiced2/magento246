@@ -1,0 +1,67 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+ /**
+  * Copyright © Magento, Inc. All rights reserved.
+  * See COPYING.txt for license details.
+  */
+-->
+
+<tests xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="urn:magento:mftf:Test/etc/testSchema.xsd">
+    <test name="AdminConfigSaveEmptySettingsForRestrictedAdminUserTest">
+        <annotations>
+            <features value="Configuration"/>
+            <stories value="Access Oauth Service configuration."/>
+            <title value="Access Oauth Service configuration as a restricted admin user."/>
+            <description value="Access and save Oauth Service configuration as a restricted admin user."/>
+            <severity value="AVERAGE"/>
+            <testCaseId value="AC-6853"/>
+            <useCaseId value="ACP2E-1277"/>
+            <group value="configuration"/>
+        </annotations>
+        <before>
+            <actionGroup ref="AdminLoginActionGroup" stepKey="loginAsAdmin"/>
+            <actionGroup ref="AdminFillUserRoleRequiredDataActionGroup" stepKey="fillUserRoleRequiredData">
+                <argument name="User" value="adminRole"/>
+                <argument name="restrictedRole" value="Stores"/>
+            </actionGroup>
+            <click selector="{{AdminEditRoleInfoSection.roleResourcesTab}}" stepKey="clickRoleResourcesTab" />
+            <actionGroup ref="AdminAddRestrictedRoleActionGroup" stepKey="addRestrictedRoleStores">
+                <argument name="User" value="adminRole"/>
+                <argument name="restrictedRole" value="Stores"/>
+            </actionGroup>
+            <click selector="{{AdminEditRoleInfoSection.saveButton}}" stepKey="clickSaveRoleButton" />
+            <see userInput="You saved the role." stepKey="seeUserRoleSavedMessage"/>
+
+            <actionGroup ref="AdminCreateUserWithRoleActionGroup" stepKey="createUser">
+                <argument name="role" value="adminRole"/>
+                <argument name="user" value="NewAdminUser"/>
+            </actionGroup>
+        </before>
+        <after>
+            <actionGroup ref="AdminLogoutActionGroup" stepKey="logoutAdminUser"/>
+            <actionGroup ref="AdminLoginActionGroup" stepKey="loginAsAdmin"/>
+            <actionGroup ref="AdminDeleteCreatedUserActionGroup" stepKey="deleteUser">
+                <argument name="user" value="NewAdminUser"/>
+            </actionGroup>
+            <actionGroup ref="ClearFiltersAdminDataGridActionGroup" stepKey="clearAdminUserGridFilters"/>
+            <amOnPage url="{{AdminRolesPage.url}}" stepKey="navigateToUserRoleGrid"/>
+            <actionGroup ref="AdminDeleteRoleActionGroup" stepKey="deleteRole">
+                <argument name="role" value="adminRole"/>
+            </actionGroup>
+        </after>
+        <actionGroup ref="AdminLogoutActionGroup" stepKey="logoutFromAdmin"/>
+        <actionGroup ref="AdminLoginActionGroup" stepKey="logAsNewUser">
+            <argument name="username" value="{{NewAdminUser.username}}"/>
+            <argument name="password" value="{{NewAdminUser.password}}"/>
+        </actionGroup>
+        <amOnPage url="{{AdminConfigServicesOauthPage.url}}" stepKey="navigateToConfigurationPage"/>
+        <waitForPageLoad stepKey="waitForPageLoad"/>
+        <conditionalClick selector="{{AdminConfigAccessTokenExpirationSection.tabAccessTokenLifetime}}" dependentSelector="{{AdminConfigAccessTokenExpirationSection.CheckIfTabExpand}}" visible="true" stepKey="expandTab"/>
+        <waitForAjaxLoad stepKey="waitForAjax"/>
+        <uncheckOption selector="{{AdminConfigAccessTokenExpirationSection.systemValueForTokenLifetime}}" stepKey="uncheckUseSystemValue"/>
+        <fillField selector="{{AdminConfigAccessTokenExpirationSection.valueForTokenLifetime}}" userInput="" stepKey="valueForTokenLifetime"/>
+        <uncheckOption selector="{{AdminConfigAccessTokenExpirationSection.systemValueForTokenLifetimeAdmin}}" stepKey="uncheckUseSystemValueAdmin"/>
+        <fillField selector="{{AdminConfigAccessTokenExpirationSection.valueForTokenLifetimeAdmin}}" userInput="" stepKey="valueForTokenLifetimeAdmin"/>
+        <actionGroup ref="AdminSaveConfigActionGroup" stepKey="saveConfig"/>
+    </test>
+</tests>

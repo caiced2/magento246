@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+ /**
+  * Copyright © Magento, Inc. All rights reserved.
+  * See COPYING.txt for license details.
+  */
+-->
+<tests xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xsi:noNamespaceSchemaLocation="urn:magento:mftf:Test/etc/testSchema.xsd">
+    <test name="AdminCheckPaginationInStorefrontTest" insertAfter="waitForProductsToLoad">
+        <remove keyForRemoval="scrollToResetFilter"/>
+        <remove keyForRemoval="waitForResetButtonToVisible"/>
+        <remove keyForRemoval="clickOnResetFilter"/>
+        <remove keyForRemoval="waitForPageToLoad3"/>
+        <remove keyForRemoval="selectPagePerView"/>
+        <remove keyForRemoval="selectProduct1"/>
+        <remove keyForRemoval="clickSearchButton"/>
+        <remove keyForRemoval="waitForPageToLoadProductPerPage"/>
+        <remove keyForRemoval="seeNumberOfProductsFound"/>
+        <remove keyForRemoval="selectSelectAll"/>
+
+        <!-- EE has a different way of adding products to a category -->
+        <click selector="{{AdminCategoryProductsSection.addProducts}}" stepKey="clickAddProducts"/>
+        <click selector="{{AdminCategoryAddProductsModalSection.addProductBySku}}" stepKey="clickAddBySkuTabMultiSku"/>
+        <fillField selector="{{AdminCategoryAddProductsModalSection.productSkuInput}}" userInput="$$simpleProduct1.sku$$\n$$simpleProduct2.sku$$\n$$simpleProduct3.sku$$\n$$simpleProduct4.sku$$\n$$simpleProduct5.sku$$\n$$simpleProduct6.sku$$\n$$simpleProduct7.sku$$\n$$simpleProduct8.sku$$\n$$simpleProduct9.sku$$\n$$simpleProduct10.sku$$\n$$simpleProduct11.sku$$\n$$simpleProduct12.sku$$\n$$simpleProduct13.sku$$\n$$simpleProduct14.sku$$\n$$simpleProduct15.sku$$\n$$simpleProduct16.sku$$\n$$simpleProduct17.sku$$\n$$simpleProduct18.sku$$\n$$simpleProduct19.sku$$\n$$simpleProduct20.sku$$\n$$simpleProduct21.sku$$\n$$simpleProduct22.sku$$\n$$simpleProduct23.sku$$\n$$simpleProduct24.sku$$\n$$simpleProduct25.sku$$\n$$simpleProduct26.sku$$\n$$simpleProduct27.sku$$\n$$simpleProduct28.sku$$\n$$simpleProduct29.sku$$\n$$simpleProduct30.sku$$" stepKey="fillMultiSku"/>
+        <click selector="{{AdminCategoryAddProductsModalSection.assign}}" stepKey="clickAssignProducts"/>
+        <waitForAjaxLoad stepKey="waitForAssignProducts"/>
+        <click selector="{{AdminCategoryAddProductsModalSection.saveClose}}" stepKey="closeModalProductMultiSku"/>
+    </test>
+</tests>

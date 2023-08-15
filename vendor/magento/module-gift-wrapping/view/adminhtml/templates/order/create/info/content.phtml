@@ -1,0 +1,86 @@
+<?php
+/**
+ * Copyright © Magento, Inc. All rights reserved.
+ * See COPYING.txt for license details.
+ */
+
+// phpcs:disable Magento2.Files.LineLength
+
+/** @var $block \Magento\GiftWrapping\Block\Adminhtml\Order\Create\Info\Content */
+?>
+
+<div id="wrapping-container">
+    <?php if ($block->isGiftWrappingForEntireOrder()) : ?>
+        <p><?= $block->escapeHtml(__('Leave a box blank if you don\'t want to add gift wrapping for whole order.')) ?></p>
+
+        <div class="gift-wrapping-form">
+            <div class="admin__field">
+                <label class="admin__field-label"><?= $block->escapeHtml(__('Gift Wrapping Design')) ?></label>
+                <?= $block->getDesignSelectHtml('quote') ?>
+            </div>
+            <div id="wrapping-price-box" class="gift-wrapping-design">
+                <img id="wrapping-image-box"
+                     class="image-box"
+                     alt="<?= $block->escapeHtml(__('Gift Wrapping Design')) ?>"
+                     src="" />
+                <?php if ($block->getDisplayWrappingBothPrices()) : ?>
+                <div class="price-box">
+                    <span class="label"><?= $block->escapeHtml(__('Price Excl. Tax')) ?>:</span>
+                    <span class="price" id="wrapping-price-excl-tax"></span>
+                </div>
+                <div class="price-box">
+                    <span class="label"><?= $block->escapeHtml(__('Price Incl. Tax')) ?>:</span>
+                    <span class="price" id="wrapping-price-incl-tax"></span>
+                </div>
+                <?php else : ?>
+                <div class="price-box">
+                    <span class="label"><?= $block->escapeHtml(__('Price')) ?>:</span>
+                    <span class="price" id="wrapping-price"></span>
+                </div>
+                <?php endif; ?>
+            </div>
+        </div>
+    <?php endif; ?>
+
+    <?php if ($block->getAllowGiftReceipt()) : ?>
+        <div class="admin__field admin__field-option">
+            <input type="checkbox"
+                   id="allow-gift-receipt"
+                   class="admin__control-checkbox"
+                   value="1"
+                   name="giftwrapping[quote][<?= $block->escapeHtmlAttr($block->getEntityId()) ?>][allow_gift_receipt]" />
+            <label for="allow-gift-receipt"
+                   class="admin__field-label"><?= $block->escapeHtml(__('Send Gift Receipt')) ?></label>
+        </div>
+    <?php endif; ?>
+
+    <?php if ($block->getAllowPrintedCard()) : ?>
+        <div class="admin__field admin__field-option">
+            <input type="checkbox"
+                   id="add-printed-card"
+                   class="admin__control-checkbox"
+                   value="1"
+                   name="giftwrapping[quote][<?= $block->escapeHtmlAttr($block->getEntityId()) ?>][add_printed_card]" />
+            <label for="add-printed-card"
+                   class="admin__field-label"><?= $block->escapeHtml(__('Add Printed Card')) ?></label>
+        </div>
+
+        <div id="card-price-box" class="card-price-box">
+        <?php if ($block->getDisplayCardBothPrices()) : ?>
+            <div class="price-box">
+                <span class="label"><?= $block->escapeHtml(__('Price Excl. Tax')) ?>:</span>
+                <span class="price" id="card-price-excl-tax"></span>
+            </div>
+            <div class="price-box">
+                <span class="label"><?= $block->escapeHtml(__('Price Incl. Tax')) ?>:</span>
+                <span class="price" id="card-price-incl-tax"></span>
+            </div>
+        <?php else : ?>
+            <div class="price-box">
+                <span class="label"><?= $block->escapeHtml(__('Price')) ?>:</span>
+                <span class="price" id="card-price"></span>
+            </div>
+        <?php endif; ?>
+        </div>
+    <?php endif; ?>
+</div>

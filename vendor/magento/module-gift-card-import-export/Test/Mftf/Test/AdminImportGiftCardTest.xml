@@ -1,0 +1,173 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+ /**
+  * Copyright © Magento, Inc. All rights reserved.
+  * See COPYING.txt for license details.
+  */
+-->
+
+<tests xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xsi:noNamespaceSchemaLocation="urn:magento:mftf:Test/etc/testSchema.xsd">
+    <test name="AdminImportGiftCardTest">
+        <annotations>
+            <features value="GiftCardImportExport"/>
+            <stories value="Import Products"/>
+            <title value="Import Gift Card"/>
+            <description value="Imports a .csv file containing a gift card. Verifies that product is imported successfully."/>
+            <severity value="MAJOR"/>
+            <testCaseId value="MC-38248"/>
+            <group value="importExport"/>
+            <group value="giftCard"/>
+        </annotations>
+
+        <before>
+            <!-- Create Product, Upload Images & Create Customer -->
+            <createData entity="ImportCategory_GiftCard" stepKey="createImportCategory"/>
+            <createData entity="Simple_US_Customer" stepKey="createCustomer"/>
+
+            <!-- Copy Images to Import Directory for Product Images -->
+            <helper class="Magento\Catalog\Test\Mftf\Helper\LocalFileAssertions" method="createDirectory" stepKey="createDirectoryForImportImages">
+                <argument name="path">var/import/images/{{ImportProduct_GiftCard.name}}</argument>
+            </helper>
+            <helper class="Magento\Catalog\Test\Mftf\Helper\LocalFileAssertions" method="copy" stepKey="copyProductBaseImage">
+                <argument name="source">dev/tests/acceptance/tests/_data/{{ImportProduct_GiftCard.baseImage}}</argument>
+                <argument name="destination">var/import/images/{{ImportProduct_GiftCard.name}}/{{ImportProduct_GiftCard.baseImage}}</argument>
+            </helper>
+            <helper class="Magento\Catalog\Test\Mftf\Helper\LocalFileAssertions" method="copy" stepKey="copyProductSmallImage">
+                <argument name="source">dev/tests/acceptance/tests/_data/{{ImportProduct_GiftCard.smallImage}}</argument>
+                <argument name="destination">var/import/images/{{ImportProduct_GiftCard.name}}/{{ImportProduct_GiftCard.smallImage}}</argument>
+            </helper>
+            <helper class="Magento\Catalog\Test\Mftf\Helper\LocalFileAssertions" method="copy" stepKey="copyProductThumbnailImage">
+                <argument name="source">dev/tests/acceptance/tests/_data/{{ImportProduct_GiftCard.thumbnailImage}}</argument>
+                <argument name="destination">var/import/images/{{ImportProduct_GiftCard.name}}/{{ImportProduct_GiftCard.thumbnailImage}}</argument>
+            </helper>
+
+            <!-- Login as Admin -->
+            <actionGroup ref="AdminLoginActionGroup" stepKey="loginAsAdmin"/>
+        </before>
+
+        <after>
+            <!-- Delete Data -->
+            <deleteData createDataKey="createImportCategory" stepKey="deleteImportCategory"/>
+            <deleteData createDataKey="createCustomer" stepKey="deleteCustomer"/>
+            <helper class="Magento\Catalog\Test\Mftf\Helper\LocalFileAssertions" method="deleteDirectory" stepKey="deleteProductImageDirectory">
+                <argument name="path">var/import/images/{{ImportProduct_GiftCard.name}}</argument>
+            </helper>
+            <deleteData url="/V1/products/{{ImportProduct_GiftCard.urlKey}}" stepKey="deleteImportedGiftCard"/>
+            <actionGroup ref="NavigateToAndResetProductGridToDefaultViewActionGroup" stepKey="navigateToAndResetProductGridToDefaultView"/>
+            <actionGroup ref="AdminLogoutActionGroup" stepKey="logoutFromAdmin"/>
+        </after>
+
+        <!-- Import Gift Card & Assert No Errors -->
+        <actionGroup ref="AdminNavigateToImportPageActionGroup" stepKey="navigateToImportPage"/>
+        <actionGroup ref="AdminFillImportFormActionGroup" stepKey="fillImportForm">
+            <argument name="importFile" value="{{ImportProduct_GiftCard.fileName}}"/>
+            <argument name="imagesFileDirectory" value="{{ImportProduct_GiftCard.name}}"/>
+        </actionGroup>
+        <actionGroup ref="AdminClickCheckDataImportActionGroup" stepKey="clickCheckData"/>
+        <see selector="{{AdminImportValidationMessagesSection.success}}" userInput="{{ImportCommonMessages.validFile}}" stepKey="seeCheckDataResultMessage"/>
+        <dontSeeElementInDOM selector="{{AdminImportValidationMessagesSection.importErrorList}}" stepKey="dontSeeErrorMessage"/>
+        <actionGroup ref="AdminClickImportActionGroup" stepKey="clickImport"/>
+        <see selector="{{AdminImportValidationMessagesSection.notice}}" userInput="{{ImportProduct_GiftCard.importSummary}}" stepKey="seeNoticeMessage"/>
+        <see selector="{{AdminImportValidationMessagesSection.messageByType('success')}}" userInput="{{ImportCommonMessages.success}}" stepKey="seeImportMessage"/>
+        <dontSeeElementInDOM selector="{{AdminImportValidationMessagesSection.importErrorList}}" stepKey="dontSeeErrorMessage2"/>
+
+        <!-- Reindex -->
+        <actionGroup ref="CliIndexerReindexActionGroup" stepKey="reindex">
+            <argument name="indices" value=""/>
+        </actionGroup>
+
+        <!-- Admin: Verify Data on Import History Page -->
+        <actionGroup ref="AdminNavigateToImportHistoryPageActionGroup" stepKey="navigateToImportHistoryPage"/>
+        <actionGroup ref="AdminGridSortColumnDescendingActionGroup" stepKey="sortColumnByIdDescending">
+            <argument name="columnLabel" value="history_id"/>
+        </actionGroup>
+        <see userInput="{{ImportProduct_GiftCard.fileName}}" selector="{{AdminDataGridTableSection.firstRow}}" stepKey="seeImportedFile"/>
+        <see userInput="{{ImportProduct_GiftCard.importSummary}}" selector="{{AdminDataGridTableSection.firstRow}}" stepKey="seeSummary"/>
+
+        <!-- Admin: Verify Gift Card on Edit Product Page -->
+        <actionGroup ref="NavigateToCreatedProductEditPageActionGroup" stepKey="goToGiftCardEditPage">
+            <argument name="product" value="ImportProduct_GiftCard"/>
+        </actionGroup>
+        <actionGroup ref="AdminAssertGiftCardProductGeneralInfoOnEditPageActionGroup" stepKey="assertGiftCardOnEditPage">
+            <argument name="productStatus" value="{{ImportProduct_GiftCard.status}}"/>
+            <argument name="productName" value="{{ImportProduct_GiftCard.name}}"/>
+            <argument name="productSku" value="{{ImportProduct_GiftCard.sku}}"/>
+            <argument name="productQuantity" value="{{ImportProduct_GiftCard.quantity}}"/>
+            <argument name="productWeight" value="{{ImportProduct_GiftCard.weight}}"/>
+            <argument name="categoryName" value="{{ImportCategory_GiftCard.name}}"/>
+            <argument name="cardType" value="{{ImportProduct_GiftCard.card_type}}"/>
+            <argument name="amounts" value="{{ImportProduct_GiftCard.amounts}}"/>
+            <argument name="openAmountValue" value="{{ImportProduct_GiftCard.openAmountValue}}"/>
+            <argument name="openAmountFrom" value="{{ImportProduct_GiftCard.openAmountFrom}}"/>
+            <argument name="openAmountTo" value="{{ImportProduct_GiftCard.openAmountTo}}"/>
+        </actionGroup>
+        <actionGroup ref="AdminAssertProductImageOnProductPageActionGroup" stepKey="assertProductBaseImageOnEditPage">
+            <argument name="image" value="{{ImportProduct_GiftCard.baseImageName}}"/>
+        </actionGroup>
+        <seeElement selector="{{AdminProductImagesSection.imageFileRoleByImage(ImportProduct_GiftCard.baseImageName, 'image')}}" stepKey="seeBaseImageRole"/>
+        <actionGroup ref="AdminAssertProductImageOnProductPageActionGroup" stepKey="assertProductSmallImageOnEditPage">
+            <argument name="image" value="{{ImportProduct_GiftCard.smallImageName}}"/>
+        </actionGroup>
+        <seeElement selector="{{AdminProductImagesSection.imageFileRoleByImage(ImportProduct_GiftCard.smallImageName, 'small_image')}}" stepKey="seeSmallImageRole"/>
+        <actionGroup ref="AdminAssertProductImageOnProductPageActionGroup" stepKey="assertProductThumbnailImageOnEditPage">
+            <argument name="image" value="{{ImportProduct_GiftCard.thumbnailImageName}}"/>
+        </actionGroup>
+        <seeElement selector="{{AdminProductImagesSection.imageFileRoleByImage(ImportProduct_GiftCard.thumbnailImageName, 'thumbnail')}}" stepKey="seeThumbnailImageRole"/>
+
+        <!-- Admin: Verify Gift Card Information Section on Edit Product Page -->
+        <actionGroup ref="ExpandAdminProductSectionActionGroup" stepKey="expandGiftCardSection">
+            <argument name="sectionSelector" value="{{AdminProductFormSection.sectionHeader}}"/>
+            <argument name="sectionDependentSelector" value="{{AdminProductFormSection.lifetime}}"/>
+        </actionGroup>
+        <seeCheckboxIsChecked selector="{{AdminProductFormSection.treatBalanceAsStoreCreditConfigSetting}}" stepKey="seeTreatBalanceAsStoreCreditUseConfigSettings"/>
+        <seeCheckboxIsChecked selector="{{AdminProductFormSection.lifetimeConfigSetting}}" stepKey="seeLifetimeUseConfigSettings"/>
+        <seeCheckboxIsChecked selector="{{AdminProductFormSection.allowMessageConfigSetting}}" stepKey="seeAllowMessageUseConfigSettings"/>
+        <seeCheckboxIsChecked selector="{{AdminProductFormSection.emailTemplateConfigSetting}}" stepKey="seeEmailTemplateUseConfigSettings"/>
+        <actionGroup ref="SaveProductFormActionGroup" stepKey="saveProduct"/>
+
+        <!-- Storefront: Verify Gift Card In Category -->
+        <actionGroup ref="LoginToStorefrontActionGroup" stepKey="loginStorefront">
+            <argument name="Customer" value="$$createCustomer$$"/>
+        </actionGroup>
+        <actionGroup ref="StorefrontNavigateToCategoryUrlActionGroup" stepKey="goToCategoryPage">
+            <argument name="categoryUrl" value="{{ImportCategory_GiftCard.name_lwr}}"/>
+        </actionGroup>
+        <seeNumberOfElements selector="{{StorefrontCategoryMainSection.productName}}" userInput="1" stepKey="seeOnly1Product2"/>
+        <see selector="{{StorefrontCategoryMainSection.productName}}" userInput="{{ImportProduct_GiftCard.name}}" stepKey="seeProduct"/>
+
+        <!-- Storefront: Verify Gift Card Info & Images -->
+        <actionGroup ref="StorefrontOpenProductPageActionGroup" stepKey="openProductStorefrontPage">
+            <argument name="productUrl" value="{{ImportProduct_GiftCard.urlKey}}"/>
+        </actionGroup>
+        <see selector="{{StorefrontProductInfoMainSection.productName}}" userInput="{{ImportProduct_GiftCard.name}}" stepKey="seeProductName"/>
+        <see selector="{{StorefrontProductInfoMainSection.productSku}}" userInput="{{ImportProduct_GiftCard.sku}}" stepKey="seeSku"/>
+        <see selector="{{StorefrontProductInfoMainSection.productPrice}}" userInput="${{ImportProduct_GiftCard.amounts[0]}}" stepKey="seePrice"/>
+        <seeElement selector="{{StorefrontProductInfoMainSection.productImageSrc(ImportProduct_GiftCard.baseImageName)}}" stepKey="seeBaseImage"/>
+        <seeElement selector="{{StorefrontProductInfoMainSection.productImageSrc(ImportProduct_GiftCard.smallImageName)}}" stepKey="seeSmallImage"/>
+        <seeElement selector="{{StorefrontProductInfoMainSection.productImageSrc(ImportProduct_GiftCard.thumbnailImageName)}}" stepKey="seeThumbnailImage"/>
+
+        <!-- Purchase Gift Card -->
+        <actionGroup ref="StorefrontFillGiftCardFormActionGroup" stepKey="fillGiftCardForm"/>
+        <actionGroup ref="StorefrontAddToTheCartActionGroup" stepKey="addProductToCart"/>
+        <actionGroup ref="StorefrontOpenCheckoutPageActionGroup" stepKey="navigateToCheckoutPage"/>
+        <actionGroup ref="CheckoutSelectCheckMoneyOrderPaymentActionGroup" stepKey="selectCheckMoneyOrder"/>
+        <actionGroup ref="ClickPlaceOrderActionGroup" stepKey="clickPlacePurchaseOrder"/>
+        <grabTextFrom selector="{{CheckoutSuccessMainSection.orderNumber22}}" stepKey="grabOrderNumber"/>
+
+        <!-- Create Invoice -->
+        <actionGroup ref="OpenOrderByIdActionGroup" stepKey="goToOrderInAdmin">
+            <argument name="orderId" value="{$grabOrderNumber}"/>
+        </actionGroup>
+        <actionGroup ref="StartCreateInvoiceFromOrderPageActionGroup" stepKey="startInvoice"/>
+        <actionGroup ref="SubmitInvoiceActionGroup" stepKey="submitInvoice"/>
+        <grabTextFrom selector="{{AdminOrderFormItemsOrderedSection.giftCardAccountBySku(ImportProduct_GiftCard.sku)}}" stepKey="grabGiftCardAccount"/>
+
+        <!-- Storefront: Confirm Gift Card Can Be Used -->
+        <actionGroup ref="StorefrontNavigateToGiftCardPageActionGroup" stepKey="navigateToGiftCardPage"/>
+        <actionGroup ref="StorefrontCheckStatusAndBalanceOfGiftCardActionGroup" stepKey="verifyGiftCardAmount">
+            <argument name="giftCardNumber" value="{$grabGiftCardAccount}"/>
+            <argument name="giftCardAmount" value="${{ImportProduct_GiftCard.amounts[0]}}"/>
+        </actionGroup>
+    </test>
+</tests>

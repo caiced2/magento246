@@ -1,0 +1,45 @@
+<?xml version="1.0"?>
+<!--
+/**
+ * Copyright © Magento, Inc. All rights reserved.
+ * See COPYING.txt for license details.
+ */
+-->
+<config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="urn:magento:framework:Event/etc/events.xsd">
+    <event name="sales_order_process_relation">
+        <observer name="sales_archived_grid_order_sync_insert" instance="SalesArchiveOrderIndexGridSyncInsert" />
+    </event>
+    <event name="sales_order_invoice_process_relation">
+        <observer name="sales_archived_grid_order_invoice_sync_insert" instance="SalesArchiveInvoiceIndexGridSyncInsert" />
+    </event>
+    <event name="sales_order_shipment_process_relation">
+        <observer name="sales_archived_grid_order_shipment_sync_insert" instance="SalesArchiveShipmentIndexGridSyncInsert" />
+    </event>
+    <event name="sales_order_creditmemo_process_relation">
+        <observer name="sales_archived_grid_order_creditmemo_sync_insert" instance="SalesArchiveCreditmemoIndexGridSyncInsert" />
+    </event>
+    <event name="controller_action_postdispatch_adminhtml_order_shipment_massPrintShippingLabel">
+        <observer name="magento_salesarchive" instance="Magento\SalesArchive\Observer\ReplaceSalesOrderRedirectObserver" />
+    </event>
+    <event name="controller_action_postdispatch_sales_order_pdfshipments">
+        <observer name="magento_salesarchive" instance="Magento\SalesArchive\Observer\ReplaceSalesOrderRedirectObserver" />
+    </event>
+    <event name="controller_action_postdispatch_sales_order_pdfinvoices">
+        <observer name="magento_salesarchive" instance="Magento\SalesArchive\Observer\ReplaceSalesOrderRedirectObserver" />
+    </event>
+    <event name="controller_action_postdispatch_sales_order_pdfcreditmemos">
+        <observer name="magento_salesarchive" instance="Magento\SalesArchive\Observer\ReplaceSalesOrderRedirectObserver" />
+    </event>
+    <event name="controller_action_postdispatch_sales_order_pdfdocs">
+        <observer name="magento_salesarchive" instance="Magento\SalesArchive\Observer\ReplaceSalesOrderRedirectObserver" />
+    </event>
+    <event name="controller_action_postdispatch_sales_order_massHold">
+        <observer name="magento_salesarchive" instance="Magento\SalesArchive\Observer\ReplaceSalesOrderRedirectObserver" />
+    </event>
+    <event name="controller_action_postdispatch_sales_order_massUnhold">
+        <observer name="magento_salesarchive" instance="Magento\SalesArchive\Observer\ReplaceSalesOrderRedirectObserver" />
+    </event>
+    <event name="controller_action_postdispatch_sales_order_massCancel">
+        <observer name="magento_salesarchive" instance="Magento\SalesArchive\Observer\ReplaceSalesOrderRedirectObserver" />
+    </event>
+</config>

@@ -1,0 +1,64 @@
+<?xml version="1.0"?>
+<!--
+/**
+ * Copyright © Magento, Inc. All rights reserved.
+ * See COPYING.txt for license details.
+ */
+-->
+<config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="urn:magento:framework:ObjectManager/etc/config.xsd">
+    <type name="Magento\Customer\Model\Registration">
+        <plugin name="invitation_customer_registration_plugin" type="Magento\Invitation\Model\Plugin\CustomerRegistration"/>
+    </type>
+    <type name="Magento\Framework\Url\SecurityInfo">
+        <arguments>
+            <argument name="secureUrlList" xsi:type="array">
+                <item name="invitation" xsi:type="string">/invitation/</item>
+            </argument>
+        </arguments>
+    </type>
+    <type name="Magento\Invitation\Controller\Customer\Account\Confirm">
+        <plugin name="invitation_enabled_check" type="Magento\Invitation\Controller\Customer\Account\Plugin" sortOrder="10" />
+    </type>
+    <type name="Magento\Invitation\Controller\Customer\Account\Confirmation">
+        <plugin name="invitation_enabled_check" type="Magento\Invitation\Controller\Customer\Account\Plugin" sortOrder="10" />
+    </type>
+    <type name="Magento\Invitation\Controller\Customer\Account\Create">
+        <plugin name="invitation_enabled_check" type="Magento\Invitation\Controller\Customer\Account\Plugin" sortOrder="10" />
+    </type>
+    <type name="Magento\Invitation\Controller\Customer\Account\CreatePassword">
+        <plugin name="invitation_enabled_check" type="Magento\Invitation\Controller\Customer\Account\Plugin" sortOrder="10" />
+    </type>
+    <type name="Magento\Invitation\Controller\Customer\Account\CreatePost">
+        <plugin name="invitation_enabled_check" type="Magento\Invitation\Controller\Customer\Account\Plugin" sortOrder="10" />
+    </type>
+    <type name="Magento\Invitation\Controller\Customer\Account\Edit">
+        <plugin name="invitation_enabled_check" type="Magento\Invitation\Controller\Customer\Account\Plugin" sortOrder="10" />
+    </type>
+    <type name="Magento\Invitation\Controller\Customer\Account\EditPost">
+        <plugin name="invitation_enabled_check" type="Magento\Invitation\Controller\Customer\Account\Plugin" sortOrder="10" />
+    </type>
+    <type name="Magento\Invitation\Controller\Customer\Account\ForgotPassword">
+        <plugin name="invitation_enabled_check" type="Magento\Invitation\Controller\Customer\Account\Plugin" sortOrder="10" />
+    </type>
+    <type name="Magento\Invitation\Controller\Customer\Account\ForgotPasswordPost">
+        <plugin name="invitation_enabled_check" type="Magento\Invitation\Controller\Customer\Account\Plugin" sortOrder="10" />
+    </type>
+    <type name="Magento\Invitation\Controller\Customer\Account\Index">
+        <plugin name="invitation_enabled_check" type="Magento\Invitation\Controller\Customer\Account\Plugin" sortOrder="10" />
+    </type>
+    <type name="Magento\Invitation\Controller\Customer\Account\Login">
+        <plugin name="invitation_enabled_check" type="Magento\Invitation\Controller\Customer\Account\Plugin" sortOrder="10" />
+    </type>
+    <type name="Magento\Invitation\Controller\Customer\Account\LoginPost">
+        <plugin name="invitation_enabled_check" type="Magento\Invitation\Controller\Customer\Account\Plugin" sortOrder="10" />
+    </type>
+    <type name="Magento\Invitation\Controller\Customer\Account\Logout">
+        <plugin name="invitation_enabled_check" type="Magento\Invitation\Controller\Customer\Account\Plugin" sortOrder="10" />
+    </type>
+    <type name="Magento\Invitation\Controller\Customer\Account\LogoutSuccess">
+        <plugin name="invitation_enabled_check" type="Magento\Invitation\Controller\Customer\Account\Plugin" sortOrder="10" />
+    </type>
+    <type name="Magento\Invitation\Controller\Customer\Account\ResetPasswordPost">
+        <plugin name="invitation_enabled_check" type="Magento\Invitation\Controller\Customer\Account\Plugin" sortOrder="10" />
+    </type>
+</config>

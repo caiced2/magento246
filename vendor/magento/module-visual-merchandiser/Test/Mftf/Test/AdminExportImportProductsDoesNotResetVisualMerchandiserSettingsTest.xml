@@ -1,0 +1,187 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+ /**
+  * Copyright © Magento, Inc. All rights reserved.
+  * See COPYING.txt for license details.
+  */
+-->
+
+<tests xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xsi:noNamespaceSchemaLocation="urn:magento:mftf:Test/etc/testSchema.xsd">
+    <test name="AdminExportImportProductsDoesNotResetVisualMerchandiserSettingsTest">
+        <annotations>
+            <stories value="Visual Merchandiser"/>
+            <title value="Export - Import of products does not reset Visual Merchandiser settings."/>
+            <description value="Export - Import of products does not reset Visual Merchandiser settings. After reimporting products VM settings aren't lost."/>
+            <severity value="CRITICAL"/>
+            <testCaseId value="MC-11793"/>
+            <group value="visual_merchandiser"/>
+            <group value="import_export"/>
+        </annotations>
+        <before>
+            <actionGroup ref="AdminLoginActionGroup" stepKey="loginAsAdmin"/>
+            <actionGroup ref="DeleteAllProductsUsingProductGridActionGroup" stepKey="removeAllProducts"/>
+
+            <!-- Install sample data or create a set of products and categories with different settings -->
+            <createData entity="_defaultCategory" stepKey="createMainCategory"/>
+            <createData entity="SimpleSubCategory" stepKey="createSubCategory1">
+                <requiredEntity createDataKey="createMainCategory"/>
+            </createData>
+            <createData entity="SimpleSubCategory" stepKey="createSubCategory2">
+                <requiredEntity createDataKey="createMainCategory"/>
+            </createData>
+
+            <createData entity="ApiSimpleProduct" stepKey="createProduct1">
+                <field key="price">35</field>
+                <requiredEntity createDataKey="createSubCategory1"/>
+            </createData>
+            <createData entity="SimpleProduct3" stepKey="createProduct2">
+                <requiredEntity createDataKey="createSubCategory1"/>
+            </createData>
+            <createData entity="ApiSimpleProduct" stepKey="createProduct3">
+                <requiredEntity createDataKey="createSubCategory2"/>
+            </createData>
+            <createData entity="SimpleProduct3" stepKey="createProduct4">
+                <requiredEntity createDataKey="createSubCategory2"/>
+            </createData>
+            <createData entity="ApiSimpleProduct" stepKey="createProduct5">
+                <requiredEntity createDataKey="createSubCategory2"/>
+            </createData>
+            <createData entity="ApiSimpleProduct" stepKey="createProduct6">
+                <field key="price">25</field>
+                <requiredEntity createDataKey="createSubCategory2"/>
+            </createData>
+            <createData entity="ApiSimpleProduct" stepKey="createProduct7">
+                <field key="price">45</field>
+                <requiredEntity createDataKey="createSubCategory2"/>
+            </createData>
+        </before>
+        <after>
+            <!-- Delete data -->
+            <deleteData createDataKey="createMainCategory" stepKey="deleteMainCategory"/>
+            <deleteData createDataKey="createSubCategory1" stepKey="deleteSubCategory1"/>
+            <deleteData createDataKey="createSubCategory2" stepKey="deleteSubCategory2"/>
+            <deleteData createDataKey="createProduct1" stepKey="deleteProduct1"/>
+            <deleteData createDataKey="createProduct2" stepKey="deleteProduct2"/>
+            <deleteData createDataKey="createProduct3" stepKey="deleteProduct3"/>
+            <deleteData createDataKey="createProduct4" stepKey="deleteProduct4"/>
+            <deleteData createDataKey="createProduct5" stepKey="deleteProduct5"/>
+            <deleteData createDataKey="createProduct6" stepKey="deleteProduct6"/>
+            <deleteData createDataKey="createProduct7" stepKey="deleteProduct7"/>
+            <magentoCron groups="index" stepKey="reindexInvalidatedIndices"/>
+            <actionGroup ref="AdminLogoutActionGroup" stepKey="logout"/>
+        </after>
+
+        <!-- Set category Visual Merchandiser rule -->
+        <amOnPage url="{{AdminCategoryEditPage.url($createSubCategory2.id$)}}" stepKey="amOnEditCategoryPage"/>
+        <waitForPageLoad stepKey="waitForCategoryPageLoad"/>
+
+        <actionGroup ref="OpenProductsInCategorySectionActionGroup" stepKey="expandCategoryProducts"/>
+        <actionGroup ref="EnableMatchProductsByRuleActionGroup" stepKey="matchByRule"/>
+        <actionGroup ref="AdminSortingProductsInCategoryPageActionGroup" stepKey="applySmartSorting"/>
+        <actionGroup ref="AdminAddSmartCategoryConditionActionGroup" stepKey="addCondition">
+            <argument name="condition" value="SmartCategoryConditionPriceGreater50"/>
+        </actionGroup>
+        <actionGroup ref="SaveCategoryFormWithCategoryRulesActionGroup" stepKey="saveCategoryWithRule"/>
+
+        <!-- Verify that rule applied correctly -->
+        <actionGroup ref="OpenProductsInCategorySectionActionGroup" stepKey="expandCategoryProductsAgain"/>
+        <actionGroup ref="SwitchToTileModeProductInCategoryActionGroup" stepKey="switchToTileMode"/>
+
+        <dontSee userInput="$createProduct1.name$" selector="{{AdminCategoryProductsTileSection.productName}}" stepKey="dontSeeProduct1"/>
+        <dontSee userInput="$createProduct6.name$" selector="{{AdminCategoryProductsTileSection.productName}}" stepKey="dontSeeProduct6"/>
+        <dontSee userInput="$createProduct7.name$" selector="{{AdminCategoryProductsTileSection.productName}}" stepKey="dontSeeProduct7"/>
+
+        <actionGroup ref="SeeProductInProductCategoryTileForCurrentCategoryActionGroup" stepKey="seeProduct2">
+            <argument name="product" value="$createProduct2$"/>
+        </actionGroup>
+        <actionGroup ref="SeeProductInProductCategoryTileForCurrentCategoryActionGroup" stepKey="seeProduct3">
+            <argument name="product" value="$createProduct3$"/>
+        </actionGroup>
+        <actionGroup ref="SeeProductInProductCategoryTileForCurrentCategoryActionGroup" stepKey="seeProduct4">
+            <argument name="product" value="$createProduct4$"/>
+        </actionGroup>
+        <actionGroup ref="SeeProductInProductCategoryTileForCurrentCategoryActionGroup" stepKey="seeProduct5">
+            <argument name="product" value="$createProduct5$"/>
+        </actionGroup>
+
+        <!-- Remember order of products -->
+        <grabTextFrom selector="{{AdminCategoryProductsTileSection.productByPosition('1')}}" stepKey="grabFirstProductName"/>
+        <grabTextFrom selector="{{AdminCategoryProductsTileSection.productByPosition('2')}}" stepKey="grabSecondProductName"/>
+        <grabTextFrom selector="{{AdminCategoryProductsTileSection.productByPosition('3')}}" stepKey="grabThirdProductName"/>
+        <grabTextFrom selector="{{AdminCategoryProductsTileSection.productByPosition('4')}}" stepKey="grabFourthProductName"/>
+
+        <actionGroup ref="AdminSaveCategoryFormActionGroup" stepKey="saveCategory"/>
+
+        <!-- Export all products: System -> Data Transfer -> Export -> Entity Type: Products -->
+        <amOnPage url="{{AdminExportIndexPage.url}}" stepKey="amOnExportPage"/>
+        <waitForPageLoad stepKey="waitForExportPageLoad"/>
+
+        <!-- Export created above products -->
+        <actionGroup ref="ExportAllProductsActionGroup" stepKey="exportCreatedProducts"/>
+
+        <!-- Start message queue for export consumer -->
+        <actionGroup ref="CliConsumerStartActionGroup" stepKey="startMessageQueue">
+            <argument name="consumerName" value="{{AdminExportMessageConsumerData.consumerName}}"/>
+            <argument name="maxMessages" value="{{AdminExportMessageConsumerData.messageLimit}}"/>
+        </actionGroup>
+        <reloadPage stepKey="refreshPage"/>
+        <waitForElementVisible selector="{{AdminExportAttributeSection.exportFileNameByPosition('0')}}" stepKey="waitForFileName"/>
+        <grabTextFrom selector="{{AdminExportAttributeSection.exportFileNameByPosition('0')}}" stepKey="getFilename"/>
+        <actionGroup ref="AdminGetExportFilenameOnServerActionGroup" stepKey="grabNameFile">
+            <argument name="rowIndex" value="0"/>
+        </actionGroup>
+
+        <!-- Download file -->
+        <actionGroup ref="DownloadFileActionGroup" stepKey="downloadCreatedProducts">
+            <argument name="fileName" value="{$getFilename}"/>
+        </actionGroup>
+
+        <!-- Create copy of export file on local file system to use it as attachment for import in step importProducts. -->
+        <!-- This step is required when remote storage is enabled -->
+        <grabAttributeFrom userInput="href" selector="{{AdminExportAttributeSection.downloadByFileName({$getFilename})}}" stepKey="grabExportUrl"/>
+        <helper class="Magento\Catalog\Test\Mftf\Helper\LocalFileAssertions" method="createDirectory" stepKey="createExportDirectory">
+            <argument name="path">var/export</argument>
+        </helper>
+        <helper class="Magento\Backend\Test\Mftf\Helper\CurlHelpers" method="downloadFile" stepKey="createCopyOfExportFile">
+            <argument name="url">$grabExportUrl</argument>
+            <argument name="targetPath">var/export/{$grabNameFile}</argument>
+        </helper>
+
+        <!-- Import all products: System -> Data Transfer -> Import -> Entity Type: Products -->
+        <actionGroup ref="AdminImportProductsActionGroup" stepKey="importProducts">
+            <argument name="behavior" value="Add/Update"/>
+            <argument name="importFile" value="../../../../../var/export/{$grabNameFile}"/>
+            <argument name="importNoticeMessage" value="Created: 0, Updated: 7, Deleted: 0"/>
+        </actionGroup>
+
+        <!-- Expected result: After reimporting products VM settings aren't lost -->
+        <!-- Check automatic sorting and products positions-->
+        <amOnPage url="{{AdminCategoryEditPage.url($createSubCategory2.id$)}}" stepKey="amOnCategoryPage"/>
+        <waitForPageLoad stepKey="waitForSubcategoryPageLoad"/>
+        <actionGroup ref="OpenProductsInCategorySectionActionGroup" stepKey="scrollToCategoryTab"/>
+        <actionGroup ref="SwitchToTileModeProductInCategoryActionGroup" stepKey="switchTileMode"/>
+
+        <see userInput="{$grabFirstProductName}" selector="{{AdminCategoryProductsTileSection.productByPosition('1')}}" stepKey="seeProductByPosition1"/>
+        <see userInput="{$grabSecondProductName}" selector="{{AdminCategoryProductsTileSection.productByPosition('2')}}" stepKey="seeProductByPosition2"/>
+        <see userInput="{$grabThirdProductName}" selector="{{AdminCategoryProductsTileSection.productByPosition('3')}}" stepKey="seeProductByPosition3"/>
+        <see userInput="{$grabFourthProductName}" selector="{{AdminCategoryProductsTileSection.productByPosition('4')}}" stepKey="seeProductByPosition4"/>
+
+        <amOnPage url="{{StorefrontCategoryPage.url($createSubCategory2.custom_attributes[url_key]$)}}" stepKey="amOnStorefrontCategoryPage"/>
+        <waitForPageLoad stepKey="waitStorefrontCategoryPageLoad"/>
+        <see userInput="{$grabFirstProductName}" selector="{{StorefrontCategoryMainSection.productNameByPosition('1')}}" stepKey="seeFirstProduct"/>
+        <see userInput="{$grabSecondProductName}" selector="{{StorefrontCategoryMainSection.productNameByPosition('2')}}" stepKey="seeSecondProduct"/>
+        <see userInput="{$grabThirdProductName}" selector="{{StorefrontCategoryMainSection.productNameByPosition('3')}}" stepKey="seeThirdProduct"/>
+        <see userInput="{$grabFourthProductName}" selector="{{StorefrontCategoryMainSection.productNameByPosition('4')}}" stepKey="seeFourthProduct"/>
+
+        <!-- Delete exported file -->
+        <actionGroup ref="DeleteExportedFileActionGroup" stepKey="deleteExportedFile">
+            <argument name="fileName" value="{$getFilename}"/>
+        </actionGroup>
+
+        <!-- Remove created in step createCopyOfExportFile file -->
+        <helper class="Magento\Catalog\Test\Mftf\Helper\LocalFileAssertions" method="deleteFileIfExists" stepKey="deleteCopiedExportFile">
+            <argument name="filePath">var/export/{$grabNameFile}</argument>
+        </helper>
+    </test>
+</tests>

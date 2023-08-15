@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+ /**
+  * Copyright © Magento, Inc. All rights reserved.
+  * See COPYING.txt for license details.
+  */
+-->
+<operations xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:noNamespaceSchemaLocation="urn:magento:mftf:DataGenerator/etc/dataOperation.xsd">
+    <operation name="CreateBannerWidget" dataType="banner_widget" type="create" auth="adminFormKey" url="admin/widget_instance/save/code/magento_banner/theme_id/{theme_id}/back/edit/active_tab/main_section/" method="POST" returnRegex="~\/save\/instance_id\/(\d+)\/~" successRegex="~The widget instance has been saved.~">
+        <object key="store_ids" dataType="store_ids">
+            <field key="0">string</field>
+        </object>
+        <object key="parameters" dataType="banner_widget_params">
+            <field key="display_mode">string</field>
+            <field key="rotate">string</field>
+            <field key="banner_ids">string</field>
+            <field key="unique_id">string</field>
+            <object key="types" dataType="types">
+                <field key="0">string</field>
+            </object>
+        </object>
+        <object key="banner_id" dataType="banner_widget_ids">
+            <field key="from">string</field>
+            <field key="to">string</field>
+        </object>
+        <field key="title">string</field>
+        <field key="sort_order">string</field>
+        <field key="limit">string</field>
+        <field key="page">string</field>
+        <field key="banner_name">string</field>
+        <field key="visible_in">string</field>
+        <field key="banner_is_enabled">string</field>
+    </operation>
+</operations>

@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+ /**
+  * Copyright © Magento, Inc. All rights reserved.
+  * See COPYING.txt for license details.
+  */
+-->
+
+<actionGroups xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+              xsi:noNamespaceSchemaLocation="urn:magento:mftf:Test/etc/actionGroupSchema.xsd">
+
+    <actionGroup name="AdminCheckStagingDashboardGridTemporaryActionGroup">
+        <arguments>
+            <argument name="stage" type="entity"/>
+            <argument name="updateName" type="string"/>
+        </arguments>
+        <!-- Check changes  -->
+        <grabTextFrom selector="{{AdminContentStagingGridDashboardSection.startDateColumnGrid(updateName)}}"  stepKey="grabStartDate"/>
+        <assertNotEmpty after="grabStartDate" stepKey="verifyNotEmptyStartDate">
+			<actualResult type="const">$grabStartDate</actualResult>
+        </assertNotEmpty>
+        <grabTextFrom selector="{{AdminContentStagingGridDashboardSection.endDateColumnGrid(updateName)}}"  stepKey="grabEndDate"/>
+        <assertNotEmpty after="grabEndDate" stepKey="verifyNotEmptyEndDate">
+			<actualResult type="const">$grabEndDate</actualResult>
+        </assertNotEmpty>
+        <see selector="{{AdminContentStagingGridDashboardSection.descriptionColumnGrid(updateName)}}" userInput="{{stage.updateDescription}}" stepKey="seeDescription"/>
+    </actionGroup>
+</actionGroups>

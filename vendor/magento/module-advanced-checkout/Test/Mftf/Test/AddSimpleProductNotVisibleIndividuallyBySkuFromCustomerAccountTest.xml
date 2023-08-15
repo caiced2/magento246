@@ -1,0 +1,61 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+/**
+ * Copyright © Magento, Inc. All rights reserved.
+ * See COPYING.txt for license details.
+ */
+-->
+
+<tests xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xsi:noNamespaceSchemaLocation="urn:magento:mftf:Test/etc/testSchema.xsd">
+    <test name="AddSimpleProductNotVisibleIndividuallyBySkuFromCustomerAccountTest">
+        <annotations>
+            <features value="AdvancedCheckout"/>
+            <stories value="Add Product By SKU"/>
+            <title value="Add simple product not visible individually by sku from customer account test"/>
+            <description value="Add simple product for which visibility is set to not visible individually by sku from customer account"/>
+            <severity value="CRITICAL"/>
+            <testCaseId value="MC-14028"/>
+            <group value="AdvancedCheckout"/>
+            <group value="mtf_migrated"/>
+        </annotations>
+        <before>
+            <!-- Create customer -->
+            <createData entity="Simple_US_Customer" stepKey="createCustomer"/>
+
+            <!-- Create product -->
+            <createData entity="SimpleProductNotVisibleIndividually" stepKey="createSimpleProduct"/>
+        </before>
+        <after>
+            <!-- Delete customer -->
+            <deleteData createDataKey="createCustomer" stepKey="deleteCustomer"/>
+
+            <!-- Delete product -->
+            <deleteData createDataKey="createSimpleProduct" stepKey="deleteSimpleProduct"/>
+        </after>
+        <!-- Login to Frontend -->
+        <actionGroup ref="LoginToStorefrontActionGroup" stepKey="loginAsCustomer">
+            <argument name="Customer" value="$$createCustomer$$"/>
+        </actionGroup>
+
+        <!-- Open My Account > Order by SKU -->
+        <amOnPage stepKey="goToMyAccountPage" url="{{StorefrontCustomerDashboardPage.url}}"/>
+        <waitForPageLoad stepKey="waitForPageLoad"/>
+        <actionGroup ref="StorefrontCustomerGoToSidebarMenu" stepKey="goToSidebarMenu">
+            <argument name="menu" value="Order by SKU"/>
+        </actionGroup>
+
+        <!-- Fill data according dataset -->
+        <actionGroup ref="FillProductSkuAndQtyActionGroup" stepKey="fillProductQtyAndSkuForOrderProduct">
+            <argument name="sku" value="$$createSimpleProduct.sku$$"/>
+            <argument name="quantity" value="{{ApiSimpleSingleQty.quantity}}"/>
+            <argument name="index" value="0"/>
+        </actionGroup>
+
+        <!-- Add product to cart -->
+        <actionGroup ref="AddProductToCartBySkuFromMyAccountActionGroup" stepKey="addProductToCartBySku"/>
+
+        <!--Assert product is not editable -->
+        <dontSeeElement selector="{{StorefrontCustomerOrderBySkuSection.editBtn}}" stepKey="dontSeeEditBtn"/>
+    </test>
+</tests>

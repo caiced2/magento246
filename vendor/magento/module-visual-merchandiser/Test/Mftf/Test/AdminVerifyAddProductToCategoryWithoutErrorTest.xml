@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+ /**
+  * Copyright © Magento, Inc. All rights reserved.
+  * See COPYING.txt for license details.
+  */
+-->
+
+<tests xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xsi:noNamespaceSchemaLocation="urn:magento:mftf:Test/etc/testSchema.xsd">
+    <test name="AdminVerifyAddProductToCategoryWithoutErrorTest">
+        <annotations>
+            <features value="Catalog"/>
+            <stories value="Add product to the category"/>
+            <title value="Admin should be able to add product to the category without error"/>
+            <description value="Admin should be able to add product to the category without error"/>
+            <severity value="BLOCKER"/>
+            <testCaseId value="MAGETWO-95706"/>
+            <group value="Catalog"/>
+        </annotations>
+        <before>
+            <actionGroup ref="AdminLoginActionGroup" stepKey="loginAsAdmin"/>
+            <createData entity="SimpleProduct2" stepKey="product"/>
+            <createData entity="SimpleSubCategory" stepKey="category"/>
+        </before>
+        <after>
+            <deleteData createDataKey="product" stepKey="deleteSimpleProduct"/>
+            <deleteData createDataKey="category" stepKey="deleteCategory"/>
+            <actionGroup ref="AdminLogoutActionGroup" stepKey="logout"/>
+        </after>
+
+        <amOnPage url="{{AdminCategoryPage.url}}" stepKey="onCategoryIndexPage"/>
+        <waitForPageLoad stepKey="waitForCategoryPageLoadAddProducts"/>
+        <click selector="{{AdminCategorySidebarTreeSection.expandAll}}" stepKey="clickExpandAll"/>
+        <actionGroup ref="AdminVerifyAddedProductToCategoryWithoutErrorActionGroup" stepKey="addProductToCategory">
+            <argument name="product" value="$$product$$"/>
+            <argument name="categoryEntity" value="$$category$$"/>
+        </actionGroup>
+    </test>
+</tests>

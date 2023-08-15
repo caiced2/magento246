@@ -1,0 +1,61 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+ /**
+  * Copyright © Magento, Inc. All rights reserved.
+  * See COPYING.txt for license details.
+  */
+-->
+
+<tests xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:noNamespaceSchemaLocation="urn:magento:mftf:Test/etc/testSchema.xsd">
+    <test name="AdminCheckPreviewButtonOpensNewTabTest">
+        <annotations>
+            <features value="Staging"/>
+            <stories value="Product Preview"/>
+            <title value="Staging preview 'button' open in a new tab for view"/>
+            <description value="Staging preview 'button' open in a new tab for view"/>
+            <severity value="AVERAGE"/>
+            <testCaseId value="MC-17281"/>
+            <useCaseId value="MC-15287"/>
+            <group value="staging"/>
+        </annotations>
+        <before>
+            <actionGroup ref="AdminLoginActionGroup" stepKey="login"/>
+            <createData entity="_defaultCategory" stepKey="createCategory"/>
+            <createData entity="SimpleProduct" stepKey="createProduct">
+                <requiredEntity createDataKey="createCategory"/>
+            </createData>
+        </before>
+        <after>
+            <deleteData createDataKey="createProduct" stepKey="deleteProduct"/>
+            <deleteData createDataKey="createCategory" stepKey="deleteCategory"/>
+            <actionGroup ref="AdminLogoutActionGroup" stepKey="logout"/>
+        </after>
+        <!--Open created product edit page on admin-->
+        <comment userInput="Open created product edit page on admin" stepKey="navigateToProductPage"/>
+        <amOnPage url="{{AdminProductEditPage.url($$createProduct.id$$)}}" stepKey="goToProductEditPage"/>
+        <waitForPageLoad stepKey="waitForProductPage"/>
+        <!--Schedule New Update-->
+        <comment userInput="Schedule New Update" stepKey="scheduleNewUpdate"/>
+        <actionGroup ref="scheduleNewUpdateActionGroup" stepKey="createScheduleUpdate">
+            <argument name="staging" value="S5UpdateNameStaging"/>
+            <argument name="timeStart" value="+1 hour"/>
+            <argument name="timeEnd" value="+1 day"/>
+        </actionGroup>
+        <!--Click Edit/View for created update-->
+        <comment userInput="Click Edit/View for created update" stepKey="openEditViewSlideOut"/>
+        <click selector="{{AdminStagingSlideOutSection.viewEdit}}" stepKey="clickViewEdit"/>
+        <waitForPageLoad stepKey="waitForViewAndEditSlideOut"/>
+        <!--Click preview-->
+        <comment userInput="Click preview" stepKey="openPreviewTab"/>
+        <click selector="{{ScheduleUpdateSection.preview}}" stepKey="clickPreview"/>
+        <waitForPageLoad time="30" stepKey="waitForNewTabPageLoad"/>
+        <switchToNextTab stepKey="switchToNextTab"/>
+        <!--Check that preview version is opened in the new tab-->
+        <comment userInput="Check that preview version is opened in the new tab" stepKey="checkPreviewUrlInNewTab"/>
+        <seeInCurrentUrl url="{{AdminStagingPreviewPage.url}}" stepKey="seePreviewUrlInNewTab"/>
+        <!--Assert page content-->
+        <comment userInput="Assert page content" stepKey="assertPageContent"/>
+        <actionGroup ref="WaitForStagingPreviewLoadedActionGroup" stepKey="waitForStagingPreviewFrameLoaded"/>
+    </test>
+</tests>

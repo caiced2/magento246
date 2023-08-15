@@ -1,0 +1,154 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+ /**
+  * Copyright © Magento, Inc. All rights reserved.
+  * See COPYING.txt for license details.
+  */
+-->
+
+<tests xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:noNamespaceSchemaLocation="urn:magento:mftf:Test/etc/testSchema.xsd">
+    <test name="AdminMoneyRefundingGiftCardPartialRefundTest">
+        <annotations>
+            <features value="GiftCard"/>
+            <stories value="Refund"/>
+            <title value="Checking money refunding to the Gift card during partial refund"/>
+            <description value="Checking money refunding to the Gift card during partial refund"/>
+            <severity value="MAJOR"/>
+            <testCaseId value="MC-16509"/>
+            <useCaseId value="MAGETWO-96849"/>
+            <group value="GiftCard"/>
+            <skip>
+                <issueId value="MC-33851"/>
+            </skip>
+            <group value="pr_exclude"/>
+        </annotations>
+        <before>
+            <actionGroup ref="AdminLoginActionGroup" stepKey="loginAsAdmin"/>
+
+            <!-- Configure Paypal Payflow Pro payment method -->
+            <createData entity="PaypalPayflowProConfig" stepKey="configurePaypalPayflowProPayment"/>
+            <!-- Enable Paypal Payflow Pro with Vault -->
+            <createData entity="EnablePaypalPayflowProWithVault" stepKey="enablePaypalPayflowProPaymentWithVault"/>
+
+            <!--Create two products-->
+            <createData entity="SimpleProduct2" stepKey="createFirstProduct">
+                <field key="price">25</field>
+            </createData>
+            <createData entity="SimpleProduct2" stepKey="createSecondProduct">
+                <field key="price">50</field>
+            </createData>
+
+            <!--Create gift card code pool-->
+            <createData entity="GiftCardCodePool" stepKey="createCodePool"/>
+            <!--Create gift card account-->
+            <createData entity="GiftCardAccount100" stepKey="createGiftCard">
+                <field key="balance">20</field>
+            </createData>
+
+        </before>
+        <after>
+            <!-- Set configs to default -->
+            <createData entity="DefaultPaypalPayflowProConfig" stepKey="defaultPaypalPayflowProConfig"/>
+            <createData entity="RollbackPaypalPayflowPro" stepKey="rollbackPaypalPayflowProConfig"/>
+
+            <!--Delete Gift card-->
+            <amOnPage url="{{AdminGiftCardAccountGridPage.url}}" stepKey="amOnGiftCardAccountGridPage"/>
+            <click selector="{{AdminGiftCardAccountGridSection.resetFilter}}" stepKey="clickResetFilterButton"/>
+            <waitForLoadingMaskToDisappear stepKey="waitForLoadingMaskToDisappearAfterReset"/>
+            <click selector="{{AdminGridTableSection.row('1')}}" stepKey="clickPrereqAccount"/>
+            <waitForPageLoad stepKey="waitForEditPageLoad"/>
+            <click selector="{{AdminGiftCardAccountGridSection.delete}}" stepKey="clickDelete"/>
+            <waitForElementVisible selector="{{AdminConfirmationModalSection.ok}}" stepKey="waitForDeleteConfirmationPopup"/>
+            <click selector="{{AdminConfirmationModalSection.ok}}" stepKey="clickDeleteGiftCardAccount"/>
+            <waitForElementVisible selector="{{AdminGiftCardAccountGridSection.deletedGiftCardAccountMessage}}" stepKey="deletedGiftCardAccount"/>
+
+            <!--Delete created data-->
+            <deleteData createDataKey="createFirstProduct" stepKey="deleteFirstProduct"/>
+            <deleteData createDataKey="createSecondProduct" stepKey="deleteSecondProduct"/>
+
+            <actionGroup ref="AdminLogoutActionGroup" stepKey="logout"/>
+        </after>
+
+        <!--Grab Gift Card code-->
+        <amOnPage url="{{AdminGiftCardAccountGridPage.url}}" stepKey="goToAccountGrid"/>
+        <actionGroup ref="SortByIdDescendingActionGroup" stepKey="sortAccountsByIdDesc"/>
+        <click selector="{{AdminGridTableSection.row('1')}}" stepKey="clickPrereqAccount"/>
+        <waitForPageLoad stepKey="waitForAccountEditPage"/>
+        <grabTextFrom selector="{{AdminGiftCardAccountInformationSection.giftCardCode}}" stepKey="giftCardAccountCode"/>
+
+        <!--Add product to cart and checkout-->
+        <amOnPage url="{{StorefrontProductPage.url($$createFirstProduct.custom_attributes[url_key]$$)}}" stepKey="amOnFirstProductPage"/>
+        <waitForPageLoad stepKey="waitForFirstPageLoad"/>
+        <actionGroup ref="AddToCartFromStorefrontProductPageActionGroup" stepKey="addToCartFromStorefrontFirstProductPage">
+            <argument name="productName" value="$$createFirstProduct.name$$"/>
+        </actionGroup>
+        <amOnPage url="{{StorefrontProductPage.url($$createSecondProduct.custom_attributes[url_key]$$)}}" stepKey="amOnSecondProductPage"/>
+        <waitForPageLoad stepKey="waitForSecondPageLoad"/>
+        <actionGroup ref="AddToCartFromStorefrontProductPageActionGroup" stepKey="addToCartFromStorefrontSecondProductPage">
+            <argument name="productName" value="$$createSecondProduct.name$$"/>
+        </actionGroup>
+        <actionGroup ref="GoToCheckoutFromMinicartActionGroup" stepKey="goToCheckoutFromMinicart"/>
+        <actionGroup ref="GuestCheckoutFillingShippingSectionActionGroup" stepKey="guestCheckoutFillingShipping"/>
+
+        <!-- Fill Paypal card data -->
+        <click selector="{{StorefrontPaypalCheckoutSection.creditCard}}" stepKey="selectPaypalPaymentMethod"/>
+        <waitForPageLoad stepKey="waitForPaypalFormLoad"/>
+        <scrollTo selector="{{StorefrontPaypalCheckoutSection.creditCard}}" stepKey="scrollToCreditCardSection"/>
+        <actionGroup ref="StorefrontPaypalFillCardDataActionGroup" stepKey="fillCardDataPaypal">
+            <argument name="cardData" value="Visa3DSecureCard"/>
+        </actionGroup>
+        <waitForPageLoad stepKey="waitForFillCardData"/>
+
+        <!--Apply Gift Card and Place  Order-->
+        <actionGroup ref="ApplyGiftCardToOrderActionGroup" stepKey="applyGiftCardToOrder">
+            <argument name="code" value="$giftCardAccountCode"/>
+        </actionGroup>
+        <actionGroup ref="CheckoutPlaceOrderActionGroup" stepKey="placeOrder">
+            <argument name="orderNumberMessage" value="CONST.successGuestCheckoutOrderNumberMessage" />
+            <argument name="emailYouMessage" value="CONST.successCheckoutEmailYouMessage"/>
+        </actionGroup>
+
+        <!--Go to order page submit invoice-->
+        <grabTextFrom selector="{{CheckoutSuccessMainSection.orderNumber}}" stepKey="grabOrderNumber"/>
+        <actionGroup ref="FilterOrderGridByIdActionGroup" stepKey="filterOrderGridById">
+            <argument name="orderId" value="$grabOrderNumber"/>
+        </actionGroup>
+        <click selector="{{AdminOrdersGridSection.firstRow}}" stepKey="clickOrderRow"/>
+        <click selector="{{AdminOrderDetailsMainActionsSection.invoice}}" stepKey="clickInvoice"/>
+        <click selector="{{AdminInvoiceMainActionsSection.submitInvoice}}" stepKey="clickSubmitInvoice"/>
+        <see selector="{{AdminOrderDetailsMessagesSection.successMessage}}" userInput="The invoice has been created." stepKey="seeSuccessMessage"/>
+
+        <!--Create credit memo-->
+        <click selector="{{AdminOrderDetailsMainActionsSection.creditMemo}}" stepKey="clickCreateCreditMemo"/>
+        <conditionalClick selector="{{AdminOrderDetailsMainActionsSection.modalOk}}" dependentSelector="{{AdminOrderDetailsMainActionsSection.modalOk}}"
+                          visible="true" stepKey="acceptModal"/>
+        <scrollTo selector="{{AdminCreditMemoItemsSection.itemQtyToRefund('1')}}" stepKey="scrollToItemsToRefund"/>
+        <fillField selector="{{AdminCreditMemoItemsSection.itemQtyToRefund('1')}}" userInput="1" stepKey="fillFirstItemToRefund"/>
+        <fillField selector="{{AdminCreditMemoItemsSection.itemQtyToRefund('2')}}" userInput="0" stepKey="fillSecondItemToRefund"/>
+        <click selector="{{AdminCreditMemoItemsSection.updateQty}}" stepKey="clickUpdateQty"/>
+        <fillField selector="{{AdminCreditMemoTotalSection.refundShipping}}" userInput="0" stepKey="fillRefundShipping"/>
+        <actionGroup ref="UpdateCreditMemoTotalsActionGroup" stepKey="updateTotals"/>
+        <click selector="{{AdminCreditMemoTotalSection.refundOffline}}" stepKey="clickRefundOffline"/>
+        <see selector="{{AdminOrderDetailsMessagesSection.successMessage}}" userInput="You created the credit memo." stepKey="seeCreditMemoSuccess"/>
+
+        <!--Go to Comments history and check Refunded item-->
+        <click selector="{{AdminOrderDetailsOrderViewSection.commentsHistory}}" stepKey="goToCommentsHistory"/>
+        <waitForPageLoad stepKey="waitForCommentsHistoryPage"/>
+        <see userInput="We refunded $25.00 offline." stepKey="seeRealMoneyRefundedFirst"/>
+
+        <!--Refund second item and check in Comments history-->
+        <click selector="{{AdminOrderDetailsMainActionsSection.creditMemo}}" stepKey="clickCreateCreditMemoForSecond" />
+        <conditionalClick selector="{{AdminOrderDetailsMainActionsSection.modalOk}}" dependentSelector="{{AdminOrderDetailsMainActionsSection.modalOk}}"
+                          visible="true" stepKey="acceptModal1"/>
+        <fillField selector="{{AdminCreditMemoTotalSection.refundShipping}}" userInput="0" stepKey="gillRefundShippingForSecond"/>
+        <actionGroup ref="UpdateCreditMemoTotalsActionGroup" stepKey="updateTotalsAgain"/>
+        <click selector="{{AdminCreditMemoTotalSection.refundOffline}}" stepKey="clickRefundOfflineForSecond"/>
+        <see selector="{{AdminOrderDetailsMessagesSection.successMessage}}" userInput="You created the credit memo." stepKey="seeCreditMemoSuccessForSecond"/>
+        <click selector="{{AdminOrderDetailsOrderViewSection.commentsHistory}}" stepKey="goToCommentsHistoryForSecond"/>
+        <waitForPageLoad stepKey="waitForCommentsHistoryPage1"/>
+        <see userInput="We refunded $30.00 offline." stepKey="seeRealMoneyRefundedSecond"/>
+        <see userInput="We refunded $20.00 to Gift Card" stepKey="seeRefundedToTheGiftCard"/>
+        <actionGroup ref="AdminOrdersGridClearFiltersActionGroup" stepKey="clearOrderFilters"/>
+    </test>
+</tests>

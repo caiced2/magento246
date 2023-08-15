@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+ /**
+  * Copyright © Magento, Inc. All rights reserved.
+  * See COPYING.txt for license details.
+  */
+-->
+
+<pages xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xsi:noNamespaceSchemaLocation="urn:magento:mftf:Page/etc/PageObject.xsd">
+    <page name="AdminCustomerSegmentEditPage" url="customersegment/edit/id/{{segmentId}}/" area="admin" module="Magento_CustomerSegment" parameterized="true">
+        <section name="AdminMainActionsSection"/>
+        <section name="AdminMessagesSection"/>
+        <section name="AdminCustomerSegmentEditSection"/>
+        <section name="AdminCustomerSegmentConditionsEditSection"/>
+        <section name="AdminCustomerSegmentMatchedCustomersSection"/>
+    </page>
+</pages>

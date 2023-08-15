@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+ /**
+  * Copyright © Magento, Inc. All rights reserved.
+  * See COPYING.txt for license details.
+  */
+-->
+
+<actionGroups xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+              xsi:noNamespaceSchemaLocation="urn:magento:mftf:Test/etc/actionGroupSchema.xsd">
+    <actionGroup name="AdminProductScheduledUpdateAssertImageIsPresentActionGroup">
+        <annotations>
+            <description>Assert tha product image is present in scheduled update form.</description>
+        </annotations>
+        <arguments>
+            <argument name="image" defaultValue="ProductImage"/>
+        </arguments>
+        <waitForElementVisible selector="{{AdminProductScheduledUpdateImagesSection.productImagesToggle}}" stepKey="waitForImagesSection"/>
+        <conditionalClick selector="{{AdminProductScheduledUpdateImagesSection.productImagesToggle}}" dependentSelector="{{AdminProductScheduledUpdateImagesSection.imageFile(image.fileName)}}" visible="false" stepKey="expandImages"/>
+        <waitForPageLoad stepKey="waitForImages"/>
+        <waitForElementVisible selector="{{AdminProductScheduledUpdateImagesSection.imageFile(image.fileName)}}" stepKey="seeProductImageName"/>
+    </actionGroup>
+</actionGroups>

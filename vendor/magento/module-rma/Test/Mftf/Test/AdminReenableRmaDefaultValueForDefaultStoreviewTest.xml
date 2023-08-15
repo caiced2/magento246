@@ -1,0 +1,64 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+ /**
+  * Copyright © Magento, Inc. All rights reserved.
+  * See COPYING.txt for license details.
+  */
+-->
+<tests xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xsi:noNamespaceSchemaLocation="urn:magento:mftf:Test/etc/testSchema.xsd">
+    <test name="AdminReenableRmaDefaultValueForDefaultStoreviewTest">
+        <annotations>
+            <stories value="Set RMA Value"/>
+            <features value="Catalog"/>
+            <title value="Able to save default value of RMA."/>
+            <description value="Admin should be Able to save default value of RMA for the product in default Storeview."/>
+            <severity value="MAJOR"/>
+            <testCaseId value="AC-1808"/>
+            <useCaseId value="ACP2E-247"/>
+            <group value="catalog"/>
+        </annotations>
+        <before>
+            <!-- Create Subcategory and Product -->
+            <createData entity="SimpleSubCategory" stepKey="createCategory"/>
+            <createData entity="_defaultProduct" stepKey="createSimpleProduct">
+                <requiredEntity createDataKey="createCategory"/>
+            </createData>
+            <!-- Login as Admin -->
+            <actionGroup ref="AdminLoginActionGroup" stepKey="login"/>
+        </before>
+        <after>
+            <!-- Delete Created Product and Category -->
+            <deleteData createDataKey="createSimpleProduct" stepKey="deleteSimpleProduct"/>
+            <deleteData createDataKey="createCategory" stepKey="deleteSubCategory"/>
+            <!-- Logout from Admin Area -->
+            <actionGroup ref="AdminLogoutActionGroup" stepKey="logoutAdmin"/>
+        </after>
+        <!-- Open product edit -->
+        <actionGroup ref="AdminProductPageOpenByIdActionGroup" stepKey="goToProductEditPage">
+            <argument name="productId" value="$$createSimpleProduct.id$$"/>
+        </actionGroup>
+        <!-- Switch store view -->
+        <actionGroup ref="AdminSwitchStoreViewActionGroup" stepKey="switchToDefaultStoreView">
+            <argument name="storeView" value="_defaultStore.name"/>
+        </actionGroup>
+        <!-- Uncheck default value,config setting and enable RMA -->
+        <click selector="{{AdminProductFormBundleSection.rmaCheckbox}}" stepKey="unCheckDefaultValue"/>
+        <click selector="{{AdminProductFormBundleSection.rmaToggle}}" stepKey="enableRmaToggle"/>
+        <click selector="{{AdminProductFormRmaSection.configSettings}}" stepKey="unCheckConfigSetting"/>
+        <!-- Save the product -->
+        <actionGroup ref="AdminProductFormSaveActionGroup" stepKey="clickSaveButton"/>
+        <seeElement selector="{{AdminCategoryMessagesSection.SuccessMessage}}" stepKey="messageYouSavedTheProductIsShown"/>
+        <!-- Check if settings are unchecked and RMA enabled -->
+        <dontSeeCheckboxIsChecked selector="{{AdminProductFormStoreviewRmaSection.useDefaultRmaCheckbox}}"  stepKey="checkBoxDisabled"/>
+        <seeCheckboxIsChecked selector="{{AdminProductFormRmaSection.enabledRma}}"  stepKey="checkRmaEnabled"/>
+        <!-- Check the default value checkbox -->
+        <click selector="{{AdminProductFormBundleSection.rmaCheckbox}}" stepKey="clickOnDefaultValue"/>
+        <!-- Save the product -->
+        <actionGroup ref="AdminProductFormSaveActionGroup" stepKey="clickSaveButtonAgain"/>
+        <seeElement selector="{{AdminCategoryMessagesSection.SuccessMessage}}" stepKey="messageYouSavedTheProductIsShownAgain"/>
+        <!-- Check default value is checked -->
+        <seeCheckboxIsChecked selector="{{AdminProductFormStoreviewRmaSection.useDefaultRmaCheckbox}}"  stepKey="checkBoxEnabled"/>
+    </test>
+</tests>
+

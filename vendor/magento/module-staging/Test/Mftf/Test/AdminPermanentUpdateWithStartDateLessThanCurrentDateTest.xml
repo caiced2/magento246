@@ -1,0 +1,83 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+ /**
+  * Copyright © Magento, Inc. All rights reserved.
+  * See COPYING.txt for license details.
+  */
+-->
+
+<tests xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xsi:noNamespaceSchemaLocation="urn:magento:mftf:Test/etc/testSchema.xsd">
+    <test name="AdminPermanentUpdateWithStartDateLessThanCurrentDateTest">
+        <annotations>
+            <features value="Staging"/>
+            <stories value="Staging updates"/>
+            <title value="Permanent Update with start date less than current date"/>
+            <description value="Permanent Update with start date less than current date"/>
+            <severity value="BLOCKER"/>
+            <testCaseId value="MAGETWO-55018"/>
+            <group value="staging"/>
+        </annotations>
+        <before>
+            <!--Create Simple Product and Category-->
+            <createData entity="_defaultCategory" stepKey="createCategory"/>
+            <createData entity="ApiProductWithDescription" stepKey="createProduct">
+                <requiredEntity createDataKey="createCategory"/>
+                <field key="price">10</field>
+            </createData>
+            <actionGroup ref="AdminLoginActionGroup" stepKey="loginAsAdmin"/>
+
+            <actionGroup ref="AdminCreateWebsiteActionGroup" stepKey="createWebsite">
+                <argument name="newWebsiteName" value="{{customWebsite.name}}"/>
+                <argument name="websiteCode" value="{{customWebsite.code}}"/>
+            </actionGroup>
+            <actionGroup ref="AdminCreateNewStoreGroupActionGroup" stepKey="createNewStore">
+                <argument name="website" value="{{customWebsite.name}}"/>
+                <argument name="storeGroupName" value="{{customStoreGroup.name}}"/>
+                <argument name="storeGroupCode" value="{{customStoreGroup.code}}"/>
+            </actionGroup>
+            <actionGroup ref="AdminCreateStoreViewActionGroup" stepKey="createCustomStoreView">
+                <argument name="StoreGroup" value="customStoreGroup"/>
+                <argument name="customStore" value="customStore"/>
+            </actionGroup>
+            <magentoCron groups="index" stepKey="reindex"/>
+        </before>
+        <after>
+            <deleteData createDataKey="createProduct" stepKey="deleteProduct"/>
+            <deleteData createDataKey="createCategory" stepKey="deleteCategory"/>
+            <actionGroup ref="AdminClearFiltersActionGroup" stepKey="clearProductFilters"/>
+            <actionGroup ref="AdminDeleteWebsiteActionGroup" stepKey="deleteWebsite">
+                <argument name="websiteName" value="{{customWebsite.name}}"/>
+            </actionGroup>
+            <magentoCron groups="index" stepKey="reindex"/>
+            <actionGroup ref="AdminClearFiltersActionGroup" stepKey="clearFilters"/>
+            <actionGroup ref="AdminLogoutActionGroup" stepKey="logout"/>
+        </after>
+        <!-- Open Product Grid, Filter product and open -->
+        <actionGroup ref="SearchForProductOnBackendActionGroup" stepKey="searchProduct">
+            <argument name="product" value="$$createProduct$$"/>
+        </actionGroup>
+        <click selector="{{AdminProductGridSection.productGridNameProduct('$$createProduct.name$$')}}" stepKey="openProductForEdit"/>
+        <!-- Create Schedule New Update -->
+        <click selector="{{AdminStagingSlideOutSection.scheduleNewUpdateBtn}}" stepKey="clickButtonSheduleNewUpdate"/>
+        <click selector="{{AdminStagingSlideOutSection.changeStoreButton}}" stepKey="clickStoreSwitcher"/>
+        <click selector="{{AdminStagingSlideOutSection.selectStoreView(customStore.name)}}" stepKey="clickStoreView"/>
+        <waitForElementVisible selector="{{AdminConfirmationModalSection.ok}}" stepKey="waitForPopupWindowAppears"/>
+        <click selector="{{AdminConfirmationModalSection.ok}}" stepKey="acceptMessage"/>
+        <generateDate date="+1 day" format="m/j/Y g:i A" stepKey="generateStartDate"/>
+        <generateDate date="+3 day" format="m/j/Y g:i A" stepKey="generateEndDate"/>
+        <actionGroup ref="FillScheduleUpdateActionGroup" stepKey="fillScheduleUpdate">
+            <argument name="staging" value="S5UpdateNameStaging"/>
+            <argument name="timeStart" value="{$generateStartDate}"/>
+            <argument name="timeEnd" value="{$generateEndDate}"/>
+            <argument name="productPrice" value="14"/>
+        </actionGroup>
+        <!-- Create Schedule New Update1 -->
+        <generateDate date="-1 day" format="m/j/Y g:i A" stepKey="generateAnotherStartDate"/>
+        <actionGroup ref="FillScheduleUpdateRemovePriceActionGroup" stepKey="fillAnotherScheduleUpdate">
+            <argument name="staging" value="S8UpdateNameStaging"/>
+            <argument name="timeStart" value="{$generateAnotherStartDate}"/>
+        </actionGroup>
+        <see selector="{{AdminStagingSlideOutSection.scheduleErrorMessage}}" userInput="error: : The Future Update Start Time is invalid. It can't be earlier than the current time." stepKey="seeErrorMessage"/>
+    </test>
+</tests>

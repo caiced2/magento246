@@ -1,0 +1,68 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+ /**
+  * Copyright © Magento, Inc. All rights reserved.
+  * See COPYING.txt for license details.
+  */
+-->
+
+<tests xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xsi:noNamespaceSchemaLocation="urn:magento:mftf:Test/etc/testSchema.xsd">
+    <test name="CheckMandatoryCustomerAddressAttributeTest">
+        <annotations>
+            <features value="CustomerAddressAttributes"/>
+            <stories value="MAGETWO-66872 - Customer Address Attribute not being marked as required when the 'Values Required' setting is redefined on Website scope"/>
+            <title value="Check mandatory Customer Address Attribute which was override"/>
+            <description value="Check mandatory Customer Address Attribute which was override"/>
+            <severity value="MAJOR"/>
+            <testCaseId value="MAGETWO-94184"/>
+            <group value="customerAddress"/>
+        </annotations>
+
+        <before>
+            <!--Login as admin-->
+            <actionGroup ref="AdminLoginActionGroup" stepKey="LoginAsAdmin"/>
+            <!--Create new Customer-->
+            <createData entity="Simple_US_Customer_CA" stepKey="createCustomer"/>
+            <magentoCron groups="index" stepKey="reindex"/>
+        </before>
+        <!--Go To Customer Address page-->
+        <actionGroup ref="GoToCustomerAddress" stepKey="GoToCustomerAddress"/>
+        <!--Create new Attribute -->
+        <actionGroup ref="AdminSaveCustomerAddressAndContinue" stepKey="AdminCreateNewAttribute">
+            <argument name="values" value="Yes"/>
+        </actionGroup>
+        <!-- Change Store View to Main Website-->
+        <click selector="{{AttributeEditSection.storeView}}" stepKey="AdminClickStoreView"/>
+        <click selector="{{AttributeEditSection.mainWebsiteStoreView('Main Website')}}" stepKey="AdminChangeStoreView"/>
+        <waitForElementVisible selector="{{CustomerAccountSection.confirm}}" stepKey="waitForConfirm"/>
+        <click selector="{{CustomerAccountSection.confirm}}" stepKey="clickToConfirm"/>
+        <waitForPageLoad stepKey="waitForPageLoad"/>
+        <!-- Changing Values Required and Save-->
+        <click selector="{{AttributeEditSection.useDefaultForRequiredValues}}" stepKey="useDefaultValueForRequiredValues"/>
+        <click stepKey="RequiredValues" selector="{{CustomerAccountSection.valuesRequired}}"/>
+        <selectOption selector="{{CustomerAccountSection.valuesRequired}}" userInput="No" stepKey="selectValuesRequired"/>
+        <click selector="{{CustomerAccountSection.save}}" stepKey="saveAttribute"/>
+        <waitForPageLoad stepKey="waitForPageLoad1"/>
+        <!-- Proceed to All Customers -->
+        <actionGroup ref="OpenEditCustomerFromAdminActionGroup" stepKey="openCustomerEdit">
+            <argument name="customer" value="$$createCustomer$$" />
+        </actionGroup>
+        <!--Edit Customer-->
+        <actionGroup ref="EditCustomerAddressesFromAdminActionGroup" stepKey="editCustomerAddress">
+                <argument name="customerAddress" value="CustomerAddressSimple"/>
+        </actionGroup>
+        <click selector="{{AdminCustomerAccountInformationSection.accountInformationButton}}" stepKey="ClickOnAccountInformationSection"/>
+        <waitForPageLoad stepKey="waitForPageOpened1"/>
+        <click selector="{{AdminCustomerAccountInformationSection.saveCustomer}}" stepKey="save"/>
+        <waitForPageLoad stepKey="waitForCustomersPage"/>
+        <see userInput="You saved the customer." stepKey="CustomerIsSaved"/>
+        <conditionalClick selector="{{AdminProductGridFilterSection.clearFilters}}" dependentSelector="{{AdminProductGridFilterSection.clearFilters}}" visible="true" stepKey="clickClearFilters"/>
+        <after>
+            <actionGroup ref="GoToCustomerAddress" stepKey="GoToCustomerAddress"/>
+            <actionGroup ref="AdminDeleteAttribute" stepKey="AdminDeleteAttribute"/>
+            <deleteData createDataKey="createCustomer" stepKey="deleteCustomer"/>
+            <actionGroup ref="AdminLogoutActionGroup" stepKey="logout"/>
+        </after>
+    </test>
+</tests>

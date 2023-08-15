@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+ /**
+  * Copyright © Magento, Inc. All rights reserved.
+  * See COPYING.txt for license details.
+  */
+-->
+
+<tests xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="urn:magento:mftf:Test/etc/testSchema.xsd">
+    <test name="SaveGiftRegistryByStoreViewTest">
+        <annotations>
+            <features value="GiftRegistry"/>
+            <stories value="Save gift registry"/>
+            <title value="Gift Registry saving by Store View with Attributes"/>
+            <description value="Gift Registry saving by Store View with Attributes"/>
+            <severity value="MAJOR"/>
+            <testCaseId value="MAGETWO-95860"/>
+            <useCaseId value="MAGETWO-95831"/>
+            <group value="giftRegistry"/>
+        </annotations>
+        <before>
+            <actionGroup ref="AdminLoginActionGroup" stepKey="loginAsAdmin"/>
+            <actionGroup ref="AdminCreateStoreViewActionGroup" stepKey="createStoreView"/>
+            <magentoCron groups="index" stepKey="reindex"/>
+        </before>
+        <after>
+            <actionGroup ref="AdminDeleteStoreViewActionGroup" stepKey="deleteStoreView"/>
+            <magentoCron groups="index" stepKey="reindex"/>
+            <actionGroup ref="AdminDeleteGiftRegistryActionGroup" stepKey="deleteGiftRegistry"/>
+            <actionGroup ref="AdminLogoutActionGroup" stepKey="logout"/>
+        </after>
+        <actionGroup ref="AdminCreateNewGiftRegistryActionGroup" stepKey="createGiftRegistry"/>
+        <actionGroup ref="AdminOpenCorrespondingGiftRegistryActionGroup" stepKey="openGiftRegistry"/>
+        <actionGroup ref="AdminAddSelectAttributesToGiftRegistryActionGroup" stepKey="addAttributeToGiftRegistry">
+            <argument name="number" value="1"/>
+            <argument name="secondNumber" value="0"/>
+        </actionGroup>
+        <actionGroup ref="AdminAddRoleAttributesToGiftRegistryActionGroup" stepKey="addSecondAttributeToGiftRegistry">
+            <argument name="number" value="1"/>
+            <argument name="secondNumber" value="2"/>
+        </actionGroup>
+        <actionGroup ref="AdminChangeStoreViewAndVerifyGiftRegistryActionGroup" stepKey="changeStoreViewAndVerify"/>
+    </test>
+</tests>

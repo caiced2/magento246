@@ -1,0 +1,147 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+ /**
+  * Copyright © Magento, Inc. All rights reserved.
+  * See COPYING.txt for license details.
+  */
+-->
+
+<tests xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xsi:noNamespaceSchemaLocation="urn:magento:mftf:Test/etc/testSchema.xsd">
+    <test name="AdminCmsScheduleUpdateCheckPreviewButtonOpensNewTabTest">
+        <annotations>
+            <stories value="CMS Pages"/>
+            <features value="Staging"/>
+            <title value="Cms staging preview 'button' open in a new tab for view"/>
+            <description value="Cms staging preview 'button' open in a new tab for view"/>
+            <severity value="CRITICAL"/>
+            <testCaseId value="MC-34161"/>
+            <useCaseId value="MC-33789"/>
+            <group value="cmsStaging"/>
+        </annotations>
+        <before>
+            <!-- Create CMS Page -->
+            <createData entity="_defaultCmsPage" stepKey="createCmsPage"/>
+
+            <!-- Login to Magento backend -->
+            <actionGroup ref="AdminLoginActionGroup" stepKey="login"/>
+
+            <!-- Create website, Store and Store View -->
+            <actionGroup ref="AdminCreateWebsiteActionGroup" stepKey="createWebsite">
+                <argument name="newWebsiteName" value="{{NewWebSiteData.name}}"/>
+                <argument name="websiteCode" value="{{NewWebSiteData.code}}"/>
+            </actionGroup>
+            <actionGroup ref="AdminCreateNewStoreGroupActionGroup" stepKey="createNewStore">
+                <argument name="website" value="{{NewWebSiteData.name}}"/>
+                <argument name="storeGroupName" value="{{NewStoreData.name}}"/>
+                <argument name="storeGroupCode" value="{{NewStoreData.code}}"/>
+            </actionGroup>
+            <actionGroup ref="AdminCreateStoreViewActionGroup" stepKey="createCustomStoreView">
+                <argument name="StoreGroup" value="NewStoreData"/>
+                <argument name="customStore" value="NewStoreViewData"/>
+            </actionGroup>
+            <magentoCron groups="index" stepKey="reindex"/>
+        </before>
+        <after>
+            <deleteData createDataKey="createCmsPage" stepKey="deleteCmsPage"/>
+
+            <actionGroup ref="AdminDeleteWebsiteActionGroup" stepKey="deleteWebsite">
+                <argument name="websiteName" value="{{NewWebSiteData.name}}"/>
+            </actionGroup>
+            <magentoCron groups="index" stepKey="reindex"/>
+
+            <actionGroup ref="AdminLogoutActionGroup" stepKey="logout"/>
+        </after>
+        <!-- Open Cms Page for Edit -->
+        <amOnPage url="{{AdminCmsPageEditPage.url($$createCmsPage.id$$)}}" stepKey="openEditCmsPage"/>
+
+        <!-- Create the new staging update -->
+        <generateDate date="+1 day" format="m/d/Y g:i A" stepKey="generateStartDate"/>
+        <generateDate date="+1 week" format="m/d/Y g:i A" stepKey="generateEndDate"/>
+        <click selector="{{AdminStagingSlideOutSection.scheduleNewUpdateBtn}}" stepKey="clickScheduleNewUpdateButton"/>
+        <actionGroup ref="AdminSwitchPageInWebsitesViewModalActionGroup" stepKey="switchPageInWebsites">
+            <argument name="storeView" value="NewStoreViewData.name"/>
+        </actionGroup>
+        <actionGroup ref="scheduleNewUpdateActionGroup" stepKey="createScheduleUpdate">
+            <argument name="staging" value="S5UpdateNameStaging"/>
+            <argument name="timeStart" value="{$generateStartDate}"/>
+            <argument name="timeEnd" value="{$generateEndDate}"/>
+        </actionGroup>
+
+        <!-- Create the second staging update -->
+        <generateDate date="+2 week" format="m/d/Y g:i A" stepKey="generateStartDateSecond"/>
+        <generateDate date="+3 week" format="m/d/Y g:i A" stepKey="generateEndDateSecond"/>
+        <click selector="{{AdminStagingSlideOutSection.scheduleNewUpdateBtn}}" stepKey="clickScheduleNewUpdateButtonSecond"/>
+        <actionGroup ref="AdminSwitchPageInWebsitesViewModalActionGroup" stepKey="switchPageInWebsitesSecond">
+            <argument name="storeView" value="NewStoreViewData.name"/>
+        </actionGroup>
+        <actionGroup ref="scheduleNewUpdateActionGroup" stepKey="createScheduleUpdateSecond">
+            <argument name="staging" value="S8UpdateNameStaging"/>
+            <argument name="timeStart" value="{$generateStartDateSecond}"/>
+            <argument name="timeEnd" value="{$generateEndDateSecond}"/>
+        </actionGroup>
+
+        <!--Click preview link-->
+        <click selector="{{AdminStagingSlideOutSection.preview}}" stepKey="clickPreviewLink"/>
+        <waitForPageLoad time="30" stepKey="waitForNewTabPageLoadFirst"/>
+        <switchToNextTab stepKey="switchToNextTabFirst"/>
+
+        <!--Check that preview version is opened in the new tab-->
+        <seeInCurrentUrl url="{{AdminStagingPreviewPage.url}}" stepKey="seePreviewUrlInNewTabFirst"/>
+
+        <!--Assert page content-->
+        <actionGroup ref="WaitForStagingPreviewLoadedActionGroup" stepKey="waitForStagingPreviewFrameLoadedFirst"/>
+        <closeTab stepKey="closeTabFirst"/>
+        <reloadPage stepKey="reloadPage"/>
+        <waitForPageLoad stepKey="waitForPageLoad"/>
+
+        <!--Click Edit/View for created update-->
+        <click selector="{{AdminStagingSlideOutSection.viewEdit}}" stepKey="clickViewEdit"/>
+        <waitForPageLoad stepKey="waitForViewAndEditSlideOut"/>
+
+        <!--Click preview button-->
+        <click selector="{{ScheduleUpdateSection.preview}}" stepKey="clickPreview"/>
+        <waitForPageLoad time="30" stepKey="waitForNewTabPageLoadSecond"/>
+        <switchToNextTab stepKey="switchToNextTabSecond"/>
+
+        <!--Check that preview version is opened in the new tab-->
+        <seeInCurrentUrl url="{{AdminStagingPreviewPage.url}}" stepKey="seePreviewUrlInNewTabSecond"/>
+
+        <!--Assert page content-->
+        <actionGroup ref="WaitForStagingPreviewLoadedActionGroup" stepKey="waitForStagingPreviewFrameLoadedSecond"/>
+        <closeTab stepKey="closeTabSecond"/>
+
+        <reloadPage stepKey="reloadPageSecond"/>
+        <waitForPageLoad stepKey="waitForPageLoadSecond"/>
+
+        <!--Click second preview link-->
+        <click selector="{{AdminStagingSlideOutSection.previewByName(S8UpdateNameStaging.updateName)}}" stepKey="clickPreviewLinkSecond"/>
+        <waitForPageLoad time="30" stepKey="waitForNewTabPageLoadThird"/>
+        <switchToNextTab stepKey="switchToNextTabThird"/>
+
+        <!--Check that second preview version is opened in the new tab-->
+        <seeInCurrentUrl url="{{AdminStagingPreviewPage.url}}" stepKey="seePreviewUrlInNewTabThird"/>
+
+        <!--Assert page content-->
+        <actionGroup ref="WaitForStagingPreviewLoadedActionGroup" stepKey="waitForStagingPreviewFrameLoadedThird"/>
+        <closeTab stepKey="closeTabThird"/>
+        <reloadPage stepKey="reloadPageThird"/>
+        <waitForPageLoad stepKey="waitForPageLoadThird"/>
+
+        <!--Click Edit/View for second created update-->
+        <click selector="{{AdminStagingSlideOutSection.editLinkByName(S8UpdateNameStaging.updateName)}}" stepKey="clickViewEditSecond"/>
+        <waitForPageLoad stepKey="waitForViewAndEditSlideOutSecond"/>
+
+        <!--Click preview button-->
+        <click selector="{{ScheduleUpdateSection.preview}}" stepKey="clickPreviewSecond"/>
+        <waitForPageLoad time="30" stepKey="waitForNewTabPageLoadFourth"/>
+        <switchToNextTab stepKey="switchToNextTabFourth"/>
+
+        <!--Check that preview version is opened in the new tab-->
+        <seeInCurrentUrl url="{{AdminStagingPreviewPage.url}}" stepKey="seePreviewUrlInNewTabFourth"/>
+
+        <!--Assert page content-->
+        <actionGroup ref="WaitForStagingPreviewLoadedActionGroup" stepKey="waitForStagingPreviewFrameLoadedFourth"/>
+        <closeTab stepKey="closeTabFourth"/>
+    </test>
+</tests>

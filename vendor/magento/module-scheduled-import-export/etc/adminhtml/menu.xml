@@ -1,0 +1,12 @@
+<?xml version="1.0"?>
+<!--
+/**
+ * Copyright © Magento, Inc. All rights reserved.
+ * See COPYING.txt for license details.
+ */
+-->
+<config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="urn:magento:module:Magento_Backend:etc/menu.xsd">
+    <menu>
+        <add id="Magento_ScheduledImportExport::system_convert_magento_scheduled_operation" title="Scheduled Import/Export" module="Magento_ScheduledImportExport" sortOrder="40" parent="Magento_Backend::system_convert" action="adminhtml/scheduled_operation" resource="Magento_ScheduledImportExport::magento_scheduled_operation"/>
+    </menu>
+</config>

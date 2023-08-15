@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+ /**
+  * Copyright © Magento, Inc. All rights reserved.
+  * See COPYING.txt for license details.
+  */
+-->
+
+<sections xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+          xsi:noNamespaceSchemaLocation="urn:magento:mftf:Page/etc/SectionObject.xsd">
+    <section name="AdminConfigCatalogCategoryPermissionsSection">
+        <element name="catalogPermissionsTab" type="button" selector="#catalog_magento_catalogpermissions-head"/>
+        <element name="checkIfTabExpand" type="button" selector="#catalog_magento_catalogpermissions-head:not(.open)"/>
+        <element name="enableSystemValue" type="button" selector="#catalog_magento_catalogpermissions_enabled"/>
+        <element name="allowBrowsingCategory" type="button" selector="#catalog_magento_catalogpermissions_grant_catalog_category_view"/>
+        <element name="allowBrowsingCategoryGroups" type="multiselect" selector="#catalog_magento_catalogpermissions_grant_catalog_category_view_groups"/>
+        <element name="displayProductPrices" type="button" selector="#catalog_magento_catalogpermissions_grant_catalog_product_price"/>
+        <element name="allowAddingToCart" type="button" selector="#catalog_magento_catalogpermissions_grant_checkout_items"/>
+        <element name="disallowCatalogSearchBy" type="select" selector="#catalog_magento_catalogpermissions_deny_catalog_search"/>
+        <element name="deletePermissionButton" type="button" selector="(//div[contains(@class, 'permission-box')]//button[contains(@class, 'action-delete')])[{{rowId}}]" parameterized="true"/>
+    </section>
+</sections>

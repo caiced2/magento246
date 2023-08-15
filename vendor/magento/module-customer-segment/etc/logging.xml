@@ -1,0 +1,47 @@
+<?xml version="1.0"?>
+<!--
+/**
+ * Copyright © Magento, Inc. All rights reserved.
+ * See COPYING.txt for license details.
+ */
+-->
+<logging xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:noNamespaceSchemaLocation="urn:magento:module:Magento_Logging:etc/logging.xsd">
+    <actions>
+        <action id="refresh_data">
+            <label translate="true">Refresh Data</label>
+        </action>
+    </actions>
+    <groups>
+        <group name="magento_customersegment">
+            <label translate="true">Manage Segments</label>
+            <expected_models>
+                <expected_model class="Magento\CustomerSegment\Model\Segment" />
+            </expected_models>
+            <events>
+                <event controller_action="customersegment_index_grid"
+                       action_alias="search"
+                       post_dispatch="postDispatchSimpleSave" />
+                <event controller_action="customersegment_index_index" action_alias="view" />
+                <event controller_action="customersegment_index_edit" action_alias="edit" />
+                <event controller_action="customersegment_index_save" action_alias="save">
+                    <skip_on_back>
+                        <controller_action name="customersegment_index_edit" />
+                    </skip_on_back>
+                </event>
+                <event controller_action="customersegment_index_match"
+                       action_alias="refresh_data"
+                       post_dispatch="Magento\CustomerSegment\Model\Logging::postDispatchCustomerSegmentMatch" />
+                <event controller_action="customersegment_index_delete"
+                       action_alias="delete" />
+                <event controller_action="customersegment_report_customer_customersegment_exportCsv"
+                       action_alias="export"
+                       post_dispatch="postDispatchSimpleSave" />
+                <event controller_action="customersegment_report_customer_customersegment_exportExcel"
+                       action_alias="export"
+                       post_dispatch="postDispatchSimpleSave" />
+                <event controller_action="mui_index_render_customer_segment_listing" action_alias="Listing"/>
+            </events>
+        </group>
+    </groups>
+</logging>

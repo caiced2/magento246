@@ -1,0 +1,40 @@
+<?xml version="1.0"?>
+<!--
+/**
+ * Copyright © Magento, Inc. All rights reserved.
+ * See COPYING.txt for license details.
+ */
+-->
+<logging xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:noNamespaceSchemaLocation="urn:magento:module:Magento_Logging:etc/logging.xsd">
+    <groups>
+        <group name="adminhtml_customer_attribute">
+            <label translate="true">Manage Customer Attributes</label>
+            <expected_models>
+                <expected_model class="Magento\Customer\Model\Attribute" />
+            </expected_models>
+            <events>
+                <event controller_action="adminhtml_customer_attribute_edit"
+                       action_alias="view" />
+                <event controller_action="adminhtml_customer_attribute_save"
+                       action_alias="save" />
+                <event controller_action="adminhtml_customer_attribute_delete"
+                       action_alias="delete" />
+            </events>
+        </group>
+        <group name="adminhtml_customer_address_attribute">
+            <label translate="true">Manage Customer Address Attributes</label>
+            <expected_models>
+                <expected_model class="Magento\Customer\Model\Attribute" />
+            </expected_models>
+            <events>
+                <event controller_action="adminhtml_customer_address_attribute_edit"
+                       action_alias="view" />
+                <event controller_action="adminhtml_customer_address_attribute_save"
+                       action_alias="save" />
+                <event controller_action="adminhtml_customer_address_attribute_delete"
+                       action_alias="delete" />
+            </events>
+        </group>
+    </groups>
+</logging>

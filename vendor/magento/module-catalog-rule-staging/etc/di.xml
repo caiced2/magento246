@@ -1,0 +1,195 @@
+<?xml version="1.0"?>
+<!--
+/**
+ * Copyright © Magento, Inc. All rights reserved.
+ * See COPYING.txt for license details.
+ */
+-->
+<config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="urn:magento:framework:ObjectManager/etc/config.xsd">
+    <preference for="Magento\CatalogRuleStaging\Api\CatalogRuleStagingInterface" type="Magento\CatalogRuleStaging\Model\CatalogRuleStaging" />
+    <type name="Magento\Framework\EntityManager\MetadataPool">
+        <arguments>
+            <argument name="metadata" xsi:type="array">
+                <item name="Magento\CatalogRule\Api\Data\RuleInterface" xsi:type="array">
+                    <item name="entityTableName" xsi:type="string">catalogrule</item>
+                    <item name="identifierField" xsi:type="string">rule_id</item>
+                    <item name="sequenceTable" xsi:type="string">sequence_catalogrule</item>
+                </item>
+            </argument>
+        </arguments>
+    </type>
+    <type name="Magento\Staging\Model\StagingList">
+        <arguments>
+            <argument name="entities" xsi:type="array">
+                <item name="catalog_rule" xsi:type="string">Magento\CatalogRule\Api\Data\RuleInterface</item>
+            </argument>
+        </arguments>
+    </type>
+    <type name="Magento\Staging\Model\EntityStaging">
+        <arguments>
+            <argument name="stagingServices" xsi:type="array">
+                <item name="Magento\CatalogRule\Api\Data\RuleInterface" xsi:type="string">Magento\CatalogRuleStaging\Api\CatalogRuleStagingInterface</item>
+            </argument>
+        </arguments>
+    </type>
+    <type name="Magento\Staging\Model\StagingApplier">
+        <arguments>
+            <argument name="appliers" xsi:type="array">
+                <item name="Magento\CatalogRule\Api\Data\RuleInterface" xsi:type="object">Magento\CatalogRuleStaging\Model\CatalogRuleApplier</item>
+            </argument>
+        </arguments>
+    </type>
+    <type name="Magento\Framework\EntityManager\OperationPool">
+        <arguments>
+            <argument name="operations" xsi:type="array">
+                <item name="Magento\CatalogRule\Api\Data\RuleInterface" xsi:type="array">
+                    <item name="read" xsi:type="string">Magento\Framework\EntityManager\Operation\Read</item>
+                    <item name="create" xsi:type="string">Magento\CatalogRuleStaging\Model\Operation\Create</item>
+                    <item name="update" xsi:type="string">Magento\Staging\Model\Operation\Update</item>
+                    <item name="delete" xsi:type="string">Magento\Staging\Model\Operation\Delete</item>
+                </item>
+            </argument>
+        </arguments>
+    </type>
+    <type name="Magento\CatalogRule\Model\Rule">
+        <plugin name="catalogRuleDateResolver" type="Magento\CatalogRuleStaging\Model\Plugin\DateResolverPlugin"/>
+    </type>
+    <type name="Magento\CatalogRule\Observer\ProcessFrontFinalPriceObserver">
+        <plugin name="previewCatalogPriceRule" type="Magento\CatalogRuleStaging\Model\Plugin\FinalPricePlugin" />
+    </type>
+    <virtualType name="Magento\Catalog\Pricing\Price\Pool" type="Magento\Framework\Pricing\Price\Pool">
+        <arguments>
+            <argument name="prices" xsi:type="array">
+                <item name="catalog_rule_price" xsi:type="string">\Magento\CatalogRuleStaging\Pricing\Price\CatalogRulePrice</item>
+            </argument>
+        </arguments>
+    </virtualType>
+    <virtualType name="stagingCatalogRuleUpdateSelectResult" type="Magento\Staging\Model\Entity\Update\Select\SearchResult">
+        <arguments>
+            <argument name="entityRequestName" xsi:type="string">id</argument>
+            <argument name="entityTable" xsi:type="string">catalogrule</argument>
+            <argument name="entityColumn" xsi:type="string">rule_id</argument>
+        </arguments>
+    </virtualType>
+    <virtualType name="stagingCatalogRuleUpcomingResult" type="Magento\Staging\Model\Entity\Upcoming\SearchResult">
+        <arguments>
+            <argument name="entityRequestName" xsi:type="string">id</argument>
+            <argument name="entityTable" xsi:type="string">catalogrule</argument>
+            <argument name="entityColumn" xsi:type="string">rule_id</argument>
+        </arguments>
+    </virtualType>
+    <type name="Magento\Framework\View\Element\UiComponent\DataProvider\CollectionFactory">
+        <arguments>
+            <argument name="collections" xsi:type="array">
+                <item name="catalogrulestaging_upcoming_grid_data_source" xsi:type="string">stagingCatalogRuleUpcomingResult</item>
+                <item name="catalogrulestaging_update_select_grid_data_source" xsi:type="string">stagingCatalogRuleUpdateSelectResult</item>
+                <item name="catalogrulestaging_update_remove_select_grid_data_source" xsi:type="string">stagingCatalogRuleUpdateSelectResult</item>
+            </argument>
+        </arguments>
+    </type>
+
+    <!-- Catalog Rule save controller -->
+    <virtualType name="catalogRuleHydrator" type="Magento\CatalogRuleStaging\Model\Rule\Hydrator">
+        <arguments>
+            <argument name="entityRetriever" xsi:type="object">Magento\CatalogRuleStaging\Model\Rule\Retriever</argument>
+        </arguments>
+    </virtualType>
+    <virtualType name="catalogRuleUpdateSaveSaveAction" type="Magento\Staging\Model\Entity\Update\Action\Save\SaveAction">
+        <arguments>
+            <argument name="entityHydrator" xsi:type="object">catalogRuleHydrator</argument>
+        </arguments>
+    </virtualType>
+    <virtualType name="catalogRuleUpdateSaveAssignAction" type="Magento\Staging\Model\Entity\Update\Action\Save\AssignAction">
+        <arguments>
+            <argument name="entityHydrator" xsi:type="object">catalogRuleHydrator</argument>
+        </arguments>
+    </virtualType>
+    <virtualType name="catalogRuleUpdateDeleteSaveAction" type="Magento\Staging\Model\Entity\Update\Action\Delete\SaveAction">
+        <arguments>
+            <argument name="entityRetriever" xsi:type="object">Magento\CatalogRuleStaging\Model\Rule\Retriever</argument>
+            <argument name="entityName" xsi:type="string">Magento\CatalogRule\Api\Data\RuleInterface</argument>
+        </arguments>
+    </virtualType>
+    <virtualType name="catalogRuleUpdateDeleteAssignAction" type="Magento\Staging\Model\Entity\Update\Action\Delete\AssignAction">
+        <arguments>
+            <argument name="entityRetriever" xsi:type="object">Magento\CatalogRuleStaging\Model\Rule\Retriever</argument>
+            <argument name="entityName" xsi:type="string">Magento\CatalogRule\Api\Data\RuleInterface</argument>
+        </arguments>
+    </virtualType>
+    <virtualType name="catalogRuleUpdateDeleteRemoveAction" type="Magento\Staging\Model\Entity\Update\Action\Delete\RemoveAction">
+        <arguments>
+            <argument name="entityRetriever" xsi:type="object">Magento\CatalogRuleStaging\Model\Rule\Retriever</argument>
+            <argument name="entityName" xsi:type="string">Magento\CatalogRule\Api\Data\RuleInterface</argument>
+        </arguments>
+    </virtualType>
+
+    <virtualType name="catalogRuleUpdateSave" type="Magento\Staging\Model\Entity\Update\Save">
+        <arguments>
+            <argument name="entityName" xsi:type="string">Magento\CatalogRule\Api\Data\RuleInterface</argument>
+        </arguments>
+    </virtualType>
+    <type name="Magento\CatalogRuleStaging\Controller\Adminhtml\Update\Save">
+        <arguments>
+            <argument name="stagingUpdateSave" xsi:type="object">catalogRuleUpdateSave</argument>
+        </arguments>
+    </type>
+
+    <!-- Catalog rule delete controller -->
+    <type name="Magento\CatalogRuleStaging\Controller\Adminhtml\Update\Delete">
+        <arguments>
+            <argument name="stagingUpdateDelete" xsi:type="object">catalogRuleUpdateDelete</argument>
+        </arguments>
+    </type>
+    <virtualType name="catalogRuleUpdateDelete" type="Magento\Staging\Model\Entity\Update\Delete">
+        <arguments>
+            <argument name="entityName" xsi:type="string">Magento\CatalogRule\Api\Data\RuleInterface</argument>
+        </arguments>
+    </virtualType>
+    <type name="Magento\Staging\Model\Update\IncludesList">
+        <arguments>
+            <argument name="includes" xsi:type="array">
+                <item name="catalog_rule" xsi:type="object">Magento\Staging\Model\Update\Includes</item>
+            </argument>
+        </arguments>
+    </type>
+    <virtualType name="Magento\CatalogRule\Model\ResourceModel\Rule\AssociatedEntityMap" type="Magento\Framework\DataObject">
+        <arguments>
+            <argument name="data" xsi:type="array">
+                <item name="website" xsi:type="array">
+                    <item name="associations_table" xsi:type="string">catalogrule_website</item>
+                    <item name="rule_id_field" xsi:type="string">row_id</item>
+                    <item name="entity_id_field" xsi:type="string">website_id</item>
+                </item>
+                <item name="customer_group" xsi:type="array">
+                    <item name="associations_table" xsi:type="string">catalogrule_customer_group</item>
+                    <item name="rule_id_field" xsi:type="string">row_id</item>
+                    <item name="entity_id_field" xsi:type="string">customer_group_id</item>
+                </item>
+            </argument>
+        </arguments>
+    </virtualType>
+    <type name="Magento\Staging\Model\Entity\RetrieverPool">
+        <arguments>
+            <argument name="retrievers" xsi:type="array">
+                <item name="Magento\CatalogRule\Api\Data\RuleInterface" xsi:type="object">Magento\CatalogRuleStaging\Model\Rule\Retriever</item>
+            </argument>
+        </arguments>
+    </type>
+    <type name="Magento\CatalogRuleStaging\Pricing\Price\CatalogRulePrice">
+        <arguments>
+            <argument name="productRepository" xsi:type="object">Magento\Catalog\Api\ProductRepositoryInterface\Proxy</argument>
+            <argument name="metadataPool" xsi:type="object">Magento\Framework\EntityManager\MetadataPool\Proxy</argument>
+            <argument name="searchCriteriaBuilder" xsi:type="object">Magento\Framework\Api\SearchCriteriaBuilder\Proxy</argument>
+        </arguments>
+    </type>
+    <type name="Magento\CatalogRule\Model\Indexer\ReindexRuleProduct">
+        <arguments>
+            <argument name="useWebsiteTimezone" xsi:type="boolean">false</argument>
+        </arguments>
+    </type>
+    <type name="Magento\CatalogRule\Model\Indexer\ReindexRuleProductPrice">
+        <arguments>
+            <argument name="useWebsiteTimezone" xsi:type="boolean">false</argument>
+        </arguments>
+    </type>
+</config>

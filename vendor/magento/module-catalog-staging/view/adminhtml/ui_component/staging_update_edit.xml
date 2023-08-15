@@ -1,0 +1,167 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+/**
+ * Copyright © Magento, Inc. All rights reserved.
+ * See COPYING.txt for license details.
+ */
+-->
+<form xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="urn:magento:module:Magento_Ui:etc/ui_configuration.xsd">
+    <fieldset name="products" class="Magento\Staging\Ui\Component\Form\Fieldset" sortOrder="30">
+        <settings>
+            <collapsible>true</collapsible>
+            <label translate="true">Products</label>
+        </settings>
+        <modal name="update_form_modal">
+            <settings>
+                <options>
+                    <option name="modalClass" xsi:type="string">scheduled-changes-modal-slide</option>
+                </options>
+            </settings>
+            <insertForm name="update_form_loader" component="Magento_Staging/js/form/components/insert-form">
+                <argument name="data" xsi:type="array">
+                    <item name="config" xsi:type="array">
+                        <item name="upcomingListingProvider" xsi:type="string">staging_update_edit_product_grid</item>
+                        <item name="removeModalProvider" xsi:type="string">${ $.ns}.${ $.ns}.catalogstaging_update_remove_form_modal</item>
+                        <item name="removeResponseProvider" xsi:type="string">${ $.removeModalProvider }.update_remove_form_loader:responseData</item>
+                        <item name="modalSubTitleProvider" xsi:type="string">${ $.externalProvider }:data.staging.name</item>
+                        <item name="modalTitleProvider" xsi:type="string">${ $.externalProvider }:data.product.name</item>
+                    </item>
+                </argument>
+                <settings>
+                    <formSubmitType>ajax</formSubmitType>
+                    <renderUrl path="mui/index/render_handle">
+                        <param name="handle">catalogstaging_update</param>
+                        <param name="buttons">1</param>
+                    </renderUrl>
+                    <loading>false</loading>
+                    <toolbarContainer>${ $.parentName }</toolbarContainer>
+                    <externalProvider>${ $.ns }.catalogstaging_update_form_data_source</externalProvider>
+                    <ns>catalogstaging_update_form</ns>
+                    <imports>
+                        <link name="params.store">${ $.provider }:data.store_id</link>
+                    </imports>
+                </settings>
+            </insertForm>
+        </modal>
+        <modal name="catalogstaging_update_remove_form_modal">
+            <settings>
+                <options>
+                    <option name="title" xsi:type="string">Remove Product from Campaign</option>
+                </options>
+            </settings>
+            <insertForm name="update_remove_form_loader" component="Magento_Staging/js/form/components/insert-form">
+                <argument name="data" xsi:type="array">
+                    <item name="config" xsi:type="array">
+                        <item name="source" xsi:type="string">staging</item>
+                        <item name="upcomingListingProvider" xsi:type="string">staging_update_edit_product_grid</item>
+                    </item>
+                </argument>
+                <settings>
+                    <formSubmitType>ajax</formSubmitType>
+                    <renderUrl path="mui/index/render_handle">
+                        <param name="handle">catalogstaging_update_remove</param>
+                        <param name="buttons">1</param>
+                    </renderUrl>
+                    <toolbarContainer>${ $.parentName }</toolbarContainer>
+                    <externalProvider>${ $.ns }.catalogstaging_update_remove_form_data_source</externalProvider>
+                    <ns>catalogstaging_update_remove_form</ns>
+                </settings>
+            </insertForm>
+        </modal>
+        <insertListing name="staging_update_edit_product_grid">
+            <settings>
+                <dataLinks>
+                    <exports>false</exports>
+                    <imports>true</imports>
+                </dataLinks>
+                <externalProvider>staging_update_edit_product_grid.staging_update_edit_product_grid_data_source</externalProvider>
+                <selectionsProvider>staging_update_edit_product_grid.staging_update_edit_product_grid.staging_update_edit_product_grid_columns.ids</selectionsProvider>
+                <autoRender>true</autoRender>
+                <dataScope>staging_update_edit_product_grid</dataScope>
+                <ns>staging_update_edit_product_grid</ns>
+                <exports>
+                    <link name="updateId">${ $.externalProvider }:params.update_id</link>
+                </exports>
+                <imports>
+                    <link name="updateId">${ $.provider }:data.general.id</link>
+                </imports>
+            </settings>
+        </insertListing>
+    </fieldset>
+    <fieldset name="catalog_category" class="Magento\Staging\Ui\Component\Form\Fieldset" sortOrder="20">
+        <settings>
+            <collapsible>true</collapsible>
+            <label translate="true">Categories</label>
+        </settings>
+        <modal name="update_form_modal">
+            <settings>
+                <options>
+                    <option name="modalClass" xsi:type="string">scheduled-changes-modal-slide</option>
+                </options>
+            </settings>
+            <insertForm name="update_form_loader" component="Magento_Staging/js/form/components/insert-form">
+                <argument name="data" xsi:type="array">
+                    <item name="config" xsi:type="array">
+                        <item name="upcomingListingProvider" xsi:type="string">staging_update_edit_category_grid</item>
+                        <item name="removeModalProvider" xsi:type="string">${ $.ns}.${ $.ns}.update_remove_form_modal</item>
+                        <item name="removeResponseProvider" xsi:type="string">${ $.removeModalProvider }.update_remove_form_loader:responseData</item>
+                        <item name="modalSubTitleProvider" xsi:type="string">${ $.externalProvider }:data.staging.name</item>
+                        <item name="modalTitleProvider" xsi:type="string">${ $.externalProvider }:data.title</item>
+                    </item>
+                </argument>
+                <settings>
+                    <formSubmitType>ajax</formSubmitType>
+                    <renderUrl path="mui/index/render_handle">
+                        <param name="handle">catalogstaging_category_update</param>
+                        <param name="buttons">1</param>
+                    </renderUrl>
+                    <loading>false</loading>
+                    <toolbarContainer>${ $.parentName }</toolbarContainer>
+                    <externalProvider>${ $.ns }.catalogstaging_category_update_form_data_source</externalProvider>
+                    <ns>catalogstaging_category_update_form</ns>
+                    <imports>
+                        <link name="params.store">${ $.provider }:data.store_id</link>
+                    </imports>
+                </settings>
+            </insertForm>
+        </modal>
+        <modal name="update_remove_form_modal">
+            <settings>
+                <options>
+                    <option name="title" xsi:type="string">Remove Category from Campaign</option>
+                </options>
+            </settings>
+            <insertForm name="update_remove_form_loader" component="Magento_Staging/js/form/components/insert-form">
+                <argument name="data" xsi:type="array">
+                    <item name="config" xsi:type="array">
+                        <item name="source" xsi:type="string">staging</item>
+                        <item name="upcomingListingProvider" xsi:type="string">staging_update_edit_category_grid</item>
+                    </item>
+                </argument>
+                <settings>
+                    <formSubmitType>ajax</formSubmitType>
+                    <renderUrl path="mui/index/render_handle">
+                        <param name="handle">catalogstaging_category_update_remove</param>
+                        <param name="buttons">1</param>
+                    </renderUrl>
+                    <toolbarContainer>${ $.parentName }</toolbarContainer>
+                    <externalProvider>${ $.ns }.catalogstaging_category_update_remove_form_data_source</externalProvider>
+                    <ns>catalogstaging_category_update_remove_form</ns>
+                </settings>
+            </insertForm>
+        </modal>
+        <insertListing name="staging_update_edit_category_grid">
+            <settings>
+                <externalProvider>${ $.ns }.staging_update_edit_category_grid_data_source</externalProvider>
+                <autoRender>true</autoRender>
+                <ns>staging_update_edit_category_grid</ns>
+                <exports>
+                    <link name="updateId">${ $.externalProvider }:params.update_id</link>
+                </exports>
+                <imports>
+                    <link name="updateId">${ $.provider }:data.general.id</link>
+                </imports>
+            </settings>
+        </insertListing>
+    </fieldset>
+</form>

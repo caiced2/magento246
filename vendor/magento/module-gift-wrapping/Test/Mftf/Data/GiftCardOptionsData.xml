@@ -1,0 +1,56 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+ /**
+  * Copyright © Magento, Inc. All rights reserved.
+  * See COPYING.txt for license details.
+  */
+-->
+
+<entities xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+          xsi:noNamespaceSchemaLocation="urn:magento:mftf:DataGenerator/etc/dataProfileSchema.xsd">
+    <entity name="EnableGiftWrappingForOrderItemsOnly" type="gift_options_config_state">
+        <requiredEntity type="wrapping_allow_order">DisableGiftWrappingOrderLevel</requiredEntity>
+        <requiredEntity type="wrapping_allow_items">AllowGiftWrappingForOrderItemsDefault</requiredEntity>
+        <requiredEntity type="allow_gift_receipt">DisableGiftReceipt</requiredEntity>
+        <requiredEntity type="allow_printed_card">DisablePrintedCard</requiredEntity>
+    </entity>
+    <entity name="DisableGiftWrappingOrderLevel" type="wrapping_allow_order">
+        <data key="value">0</data>
+    </entity>
+    <entity name="DisableGiftWrappingAllowItems" type="wrapping_allow_items">
+        <data key="value">0</data>
+    </entity>
+    <entity name="SetGiftWrappingOptions" type="gift_options_config_state">
+        <requiredEntity type="wrapping_allow_order">DisableGiftWrappingOrderLevel</requiredEntity>
+    </entity>
+    <entity name="DisableGiftReceipt" type="allow_gift_receipt">
+        <data key="value">0</data>
+    </entity>
+    <entity name="DisablePrintedCard" type="allow_printed_card">
+        <data key="value">0</data>
+    </entity>
+    <entity name="DefaultConfigGiftWrappingOptions" type="gift_options_config_state">
+        <requiredEntity type="wrapping_allow_order">AllowGiftWrappingOrderLevelDefault</requiredEntity>
+        <requiredEntity type="wrapping_allow_items">AllowGiftWrappingForOrderItemsDefault</requiredEntity>
+        <requiredEntity type="allow_gift_receipt">AllowGiftReceiptDefault</requiredEntity>
+        <requiredEntity type="allow_printed_card">AllowPrintedCardDefault</requiredEntity>
+    </entity>
+    <entity name="AllowGiftWrappingOrderLevelDefault" type="wrapping_allow_order">
+        <data key="value">1</data>
+    </entity>
+    <entity name="AllowGiftWrappingForOrderItemsDefault" type="wrapping_allow_items">
+        <data key="value">1</data>
+    </entity>
+    <entity name="AllowGiftReceiptDefault" type="allow_gift_receipt">
+        <data key="value">1</data>
+    </entity>
+    <entity name="AllowPrintedCardDefault" type="allow_printed_card">
+        <data key="value">1</data>
+    </entity>
+    <entity name="DisableGiftWrappingOptions" type="gift_options_config_state">
+        <requiredEntity type="wrapping_allow_order">DisableGiftWrappingOrderLevel</requiredEntity>
+        <requiredEntity type="wrapping_allow_items">DisableGiftWrappingAllowItems</requiredEntity>
+        <requiredEntity type="allow_gift_receipt">DisableGiftReceipt</requiredEntity>
+        <requiredEntity type="allow_printed_card">DisablePrintedCard</requiredEntity>
+    </entity>
+</entities>

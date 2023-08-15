@@ -1,0 +1,45 @@
+<?php
+/**
+ * Copyright © Magento, Inc. All rights reserved.
+ * See COPYING.txt for license details.
+ */
+//phpcs:disable Magento2.Files.LineLength.MaxExceeded
+//phpcs:disable Magento2.Security.IncludeFile.FoundIncludeFile
+//phpcs:disable PSR2.Methods.FunctionCallSignature.SpaceBeforeOpenBracket
+?>
+<?php
+/**
+ * @var $block \Magento\Rma\Block\Adminhtml\Rma\Edit\Tab\General\Shippingmethod
+ */
+
+?>
+<div class="admin__page-section-item order-shipping-method">
+    <div class="admin__page-section-item-title">
+        <span class="title"><?= $block->escapeHtml(__('Shipping Method')) ?></span>
+    </div>
+    <div class="admin__page-section-item-content">
+        <?php if ($block->getShipment()->getCarrierTitle()) : ?>
+            <p>
+                <strong><?= $block->escapeHtml($block->getShipment()->getCarrierTitle()) ?></strong>
+                <?= $block->escapeHtml($block->getShipment()->getMethodTitle()) ?> - <strong class="price"><?= /* @noEscape */ $block->getShippingPrice($block->getShipment()->getPrice()) ?></strong>
+            </p>
+        <?php endif; ?>
+        <p>
+            <?php if ($block->getIsPsl() == \Magento\Rma\Block\Adminhtml\Rma\Edit\Tab\General\Shippingmethod::PSL_ALLOWED) : ?>
+                <button class="action- save" type="button" id="get-shipping-method-and-rates"><span><?= $block->escapeHtml(__('Create Shipping Label')) ?></span></button>
+            <?php elseif ($block->getIsPsl() == \Magento\Rma\Block\Adminhtml\Rma\Edit\Tab\General\Shippingmethod::PSL_DISABLED) : ?>
+                <button class="action- save disabled" type="button" title="<?= $block->escapeHtmlAttr(__('Enabled when authorized items require a new shipment.')) ?>"><span><?= $block->escapeHtml(__('Create Shipping Label')) ?></span></button>
+            <?php endif; ?>
+            <?php if ($block->getShipment()->getShippingLabel()) : ?>
+                <?= /* @noEscape */ $block->getPrintLabelButton() ?>
+            <?php endif ?>
+            <?php if ($block->getShipment()->getPackages()) : ?>
+                <?= /* @noEscape */ $block->getShowPackagesButton() ?>
+            <?php endif ?>
+        </p>
+        <div id="get-psl"></div>
+        <?= $block->getChildHtml('magento_rma_shipment_tracking') ?>
+    </div>
+</div>
+
+<?php include ($block->getTemplateFile('Magento_Shipping::order/packaging/packed.phtml')) ?>

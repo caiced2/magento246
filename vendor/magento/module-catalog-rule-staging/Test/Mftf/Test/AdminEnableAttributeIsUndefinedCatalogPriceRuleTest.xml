@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+ /**
+  * Copyright © Magento, Inc. All rights reserved.
+  * See COPYING.txt for license details.
+  */
+-->
+
+<tests xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xsi:noNamespaceSchemaLocation="urn:magento:mftf:Test/etc/testSchema.xsd">
+    <test name="AdminEnableAttributeIsUndefinedCatalogPriceRuleTest">
+        <remove keyForRemoval="clickSaveAndApplyRules"/>
+        <remove keyForRemoval="reindex"/>
+        <remove keyForRemoval="flushCache"/>
+
+        <click selector="{{AdminNewCatalogPriceRule.saveAndContinue}}" after="createCatalogPriceRuleCondition" stepKey="saveAndContinue"/>
+        <waitForPageLoad stepKey="waitForSave" after="saveAndContinue"/>
+        <actionGroup ref="CreateCatalogRuleStagingUpdateWithItsStartActionGroup" after="waitForSave" stepKey="fillOutActionGroup">
+            <argument name="stagingUpdate" value="_defaultCatalogRule"/>
+        </actionGroup>
+        <actionGroup ref="CliCacheCleanActionGroup" stepKey="cleanCache" after="fillOutActionGroup">
+            <argument name="tags" value="full_page"/>
+        </actionGroup>
+
+        <remove keyForRemoval="clickSaveAndApplyRules1"/>
+        <remove keyForRemoval="reindex1"/>
+        <remove keyForRemoval="flushCache1"/>
+
+        <click selector="{{AdminNewCatalogPriceRule.saveAndContinue}}" after="createCatalogPriceRuleCondition1" stepKey="saveAndContinue1"/>
+        <actionGroup ref="CreateCatalogRuleStagingUpdateWithItsStartActionGroup" after="saveAndContinue1" stepKey="fillOutActionGroup1">
+            <argument name="stagingUpdate" value="_defaultCatalogRule"/>
+        </actionGroup>
+    </test>
+</tests>

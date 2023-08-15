@@ -1,0 +1,13 @@
+<?xml version="1.0"?>
+<!--
+/**
+ * Copyright © Magento, Inc. All rights reserved.
+ * See COPYING.txt for license details.
+ */
+-->
+<config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="urn:magento:module:Magento_Backend:etc/menu.xsd">
+    <menu>
+        <add id="Magento_Rma::sales_magento_rma_rma" title="Returns" translate="title" module="Magento_Rma" sortOrder="50" parent="Magento_Sales::sales_operation" action="adminhtml/rma" resource="Magento_Rma::magento_rma"/>
+        <add id="Magento_Rma::sales_magento_rma_rma_item_attribute" title="Returns" translate="title" module="Magento_Rma" sortOrder="50" parent="Magento_Backend::stores_attributes" action="adminhtml/rma_item_attribute" resource="Magento_Rma::rma_attribute"/>
+    </menu>
+</config>

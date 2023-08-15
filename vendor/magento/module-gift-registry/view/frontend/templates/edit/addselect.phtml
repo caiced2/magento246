@@ -1,0 +1,51 @@
+<?php
+/**
+ * Copyright © Magento, Inc. All rights reserved.
+ * See COPYING.txt for license details.
+ */
+
+// phpcs:disable Magento2.Files.LineLength.MaxExceeded
+
+?>
+
+<h2 class="subtitle">
+    <?= $block->getLayout()->getMessagesBlock()->getGroupedHtml() ?>
+</h2>
+
+<form action="<?= $block->escapeUrl($block->getAddActionUrl()) ?>"
+      method="post"
+      id="form-validate"
+      class="form validation form-giftregistry-create"
+      data-hasrequired="<?= $block->escapeHtmlAttr(__('* Required Fields')) ?>"
+      data-mage-init='{"validation":{}}'>
+    <fieldset class="fieldset">
+        <?= $block->getBlockHtml('formkey') ?>
+        <legend class="legend"><span><?= $block->escapeHtml(__('General Information')) ?></span></legend>
+
+        <div class="field type required">
+            <label for="type_id" class="label"><span><?= $block->escapeHtml(__('Gift Registry Type')) ?></span></label>
+            <div class="control">
+                <select data-validate="{required:true}" name="type_id" id="type_id">
+                    <option value=""><?= $block->escapeHtml(__('Please select a gift registry type.')) ?></option>
+                    <?php foreach ($block->getTypeList() as $type) :?>
+                        <option value="<?= $block->escapeHtmlAttr($type['value']) ?>"><?= $block->escapeHtmlAttr($type['label']) ?>
+                        </option>
+                    <?php endforeach; ?>
+                </select>
+            </div>
+        </div>
+    </fieldset>
+
+    <div class="actions-toolbar">
+        <div class="primary">
+            <button type="submit" id="submit.next" title="<?= $block->escapeHtmlAttr(__('Next')) ?>" class="action primary next">
+                <span><?= $block->escapeHtml(__('Next')) ?></span>
+            </button>
+        </div>
+        <div class="secondary">
+            <a href="<?= $block->escapeUrl($block->getBackUrl()) ?>" class="action back">
+                <span><?= $block->escapeHtml(__('Back')) ?></span>
+            </a>
+        </div>
+    </div>
+</form>

@@ -1,0 +1,23 @@
+<!--
+/**
+ * Copyright © Magento, Inc. All rights reserved.
+ * See COPYING.txt for license details.
+ */
+-->
+<div class="data-grid-cell-content">
+    <a href="#" attr="'data-tooltip-trigger': ++ko.uid" text="$col.countItems($row()) + ' objects'"></a>
+    <div
+        tooltip="
+            trigger: '[data-tooltip-trigger=' + ko.uid + ']',
+            position: 'bottom',
+            action: 'click',
+            delay: 0,
+            center: true
+        ">
+        <ul class="items" each="data: $col.getItems($row()), as: '$item'">
+            <li class="item">
+                <span text="$item.count + ' ' + $parent.getItemLabel($item)"></span>
+            </li>
+        </ul>
+    </div>
+</div>

@@ -1,0 +1,21 @@
+<?php
+/**
+ * Copyright © Magento, Inc. All rights reserved.
+ * See COPYING.txt for license details.
+ */
+// phpcs:disable Magento2.Files.LineLength
+// phpcs:disable Magento2.Templates.ThisInTemplate
+/**
+ * @var \Magento\Sales\Block\Adminhtml\Order\Totals\Item $block
+ */
+?>
+<?php $block->setPriceDataObject($block->getSource()) ?>
+
+<?php if ((float) $block->getSource()->getRewardCurrencyAmount()) : ?>
+    <tr>
+        <td class="label"><?= $block->escapeHtml($this->helper(\Magento\Reward\Helper\Data::class)->formatReward($block->getSource()->getRewardPointsBalance())) ?></td>
+        <td>
+            <?= $block->escapeHtml($block->displayPrices(-$block->getSource()->getBaseRewardCurrencyAmount(), -$block->getSource()->getRewardCurrencyAmount()), ['span']) ?>
+        </td>
+    </tr>
+<?php endif; ?>

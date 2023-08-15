@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+ /**
+  * Copyright © Magento, Inc. All rights reserved.
+  * See COPYING.txt for license details.
+  */
+-->
+
+<tests xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xsi:noNamespaceSchemaLocation="urn:magento:mftf:Test/etc/testSchema.xsd">
+    <test name="AdminBlockCouponGeneratesUntilCartPriceRuleSavedWithCouponTypeAutoTest" extends="AdminBlockCouponGeneratesUntilCartPriceRuleSavedWithSpecificCouponTypeAndAutoGenerationTickedTest">
+        <annotations>
+            <features value="SalesRule"/>
+            <stories value="Create cart price rule"/>
+            <title value="Block the coupon generates until cart price rule is saved with coupon type auto"/>
+            <description
+                value="Block the coupon generates until cart price rule is saved with coupon type auto"/>
+            <severity value="MINOR"/>
+            <testCaseId value="MC-42603"/>
+            <useCaseId value="MC-42288"/>
+            <group value="salesRule"/>
+        </annotations>
+
+        <!-- Choose coupon type auto -->
+        <selectOption selector="{{AdminCartPriceRulesFormSection.coupon}}" userInput="Auto" stepKey="selectCouponType"/>
+        <!-- Override the parent test rule tickAutoGeneration step-->
+        <dontSeeCheckboxIsChecked selector="{{AdminCartPriceRulesFormSection.useAutoGeneration}}" stepKey="tickAutoGeneration"/>
+    </test>
+</tests>

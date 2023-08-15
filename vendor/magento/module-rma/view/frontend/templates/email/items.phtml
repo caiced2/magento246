@@ -1,0 +1,45 @@
+<?php
+/**
+ * Copyright © Magento, Inc. All rights reserved.
+ * See COPYING.txt for license details.
+ */
+//phpcs:disable Magento2.Templates.ThisInTemplate.FoundThis
+//phpcs:disable Magento2.Files.LineLength.MaxExceeded
+/** @var $block \Magento\Rma\Block\Email\Items */
+?>
+<table class="email-items rma-items">
+    <thead>
+    <tr>
+        <th><?= $block->escapeHtml(__('Product')) ?></th>
+        <th><?= $block->escapeHtml(__('SKU')) ?></th>
+        <th><?= $block->escapeHtml(__('Condition')) ?></th>
+        <th><?= $block->escapeHtml(__('Resolution')) ?></th>
+        <th><?= $block->escapeHtml(__('Requested Qty')) ?></th>
+        <th><?= $block->escapeHtml(__('Qty')) ?></th>
+        <th><?= $block->escapeHtml(__('Status')) ?></th>
+    </tr>
+    </thead>
+    <tbody>
+    <?php foreach ($block->getCollection() as $item) : ?>
+    <tr>
+        <td>
+            <strong><?= $block->escapeHtml($item->getProductName()) ?></strong>
+            <?php if ($_options = $item->getOptions()) : ?>
+            <dl class="item-options">
+                <?php foreach ($_options as $_option) : ?>
+                <dt><?= $block->escapeHtml($_option['label']) ?></dt>
+                <dd><?= $block->escapeHtml($_option['value']) ?></dd>
+                <?php endforeach; ?>
+            </dl>
+            <?php endif; ?>
+        </td>
+        <td><?= $block->escapeHtml($item->getProductSku()) ?></td>
+        <td><?= $block->escapeHtml($block->getOptionAttributeStringValue($item->getCondition())) ?></td>
+        <td><?= $block->escapeHtml($block->getOptionAttributeStringValue($item->getResolution())) ?></td>
+        <td><?= /* @noEscape */  $this->helper(Magento\Rma\Helper\Data::class)->parseQuantity($item->getQtyRequested(), $item) ?></td>
+        <td><?= /* @noEscape */  $this->helper(Magento\Rma\Helper\Data::class)->getQty($item) ?></td>
+        <td><?= $block->escapeHtml($item->getStatusLabel()) ?></td>
+    </tr>
+    <?php endforeach; ?>
+    </tbody>
+</table>

@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+ /**
+  * Copyright © Magento, Inc. All rights reserved.
+  * See COPYING.txt for license details.
+  */
+-->
+<actionGroups xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:noNamespaceSchemaLocation="urn:magento:mftf:Test/etc/actionGroupSchema.xsd">
+    <actionGroup name="SetCustomerGroupConditionActionGroup">
+        <arguments>
+            <argument name="operatorType" defaultValue="is" type="string"/>
+            <argument name="groupName" defaultValue="General" type="string"/>
+        </arguments>
+        <click selector="{{AdminCustomerSegmentEditSection.conditionsTab}}" stepKey="proceedToConditionsTab"/>
+        <click selector="{{AdminCustomerSegmentConditionsEditSection.addCondition}}" stepKey="clickToAddCondition"/>
+        <selectOption userInput="Group" selector="{{AdminCustomerSegmentConditionsEditSection.conditions}}" stepKey="selectCondition"/>
+        <waitForPageLoad stepKey="waitForConditionsToAppear"/>
+        <click selector="{{AdminCustomerSegmentConditionsEditSection.ruleCondition('Group', 'is')}}" stepKey="clickOnRuleOperator"/>
+        <selectOption userInput="{{operatorType}}" selector="{{AdminCustomerSegmentConditionsEditSection.attributeEditSelect}}" stepKey="selectTypeRuleOperator"/>
+        <click selector="{{AdminCustomerSegmentConditionsEditSection.ruleCondition('Group', '...')}}" stepKey="clickForUnfocusAttribute"/>
+        <click selector="{{AdminCustomerSegmentConditionsEditSection.ruleCondition('Group', '...')}}" stepKey="clickForAddRuleAttribute"/>
+        <waitForElementVisible selector="{{AdminCustomerSegmentConditionsEditSection.attributeEditSelect}}" stepKey="waitSelect"/>
+        <selectOption userInput="{{groupName}}" selector="{{AdminCustomerSegmentConditionsEditSection.attributeEditSelect}}" stepKey="selectTypeRule"/>
+        <click selector="{{AdminMainActionsSection.saveAndContinue}}" stepKey="saveSegment"/>
+        <see userInput="You saved the segment." selector="{{AdminMessagesSection.success}}" stepKey="checkSuccessMessage"/>
+    </actionGroup>
+</actionGroups>

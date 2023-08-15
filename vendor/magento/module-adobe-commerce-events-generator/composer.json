@@ -1,0 +1,52 @@
+{
+    "name": "magento/module-adobe-commerce-events-generator",
+    "description": "Module for generating plugins based on subscribed events",
+    "type": "magento2-module",
+    "license": [
+        "OSL-3.0",
+        "AFL-3.0"
+    ],
+    "config": {
+        "sort-packages": true
+    },
+    "version": "1.2.1",
+    "require": {
+        "php": "~8.1.0||~8.2.0",
+        "ext-json": "*",
+        "magento/framework": ">=103.0.4",
+        "magento/module-adobe-commerce-events-client": "^1.2"
+    },
+    "autoload": {
+        "files": [
+            "cli_commands.php",
+            "registration.php"
+        ],
+        "psr-4": {
+            "Magento\\AdobeCommerceEventsGenerator\\": ""
+        }
+    },
+    "require-dev": {
+        "phpmd/phpmd": "^2.12.0",
+        "phpstan/phpstan": "^1.6.8",
+        "phpunit/phpunit": "~9.5.20",
+        "squizlabs/php_codesniffer": "~3.6.0",
+        "magento/magento-coding-standard": "*"
+    },
+    "scripts": {
+        "test:all": [
+            "@test:phpstan",
+            "@test:phpcs",
+            "@test:phpmd",
+            "@test:unit"
+        ],
+        "test:phpcs": [
+            "phpcs --config-set installed_paths vendor/phpcompatibility/php-compatibility/PHPCompatibility",
+            "phpcs * --standard=vendor/magento/magento-coding-standard/Magento2 --ignore=vendor,*.phtml",
+            "phpcs * --standard=vendor/magento/magento-coding-standard/Magento2Framework --ignore=vendor,*.phtml"
+        ],
+        "test:phpmd": "phpmd Console,Generator xml Test/static/ruleset/phpmd.xml",
+        "test:phpstan": "phpstan analyse -c Test/static/phpstan.neon",
+        "test:unit": "phpunit --configuration Test/Unit/phpunit.xml.dist"
+    }
+}
+

@@ -1,0 +1,36 @@
+<?php
+/**
+ * Copyright © Magento, Inc. All rights reserved.
+ * See COPYING.txt for license details.
+ */
+
+/**
+ * @var \Magento\Framework\View\Helper\SecureHtmlRenderer $secureRenderer
+ */
+?>
+<?php
+    $loadAttributesUrl = $block->escapeJs($block->getLoadAttributesUrl());
+    $loasBundleUrl = $block->escapeJs($block->getLoadBundleUrl());
+    $orderId = (int) $block->getLoadOrderId();
+?>
+<?php $scriptString = <<<script
+require([
+    'prototype',
+    'Magento_Rma/rma'
+], function(){
+
+    rma.setLoadAttributesUrl('{$loadAttributesUrl}');
+    rma.setLoadBundleUrl('{$loasBundleUrl}');
+    rma.setLoadOrderId('{$orderId}');
+    $$('a[class="product_to_add"]').each(function(obj) {
+        obj.observe('click', rma.showBundleItems.bind(rma));
+    });
+
+    $('edit_form').insert({
+        bottom: new Element('div', {id: 'details_container'})
+    });
+
+});
+script;
+?>
+<?= /* @noEscape */ $secureRenderer->renderTag('script', [], $scriptString, false); ?>

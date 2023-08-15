@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+ /**
+  * Copyright © Magento, Inc. All rights reserved.
+  * See COPYING.txt for license details.
+  */
+-->
+
+<tests xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xsi:noNamespaceSchemaLocation="urn:magento:mftf:Test/etc/testSchema.xsd">
+    <test name="CreateNotVisibleCustomerAddressAttributeTest" extends="CreateVisibleCustomerAddressAttributeTest">
+        <annotations>
+            <features value="CustomerCustomAttributes"/>
+            <stories value="Customer address attribute visibility in customer account on frontend"/>
+            <title value="Create not visible customer address attribute test"/>
+            <description value="Create not visible customer address attribute"/>
+            <severity value="MAJOR"/>
+            <testCaseId value="MC-14585"/>
+            <group value="CustomerCustomAttributes"/>
+            <group value="mtf_migrated"/>
+        </annotations>
+
+        <!-- Create new customer address attribute -->
+        <actionGroup ref="AdminCreateCustomerNewAttributeNotVisibleOnStorefront" stepKey="createTextFieldAttribute">
+            <argument name="defaultLabel" value="{{AttributeTextField.frontend_label}}"/>
+            <argument name="attributeCode" value="{{AttributeTextField.attribute_code}}"/>
+            <argument name="inputType" value="{{AttributeTextField.frontend_input}}"/>
+            <argument name="sortOrder" value="10"/>
+        </actionGroup>
+
+        <!-- Assert customer address attribute is not visible on address edit page -->
+        <dontSeeElement selector="{{StoreFrontCustomerAdvancedAttributesSection.textFieldAttribute(AttributeTextField.frontend_label)}}" stepKey="assertNewAttribute"/>
+    </test>
+</tests>

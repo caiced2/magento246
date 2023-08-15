@@ -1,0 +1,25 @@
+<?xml version="1.0"?>
+<!--
+/**
+ * Copyright © Magento, Inc. All rights reserved.
+ * See COPYING.txt for license details.
+ */
+-->
+<config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="urn:magento:module:Magento_Store:etc/config.xsd">
+    <default>
+        <magento_invitation>
+            <email>
+                <identity>general</identity>
+                <template>magento_invitation_email_template</template>
+            </email>
+            <general>
+                <enabled>1</enabled>
+                <enabled_on_front>1</enabled_on_front>
+                <registration_use_inviter_group>1</registration_use_inviter_group>
+                <registration_required_invitation>0</registration_required_invitation>
+                <max_invitation_amount_per_send>5</max_invitation_amount_per_send>
+                <allow_customer_message>1</allow_customer_message>
+            </general>
+        </magento_invitation>
+    </default>
+</config>

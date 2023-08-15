@@ -1,0 +1,41 @@
+<?xml version="1.0"?>
+<!--
+/**
+ * Copyright © Magento, Inc. All rights reserved.
+ * See COPYING.txt for license details.
+ */
+-->
+<config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="urn:magento:framework:ObjectManager/etc/config.xsd">
+    <type name="Magento\Framework\View\Element\UiComponent\DataProvider\CollectionFactory">
+        <arguments>
+            <argument name="collections" xsi:type="array">
+                <item name="pagebuilder_dynamic_block_select_grid_data_source" xsi:type="string">Magento\BannerPageBuilder\Model\ResourceModel\DynamicBlock\Grid\Collection</item>
+            </argument>
+        </arguments>
+    </type>
+    <type name="Magento\Banner\Block\Widget\Banner">
+        <plugin name="additional_attributes" type="Magento\BannerPageBuilder\Plugin\Widget\Banner"/>
+    </type>
+    <type name="Magento\PageBuilder\Model\Stage\Renderer\CmsStaticBlock">
+        <plugin name="dynamic_block_filter" type="Magento\BannerPageBuilder\Plugin\CmsStaticBlockRenderer"/>
+    </type>
+    <type name="Magento\PageBuilder\Model\Stage\RendererPool">
+        <arguments>
+            <argument name="renderers" xsi:type="array">
+                <item name="dynamic_block" xsi:type="object">Magento\BannerPageBuilder\Model\Stage\Renderer\DynamicBlock</item>
+            </argument>
+        </arguments>
+    </type>
+    <type name="Magento\PageBuilder\Model\UpgradableEntitiesPool">
+        <arguments>
+            <argument name="entities" xsi:type="array">
+                <item name="magento_banner_content" xsi:type="array">
+                    <item name="identifier" xsi:type="string">banner_id,store_id</item>
+                    <item name="fields" xsi:type="array">
+                        <item name="banner_content" xsi:type="boolean">true</item>
+                    </item>
+                </item>
+            </argument>
+        </arguments>
+    </type>
+</config>

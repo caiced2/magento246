@@ -1,0 +1,115 @@
+<?php
+/**
+ * Copyright © Magento, Inc. All rights reserved.
+ * See COPYING.txt for license details.
+ */
+
+/* @var $block \Magento\TargetRule\Block\Adminhtml\Product */
+/** @var \Magento\Framework\View\Helper\SecureHtmlRenderer $secureRenderer */
+?>
+<?php if ($block->getIsReadonly()): ?>
+    <?php $_readonly = ' disabled="disabled" ';?>
+<?php else: ?>
+    <?php $_readonly = '';?>
+<?php endif; ?>
+<div class="entry-edit">
+    <div class="entry-edit-head">
+        <h4 class="icon-head head-edit-form fieldset-legend"><?= $block->escapeHtml(__('Rule-based Settings')) ?></h4>
+    </div>
+    <div class="fieldset">
+        <div class="hor-scroll">
+        <table class="form-list" id="table_catalog_targetrule">
+        <tr>
+            <td class="label">
+                <label for="<?= $block->escapeHtmlAttr($block->getFieldName('position_limit')) ?>">
+                    <?= $block->escapeHtml(__('Rule-based Positions')) ?>
+                </label>
+            </td>
+            <td class="value">
+                <input type="text"
+                       class="input-text validate-number"
+                       id="<?= $block->escapeHtmlAttr($block->getFieldName('position_limit')) ?>"
+                       name="product[<?= $block->escapeHtmlAttr($block->getFieldName('position_limit')) ?>]"
+                       value="<?= (int)$block->getPositionLimit() ?>"
+                    <?= $block->isDefault('position_limit') || $block->getIsReadonly() ? 'disabled="true" ' : ''; ?>/>
+                <input type="checkbox"
+                       id="<?= $block->escapeHtmlAttr($block->getFieldName('position_limit')) ?>_default"
+                       name="product[<?= $block->escapeHtmlAttr($block->getFieldName('position_limit')) ?>_default]"
+                       value="1"
+                       class="checkbox"
+                    <?= /* @noEscape */ $_readonly ?><?= $block->isDefault('position_limit') ? 'checked' : ''; ?>/>
+                <?= /* @noEscape */
+                $secureRenderer->renderEventListenerAsTag(
+                    'onclick',
+                    "targetruleSetDefault(this, '"
+                        . $block->escapeHtmlAttr($block->escapeJs($block->getFieldName('position_limit'))) . "')",
+                    '#' . $block->escapeHtmlAttr($block->getFieldName('position_limit')) . '_default'
+                ); ?>
+                <label for="<?= $block->escapeHtmlAttr($block->getFieldName('position_limit')) ?>_default"
+                       class="normal">
+                    <?= $block->escapeHtml(__('Use Config Settings')) ?>
+                </label>
+            </td>
+            <?php if (!$block->isSingleStoreMode()): ?>
+            <td class="value scope-label"><?= $block->escapeHtml(__('[GLOBAL]')) ?></td>
+            <?php endif; ?>
+        </tr>
+        <tr>
+            <td class="label">
+                <label for="<?= $block->escapeHtmlAttr($block->getFieldName('position_behavior')) ?>">
+                    <?= $block->escapeHtml(__('Position Behavior')) ?>
+                </label>
+            </td>
+            <td class="value">
+                <select id="<?= $block->escapeHtmlAttr($block->getFieldName('position_behavior')) ?>"
+                        name="product[<?= $block->escapeHtmlAttr($block->getFieldName('position_behavior')) ?>]"
+                        class="select"
+                    <?= $block->isDefault('position_behavior') || $block->getIsReadonly() ? 'disabled="true"' : ''; ?>>
+            <?php
+            foreach ($block->getPositionBehaviorOptions() as $key => $value): ?>
+                <option value="<?= $block->escapeHtmlAttr($key) ?>"
+                    <?= /* @noEscape */ $key == $block->getPositionBehavior() ? 'selected' : '' ?>>
+                    <?= $block->escapeHtml($value) ?>
+                </option>
+            <?php endforeach; ?>
+            </select>
+            <input type="checkbox"
+                   id="<?= $block->escapeHtmlAttr($block->getFieldName('position_behavior')) ?>_default"
+                   name="product[<?= $block->escapeHtmlAttr($block->getFieldName('position_behavior')) ?>_default]"
+                   value="1"
+                   class="checkbox"
+                    <?= /* @noEscape */ $_readonly ?>
+                    <?= $block->isDefault('position_behavior') ? 'checked' : ''; ?>/>
+                <?= /* @noEscape */
+                $secureRenderer->renderEventListenerAsTag(
+                    'onclick',
+                    "targetruleSetDefault(this, '"
+                        . $block->escapeJs($block->getFieldName('position_behavior')) . "')",
+                    '#' . $block->escapeHtmlAttr($block->getFieldName('position_behavior')) . '_default'
+                ); ?>
+            <label for="<?= $block->escapeHtmlAttr($block->getFieldName('position_behavior')) ?>_default"
+                   class="normal">
+                <?= $block->escapeHtml(__('Use Config Settings')) ?><
+                /label>
+            </td>
+            <?php if (!$block->isSingleStoreMode()): ?>
+            <td class="value scope-label"><?= $block->escapeHtml(__('[GLOBAL]')) ?></td>
+            <?php endif; ?>
+        </tr>
+        </table>
+        </div>
+    </div>
+</div>
+<?php $scriptString = <<<script
+require(['prototype'], function(){
+
+//<![CDATA[
+targetruleSetDefault = function (check, elementId) {
+    var el = $(elementId).disabled = check.checked;
+};
+//]]>
+
+});
+script;
+?>
+<?= /* @noEscape */ $secureRenderer->renderTag('script', [], $scriptString, false); ?>

@@ -1,0 +1,133 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+ /**
+  * Copyright © Magento, Inc. All rights reserved.
+  * See COPYING.txt for license details.
+  */
+-->
+
+<tests xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xsi:noNamespaceSchemaLocation="urn:magento:mftf:Test/etc/testSchema.xsd">
+    <test name="StorefrontCheckoutWithGiftOptionsAndMultipleAddressesTest" extends="StorefrontCheckoutWithMultipleAddressesTest">
+        <annotations>
+            <features value="Gift"/>
+            <stories value="Multiple Shipping"/>
+            <title value="Saving gift options with multi-address checkout"/>
+            <description value="Saving gift options with multi-address checkout"/>
+            <severity value="MAJOR"/>
+            <testCaseId value="MC-17461"/>
+            <useCaseId value="MAGETWO-99490"/>
+            <group value="Gift"/>
+        </annotations>
+        <before>
+            <!-- Set configurations -->
+            <magentoCLI command="config:set sales/gift_options/allow_order 1" stepKey="allowGiftMessagesOnOrderLevel"/>
+            <magentoCLI command="config:set sales/gift_options/allow_items 1" stepKey="allowGiftMessagesForOrderItems"/>
+            <magentoCLI command="config:set sales/gift_options/wrapping_allow_order 1" stepKey="allowGiftWrappingOnOrderLevel"/>
+            <magentoCLI command="config:set sales/gift_options/wrapping_allow_items 1" stepKey="allowGiftWrappingForOrderItems"/>
+            <!-- Create two Gift Wrappings -->
+            <createData entity="ApiGiftWrapping" stepKey="createFirstGiftWrapping"/>
+            <createData entity="ApiGiftWrapping" stepKey="createSecondGiftWrapping"/>
+        </before>
+        <after>
+            <!-- Delete created data -->
+            <deleteData createDataKey="createFirstGiftWrapping" stepKey="deleteFirstGiftWrapping" after="logout"/>
+            <deleteData createDataKey="createSecondGiftWrapping" stepKey="deleteSecondGiftWrapping" after="deleteFirstGiftWrapping"/>
+            <!-- Set configurations -->
+            <magentoCLI command="config:set sales/gift_options/allow_order 0" stepKey="defaultGiftMessagesOnOrderLevel"/>
+            <magentoCLI command="config:set sales/gift_options/allow_items 0" stepKey="defaultGiftMessagesForOrderItems"/>
+            <!-- Open Order Page and clear filter -->
+            <actionGroup ref="AdminOrdersGridClearFiltersActionGroup" stepKey="resetOrderFilter"/>
+        </after>
+        <!-- Add gift options for items -->
+        <actionGroup ref="StorefrontAddGiftOptionsActionGroup" stepKey="AddGiftOptionsForFirstItem" after="openCart">
+            <argument name="productName" value="$$firstProduct.name$$"/>
+            <argument name="giftItemMessage" value="Gift message for the FIRST item"/>
+            <argument name="giftItemWrappingDesign" value="$$createFirstGiftWrapping.design$$"/>
+        </actionGroup>
+        <actionGroup ref="StorefrontAddGiftOptionsActionGroup" stepKey="AddGiftOptionsForItemSecond" after="AddGiftOptionsForFirstItem">
+            <argument name="productName" value="$$secondProduct.name$$"/>
+            <argument name="giftItemMessage" value="Gift message for the SECOND item"/>
+            <argument name="giftItemWrappingDesign" value="$$createSecondGiftWrapping.design$$"/>
+        </actionGroup>
+        <!-- Get created order numbers-->
+        <grabTextFrom selector="{{StorefrontCheckoutCartGiftSection.orderNumber('1')}}" stepKey="grabFirstOrderNumber" after="placeOrder"/>
+        <grabTextFrom selector="{{StorefrontCheckoutCartGiftSection.orderNumber('2')}}" stepKey="grabSecondOrderNumber" after="grabFirstOrderNumber"/>
+        <!-- Check gift options for the first order -->
+        <actionGroup ref="StorefrontCheckGiftOptionsActionGroup" stepKey="CheckGiftOptionsForFirstOrder" after="grabSecondOrderNumber">
+            <argument name="orderNumber" value="$grabFirstOrderNumber"/>
+            <argument name="productName" value="$$firstProduct.name$$"/>
+            <argument name="expectedGiftMessage" value="Gift message for the FIRST item"/>
+            <argument name="expectedGiftWrapping" value="$$createFirstGiftWrapping.design$$"/>
+        </actionGroup>
+        <!-- Check gift options for the second order -->
+        <actionGroup ref="StorefrontCheckGiftOptionsActionGroup" stepKey="CheckGiftOptionsForSecondOrder" after="CheckGiftOptionsForFirstOrder">
+            <argument name="orderNumber" value="$grabSecondOrderNumber"/>
+            <argument name="productName" value="$$secondProduct.name$$"/>
+            <argument name="expectedGiftMessage" value="Gift message for the SECOND item"/>
+            <argument name="expectedGiftWrapping" value="$$createSecondGiftWrapping.design$$"/>
+        </actionGroup>
+        <!-- Check gift options for the first order on backend -->
+        <actionGroup ref="AdminCheckGiftOptionsActionGroup" stepKey="CheckGiftOptionsOnBackendForFirstOrder" after="CheckGiftOptionsForSecondOrder">
+            <argument name="orderId" value="$grabFirstOrderNumber"/>
+            <argument name="productName" value="$$firstProduct.name$$"/>
+            <argument name="expectedGiftMessage" value="Gift message for the FIRST item"/>
+            <argument name="expectedGiftWrapping" value="$$createFirstGiftWrapping.design$$"/>
+        </actionGroup>
+        <!-- Check gift options for the second order on backend -->
+        <actionGroup ref="AdminCheckGiftOptionsActionGroup" stepKey="CheckGiftOptionsOnBackendForSecondOrder" after="CheckGiftOptionsOnBackendForFirstOrder">
+            <argument name="orderId" value="$grabSecondOrderNumber"/>
+            <argument name="productName" value="$$secondProduct.name$$"/>
+            <argument name="expectedGiftMessage" value="Gift message for the SECOND item"/>
+            <argument name="expectedGiftWrapping" value="$$createSecondGiftWrapping.design$$"/>
+        </actionGroup>
+        <!-- Add gift options for item -->
+        <actionGroup ref="StorefrontAddGiftOptionsActionGroup" stepKey="AddGiftOptionsForItem" after="openCartWithIdenticalProducts">
+            <argument name="productName" value="$$firstProduct.name$$"/>
+            <argument name="giftItemMessage" value="Gift message for the item"/>
+            <argument name="giftItemWrappingDesign" value="$$createFirstGiftWrapping.design$$"/>
+        </actionGroup>
+        <!-- Get created order numbers with identical products -->
+        <grabTextFrom selector="{{StorefrontCheckoutCartGiftSection.orderNumber('1')}}" stepKey="grabFirstOrderNumberWithIdenticalProduct" after="placeOrderWithIdenticalProducts"/>
+        <grabTextFrom selector="{{StorefrontCheckoutCartGiftSection.orderNumber('2')}}" stepKey="grabSecondOrderNumberWithIdenticalProduct" after="grabFirstOrderNumberWithIdenticalProduct"/>
+        <grabTextFrom selector="{{StorefrontCheckoutCartGiftSection.orderNumber('3')}}" stepKey="grabThirdOrderNumberWithIdenticalProduct" after="grabSecondOrderNumberWithIdenticalProduct"/>
+        <!-- Check gift options for orders -->
+        <actionGroup ref="StorefrontCheckGiftOptionsActionGroup" stepKey="CheckGiftOptionsForFirstOrderWithIdenticalProduct" after="grabThirdOrderNumberWithIdenticalProduct">
+            <argument name="orderNumber" value="$grabFirstOrderNumberWithIdenticalProduct"/>
+            <argument name="productName" value="$$firstProduct.name$$"/>
+            <argument name="expectedGiftMessage" value="Gift message for the item"/>
+            <argument name="expectedGiftWrapping" value="$$createFirstGiftWrapping.design$$"/>
+        </actionGroup>
+        <actionGroup ref="StorefrontCheckGiftOptionsActionGroup" stepKey="CheckGiftOptionsForSecondOrderWithIdenticalProduct" after="CheckGiftOptionsForFirstOrderWithIdenticalProduct">
+            <argument name="orderNumber" value="$grabSecondOrderNumberWithIdenticalProduct"/>
+            <argument name="productName" value="$$firstProduct.name$$"/>
+            <argument name="expectedGiftMessage" value="Gift message for the item"/>
+            <argument name="expectedGiftWrapping" value="$$createFirstGiftWrapping.design$$"/>
+        </actionGroup>
+        <actionGroup ref="StorefrontCheckGiftOptionsActionGroup" stepKey="CheckGiftOptionsForThirdOrderWithIdenticalProduct" after="CheckGiftOptionsForSecondOrderWithIdenticalProduct">
+            <argument name="orderNumber" value="$grabThirdOrderNumberWithIdenticalProduct"/>
+            <argument name="productName" value="$$firstProduct.name$$"/>
+            <argument name="expectedGiftMessage" value="Gift message for the item"/>
+            <argument name="expectedGiftWrapping" value="$$createFirstGiftWrapping.design$$"/>
+        </actionGroup>
+        <!-- Check gift options for orders on backend -->
+        <actionGroup ref="AdminCheckGiftOptionsActionGroup" stepKey="CheckGiftOptionsOnBackendForFirstOrderWithIdenticalProduct" after="CheckGiftOptionsForThirdOrderWithIdenticalProduct">
+            <argument name="orderId" value="$grabFirstOrderNumberWithIdenticalProduct"/>
+            <argument name="productName" value="$$firstProduct.name$$"/>
+            <argument name="expectedGiftMessage" value="Gift message for the item"/>
+            <argument name="expectedGiftWrapping" value="$$createFirstGiftWrapping.design$$"/>
+        </actionGroup>
+        <actionGroup ref="AdminCheckGiftOptionsActionGroup" stepKey="CheckGiftOptionsOnBackendForOrderSecondWithIdenticalProduct" after="CheckGiftOptionsOnBackendForFirstOrderWithIdenticalProduct">
+            <argument name="orderId" value="$grabSecondOrderNumberWithIdenticalProduct"/>
+            <argument name="productName" value="$$firstProduct.name$$"/>
+            <argument name="expectedGiftMessage" value="Gift message for the item"/>
+            <argument name="expectedGiftWrapping" value="$$createFirstGiftWrapping.design$$"/>
+        </actionGroup>
+        <actionGroup ref="AdminCheckGiftOptionsActionGroup" stepKey="CheckGiftOptionsOnBackendForOrderThirdWithIdenticalProduct" after="CheckGiftOptionsOnBackendForOrderSecondWithIdenticalProduct">
+            <argument name="orderId" value="$grabThirdOrderNumberWithIdenticalProduct"/>
+            <argument name="productName" value="$$firstProduct.name$$"/>
+            <argument name="expectedGiftMessage" value="Gift message for the item"/>
+            <argument name="expectedGiftWrapping" value="$$createFirstGiftWrapping.design$$"/>
+        </actionGroup>
+    </test>
+</tests>

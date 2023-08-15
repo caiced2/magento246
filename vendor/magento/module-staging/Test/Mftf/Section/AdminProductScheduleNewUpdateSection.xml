@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+/**
+   * Copyright © Magento, Inc. All rights reserved.
+   * See COPYING.txt for license details.
+   */
+-->
+<sections xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+          xsi:noNamespaceSchemaLocation="urn:magento:mftf:Page/etc/SectionObject.xsd">
+    <section name="AdminProductScheduleUpdateSection">
+        <element name="scheduleNewUpdateBtn" type="button" selector="#staging_update_new" timeout="30"/>
+        <element name="updateName" type="input" selector="input[name='staging[name]']"/>
+        <element name="updateDescription" type="textarea" selector="textarea[name='staging[description]']"/>
+        <element name="startDate" type="input" selector="input[name='staging[start_time]']"/>
+        <element name="endDate" type="input" selector="input[name='staging[end_time]']"/>
+        <element name="save" type="button" selector=".modals-wrapper button#save" timeout="30"/>
+        <element name="advancedPricing" type="button" selector="//*[contains(@class, 'scheduled-changes')]//span[contains(text(), 'Advanced Pricing')]"/>
+        <element name="doneButton" type="button" selector=".catalogstaging_update_form_catalogstaging_update_form_advanced_pricing_modal button.action-primary"/>
+    </section>
+</sections>

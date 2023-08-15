@@ -1,0 +1,77 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+ /**
+  * Copyright © Magento, Inc. All rights reserved.
+  * See COPYING.txt for license details.
+  */
+-->
+
+<tests xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xsi:noNamespaceSchemaLocation="urn:magento:mftf:Test/etc/testSchema.xsd">
+    <test name="AdminCreateGiftCardProductOutOfStockOfVirtualTypeWithoutWebsiteTest">
+        <annotations>
+            <features value="GiftCard"/>
+            <stories value="Create gift card product"/>
+            <title value="Admin create gift card product cart out of stock of virtual type without website test"/>
+            <description value="Admin should be able to create gift cart out of stock of virtual type without website"/>
+            <severity value="CRITICAL"/>
+            <testCaseId value="MC-14499"/>
+            <group value="mtf_migrated"/>
+            <group value="GiftCard"/>
+        </annotations>
+        <before>
+            <!-- Create category -->
+            <createData entity="SimpleSubCategory" stepKey="createCategory"/>
+
+            <!-- Login as admin -->
+            <actionGroup ref="AdminLoginActionGroup" stepKey="loginAsAdmin"/>
+        </before>
+        <after>
+            <!--Delete category -->
+            <deleteData createDataKey="createCategory" stepKey="deleteCategory"/>
+
+            <!-- Delete product -->
+            <actionGroup ref="DeleteProductBySkuActionGroup" stepKey="deleteProduct">
+                <argument name="sku" value="{{VirtualGiftCardOutOfStock.sku}}"/>
+            </actionGroup>
+            <actionGroup ref="ResetAdminDataGridToDefaultViewActionGroup" stepKey="clearFilters"/>
+
+            <!-- Log out -->
+            <actionGroup ref="AdminLogoutActionGroup" stepKey="logout"/>
+        </after>
+
+        <!-- Create gift card product -->
+        <amOnPage url="{{AdminProductIndexPage.url}}" stepKey="navigateToCatalogProductGrid"/>
+        <waitForPageLoad stepKey="waitForCatalogProductGrid"/>
+        <actionGroup ref="GoToSpecifiedCreateProductPageActionGroup" stepKey="openProductFillForm">
+            <argument name="productType" value="giftcard"/>
+        </actionGroup>
+
+        <!-- Fill gift card product values -->
+        <actionGroup ref="AdminFillGiftCardProductFieldsActionGroup" stepKey="fillGiftCardProductFields">
+            <argument name="product" value="VirtualGiftCardOutOfStock"/>
+        </actionGroup>
+
+        <!-- Add amount to gift card product -->
+        <actionGroup ref="addGiftCardAmount" stepKey="addAmountToGiftCard">
+            <argument name="giftCardAmount" value="VirtualGiftCardOutOfStock.amounts[0]"/>
+        </actionGroup>
+
+        <!-- Add gift card product to category -->
+        <searchAndMultiSelectOption selector="{{AdminProductFormSection.categoriesDropdown}}" parameterArray="[$$createCategory.name$$]" stepKey="fillCategory" after="addAmountToGiftCard"/>
+
+        <!-- Save gift card product -->
+        <actionGroup ref="SaveProductFormActionGroup" stepKey="saveProduct"/>
+
+        <!-- Assert gift card product in grid -->
+        <actionGroup ref="FilterAndSelectProductActionGroup" stepKey="filterProductGridBySku">
+            <argument name="productSku" value="{{VirtualGiftCardOutOfStock.sku}}"/>
+        </actionGroup>
+
+        <!-- Assert gift card product amount in product form -->
+        <seeInField selector="{{AdminProductFormSection.cardAmount('1')}}" userInput="{{VirtualGiftCardOutOfStock.amounts[0]}}" stepKey="checkGiftCardAmountFilled"/>
+
+        <!-- Assert gift card product stock status in product form -->
+        <seeOptionIsSelected selector="{{AdminProductFormSection.productStockStatus}}" userInput="Out Of Stock" stepKey="seeStockStatusInProductForm"/>
+    </test>
+</tests>

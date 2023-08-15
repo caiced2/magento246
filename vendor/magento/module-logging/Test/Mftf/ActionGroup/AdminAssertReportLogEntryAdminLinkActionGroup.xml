@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+ /**
+  * Copyright © Magento, Inc. All rights reserved.
+  * See COPYING.txt for license details.
+  */
+-->
+
+<actionGroups xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+              xsi:noNamespaceSchemaLocation="urn:magento:mftf:Test/etc/actionGroupSchema.xsd">
+    <actionGroup name="AdminAssertReportLogEntryAdminLinkActionGroup">
+        <annotations>
+            <description>Click on admin name link and verify url.</description>
+        </annotations>
+        <arguments>
+            <argument name="userName" type="string" defaultValue="{{_ENV.MAGENTO_ADMIN_USERNAME}}"/>
+        </arguments>
+
+        <click selector="//a[contains(text(),'{{userName}}')]" stepKey="clickOnAdminUserName"/>
+        <seeInCurrentUrl url="user/edit/user_id/" stepKey="checkUrl"/>
+    </actionGroup>
+</actionGroups>

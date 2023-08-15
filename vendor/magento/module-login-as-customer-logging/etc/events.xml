@@ -1,0 +1,36 @@
+<?xml version="1.0"?>
+<!--
+/**
+ * Copyright © Magento, Inc. All rights reserved.
+ * See COPYING.txt for license details.
+ */
+-->
+<config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="urn:magento:framework:Event/etc/events.xsd">
+    <event name="checkout_cart_add_product_complete">
+        <observer name="login_as_customer_log_add_to_cart" instance="Magento\LoginAsCustomerLogging\Observer\LogAddToCartObserver" />
+    </event>
+    <event name="sales_quote_item_qty_set_after">
+        <observer name="login_as_customer_log_update_qty" instance="Magento\LoginAsCustomerLogging\Observer\LogUpdateQtyObserver" />
+    </event>
+    <event name="sales_quote_remove_item">
+        <observer name="login_as_customer_log_remove_item_from_cart" instance="Magento\LoginAsCustomerLogging\Observer\LogRemoveItemFromCartObserver" />
+    </event>
+    <event name="sales_quote_collect_totals_after">
+        <observer name="login_as_customer_log_apply_coupon" instance="Magento\LoginAsCustomerLogging\Observer\LogApplyCoupon" />
+    </event>
+    <event name="wishlist_product_add_after">
+        <observer name="login_as_customer_log_add_product_to_wishlist" instance="Magento\LoginAsCustomerLogging\Observer\LogAddToWishlistObserver" />
+    </event>
+    <event name="sales_order_place_after">
+        <observer name="login_as_customer_log_place_order" instance="Magento\LoginAsCustomerLogging\Observer\LogPlaceOrderObserver" />
+    </event>
+    <event name="customer_address_save_after">
+        <observer name="login_as_customer_log_save_customer_address" instance="Magento\LoginAsCustomerLogging\Observer\LogSaveCustomerAddressObserver" />
+    </event>
+    <event name="customer_address_delete_after">
+        <observer name="login_as_customer_log_delete_customer_address" instance="Magento\LoginAsCustomerLogging\Observer\LogDeleteCustomerAddressObserver" />
+    </event>
+    <event name="customer_save_after_data_object">
+        <observer name="login_as_customer_log_save_customer" instance="Magento\LoginAsCustomerLogging\Observer\LogSaveCustomerObserver" />
+    </event>
+</config>

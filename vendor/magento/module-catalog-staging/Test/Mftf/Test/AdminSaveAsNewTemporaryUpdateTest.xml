@@ -1,0 +1,85 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+ /**
+  * Copyright © Magento, Inc. All rights reserved.
+  * See COPYING.txt for license details.
+  */
+-->
+
+<tests xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xsi:noNamespaceSchemaLocation="urn:magento:mftf:Test/etc/testSchema.xsd">
+    <test name="AdminSaveAsNewTemporaryUpdateTest">
+        <annotations>
+            <stories value="Create staging update"/>
+            <title value="Create temporary product update campaign, remove it and save as new update"/>
+            <description value="Admin should be able to create temporary product update campaign, remove it and save as new update"/>
+            <severity value="CRITICAL"/>
+            <testCaseId value="MC-14755"/>
+            <group value="CatalogStaging"/>
+            <group value="mtf_migrated"/>
+        </annotations>
+        <before>
+            <actionGroup ref="AdminLoginActionGroup" stepKey="loginAsAdmin"/>
+            <createData entity="_defaultCategory" stepKey="createCategory"/>
+            <createData entity="SimpleProduct" stepKey="createProduct">
+                <requiredEntity createDataKey="createCategory"/>
+            </createData>
+            <!-- Create temporary product updates -->
+            <amOnPage url="{{AdminProductEditPage.url($$createProduct.id$$)}}" stepKey="visitAdminProductPage"/>
+            <waitForPageLoad stepKey="waitForProductPageLoad"/>
+            <actionGroup ref="AdminFillTemporaryUpdateActionGroup" stepKey="fillStagingUpdate">
+                <argument name="stage" value="TemporaryUpdatePlus5min"/>
+            </actionGroup>
+            <scrollToTopOfPage stepKey="scrollToTop"/>
+            <click selector="{{AdminStagingSlideOutSection.save}}" stepKey="clickSave"/>
+            <click selector="{{AdminProductFormActionSection.saveButton}}" stepKey="saveProduct"/>
+            <seeElement selector="{{AdminProductMessagesSection.successMessage}}" stepKey="assertSuccess"/>
+        </before>
+        <after>
+            <deleteData createDataKey="createProduct" stepKey="deleteProduct"/>
+            <deleteData createDataKey="createCategory" stepKey="deleteCategory"/>
+            <actionGroup ref="AdminClearFiltersStagingDashboardActionGroup" stepKey="clearFilter"/>
+            <amOnPage url="{{AdminLogoutPage.url}}" stepKey="amOnLogoutPage"/>
+        </after>
+
+        <!-- Open the product in the admin panel -->
+        <amOnPage url="{{AdminProductEditPage.url($$createProduct.id$$)}}" stepKey="openAdminProductPage"/>
+        <waitForPageLoad stepKey="waitForPageLoad"/>
+
+        <!-- Remove the product update -->
+        <click selector="{{ScheduleUpdateSection.selectUpdate}}" stepKey="clickEdit"/>
+        <waitForLoadingMaskToDisappear stepKey="waitForEditPage"/>
+        <click selector="{{ScheduleUpdateSection.removeFromUpdate}}" stepKey="clickButtonRemove"/>
+        <waitForPageLoad stepKey="waitForDeletePage"/>
+        <click selector="{{ScheduleUpdateSection.deleteTheUpdate}}" stepKey="clickDelete"/>
+        <see userInput="The product will be removed from the update and all scheduled changes will be lost." stepKey="seeMessage"/>
+        <click selector="{{ScheduleUpdateSection.buttonDone}}" stepKey="clickSaveButton"/>
+        <waitForLoadingMaskToDisappear stepKey="waitForApply"/>
+
+        <!-- Save the product update as a new one -->
+        <amOnPage url="{{AdminProductEditPage.url($$createProduct.id$$)}}" stepKey="visitAdminProductPage"/>
+        <waitForPageLoad stepKey="waitForProductPageLoad"/>
+
+        <actionGroup ref="AdminFillTemporaryUpdateActionGroup" stepKey="fillStagingUpdate">
+            <argument name="stage" value="UpdateWithDatePlusTwoYears"/>
+        </actionGroup>
+        <scrollToTopOfPage stepKey="scrollToTop"/>
+        <click selector="{{AdminStagingSlideOutSection.save}}" stepKey="clickSave"/>
+        <click selector="{{AdminProductFormActionSection.saveButton}}" stepKey="saveProduct"/>
+        <seeElement selector="{{AdminProductMessagesSection.successMessage}}" stepKey="assertSuccess"/>
+
+        <!-- Perform assertions -->
+        <actionGroup ref="AdminGoToStagingDashboardGridActionGroup" stepKey="goToGridDashboard">
+            <argument name="updateName" value="{{UpdateWithDatePlusTwoYears.updateName}}"/>
+        </actionGroup>
+
+        <actionGroup ref="AdminCheckStagingDashboardGridTemporaryActionGroup" stepKey="checkGridDashboard">
+            <argument name="stage" value="UpdateWithDatePlusTwoYears"/>
+            <argument name="updateName" value="{{UpdateWithDatePlusTwoYears.updateName}}"/>
+        </actionGroup>
+
+        <actionGroup ref="AdminCheckLinksStagingDashboardActionGroup" stepKey="checkLinks">
+            <argument name="updateName" value="{{UpdateWithDatePlusTwoYears.updateName}}"/>
+        </actionGroup>
+    </test>
+</tests>

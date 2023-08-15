@@ -1,0 +1,92 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+ /**
+  * Copyright © Magento, Inc. All rights reserved.
+  * See COPYING.txt for license details.
+  */
+-->
+
+<tests xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xsi:noNamespaceSchemaLocation="urn:magento:mftf:Test/etc/testSchema.xsd">
+    <test name="AdminSortCategoryProductByStockTest">
+        <annotations>
+            <features value="VisualMerchandiser"/>
+            <stories value="Stock Quantity Calculation For Configurable Products"/>
+            <title value="Stock Quantity calculation for configurable products"/>
+            <description value="Verify category products sorted for configurable products based on stock quantity"/>
+            <severity value="CRITICAL"/>
+            <testCaseId value="MC-29170"/>
+            <group value="VisualMerchandiser"/>
+        </annotations>
+        <before>
+            <comment userInput="Create any Category, create three simple Products with quantity 1,100,777" stepKey="stepCreateSimpleProduct" />
+            <actionGroup ref="AdminLoginActionGroup" stepKey="loginAsAdmin"/>
+            <actionGroup ref="DeleteAllProductsUsingProductGridActionGroup" stepKey="deleteAllProducts"/>
+            <createData entity="_defaultCategory" stepKey="createCategory"/>
+            <createData entity="SimpleProductWithQty100" stepKey="createSimpleProduct1">
+                <requiredEntity createDataKey="createCategory"/>
+            </createData>
+            <createData entity="SimpleProductWithQty777" stepKey="createSimpleProduct2">
+                <requiredEntity createDataKey="createCategory"/>
+            </createData>
+            <createData entity="SimpleProductWithQty1" stepKey="createSimpleProduct3">
+                <requiredEntity createDataKey="createCategory"/>
+            </createData>
+            <comment userInput="Create configurable Products with three color option - white, red and blue with quantity 5,105,600" stepKey="stepCreateConfigurableProduct" />
+            <actionGroup ref="CreateCustomConfigurableProductActionGroup" stepKey="createConfigurableProduct">
+                <argument name="product" value="ConfigurableProductWithQty55"/>
+                <argument name="category" value="$$createCategory$$"/>
+            </actionGroup>
+        </before>
+        <after>
+            <actionGroup ref="DeleteAllProductsUsingProductGridActionGroup" stepKey="deleteAllProducts"/>
+            <deleteData createDataKey="createCategory" stepKey="deleteCategory"/>
+            <actionGroup ref="AdminLogoutActionGroup" stepKey="logout"/>
+        </after>
+        <comment userInput="Select created Category" stepKey="stepSelectCreatedCategory" />
+        <actionGroup ref="OpenCategoryFromCategoryTreeActionGroup" stepKey="getCategoryId">
+            <argument name="category" value="$$createCategory.name$$"/>
+        </actionGroup>
+        <comment userInput="Navigate to Products in Category selector and click on selector" stepKey="stepNavigateToProductInCategorySelector" />
+        <actionGroup ref="OpenProductsInCategorySectionActionGroup" stepKey="openProductsInCategorySectionBeforeSort"/>
+        <comment userInput="Sorting Option set to Price: Move low stock to top" stepKey="stepSortingSelection" />
+        <actionGroup ref="SortProductsByCriteriaInCategoryActionGroup" stepKey="SelectSortOrderInProductInCategory1">
+            <argument name="criteria" value="Move low stock to top"/>
+        </actionGroup>
+        <comment userInput="Assert First position of product in Admin in Category Page" stepKey="stepAssertFirstPosition" />
+        <actionGroup ref="AdminCheckProductPositionInCategoryProductsGridActionGroup" stepKey="assertSimpleProduct3InGrid">
+            <argument name="productName" value="$$createSimpleProduct3.name$$"/>
+            <argument name="position" value="1"/>
+        </actionGroup>
+        <comment userInput="Assert Second position of product in Admin in Category Page" stepKey="stepAssertSecondPosition" />
+        <actionGroup ref="AdminCheckProductPositionInCategoryProductsGridActionGroup" stepKey="assertConfigurableProductWithWhiteOptionInGrid">
+            <argument name="productName" value="{{ConfigurableProductWithQty55.name}}-{{ConfigurableProductWithQty55.optionName1}}"/>
+            <argument name="position" value="2"/>
+        </actionGroup>
+        <comment userInput="Assert Third position of product in Admin in Category Page" stepKey="stepAssertThirdPosition" />
+        <actionGroup ref="AdminCheckProductPositionInCategoryProductsGridActionGroup" stepKey="assertSimpleProduct1InGrid">
+            <argument name="productName" value="$$createSimpleProduct1.name$$"/>
+            <argument name="position" value="3"/>
+        </actionGroup>
+        <comment userInput="Assert Fourth position of product in Admin in Category Page" stepKey="stepAssertFourthPosition" />
+        <actionGroup ref="AdminCheckProductPositionInCategoryProductsGridActionGroup" stepKey="assertConfigurableProductWithRedOptionInGrid">
+            <argument name="productName" value="{{ConfigurableProductWithQty55.name}}-{{ConfigurableProductWithQty55.optionName2}}"/>
+            <argument name="position" value="4"/>
+        </actionGroup>
+        <comment userInput="Assert Fifth position of product in Admin in Category Page" stepKey="stepAssertFifthPosition" />
+        <actionGroup ref="AdminCheckProductPositionInCategoryProductsGridActionGroup" stepKey="assertConfigurableProductWithBlueOptionInGrid">
+            <argument name="productName" value="{{ConfigurableProductWithQty55.name}}-{{ConfigurableProductWithQty55.optionName3}}" />
+            <argument name="position" value="5"/>
+        </actionGroup>
+        <comment userInput="Assert Sixth position of product in Admin in Category Page" stepKey="stepAssertSixthPosition" />
+        <actionGroup ref="AdminCheckProductPositionInCategoryProductsGridActionGroup" stepKey="assertConfigurableProductInGrid">
+            <argument name="productName" value="{{ConfigurableProductWithQty55.name}}"/>
+            <argument name="position" value="6"/>
+        </actionGroup>
+        <comment userInput="Assert Seventh position of product in Admin in Category Page" stepKey="stepAssertSeventhPosition" />
+        <actionGroup ref="AdminCheckProductPositionInCategoryProductsGridActionGroup" stepKey="assertSimpleProduct2InGrid">
+            <argument name="productName" value="$$createSimpleProduct2.name$$"/>
+            <argument name="position" value="7"/>
+        </actionGroup>
+    </test>
+</tests>

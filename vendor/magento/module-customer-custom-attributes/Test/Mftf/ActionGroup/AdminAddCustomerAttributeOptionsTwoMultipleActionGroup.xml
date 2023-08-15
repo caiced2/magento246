@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+ /**
+  * Copyright © Magento, Inc. All rights reserved.
+  * See COPYING.txt for license details.
+  */
+-->
+<actionGroups xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+              xsi:noNamespaceSchemaLocation="urn:magento:mftf:Test/etc/actionGroupSchema.xsd">
+    <actionGroup name="AdminAddCustomerAttributeOptionsTwoMultipleActionGroup">
+        <arguments>
+            <argument name="customerAttribute" type="entity"/>
+        </arguments>
+        <waitForPageLoad stepKey="waitForLoadTab1"/>
+        <click selector="{{CustomerAccountSection.attributeOption}}" stepKey="goOptionSection"/>
+        <waitForPageLoad stepKey="waitForLoadTab"/>
+        <click selector="{{AdminCustomerAddressAttributeSection.addOptionsButton}}" stepKey="clickAddOption"/>
+        <fillField selector="{{AttributeOptionSection.optionField('1')}}" userInput="{{customerAttribute.option1}}" stepKey="fillOption1"/>
+        <click selector="{{AdminCustomerAddressAttributeSection.addOptionsButton}}" stepKey="addOption2"/>
+        <fillField selector="{{AttributeOptionSection.optionField('2')}}" userInput="{{customerAttribute.option2}}" stepKey="fillOption2" after="addOption2"/>
+        <click selector="{{CustomerAccountSection.save}}" stepKey="saveAttribute"/>
+        <waitForPageLoad stepKey="WaitForAttributeSaved"/>
+        <see userInput="You saved the customer attribute." stepKey="verifyAttributeCreated"/>
+    </actionGroup>
+</actionGroups>

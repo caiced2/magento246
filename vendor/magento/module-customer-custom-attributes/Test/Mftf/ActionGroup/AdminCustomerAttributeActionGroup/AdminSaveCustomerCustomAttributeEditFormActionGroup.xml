@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+ /**
+  * Copyright © Magento, Inc. All rights reserved.
+  * See COPYING.txt for license details.
+  */
+-->
+<actionGroups xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:noNamespaceSchemaLocation="urn:magento:mftf:Test/etc/actionGroupSchema.xsd">
+    <actionGroup name="AdminSaveCustomerCustomAttributeEditFormActionGroup">
+        <annotations>
+            <description>Press "Save Attribute" button and verify success message. Starts on create new customer custom attribute page.</description>
+        </annotations>
+
+        <scrollToTopOfPage stepKey="scrollToCustomerCustomAttributePageTop"/>
+        <waitForElementVisible selector="{{AdminMainActionsSection.save}}" stepKey="waitForButton"/>
+        <click selector="{{AdminMainActionsSection.save}}" stepKey="saveAttribute"/>
+        <waitForElementVisible selector="{{AdminMessagesSection.success}}" stepKey="waitForSuccessMessage"/>
+        <see selector="{{AdminMessagesSection.success}}" userInput="You saved the customer attribute." stepKey="verifyAttributeSaved"/>
+    </actionGroup>
+</actionGroups>

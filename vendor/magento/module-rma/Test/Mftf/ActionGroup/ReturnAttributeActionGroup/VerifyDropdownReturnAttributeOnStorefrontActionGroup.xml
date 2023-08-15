@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+ /**
+  * Copyright © Magento, Inc. All rights reserved.
+  * See COPYING.txt for license details.
+  */
+-->
+<actionGroups xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:noNamespaceSchemaLocation="urn:magento:mftf:Test/etc/actionGroupSchema.xsd">
+    <actionGroup name="VerifyDropdownReturnAttributeOnStorefront">
+        <arguments>
+            <argument name="attribute" defaultValue="DropdownReturnAttribute"/>
+            <argument name="orderId" type="string"/>
+            <argument name="customer"/>
+        </arguments>
+        <see userInput="{{orderId}}" selector="{{StorefrontCustomerReturnSection.orderId}}" stepKey="seeOrderId"/>
+        <see userInput="{{customer.email}}" selector="{{StorefrontCustomerReturnSection.email}}" stepKey="seeCustomerEmail"/>
+        <see userInput="{{attribute.option_name}}" selector="{{StorefrontCustomerReturnSection.customAttributeSelect('0',attribute.label)}}" stepKey="seeCustomAttribute"/>
+    </actionGroup>
+</actionGroups>

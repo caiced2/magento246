@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+ /**
+  * Copyright © Magento, Inc. All rights reserved.
+  * See COPYING.txt for license details.
+  */
+-->
+<sections xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:noNamespaceSchemaLocation="urn:magento:mftf:Page/etc/SectionObject.xsd">
+    <section name="StorefrontApplyGiftCardAccountSection">
+        <element name="applyGiftCardSection" type="text" selector="#giftcardaccount-placer"/>
+        <element name="sectionGiftCardIsExpanded" type="text" selector="#giftcardaccount-placer&gt;div.payment-option-content"/>
+        <element name="openApplyGiftCardSection" type="text" selector="#block-giftcard-heading"/>
+        <element name="giftCardCodeField" type="input" selector="#giftcard-code"/>
+        <element name="applyGiftCardButton" type="button" selector="#giftcard-form&gt;div.actions-toolbar&gt;div.primary&gt;button"/>
+        <element name="addGiftCardButton" type="button" selector="//button[@value='Add Gift Card']"/>
+        <element name="seeBalanceButton" type="button" selector="#giftcard-form&gt;div.actions-toolbar&gt;div.secondary&gt;button"/>
+        <element name="giftCardInfo" type="text" selector="#giftcard-form&gt;div.payment-option-inner&gt;div.giftcard-account-info&gt;div.giftcard-account-number&gt;span:nth-child(1)"/>
+        <element name="giftCardNumber" type="text" selector="#giftcard-form&gt;div.payment-option-inner&gt;div.giftcard-account-info&gt;div.giftcard-account-number&gt;span.giftcard-number"/>
+        <element name="currentBalance" type="text" selector="#giftcard-form&gt;div.payment-option-inner&gt;div.giftcard-account-info&gt;div.giftcard-account-balance&gt;span.price"/>
+        <element name="giftCardCodeAdded" type="text" selector="#giftcardaccount-placer&gt;div.payment-option-content&gt;div&gt;div"/>
+        <element name="giftCardAccountCodeName" type="text" selector="#opc-sidebar&gt;div.opc-block-summary&gt;table &gt;tbody &gt;tr:nth-child(2)"/>
+        <element name="giftCardAccountCodeDiscount" type="text" selector="#opc-sidebar&gt;div.opc-block-summary&gt;table&gt;tbody&gt;tr.totals.giftcard&gt;td"/>
+    </section>
+</sections>

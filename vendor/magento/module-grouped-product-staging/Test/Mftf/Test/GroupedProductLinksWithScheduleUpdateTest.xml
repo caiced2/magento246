@@ -1,0 +1,102 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+ /**
+  * Copyright © Magento, Inc. All rights reserved.
+  * See COPYING.txt for license details.
+  */
+-->
+
+<tests xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xsi:noNamespaceSchemaLocation="urn:magento:mftf:Test/etc/testSchema.xsd">
+    <test name="GroupedProductLinksWithScheduleUpdateTest">
+        <annotations>
+            <features value="GroupedProductStaging"/>
+            <stories value="Admin manages staging update"/>
+            <title value="Product links should be kept for new staging versions"/>
+            <description value="When admin creates schedule updates for new product versions it is important to keep product attributes for them"/>
+            <severity value="CRITICAL"/>
+            <testCaseId value="MC-15927"/>
+            <useCaseId value="MAGETWO-98187"/>
+            <group value="groupedProductStaging"/>
+        </annotations>
+        <before>
+            <createData entity="_defaultCategory" stepKey="createCategory"/>
+            <createData entity="ApiSimpleProduct" stepKey="createProductOne">
+                <requiredEntity createDataKey="createCategory"/>
+            </createData>
+            <createData entity="ApiSimpleProduct" stepKey="createProductTwo">
+                <requiredEntity createDataKey="createCategory"/>
+            </createData>
+            <createData entity="GroupedProduct" stepKey="createGroupedProduct">
+                <requiredEntity createDataKey="createCategory"/>
+            </createData>
+            <actionGroup ref="AdminLoginActionGroup" stepKey="loginAsAdmin"/>
+        </before>
+        <after>
+            <deleteData createDataKey="createProductOne" stepKey="deleteProductOne"/>
+            <deleteData createDataKey="createProductTwo" stepKey="deleteProductTwo"/>
+            <deleteData createDataKey="createCategory" stepKey="deleteCategory"/>
+            <deleteData createDataKey="createGroupedProduct" stepKey="deleteGroupedProduct"/>
+            <actionGroup ref="AdminLogoutActionGroup" stepKey="logout"/>
+        </after>
+
+        <!-- Create grouped product links -->
+        <actionGroup ref="AdminProductPageOpenByIdActionGroup" stepKey="openGroupedProduct">
+            <argument name="productId" value="$$createGroupedProduct.id$$"/>
+        </actionGroup>
+
+        <actionGroup ref="AdminAssignProductToGroupActionGroup" stepKey="addFirstSimpleToGroup">
+            <argument name="product" value="$$createProductOne$$"/>
+        </actionGroup>
+        <actionGroup ref="AdminAssignProductToGroupActionGroup" stepKey="addSecondSimpleToGroup">
+            <argument name="product" value="$$createProductTwo$$"/>
+        </actionGroup>
+        <actionGroup ref="SaveProductFormActionGroup" stepKey="saveGroupedProduct"/>
+
+        <!-- Create the new staging update -->
+        <generateDate date="+1 day" format="m/d/Y g:i A" stepKey="generateStartTime"/>
+        <generateDate date="+1 week" format="m/d/Y g:i A" stepKey="generateEndTime"/>
+        <actionGroup ref="FillScheduleUpdateRemovePriceActionGroup" stepKey="createNewStagingUpdate">
+            <argument name="staging" value="S8UpdateNameStaging"/>
+            <argument name="timeStart" value="{$generateStartTime}"/>
+            <argument name="timeEnd" value="{$generateEndTime}"/>
+        </actionGroup>
+
+        <!-- Open preview of product's staging -->
+        <actionGroup ref="GoToProductStagingPreview" stepKey="goToProductStagingPreview">
+            <argument name="productId" value="$$createGroupedProduct.id$$"/>
+            <argument name="updateName" value="{{S8UpdateNameStaging.updateName}}"/>
+        </actionGroup>
+        <actionGroup ref="FocusOnStagingPreviewIframe" stepKey="focusToStagedProductPreviewIframe"/>
+
+        <!-- Check for the product links. They should not been disappeared. -->
+        <actionGroup ref="AssertLinkPresenceOnGroupedProductPage" stepKey="seeFirstStagedGroupedProduct">
+            <argument name="productName" value="$createProductOne.name$"/>
+        </actionGroup>
+        <actionGroup ref="AssertLinkPresenceOnGroupedProductPage" stepKey="seeSecondStagedGroupedProduct">
+            <argument name="productName" value="$createProductTwo.name$"/>
+        </actionGroup>
+
+        <!-- Change Preview Version -->
+        <actionGroup ref="FocusOnHostPage" stepKey="focusBackToStagedProductStagingPreviewHeader"/>
+        <generateDate date="+2 week" format="M j, Y g:i A" stepKey="generateVersionExpiredDate"/>
+        <actionGroup ref="ChangePreviewVersion" stepKey="switchToRollBackedProductPreview">
+            <argument name="version" value="{$generateVersionExpiredDate}"/>
+        </actionGroup>
+        <actionGroup ref="FocusOnStagingPreviewIframe" stepKey="focusToRollbackedProductPreviewIframe"/>
+
+        <!-- Check for the product links. They should not been disappeared. -->
+        <actionGroup ref="AssertLinkPresenceOnGroupedProductPage" stepKey="seeFirstRollBackedGroupedProduct">
+            <argument name="productName" value="$createProductOne.name$"/>
+        </actionGroup>
+        <actionGroup ref="AssertLinkPresenceOnGroupedProductPage" stepKey="seeSecondRollBackedGroupedProduct">
+            <argument name="productName" value="$createProductTwo.name$"/>
+        </actionGroup>
+
+        <!-- Focus On Host page -->
+        <actionGroup ref="FocusOnHostPage" stepKey="focusBackToRollBackedProductStagingPreviewHeader"/>
+
+        <!-- Close Preview -->
+        <closeTab stepKey="closePreviewTab"/>
+    </test>
+</tests>

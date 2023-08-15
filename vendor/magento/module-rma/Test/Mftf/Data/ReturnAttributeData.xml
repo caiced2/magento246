@@ -1,0 +1,33 @@
+<?xml version="1.0"?>
+<!--
+/**
+ * Copyright © Magento, Inc. All rights reserved.
+ * See COPYING.txt for license details.
+ */
+-->
+<entities xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+          xsi:noNamespaceSchemaLocation="urn:magento:mftf:DataGenerator/etc/dataProfileSchema.xsd">
+    <entity name="DropdownReturnAttribute" type="return_attribute">
+        <data key="label" unique="suffix">attribute</data>
+        <data key="attribute_code" unique="suffix">attribute</data>
+        <data key="input_type">select</data>
+        <data key="is_required_value">1</data>
+        <data key="is_visible">1</data>
+        <data key="sort_order">10</data>
+        <data key="used_in_forms">default</data>
+        <data key="option_name" unique="suffix">option</data>
+    </entity>
+    <entity name="YesNoReturnAttribute" type="return_attribute">
+        <data key="attribute_code" unique="suffix">yes_no_return_attribute</data>
+        <data key="frontend_input">boolean</data>
+        <data key="is_required">0</data>
+        <data key="is_visible">1</data>
+        <data key="sort_order">1</data>
+        <array key="frontend_label">
+            <item>YesNoReturnAttribute</item>
+        </array>
+        <array key="used_in_forms">
+            <item>default</item>
+        </array>
+    </entity>
+</entities>

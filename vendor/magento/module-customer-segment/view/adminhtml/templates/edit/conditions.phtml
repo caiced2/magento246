@@ -1,0 +1,32 @@
+<?php
+/**
+ * Copyright © Magento, Inc. All rights reserved.
+ * See COPYING.txt for license details.
+ */
+
+/** @var \Magento\CustomerSegment\Block\Adminhtml\Customersegment\Edit\Tab\Conditions $block */
+$element = $block->getElement();
+$jsObjectName = $element->getHtmlId();
+?>
+<div class="control admin__field-control">
+    <div class="rule-tree">
+        <fieldset id="<?= $block->escapeHtmlAttr($jsObjectName) ?>"
+            <?= /* @noEscape */ $element->serialize(['class']) ?> class="fieldset">
+            <legend class="legend"><span><?= $block->escapeHtml($element->getLegend()) ?></span></legend>
+            <div class="rule-tree-wrapper">
+                <?= $element->getChildrenHtml() ?>
+            </div>
+        </fieldset>
+    </div>
+</div>
+<script type="text/x-magento-init">
+{
+    "*": {
+        "Magento_CustomerSegment/js/conditions":{
+            "jsObjectName" : "<?= /* @noEscape */ $jsObjectName ?>",
+            "childUrl" : "<?= /* @noEscape */ $block->getNewChildUrl() ?>",
+            "isReadonly" : "<?= /* @noEscape */ $element->getReadonly() ?>"
+        }
+    }
+}
+</script>

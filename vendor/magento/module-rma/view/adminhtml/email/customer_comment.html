@@ -1,0 +1,19 @@
+<!--
+/**
+ * Copyright © Magento, Inc. All rights reserved.
+ * See COPYING.txt for license details.
+ */
+-->
+<!--@subject {{trans "%store_name:  New customer comment" store_name=$store.frontend_name}} @-->
+<!--@vars {
+"var comment":"Order Comment",
+"var store.frontend_name":"Store Name",
+"var rma.increment_id":"Increment Id",
+"var order_data.customer_name":"Customer Name"
+} @-->
+
+<h1>{{trans "New Comment for RMA #%increment_id" increment_id=$rma.increment_id}}</h1>
+
+<p>{{trans "Customer %name has left a new comment:" name=$order_data.customer_name}}</p>
+
+<p><em>{{var comment}}</em></p>

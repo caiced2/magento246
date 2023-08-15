@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+ /**
+  * Copyright © Magento, Inc. All rights reserved.
+  * See COPYING.txt for license details.
+  */
+-->
+
+<actionGroups xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+              xsi:noNamespaceSchemaLocation="urn:magento:mftf:Test/etc/actionGroupSchema.xsd">
+    <actionGroup name="AdminAssertGiftCardProductGeneralInfoOnEditPageActionGroup" extends="AdminAssertProductInfoOnEditPageActionGroup">
+        <annotations>
+            <description>Verifies the general data on the Edit product details page in admin for a gift card.</description>
+        </annotations>
+        <arguments>
+            <argument name="cardType" defaultValue="{{GiftCard.card_type}}" type="string"/>
+            <argument name="amounts" defaultValue="{{GiftCard.amounts}}" type="string"/>
+            <argument name="openAmountValue" defaultValue="0" type="string"/>
+            <argument name="openAmountFrom" defaultValue="" type="string"/>
+            <argument name="openAmountTo" defaultValue="" type="string"/>
+        </arguments>
+        <remove keyForRemoval="seeProductPrice"/>
+        <seeInField userInput="{{cardType}}" selector="{{AdminProductFormSection.cardType}}" stepKey="seeCardType"/>
+        <grabMultiple selector="{{AdminProductFormSection.allCardAmounts}}" userInput="value" stepKey="amountValues"/>
+        <assertEquals stepKey="assertValues">
+            <actualResult type="variable">amountValues</actualResult>
+            <expectedResult type="array">{{amounts}}</expectedResult>
+        </assertEquals>
+        <seeElement selector="{{AdminProductFormSection.openAmountToggleValue(openAmountValue)}}" stepKey="seeOpenAmount"/>
+        <seeInField userInput="{{openAmountFrom}}" selector="{{AdminProductFormSection.openAmountMin}}" stepKey="seeOpenAmountFrom"/>
+        <seeInField userInput="{{openAmountTo}}" selector="{{AdminProductFormSection.openAmountMax}}" stepKey="seeOpenAmountTo"/>
+    </actionGroup>
+</actionGroups>

@@ -1,0 +1,50 @@
+<?php
+/**
+ * Copyright © Magento, Inc. All rights reserved.
+ * See COPYING.txt for license details.
+ */
+
+/** @var \Magento\Framework\View\Helper\SecureHtmlRenderer $secureRenderer */
+?>
+<?php
+$scriptString = <<<script
+    var updateCartBtn = $$('#multiship-addresses-table .button');
+    updateCartBtn.each(function(element) {
+        element.observe('click', function(event) {
+script;
+
+$i = 0;
+foreach ($block->getListBlock()->getItems() as $item) {
+    $qty = $item->getQty();
+    $sku = $block->escapeJs($item->getSku());
+    $productName = $block->escapeJs($item->getProduct()->getName());
+    $productPrice = $block->escapeJs($item->getProduct()->getPrice());
+
+    $scriptString .= <<<script
+    var newVal = $$('#multiship-addresses-table .qty:nth({$i})').first().value;
+    if ({$qty} != newVal && newVal != 0) {
+        var newQty = newVal - {$qty};
+        dataLayer.push({
+            'ecommerce': {
+                'event': 'addToCart',
+                'add': {
+                    'products': [{
+                        'id': "{$sku}",
+                        'name': "{$productName}",
+                        'price': "{$productPrice}",
+                        'quantity': newQty
+                    }]
+                }
+            }
+        });
+    }
+script;
+    $i++;
+}
+
+$scriptString .= <<<script
+        });
+    });
+script;
+?>
+<?= /* @noEscape */ $secureRenderer->renderTag('script', [], $scriptString, false); ?>

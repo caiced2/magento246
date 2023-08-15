@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+ /**
+  * Copyright © Magento, Inc. All rights reserved.
+  * See COPYING.txt for license details.
+  */
+-->
+
+<actionGroups xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+              xsi:noNamespaceSchemaLocation="urn:magento:mftf:Test/etc/actionGroupSchema.xsd">
+    <actionGroup name="AdminFillScheduledExportFormActionGroup">
+        <annotations>
+            <description>Fills the form on the System > Data Transfer > Scheduled Import/Export > Add Scheduled Export page.</description>
+        </annotations>
+        <arguments>
+            <argument name="name" defaultValue="{{ScheduleExport1.name}}" type="string"/>
+            <argument name="description" defaultValue="" type="string"/>
+            <argument name="entityType" defaultValue="Products" type="string"/>
+            <argument name="startTimeHour" defaultValue="00" type="string"/>
+            <argument name="startTimeMinute" defaultValue="00" type="string"/>
+            <argument name="startTimeSecond" defaultValue="00" type="string"/>
+            <argument name="frequency" defaultValue="Daily" type="string"/>
+            <argument name="status" defaultValue="Enabled" type="string"/>
+            <argument name="fileFormat" defaultValue="CSV" type="string"/>
+            <argument name="serverType" defaultValue="Local Server" type="string"/>
+            <argument name="fileDirectory" defaultValue="" type="string"/>
+            <argument name="failedEmailReceiver" defaultValue="General Contact" type="string"/>
+            <argument name="failedEmailSender" defaultValue="General Contact" type="string"/>
+            <argument name="failedEmailTemplate" defaultValue="Export Failed (Default)" type="string"/>
+            <argument name="sendFailedEmailCopyTo" defaultValue="" type="string"/>
+            <argument name="sendFailedEmailCopyMethod" defaultValue="Bcc" type="string"/>
+        </arguments>
+        <waitForElementVisible selector="{{AdminNewScheduledExportSection.name}}" stepKey="waitForName"/>
+        <fillField userInput="{{name}}" selector="{{AdminNewScheduledExportSection.name}}" stepKey="fillName"/>
+        <fillField userInput="{{description}}" selector="{{AdminNewScheduledExportSection.description}}" stepKey="fillDescription"/>
+        <selectOption userInput="{{entityType}}" selector="{{AdminNewScheduledExportSection.entityType}}" stepKey="selectEntityType"/>
+        <selectOption userInput="{{startTimeHour}}" selector="{{AdminNewScheduledExportSection.startTimeHour}}" stepKey="selectStartTimeHour"/>
+        <selectOption userInput="{{startTimeMinute}}" selector="{{AdminNewScheduledExportSection.startTimeMinute}}" stepKey="selectStartTimeMinute"/>
+        <selectOption userInput="{{startTimeSecond}}" selector="{{AdminNewScheduledExportSection.startTimeSecond}}" stepKey="selectStartTimeSecond"/>
+        <selectOption userInput="{{frequency}}" selector="{{AdminNewScheduledExportSection.frequency}}" stepKey="selectFrequency"/>
+        <selectOption userInput="{{status}}" selector="{{AdminNewScheduledExportSection.status}}" stepKey="selectStatus"/>
+        <selectOption userInput="{{fileFormat}}" selector="{{AdminNewScheduledExportSection.fileFormat}}" stepKey="selectFileFormat"/>
+        <selectOption userInput="{{serverType}}" selector="{{AdminNewScheduledExportSection.serverType}}" stepKey="selectServerType"/>
+        <fillField userInput="{{fileDirectory}}" selector="{{AdminNewScheduledExportSection.fileDirectory}}" stepKey="fillFileDirectory"/>
+        <selectOption userInput="{{failedEmailReceiver}}" selector="{{AdminNewScheduledExportSection.failedEmailReceiver}}" stepKey="selectFailedEmailReceiver"/>
+        <selectOption userInput="{{failedEmailSender}}" selector="{{AdminNewScheduledExportSection.failedEmailSender}}" stepKey="selectFailedEmailSender"/>
+        <selectOption userInput="{{failedEmailTemplate}}" selector="{{AdminNewScheduledExportSection.failedEmailTemplate}}" stepKey="selectFailedEmailTemplate"/>
+        <fillField userInput="{{sendFailedEmailCopyTo}}" selector="{{AdminNewScheduledExportSection.sendFailedEmailCopyTo}}" stepKey="fillSendFailedEmailCopyTo"/>
+        <selectOption userInput="{{sendFailedEmailCopyMethod}}" selector="{{AdminNewScheduledExportSection.sendFailedEmailCopyMethod}}" stepKey="selectSendFailedEmailCopyMethod"/>
+    </actionGroup>
+</actionGroups>

@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+ /**
+  * Copyright © Magento, Inc. All rights reserved.
+  * See COPYING.txt for license details.
+  */
+-->
+
+<sections xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:noNamespaceSchemaLocation="urn:magento:mftf:Page/etc/SectionObject.xsd">
+    <section name="AdminEditReturnMainActionsSection">
+        <element name="back" type="button" selector="button#back" timeout="30" />
+        <element name="reset" type="button" selector="button#reset" timeout="30" />
+        <element name="close" type="button" selector="button#close" timeout="30" />
+        <element name="print" type="button" selector="button#print" timeout="30" />
+        <element name="saveContinue" type="button" selector="button#save_and_edit_button" timeout="30" />
+        <element name="save" type="button" selector="button#save" timeout="30" />
+    </section>
+</sections>

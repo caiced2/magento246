@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+ /**
+  * Copyright © Magento, Inc. All rights reserved.
+  * See COPYING.txt for license details.
+  */
+-->
+<actionGroups xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:noNamespaceSchemaLocation="urn:magento:mftf:Test/etc/actionGroupSchema.xsd">
+    <actionGroup name="processingReturnItem">
+        <arguments>
+            <argument name="process"/>
+        </arguments>
+        <fillField selector="{{AdminReturnItemsSection.selectProcess(process.process_type)}}" userInput="{{process.qty}}" stepKey="fillRequestedReturnQty"/>
+        <selectOption selector="{{AdminReturnItemsSection.selectStatus}}" userInput="{{process.status_type}}" stepKey="selectReturnStatus"/>
+        <click selector="{{AdminEditReturnMainActionsSection.saveContinue}}" stepKey="clickOnSaveAndContinue"/>
+        <waitForElementVisible selector="{{AdminMessagesSection.success}}" stepKey="waitForSuccessMessage"/>
+        <see selector="{{AdminMessagesSection.success}}" userInput="You saved the RMA request." stepKey="seeSuccessMessage"/>
+    </actionGroup>
+</actionGroups>

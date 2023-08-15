@@ -1,0 +1,96 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+ /**
+  * Copyright © Magento, Inc. All rights reserved.
+  * See COPYING.txt for license details.
+  */
+-->
+
+<entities xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+          xsi:noNamespaceSchemaLocation="urn:magento:mftf:DataGenerator/etc/dataProfileSchema.xsd">
+    <entity name="RmaSettingsConfig" type="rma_settings_config_state">
+        <requiredEntity type="enabled">EnableRMAOnStorefront</requiredEntity>
+        <requiredEntity type="enabled_on_product">EnableRMAOnProductLevel</requiredEntity>
+        <requiredEntity type="use_store_address">UseStoreAddress</requiredEntity>
+        <requiredEntity type="store_name">ContactName</requiredEntity>
+        <requiredEntity type="address">StreetAddress</requiredEntity>
+        <requiredEntity type="city">City</requiredEntity>
+        <requiredEntity type="region_id">StateProvince</requiredEntity>
+        <requiredEntity type="zip">ZipPostalCode</requiredEntity>
+        <requiredEntity type="country_id">Country</requiredEntity>
+    </entity>
+    <entity name="EnableRMAOnStorefront" type="enabled">
+        <data key="value">1</data>
+    </entity>
+    <entity name="EnableRMAOnProductLevel" type="enabled_on_product">
+        <data key="value">1</data>
+    </entity>
+    <entity name="UseStoreAddress" type="use_store_address">
+        <data key="value">0</data>
+    </entity>
+    <entity name="ContactName" type="store_name">
+        <data key="value">Return Store</data>
+    </entity>
+    <entity name="StreetAddress" type="address">
+        <data key="value">Main Street 1</data>
+    </entity>
+    <entity name="City" type="city">
+        <data key="value">New York</data>
+    </entity>
+    <entity name="StateProvince" type="region_id">
+        <data key="value">43</data>
+    </entity>
+    <entity name="ZipPostalCode" type="zip">
+        <data key="value">10010</data>
+    </entity>
+    <entity name="Country" type="country_id">
+        <data key="value">US</data>
+    </entity>
+
+    <entity name="RestoreDefaultRmaSettingsConfig" type="rma_settings_config_state">
+        <requiredEntity type="enabled">default_EnableRMAOnStorefront</requiredEntity>
+        <requiredEntity type="enabled_on_product">default_EnableRMAOnProductLevel</requiredEntity>
+        <requiredEntity type="use_store_address">default_UseStoreAddress</requiredEntity>
+        <requiredEntity type="store_name">default_ContactName</requiredEntity>
+        <requiredEntity type="address">default_StreetAddress</requiredEntity>
+        <requiredEntity type="city">default_City</requiredEntity>
+        <requiredEntity type="region_id">default_StateProvince</requiredEntity>
+        <requiredEntity type="zip">default_ZipPostalCode</requiredEntity>
+        <requiredEntity type="country_id">default_Country</requiredEntity>
+    </entity>
+    <entity name="default_EnableRMAOnStorefront" type="enabled">
+        <data key="value">0</data>
+    </entity>
+    <entity name="default_EnableRMAOnProductLevel" type="enabled_on_product">
+        <data key="value">1</data>
+    </entity>
+    <entity name="default_ContactName" type="store_name">
+        <data key="value"/>
+    </entity>
+    <entity name="default_StreetAddress" type="address">
+        <data key="value"/>
+    </entity>
+    <entity name="default_City" type="city">
+        <data key="value"/>
+    </entity>
+    <entity name="default_StateProvince" type="region_id">
+        <data key="value"/>
+    </entity>
+    <entity name="default_ZipPostalCode" type="zip">
+        <data key="value"/>
+    </entity>
+    <entity name="default_Country" type="country_id">
+        <data key="value">US</data>
+    </entity>
+    <entity name="default_UseStoreAddress" type="use_store_address">
+        <data key="value">1</data>
+    </entity>
+
+    <entity name="EnableRMA" type="rma_settings_config_state">
+        <requiredEntity type="enabled">EnableRMAOnStorefront</requiredEntity>
+    </entity>
+
+    <entity name="DisableRMA" type="rma_settings_config_state">
+        <requiredEntity type="enabled">default_EnableRMAOnStorefront</requiredEntity>
+    </entity>
+</entities>

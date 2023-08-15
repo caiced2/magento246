@@ -1,0 +1,106 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+ /**
+  * Copyright © Magento, Inc. All rights reserved.
+  * See COPYING.txt for license details.
+  */
+-->
+
+<tests xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xsi:noNamespaceSchemaLocation="urn:magento:mftf:Test/etc/testSchema.xsd">
+    <test name="AdminDateFormatOnAttributePageTest">
+        <annotations>
+            <features value="CustomerCustomAttributes"/>
+            <stories value="MAGETWO-95802: [EE] Admin date wrong formatting for French locale"/>
+            <title value="Date format localization on Attribute creating page"/>
+            <description value="Check that Date format localization on Attribute creating page is correct"/>
+            <severity value="MAJOR"/>
+            <testCaseId value="MAGETWO-96136"/>
+            <group value="customer"/>
+            <group value="pr_exclude"/>
+        </annotations>
+        <before>
+            <!-- Create Customer -->
+            <createData entity="Simple_US_Customer" stepKey="customer"/>
+            <!-- Set locale options to France-->
+            <magentoCLI stepKey="localeFR" command="config:set general/locale/code fr_FR"/>
+            <magentoCLI stepKey="staticDeployAfterChangeLocaleToFR" command="setup:static-content:deploy fr_FR"/>
+            <!--Login as admin-->
+            <actionGroup ref="AdminLoginActionGroup" stepKey="LoginAsAdmin"/>
+        </before>
+        <!-- Change Admin locale to Français (France) / French (France) -->
+        <actionGroup ref="SetAdminAccountActionGroup" stepKey="setAdminAccountToFrance">
+            <argument name="InterfaceLocaleByValue" value="fr_FR" />
+        </actionGroup>
+
+        <!--Create new Customer attribute-->
+        <amOnPage url="{{CustomerAttributesPage.url}}" stepKey="navigateToCustomerAddress"/>
+        <waitForPageLoad stepKey="waitForCustomerAttributePageLoaded"/>
+        <actionGroup ref="AdminCreateCustomerNewAttributeDate" stepKey="adminCreateCustomerAttribute">
+            <argument name="defaultLabel" value="{{AttributeDate.label}}"/>
+            <argument name="attributeCode" value="{{AttributeDate.code}}"/>
+            <argument name="inputType" value="{{AttributeDate.inputType}}"/>
+            <argument name="sortOrder" value="{{AttributeMultipleData.sortOrder}}"/>
+            <argument name="formToUse" value="Customer Registration"/>
+            <argument name="formToUse1" value="Customer Account Edit"/>
+            <argument name="message" value="You saved the customer attribute."/>
+        </actionGroup>
+
+        <!--Log in to Storefront as Customer-->
+        <actionGroup ref="LoginToStorefrontActionGroup" stepKey="signUpNewUser">
+            <argument name="Customer" value="$$customer$$"/>
+        </actionGroup>
+
+        <!--Go to Storefront > Account Information-->
+        <click selector="{{StorefrontCustomerSidebarSection.sidebarTab('Account Information')}}" stepKey="clickToOpenAccountInformation"/>
+        <waitForPageLoad stepKey="waitForAccountInformationPageLoad"/>
+        <see userInput="Edit Account Information" stepKey="seeEditAccountInformationPage"/>
+
+        <!--Select date in the correct diapason-->
+        <generateDate stepKey="generateDate" date="-1 day" format="d/m/Y"/>
+        <fillField stepKey="fillValueDate" selector="{{StorefrontCustomerAccountInformationSection.testAddedAttributeFiled('test_date')}}" userInput="{$generateDate}"/>
+        <pressKey parameterArray="[\Facebook\WebDriver\WebDriverKeys::ENTER]" selector="{{StorefrontCustomerAccountInformationSection.testAddedAttributeFiled('test_date')}}" stepKey="pressEnterKey"/>
+
+        <!--Click "Save" button-->
+        <pressKey parameterArray="[\Facebook\WebDriver\WebDriverKeys::ENTER]" selector="{{StorefrontCustomerAccountInformationSection.testAddedAttributeFiled('test_date')}}" stepKey="submitForm"/>
+        <waitForPageLoad stepKey="waitForAccountSaved"/>
+
+        <!--Make sure that the system redirects to My Account page-->
+        <seeInCurrentUrl url="customer/account" stepKey="myAccountPage"/>
+
+        <!--Open "Account information". Make sure that Date format is dd/mm/yyyy-->
+        <click selector="{{StorefrontCustomerSidebarSection.sidebarTab('Account Information')}}" stepKey="clickToOpenAccountInformationPage"/>
+        <waitForPageLoad stepKey="waitForAccountInformationPageLoaded"/>
+        <see userInput="Edit Account Information" stepKey="seeEditAccountInformationPageIsOpened"/>
+
+        <grabValueFrom selector="{{StorefrontCustomerAccountInformationSection.testAddedAttributeFiled('test_date')}}" stepKey="grabDate"/>
+        <assertEquals stepKey="validateDateFormat">
+            <expectedResult type="string">$generateDate</expectedResult>
+            <actualResult type="variable">$grabDate</actualResult>
+        </assertEquals>
+
+        <after>
+            <!--Delete created customer attribute-->
+            <amOnPage url="{{CustomerAttributesPage.url}}" stepKey="navigateToCustomerAttributePage"/>
+            <actionGroup ref="DeleteCustomerAttribute" stepKey="adminDeleteCustomerAttribute">
+                <argument name="defaultLabel" value="{{AttributeDate.label}}"/>
+            </actionGroup>
+            <!--Delete created customer-->
+            <deleteData createDataKey="customer" stepKey="deleteCustomer"/>
+            <!-- Set locale options to en_US-->
+            <magentoCLI stepKey="localeUS" command="config:set general/locale/code en_US"/>
+            <!-- Change Admin locale to default -->
+            <actionGroup ref="SetAdminAccountActionGroup" stepKey="setAdminAccountToFrance">
+                <argument name="InterfaceLocaleByValue" value="en_US" />
+            </actionGroup>
+            <!--Log out-->
+            <actionGroup ref="AdminLogoutActionGroup" stepKey="logOut"/>
+            <actionGroup ref="CliIndexerReindexActionGroup" stepKey="reindex">
+                <argument name="indices" value=""/>
+            </actionGroup>
+            <actionGroup ref="CliCacheFlushActionGroup" stepKey="flushCache">
+                <argument name="tags" value=""/>
+            </actionGroup>
+        </after>
+    </test>
+</tests>

@@ -1,0 +1,28 @@
+<!--
+/**
+ * Copyright © Magento, Inc. All rights reserved.
+ * See COPYING.txt for license details.
+ */
+-->
+
+<div class="field bolt-addresses" if="boltListVisible()" afterRender="afterRender">
+    <div class="control">
+        <div class="shipping-address-items">
+            <!-- ko foreach: { data: elems, as: 'element' } -->
+            <!-- ko template: element.getTemplate() --><!-- /ko -->
+            <!-- /ko -->
+        </div>
+    </div>
+    <!-- Address form pop up -->
+    <div class="new-bolt-address-popup" >
+        <button type="button" class="action action-show-popup"
+                data-bind="click: openParentPopup.bind()"
+                visible="!$parents[1].isNewAddressAdded()">
+            <span translate="'New Address'"></span>
+        </button>
+    </div>
+    <div id="opc-new-shipping-address"
+         data-bind="visible: $parents[1].isFormPopUpVisible()"
+         render="shippingFormTemplate">
+    </div>
+</div>

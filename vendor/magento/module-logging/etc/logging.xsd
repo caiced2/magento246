@@ -1,0 +1,140 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+/**
+ * Copyright © Magento, Inc. All rights reserved.
+ * See COPYING.txt for license details.
+ */
+-->
+<xs:schema elementFormDefault="qualified" xmlns:xs="http://www.w3.org/2001/XMLSchema">
+    <xs:element name="logging">
+        <xs:annotation>
+            <xs:documentation>
+                Specifies logging configuration.
+            </xs:documentation>
+        </xs:annotation>
+        <xs:complexType>
+            <xs:all>
+                <xs:element name="actions" type="actionsType" minOccurs="0" />
+                <xs:element name='groups'  type="groupsType" minOccurs="1" />
+            </xs:all>
+        </xs:complexType>
+    </xs:element>
+
+    <xs:complexType name="actionsType">
+        <xs:sequence>
+            <xs:element name="action" type="actionType" minOccurs="1" maxOccurs="unbounded"/>
+        </xs:sequence>
+    </xs:complexType>
+
+    <xs:complexType name="actionType">
+        <xs:annotation>
+            <xs:documentation>
+                The definition of the action.
+            </xs:documentation>
+        </xs:annotation>
+        <xs:sequence>
+            <xs:element name="label" type="translatableType" minOccurs="1" maxOccurs="1" />
+        </xs:sequence>
+        <xs:attribute name="id" type="xs:ID" use="required"/>
+    </xs:complexType>
+
+    <xs:complexType name="groupsType">
+        <xs:sequence>
+            <xs:element name="group" type="groupType" minOccurs="1" maxOccurs="unbounded"/>
+        </xs:sequence>
+    </xs:complexType>
+
+    <xs:complexType name="groupType">
+        <xs:annotation>
+            <xs:documentation>
+                The group of events which will be logged
+            </xs:documentation>
+        </xs:annotation>
+        <xs:all>
+            <xs:element name="label" type="translatableType" minOccurs="0" maxOccurs="1" />
+            <xs:element name="expected_models" type="expectedModelsType" minOccurs="0" />
+            <xs:element name="events" type="eventsType" minOccurs="0" />
+        </xs:all>
+        <xs:attribute name="name" type="xs:token" use="required"/>
+    </xs:complexType>
+
+    <xs:complexType name="translatableType">
+        <xs:simpleContent>
+            <xs:extension base="xs:string">
+                <xs:attribute name="translate" use="optional" fixed="true" type="xs:boolean"/>
+            </xs:extension>
+        </xs:simpleContent>
+    </xs:complexType>
+
+    <xs:complexType name="expectedModelsType">
+        <xs:sequence>
+            <xs:element name="expected_model" type="expectedModelType" minOccurs="1" maxOccurs="unbounded"/>
+        </xs:sequence>
+        <xs:attribute name="merge_group" type="xs:boolean" use="optional" />
+    </xs:complexType>
+
+    <xs:complexType name="expectedModelType">
+        <xs:annotation>
+            <xs:documentation>
+                The model that the logging service is monitoring
+            </xs:documentation>
+        </xs:annotation>
+        <xs:all>
+            <xs:element name="additional_fields" type="fieldsType" minOccurs="0" />
+            <xs:element name="skip_fields" type="fieldsType" minOccurs="0" />
+        </xs:all>
+        <xs:attribute name="class" type="xs:string" use="required"/>
+    </xs:complexType>
+
+    <xs:complexType name="fieldsType">
+        <xs:sequence>
+            <xs:element name="field" type="fieldType" minOccurs="1" maxOccurs="unbounded"/>
+        </xs:sequence>
+    </xs:complexType>
+
+    <xs:complexType name="fieldType">
+        <xs:attribute name="name" type="xs:token" use="required" />
+    </xs:complexType>
+
+    <xs:complexType name="eventsType">
+        <xs:sequence>
+            <xs:element name="event" type="eventType" minOccurs="1" maxOccurs="unbounded"/>
+        </xs:sequence>
+    </xs:complexType>
+
+    <xs:complexType name="eventType">
+        <xs:annotation>
+            <xs:documentation>
+                The name of an event associated with a controller action and a logging action.
+            </xs:documentation>
+        </xs:annotation>
+        <xs:all>
+            <xs:element name="expected_models" type="expectedModelsType" minOccurs="0" />
+            <xs:element name="skip_on_back" type="skipOnBackType" minOccurs="0" />
+        </xs:all>
+        <xs:attribute name="controller_action" type="xs:token" use="required" />
+        <xs:attribute name="action_alias" type="xs:token" use="required" />
+        <xs:attribute name="post_dispatch" use="optional">
+            <xs:simpleType>
+                <xs:restriction base="xs:token">
+                    <xs:pattern value="([^:]+)(::[^:]+)?" />
+                </xs:restriction>
+            </xs:simpleType>
+        </xs:attribute>
+    </xs:complexType>
+
+    <xs:complexType name="skipOnBackType">
+        <xs:sequence>
+            <xs:element name="controller_action" type="controllerActionType" minOccurs="1" maxOccurs="unbounded"/>
+        </xs:sequence>
+    </xs:complexType>
+
+    <xs:complexType name="controllerActionType">
+        <xs:annotation>
+            <xs:documentation>
+                The controller actions that should skip
+            </xs:documentation>
+        </xs:annotation>
+        <xs:attribute name="name" type="xs:token" use="required" />
+    </xs:complexType>
+</xs:schema>

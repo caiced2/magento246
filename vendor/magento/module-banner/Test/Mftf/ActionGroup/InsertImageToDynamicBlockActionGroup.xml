@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+ /**
+  * Copyright © Magento, Inc. All rights reserved.
+  * See COPYING.txt for license details.
+  */
+-->
+
+<actionGroups xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:noNamespaceSchemaLocation="urn:magento:mftf:Test/etc/actionGroupSchema.xsd">
+    <!--Insert image to dynamic block-->
+    <actionGroup name="InsertImageToDynamicBlockActionGroup">
+        <arguments>
+            <argument name="imageFileName" defaultValue="magento.jpg" type="string"/>
+        </arguments>
+        <!--Insert image-->
+        <conditionalClick selector="{{AdminBannerBasicActionSection.ContentTab}}" dependentSelector="{{BannerContentSection.checkIfContentTabOpen}}" visible="true" stepKey="clickIfContentTabCloses"/>
+        <waitForPageLoad stepKey="waitForContent"/>
+        <waitForElementVisible selector="{{AdminBannerBasicActionSection.insertImage}}" stepKey="waitInsertImageUploader"/>
+        <click selector="{{AdminBannerBasicActionSection.insertImage}}" stepKey="clickInsertImage"/>
+        <waitForElementVisible selector="{{MediaGallerySection.UploadImage}}" stepKey="waitAttacheButton"/>
+        <attachFile selector="{{MediaGallerySection.UploadImage}}" userInput="{{imageFileName}}" stepKey="attacheFile"/>
+        <waitForPageLoad stepKey="waiFileUpload"/>
+        <waitForElementVisible selector="{{MediaGallerySection.imageBlockByName(imageFileName)}}" stepKey="waitImage"/>
+        <conditionalClick selector="{{MediaGallerySection.imageBlockByName(imageFileName)}}" dependentSelector="{{MediaGallerySection.imageSelected(imageFileName)}}" visible="false" stepKey="clickOnImage"/>
+        <waitForElementVisible selector="{{MediaGallerySection.InsertFile}}" stepKey="waitForAddSelectButton"/>
+        <click selector="{{MediaGallerySection.InsertFile}}" stepKey="clickSelectImage"/>
+        <waitForPageLoad time="30" stepKey="waitForPageLoad"/>
+    </actionGroup>
+</actionGroups>

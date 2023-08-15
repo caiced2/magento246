@@ -1,0 +1,60 @@
+<?xml version="1.0"?>
+<!--
+/**
+ * Copyright © Magento, Inc. All rights reserved.
+ * See COPYING.txt for license details.
+ */
+-->
+<config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="urn:magento:framework:ObjectManager/etc/config.xsd">
+    <type name="Magento\GiftCardAccount\Model\Pool">
+        <arguments>
+            <argument name="giftCardCodeParams" xsi:type="array">
+                <item name="separator" xsi:type="string">-</item>
+                <item name="charset" xsi:type="array">
+                    <item name="alphanum" xsi:type="string">ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789</item>
+                    <item name="alpha" xsi:type="string">ABCDEFGHIJKLMNOPQRSTUVWXYZ</item>
+                    <item name="num" xsi:type="string">0123456789</item>
+                </item>
+            </argument>
+        </arguments>
+    </type>
+    <type name="Magento\Framework\Module\Setup\Migration">
+        <arguments>
+            <argument name="compositeModules" xsi:type="array">
+                <item name="magento_giftcardaccount" xsi:type="string">Magento_GiftCardAccount</item>
+            </argument>
+        </arguments>
+    </type>
+    <type name="Magento\Sales\Controller\Adminhtml\Order\Edit\Index">
+        <plugin name="order_edit" type="Magento\GiftCardAccount\Controller\Adminhtml\Order\Edit\Plugin" sortOrder="10"/>
+    </type>
+    <preference for="Magento\GiftCardAccount\Api\Data\GiftCardAccountInterface" type="Magento\GiftCardAccount\Model\Giftcardaccount" />
+    <preference for="Magento\GiftCardAccount\Api\GiftCardAccountRepositoryInterface" type="Magento\GiftCardAccount\Model\GiftCardAccountRepository"/>
+    <preference for="Magento\GiftCardAccount\Api\GiftCardAccountManagementInterface" type="Magento\GiftCardAccount\Model\Service\GiftCardAccountManagement"/>
+    <preference for="Magento\GiftCardAccount\Model\Spi\GiftCardAccountResourceInterface" type="Magento\GiftCardAccount\Model\ResourceModel\Giftcardaccount"/>
+    <preference for="Magento\GiftCardAccount\Api\GuestGiftCardAccountManagementInterface" type="Magento\GiftCardAccount\Model\GuestCart\GiftCardAccountManagement"/>
+    <preference for="Magento\GiftCardAccount\Api\Data\GiftCardAccountSearchResultInterface" type="Magento\Framework\Api\SearchResults"/>
+    <type name="Magento\Quote\Model\Cart\TotalsConverter">
+        <plugin name="giftCardAmountTotal" type="Magento\GiftCardAccount\Model\Plugin\TotalsConverter" />
+    </type>
+    <type name="Magento\Quote\Model\Quote\TotalsCollector">
+        <plugin name="quoteGiftCardAmountUpdater" type="Magento\GiftCardAccount\Model\Plugin\TotalsCollector" />
+    </type>
+    <type name="Magento\Sales\Api\OrderRepositoryInterface">
+        <plugin name="gift_card_account" type="Magento\GiftCardAccount\Model\Plugin\OrderRepository" />
+    </type>
+    <type name="Magento\Sales\Api\InvoiceRepositoryInterface">
+        <plugin name="gift_card_account" type="Magento\GiftCardAccount\Model\Plugin\InvoiceRepository" />
+    </type>
+    <type name="Magento\Sales\Api\CreditmemoRepositoryInterface">
+        <plugin name="gift_card_account" type="Magento\GiftCardAccount\Model\Plugin\CreditmemoRepository" />
+    </type>
+    <preference for="Magento\GiftCardAccount\Model\Spi\UsageAttemptsManagerInterface"
+                type="Magento\GiftCardAccount\Model\UsageAttempt\UsageAttemptsManager" />
+    <preference for="Magento\GiftCardAccount\Model\Spi\UsageAttemptFactoryInterface"
+                type="Magento\GiftCardAccount\Model\UsageAttempt\UsageAttemptFactory" />
+    <preference for="Magento\GiftCardAccount\Model\Spi\GiftCardAccountManagerInterface"
+                type="Magento\GiftCardAccount\Model\Manager" />
+    <preference for="Magento\GiftCardAccount\Api\GiftCardRedeemerInterface"
+                type="Magento\GiftCardAccount\Model\Redeemer" />
+</config>

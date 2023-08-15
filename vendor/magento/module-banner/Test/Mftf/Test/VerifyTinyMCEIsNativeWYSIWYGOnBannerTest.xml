@@ -1,0 +1,98 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+ /**
+  * Copyright © Magento, Inc. All rights reserved.
+  * See COPYING.txt for license details.
+  */
+-->
+
+<tests xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xsi:noNamespaceSchemaLocation="urn:magento:mftf:Test/etc/testSchema.xsd">
+    <test name="DefaultTinyMCEonBannerPageTest">
+        <annotations>
+            <title value="Admin see TinyMCE is native WYSIWYG on Banner Page"/>
+            <description value="Admin see TinyMCE is native WYSIWYG on Banner Page"/>
+            <severity value="CRITICAL"/>
+            <testCaseId value="MAGETWO-85845"/>
+            <features value="MAGETWO-36659-[CMS] WYSIWYG update"/>
+            <stories value="MAGETWO-42047-Apply new WYSIWYG to Banner add/edit"/>
+            <group value="Banner"/>
+        </annotations>
+        <before>
+            <createData stepKey="createSalesRule" entity="ApiSalesRule" />
+            <createData stepKey="createSalesRuleCoupon" entity="ApiSalesRuleCoupon">
+                <requiredEntity createDataKey="createSalesRule"/>
+            </createData>
+            <actionGroup ref="AdminLoginActionGroup" stepKey="loginGetFromGeneralFile"/>
+            <actionGroup ref="EnabledWYSIWYGActionGroup" stepKey="enableWYSIWYG"/>
+            <actionGroup ref="CliEnableTinyMCEActionGroup" stepKey="enableTinyMCE" />
+            <actionGroup ref="ConfigAdminAccountSharingActionGroup" stepKey="allowAdminShareAccount"/>
+            <amOnPage url="{{AdminNewWidgetPage.url}}" stepKey="amOnAdminNewWidgetPage"/>
+            <selectOption selector="{{AdminNewWidgetSection.widgetType}}" userInput="Dynamic Blocks Rotator" stepKey="setWidgetType"/>
+            <selectOption selector="{{AdminNewWidgetSection.widgetDesignTheme}}" userInput="Magento Luma" stepKey="setWidgetDesignTheme"/>
+            <click selector="{{AdminNewWidgetSection.continue}}" stepKey="clickContinue"/>
+            <grabFromCurrentUrl regex="~/theme_id/(\d+)/~" stepKey="themeId"/>
+            <createData entity="sampleBannerWidget" stepKey="createPreReqWidget">
+                <field key="theme_id">{$themeId}</field>
+            </createData>            
+            <createData entity="_defaultCategory" stepKey="createPreReqCategory"/>
+            <createData entity="_defaultProduct" stepKey="createPreReqProduct">
+                <requiredEntity createDataKey="createPreReqCategory"/>
+            </createData>
+        </before>
+        <after>
+            <actionGroup ref="DisabledWYSIWYGActionGroup" stepKey="disableWYSIWYG"/>
+            <actionGroup ref="AdminLogoutActionGroup" stepKey="logout"/>
+        </after>
+        <actionGroup ref="CreateBannerActionGroup" stepKey="createPreReqBanner">
+            <argument name="Banner" value="sampleBanner" />
+        </actionGroup>
+        <actionGroup ref="AssignBannerToWidgetActionGroup" stepKey="createPreReqWidget">
+            <argument name="Banner" value="sampleBanner"/>
+            <argument name="Widget" value="$$createPreReqWidget$$"/>
+        </actionGroup>
+        <amOnPage url="{{AdminDynamicBlockGridPage.url}}" stepKey="goToBannerGrid"/>
+        <waitForPageLoad stepKey="waitForPageLoad1"/>
+        <click selector="{{AdminWidgetGridSection.title(sampleBanner.Name)}}" stepKey="navigateToPreReqBanner" />
+        <waitForPageLoad stepKey="waitForPageLoad2"/>
+        <conditionalClick selector="{{AdminBannerBasicActionSection.ContentTab}}" dependentSelector="{{TinyMCESection.checkIfContentTabOpen}}" stepKey="clickIfContentTabCloses" visible="true"/>
+        <waitForElementVisible selector="{{TinyMCESection.TinyMCE}}" stepKey="waitForTinyMCE" />
+        <actionGroup ref="VerifyTinyMCEActionGroup" stepKey="verifyTinyMCE"/>
+        <actionGroup ref="VerifyMagentoEntityActionGroup" stepKey="verifyMagentoEntities"/>
+        <executeJS function="tinyMCE.get('banner_form_store_contents').setContent('Hello TinyMCE from banner!');" stepKey="executeJSFillContent"/>
+        <click selector="{{BannerContentSection.ShowHideBtn}}" stepKey="clickShowHideBtn" />
+        <waitForElementVisible selector="{{TinyMCESection.InsertWidgetBtn}}" stepKey="waitForInsertWidget" />
+        <see selector="{{TinyMCESection.InsertImageBtn}}" userInput="Insert Image..." stepKey="assertInf17"/>
+        <see selector="{{TinyMCESection.InsertWidgetBtn}}" userInput="Insert Widget..." stepKey="assertInfo18"/>
+        <see selector="{{TinyMCESection.InsertVariableBtn}}" userInput="Insert Variable..." stepKey="assertInfo19"/>
+
+        <!-- Go to Assign Cart Rule To Banner -->
+        <actionGroup ref="AssignRelatedCartPriceRuleToBannerActionGroup" stepKey="assignCartPriceRuleToBanner">
+            <argument name="Banner" value="sampleBanner"/>
+            <argument name="CartPriceRule" value="$$createSalesRule$$"/>
+        </actionGroup>
+        <waitForPageLoad stepKey="waitForPageLoad3" />
+        <see userInput="You saved the dynamic block." stepKey="seeSuccessMessage"/>
+        <actionGroup ref="ClearCacheActionGroup" stepKey="clearMagentoCache1"/>
+
+        <!-- Go to storefront and apply cart rule -->
+        <amOnPage url="{{StorefrontProductPage.url($$createPreReqProduct.custom_attributes[url_key]$$)}}" stepKey="openProductPage"/>
+        <waitForPageLoad stepKey="waitForPageLoad6"/>
+        <actionGroup ref="ApplyCartRuleOnStorefrontActionGroup" stepKey="applyCartRule">
+            <argument name="product" value="$$createPreReqProduct$$"/>
+            <argument name="couponCode" value="$$createSalesRuleCoupon.code$$"/>
+        </actionGroup>
+        <waitForText userInput='You used coupon code "$$createSalesRuleCoupon.code$$"' stepKey="waitForText1"/>
+        <see selector="{{StorefrontMessagesSection.success}}" userInput='You used coupon code "$$createSalesRuleCoupon.code$$"'
+             stepKey="seeSuccessMessage1"/>
+
+        <!-- Go to storefront banner page, assert banner content -->
+        <waitForPageLoad stepKey="waitForPageLoad4" />
+        <actionGroup ref="ClearCacheActionGroup" stepKey="clearMagentoCache2"/>
+        <amOnPage url="/" stepKey="goToBannerFrontPage" />
+        <wait time="30" stepKey="waitForBanners"/>
+        <reloadPage stepKey="reloadPage"/>
+        <waitForText userInput="Hello TinyMCE from banner!" stepKey="waitForText"/>
+        <see userInput="Hello TinyMCE from banner!" stepKey="assertBannerDescription"/>
+    </test>
+</tests>

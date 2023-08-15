@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+ /**
+  * Copyright © Magento, Inc. All rights reserved.
+  * See COPYING.txt for license details.
+  */
+-->
+
+<tests xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xsi:noNamespaceSchemaLocation="urn:magento:mftf:Test/etc/testSchema.xsd">
+    <test name="AdminCheckProductUpdateFormTest">
+        <annotations>
+            <features value="CatalogStaging"/>
+            <stories value="Product staging update form"/>
+            <title value="Check the fields in the product staging update modal form"/>
+            <description value="Check the fields in the product staging update modal form"/>
+            <severity value="MAJOR"/>
+            <testCaseId value="MC-15257"/>
+            <group value="CatalogStaging"/>
+        </annotations>
+
+        <before>
+            <actionGroup ref="AdminLoginActionGroup" stepKey="loginAsAdmin"/>
+            <createData entity="defaultSimpleProduct" stepKey="simpleProduct"/>
+        </before>
+
+        <after>
+            <deleteData createDataKey="simpleProduct" stepKey="deleteSimpleProduct"/>
+            <actionGroup ref="AdminLogoutActionGroup" stepKey="logout"/>
+        </after>
+
+        <amOnPage url="{{AdminProductEditPage.url($$simpleProduct.id$$)}}" stepKey="goToEditProductPage" />
+        <waitForPageLoad stepKey="waitForProductPageLoad"/>
+
+        <click selector="{{AdminStagingSlideOutSection.scheduleNewUpdateBtn}}" stepKey="clickNewUpdate"/>
+        <waitForLoadingMaskToDisappear stepKey="waitForLoadingMask"/>
+        <actionGroup ref="verifyDefaultProductUpdateForm" stepKey="checkProductStagingUpdateForm"/>
+    </test>
+</tests>

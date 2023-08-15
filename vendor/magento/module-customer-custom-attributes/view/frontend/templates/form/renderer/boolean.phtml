@@ -1,0 +1,31 @@
+<?php
+/**
+ * Copyright © Magento, Inc. All rights reserved.
+ * See COPYING.txt for license details.
+ */
+?>
+<?php
+/**
+ * Create account form template
+ */
+/* @var $block \Magento\CustomAttributeManagement\Block\Form\Renderer\Boolean */
+?>
+<?php
+$fieldCssClass = 'field field-' . $block->getHtmlId();
+$fieldCssClass .= $block->isRequired() ? ' required' : '';
+?>
+<div class="<?= /* @noEscape */ $fieldCssClass ?>">
+    <label class="label" for="<?= $block->getHtmlId() ?>"><span><?= $block->escapeHtml($block->getLabel()) ?></span></label>
+    <div class="control">
+        <select id="<?= $block->getHtmlId() ?>" name="<?= $block->escapeHtmlAttr($block->getFieldName()) ?>"<?php if ($block->getHtmlClass()) :
+            ?> class="select <?= $block->getHtmlClass() ?>"<?php endif;?>>
+        <?php foreach ($block->getOptions() as $option) :?>
+        <option value="<?= $block->escapeHtmlAttr($option['value']) ?>"<?php if ($option['value'] == $block->getValue()) :
+            ?> selected="selected"<?php endif;?>><?= $block->escapeHtml($option['label']) ?></option>
+        <?php endforeach;?>
+        </select>
+        <?php if ($_message = $block->getAdditionalDescription()) : ?>
+        <div class="note"><?= /* @noEscape */ $_message ?></div>
+        <?php endif; ?>
+    </div>
+</div>

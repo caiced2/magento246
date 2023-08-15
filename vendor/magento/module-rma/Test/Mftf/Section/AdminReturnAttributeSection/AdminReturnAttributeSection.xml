@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+ /**
+  * Copyright © Magento, Inc. All rights reserved.
+  * See COPYING.txt for license details.
+  */
+-->
+<sections xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:noNamespaceSchemaLocation="urn:magento:mftf:Page/etc/SectionObject.xsd">
+    <section name="AdminReturnAttributeSection">
+        <element name="add" type="button" selector="#add"/>
+        <element name="save" type="button" selector="#save"/>
+        <element name="delete" type="button" selector="#delete"/>
+        <element name="search" type="button" selector=".action-default.scalable.action-secondary" timeout="30"/>
+        <element name="resetFilter" type="button" selector=".action-default.scalable.action-reset.action-tertiary" timeout="30"/>
+        <element name="attributeCode" type="input" selector="#rmaItemAttributeGrid_filter_attribute_code"/>
+        <element name="foundAttribute" type="button" selector="#rmaItemAttributeGrid_table &gt; tbody &gt; tr:nth-child({{value}})" parameterized="true"/>
+        <element name="acceptDeleting" type="button" selector=".action-primary.action-accept"/>
+        <element name="successMessage" type="text" selector=".message.message-success.success"/>
+    </section>
+</sections>

@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+ /**
+  * Copyright © Magento, Inc. All rights reserved.
+  * See COPYING.txt for license details.
+  */
+-->
+<sections xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+          xsi:noNamespaceSchemaLocation="urn:magento:mftf:Page/etc/SectionObject.xsd">
+    <section name="AdminStagingEditSection">
+        <element name="updateName" type="input" selector="input[name='general[name]']"/>
+        <element name="updateDescription" type="textarea" selector="textarea[name='general[description]']"/>
+        <element name="startDate" type="input" selector="input[name='general[start_time]']"/>
+        <element name="endDate" type="input" selector="input[name='general[end_time]']"/>
+        <element name="productsTab" type="button" selector="div[data-index='products']"/>
+        <element name="productsTabOpen" type="button" selector="div[data-index='products']._show"/>
+        <element name="productNameInProductsTab" type="text" selector="table.data-grid tr.data-row:first-of-type > td:nth-of-type(3)"/>
+        <element name="productSKUInProductsTab" type="text" selector="table.data-grid tr.data-row:first-of-type > td:nth-of-type(6)"/>
+        <element name="editExistingUpdate" type="radio" selector="input[data-index='staging_save_mode']" timeout="10"/>
+        <element name="selectButton" type="button" selector=".data-row:nth-child({{productPosition}}) .action-select" parameterized="true"/>
+        <element name="viewEditButton" type="button" selector="._active > li:nth-child(1) > .action-menu-item"/>
+    </section>
+</sections>

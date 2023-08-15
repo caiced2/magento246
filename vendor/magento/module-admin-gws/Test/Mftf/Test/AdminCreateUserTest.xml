@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+ /**
+  * Copyright © Magento, Inc. All rights reserved.
+  * See COPYING.txt for license details.
+  */
+-->
+<tests xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="urn:magento:mftf:Test/etc/testSchema.xsd">
+    <test name="AdminCreateUserWithNewAdminRoleTest">
+        <annotations>
+            <features value="AdminGws"/>
+            <stories value="Create users"/>
+            <title value="Create a user in admin"/>
+            <description value="Create a user in admin"/>
+            <severity value="CRITICAL"/>
+            <group value="user"/>
+            <group value="pr_exclude"/>
+        </annotations>
+        <before>
+            <actionGroup ref="AdminLoginActionGroup" stepKey="login"/>
+        </before>
+        <actionGroup ref="AdminCreateUserRoleActionGroup" stepKey="createNewAdminUserRole">
+            <argument name="role" value="adminRole"/>
+        </actionGroup>
+        <actionGroup ref="AdminCreateUserActionGroup" stepKey="createAdminUser">
+            <argument name="role" value="adminRole"/>
+        </actionGroup>
+        <amOnPage url="{{AdminUsersPage.url}}" stepKey="navigateToRoleGrid" />
+        <waitForPageLoad stepKey="waitForPageLoad1" />
+        <fillField selector="{{AdminUserGridSection.usernameFilterTextField}}" userInput="{{newAdmin.username}}" stepKey="filterByUserName" />
+        <click selector="{{AdminUserGridSection.searchButton}}" stepKey="clickSearch" />
+        <waitForPageLoad stepKey="waitForPageLoad2" />
+        <see selector="{{AdminUserGridSection.usernameInFirstRow}}" userInput="{{newAdmin.username}}" stepKey="seeNewRole" />
+    </test>
+</tests>
+

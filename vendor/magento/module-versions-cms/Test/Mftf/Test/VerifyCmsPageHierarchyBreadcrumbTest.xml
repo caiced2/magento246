@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+ /**
+  * Copyright © Magento, Inc. All rights reserved.
+  * See COPYING.txt for license details.
+  */
+-->
+
+<tests xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:noNamespaceSchemaLocation="urn:magento:mftf:Test/etc/testSchema.xsd">
+    <test name="VerifyCmsPageHierarchyBreadcrumbTest">
+        <annotations>
+            <features value="Cms"/>
+            <stories value="CMS Hierarchy display setting for frontend CMS page"/>
+            <title value="CMS Hierarchy should not render breadcrumbs after disabled from Admin"/>
+            <description value="CMS Hierarchy should not render breadcrumbs after disabled from Admin"/>
+            <severity value="MINOR"/>
+            <testCaseId value="AC-3167"/>
+            <group value="Cms"/>
+        </annotations>
+        <before>
+            <magentoCLI command="config:set cms/hierarchy/enabled 1" stepKey="setEnablehierarchyToYes"/>
+            <magentoCLI command="cache:clean config" stepKey="cacheClean"/>
+            <actionGroup ref="AdminLoginActionGroup" stepKey="loginGetFromGeneralFile"/>
+            <actionGroup ref="AddNewNodeActionGroup" stepKey="createNode">
+                <argument name="NodeTitle" value="{{DefaultHierarchyNode.name}}"/>
+                <argument name="NodeUrlKey" value="{{DefaultHierarchyNode.urlKey}}"/>
+            </actionGroup>
+            <actionGroup ref="CreateNewPageWithAllValuesActionGroup" stepKey="createNewPage">
+                <argument name="PageTitle" value="{{_newDefaultCmsPage.title}}"/>
+                <argument name="ContentHeading" value="{{_newDefaultCmsPage.content_heading}}"/>
+                <argument name="URLKey" value="{{_newDefaultCmsPage.identifier}}"/>
+                <argument name="selectStoreViewOpt" value="Default Store View"/>
+                <argument name="selectHierarchyOpt" value="{{DefaultHierarchyNode.name}}"/>
+            </actionGroup>
+            <click selector="{{CmsNewPagePageActionsSection.expandSplitButton}}" stepKey="expandButtonMenu"/>
+            <waitForElementVisible selector="{{CmsNewPagePageActionsSection.splitButtonMenu}}" stepKey="waitForSplitButtonMenuVisible"/>
+            <click selector="{{CmsNewPagePageActionsSection.savePage}}" stepKey="clickSavePage"/>
+            <waitForElementVisible selector="{{AdminMessagesSection.success}}" stepKey="waitForPageSave"/>
+        </before>
+        <amOnPage url="{{_newDefaultCmsPage.identifier}}" stepKey="amOnNewCMSPageCreatedCheckingBreadcrumb"/>
+        <actionGroup ref="DeleteCurrentHierarchyActionGroup" stepKey="deleteNode"/>
+        <after>
+            <magentoCLI command="config:set cms/hierarchy/enabled 0" stepKey="setEnablehierarchyToNo"/>
+            <magentoCLI command="cache:clean config" stepKey="cacheClean1"/>
+            <amOnPage url="{{_newDefaultCmsPage.identifier}}" stepKey="amOnCMSPageCheckingBreadcrumb"/>
+            <actionGroup ref="DeletePageByUrlKeyActionGroup" stepKey="deleteCMSPage">
+                <argument name="UrlKey" value="{{_newDefaultCmsPage.identifier}}"/>
+            </actionGroup>
+            <actionGroup ref="AdminLogoutActionGroup" stepKey="adminLogout"/>
+        </after>
+    </test>
+</tests>

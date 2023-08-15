@@ -1,0 +1,35 @@
+<?xml version="1.0"?>
+<!--
+/**
+ * Copyright © Magento, Inc. All rights reserved.
+ * See COPYING.txt for license details.
+ */
+-->
+<logging xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:noNamespaceSchemaLocation="urn:magento:module:Magento_Logging:etc/logging.xsd">
+    <groups>
+        <group name="adminhtml_rma_index">
+            <label translate="true">Returns</label>
+            <expected_models>
+                <expected_model class="Magento\Rma\Model\Rma\RmaDataMapper"/>
+            </expected_models>
+            <events>
+                <event controller_action="adminhtml_rma_index"
+                       action_alias="view"
+                       post_dispatch="postDispatchSimpleSave" />
+                <event controller_action="adminhtml_rma_new"
+                       action_alias="new"
+                       post_dispatch="postDispatchSimpleSave" />
+                <event controller_action="adminhtml_rma_edit"
+                       action_alias="view"
+                       post_dispatch="postDispatchSimpleSave" />
+                <event controller_action="adminhtml_rma_save"
+                       action_alias="save"
+                       post_dispatch="postDispatchSimpleSave" />
+                <event controller_action="adminhtml_rma_chooseorder"
+                       action_alias="choose order"
+                       post_dispatch="postDispatchSimpleSave" />
+            </events>
+        </group>
+    </groups>
+</logging>

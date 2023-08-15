@@ -1,0 +1,132 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+ /**
+  * Copyright © Magento, Inc. All rights reserved.
+  * See COPYING.txt for license details.
+  */
+-->
+
+<tests xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xsi:noNamespaceSchemaLocation="urn:magento:mftf:Test/etc/testSchema.xsd">
+    <test name="RestrictedAdminCatalogOpenUpdateAttributesTest">
+        <annotations>
+            <features value="AdminGws"/>
+            <stories value="Restrict users"/>
+            <title value="Open catalog update attributes for users with limited permission"/>
+            <description value="Restricted admin user with access to Products should have access for Update Attributes but only for those stores to which he has access"/>
+            <severity value="AVERAGE"/>
+            <testCaseId value="MC-15951"/>
+            <useCaseId value="MAGETWO-98256"/>
+            <group value="userRole"/>
+        </annotations>
+        <before>
+            <!--Create Simple Product and Category -->
+            <createData entity="SimpleSubCategory" stepKey="createCategory"/>
+            <createData entity="SimpleProduct" stepKey="createSimpleProduct1">
+                <requiredEntity createDataKey="createCategory"/>
+            </createData>
+            <createData entity="SimpleProduct" stepKey="createSimpleProduct2">
+                <requiredEntity createDataKey="createCategory"/>
+            </createData>
+            <!--Create Website -->
+            <createData entity="secondCustomWebsite" stepKey="createCustomWebsite2"/>
+
+            <actionGroup ref="AdminLoginActionGroup" stepKey="loginAsAdmin1"/>
+
+            <!--Create Store and Store View -->
+            <actionGroup ref="AdminCreateNewStoreGroupActionGroup" stepKey="createSecondStoreGroup">
+                <argument name="website" value="$createCustomWebsite2.website[name]$"/>
+                <argument name="storeGroupName" value="{{SecondStoreGroupUnique.name}}"/>
+                <argument name="storeGroupCode" value="{{SecondStoreGroupUnique.code}}"/>
+            </actionGroup>
+            <actionGroup ref="AdminCreateStoreViewActionGroup" stepKey="createSecondStoreView">
+                <argument name="StoreGroup" value="SecondStoreGroupUnique"/>
+                <argument name="customStore" value="SecondStoreUnique"/>
+            </actionGroup>
+            <magentoCron groups="index" stepKey="reindex"/>
+
+            <!-- Open SimpleProduct1 and assigned to custom website -->
+            <amOnPage url="{{AdminProductEditPage.url($$createSimpleProduct1.id$$)}}" stepKey="goToProductEditPage1"/>
+            <actionGroup ref="ProductSetWebsiteActionGroup" stepKey="setWebsiteForProduct1">
+                <argument name="website" value="$createCustomWebsite2.website[name]$"/>
+            </actionGroup>
+
+            <!-- Open SimpleProduct2, assigned to custom website and deselect main site and save -->
+            <amOnPage url="{{AdminProductEditPage.url($$createSimpleProduct2.id$$)}}" stepKey="goToProductEditPage2"/>
+            <actionGroup ref="SelectProductInWebsitesActionGroup" stepKey="selectWebsiteInProduct2">
+                <argument name="website" value="$createCustomWebsite2.website[name]$"/>
+            </actionGroup>
+            <uncheckOption selector="{{ProductInWebsitesSection.website('Main Website')}}" stepKey="uncheckMainWebsiteInProduct2"/>
+            <actionGroup ref="SaveProductFormActionGroup" stepKey="saveProduct2"/>
+
+            <!-- Create restricted admin user -->
+            <actionGroup ref="AdminCreateUserRoleWithScopeActionGroup" stepKey="createRestrictedAdminRole">
+                <argument name="role" value="RestrictedAdminRole"/>
+                <argument name="scopeName" value="$createCustomWebsite2.website[name]$"/>
+            </actionGroup>
+            <actionGroup ref="AdminCreateUserWithRoleActionGroup" stepKey="createRestrictedAdmin">
+                <argument name="role" value="RestrictedAdminRole"/>
+            </actionGroup>
+        </before>
+        <after>
+            <actionGroup ref="AdminLogoutActionGroup" stepKey="beginWithLogout"/>
+
+            <deleteData createDataKey="createSimpleProduct1" stepKey="deleteSimpleProduct1"/>
+            <deleteData createDataKey="createSimpleProduct2" stepKey="deleteSimpleProduct2"/>
+            <deleteData createDataKey="createCategory" stepKey="deleteCategory"/>
+
+            <actionGroup ref="AdminLoginActionGroup" stepKey="loginAsAdmin3"/>
+
+            <actionGroup ref="AdminDeleteCreatedUserActionGroup" stepKey="deleteUser">
+                <argument name="user" value="newAdmin"/>
+            </actionGroup>
+            <actionGroup ref="AdminDeleteUserRoleWithSpecifiedPermissionActionGroup" stepKey="deleteRole">
+                <argument name="role" value="RestrictedAdminRole"/>
+            </actionGroup>
+            <actionGroup ref="AdminDeleteWebsiteActionGroup" stepKey="deleteWebsite">
+                <argument name="websiteName" value="$createCustomWebsite2.website[name]$"/>
+            </actionGroup>
+            <magentoCron groups="index" stepKey="reindex"/>
+
+            <actionGroup ref="AdminLogoutActionGroup" stepKey="logoutAsAdmin3"/>
+        </after>
+
+        <!--Search created store view in grid and grab store ID -->
+        <actionGroup ref="AssertStoreViewInGridActionGroup" stepKey="searchCreatedStoreViewInGrid">
+            <argument name="storeViewName" value="{{SecondStoreUnique.name}}"/>
+        </actionGroup>
+        <click selector="{{AdminStoresGridSection.storeNameInFirstRow}}" stepKey="clickStoreViewFirstRowInGrid"/>
+        <waitForPageLoad stepKey="waitForAdminSystemStoreViewPageLoad"/>
+        <grabFromCurrentUrl regex="~/store_id/(\d+)/~" stepKey="grabStoreIdFromURL"/>
+
+        <actionGroup ref="AdminLogoutActionGroup" stepKey="logoutAsAdmin1"/>
+
+        <actionGroup ref="AdminLoginActionGroup" stepKey="loginAsAdmin2" >
+            <argument name="username" value="{{newAdmin.username}}" />
+            <argument name="password" value="{{newAdmin.password}}" />
+        </actionGroup>
+
+        <!-- Search and select products -->
+        <actionGroup ref="AdminOpenProductIndexPageActionGroup" stepKey="navigateToProductIndex"/>
+        <comment userInput="BIC workaround" stepKey="waitForProductIndexPageLoad"/>
+        <actionGroup ref="ResetAdminDataGridToDefaultViewActionGroup" stepKey="resetGrid"/>
+        <actionGroup ref="SearchProductGridByKeyword2ActionGroup" stepKey="searchByKeyword">
+            <argument name="keyword" value="simple-product"/>
+        </actionGroup>
+        <actionGroup ref="SortProductsByIdDescendingActionGroup" stepKey="sortProductsByIdDescending"/>
+        <click selector="{{AdminProductGridSection.productRowCheckboxBySku($$createSimpleProduct1.sku$$)}}" stepKey="clickCheckbox1"/>
+        <click selector="{{AdminProductGridSection.productRowCheckboxBySku($$createSimpleProduct2.sku$$)}}" stepKey="clickCheckbox2"/>
+
+        <!-- Open Update Attributes -->
+        <click selector="{{AdminProductGridSection.bulkActionDropdown}}" stepKey="clickDropdown"/>
+        <click selector="{{AdminProductGridSection.bulkActionOption('Update attributes')}}" stepKey="clickUpdateAttributes"/>
+        <waitForPageLoad stepKey="waitForProductAttributePageToLoad"/>
+
+        <dontSeeElementInDOM selector="{{AdminMainActionsSection.allStoreViews}}" stepKey="dontAvailableAllStoreViewsInStoreSwitcher"/>
+        <seeElementInDOM selector="{{AdminMainActionsSection.storeViewByName(SecondStoreUnique.name)}}" stepKey="availableSecondStoreViewInStoreSwitcher"/>
+        <see userInput="{{SecondStoreUnique.name}}" selector="{{AdminMainActionsSection.storeViewDropdown}}" stepKey="seeSecondStoreViewName"/>
+        <seeElementInDOM selector="{{AdminEditProductAttributesSection.formByStoreId('$grabStoreIdFromURL')}}" stepKey="checkCorrectFormActionUrl"/>
+
+        <actionGroup ref="AdminLogoutActionGroup" stepKey="logoutAsAdmin2"/>
+    </test>
+</tests>

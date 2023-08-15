@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+ /**
+  * Copyright © Magento, Inc. All rights reserved.
+  * See COPYING.txt for license details.
+  */
+-->
+<actionGroups xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:noNamespaceSchemaLocation="urn:magento:mftf:Test/etc/actionGroupSchema.xsd">
+    <actionGroup name="AdminFillReturnItemFields">
+        <arguments>
+            <argument name="itemIndex" type="string" defaultValue="1"/>
+            <argument name="qtyRequested" type="string" defaultValue="1"/>
+            <argument name="reason" type="string"/>
+            <argument name="condition" type="string"/>
+            <argument name="resolution" type="string"/>
+        </arguments>
+        <fillField selector="{{AdminReturnItemsSection.requested(itemIndex)}}" userInput="{{qtyRequested}}" stepKey="fillRequestedReturnQty"/>
+        <selectOption selector="{{AdminReturnItemsSection.returnReason(itemIndex)}}" userInput="{{reason}}" stepKey="selectReturnReason"/>
+        <selectOption selector="{{AdminReturnItemsSection.itemCondition(itemIndex)}}" userInput="{{condition}}" stepKey="selectReturnItemCondition"/>
+        <selectOption selector="{{AdminReturnItemsSection.resolution(itemIndex)}}" userInput="{{resolution}}" stepKey="selectReturnResolution"/>
+    </actionGroup>
+</actionGroups>

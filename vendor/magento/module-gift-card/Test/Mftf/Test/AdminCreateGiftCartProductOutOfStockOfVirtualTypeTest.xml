@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+ /**
+  * Copyright © Magento, Inc. All rights reserved.
+  * See COPYING.txt for license details.
+  */
+-->
+
+<tests xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xsi:noNamespaceSchemaLocation="urn:magento:mftf:Test/etc/testSchema.xsd">
+    <test name="AdminCreateGiftCartProductOutOfStockOfVirtualTypeTest" extends="AdminCreateGiftCardProductOutOfStockOfVirtualTypeWithoutWebsiteTest">
+        <annotations>
+            <features value="GiftCard"/>
+            <stories value="Create gift card product"/>
+            <title value="Admin create gift card product cart out of stock of virtual type test"/>
+            <description value="Admin should be able to create gift cart out of stock of virtual type"/>
+            <severity value="CRITICAL"/>
+            <testCaseId value="MC-14497"/>
+            <group value="mtf_migrated"/>
+            <group value="GiftCard"/>
+        </annotations>
+        <remove keyForRemoval="seeStockStatusInProductForm"/>
+
+        <!-- Assert gift card product is out of stock on storefront -->
+        <amOnPage url="{{VirtualGiftCardOutOfStock.urlKey}}.html" stepKey="goToProductPage" after="checkGiftCardAmountFilled"/>
+        <waitForPageLoad stepKey="waitForProductPageLoad" after="goToProductPage"/>
+        <see selector="{{StorefrontProductInfoMainSection.stockIndication}}" userInput="OUT OF STOCK" stepKey="checkForOutOfStock" after="waitForProductPageLoad"/>
+    </test>
+</tests>

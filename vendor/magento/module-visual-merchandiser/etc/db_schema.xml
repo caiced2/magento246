@@ -1,0 +1,40 @@
+<?xml version="1.0"?>
+<!--
+/**
+ * Copyright © Magento, Inc. All rights reserved.
+ * See COPYING.txt for license details.
+ */
+-->
+<schema xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:noNamespaceSchemaLocation="urn:magento:framework:Setup/Declaration/Schema/etc/schema.xsd">
+    <table name="visual_merchandiser_rule" resource="default" engine="innodb" comment="VisualMerchandiser Rules Table">
+        <column xsi:type="int" name="rule_id" unsigned="true" nullable="false" identity="true"
+                comment="Rule Id"/>
+        <column xsi:type="int" name="category_id" unsigned="true" nullable="false" identity="false"
+                default="0" comment="Category ID"/>
+        <column xsi:type="smallint" name="store_id" unsigned="true" nullable="false" identity="false"
+                default="0" comment="Store ID"/>
+        <column xsi:type="smallint" name="is_active" unsigned="false" nullable="false" identity="false"
+                default="0" comment="Is Active"/>
+        <column xsi:type="mediumtext" name="conditions_serialized" nullable="true" comment="Conditions Serialized"/>
+        <constraint xsi:type="primary" referenceId="PRIMARY">
+            <column name="rule_id"/>
+        </constraint>
+        <constraint xsi:type="foreign" referenceId="VISUAL_MERCHANDISER_RULE_STORE_ID_STORE_STORE_ID"
+                    table="visual_merchandiser_rule" column="store_id" referenceTable="store" referenceColumn="store_id"
+                    onDelete="CASCADE"/>
+        <constraint xsi:type="foreign" referenceId="VISUAL_MERCHANDISER_RULE_CTGR_ID_CAT_CTGR_ENTT_ENTT_ID"
+                    table="visual_merchandiser_rule" column="category_id" referenceTable="catalog_category_entity"
+                    referenceColumn="entity_id" onDelete="CASCADE"/>
+        <constraint xsi:type="unique" referenceId="VISUAL_MERCHANDISER_RULE_CATEGORY_ID_STORE_ID">
+            <column name="category_id"/>
+            <column name="store_id"/>
+        </constraint>
+        <index referenceId="VISUAL_MERCHANDISER_RULE_CATEGORY_ID" indexType="btree">
+            <column name="category_id"/>
+        </index>
+        <index referenceId="VISUAL_MERCHANDISER_RULE_STORE_ID" indexType="btree">
+            <column name="store_id"/>
+        </index>
+    </table>
+</schema>

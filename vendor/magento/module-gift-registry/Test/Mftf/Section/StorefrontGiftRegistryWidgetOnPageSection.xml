@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+ /**
+  * Copyright © Magento, Inc. All rights reserved.
+  * See COPYING.txt for license details.
+  */
+-->
+
+<sections xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+          xsi:noNamespaceSchemaLocation="urn:magento:mftf:Page/etc/SectionObject.xsd">
+    <section name="StorefrontGiftRegistryWidgetOnPageSection">
+        <element name="searchBySelect" type="select" selector="div.block-giftregistry #search-by"/>
+        <element name="firstNameInput" type="input" selector="#gr-quick-search-widget-name-form #quick-search-firstname"/>
+        <element name="lastNameInput" type="input" selector="#gr-quick-search-widget-name-form #quick-search-lastname"/>
+        <element name="typeSelect" type="select" selector="#gr-quick-search-widget-name-form #quick_search_type_id"/>
+        <element name="emailInput" type="input" selector="#gr-quick-search-widget-email-form #quick-search-email"/>
+        <element name="activeSearchButton" type="button" selector="div.block-giftregistry form[style='display: block;'] .search" timeout="30"/>
+    </section>
+</sections>

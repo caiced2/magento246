@@ -1,0 +1,100 @@
+<?xml version="1.0"?>
+<!--
+/**
+ * Copyright © Magento, Inc. All rights reserved.
+ * See COPYING.txt for license details.
+ */
+-->
+<routes xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:noNamespaceSchemaLocation="urn:magento:module:Magento_Webapi:etc/webapi.xsd">
+    <route url="/V1/returns/:id/tracking-numbers" method="POST">
+        <service class="Magento\Rma\Api\TrackManagementInterface" method="addTrack"/>
+        <resources>
+            <resource ref="Magento_Rma::magento_rma" />
+        </resources>
+    </route>
+    <route url="/V1/returns/:id/tracking-numbers/:trackId" method="DELETE">
+        <service class="Magento\Rma\Api\TrackManagementInterface" method="removeTrackById"/>
+        <resources>
+            <resource ref="Magento_Rma::magento_rma" />
+        </resources>
+    </route>
+    <route url="/V1/returns/:id" method="GET">
+        <service class="Magento\Rma\Api\RmaRepositoryInterface" method="get"/>
+        <resources>
+            <resource ref="Magento_Rma::magento_rma" />
+        </resources>
+    </route>
+    <route url="/V1/returns/:id" method="DELETE">
+        <service class="Magento\Rma\Api\RmaRepositoryInterface" method="delete"/>
+        <resources>
+            <resource ref="Magento_Rma::magento_rma" />
+        </resources>
+    </route>
+    <route url="/V1/returns/:id/comments" method="POST">
+        <service class="Magento\Rma\Api\CommentManagementInterface" method="addComment"/>
+        <resources>
+            <resource ref="Magento_Rma::magento_rma" />
+        </resources>
+    </route>
+    <route url="/V1/returns" method="POST">
+        <service class="Magento\Rma\Api\RmaManagementInterface" method="saveRma"/>
+        <resources>
+            <resource ref="Magento_Rma::magento_rma" />
+        </resources>
+    </route>
+    <route url="/V1/returns/:id" method="PUT">
+        <service class="Magento\Rma\Api\RmaManagementInterface" method="saveRma"/>
+        <resources>
+            <resource ref="Magento_Rma::magento_rma" />
+        </resources>
+    </route>
+    <route url="/V1/returns/:id/comments" method="GET">
+        <service class="Magento\Rma\Api\CommentManagementInterface" method="commentsList"/>
+        <resources>
+            <resource ref="Magento_Rma::magento_rma" />
+        </resources>
+    </route>
+    <route url="/V1/returns" method="GET">
+        <service class="Magento\Rma\Api\RmaManagementInterface" method="search"/>
+        <resources>
+            <resource ref="Magento_Rma::magento_rma" />
+        </resources>
+    </route>
+    <route url="/V1/returnsAttributeMetadata/:attributeCode" method="GET">
+        <service class="Magento\Rma\Api\RmaAttributesManagementInterface" method="getAttributeMetadata"/>
+        <resources>
+            <resource ref="Magento_Rma::magento_rma"/>
+        </resources>
+    </route>
+    <route url="/V1/returnsAttributeMetadata/form/:formCode" method="GET">
+        <service class="Magento\Rma\Api\RmaAttributesManagementInterface" method="getAttributes"/>
+        <resources>
+            <resource ref="Magento_Rma::magento_rma"/>
+        </resources>
+    </route>
+    <route url="/V1/returnsAttributeMetadata" method="GET">
+        <service class="Magento\Rma\Api\RmaAttributesManagementInterface" method="getAllAttributesMetadata"/>
+        <resources>
+            <resource ref="Magento_Rma::magento_rma"/>
+        </resources>
+    </route>
+    <route url="/V1/returnsAttributeMetadata/custom" method="GET">
+        <service class="Magento\Rma\Api\RmaAttributesManagementInterface" method="getCustomAttributesMetadata"/>
+        <resources>
+            <resource ref="Magento_Rma::magento_rma"/>
+        </resources>
+    </route>
+    <route url="/V1/returns/:id/tracking-numbers" method="GET">
+        <service class="Magento\Rma\Api\TrackManagementInterface" method="getTracks"/>
+        <resources>
+            <resource ref="Magento_Rma::magento_rma" />
+        </resources>
+    </route>
+    <route url="/V1/returns/:id/labels" method="GET">
+        <service class="Magento\Rma\Api\TrackManagementInterface" method="getShippingLabelPdf"/>
+        <resources>
+            <resource ref="Magento_Rma::magento_rma" />
+        </resources>
+    </route>
+</routes>

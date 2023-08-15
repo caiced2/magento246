@@ -1,0 +1,21 @@
+<?xml version="1.0"?>
+<!--
+/**
+ * Copyright © Magento, Inc. All rights reserved.
+ * See COPYING.txt for license details.
+ */
+-->
+<page xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="urn:magento:framework:View/Layout/etc/page_configuration.xsd">
+    <body>
+        <referenceBlock name="creditmemo_totals">
+            <block class="Magento\Sales\Block\Adminhtml\Order\Totals\Item" name="customerbalance" template="Magento_CustomerBalance::sales/creditmemo/totals/customerbalance.phtml" after="-"/>
+        </referenceBlock>
+        <referenceContainer name="submit_before">
+            <block class="Magento\CustomerBalance\Block\Adminhtml\Sales\Order\Creditmemo\Controls" name="customerbalance.creditmemo" template="Magento_CustomerBalance::sales/creditmemo/refund.phtml">
+                <arguments>
+                    <argument name="customer_balance_data" xsi:type="object" shared="false">Magento\CustomerBalance\Block\Adminhtml\DataProvider\Refund</argument>
+                </arguments>
+            </block>
+        </referenceContainer>
+    </body>
+</page>

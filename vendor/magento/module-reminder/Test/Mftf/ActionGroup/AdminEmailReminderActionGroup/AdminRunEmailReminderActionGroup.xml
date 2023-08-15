@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+ /**
+  * Copyright © Magento, Inc. All rights reserved.
+  * See COPYING.txt for license details.
+  */
+-->
+<actionGroups xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:noNamespaceSchemaLocation="urn:magento:mftf:Test/etc/actionGroupSchema.xsd">
+    <actionGroup name="AdminRunEmailReminderActionGroup" extends="AdminOpenEmailReminderByNameActionGroup">
+        <annotations>
+            <description>EXTENDS: AdminOpenEmailReminderByNameActionGroup. Runs the Email Reminder.</description>
+        </annotations>
+
+        <waitForElementVisible selector="{{AdminEmailReminderRuleFormMainActionsSection.runNow}}" after="waitForEmailReminderPageLoaded" stepKey="waitForRunNowButtonVisible"/>
+        <click selector="{{AdminEmailReminderRuleFormMainActionsSection.runNow}}" stepKey="clickOnRunNowButton"/>
+        <waitForElementVisible selector="{{AdminConfirmationModalSection.ok}}" stepKey="waitForConfirmButtonVisible"/>
+        <click selector="{{AdminConfirmationModalSection.ok}}" stepKey="clickToConfirm"/>
+        <waitForElementVisible selector="{{AdminMessagesSection.success}}" stepKey="waitForSuccessMessage"/>
+        <see selector="{{AdminMessagesSection.success}}" userInput="You matched the reminder rule." stepKey="seeSuccessMessage"/>
+    </actionGroup>
+</actionGroups>

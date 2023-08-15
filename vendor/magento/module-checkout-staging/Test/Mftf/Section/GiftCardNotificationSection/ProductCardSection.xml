@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+ /**
+  * Copyright © Magento, Inc. All rights reserved.
+  * See COPYING.txt for license details.
+  */
+-->
+<sections xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:noNamespaceSchemaLocation="urn:magento:mftf:Page/etc/SectionObject.xsd">
+    <section name="ProductCardSection">
+        <!--Add/remove gift cart and cart price codes for the product-->
+        <element name="add" type="button" selector="#product-addtocart-button"/>
+        <element name="message" type="text" selector="//div[@role='alert']/div/div"/>
+        <element name="showCard" type="button" selector=".action.showcart"/>
+        <element name="proceed" type="button" selector="#top-cart-btn-checkout"/>
+        <element name="addCard" type="button" selector="#block-giftcard-heading"/>
+        <element name="enterCode" type="button" selector="#giftcard-code"/>
+        <element name="apply" type="button" selector="//span[text()='Apply']"/>
+        <element name="verificationMsg" type="button" selector="//div[@data-role='checkout-messages']/div/div"/>
+        <element name="remove" type="button" selector="//a[contains(text(), 'Remove')]"/>
+        <element name="addCoupon" type="button" selector="//span[text()='Apply Discount Code']" timeout="60"/>
+        <element name="addCode" type="button" selector="#discount-code"/>
+        <element name="applyDiscount" type="button" selector="//span[text()='Apply Discount']" timeout="60"/>
+        <element name="discountVerificationMsg" type="button" selector="//div[contains(@class, 'discount-code _active')]//div[@data-role='checkout-messages']/div/div"/>
+        <element name="discountSuccessMsgInDOM" type="button" selector="//div[contains(@class, 'discount-code _active')]//div[@data-role='checkout-messages']/div[contains(@class,'message-success')]/div"/>
+        <element name="cancel" type="button" selector="//span[text()='Cancel coupon']"/>
+    </section>
+</sections>

@@ -1,0 +1,136 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+ /**
+  * Copyright © Magento, Inc. All rights reserved.
+  * See COPYING.txt for license details.
+  */
+-->
+
+<tests xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="urn:magento:mftf:Test/etc/testSchema.xsd">
+        <test name="AddConfigurableProductToCartOrderBySkuWidgetTest">
+        <annotations>
+            <title value="Check that shopping Cart is empty when Configurable product added by SKU from Widget to an Order"/>
+            <description value="Check that shopping Cart is empty when Configurable product added by SKU from Widget to an Order"/>
+            <severity value="CRITICAL"/>
+            <testCaseId value="MC-14052"/>
+            <group value="AdvancedCheckout"/>
+            <stories value="Add products to cart by sku from widget"/>
+            <group value="mtf_migrated"/>
+        </annotations>
+        <before>
+            <!--Register Customer-->
+            <createData entity="Simple_US_Customer" stepKey="createCustomer"/>
+
+            <!--Create Configurable Product -->
+            <!-- Create the category to put the product in -->
+            <createData entity="ApiCategory" stepKey="createCategory"/>
+
+            <!-- Create the configurable product based on the data in the /data folder -->
+            <createData entity="ApiConfigurableProduct" stepKey="createConfigProduct">
+                <requiredEntity createDataKey="createCategory"/>
+            </createData>
+
+            <!-- Make the configurable product have two options, that are children of the default attribute set -->
+            <createData entity="productAttributeWithTwoOptions" stepKey="createConfigProductAttribute"/>
+            <createData entity="productAttributeOption1" stepKey="createConfigProductAttributeOption1">
+                <requiredEntity createDataKey="createConfigProductAttribute"/>
+            </createData>
+            <createData entity="productAttributeOption2" stepKey="createConfigProductAttributeOption2">
+                <requiredEntity createDataKey="createConfigProductAttribute"/>
+            </createData>
+            <createData entity="AddToDefaultSet" stepKey="createConfigAddToAttributeSet">
+                <requiredEntity createDataKey="createConfigProductAttribute"/>
+            </createData>
+            <getData entity="ProductAttributeOptionGetter" index="1" stepKey="getConfigAttributeOption1">
+                <requiredEntity createDataKey="createConfigProductAttribute"/>
+            </getData>
+            <getData entity="ProductAttributeOptionGetter" index="2" stepKey="getConfigAttributeOption2">
+                <requiredEntity createDataKey="createConfigProductAttribute"/>
+            </getData>
+
+            <!-- Create the 2 children that will be a part of the configurable product -->
+            <createData entity="ApiSimpleOne" stepKey="createConfigChildProduct1">
+                <requiredEntity createDataKey="createConfigProductAttribute"/>
+                <requiredEntity createDataKey="getConfigAttributeOption1"/>
+            </createData>
+            <createData entity="ApiSimpleTwo" stepKey="createConfigChildProduct2">
+                <requiredEntity createDataKey="createConfigProductAttribute"/>
+                <requiredEntity createDataKey="getConfigAttributeOption2"/>
+            </createData>
+
+            <!-- Assign the two products to the configurable product -->
+            <createData entity="ConfigurableProductTwoOptions" stepKey="createConfigProductOption">
+                <requiredEntity createDataKey="createConfigProduct"/>
+                <requiredEntity createDataKey="createConfigProductAttribute"/>
+                <requiredEntity createDataKey="getConfigAttributeOption1"/>
+                <requiredEntity createDataKey="getConfigAttributeOption2"/>
+            </createData>
+            <createData entity="ConfigurableProductAddChild" stepKey="createConfigProductAddChild1">
+                <requiredEntity createDataKey="createConfigProduct"/>
+                <requiredEntity createDataKey="createConfigChildProduct1"/>
+            </createData>
+            <createData entity="ConfigurableProductAddChild" stepKey="createConfigProductAddChild2">
+                <requiredEntity createDataKey="createConfigProduct"/>
+                <requiredEntity createDataKey="createConfigChildProduct2"/>
+            </createData>
+
+            <actionGroup ref="AdminLoginActionGroup" stepKey="loginAsAdmin"/>
+            <waitForPageLoad time="30" stepKey="waitForWidgetLoad"/>
+
+            <!-- Flush cache -->
+            <actionGroup ref="CliCacheFlushActionGroup" stepKey="flushCache">
+                <argument name="tags" value=""/>
+            </actionGroup>
+
+            <!--Create widget "Order by Sku" -->
+            <actionGroup ref="AdminCreateAndSaveWidgetActionGroup" stepKey="createWidget">
+                <argument name="widget" value="DefaultOrderBySKUWidget" />
+            </actionGroup>
+        </before>
+        <after>
+            <deleteData createDataKey="createCustomer" stepKey="deleteCustomer"/>
+            <deleteData createDataKey="createCategory" stepKey="deleteCategory"/>
+            <deleteData createDataKey="createConfigProduct" stepKey="deleteConfigProduct"/>
+            <deleteData createDataKey="createConfigChildProduct1" stepKey="deleteConfigChildProduct1"/>
+            <deleteData createDataKey="createConfigChildProduct2" stepKey="deleteConfigChildProduct2"/>
+            <deleteData createDataKey="createConfigProductAttribute" stepKey="deleteConfigProductAttribute"/>
+
+            <actionGroup ref="AdminDeleteWidgetActionGroup" stepKey="deleteWidget">
+                <argument name="widget" value="DefaultOrderBySKUWidget"/>
+            </actionGroup>
+
+            <actionGroup ref="AdminLogoutActionGroup" stepKey="adminLogout"/>
+            <amOnPage url="{{AdminLogoutPage.url}}" stepKey="logout"/>
+
+            <!-- Reindex invalidated indices after product attribute has been created/deleted -->
+           <magentoCron groups="index" stepKey="reindexInvalidatedIndices"/>
+        </after>
+
+        <!--Login to Frontend-->
+        <actionGroup ref="LoginToStorefrontActionGroup" stepKey="customerLogin">
+            <argument name="Customer" value="$$createCustomer$$" />
+        </actionGroup>
+
+        <!--Navigate to My Account-->
+        <amOnPage url="{{StorefrontCustomerDashboardPage.url}}" stepKey="openCustomersAccount"/>
+        <scrollTo selector="{{StorefrontWidgetOrderBySKUSection.sku('0')}}" stepKey="scrollToWidget"/>
+
+        <!--Fill data in widget according to dataset-->
+        <actionGroup ref="StorefrontFillOrderBySkuWidgetActionGroup" stepKey="fillSimpleProductBySkuOnWidget">
+            <argument name="product" value="$$createConfigProduct$$" />
+            <argument name="cartItem" value="SimpleTwoCartItems" />
+            <argument name="rowNumber" value="0" />
+        </actionGroup>
+
+        <!--Click Add to Cart button-->
+        <actionGroup ref="StorefrontAddToCartOrderBySkuWidgetActionGroup" stepKey="addToCart"/>
+
+        <!--Perform all asserts-->
+        <waitForPageLoad time="10" stepKey="waitForPageLoad"/>
+        <see selector="{{CheckoutCartMessageSection.errorMessage}}" userInput="1 product requires your attention." stepKey="seeErrorMessage"/>
+        <see selector="{{CheckoutCartProductSection.productName}}" userInput="$$createConfigProduct.name$$" stepKey="seeProductName"/>
+        <see selector="{{CheckoutCartProductSection.messageErrorNeedChooseOptions}}" userInput="You need to choose options for your item." stepKey="seeNeedChooseOptions"/>
+        <see selector="{{CheckoutCartProductSection.productOptionsLink}}" userInput="Specify the product's options." stepKey="seeText"/>
+        <actionGroup ref="StorefrontCheckThatCartIsEmptyActionGroup" stepKey="checkThatCartIsEmpty"/>
+    </test>
+</tests>

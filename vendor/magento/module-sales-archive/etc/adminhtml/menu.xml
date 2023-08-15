@@ -1,0 +1,16 @@
+<?xml version="1.0"?>
+<!--
+/**
+ * Copyright © Magento, Inc. All rights reserved.
+ * See COPYING.txt for license details.
+ */
+-->
+<config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="urn:magento:module:Magento_Backend:etc/menu.xsd">
+    <menu>
+        <add id="Magento_SalesArchive::sales_archive" title="Archive" translate="title" module="Magento_SalesArchive" sortOrder="20" parent="Magento_Sales::sales" dependsOnConfig="sales/magento_salesarchive/active" resource="Magento_SalesArchive::archive"/>
+        <add id="Magento_SalesArchive::sales_archive_orders" title="Orders" translate="title" module="Magento_SalesArchive" sortOrder="10" parent="Magento_SalesArchive::sales_archive" action="sales/archive/orders" resource="Magento_SalesArchive::orders"/>
+        <add id="Magento_SalesArchive::sales_archive_invoices" title="Invoices" translate="title" module="Magento_SalesArchive" sortOrder="20" parent="Magento_SalesArchive::sales_archive" action="sales/archive/invoices" resource="Magento_SalesArchive::invoices"/>
+        <add id="Magento_SalesArchive::sales_archive_shipments" title="Shipments" translate="title" module="Magento_SalesArchive" sortOrder="30" parent="Magento_SalesArchive::sales_archive" action="sales/archive/shipments" resource="Magento_SalesArchive::shipments"/>
+        <add id="Magento_SalesArchive::sales_archive_creditmemos" title="Credit Memos" translate="title" module="Magento_SalesArchive" sortOrder="40" parent="Magento_SalesArchive::sales_archive" action="sales/archive/creditmemos" resource="Magento_SalesArchive::creditmemos"/>
+    </menu>
+</config>

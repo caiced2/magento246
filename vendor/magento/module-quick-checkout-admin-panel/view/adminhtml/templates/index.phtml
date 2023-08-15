@@ -1,0 +1,14 @@
+<?php
+/**
+ * Copyright © Magento, Inc. All rights reserved.
+ * See COPYING.txt for license details.
+ */
+?>
+
+<?php
+    /** @var \Magento\QuickCheckoutAdminPanel\Block\Adminhtml\Dashbaord\Index $block */
+    /** @var \Magento\Framework\Escaper $escaper */
+?>
+
+<div id="root" data-config="<?= $escaper->escapeHtmlAttr($block->getConfigJson()) ?>"></div>
+<script src="<?= $escaper->escapeUrl($block->getFrontendUrl()) ?>"></script>

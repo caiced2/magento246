@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+ /**
+  * Copyright © Magento, Inc. All rights reserved.
+  * See COPYING.txt for license details.
+  */
+-->
+<actionGroups xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+              xsi:noNamespaceSchemaLocation="urn:magento:mftf:Test/etc/actionGroupSchema.xsd">
+    <actionGroup name="AdminCustomerConfigSetCustomAddressTemplateByTypeActionGroup">
+        <annotations>
+            <description>Set custom data in the address template input</description>
+        </annotations>
+        <arguments>
+            <argument name="templateType" type="string" defaultValue="{{templateTypeText.templateType}}"/>
+            <argument name="templateValue" type="string" defaultValue="custom_value"/>
+        </arguments>
+        <waitForElementVisible selector="{{AdminCustomerConfigAddressTemplateSection.addressTemplateTypeValueInput(templateType)}}" stepKey="waitForInputVisibility"/>
+        <uncheckOption selector="{{AdminCustomerConfigAddressTemplateSection.addressTemplateTypeDefaultCheckbox(templateType)}}" stepKey="uncheckAddressTemplateCheckbox"/>
+        <fillField selector="{{AdminCustomerConfigAddressTemplateSection.addressTemplateTypeValueInput(templateType)}}" userInput="{{templateValue}}" stepKey="fillAddressTemplateValue"/>
+    </actionGroup>
+</actionGroups>

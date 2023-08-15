@@ -1,0 +1,33 @@
+<?xml version="1.0"?>
+<!--
+/**
+ * Copyright © Magento, Inc. All rights reserved.
+ * See COPYING.txt for license details.
+ */
+-->
+<config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="urn:magento:module:Magento_Config:etc/system_file.xsd">
+    <system>
+        <section id="catalog">
+            <group id="magento_catalogevent" translate="label" showInDefault="1" showInWebsite="1" showInStore="1" sortOrder="800">
+                <label>Catalog Events</label>
+                <field id="enabled" translate="label" type="select" sortOrder="5" showInDefault="1" showInWebsite="1" showInStore="0">
+                    <label>Enable Catalog Events Functionality</label>
+                    <source_model>Magento\Config\Model\Config\Source\Yesno</source_model>
+                    <backend_model>Magento\CatalogEvent\Model\Adminhtml\System\Config\Backend\Cache</backend_model>
+                </field>
+                <field id="lister_output" translate="label" type="select" sortOrder="10" showInDefault="1" showInWebsite="1" showInStore="1">
+                    <label>Enable Catalog Event Widget on Storefront</label>
+                    <source_model>Magento\Config\Model\Config\Source\Yesno</source_model>
+                </field>
+                <field id="lister_widget_limit" translate="label comment" sortOrder="15" showInDefault="1" showInWebsite="1" showInStore="1">
+                    <label>Number of Events to be Displayed in Event Slider Widget</label>
+                    <comment>You can override this default value in CMS using the limit="x" variable. Leave empty for no limitation.</comment>
+                </field>
+                <field id="lister_widget_scroll" translate="label comment" sortOrder="20" showInDefault="1" showInWebsite="1" showInStore="1">
+                    <label>Events to Scroll per Click in Event Slider Widget</label>
+                    <comment>You can override this default value in CMS using the limit="x" variable.</comment>
+                </field>
+            </group>
+        </section>
+    </system>
+</config>

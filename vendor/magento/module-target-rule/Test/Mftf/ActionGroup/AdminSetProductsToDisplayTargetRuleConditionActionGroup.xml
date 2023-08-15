@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+ /**
+  * Copyright © Magento, Inc. All rights reserved.
+  * See COPYING.txt for license details.
+  */
+-->
+<actionGroups xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+              xsi:noNamespaceSchemaLocation="urn:magento:mftf:Test/etc/actionGroupSchema.xsd">
+    <actionGroup name="AdminSetProductsToDisplayTargetRuleConditionActionGroup">
+        <annotations>
+            <description>Clicks on the 'Products to Display' tab and sets conditions for Target Rule</description>
+        </annotations>
+        <arguments>
+            <argument name="attributeName" type="string" defaultValue="Category"/>
+            <argument name="attributeValue" type="string" defaultValue="2"/>
+            <argument name="operatorType" type="string" defaultValue="is"/>
+            <argument name="valueType" type="string" defaultValue="Constant Value"/>
+        </arguments>
+
+        <conditionalClick selector="{{AdminTargetRuleSection.productToDisplayTab}}" dependentSelector="{{AdminTargetRuleProductsToDisplaySection.actionAggregator}}" visible="false" stepKey="openProductsToDisplayTab"/>
+        <click selector="{{AdminTargetRuleProductsToDisplaySection.selectCondition('1','1')}}" stepKey="clickOnPlusButton"/>
+        <waitForElementVisible selector="{{AdminTargetRuleProductsToDisplaySection.newAction}}" stepKey="waitForConditionSelectorVisible"/>
+        <selectOption selector="{{AdminTargetRuleProductsToDisplaySection.newAction}}" userInput="{{attributeName}}" stepKey="selectAttributeCondition"/>
+        <waitForPageLoad stepKey="waitForConditionLoad"/>
+        <click selector="{{AdminTargetRuleProductsToDisplaySection.selectCondition('1','1')}}" stepKey="clickOnOperatorType"/>
+        <selectOption selector="{{AdminTargetRuleProductsToDisplaySection.newActionOperator}}" userInput="{{operatorType}}" stepKey="selectOperatorType"/>
+        <click selector="{{AdminTargetRuleSection.productToDisplayTab}}" stepKey="clickToUnfocusFromOperatorSelect"/>
+        <click selector="{{AdminTargetRuleProductsToDisplaySection.selectCondition('1','2')}}" stepKey="clickOnValueTypeSelect"/>
+        <selectOption selector="{{AdminTargetRuleProductsToDisplaySection.selectCategoryToggle('1--1')}}" userInput="{{valueType}}" stepKey="selectValueType"/>
+        <click selector="{{AdminTargetRuleProductsToDisplaySection.targetEllipsis}}" stepKey="clickOnEllipsis"/>
+        <waitForElementVisible selector="{{AdminTargetRuleProductsToDisplaySection.ruleFieldByIndex('1--1')}}" stepKey="waitForInputFieldVisible"/>
+        <fillField selector="{{AdminTargetRuleProductsToDisplaySection.ruleFieldByIndex('1--1')}}" userInput="{{attributeValue}}" stepKey="fillAttributeValue"/>
+        <click selector="{{AdminTargetRuleProductsToDisplaySection.apply}}" stepKey="clickOnApplyButton"/>
+    </actionGroup>
+</actionGroups>

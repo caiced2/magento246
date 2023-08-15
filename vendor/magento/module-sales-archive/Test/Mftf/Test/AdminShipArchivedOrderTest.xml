@@ -1,0 +1,87 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+ /**
+  * Copyright © Magento, Inc. All rights reserved.
+  * See COPYING.txt for license details.
+  */
+-->
+
+<tests xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xsi:noNamespaceSchemaLocation="urn:magento:mftf:Test/etc/testSchema.xsd">
+    <test name="AdminShipArchivedOrderTest">
+        <annotations>
+            <features value="SalesArchive"/>
+            <stories value="Create Shipment"/>
+            <title value="Admin move created order to Archive and create shipment for it"/>
+            <description value="Admin creates a new order whereupon move it to Archive and create shipment for it"/>
+            <severity value="AVERAGE"/>
+            <testCaseId value="MC-37499"/>
+            <group value="salesArchive"/>
+            <group value="sales"/>
+        </annotations>
+        <before>
+            <createData entity="SimpleProduct2" stepKey="createSimpleProduct"/>
+            <createData entity="Simple_US_Customer" stepKey="createCustomer"/>
+            <actionGroup ref="CliEnableSalesArchiveActionGroup" stepKey="enableOrderArchiving"/>
+            <actionGroup ref="CliSetOrderStatusesToBeArchivedActionGroup" stepKey="setOrderStatusesToBeArchived">
+                <argument name="orderStatuses" value="{{OrderStatusesArchived.allValue}}"/>
+            </actionGroup>
+            <actionGroup ref="AdminLoginActionGroup" stepKey="loginAsAdmin"/>
+        </before>
+        <after>
+            <deleteData createDataKey="createSimpleProduct" stepKey="deleteSimpleProduct"/>
+            <deleteData createDataKey="createCustomer" stepKey="deleteCustomer"/>
+            <actionGroup ref="CliSetOrderStatusesToBeArchivedActionGroup" stepKey="setDefaultOrderStatusesToBeArchived"/>
+            <actionGroup ref="CliDisableSalesArchiveActionGroup" stepKey="disableOrderArchiving"/>
+            <actionGroup ref="AdminOrdersGridClearFiltersActionGroup" stepKey="resetOrderFilter"/>
+            <amOnPage url="{{AdminArchiveOrdersGridPage.url}}" stepKey="goToAdminArchiveOrdersGrid"/>
+            <actionGroup ref="AdminGridFilterResetActionGroup" stepKey="clearArchiveOrdersGridFilters"/>
+            <amOnPage url="{{AdminShipmentsArchiveGridPage.url}}" stepKey="goToAdminArchiveShipmentsGrid"/>
+            <actionGroup ref="AdminGridFilterResetActionGroup" stepKey="clearArchiveShipmentsGridFilters"/>
+            <actionGroup ref="AdminLogoutActionGroup" stepKey="logoutFromAdmin"/>
+        </after>
+        <!-- Create new order from admin panel with created customer -->
+        <actionGroup ref="NavigateToNewOrderPageExistingCustomerActionGroup" stepKey="navigateToNewOrderWithExistingCustomer">
+            <argument name="customer" value="$createCustomer$"/>
+        </actionGroup>
+        <!-- Add Simple product to order and fill quantity -->
+        <actionGroup ref="AddSimpleProductToOrderActionGroup" stepKey="addSimpleProductToTheOrder">
+            <argument name="product" value="$createSimpleProduct$"/>
+            <argument name="productQty" value="2"/>
+        </actionGroup>
+        <actionGroup ref="AdminSelectFlatRateShippingMethodActionGroup" stepKey="selectFlatRateShippingMethod"/>
+        <actionGroup ref="AdminOrderClickSubmitOrderActionGroup" stepKey="submitOrder"/>
+        <actionGroup ref="VerifyCreatedOrderInformationActionGroup" stepKey="verifyCreatedOrderInformation"/>
+        <grabFromCurrentUrl regex="~/order_id/(\d+)/~" stepKey="grabOrderId"/>
+        <grabTextFrom selector="|Order # (\d+)|" stepKey="orderNumber"/>
+        <!-- Move the created order to the archive -->
+        <actionGroup ref="FilterOrderGridByIdActionGroup" stepKey="filterOrderGridById">
+            <argument name="orderId" value="{$orderNumber}"/>
+        </actionGroup>
+        <actionGroup ref="AdminOrderActionOnGridActionGroup" stepKey="actionMoveToArchive">
+            <argument name="action" value="Move to Archive"/>
+            <argument name="orderId" value="{$orderNumber}"/>
+        </actionGroup>
+        <!-- Assert Success Message -->
+        <actionGroup ref="AssertAdminMessageCreateIntegrationEntityActionGroup" stepKey="seeSuccessMessage">
+            <argument name="message" value="We archived 1 order(s)."/>
+        </actionGroup>
+        <!-- Create Shipment from archived order-->
+        <amOnPage url="{{AdminArchiveOrdersGridPage.url}}" stepKey="navigateToArchiveOrdersPage"/>
+        <actionGroup ref="AdminGridFilterSearchResultsByInput" stepKey="filterArchiveOrderGridByIdAction">
+            <argument name="selector" value="AdminOrdersGridSection.idFilter"/>
+            <argument name="value" value="{$orderNumber}"/>
+        </actionGroup>
+        <actionGroup ref="AdminSelectFirstGridRowActionGroup" stepKey="openArchivedOrder"/>
+        <actionGroup ref="GoToShipmentIntoOrderActionGroup" stepKey="startShipment"/>
+        <actionGroup ref="SubmitShipmentIntoOrderActionGroup" stepKey="submitShipment"/>
+        <!-- Assert created Archive Shipment -->
+        <amOnPage url="{{AdminShipmentsArchiveGridPage.url}}" stepKey="navigateToShipmentsArchivePage"/>
+        <actionGroup ref="AdminGridFilterSearchResultsByInput" stepKey="filterArchiveShipmentsGridByOrderId">
+            <argument name="selector" value="AdminShipmentsGridFiltersSection.orderNumber"/>
+            <argument name="value" value="{$orderNumber}"/>
+        </actionGroup>
+        <see userInput="{$orderNumber}" selector="{{AdminGridRow.rowOne}}" stepKey="seeArchivedShipment"/>
+        <actionGroup ref="AdminAssertNumberOfRecordsInUiGridActionGroup" stepKey="assertNumberOfRecordsInShipmentsGrid"/>
+    </test>
+</tests>

@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+ /**
+  * Copyright © Magento, Inc. All rights reserved.
+  * See COPYING.txt for license details.
+  */
+-->
+<actionGroups xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:noNamespaceSchemaLocation="urn:magento:mftf:Test/etc/actionGroupSchema.xsd">
+    <actionGroup name="VerifyStagingUpdatePriceActionGroup">
+        <arguments>
+            <argument name="category"/>
+            <argument name="product"/>
+            <argument name="previewDate" type="string"/>
+            <argument name="expectedPrice" defaultValue="10" type="string"/>
+        </arguments>
+        <seeInCurrentUrl url="{{AdminStagingPreviewPage.url}}" stepKey="seeInUrlUpdatePreview"/>
+        <switchToIFrame stepKey="switchToIFrame"/>
+        <waitForPageLoad time="30" stepKey="waitForFrameLoad"/>
+        <click selector="{{AdminStagingPreviewSection.calendarBtn}}" stepKey="clickPreviewCalendar"/>
+        <fillField selector="{{AdminStagingPreviewSection.stagingDate}}" userInput="{{previewDate}}" stepKey="fillDate"/>
+        <click selector="{{AdminStagingPreviewSection.previewBtn}}" stepKey="clickPreview"/>
+        <executeJS function="jQuery('[data-role=\'preview-iframe\']').attr('id', 'preview-iframe')" stepKey="setPreviewIframeId"/>
+        <switchToIFrame userInput="preview-iframe" stepKey="switchToIFrameNow"/>
+        <waitForPageLoad time="30" stepKey="waitForPageLoad"/>
+        <click selector="{{StorefrontHeaderSection.NavigationCategoryByName(category.name)}}" stepKey="clickOnCreatedCategory"/>
+        <waitForPageLoad stepKey="waitForCategoryLoad"/>
+        <scrollTo selector="{{StorefrontCategoryProductSection.ProductPriceByName(product.name)}}" stepKey="scrollToProduct"/>
+        <see selector="{{StorefrontCategoryProductSection.ProductPriceByName(product.name)}}" userInput="{{expectedPrice}}" stepKey="seeProductPriceAgain"/>
+    </actionGroup>
+</actionGroups>

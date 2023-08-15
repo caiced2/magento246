@@ -1,0 +1,33 @@
+<?xml version="1.0"?>
+<!--
+/**
+ * Copyright © Magento, Inc. All rights reserved.
+ * See COPYING.txt for license details.
+ */
+-->
+<logging xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="urn:magento:module:Magento_Logging:etc/logging.xsd">
+    <actions>
+        <action id="add_to_cart">
+            <label translate="true">Add to Cart</label>
+        </action>
+        <action id="add_to_wishlist">
+            <label translate="true">Add to Wishlist</label>
+        </action>
+        <action id="place_order">
+            <label translate="true">Place Order</label>
+        </action>
+        <action id="logout">
+            <label translate="true">Logout</label>
+        </action>
+    </actions>
+    <groups>
+        <group name="login_as_customer">
+            <label translate="true">Login as Customer</label>
+            <events>
+                <event controller_action="checkout_cart_add" action_alias="add_to_cart" />
+                <event controller_action="wishlist_index_add" action_alias="add_to_wishlist" />
+                <event controller_action="wishlist_index_fromcart" action_alias="add_to_wishlist" />
+            </events>
+        </group>
+    </groups>
+</logging>

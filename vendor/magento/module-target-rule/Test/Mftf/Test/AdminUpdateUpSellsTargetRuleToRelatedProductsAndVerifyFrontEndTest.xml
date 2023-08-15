@@ -1,0 +1,153 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+ /**
+  * Copyright © Magento, Inc. All rights reserved.
+  * See COPYING.txt for license details.
+  */
+-->
+<tests xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xsi:noNamespaceSchemaLocation="urn:magento:mftf:Test/etc/testSchema.xsd">
+    <test name="AdminUpdateUpSellsTargetRuleToRelatedProductsAndVerifyFrontEndTest">
+        <annotations>
+            <stories value="UpdateTargetRule"/>
+            <title value="Update UpSells Target Rule To Related Products And Verify FrontEnd"/>
+            <description value="Test log in to Related Product Rules, Update Target Rule For Up-sells Product And Verify FrontEnd Test"/>
+            <testCaseId value="MC-14284"/>
+            <severity value="CRITICAL"/>
+            <group value="targetRule"/>
+            <group value="mtf_migrated"/>
+        </annotations>
+        <before>
+            <createData entity="_defaultCategory" stepKey="createCategory1"/>
+            <createData entity="SimpleSubCategory" stepKey="createCategory2"/>
+            <!--Create product1 with category1-->
+            <createData entity="SimpleProduct" stepKey="createSimpleProduct1">
+                <requiredEntity createDataKey="createCategory1"/>
+            </createData>
+            <!--Create product2 with category2-->
+            <createData entity="_defaultProduct" stepKey="createSimpleProduct2">
+                <requiredEntity createDataKey="createCategory2"/>
+            </createData>
+            <actionGroup ref="AdminLoginActionGroup" stepKey="LoginAsAdmin"/>
+        </before>
+        <after>
+            <deleteData createDataKey="createCategory1" stepKey="deleteCategory1"/>
+            <deleteData createDataKey="createCategory2" stepKey="deleteCategory2"/>
+            <deleteData createDataKey="createSimpleProduct1" stepKey="deleteCreatedProduct1"/>
+            <deleteData createDataKey="createSimpleProduct2" stepKey="deleteCreatedProduct2"/>
+            <actionGroup ref="DeleteTargetRuleByNameActionGroup" stepKey="deleteUpdatedTargetRule">
+                <argument name="ruleName" value="UpSellsTargetRuleUpdatedAsRelated.ruleName"/>
+            </actionGroup>
+            <actionGroup ref="AdminLogoutActionGroup" stepKey="logout"/>
+        </after>
+
+        <!--Add special price to product1-->
+        <actionGroup ref="AssertProductOnAdminGridActionGroup" stepKey="seeProductInGrid">
+            <argument name="product" value="$$createSimpleProduct1$$"/>
+        </actionGroup>
+        <click selector="{{AdminProductGridFilterSection.nthRow('1')}}" stepKey="clickFirstRow"/>
+        <waitForPageLoad stepKey="waitForProductLoad"/>
+        <click selector="{{AdminProductFormSection.advancedPricingLink}}" stepKey="clickAdvancedPricingLink"/>
+        <fillField selector="{{AdminProductFormAdvancedPricingSection.specialPrice}}" userInput="{{updateVirtualProductSpecialPrice.special_price}}" stepKey="fillSpecialPrice"/>
+        <click selector="{{AdminProductFormAdvancedPricingSection.doneButton}}" stepKey="clickDoneButton"/>
+        <click selector="{{AdminProductFormSection.save}}" stepKey="clickSaveButton"/>
+        <waitForPageLoad stepKey="waitForProductSave"/>
+
+        <!--Create initial up-sells target rule as per data-->
+        <actionGroup ref="GoToTargetRulePage" stepKey="gotoTargetRules"/>
+        <actionGroup ref="ClickAddNewTargetRule" stepKey="clickAddRule"/>
+        <actionGroup ref="FillGeneralRuleInformation" stepKey="fillRuleFields">
+            <argument name="information" value="TargetRuleUpSells"/>
+        </actionGroup>
+        <selectOption selector="{{AdminTargetRuleInformationSection.customerSegments}}" userInput="{{TargetRuleUpSells.use_customer_segment}}" stepKey="selectCustomerSegment"/>
+        <!--Fill values in Product To Display tab-->
+        <click selector="{{AdminTargetRuleSection.productToDisplayTab}}" stepKey="clickProductToDisplayTab"/>
+        <click selector="{{AdminTargetRuleProductsToDisplaySection.selectCondition('1','1')}}" stepKey="clickOnPlusIcon"/>
+        <selectOption selector="{{AdminTargetRuleProductsToDisplaySection.newAction}}" userInput="Category" stepKey="selectCategoryAsNewCondition"/>
+        <click selector="{{AdminTargetRuleProductsToDisplaySection.selectCondition('1','2')}}" stepKey="clickSelectCondition"/>
+        <selectOption selector="{{AdminTargetRuleProductsToDisplaySection.selectCategoryToggle('1--1')}}" userInput="the Same as Matched Product Categories" stepKey="selectTheSameAsMatchedProductCategories"/>
+        <actionGroup ref="SaveTargetRule" stepKey="saveTargetRule"/>
+
+        <!--Go to target rule grid page and verify AssertTargetRuleInGrid-->
+        <actionGroup ref="AssertTargetRuleInGridActionGroup" stepKey="searchCreatedTargetRuleInGrid">
+            <argument name="ruleName" value="{{TargetRuleUpSells.ruleName}}"/>
+        </actionGroup>
+        <click selector="{{AdminTargetRuleGridFilterSection.rowByIndex('1')}}" stepKey="clickTargetRuleInGrid"/>
+        <waitForPageLoad stepKey="waitForTargetRuleLoad"/>
+
+        <!--Update target rule as per data and verify AssertTargetRuleSuccessSaveMessage-->
+        <actionGroup ref="FillGeneralRuleInformation" stepKey="fillRuleFields2">
+            <argument name="information" value="UpSellsTargetRuleUpdatedAsRelated"/>
+        </actionGroup>
+        <selectOption selector="{{AdminTargetRuleInformationSection.customerSegments}}" userInput="{{UpSellsTargetRuleUpdatedAsRelated.use_customer_segment}}" stepKey="selectAllFromCustomerSegment2"/>
+        <!--Update values in Product To Match Section-->
+        <click selector="{{AdminTargetRuleSection.productToMatchTab}}" stepKey="clickProductToMatchTab"/>
+        <click selector="{{AdminTargetRuleProductsToMatchSection.selectCondition('1','1')}}" stepKey="clickOnSelectCondition"/>
+        <selectOption selector="{{AdminTargetRuleProductsToMatchSection.conditionSelect('1')}}" userInput="Category" stepKey="selectCategoryInNewAction"/>
+        <waitForPageLoad stepKey="waitForConditionLoad"/>
+        <click selector="{{AdminTargetRuleProductsToMatchSection.targetEllipsis}}" stepKey="clickTheEllipsis"/>
+        <fillField selector="{{AdminTargetRuleProductsToMatchSection.ruleFieldByIndex('1--1')}}" userInput="$$createCategory1.id$$" stepKey="fillCategoryId"/>
+        <click selector="{{AdminTargetRuleProductsToMatchSection.selectCondition('2','1')}}" stepKey="clickOnSelectCondition2"/>
+        <selectOption selector="{{AdminTargetRuleProductsToMatchSection.conditionSelect('1')}}" userInput="Attribute Set" stepKey="selectAttributeSet"/>
+        <waitForPageLoad stepKey="waitForAttributeLoad"/>
+        <click selector="{{AdminTargetRuleProductsToMatchSection.targetEllipsis}}" stepKey="clickEllipsisToSelectDefault"/>
+        <!--Update values in Product To Display Section-->
+        <click selector="{{AdminTargetRuleSection.productToDisplayTab}}" stepKey="clickProductToDisplayTab2"/>
+        <click selector="{{AdminTargetRuleProductsToDisplaySection.selectCondition('1','2')}}" stepKey="clickSelect"/>
+        <selectOption selector="{{AdminTargetRuleProductsToDisplaySection.selectCategoryToggle('1--1')}}" userInput="Constant Value" stepKey="selectConstantValue"/>
+
+        <click selector="{{AdminTargetRuleProductsToDisplaySection.targetEllipsis}}" stepKey="clickEllipsis"/>
+        <fillField selector="{{AdminTargetRuleProductsToDisplaySection.ruleFieldByIndex('1--1')}}" userInput="$$createCategory2.id$$" stepKey="fillCategory2Id"/>
+        <click selector="{{AdminTargetRuleProductsToDisplaySection.apply}}" stepKey="clickOnApply"/>
+        <click selector="{{AdminTargetRuleProductsToDisplaySection.selectCondition('2','1')}}" stepKey="clickOnPlusIcon2"/>
+        <selectOption selector="{{AdminTargetRuleProductsToDisplaySection.newAction}}" userInput="Attribute Set" stepKey="selectAttributeSetAsNewCondition"/>
+        <click selector="{{AdminTargetRuleProductsToDisplaySection.selectCondition('2','2')}}" stepKey="clickSelectCondition2"/>
+        <selectOption selector="{{AdminTargetRuleProductsToDisplaySection.selectCategoryToggle('1--2')}}" userInput="Matched Product Attribute Set" stepKey="selectMatchedProductAttributeSet"/>
+        <!-- Switch to main tab and fill dates -->
+        <click selector="{{AdminTargetRuleSection.ruleInformationTab}}" stepKey="clickRuleInformationTab"/>
+        <generateDate date="+1 minute" format="m/d/Y" stepKey="generateFromDate"/>
+        <fillField selector="{{AdminTargetRuleInformationSection.from}}" userInput="{$generateFromDate}" stepKey="fillFromDate"/>
+        <generateDate date="+10 day" format="m/d/Y" stepKey="generateToDate"/>
+        <fillField selector="{{AdminTargetRuleInformationSection.to}}" userInput="{$generateToDate}" stepKey="fillToDate"/>
+        <!-- Save rule -->
+        <actionGroup ref="SaveTargetRule" stepKey="AssertTargetRuleSuccessSaveMessage2"/>
+
+        <!--Go to target rule grid page and verify AssertTargetRuleInGrid-->
+        <actionGroup ref="AssertTargetRuleInGridActionGroup" stepKey="AssertTargetRuleInGrid">
+            <argument name="ruleName" value="{{UpSellsTargetRuleUpdatedAsRelated.ruleName}}"/>
+        </actionGroup>
+        <click selector="{{AdminTargetRuleGridFilterSection.rowByIndex('1')}}" stepKey="clickTargetRuleGrid"/>
+        <waitForPageLoad stepKey="waitForTargetRuleFormPageToLoad"/>
+
+        <!--Go to target rule form page and verify AssertTargetRuleForm-->
+        <seeInField selector="{{AdminTargetRuleInformationSection.ruleName}}" userInput="{{UpSellsTargetRuleUpdatedAsRelated.ruleName}}" stepKey="seeRuleName"/>
+        <seeInField selector="{{AdminTargetRuleInformationSection.status}}" userInput="{{UpSellsTargetRuleUpdatedAsRelated.status}}" stepKey="seeStatus"/>
+        <seeInField selector="{{AdminTargetRuleInformationSection.applyTo}}" userInput="{{UpSellsTargetRuleUpdatedAsRelated.applyTo}}" stepKey="seeApplyTo"/>
+        <scrollTo selector="{{AdminTargetRuleInformationSection.customerSegments}}" stepKey="scrollToCustomerSegments"/>
+        <seeInField selector="{{AdminTargetRuleInformationSection.customerSegments}}" userInput="{{UpSellsTargetRuleUpdatedAsRelated.use_customer_segment}}" stepKey="seeAllInCustomerSegment"/>
+        <click selector="{{AdminTargetRuleSection.productToMatchTab}}" stepKey="clickProductToMatch"/>
+        <waitForPageLoad stepKey="waitForProductToMatchTabToOpen"/>
+        <see selector="{{AdminTargetRuleProductsToMatchSection.conditionsChildrenByIndex('1')}}" userInput="$$createCategory1.id$$" stepKey="seeCategory1Value"/>
+        <see selector="{{AdminTargetRuleProductsToMatchSection.conditionsChildrenByIndex('1')}}" userInput="Default" stepKey="seeDefaultInAttributeSet"/>
+        <click selector="{{AdminTargetRuleSection.productToDisplayTab}}" stepKey="clickOnProductToDisplayTab"/>
+        <waitForPageLoad stepKey="waitForProductToDisplayTabToOpen"/>
+        <see selector="{{AdminTargetRuleProductsToDisplaySection.ruleActionsFieldset}}" userInput="$$createCategory2.id$$" stepKey="seeCategory2Value"/>
+        <see selector="{{AdminTargetRuleProductsToDisplaySection.ruleActionsFieldset}}" userInput="Matched Product Attribute Set" stepKey="seeProductAttributeSet"/>
+
+        <!--Go to storefront page and verify created product-->
+        <actionGroup ref="AssertProductNameAndSkuInStorefrontProductPageByCustomAttributeUrlKeyActionGroup" stepKey="openProductPageAndVerifyProduct1">
+            <argument name="product" value="$$createSimpleProduct1$$"/>
+        </actionGroup>
+        <waitForElementVisible selector="{{StorefrontProductRelatedProductsSection.relatedProductsActionsHeaderText}}" stepKey="waitForRelatedProductsActionsHeaderVisible"/>
+        <scrollTo selector="{{StorefrontProductRelatedProductsSection.relatedProductsActionsHeaderText}}" stepKey="scrollToRelatedProductsActionsHeader"/>
+        <!--Verify Product 2 is available in Related Products and AssertProductRelatedProducts-->
+        <seeElement selector="{{StorefrontProductRelatedProductsSection.relatedProductName($$createSimpleProduct2.name$$)}}" stepKey="seeAssertProductRelatedProducts"/>
+
+        <!--Go to storefront page and verify created product-->
+        <actionGroup ref="AssertProductNameAndSkuInStorefrontProductPageByCustomAttributeUrlKeyActionGroup" stepKey="openProductPageAndVerifyProduct2">
+            <argument name="product" value="$$createSimpleProduct2$$"/>
+        </actionGroup>
+        <!--Verify Product 1 is not displayed in up-sells products section and AssertProductAbsentUpSells-->
+        <dontSee selector="{{StorefrontProductUpSellProductsSection.upSellProducts}}" userInput="$$createSimpleProduct1.name$$" stepKey="seeAssertProductAbsentUpSells"/>
+    </test>
+</tests>

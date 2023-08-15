@@ -1,0 +1,70 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+ /**
+  * Copyright © Magento, Inc. All rights reserved.
+  * See COPYING.txt for license details.
+  */
+-->
+
+<tests xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xsi:noNamespaceSchemaLocation="urn:magento:mftf:Test/etc/testSchema.xsd">
+    <test name="AdminCreateCustomerSegmentNewsletterSubscriptionTest">
+        <annotations>
+            <stories value="Create Customer Segment Entity With Customer Conditions"/>
+            <title value="Create customer segment with condition based on 'Newsletter Subscription' and customer is subscribed to newsletter"/>
+            <description value="Admin should be able to create customer segment with condition based on 'Newsletter Subscription' and customer is subscribed to newsletter"/>
+            <severity value="CRITICAL"/>
+            <testCaseId value="MC-14539"/>
+            <group value="CustomerSegment"/>
+            <group value="mtf_migrated"/>
+        </annotations>
+        <before>
+            <actionGroup ref="AdminLoginActionGroup" stepKey="LoginAsAdmin"/>
+            <!--Test customer is created-->
+            <createData entity="Simple_US_Customer" stepKey="createCustomer"/>
+        </before>
+        <after>
+            <deleteData createDataKey="createCustomer" stepKey="deleteCustomer"/>
+            <actionGroup ref="FindAndDeleteCustomerSegmentActionGroup" stepKey="deleteSegment">
+                <argument name="segmentName" value="{{CustomerSegmentSubscription.name}}"/>
+            </actionGroup>
+            <magentoCron groups="index" stepKey="reindex"/>
+            <actionGroup ref="AdminLogoutActionGroup" stepKey="logout"/>
+        </after>
+
+        <actionGroup ref="LoginToStorefrontActionGroup" stepKey="loginAsCustomer">
+            <argument name="Customer" value="$$createCustomer$$"/>
+        </actionGroup>
+
+        <amOnPage url="{{StorefrontNewsletterManagePage.url}}" stepKey="onSubscriptionPage"/>
+        <checkOption selector="{{StorefrontNewsletterManageSection.subscriptionCheckbox}}" stepKey="subscribeOnNewletter"/>
+        <click selector="{{StorefrontNewsletterManageSection.saveButton}}" stepKey="clickSaveButton"/>
+
+        <!--Navigate to CUSTOMERS->Segment > Click 'Add Segment' button -->
+        <actionGroup ref="CreateCustomerSegmentWithContinueEditActionGroup" stepKey="createCustomerSegment">
+            <argument name="customerSegment" value="CustomerSegmentSubscription"/>
+        </actionGroup>
+
+        <!--Fill all fields according to dataset-->
+        <click selector="{{AdminCustomerSegmentEditSection.conditionsTab}}" stepKey="proceedToConditionsTab"/>
+        <click selector="{{AdminCustomerSegmentConditionsEditSection.addCondition}}" stepKey="clickToAddCondition" />
+
+        <!-- Select that Customer is subscribed  to newsletter.-->
+        <selectOption userInput="Newsletter Subscription" selector="{{AdminCustomerSegmentConditionsEditSection.conditions}}" stepKey="selectCondition"/>
+        <waitForPageLoad stepKey="waitForConditionsToAppear"/>
+        <see userInput="Customer is subscribed  to newsletter. " stepKey="seeSubscribed"/>
+
+        <!-- Click 'Save and Continue Edit' button -->
+        <click selector="{{AdminMainActionsSection.saveAndContinue}}" stepKey="saveSegment"/>
+        <see userInput="You saved the segment." selector="{{AdminMessagesSection.success}}" stepKey="checkSuccessMessage"/>
+        <actionGroup ref="CliConsumerStartActionGroup" stepKey="startMessageQueue">
+            <argument name="consumerName" value="{{AdminCustomerSegmentConsumerData.consumerName}}"/>
+            <argument name="maxMessages" value="{{AdminCustomerSegmentConsumerData.messageLimit}}"/>
+        </actionGroup>
+        <reloadPage stepKey="refreshPage"/>
+        <waitForPageLoad stepKey="waitForPageLoaded"/>
+        <actionGroup ref="AdminCheckCustomerInSegmentActionGroup" stepKey="checkCustomerInSegment">
+            <argument name="customer" value="$$createCustomer$$"/>
+        </actionGroup>
+    </test>
+</tests>

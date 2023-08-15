@@ -1,0 +1,44 @@
+<?xml version="1.0"?>
+<!--
+/**
+ * Copyright © Magento, Inc. All rights reserved.
+ * See COPYING.txt for license details.
+ */
+-->
+<page xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="urn:magento:framework:View/Layout/etc/page_configuration.xsd">
+    <body>
+        <referenceBlock name="customerbalance.balance">
+            <block class="Magento\CustomerBalance\Block\Adminhtml\Customer\Edit\Tab\Customerbalance\Balance\Grid" name="customer.balance.grid" as="grid">
+                <arguments>
+                    <argument name="id" xsi:type="string">balanceGrid</argument>
+                    <argument name="use_ajax" xsi:type="string">1</argument>
+                    <argument name="default_sort" xsi:type="string">website_id</argument>
+                    <argument name="pager_visibility" xsi:type="string">0</argument>
+                </arguments>
+                <block class="Magento\Backend\Block\Widget\Grid\ColumnSet" name="customer.balance.grid.columnSet" as="grid.columnSet">
+                    <arguments>
+                        <argument name="filter_visibility" xsi:type="string">0</argument>
+                    </arguments>
+                    <block class="Magento\Backend\Block\Widget\Grid\Column" name="customer.balance.grid.columnSet.amount" as="amount">
+                        <arguments>
+                            <argument name="header" xsi:type="string" translate="true">Balance</argument>
+                            <argument name="sortable" xsi:type="string">0</argument>
+                            <argument name="width" xsi:type="string">50</argument>
+                            <argument name="renderer" xsi:type="string">Magento\CustomerBalance\Block\Adminhtml\Widget\Grid\Column\Renderer\Currency</argument>
+                            <argument name="index" xsi:type="string">amount</argument>
+                        </arguments>
+                    </block>
+                    <block class="Magento\Backend\Block\Widget\Grid\Column\Multistore" name="customer.balance.grid.columnSet.website_id" as="website_id">
+                        <arguments>
+                            <argument name="header" xsi:type="string" translate="true">Website</argument>
+                            <argument name="index" xsi:type="string">website_id</argument>
+                            <argument name="type" xsi:type="string">options</argument>
+                            <argument name="options" xsi:type="options" model="Magento\Config\Model\Config\Source\Website\OptionHash"/>
+                            <argument name="sortable" xsi:type="string">0</argument>
+                        </arguments>
+                    </block>
+                </block>
+            </block>
+        </referenceBlock>
+    </body>
+</page>

@@ -1,0 +1,132 @@
+<?xml version="1.0"?>
+<!--
+/**
+ * Copyright © Magento, Inc. All rights reserved.
+ * See COPYING.txt for license details.
+ */
+-->
+<schema xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:noNamespaceSchemaLocation="urn:magento:framework:Setup/Declaration/Schema/etc/schema.xsd">
+    <table name="sequence_salesrule" resource="default" engine="innodb">
+        <column xsi:type="int" name="sequence_value" unsigned="true" nullable="false" identity="true"
+                onCreate="migrateSequneceColumnData(salesrule,rule_id)"/>
+        <constraint xsi:type="primary" referenceId="PRIMARY">
+            <column name="sequence_value"/>
+        </constraint>
+    </table>
+    <table name="salesrule_customer_group" resource="default" comment="Sales Rules To Customer Groups Relations">
+        <column xsi:type="int" name="rule_id" disabled="true"/>
+        <column xsi:type="int" name="row_id" unsigned="true" nullable="false" identity="false"
+                onCreate="migrateDataFrom(rule_id)" comment="Version Id"/>
+        <constraint xsi:type="foreign" referenceId="SALESRULE_CUSTOMER_GROUP_RULE_ID_SALESRULE_RULE_ID" disabled="1"/>
+        <constraint xsi:type="foreign" referenceId="SALESRULE_CUSTOMER_GROUP_ROW_ID_SALESRULE_ROW_ID"
+                    table="salesrule_customer_group" column="row_id" referenceTable="salesrule" referenceColumn="row_id"
+                    onDelete="CASCADE"/>
+        <constraint xsi:type="primary" referenceId="PRIMARY" disabled="1"/>
+        <constraint xsi:type="primary" referenceId="STAGING_PRIMARY">
+            <column name="row_id"/>
+            <column name="customer_group_id"/>
+        </constraint>
+    </table>
+    <table name="salesrule_website" resource="default" comment="Sales Rules To Websites Relations">
+        <column xsi:type="int" name="rule_id" disabled="true"/>
+        <column xsi:type="int" name="row_id" unsigned="true" nullable="false" identity="false"
+                onCreate="migrateDataFrom(rule_id)" comment="Version Id"/>
+        <constraint xsi:type="foreign" referenceId="SALESRULE_WEBSITE_RULE_ID_SALESRULE_RULE_ID" disabled="1"/>
+        <constraint xsi:type="foreign" referenceId="SALESRULE_WEBSITE_ROW_ID_SALESRULE_ROW_ID" table="salesrule_website"
+                    column="row_id" referenceTable="salesrule" referenceColumn="row_id" onDelete="CASCADE"/>
+        <constraint xsi:type="primary" referenceId="PRIMARY" disabled="1"/>
+        <constraint xsi:type="primary" referenceId="STAGING_PRIMARY">
+            <column name="row_id"/>
+            <column name="website_id"/>
+        </constraint>
+    </table>
+    <table name="salesrule_product_attribute" resource="default" comment="Salesrule Product Attribute">
+        <column xsi:type="int" name="rule_id" disabled="true"/>
+        <column xsi:type="int" name="row_id" unsigned="true" nullable="false" identity="false"
+                onCreate="migrateDataFrom(rule_id)" comment="Version Id"/>
+        <constraint xsi:type="foreign" referenceId="SALESRULE_PRODUCT_ATTRIBUTE_RULE_ID_SALESRULE_RULE_ID" disabled="1"/>
+        <constraint xsi:type="foreign" referenceId="SALESRULE_PRODUCT_ATTRIBUTE_ROW_ID_SALESRULE_ROW_ID"
+                    table="salesrule_product_attribute" column="row_id" referenceTable="salesrule"
+                    referenceColumn="row_id" onDelete="CASCADE"/>
+        <constraint xsi:type="primary" referenceId="PRIMARY" disabled="1"/>
+        <constraint xsi:type="primary" referenceId="STAGING_PRIMARY">
+            <column name="row_id"/>
+            <column name="website_id"/>
+            <column name="customer_group_id"/>
+            <column name="attribute_id"/>
+        </constraint>
+    </table>
+    <table name="salesrule_label" resource="default" comment="Salesrule Label">
+        <column xsi:type="int" name="rule_id" disabled="true"/>
+        <column xsi:type="int" name="row_id" unsigned="true" nullable="false" identity="false"
+                onCreate="migrateDataFrom(rule_id)" comment="Version Id"/>
+        <constraint xsi:type="foreign" referenceId="SALESRULE_LABEL_RULE_ID_SALESRULE_RULE_ID" disabled="1"/>
+        <constraint xsi:type="foreign" referenceId="SALESRULE_LABEL_ROW_ID_SALESRULE_ROW_ID"
+                    table="salesrule_label" column="row_id" referenceTable="salesrule"
+                    referenceColumn="row_id" onDelete="CASCADE"/>
+        <constraint xsi:type="unique" referenceId="SALESRULE_LABEL_RULE_ID_STORE_ID" disabled="1"/>
+        <constraint xsi:type="unique" referenceId="SALESRULE_LABEL_ROW_ID_STORE_ID">
+            <column name="row_id"/>
+            <column name="store_id"/>
+        </constraint>
+    </table>
+    <table name="salesrule_coupon" resource="default" comment="Salesrule Coupon">
+        <constraint xsi:type="foreign" referenceId="SALESRULE_COUPON_RULE_ID_SALESRULE_RULE_ID" disabled="1"/>
+        <constraint xsi:type="foreign" referenceId="SALESRULE_COUPON_RULE_ID_SEQUENCE_SALESRULE_SEQUENCE_VALUE"
+                    table="salesrule_coupon" column="rule_id" referenceTable="sequence_salesrule"
+                    referenceColumn="sequence_value" onDelete="CASCADE"/>
+    </table>
+    <table name="salesrule_customer" resource="default" comment="Salesrule Customer">
+        <constraint xsi:type="foreign" referenceId="SALESRULE_CUSTOMER_RULE_ID_SALESRULE_RULE_ID" disabled="1"/>
+        <constraint xsi:type="foreign" referenceId="SALESRULE_CUSTOMER_RULE_ID_SEQUENCE_SALESRULE_SEQUENCE_VALUE"
+                    table="salesrule_customer" column="rule_id" referenceTable="sequence_salesrule"
+                    referenceColumn="sequence_value" onDelete="CASCADE"/>
+    </table>
+    <table name="salesrule" resource="default" comment="Salesrule">
+        <column xsi:type="int" name="rule_id" unsigned="true" nullable="false" identity="false"
+                comment="Entity Id"/>
+        <column xsi:type="int" name="row_id" unsigned="true" nullable="false" identity="true"
+                onCreate="migrateDataFrom(rule_id)" comment="Version Id"/>
+        <column xsi:type="bigint" name="created_in" default="1" unsigned="true" nullable="false" identity="false"
+                comment="Update Id"/>
+        <column xsi:type="bigint" name="updated_in" default="2147483647" unsigned="true" nullable="false" identity="false"
+                comment="Next Update Id"/>
+        <constraint xsi:type="primary" referenceId="PRIMARY" disabled="1"/>
+        <constraint xsi:type="primary" referenceId="STAGING_PRIMARY">
+            <column name="row_id"/>
+        </constraint>
+        <index referenceId="SALESRULE_RULE_ID" indexType="btree">
+            <column name="rule_id"/>
+        </index>
+        <constraint xsi:type="foreign" referenceId="SALESRULE_RULE_ID_SEQUENCE_SALESRULE_SEQUENCE_VALUE" table="salesrule"
+                    column="rule_id" referenceTable="sequence_salesrule" referenceColumn="sequence_value"
+                    onDelete="CASCADE"/>
+        <index referenceId="SALESRULE_CREATED_IN" indexType="btree">
+            <column name="created_in"/>
+        </index>
+        <index referenceId="SALESRULE_UPDATED_IN" indexType="btree">
+            <column name="updated_in"/>
+        </index>
+    </table>
+    <table name="magento_salesrule_filter">
+        <constraint xsi:type="foreign" referenceId="MAGENTO_SALESRULE_FILTER_RULE_ID_SALESRULE_RULE_ID" disabled="true"/>
+        <constraint xsi:type="foreign" referenceId="MAGENTO_SALESRULE_FILTER_RULE_ID_SEQUENCE_SALESRULE_SEQUENCE_VAL"
+                    table="magento_salesrule_filter" column="rule_id" referenceTable="sequence_salesrule"
+                    referenceColumn="sequence_value" onDelete="CASCADE"/>
+    </table>
+    <table name="magento_banner_salesrule">
+        <constraint xsi:type="foreign" referenceId="MAGENTO_BANNER_SALESRULE_RULE_ID_SALESRULE_RULE_ID"
+                    disabled="true"/>
+        <constraint xsi:type="foreign" referenceId="MAGENTO_BANNER_SALESRULE_RULE_ID_SEQUENCE_SALESRULE_SEQUENCE_VAL"
+                    table="magento_banner_salesrule" column="rule_id" referenceTable="sequence_salesrule"
+                    referenceColumn="sequence_value" onDelete="CASCADE"/>
+    </table>
+    <table name="magento_reminder_rule">
+        <constraint xsi:type="foreign" referenceId="MAGENTO_REMINDER_RULE_SALESRULE_ID_SALESRULE_RULE_ID"
+                    disabled="true"/>
+        <constraint xsi:type="foreign" referenceId="FK_81ACD87B0CB5AB8CC9B8D0B05F30FBB8"
+                    table="magento_reminder_rule" column="salesrule_id" referenceTable="sequence_salesrule"
+                    referenceColumn="sequence_value" onDelete="SET NULL"/>
+    </table>
+</schema>

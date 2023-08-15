@@ -1,0 +1,146 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+ /**
+  * Copyright © Magento, Inc. All rights reserved.
+  * See COPYING.txt for license details.
+  */
+-->
+
+<tests xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xsi:noNamespaceSchemaLocation="urn:magento:mftf:Test/etc/testSchema.xsd">
+    <test name="AdminCartPriceRuleScheduleUpdatePreviewTest">
+        <annotations>
+            <features value="SalesRule"/>
+            <stories value="[Staging] Cart Price Rule"/>
+            <title value="[Staging] Cart Price Rule - Staging preview"/>
+            <description value="[Staging] Cart price rule staging preview should be loaded in assigned website store view"/>
+            <severity value="AVERAGE"/>
+            <testCaseId value="MC-41199"/>
+            <useCaseId value="MC-41142"/>
+            <group value="salesRuleStaging"/>
+        </annotations>
+        <before>
+            <!-- Login to backend -->
+            <actionGroup ref="AdminLoginActionGroup" stepKey="login"/>
+            <!-- Create website -->
+            <actionGroup ref="AdminCreateWebsiteActionGroup" stepKey="createWebsite">
+                <argument name="newWebsiteName" value="{{NewWebSiteData.name}}"/>
+                <argument name="websiteCode" value="{{NewWebSiteData.code}}"/>
+            </actionGroup>
+            <!-- Create store -->
+            <actionGroup ref="AdminCreateNewStoreGroupActionGroup" stepKey="createStore">
+                <argument name="website" value="{{NewWebSiteData.name}}"/>
+                <argument name="storeGroupName" value="{{NewStoreData.name}}"/>
+                <argument name="storeGroupCode" value="{{NewStoreData.code}}"/>
+            </actionGroup>
+            <!-- Create store view -->
+            <actionGroup ref="AdminCreateStoreViewActionGroup" stepKey="createStoreView">
+                <argument name="StoreGroup" value="NewStoreData"/>
+                <argument name="customStore" value="NewStoreViewData"/>
+            </actionGroup>
+            <!-- Create cart price rule-->
+            <createData entity="ApiCartRule" stepKey="createCartPriceRule"/>
+            <magentoCron groups="index" stepKey="reindex"/>
+        </before>
+        <after>
+            <!-- Delete website-->
+            <actionGroup ref="AdminDeleteWebsiteActionGroup" stepKey="deleteWebsite">
+                <argument name="websiteName" value="{{NewWebSiteData.name}}"/>
+            </actionGroup>
+            <!-- Delete cart price rule -->
+            <deleteData createDataKey="createCartPriceRule" stepKey="deleteCartPriceRule"/>
+            <!-- Logout from backend -->
+            <actionGroup ref="AdminLogoutActionGroup" stepKey="logout"/>
+            <magentoCron groups="index" stepKey="reindex"/>
+        </after>
+
+        <!-- Create the first staging update -->
+        <amOnPage url="{{AdminCartPriceRuleEditPage.url('$$createCartPriceRule.rule_id$$')}}" stepKey="openEditRule1"/>
+        <click selector="{{ScheduleUpdateSection.scheduleUpdate}}" stepKey="clickNewScheduleUpdate1"/>
+        <!-- Assign cart price rule to main website and second website -->
+        <actionGroup ref="AdminSalesRuleStagingSelectWebsitesActionGroup" stepKey="assignMainAndSecondWebsite1">
+            <argument name="websites" value="{{_defaultWebsite.name}},{{NewWebSiteData.name}}"/>
+        </actionGroup>
+        <!-- Fill schedule name, start and end dates -->
+        <actionGroup ref="scheduleNewUpdateActionGroup" stepKey="createScheduleUpdate1">
+            <argument name="staging" value="S5UpdateNameStaging"/>
+            <argument name="timeStart" value="+2 day"/>
+            <argument name="timeEnd" value="+3 day"/>
+        </actionGroup>
+
+        <!-- Create the second staging update -->
+        <amOnPage url="{{AdminCartPriceRuleEditPage.url('$$createCartPriceRule.rule_id$$')}}" stepKey="openEditRule2"/>
+        <click selector="{{ScheduleUpdateSection.scheduleUpdate}}" stepKey="clickNewScheduleUpdate2"/>
+        <!-- Assign cart price rule to second website only-->
+        <actionGroup ref="AdminSalesRuleStagingSelectWebsitesActionGroup" stepKey="assignMainAndSecondWebsite2">
+            <argument name="websites" value="{{NewWebSiteData.name}}"/>
+        </actionGroup>
+        <!-- Fill schedule name, start and end dates -->
+        <actionGroup ref="scheduleNewUpdateActionGroup" stepKey="createScheduleUpdate2">
+            <argument name="staging" value="S8UpdateNameStaging"/>
+            <argument name="timeStart" value="+6 day"/>
+            <argument name="timeEnd" value="+7 day"/>
+        </actionGroup>
+
+        <!--Click preview link for "first staging update" from "Scheduled Changes" section-->
+        <click selector="{{AdminStagingSlideOutSection.previewByName(S5UpdateNameStaging.updateName)}}" stepKey="clickPreviewLink1"/>
+        <waitForPageLoad time="30" stepKey="waitForNewTabPageLoad1"/>
+        <!-- Switch to new tab -->
+        <switchToNextTab stepKey="switchToNextTab1"/>
+        <actionGroup ref="WaitForStagingPreviewLoadedActionGroup" stepKey="waitForStagingPreviewFrameLoaded1"/>
+        <!-- Verify that default store view is selected -->
+        <actionGroup ref="AdminAssertStagingPreviewScopeActionGroup" stepKey="verifyDefaultStoreViewIsSelected">
+            <argument name="storeView" value="{{_defaultStore.name}}"/>
+        </actionGroup>
+        <!-- Switch to previous tab -->
+        <closeTab stepKey="closeTab1"/>
+        <actionGroup ref="ReloadPageActionGroup" stepKey="refreshPage1"/>
+
+        <!--Click edit link for "first staging update" from "Scheduled Changes" section-->
+        <click selector="{{AdminStagingSlideOutSection.editLinkByName(S5UpdateNameStaging.updateName)}}" stepKey="clickEditLink1"/>
+        <waitForPageLoad stepKey="waitForViewAndEditSlideOut"/>
+        <!--Click preview button from modal-->
+        <click selector="{{AdminStagingSlideOutSection.previewModal}}" stepKey="clickPreview"/>
+        <waitForPageLoad time="30" stepKey="waitForNewTabPageLoad2"/>
+        <!-- Switch to new tab -->
+        <switchToNextTab stepKey="switchToNextTab2"/>
+        <actionGroup ref="WaitForStagingPreviewLoadedActionGroup" stepKey="waitForStagingPreviewFrameLoaded2"/>
+        <!-- Verify that default store view is selected -->
+        <actionGroup ref="AdminAssertStagingPreviewScopeActionGroup" stepKey="verifyDefaultStoreViewIsSelected2">
+            <argument name="storeView" value="{{_defaultStore.name}}"/>
+        </actionGroup>
+        <!-- Switch to previous tab -->
+        <closeTab stepKey="closeTab2"/>
+        <actionGroup ref="ReloadPageActionGroup" stepKey="refreshPage2"/>
+
+        <!--Click preview link for "second staging update" from "Scheduled Changes" section-->
+        <click selector="{{AdminStagingSlideOutSection.previewByName(S8UpdateNameStaging.updateName)}}" stepKey="clickPreviewLink2"/>
+        <waitForPageLoad time="30" stepKey="waitForNewTabPageLoad3"/>
+        <!-- Switch to new tab -->
+        <switchToNextTab stepKey="switchToNextTab3"/>
+        <actionGroup ref="WaitForStagingPreviewLoadedActionGroup" stepKey="waitForStagingPreviewFrameLoaded3"/>
+        <!-- Verify that second store view is selected -->
+        <actionGroup ref="AdminAssertStagingPreviewScopeActionGroup" stepKey="verifyDefaultStoreViewIsSelected3">
+            <argument name="storeView" value="{{NewStoreViewData.name}}"/>
+        </actionGroup>
+        <!-- Switch to previous tab -->
+        <closeTab stepKey="closeTab3"/>
+        <actionGroup ref="ReloadPageActionGroup" stepKey="refreshPage3"/>
+
+        <!--Click edit link for "second staging update" from "Scheduled Changes" section-->
+        <click selector="{{AdminStagingSlideOutSection.editLinkByName(S8UpdateNameStaging.updateName)}}" stepKey="clickEditLink4"/>
+        <waitForPageLoad stepKey="waitForViewAndEditSlideOut2"/>
+        <!--Click preview button from modal-->
+        <click selector="{{AdminStagingSlideOutSection.previewModal}}" stepKey="clickPreview2"/>
+        <waitForPageLoad time="30" stepKey="waitForNewTabPageLoad4"/>
+        <!-- Switch to new tab -->
+        <switchToNextTab stepKey="switchToNextTab4"/>
+        <actionGroup ref="WaitForStagingPreviewLoadedActionGroup" stepKey="waitForStagingPreviewFrameLoaded4"/>
+        <!-- Verify that second store view is selected -->
+        <actionGroup ref="AdminAssertStagingPreviewScopeActionGroup" stepKey="verifyDefaultStoreViewIsSelected4">
+            <argument name="storeView" value="{{NewStoreViewData.name}}"/>
+        </actionGroup>
+        <!-- Switch to previous tab -->
+        <closeTab stepKey="closeTab4"/>
+    </test>
+</tests>

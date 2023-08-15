@@ -1,0 +1,15 @@
+<?xml version="1.0"?>
+<!--
+/**
+ * Copyright © Magento, Inc. All rights reserved.
+ * See COPYING.txt for license details.
+ */
+-->
+<!--
+@deprecated split database solution is deprecated and will be removed
+-->
+<config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="urn:magento:framework:Communication/etc/communication.xsd">
+    <topic name="catalog.product.removed" request="Magento\Catalog\Api\Data\ProductInterface">
+        <handler name="catalog.product.removed.handler" type="Magento\ScalableCheckout\Model\ResourceModel\Quote\Item\Consumer" method="processMessage" />
+    </topic>
+</config>

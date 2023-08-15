@@ -1,0 +1,73 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+ /**
+  * Copyright © Magento, Inc. All rights reserved.
+  * See COPYING.txt for license details.
+  */
+-->
+
+<tests xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xsi:noNamespaceSchemaLocation="urn:magento:mftf:Test/etc/testSchema.xsd">
+    <test name="AdminCartPriceRuleSelectFromExistingScheduledUpdateTest">
+        <annotations>
+            <features value="SalesRule"/>
+            <stories value="[Staging] Cart Price Rule >> Schedule New Update - Select from existing Scheduled Update"/>
+            <title value="[Staging] Cart Price Rule >> Schedule New Update - Select from existing Scheduled Update"/>
+            <description value="[Staging] Cart Price Rule >> Schedule New Update - Select from existing Scheduled Update"/>
+            <severity value="MAJOR"/>
+            <testCaseId value="MAGETWO-49103"/>
+            <group value="salesRule"/>
+        </annotations>
+        <before>
+            <!-- Create Price Rule -->
+            <createData entity="ApiCartRule" stepKey="createPriceRule"/>
+
+            <!-- Create Price Rule1 -->
+            <createData entity="ApiCartRule" stepKey="createPriceRule1"/>
+        </before>
+        <after>
+            <!-- Delete Cart Price Rule -->
+            <deleteData createDataKey="createPriceRule" stepKey="deletePriceRule"/>
+            <deleteData createDataKey="createPriceRule1" stepKey="deletePriceRule1"/>
+
+            <!-- Logout Admin -->
+            <actionGroup ref="AdminLogoutActionGroup" stepKey="logoutOfAdmin"/>
+        </after>
+        <!--Login to admin-->
+        <actionGroup ref="AdminLoginActionGroup" stepKey="loginToAdmin"/>
+
+        <!-- Search and Go To Cart Price Rule Page -->
+        <actionGroup ref="AdminOpenCartPriceRulesPageActionGroup" stepKey="goToCartPriceRulePage"/>
+        <actionGroup ref="AdminFilterCartPriceRuleActionGroup" stepKey="filterCartPriceRule">
+            <argument name="ruleName" value="$$createPriceRule.name$$"/>
+        </actionGroup>
+
+        <!-- Create Schedule New Update -->
+        <generateDate date="+1 day" format="m/d/Y g:i A" stepKey="generateStartDate"/>
+        <actionGroup ref="FillScheduleUpdateRemovePriceActionGroup" stepKey="createScheduleNewUpdate">
+            <argument name="staging" value="Update007"/>
+            <argument name="timeStart" value="{$generateStartDate}"/>
+        </actionGroup>
+
+        <!-- Search and Go To Cart Price Rule Page1 -->
+        <actionGroup ref="AdminOpenCartPriceRulesPageActionGroup" stepKey="goToCartPriceRulePage1"/>
+        <actionGroup ref="AdminFilterCartPriceRuleActionGroup" stepKey="filterCartPriceRule1">
+            <argument name="ruleName" value="$$createPriceRule1.name$$"/>
+        </actionGroup>
+
+        <!-- Assign To Existing Update -->
+        <actionGroup ref="AssignToExistingUpdateRemovePriceActionGroup" stepKey="assignToExistingUpdate">
+            <argument name="staging" value="Update007"/>
+        </actionGroup>
+
+        <reloadPage stepKey="reloadCartPriceRulePage"/>
+        <waitForPageLoad stepKey="waitForPageReload"/>
+
+        <!-- See Schedule Update -->
+        <see selector="{{AdminScheduledChangesSection.scheduleDetails(Update007.updateName)}}" userInput="{{Update007.updateName}}" stepKey="seeUpdateName"/>
+        <see selector="{{AdminScheduledChangesSection.scheduleDetails(Update007.updateDescription)}}" userInput="{{Update007.updateDescription}}" stepKey="seeUpdateDescription"/>
+        <see selector="{{AdminScheduledChangesSection.scheduleViewEdit(Update007.updateName)}}" userInput="View/Edit" stepKey="seeUpdateViewAndEdit"/>
+        <see selector="{{AdminScheduledChangesSection.scheduleActions(Update007.updateName, 'Preview')}}" userInput="Preview" stepKey="seeUpdatePreview"/>
+        <see selector="{{AdminScheduledChangesSection.scheduleLabel('Start')}}" userInput="Start" stepKey="seeStart"/>
+    </test>
+</tests>

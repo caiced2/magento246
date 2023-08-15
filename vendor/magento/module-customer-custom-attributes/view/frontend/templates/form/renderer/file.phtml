@@ -1,0 +1,23 @@
+<?php
+/**
+ * Copyright © Magento, Inc. All rights reserved.
+ * See COPYING.txt for license details.
+ */
+?>
+<?php
+/**
+ * Create account form template
+ *
+ * @var $block \Magento\CustomAttributeManagement\Block\Form\Renderer\File
+ */
+?>
+<?php
+$fieldCssClass = 'field  field-' . $block->getHtmlId();
+$fieldCssClass .= $block->isRequired() ? ' required' : '';
+?>
+<div class="<?= /* @noEscape */ $fieldCssClass ?>">
+    <label class="label" for="<?= $block->getHtmlId() ?>"><span><?= $block->escapeHtml($block->getLabel()) ?></span></label>
+    <div class="control" data-bind="scope:'<?= $block->escapeHtml($block->getAttributeObject()->getAttributeCode()) ?>'">
+        <!-- ko template: getTemplate() --><!-- /ko -->
+    </div>
+</div>

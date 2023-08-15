@@ -1,0 +1,104 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+ /**
+  * Copyright © Magento, Inc. All rights reserved.
+  * See COPYING.txt for license details.
+  */
+-->
+
+<tests xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="urn:magento:mftf:Test/etc/testSchema.xsd">
+    <test name="AdminCustomerGridUIFilterForRestrictedWebsitesTest">
+        <annotations>
+            <features value="Customer"/>
+            <stories value="Websites filter"/>
+            <title value="Websites filter on Customers page when uses the restricted user"/>
+            <description value="Websites filter on Customers page when uses the restricted user"/>
+            <severity value="AVERAGE"/>
+            <testCaseId value="MC-40882"/>
+            <useCaseId value="MC-40502"/>
+            <group value="customer"/>
+        </annotations>
+        <before>
+            <actionGroup ref="AdminLoginActionGroup" stepKey="login"/>
+            <!--Create new website,store and store view-->
+            <comment userInput="BIC workaround" stepKey="createWebsite"/>
+            <actionGroup ref="AdminSystemStoreOpenPageActionGroup" stepKey="goToAdminSystemStorePage"/>
+            <actionGroup ref="AdminCreateWebsiteActionGroup" stepKey="adminCreateNewWebsite">
+                <argument name="newWebsiteName" value="{{NewWebSiteData.name}}"/>
+                <argument name="websiteCode" value="{{NewWebSiteData.code}}"/>
+            </actionGroup>
+            <actionGroup ref="AdminCreateNewStoreGroupActionGroup" stepKey="adminCreateNewStore">
+                <argument name="website" value="{{NewWebSiteData.name}}"/>
+                <argument name="storeGroupName" value="{{NewStoreData.name}}"/>
+                <argument name="storeGroupCode" value="{{NewStoreData.code}}"/>
+            </actionGroup>
+            <actionGroup ref="AdminCreateStoreViewActionGroup" stepKey="adminCreateNewStoreView">
+                <argument name="StoreGroup" value="NewStoreData"/>
+            </actionGroup>
+            <magentoCron groups="index" stepKey="reindex"/>
+            <actionGroup ref="AdminCreateUserRoleWithScopeActionGroup" stepKey="createRestrictedAdminRole">
+                <argument name="role" value="RestrictedAdminRole"/>
+                <argument name="scopeName" value="{{NewWebSiteData.name}}"/>
+            </actionGroup>
+            <comment userInput="BIC workaround" stepKey="waitForPageLoad"/>
+            <actionGroup ref="AdminCreateUserWithRoleActionGroup" stepKey="createRestrictedAdmin">
+                <argument name="role" value="RestrictedAdminRole"/>
+                <argument name="user" value="NewAdminUser"/>
+            </actionGroup>
+        </before>
+        <after>
+            <actionGroup ref="AdminLogoutActionGroup" stepKey="logout"/>
+            <actionGroup ref="AdminLoginActionGroup" stepKey="login"/>
+            <actionGroup ref="AdminDeleteWebsiteActionGroup" stepKey="deleteWebsite">
+                <argument name="websiteName" value="{{NewWebSiteData.name}}"/>
+            </actionGroup>
+            <magentoCron groups="index" stepKey="reindex"/>
+            <actionGroup ref="AdminDeleteCreatedUserActionGroup" stepKey="deleteAdminUser">
+                <argument name="user" value="NewAdminUser"/>
+            </actionGroup>
+            <actionGroup ref="AdminDeleteUserRoleWithSpecifiedPermissionActionGroup" stepKey="deleteRole">
+                <argument name="role" value="RestrictedAdminRole"/>
+            </actionGroup>
+            <comment userInput="BIC workaround" stepKey="deleteTestWebsite"/>
+            <actionGroup ref="AdminLogoutActionGroup" stepKey="logout1"/>
+        </after>
+        <actionGroup ref="AdminSystemStoreOpenPageActionGroup" stepKey="goToAdminSystemStoresPage"/>
+        <actionGroup ref="AdminClearGridFiltersActionGroup" stepKey="clearFilters"/>
+        <executeJS function="
+        return (
+            function() {
+                var elements = document.querySelectorAll('tbody td[data-column=website_title] a');
+                var website_ids = [];
+
+                for (let i = 0; i &lt; elements.length; i++) {
+                        website_ids.push(elements[i].href);
+                };
+                return [... new Set(website_ids)].length;
+            }()
+        )" stepKey="expectedNumberOfWebsites"/>
+        <comment userInput="expectedNumberOfWebsites: {$expectedNumberOfWebsites}" stepKey="test1"/>
+        <actionGroup ref="AdminOpenCustomersGridActionGroup" stepKey="goToCustomersGrid"/>
+        <actionGroup ref="ResetAdminDataGridToDefaultViewActionGroup" stepKey="resetGrid"/>
+        <click selector="{{AdminDataGridHeaderSection.filters}}" stepKey="openFiltersSectionOnCustomersGrid"/>
+        <executeJS function="var len = document.querySelectorAll('{{AdminCustomerFiltersSection.websiteOptions}}').length; return len-1;" stepKey="websiteAmount"/>
+        <comment userInput="websiteAmount: {$websiteAmount}" stepKey="test2"/>
+        <assertEquals stepKey="assertWebsiteAmounts">
+            <actualResult type="string">{$websiteAmount}</actualResult>
+            <expectedResult type="string">{$expectedNumberOfWebsites}</expectedResult>
+        </assertEquals>
+        <actionGroup ref="AdminLogoutActionGroup" stepKey="logout2"/>
+        <!--Go to Customers grid and check that the filter websites amount is the same as the allowed websites amount for the restricted user.-->
+        <actionGroup ref="AdminLoginActionGroup" stepKey="loginAsAdmin2" >
+            <argument name="username" value="{{NewAdminUser.username}}" />
+            <argument name="password" value="{{NewAdminUser.password}}" />
+        </actionGroup>
+        <actionGroup ref="AdminOpenCustomersGridActionGroup" stepKey="goToCustomersGrid2"/>
+        <actionGroup ref="ResetAdminDataGridToDefaultViewActionGroup" stepKey="resetGrid2"/>
+        <click selector="{{AdminDataGridHeaderSection.filters}}" stepKey="openFiltersSectionOnCustomersGridRestrictedUser"/>
+        <executeJS function="var len = document.querySelectorAll('{{AdminCustomerFiltersSection.websiteOptions}}').length; return len-1;" stepKey="websiteAmountRestrictedUser"/>
+        <assertEquals stepKey="assertWebsitesAmountRestrictedUser">
+            <actualResult type="string">{$websiteAmountRestrictedUser}</actualResult>
+            <expectedResult type="const">1</expectedResult>
+        </assertEquals>
+    </test>
+</tests>

@@ -1,0 +1,24 @@
+<?xml version="1.0"?>
+<!--
+/**
+ * Copyright © Magento, Inc. All rights reserved.
+ * See COPYING.txt for license details.
+ */
+-->
+<schema xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:noNamespaceSchemaLocation="urn:magento:framework:Setup/Declaration/Schema/etc/schema.xsd">
+    <table name="downloadable_link" resource="default" comment="Downloadable Link Table">
+        <constraint xsi:type="foreign" referenceId="DOWNLOADABLE_LINK_PRODUCT_ID_CATALOG_PRODUCT_ENTITY_ENTITY_ID"
+                    disabled="1"/>
+        <constraint xsi:type="foreign" referenceId="DOWNLOADABLE_LINK_PRODUCT_ID_CATALOG_PRODUCT_ENTITY_ROW_ID"
+                    table="downloadable_link" column="product_id" referenceTable="catalog_product_entity"
+                    referenceColumn="row_id" onDelete="CASCADE"/>
+    </table>
+    <table name="downloadable_sample" resource="default" comment="Downloadable Sample Table">
+        <constraint xsi:type="foreign" referenceId="DOWNLOADABLE_SAMPLE_PRODUCT_ID_CATALOG_PRODUCT_ENTITY_ENTITY_ID"
+                    disabled="1"/>
+        <constraint xsi:type="foreign" referenceId="DOWNLOADABLE_SAMPLE_PRODUCT_ID_CATALOG_PRODUCT_ENTITY_ROW_ID"
+                    table="downloadable_sample" column="product_id" referenceTable="catalog_product_entity"
+                    referenceColumn="row_id" onDelete="CASCADE"/>
+    </table>
+</schema>

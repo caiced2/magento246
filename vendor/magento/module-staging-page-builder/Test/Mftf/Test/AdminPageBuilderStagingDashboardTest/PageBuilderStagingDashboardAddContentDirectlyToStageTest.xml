@@ -1,0 +1,107 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+ /**
+  * Copyright © Magento, Inc. All rights reserved.
+  * See COPYING.txt for license details.
+  */
+-->
+<tests xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xsi:noNamespaceSchemaLocation="urn:magento:mftf:Test/etc/testSchema.xsd">
+    <test  name="PageBuilderStagingDashboardAddContentDirectlyToStageTest" extends="PageBuilderCMSPageAddContentDirectlyToStageTest">
+        <annotations>
+            <features value="PageBuilder"/>
+            <stories value="Staging Dashboard - CMS Page"/>
+            <title value="Verify Can Only Add Expected Content Types to Staging Dashboard Stage Directly"/>
+            <description value="Verify user can add Row, Columns, Tabs, HTML Code, Blocks, and Dynamic Blocks to Staging Dashboard stage directly. Verify user cannot add any other content type to Staging Dashboard stage directly"/>
+            <severity value="BLOCKER"/>
+            <group value="pagebuilder"/>
+            <group value="pagebuilder-ee"/>
+            <group value="pagebuilder-stage"/>
+            <group value="pagebuilder-staging"/>
+            <group value="pagebuilder-stagingDashboard"/>
+        </annotations>
+        <before>
+            <actionGroup ref="navigateToStagingSlideout" stepKey="navigateToStagingSlideout" after="navigateToCreatedCMSPage"/>
+            <actionGroup ref="FillScheduleUpdateBasicActionGroup" stepKey="createScheduleUpdate" after="navigateToStagingSlideout">
+                <argument name="schedule" value="UpdateWithoutEndUnique_2MinutesAhead"/>
+            </actionGroup>
+            <actionGroup ref="navigateToViewStagingUpdateFromStagingDashboard" stepKey="navigateToViewStagingUpdateFromStagingDashboard" after="createScheduleUpdate">
+                <argument name="update" value="UpdateWithoutEndUnique_2MinutesAhead"/>
+            </actionGroup>
+            <actionGroup ref="openEditSlideOutForCMSPagesStagingUpdateFromViewStagingUpdate" stepKey="openEditSlideOutForCMSPagesStagingUpdateFromViewStagingUpdate" after="navigateToViewStagingUpdateFromStagingDashboard"/>
+            <actionGroup ref="switchToPageBuilderStage" stepKey="switchToPageBuilderStage2" after="openEditSlideOutForCMSPagesStagingUpdateFromViewStagingUpdate">
+                <argument name="sectionSelector" value="{{AdminStagingSlideOutSection.contentTab}}"/>
+                <argument name="sectionDependentSelector" value="{{AdminStagingSlideOutSection.stagingContentTab}}"/>
+            </actionGroup>
+            <remove keyForRemoval="openPageBuilderFullScreen"/>
+            <actionGroup ref="ExpandAdminProductSectionActionGroup" stepKey="clickContentSectionHeader" after="switchToPageBuilderStage2">
+                <argument name="sectionSelector" value="{{AdminStagingDashboardSection.contentHeader}}"/>
+                <argument name="sectionDependentSelector" value="{{AdminStagingDashboardSection.contentHeaderActive}}"/>
+            </actionGroup>
+        </before>
+        <after>
+            <amOnPage url="{{AdminStagingDashboardPage.url}}" stepKey="NavigateAndResetToDefaultView"/>
+            <actionGroup ref="ClearFiltersAdminDataGridActionGroup" stepKey="clearFilter" after="NavigateAndResetToDefaultView"/>
+        </after>
+        <!-- Verify Can Add Row to Stage Directly -->
+        <actionGroup ref="dragContentTypeToContainer" stepKey="dragRowIntoContainer">
+            <argument name="contentType" value="PageBuilderRowContentType"/>
+            <argument name="containerTargetType" value="PageBuilderRootContainerContentType"/>
+            <argument name="pageBuilderArea" value="{{AdminStagingSlideOutSection.stagingContentTab}}"/>
+        </actionGroup>
+        <!-- Verify Can Add Column to Stage Directly -->
+        <actionGroup ref="dragContentTypeToDropZone" stepKey="dragColumnIntoContainer">
+            <argument name="contentType" value="PageBuilderColumnGroupContentType"/>
+            <argument name="containerTargetType" value="PageBuilderRootContainerContentType"/>
+            <argument name="dropZoneIndex" value="2"/>
+            <argument name="pageBuilderArea" value="{{AdminStagingSlideOutSection.stagingContentTab}}"/>
+        </actionGroup>
+        <!-- Verify Can Add Tab to Stage Directly -->
+        <actionGroup ref="dragContentTypeToDropZone" stepKey="dragTabsIntoContainer">
+            <argument name="contentType" value="PageBuilderTabsContentType"/>
+            <argument name="containerTargetType" value="PageBuilderRootContainerContentType"/>
+            <argument name="dropZoneIndex" value="3"/>
+            <argument name="pageBuilderArea" value="{{AdminStagingSlideOutSection.stagingContentTab}}"/>
+        </actionGroup>
+        <!-- Verify Can Add HTML Code to Stage Directly -->
+        <actionGroup ref="dragContentTypeToDropZone" stepKey="dragHTMLIntoContainer">
+            <argument name="contentType" value="PageBuilderHtmlContentType"/>
+            <argument name="containerTargetType" value="PageBuilderRootContainerContentType"/>
+            <argument name="dropZoneIndex" value="4"/>
+            <argument name="pageBuilderArea" value="{{AdminStagingSlideOutSection.stagingContentTab}}"/>
+        </actionGroup>
+        <!-- Verify Can Add Block to Stage Directly -->
+        <actionGroup ref="dragContentTypeToDropZone" stepKey="dragBlockIntoContainer">
+            <argument name="contentType" value="PageBuilderBlockContentType"/>
+            <argument name="containerTargetType" value="PageBuilderRootContainerContentType"/>
+            <argument name="dropZoneIndex" value="5"/>
+            <argument name="pageBuilderArea" value="{{AdminStagingSlideOutSection.stagingContentTab}}"/>
+        </actionGroup>
+        <!-- Verify Can Add Dynamic Block to Stage Directly -->
+        <actionGroup ref="dragContentTypeToDropZone" stepKey="dragDynamicBlockIntoContainer" after="dragBlockIntoContainer">
+            <argument name="contentType" value="PageBuilderDynamicBlockContentType"/>
+            <argument name="containerTargetType" value="PageBuilderRootContainerContentType"/>
+            <argument name="dropZoneIndex" value="6"/>
+            <argument name="pageBuilderArea" value="{{AdminStagingSlideOutSection.stagingContentTab}}"/>
+        </actionGroup>
+        <!-- Save Staging and Verify Expected Content Types on Stage -->
+        <actionGroup ref="saveStagingDashboardSlideOutUpdateForm" stepKey="saveAndContinueEditCmsPage"/>
+        <actionGroup ref="saveStagingDashboardUpdateForm" stepKey="saveStagingDashboardUpdateForm" after="saveAndContinueEditCmsPage">
+            <argument name="updateName" value="UpdateWithoutEndUnique_2MinutesAhead.updateName"/>
+        </actionGroup>
+        <actionGroup ref="navigateToViewStagingUpdateFromStagingDashboard" stepKey="navigateToViewStagingUpdate" after="saveStagingDashboardUpdateForm">
+            <argument name="update" value="UpdateWithoutEndUnique_2MinutesAhead"/>
+        </actionGroup>
+        <actionGroup ref="openEditSlideOutForCMSPagesStagingUpdateFromViewStagingUpdate" stepKey="openEditSlideOutForCMSPagesStagingUpdateFromViewStagingUpdate2" after="navigateToViewStagingUpdate"/>
+        <actionGroup ref="switchToPageBuilderStage" stepKey="switchToPageBuilderStage" after="openEditSlideOutForCMSPagesStagingUpdateFromViewStagingUpdate2">
+            <argument name="sectionSelector" value="{{AdminStagingSlideOutSection.contentTab}}"/>
+            <argument name="sectionDependentSelector" value="{{AdminStagingSlideOutSection.stagingContentTab}}"/>
+        </actionGroup>
+        <actionGroup ref="ExpandAdminProductSectionActionGroup" stepKey="clickContentSectionHeader2" after="switchToPageBuilderStage">
+            <argument name="sectionSelector" value="{{AdminStagingDashboardSection.contentHeader}}"/>
+            <argument name="sectionDependentSelector" value="{{AdminStagingDashboardSection.contentHeaderActive}}"/>
+        </actionGroup>
+        <actionGroup ref="exitPageBuilderFullScreen" stepKey="exitPageBuilderFullScreen2" before="navigateToCMSPageStorefront"/>
+        <actionGroup ref="openPreviewForScheduledUpdateFromSlideOut" stepKey="navigateToCMSPageStorefront"/>
+    </test>
+</tests>

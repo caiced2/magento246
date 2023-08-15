@@ -1,0 +1,37 @@
+<?xml version="1.0"?>
+<!--
+/**
+ * Copyright © Magento, Inc. All rights reserved.
+ * See COPYING.txt for license details.
+ */
+-->
+<config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="urn:magento:framework:Event/etc/events.xsd">
+    <event name="layout_generate_blocks_after">
+        <observer name="magento_persistenthistory" instance="Magento\PersistentHistory\Observer\ApplyPersistentDataObserver" />
+    </event>
+    <event name="controller_action_predispatch_catalog_product_compare_clear">
+        <observer name="magento_persistenthistory" instance="Magento\PersistentHistory\Observer\ApplyCustomerIdObserver" />
+    </event>
+    <event name="controller_action_predispatch_catalog_product_compare_remove">
+        <observer name="magento_persistenthistory" instance="Magento\PersistentHistory\Observer\ApplyCustomerIdObserver" />
+    </event>
+    <event name="controller_action_predispatch">
+        <observer name="magento_persistenthistory" instance="Magento\PersistentHistory\Observer\EmulateCustomerObserver" />
+        <observer name="persistent_customer" disabled="true" />
+    </event>
+    <event name="sales_quote_save_before">
+        <observer name="magento_persistenthistory" instance="Magento\PersistentHistory\Observer\SetQuotePersistentDataObserver" />
+    </event>
+    <event name="controller_action_predispatch_checkout_onepage_saveMethod">
+        <observer name="magento_persistenthistory" instance="Magento\PersistentHistory\Observer\PreventSettingQuoteObserver" />
+    </event>
+    <event name="controller_action_predispatch_checkout_onepage_saveOrder">
+        <observer name="magento_persistenthistory" instance="Magento\PersistentHistory\Observer\PreventSettingQuoteObserver" />
+    </event>
+    <event name="render_block">
+        <observer name="magento_persistenthistory" instance="Magento\PersistentHistory\Observer\ApplyBlockPersistentDataObserver" />
+    </event>
+    <event name="persistent_session_expired">
+        <observer name="magento_persistenthistory" instance="Magento\PersistentHistory\Observer\ExpireSidebarsObserver" />
+    </event>
+</config>

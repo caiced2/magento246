@@ -1,0 +1,74 @@
+<?php
+/**
+ * Copyright © Magento, Inc. All rights reserved.
+ * See COPYING.txt for license details.
+ */
+
+namespace Magento\GiftCardAccount\view\frontend\templates\cart;
+
+use Magento\Framework\Escaper;
+use Magento\Framework\View\Helper\SecureHtmlRenderer;
+use Magento\GiftCardAccount\Block\Checkout\Cart\Total;
+use Magento\GiftCardAccount\Model\Giftcardaccount;
+
+/**
+ * @var Total $block
+ * @var SecureHtmlRenderer $secureRenderer
+ * @var Escaper $escaper
+ */
+$cards = $block->getTotal()->getGiftCards();
+if (!$cards) {
+    $cards = $block->getQuoteGiftCards();
+}
+$title = $escaper->escapeHtml(__('Remove'));
+/** @var \Magento\Checkout\Helper\Data $checkoutHelper */
+$checkoutHelper = $block->getData('checkoutHelper');
+?>
+<?php if ($block->getTotal()->getValue()): ?>
+    <?php foreach ($cards as $c): ?>
+        <tr class="totals giftcard">
+            <th colspan="<?= $escaper->escapeHtmlAttr($block->getColspan()) ?>"
+                class="mark" scope="row">
+                <?= /* @noEscape */ $secureRenderer->renderTag(
+                    'style',
+                    [],
+                    '.totals.giftcard > th:nth-child(1){ '
+                        . $escaper->escapeHtml($block->getTotal()->getStyle()) . '}',
+                    false
+                );
+                ?>
+                <a href="<?= $escaper->escapeUrl($block->getUrl('magento_giftcardaccount/cart/remove')) ?>"
+                   id="giftcard_action_delete"
+                   class="action delete"
+                   title="<?= /* @noEscape */ $title ?>">
+                    <span><?= /* @noEscape */ $title ?></span>
+                </a>
+                <script type="text/x-magento-init">
+                {
+                    "#giftcard_action_delete": {
+                        "Magento_GiftCardAccount/js/action/remove-gift-card-from-totals": {
+                            "code": "<?= $escaper->escapeJs($c[Giftcardaccount::CODE]) ?>"
+                        }
+                    }
+                }
+                </script>
+                <?= $escaper->escapeHtml(__('Gift Card (%1)', $c[Giftcardaccount::CODE])) ?>
+            </th>
+            <td class="amount"
+                data-th="<?= $escaper->escapeHtmlAttr(__('Gift Card (%1)', $c[Giftcardaccount::CODE])) ?>">
+            <span class="discount">
+                &#45;<?= /* @noEscape */ $checkoutHelper
+                    ->formatPrice($c[Giftcardaccount::AMOUNT]); ?>
+            </span>
+            </td>
+            <?= /* @noEscape */ $secureRenderer->renderTag(
+                'style',
+                [],
+                '.totals.giftcard > td:nth-child(1){ '
+                . $escaper->escapeHtml($block->getTotal()->getStyle()) . '}',
+                false
+            );
+            ?>
+        </tr>
+    <?php endforeach; ?>
+<?php endif; ?>

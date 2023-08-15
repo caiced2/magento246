@@ -1,0 +1,17 @@
+<?php
+/**
+ * Copyright © Magento, Inc. All rights reserved.
+ * See COPYING.txt for license details.
+ */
+/**
+ * @var \Magento\Framework\View\Element\Template $block
+ * @var \Magento\Framework\Escaper $escaper
+ */
+?>
+
+<?= $escaper->escapeHtml(__(
+    'Viewing combined "%1" report from segments: %2.',
+    $block->getData('viewMode'),
+    implode(', ', $block->getData('segments'))
+));
+

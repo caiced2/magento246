@@ -1,0 +1,47 @@
+<!--
+/**
+ * Copyright © Magento, Inc. All rights reserved.
+ * See COPYING.txt for license details.
+ */
+-->
+<form class="form bolt-form-shipping-address" data-hasrequired="$t('* Required Fields')}">
+    <!-- ko foreach: $parents[1].getRegion('before-fields') -->
+    <!-- ko template: getTemplate() --><!-- /ko -->
+    <!--/ko-->
+    <div id="shipping-bolt-address-form" class="fieldset address">
+        <!-- ko foreach: $parents[1].getRegion('additional-fieldsets') -->
+        <!-- ko template: getTemplate() --><!-- /ko -->
+        <!--/ko-->
+        <div class="field choice">
+            <!-- ko if: (isCustomerLoggedIn) -->
+            <div>
+                <input type="checkbox"
+                       id="shipping-save-in-address-book"
+                       class="checkbox"
+                       click="saveAddressInAddressBook"
+                       data-bind="checked: shouldSaveInAddressBook()"
+                >
+                <label class="label" for="shipping-save-in-address-book">
+                    <span translate="'Save in address book'"></span>
+                </label>
+            </div>
+            <!--/ko-->
+            <div>
+                <input type="checkbox"
+                       id="shipping-save-to-bolt"
+                       class="checkbox"
+                       click="saveAddressInBoltAddressBook"
+                       data-bind="checked: shouldSaveInBoltAddress()"
+                >
+                <label class="label" for="shipping-save-to-bolt">
+                    <span translate="'Save in Bolt address book'"></span>
+                </label>
+                <!-- ko if: (boltWalletError) -->
+                <div class="field-error">
+                    <span data-bind='text: boltWalletError'></span>
+                </div>
+                <!--/ko-->
+            </div>
+        </div>
+    </div>
+</form>

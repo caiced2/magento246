@@ -1,0 +1,67 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+ /**
+  * Copyright © Magento, Inc. All rights reserved.
+  * See COPYING.txt for license details.
+  */
+-->
+
+<tests xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xsi:noNamespaceSchemaLocation="urn:magento:mftf:Test/etc/testSchema.xsd">
+    <test name="AdminVerifyCustomerCustomFileAttributeUploadTest">
+        <annotations>
+            <features value="CustomerCustomAttribute"/>
+            <stories value="Custom Customer Attributes can correctly upload and store a file"/>
+            <title value="Custom Customer Attributes can correctly upload and store a file"/>
+            <description value="Custom Customer Attributes can correctly upload and store a file"/>
+            <severity value="MAJOR"/>
+            <testCaseId value="MC-26530"/>
+            <useCaseId value="MC-15020"/>
+            <group value="customer"/>
+            <group value="customeCustomAttributes"/>
+        </annotations>
+        <before>
+            <magentoCron groups="index" stepKey="reindex"/>
+            <!--Login as admin-->
+            <actionGroup ref="AdminLoginActionGroup" stepKey="LoginAsAdmin"/>
+        </before>
+        <after>
+            <!-- Delete customer attributes -->
+            <amOnPage url="{{CustomerAttributesPage.url}}" stepKey="navigateToCustomerAttributePage"/>
+            <actionGroup ref="DeleteCustomerAttribute" stepKey="adminDeleteFileAttribute">
+                <argument name="defaultLabel" value="{{AttributeFile.frontend_label}}"/>
+            </actionGroup>
+            <!--Log out-->
+            <actionGroup ref="AdminLogoutActionGroup" stepKey="logOut"/>
+        </after>
+
+        <amOnPage url="{{CustomerAttributesPage.url}}" stepKey="navigateToCustomerAddress"/>
+        <waitForPageLoad stepKey="waitForCustomerAttributePageLoaded"/>
+        <actionGroup ref="AdminCreateCustomerNewAttribute" stepKey="createTextFieldAttribute">
+            <argument name="defaultLabel" value="{{AttributeFile.frontend_label}}"/>
+            <argument name="attributeCode" value="{{AttributeFile.attribute_code}}"/>
+            <argument name="inputType" value="{{AttributeFile.frontend_input}}"/>
+            <argument name="sortOrder" value="{{AttributeFile.sort_order}}"/>
+            <argument name="formToUse" value="{{AttributeFile.used_in_forms}}"/>
+            <argument name="formToUse1" value="Customer Account Edit"/>
+            <argument name="message" value="You saved the customer attribute."/>
+        </actionGroup>
+
+        <actionGroup ref="StorefrontOpenCustomerAccountCreatePageActionGroup" stepKey="openCreateAccountPage"/>
+        <actionGroup ref="StorefrontFillCustomerAccountCreationFormActionGroup" stepKey="fillCreateAccountForm">
+            <argument name="customer" value="Simple_US_Customer"/>
+        </actionGroup>
+        <actionGroup ref="StorefrontCustomerEditUploadFileAttributeActionGroup" stepKey="uploadAttributeFile"/>
+        <actionGroup ref="StorefrontCreateCustomerSaveActionGroup" stepKey="createAccount"/>
+        <actionGroup ref="CliIndexerReindexActionGroup" stepKey="reindexAfterTest">
+            <argument name="indices" value="customer_grid"/>
+        </actionGroup>
+        <actionGroup ref="OpenEditCustomerFromAdminActionGroup" stepKey="editCustomer">
+            <argument name="customer" value="Simple_US_Customer"/>
+        </actionGroup>
+
+        <conditionalClick selector="{{AdminCustomerAccountInformationSection.accountInformationTab}}" dependentSelector="{{AdminCustomerAccountInformationSection.accountInformationTab}}" visible="true" stepKey="clickOnAccountInformation"/>
+
+        <waitForElementVisible selector="{{AdminCustomerAccountAttributeSection.fileUpload('small',AttributeFile.frontend_label)}}" stepKey="seeUploadedFile"/>
+    </test>
+</tests>

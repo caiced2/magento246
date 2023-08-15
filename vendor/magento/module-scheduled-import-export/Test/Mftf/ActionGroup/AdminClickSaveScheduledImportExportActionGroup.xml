@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+ /**
+  * Copyright © Magento, Inc. All rights reserved.
+  * See COPYING.txt for license details.
+  */
+-->
+
+<actionGroups xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+              xsi:noNamespaceSchemaLocation="urn:magento:mftf:Test/etc/actionGroupSchema.xsd">
+    <actionGroup name="AdminClickSaveScheduledImportExportActionGroup">
+        <annotations>
+            <description>Clicks the 'Save' button on the Admin New Scheduled Import or Export page.</description>
+        </annotations>
+        <arguments>
+            <argument name="resultMessageType" defaultValue="success" type="string"/>
+            <argument name="resultMessage" defaultValue="You saved the scheduled import." type="string"/>
+        </arguments>
+        <waitForElementVisible selector="{{AdminNewScheduledImportSection.saveButton}}" stepKey="waitForSaveButton"/>
+        <click selector="{{AdminNewScheduledImportSection.saveButton}}" stepKey="clickSaveButton"/>
+        <waitForPageLoad stepKey="waitForPageLoad"/>
+        <waitForText userInput="Scheduled Imports/Exports" selector="{{AdminHeaderSection.pageTitle}}" stepKey="waitForPageTitle"/>
+        <waitForText userInput="{{resultMessage}}" selector="{{AdminMessagesSection.messageByType(resultMessageType)}}" stepKey="waitForMessage"/>
+    </actionGroup>
+</actionGroups>

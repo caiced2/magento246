@@ -1,0 +1,29 @@
+<?='<?xml version="1.0"?>'; ?>
+
+<!--
+Generated code.  DO NOT EDIT!
+-->
+
+<!--
+/**
+ * Copyright © Magento, Inc. All rights reserved.
+ * See COPYING.txt for license details.
+ */
+-->
+<?php
+/** @var \Magento\AdobeCommerceEventsGenerator\Generator\ModuleBlock $block */
+$dependencies = $block->getDependencies();
+?>
+<config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="urn:magento:framework:Module/etc/module.xsd">
+<?php if (empty($dependencies)): ?>
+    <module name="<?= $block->getModuleName(); ?>" />
+<?php else: ?>
+    <module name="<?= $block->getModuleName(); ?>">
+        <sequence>
+    <?php foreach ($dependencies as $dependency): ?>
+            <module name='<?= $dependency; ?>' />
+    <?php endforeach; ?>
+        </sequence>
+    </module>
+<?php endif; ?>
+</config>

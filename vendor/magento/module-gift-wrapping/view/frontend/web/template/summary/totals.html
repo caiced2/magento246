@@ -1,0 +1,38 @@
+<!--
+/**
+ * Copyright © Magento, Inc. All rights reserved.
+ * See COPYING.txt for license details.
+ */
+-->
+<!-- ko if: isAvailable() -->
+    <!-- ko if: displayBothPrices() -->
+        <tr class="totals giftwrapping excl">
+            <th class="mark">
+                <span data-bind="text: $t(title) + ' ' + $t(excludingTaxMessage)"></span>
+            </th>
+            <td data-bind="text: getValue(), attr: {'data-th': $t(excludingTaxMessage)}" class="amount"></td>
+        </tr>
+        <tr class="totals giftwrapping incl">
+            <th class="mark">
+                <span data-bind="text: $t(title) + ' ' + $t(includingTaxMessage)"></span>
+            </th>
+            <td data-bind="text: getIncludingTaxValue(), attr: {'data-th': $t(includingTaxMessage)}" class="amount"></td>
+        </tr>
+    <!-- /ko -->
+    <!-- ko if: displayPriceInclTax() -->
+        <tr class="totals giftwrapping">
+            <th class="mark">
+                <span data-bind="{i18n: title}"></span>
+            </th>
+            <td data-bind="{text: getIncludingTaxValue(), attr: {'data-th': $t(title)}}" class="amount"></td>
+        </tr>
+    <!-- /ko -->
+    <!-- ko if: displayPriceExclTax() -->
+        <tr class="totals giftwrapping">
+            <th class="mark">
+                <span data-bind="{i18n: title}"></span>
+            </th>
+            <td data-bind="{text: getValue(), attr: {'data-th': $t(title)}}" class="amount"></td>
+        </tr>
+    <!-- /ko -->
+<!-- /ko -->

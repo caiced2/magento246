@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+ /**
+  * Copyright © Magento, Inc. All rights reserved.
+  * See COPYING.txt for license details.
+  */
+-->
+<sections xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+          xsi:noNamespaceSchemaLocation="urn:magento:mftf:Page/etc/SectionObject.xsd">
+    <section name="AdminCustomerAccountAttributeSection">
+        <element name="customAttributeInput" type="input" selector="input[name='customer[{{attributeCode}}]']" parameterized="true"/>
+        <element name="customFileAttributeUploadButton" type="input" selector=".file-uploader-area input[name='customer[{{attributeCode}}]'] ~ .file-uploader-button" parameterized="true"/>
+        <element name="imagePreview" type="text" selector="//span[text()='{{attributeLabel}}']/following::a[contains(@class, 'preview-image')][contains(@title, '{{imageName}}')]" parameterized="true"/>
+        <element name="fileDeleteButton" type="button" selector="//*[contains(@class, 'file-uploader-area')]//input[@name='customer[{{attributeCode}}]']/../..//button[contains(@class, 'action-remove')]" parameterized="true"/>
+        <element name="fileUpload" type="input" selector="//div[contains(@class,'admin__field')][.//div[contains(@class,'file-uploader-filename')][contains(text(),'{{partialFileName}}')]]/label/span[text()='{{fieldLabelText}}']" parameterized="true"/>
+        <element name="fileUploader" type="input" selector="//div[contains(@class,'admin__field')]//div[contains(@class,'file-uploader')]//input[contains(@name,'{{label}}')]" parameterized="true" timeout="30"/>
+        <element name="customerAttributeInput" type="input" selector="//input[contains(@name,'{{attributeCode}}')]" parameterized="true" timeout="30"/>
+        <element name="customerAttributeImage" type="block" selector="//input[contains(@name,'{{attributeCode}}')]//ancestor::div[@class='file-uploader']//div[contains(concat(' ',normalize-space(@class),' '),' file-uploader-preview ')]//img" parameterized="true"/>
+    </section>
+</sections>

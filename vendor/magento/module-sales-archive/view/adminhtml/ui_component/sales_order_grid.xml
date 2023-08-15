@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+/**
+ * Copyright © Magento, Inc. All rights reserved.
+ * See COPYING.txt for license details.
+ */
+-->
+<listing xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="urn:magento:module:Magento_Ui:etc/ui_configuration.xsd" class="Magento\SalesArchive\Ui\Component\Listing">
+    <settings>
+        <buttons>
+            <button name="go_to_archive">
+                <url path="sales/archive/orders"/>
+                <label translate="true">Go to Archive</label>
+            </button>
+        </buttons>
+    </settings>
+    <listingToolbar name="listing_top">
+        <massaction name="listing_massaction" class="Magento\SalesArchive\Ui\Component\MassAction">
+            <action name="add_order_to_archive" sortOrder="1">
+                <argument name="data" xsi:type="array">
+                    <item name="sortOrder" xsi:type="string">1</item>
+                </argument>
+                <settings>
+                    <url path="sales/archive/massAdd"/>
+                    <type>add_order_to_archive</type>
+                    <label translate="true">Move to Archive</label>
+                </settings>
+            </action>
+        </massaction>
+    </listingToolbar>
+</listing>

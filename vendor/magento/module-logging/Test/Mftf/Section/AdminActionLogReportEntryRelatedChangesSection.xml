@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+ /**
+  * Copyright © Magento, Inc. All rights reserved.
+  * See COPYING.txt for license details.
+  */
+-->
+<sections xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+          xsi:noNamespaceSchemaLocation="urn:magento:mftf:Page/etc/SectionObject.xsd">
+    <section name="AdminActionLogReportEntryRelatedChangesSection">
+        <element name="sourceDataColumn" type="text" selector="//th/span[text()='Source Data']"/>
+        <element name="valueBeforeChangeColumn" type="text" selector="//th/span[text()='Value Before Change']"/>
+        <element name="valueBeforeAfterColumn" type="text" selector="//th/span[text()='Value After Change']"/>
+        <element name="beforeParamValue" type="text" parameterized="true"
+                 selector="//td[contains(@class, 'col-original_data')]//dt[contains(@class, 'parameter') and contains(text(), '{{var1}}')]/following::dd[contains(text(), '{{var2}}')]"/>
+        <element name="afterParamValue" type="text" parameterized="true"
+                 selector="//td[contains(@class, 'col-result_data')]//dt[contains(@class, 'parameter') and contains(text(), '{{var1}}')]/following::dd[contains(text(), '{{var2}}')]"/>
+    </section>
+</sections>

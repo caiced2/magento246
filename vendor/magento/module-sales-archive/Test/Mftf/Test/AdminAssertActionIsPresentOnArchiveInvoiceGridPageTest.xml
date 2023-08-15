@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+ /**
+  * Copyright © Magento, Inc. All rights reserved.
+  * See COPYING.txt for license details.
+  */
+-->
+
+<tests xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xsi:noNamespaceSchemaLocation="urn:magento:mftf:Test/etc/testSchema.xsd">
+    <test name="AdminAssertActionIsPresentOnArchiveInvoiceGridPageTest">
+        <annotations>
+            <features value="SalesArchive"/>
+            <stories value="Create Invoice"/>
+            <title value="Verify action 'PDF Invoices' is present"/>
+            <description value="Verify action 'PDF Invoices' is present on Archive Invoices grid page"/>
+            <severity value="AVERAGE"/>
+            <testCaseId value="MC-40465"/>
+            <useCaseId value="MC-37688"/>
+            <group value="salesArchive"/>
+            <group value="pr_exclude"/>
+        </annotations>
+        <before>
+            <magentoCLI command="config:set {{ArchivingEnable.path}} {{ArchivingEnable.value}}" stepKey="enableArchiving"/>
+            <actionGroup ref="AdminLoginActionGroup" stepKey="loginAsAdmin"/>
+        </before>
+        <after>
+            <magentoCLI command="config:set {{ArchivingDisabled.path}} {{ArchivingDisabled.value}}" stepKey="disableArchiving"/>
+            <actionGroup ref="AdminLogoutActionGroup" stepKey="logoutFromAdmin"/>
+        </after>
+
+        <actionGroup ref="AdminOpenArchiveInvoicesActionGroup" stepKey="navigateToArchiveInvoicesGrid"/>
+        <actionGroup ref="AdminAssertActionOnInvoiceGridPageActionGroup" stepKey="assertPresentAction">
+            <argument name="action" value="PDF Invoices"/>
+        </actionGroup>
+    </test>
+</tests>

@@ -1,0 +1,70 @@
+<!--
+/**
+ * Copyright © Magento, Inc. All rights reserved.
+ * See COPYING.txt for license details.
+ */
+-->
+<div class="shipping-address-item selected">
+    <if args="defaultAddress()">
+        <text args="defaultAddress().prefix"></text>
+        <text args="defaultAddress().firstname"></text>
+        <text args="defaultAddress().middlename"></text>
+        <text args="defaultAddress().lastname"></text>
+        <text args="defaultAddress().suffix"></text>
+        <br>
+        <text args="_.values(_.compact(defaultAddress().street)).join(', ')"></text>
+        <br>
+        <text args="defaultAddress().city "></text>
+        , <span text="defaultAddress().region"></span>
+        <text args="defaultAddress().postcode"></text>
+        <br>
+
+        <if args="getCountryName(defaultAddress().countryId)">
+            <text args="getCountryName(defaultAddress().countryId)"></text>
+        </if>
+        <ifnot args="getCountryName(defaultAddress().countryId)">
+            <text args="getCountryName(defaultAddress().country_id)"></text>
+        </ifnot>
+        <br>
+        <a if="defaultAddress().telephone" attr="'href': 'tel:' + defaultAddress().telephone"
+           text="defaultAddress().telephone"></a><br>
+
+        <each args="data: defaultAddress().customAttributes, as: 'element'">
+            <each args="data: Object.keys(element), as: 'attribute'">
+                <if args="typeof element[attribute] === 'object'">
+                    <if args="element[attribute].label">
+                        <text args="element[attribute].label"></text>
+                    </if>
+                    <ifnot args="element[attribute].label">
+                        <if args="element[attribute].value">
+                            <text args="element[attribute].value"></text>
+                        </if>
+                    </ifnot>
+                </if>
+                <if args="typeof element[attribute] === 'string'">
+                    <text args="element[attribute]"></text>
+                </if>
+                <br>
+            </each>
+        </each>
+    </if>
+    <ifnot args="defaultAddress()">
+        <p text="noAddressMessage"></p>
+    </ifnot>
+    <div class="edit-address-popup">
+        <button type="button"
+                class="action action-additional"
+                visible="defaultAddress() && defaultAddress().isEditable()"
+                click="editAddress">
+            <span translate="'Edit'"></span>
+        </button>
+    </div>
+    <div class="change-address-popup">
+        <button type="button"
+                class="action action-additional"
+                visible="isChangeAddressVisible"
+                click="openAddressSelection">
+            <span translate="'Change Address'"></span>
+        </button>
+    </div>
+</div>

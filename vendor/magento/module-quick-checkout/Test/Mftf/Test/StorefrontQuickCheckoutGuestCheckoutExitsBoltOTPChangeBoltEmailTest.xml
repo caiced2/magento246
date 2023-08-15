@@ -1,0 +1,71 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+ /**
+  * Copyright © Magento, Inc. All rights reserved.
+  * See COPYING.txt for license details.
+  */
+-->
+
+<tests xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xsi:noNamespaceSchemaLocation="urn:magento:mftf:Test/etc/testSchema.xsd">
+    <test name="StorefrontQuickCheckoutGuestCheckoutExitsBoltOTPChangeBoltEmailTest">
+        <annotations>
+            <features value="MagentoQuickCheckout"/>
+            <stories value="Shopper exits OTP modal and enter different bolt account"/>
+            <title value="The shopper exits the OTP modal and enter another Bolt account"/>
+            <description value="The shopper exits the OTP modal and enters a new email matching a different Bolt account"/>
+            <severity value="CRITICAL"/>
+            <testCaseId value="guest-checkout-exits-bolt-otp-enter-different-bolt-account"/>
+            <group value="quick-checkout"/>
+        </annotations>
+        <before>
+            <magentoCLI command="config:set {{EnableFreeShippingConfigData.path}} {{EnableFreeShippingConfigData.value}}" stepKey="enableFreeShipping"/>
+            <!-- Login -->
+            <actionGroup ref="AdminLoginActionGroup" stepKey="login"/>
+            <actionGroup ref="AdminConfigureQuickCheckoutActionGroup" stepKey="configurePaymentMethod">
+                <argument name="methodAction" value="authorize_capture"/>
+            </actionGroup>
+            <!-- Create Product -->
+            <createData entity="_defaultCategory" stepKey="createCategory"/>
+            <createData entity="_defaultProduct" stepKey="createProduct">
+                <requiredEntity createDataKey="createCategory"/>
+            </createData>
+        </before>
+        <after>
+            <magentoCLI command="config:set {{DisableFreeShippingMethod.path}} {{DisableFreeShippingMethod.value}}" stepKey="disableFreeShipping"/>
+            <actionGroup ref="AdminDisableQuickCheckoutActionGroup" stepKey="disablePaymentMethod" />
+            <!-- Delete product -->
+            <deleteData stepKey="deleteCategory" createDataKey="createCategory"/>
+            <deleteData stepKey="deleteProduct" createDataKey="createProduct"/>
+            <!-- Logout -->
+            <actionGroup ref="AdminLogoutActionGroup" stepKey="logoutFromAdmin"/>
+        </after>
+
+        <!-- Navigate to storefront as a guest -->
+        <amOnPage url="{{StorefrontCategoryPage.url($$createCategory.name$$)}}" stepKey="navigateToCategoryPage"/>
+        <actionGroup ref="StorefrontAddProductToCartFromCategoryActionGroup" stepKey="addProductToCart">
+            <argument name="productName" value="$$createProduct.name$$"/>
+        </actionGroup>
+        <actionGroup ref="GoToCheckoutFromMinicartActionGroup" stepKey="goToCheckoutFromMinicart"/>
+
+        <!-- OTP Test, close and enter another BOLT email account -->
+        <actionGroup ref="OpenOTPWithEmailAddressAndCloseOTPActionGroup" stepKey="openOTPAndCloseOTP">
+            <argument name="customer" value="BoltCustomer"/>
+        </actionGroup>
+
+        <actionGroup ref="LoginWithEmailAddressAndOtpActionGroup" stepKey="loginWithEmailAddressAndOtp">
+            <argument name="customer" value="BoltCustomerWithTwoCreditCards"/>
+        </actionGroup>
+
+        <!-- Place Order -->
+        <waitForElement selector="{{CheckoutPaymentSection.useExistingCardRadio}}" stepKey="waitForUseExistingCardRadio"/>
+        <waitForElementVisible selector="{{CheckoutPaymentSection.MagentoPaymentsHostedFieldsPlaceOrderButton}}" stepKey="waitPlaceOrderButton"/>
+        <click selector="{{CheckoutPaymentSection.MagentoPaymentsHostedFieldsPlaceOrderButton}}" stepKey="clickPlaceOrderButton"/>
+
+        <!-- I see order successful page -->
+        <waitForLoadingMaskToDisappear stepKey="waitForLoadingMaskToDisappear2"/>
+        <waitForElement selector="{{CheckoutSuccessMainSection.successTitle}}" stepKey="waitForLoadSuccessPageTitle"/>
+        <waitForElement selector="{{CheckoutSuccessMainSection.success}}" time="30" stepKey="waitForLoadSuccessPage"/>
+        <see selector="{{CheckoutSuccessMainSection.successTitle}}" userInput="Thank you for your purchase!" stepKey="checkOrderSuccessPageTitle"/>
+    </test>
+</tests>

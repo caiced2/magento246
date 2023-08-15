@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+ /**
+  * Copyright © Magento, Inc. All rights reserved.
+  * See COPYING.txt for license details.
+  */
+-->
+<actionGroups xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:noNamespaceSchemaLocation="urn:magento:mftf:Test/etc/actionGroupSchema.xsd">
+    <actionGroup name="AdminCreateSimpleProduct">
+        <click selector="{{AdminCreateSimpleProductSection.add}}" stepKey="clickToAddProduct"/>
+        <waitForPageLoad stepKey="WaitForProductPageIsLoaded"/>
+        <fillField selector="{{AdminCreateSimpleProductSection.name}}" userInput="{{SimpleProduct5.name}}" stepKey="setNameForProduct"/>
+        <fillField selector="{{AdminCreateSimpleProductSection.sku}}" userInput="{{SimpleProduct5.sku}}" stepKey="setSKUForProduct"/>
+        <fillField selector="{{AdminCreateSimpleProductSection.price}}" userInput="{{SimpleProduct5.price}}" stepKey="setPriceForProduct"/>
+        <fillField selector="{{AdminCreateSimpleProductSection.quantity}}" userInput="{{SimpleProduct5.quantity}}" stepKey="setQuantityForProduct"/>
+        <click selector="{{AdminCreateSimpleProductSection.search}}" stepKey="clickOnSearchEngineOptimization"/>
+        <fillField selector="{{AdminCreateSimpleProductSection.urlKey}}" userInput="{{SimpleProduct5.urlKey}}" stepKey="setSearchUrlForProduct"/>
+        <click selector="{{AdminCreateSimpleProductSection.saveButton}}" stepKey="clickSaveProduct"/>
+        <waitForPageLoad stepKey="WaitForProductSave"/>
+        <see selector="{{AdminCreateSimpleProductSection.successMessage}}" userInput="You saved the product." stepKey="seeSaveConfirmation"/>
+    </actionGroup>
+</actionGroups>

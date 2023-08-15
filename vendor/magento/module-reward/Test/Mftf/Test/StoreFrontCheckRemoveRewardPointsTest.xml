@@ -1,0 +1,68 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+ /**
+  * Copyright © Magento, Inc. All rights reserved.
+  * See COPYING.txt for license details.
+  */
+-->
+
+<tests xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xsi:noNamespaceSchemaLocation="urn:magento:mftf:Test/etc/testSchema.xsd">
+    <test name="StoreFrontCheckRemoveRewardPointsTest">
+        <annotations>
+            <features value="Reward"/>
+            <stories value="Remove reward points"/>
+            <title value="Check that reward points can be successfully deleted from order"/>
+            <description value="Reward points can be deleted from multishipment order"/>
+            <severity value="MAJOR"/>
+            <testCaseId value="MC-36659"/>
+            <useCaseId value="MC-35955"/>
+            <group value="reward"/>
+            <group value="multishipping"/>
+        </annotations>
+
+        <before>
+            <createData entity="SimpleProduct2" stepKey="product"/>
+            <createData entity="Simple_US_Customer_Two_Addresses" stepKey="customer"/>
+            <actionGroup ref="AdminLoginActionGroup" stepKey="loginAsAdmin"/>
+            <actionGroup ref="AdminCreateCurrencyToPointsRateActionGroup" stepKey="createCurrencyToPointsRateActionGroup">
+                <argument name="rate1" value="1"/>
+                <argument name="rate2" value="1"/>
+            </actionGroup>
+            <actionGroup ref="AdminCreatePointsToCurrencyRateActionGroup" stepKey="createPointsToCurrencyRateActionGroup">
+                <argument name="rate1" value="1"/>
+                <argument name="rate2" value="1"/>
+            </actionGroup>
+            <actionGroup ref="AdminApplyRewardPointsActionGroup" stepKey="applyRewardPointsToCustomer">
+                <argument name="customerId" value="$$customer.id$$"/>
+                <argument name="rewards" value="10"/>
+            </actionGroup>
+        </before>
+
+        <after>
+            <actionGroup ref="StorefrontCustomerLogoutActionGroup" stepKey="logoutStorefront"/>
+            <deleteData createDataKey="product"  stepKey="deleteProduct"/>
+            <deleteData createDataKey="customer" stepKey="deleteCustomer"/>
+            <actionGroup ref="AdminDeleteRewardExchangeRateActionGroup" stepKey="deleteRewardExchangeRateFirst"/>
+            <actionGroup ref="AdminDeleteRewardExchangeRateActionGroup" stepKey="deleteRewardExchangeRateSecond"/>
+            <actionGroup ref="AdminLogoutActionGroup" stepKey="adminLogout"/>
+            <comment userInput="BIC workaround" stepKey="customerLogout"/>
+        </after>
+
+        <actionGroup ref="LoginToStorefrontActionGroup" stepKey="loginToStorefrontAccount">
+            <argument name="Customer" value="$customer$"/>
+        </actionGroup>
+        <actionGroup ref="OpenStoreFrontProductPageActionGroup" stepKey="openProductPage">
+            <argument name="productUrlKey" value="$product.custom_attributes[url_key]$"/>
+        </actionGroup>
+        <actionGroup ref="AddToCartFromStorefrontProductPageActionGroup" stepKey="cartAddVirtualProductToCart">
+            <argument name="productName" value="$product.name$"/>
+        </actionGroup>
+        <actionGroup ref="StorefrontOpenCartFromMinicartActionGroup" stepKey="openCart"/>
+        <actionGroup ref="CheckingWithSingleAddressActionGroup" stepKey="checkoutWithSingleAddresses"/>
+        <actionGroup ref="StorefrontLeaveDefaultShippingMethodsAndGoToBillingInfoActionGroup" stepKey="checkoutWithSingleShipping"/>
+        <actionGroup ref="StorefrontMultishippingSelectUseRewardPointsActionGroup" stepKey="setUseRewardPoints"/>
+        <actionGroup ref="SelectBillingInfoActionGroup" stepKey="checkoutWithPaymentMethod"/>
+        <actionGroup ref="StorefrontMultishippingRemoveRewardPointsActionGroup" stepKey="removeRewardPoints"/>
+    </test>
+</tests>

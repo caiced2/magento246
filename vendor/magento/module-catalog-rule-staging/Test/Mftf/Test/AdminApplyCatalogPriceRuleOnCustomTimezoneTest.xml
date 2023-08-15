@@ -1,0 +1,75 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+ /**
+  * Copyright © Magento, Inc. All rights reserved.
+  * See COPYING.txt for license details.
+  */
+-->
+
+<tests xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="urn:magento:mftf:Test/etc/testSchema.xsd">
+    <test name="AdminApplyCatalogPriceRuleOnCustomTimezoneTest">
+        <annotations>
+            <features value="CatalogRule"/>
+            <stories value="Apply catalog price rule"/>
+            <title value="Apply catalog price rule on website with timezone -1h of the admin timezone"/>
+            <description value="Apply catalog price rule on website with timezone -1h of the admin timezone"/>
+            <severity value="CRITICAL"/>
+            <testCaseId value="MC-40418"/>
+            <useCaseId value="MC-40283"/>
+            <group value="CatalogRule"/>
+        </annotations>
+        <before>
+            <!-- Set custom Time Zone on the Main Website -->
+            <magentoCLI command="config:set --scope=website --scope-code=base general/locale/timezone America/Phoenix" stepKey="setTimezone"/>
+            <magentoCLI command="cache:flush" arguments="config" stepKey="flushConfigCache"/>
+            <!-- Create simple product -->
+            <createData entity="ApiCategory" stepKey="createCategory"/>
+            <createData entity="ApiSimpleProduct" stepKey="createSimpleProduct">
+                <requiredEntity createDataKey="createCategory"/>
+            </createData>
+            <!-- Login to admin area -->
+            <actionGroup ref="AdminLoginActionGroup" stepKey="loginAsAdmin"/>
+            <!-- Create catalog price rule -->
+            <actionGroup ref="AdminOpenNewCatalogPriceRuleFormPageActionGroup" stepKey="openNewCatalogPriceRulePage"/>
+            <actionGroup ref="CreateCatalogPriceRuleViaTheUiActionGroup" stepKey="fillCatalogPriceRuleData">
+                <argument name="customerGroup" value="NOT LOGGED IN"/>
+            </actionGroup>
+            <!-- Save and continue edit the catalog price rule -->
+            <actionGroup ref="SaveAndContinueEditCatalogPriceRuleActionGroup" stepKey="saveAndContinueEdit"/>
+        </before>
+        <after>
+            <!-- Set default Time Zone on the Main Website -->
+            <magentoCLI command="config:set --scope=website --scope-code=base general/locale/timezone America/Chicago" stepKey="restoreTimezone"/>
+            <magentoCLI command="cache:flush" arguments="config" stepKey="flushConfigCacheAfterRestore"/>
+            <!-- Delete the category and product -->
+            <deleteData createDataKey="createCategory" stepKey="deleteCategory"/>
+            <deleteData createDataKey="createSimpleProduct" stepKey="deleteSimpleProduct"/>
+            <!-- Delete the rule -->
+            <actionGroup ref="AdminOpenCatalogPriceRulePageActionGroup" stepKey="goToPriceRulePage"/>
+            <actionGroup ref="deleteEntitySecondaryGrid" stepKey="deletePriceRule">
+                <argument name="name" value="{{_defaultCatalogRule.name}}"/>
+                <argument name="searchInput" value="{{AdminSecondaryGridSection.catalogRuleIdentifierSearch}}"/>
+            </actionGroup>
+            <!-- Reindex invalidated indices -->
+            <magentoCron groups="index" stepKey="reindexAfterRemoveRule"/>
+        </after>
+
+        <!-- Create Schedule Update to activate the rule -->
+        <actionGroup ref="CreateCatalogRuleStagingUpdateActionGroup" stepKey="createScheduleUpdateToActivateTheRule"/>
+        <!-- Verify price on category page for the product -->
+        <actionGroup ref="StorefrontNavigateCategoryPageActionGroup" stepKey="goToCategoryPage">
+            <argument name="category" value="$createCategory$"/>
+        </actionGroup>
+        <actionGroup ref="StorefrontAssertProductPriceOnCategoryPageActionGroup" stepKey="assertProductPriceOnCategoryPage">
+            <argument name="productName" value="$createSimpleProduct.name$"/>
+            <argument name="productPrice" value="$110.70"/>
+        </actionGroup>
+        <!-- Verify price on the product page -->
+        <actionGroup ref="StorefrontOpenProductEntityPageActionGroup" stepKey="gotToProductPage">
+            <argument name="product" value="$createSimpleProduct$"/>
+        </actionGroup>
+        <actionGroup ref="StorefrontAssertProductPriceOnProductPageActionGroup" stepKey="assertProductPriceOnProductPage">
+            <argument name="productPrice" value="$110.70"/>
+        </actionGroup>
+    </test>
+</tests>

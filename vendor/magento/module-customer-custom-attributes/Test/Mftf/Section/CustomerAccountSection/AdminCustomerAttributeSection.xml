@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+ /**
+  * Copyright © Magento, Inc. All rights reserved.
+  * See COPYING.txt for license details.
+  */
+-->
+<sections xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+          xsi:noNamespaceSchemaLocation="urn:magento:mftf:Page/etc/SectionObject.xsd">
+    <section name="AdminCustomerAttributeSection">
+        <element name="manageLabel" type="button" selector="#customer_attribute_tabs_options"/>
+        <element name="searchDefaultLabel" type="input" selector="#customerAttributeGrid_filter_frontend_label"/>
+        <element name="firstAttribute" type="button" selector="//*[@id='customerAttributeGrid_table']/tbody/tr[1]/td[contains(@class,'col-attr-code')]" timeout="30"/>
+        <element name="resetFilters" type="button" selector="button[title='Reset Filter']" timeout="30"/>
+        <element name="attributeCode" type="input" selector="[name*='attribute_code']" timeout="30"/>
+        <element name="defaultLabel" type="input" selector="[name*='frontend_label']" timeout="30"/>
+        <element name="searchBtn" type="button" selector="[data-action='grid-filter-apply']" timeout="30"/>
+    </section>
+</sections>

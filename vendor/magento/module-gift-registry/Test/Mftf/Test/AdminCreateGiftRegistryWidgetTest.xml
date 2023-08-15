@@ -1,0 +1,78 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+ /**
+  * Copyright © Magento, Inc. All rights reserved.
+  * See COPYING.txt for license details.
+  */
+-->
+
+<tests xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xsi:noNamespaceSchemaLocation="urn:magento:mftf:Test/etc/testSchema.xsd">
+    <test name="AdminCreateGiftRegistryWidgetTest">
+        <annotations>
+            <features value="GiftReistry"/>
+            <stories value="CMS Widgets"/>
+            <title value="Admin User can create widgets type of Gift Registry Search"/>
+            <description value=" Admin User can create Widget type of Gift Registry Search in a CMS page."/>
+            <severity value="AVERAGE"/>
+            <testCaseId value="MC-37849"/>
+            <group value="WYSIWYGDisabled"/>
+            <group value="cms"/>
+            <group value="widget"/>
+            <group value="giftRegistry"/>
+        </annotations>
+        <before>
+            <createData entity="_defaultCmsPage" stepKey="createCMSPage"/>
+            <createData entity="Simple_US_Customer" stepKey="createCustomer"/>
+            <actionGroup ref="LoginToStorefrontActionGroup" stepKey="loginAsCustomer">
+                <argument name="Customer" value="$createCustomer$"/>
+            </actionGroup>
+            <!--Create new Gift Registry-->
+            <amOnPage url="{{StorefrontGiftRegistryPage.url}}" stepKey="openGiftRegistryPage"/>
+            <actionGroup ref="StorefrontSelectNewGiftRegistryTypeAndProceedActionGroup" stepKey="selectGiftRegistryType"/>
+            <actionGroup ref="StorefrontFillGiftRegistryFieldsActionGroup" stepKey="setGiftRegistryParams">
+                <argument name="email" value="$createCustomer.email$"/>
+                <argument name="eventTitle" value="Birthday of someone"/>
+            </actionGroup>
+            <click selector="{{StorefrontCreateEditGiftRegistrySection.saveButton}}" stepKey="saveRegistry"/>
+            <actionGroup ref="AdminLoginActionGroup" stepKey="loginAsAdmin"/>
+        </before>
+        <after>
+            <deleteData createDataKey="createCMSPage" stepKey="deleteCmsPage" />
+            <actionGroup ref="StorefrontCustomerLogoutActionGroup" stepKey="logoutFromStorefront"/>
+            <deleteData createDataKey="createCustomer" stepKey="deleteCustomer"/>
+            <actionGroup ref="AdminLogoutActionGroup" stepKey="logoutFromAdmin"/>
+        </after>
+        <!--Open CMS page on admin-->
+        <actionGroup ref="AdminOpenCmsPageActionGroup" stepKey="openEditPage">
+            <argument name="page_id" value="$createCMSPage.id$"/>
+        </actionGroup>
+        <!-- Add GiftRegistry search widget -->
+        <conditionalClick selector="{{CmsNewPagePageContentSection.header}}" dependentSelector="{{CmsNewPagePageContentSection.contentHeading}}" visible="false" stepKey="expandContentTabIfCollapsed"/>
+        <actionGroup ref="AdminInsertWidgetToCmsPageContentActionGroup" stepKey="insertWidgetToCmsPageContent">
+            <argument name="widgetType" value="Gift Registry Search"/>
+        </actionGroup>
+        <waitForElementVisible selector="{{WidgetSection.giftRegistryQuickSearchType}}" stepKey="waitForSelectAppear"/>
+        <selectOption selector="{{WidgetSection.giftRegistryQuickSearchType}}" userInput="all" stepKey="selectGiftRegistrySearchType"/>
+        <actionGroup ref="AdminClickInsertWidgetActionGroup" stepKey="clickInsertWidgetButton"/>
+        <actionGroup ref="AdminSaveAndContinueEditCmsPageActionGroup" stepKey="saveCmsPage"/>
+        <!-- Open CMS page on storefront-->
+        <actionGroup ref="NavigateToStorefrontForCreatedPageActionGroup" stepKey="navigateToCreatedCmsPage">
+            <argument name="page" value="$createCMSPage.identifier$"/>
+        </actionGroup>
+        <!--Search by name-->
+        <actionGroup ref="StorefrontSearchGiftRegistryByNameActionGroup" stepKey="useSearchByName"/>
+        <actionGroup ref="AssertStorefrontGiftRegistrySearchResultActionGroup" stepKey="assertSearchByNameResult">
+            <argument name="email" value=""/>
+        </actionGroup>
+        <moveBack stepKey="moveBackAfterSearchByName"/>
+        <!--Search by email-->
+        <actionGroup ref="StorefrontSearchGiftRegistryByEmailActionGroup" stepKey="useSearchByEmail">
+            <argument name="email" value="$createCustomer.email$"/>
+        </actionGroup>
+        <actionGroup ref="AssertStorefrontGiftRegistrySearchResultActionGroup" stepKey="assertSearchByEmailResult">
+            <argument name="email" value="$createCustomer.email$"/>
+            <argument name="event" value="Birthday of someone"/>
+        </actionGroup>
+    </test>
+</tests>

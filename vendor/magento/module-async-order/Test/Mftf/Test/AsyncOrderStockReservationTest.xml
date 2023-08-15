@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+ /**
+  * Copyright © Magento, Inc. All rights reserved.
+  * See COPYING.txt for license details.
+  */
+-->
+<tests xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xsi:noNamespaceSchemaLocation="urn:magento:mftf:Test/etc/testSchema.xsd">
+    <test name="AsyncOrderStockReservationTest">
+        <annotations>
+            <stories value="Async Order Stock Reservation"/>
+            <title value="Async Order Stock Reservation"/>
+            <description value="Async Order with Deferred Stock Update"/>
+            <severity value="MAJOR"/>
+            <testCaseId value="ACPT-933"/>
+            <group value="async_checkout"/>
+        </annotations>
+        <!-- This test is temporary dummy for future improvement in scope of ACPT-933. Do not delete this test until ACPT-933 is resolved.-->
+    </test>
+</tests>

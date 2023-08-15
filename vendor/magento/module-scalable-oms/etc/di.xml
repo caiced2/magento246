@@ -1,0 +1,117 @@
+<?xml version="1.0"?>
+<!--
+/**
+ * Copyright © Magento, Inc. All rights reserved.
+ * See COPYING.txt for license details.
+ */
+-->
+<config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="urn:magento:framework:ObjectManager/etc/config.xsd">
+    <preference for="Magento\Framework\ForeignKey\ConfigInterface" type="Magento\Framework\ForeignKey\Config" />
+    <preference for="Magento\Framework\ForeignKey\ConstraintInterface" type="Magento\Framework\ForeignKey\Constraint" />
+    <type name="Magento\Framework\Setup\Declaration\Schema\Sharding">
+        <arguments>
+            <argument name="resources" xsi:type="array">
+                <item name="default" xsi:type="string">default</item>
+                <item name="sales" xsi:type="string">sales</item>
+            </argument>
+        </arguments>
+    </type>
+    <type name="Magento\Framework\ForeignKey\ConstraintProcessor">
+        <arguments>
+            <argument name="strategies" xsi:type="array">
+                <item name="CASCADE" xsi:type="object">Magento\Framework\ForeignKey\Strategy\Cascade</item>
+                <item name="RESTRICT" xsi:type="object">Magento\Framework\ForeignKey\Strategy\Restrict</item>
+                <item name="SET NULL" xsi:type="object">Magento\Framework\ForeignKey\Strategy\SetNull</item>
+                <item name="NO ACTION" xsi:type="object">Magento\Framework\ForeignKey\Strategy\NoAction</item>
+                <item name="DB CASCADE" xsi:type="object">Magento\Framework\ForeignKey\Strategy\DbCascade</item>
+                <item name="DB RESTRICT" xsi:type="object">Magento\Framework\ForeignKey\Strategy\DbIgnore</item>
+                <item name="DB SET NULL" xsi:type="object">Magento\Framework\ForeignKey\Strategy\DbIgnore</item>
+                <item name="DB NO ACTION" xsi:type="object">Magento\Framework\ForeignKey\Strategy\DbIgnore</item>
+            </argument>
+        </arguments>
+    </type>
+    <type name="Magento\Framework\Model\ResourceModel\Db\ObjectRelationProcessor">
+        <plugin name="object_constraints_resolver" type="Magento\Framework\ForeignKey\ObjectRelationProcessor\Plugin" />
+    </type>
+    <type name="Magento\Framework\Console\CommandListInterface">
+        <arguments>
+            <argument name="commands" xsi:type="array">
+                <item name="split-sales-db" xsi:type="object">Magento\ScalableOms\Console\Command\SplitSales</item>
+            </argument>
+        </arguments>
+    </type>
+    <virtualType name="OmsTableNameArrayIterator" type="Magento\Framework\ForeignKey\Migration\TableNameArrayIterator">
+        <arguments>
+            <argument name="tableNames" xsi:type="array">
+                <item name="sales_bestsellers_aggregated_daily" xsi:type="string">sales_bestsellers_aggregated_daily</item>
+                <item name="sales_bestsellers_aggregated_monthly" xsi:type="string">sales_bestsellers_aggregated_monthly</item>
+                <item name="sales_bestsellers_aggregated_yearly" xsi:type="string">sales_bestsellers_aggregated_yearly</item>
+                <item name="sales_creditmemo" xsi:type="string">sales_creditmemo</item>
+                <item name="sales_creditmemo_comment" xsi:type="string">sales_creditmemo_comment</item>
+                <item name="sales_creditmemo_grid" xsi:type="string">sales_creditmemo_grid</item>
+                <item name="sales_creditmemo_item" xsi:type="string">sales_creditmemo_item</item>
+                <item name="sales_invoice" xsi:type="string">sales_invoice</item>
+                <item name="sales_invoice_comment" xsi:type="string">sales_invoice_comment</item>
+                <item name="sales_invoice_grid" xsi:type="string">sales_invoice_grid</item>
+                <item name="sales_invoice_item" xsi:type="string">sales_invoice_item</item>
+                <item name="sales_invoiced_aggregated" xsi:type="string">sales_invoiced_aggregated</item>
+                <item name="sales_invoiced_aggregated_order" xsi:type="string">sales_invoiced_aggregated_order</item>
+                <item name="sales_order" xsi:type="string">sales_order</item>
+                <item name="sales_order_address" xsi:type="string">sales_order_address</item>
+                <item name="sales_order_aggregated_created" xsi:type="string">sales_order_aggregated_created</item>
+                <item name="sales_order_aggregated_updated" xsi:type="string">sales_order_aggregated_updated</item>
+                <item name="sales_order_grid" xsi:type="string">sales_order_grid</item>
+                <item name="sales_order_item" xsi:type="string">sales_order_item</item>
+                <item name="sales_order_payment" xsi:type="string">sales_order_payment</item>
+                <item name="sales_order_status" xsi:type="string">sales_order_status</item>
+                <item name="sales_order_status_history" xsi:type="string">sales_order_status_history</item>
+                <item name="sales_order_status_label" xsi:type="string">sales_order_status_label</item>
+                <item name="sales_order_status_state" xsi:type="string">sales_order_status_state</item>
+                <item name="sales_order_tax" xsi:type="string">sales_order_tax</item>
+                <item name="sales_order_tax_item" xsi:type="string">sales_order_tax_item</item>
+                <item name="sales_payment_transaction" xsi:type="string">sales_payment_transaction</item>
+                <item name="sales_refunded_aggregated" xsi:type="string">sales_refunded_aggregated</item>
+                <item name="sales_refunded_aggregated_order" xsi:type="string">sales_refunded_aggregated_order</item>
+                <item name="sales_sequence_meta" xsi:type="string">sales_sequence_meta</item>
+                <item name="sales_sequence_profile" xsi:type="string">sales_sequence_profile</item>
+                <item name="sales_shipment" xsi:type="string">sales_shipment</item>
+                <item name="sales_shipment_comment" xsi:type="string">sales_shipment_comment</item>
+                <item name="sales_shipment_grid" xsi:type="string">sales_shipment_grid</item>
+                <item name="sales_shipment_item" xsi:type="string">sales_shipment_item</item>
+                <item name="sales_shipment_track" xsi:type="string">sales_shipment_track</item>
+                <item name="sales_shipping_aggregated" xsi:type="string">sales_shipping_aggregated</item>
+                <item name="sales_shipping_aggregated_order" xsi:type="string">sales_shipping_aggregated_order</item>
+                <item name="magento_sales_creditmemo_grid_archive" xsi:type="string">magento_sales_creditmemo_grid_archive</item>
+                <item name="magento_sales_invoice_grid_archive" xsi:type="string">magento_sales_invoice_grid_archive</item>
+                <item name="magento_sales_order_grid_archive" xsi:type="string">magento_sales_order_grid_archive</item>
+                <item name="magento_sales_shipment_grid_archive" xsi:type="string">magento_sales_shipment_grid_archive</item>
+                <item name="magento_customercustomattributes_sales_flat_order" xsi:type="string">magento_customercustomattributes_sales_flat_order</item>
+                <item name="magento_customercustomattributes_sales_flat_order_address" xsi:type="string">magento_customercustomattributes_sales_flat_order_address</item>
+                <item name="salesrule_coupon_aggregated" xsi:type="string">salesrule_coupon_aggregated</item>
+                <item name="salesrule_coupon_aggregated_updated" xsi:type="string">salesrule_coupon_aggregated_updated</item>
+                <item name="tax_order_aggregated_created" xsi:type="string">tax_order_aggregated_created</item>
+                <item name="tax_order_aggregated_updated" xsi:type="string">tax_order_aggregated_updated</item>
+            </argument>
+        </arguments>
+    </virtualType>
+    <type name="Magento\ScalableOms\Console\Command\SplitSales">
+        <arguments>
+            <argument name="tableIterators" xsi:type="array">
+                <item name="sequenceTableIterator" xsi:type="object">Magento\ScalableOms\Model\SequenceTableIterator</item>
+                <item name="arrayTableNameIterator" xsi:type="object">OmsTableNameArrayIterator</item>
+            </argument>
+        </arguments>
+    </type>
+    <type name="Magento\SalesArchive\Model\ResourceModel\Synchronizer">
+        <arguments>
+            <argument name="connectionName" xsi:type="string">sales</argument>
+        </arguments>
+    </type>
+    <type name="Magento\Framework\ForeignKey\ObjectRelationProcessor\EnvironmentConfig">
+        <arguments>
+            <argument name="connectionNames" xsi:type="array">
+                <item name="sales" xsi:type="string">sales</item>
+            </argument>
+        </arguments>
+    </type>
+</config>

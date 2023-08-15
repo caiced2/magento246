@@ -1,0 +1,350 @@
+<?xml version="1.0"?>
+<!--
+/**
+ * Copyright © Magento, Inc. All rights reserved.
+ * See COPYING.txt for license details.
+ */
+-->
+<schema xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:noNamespaceSchemaLocation="urn:magento:framework:Setup/Declaration/Schema/etc/schema.xsd">
+    <table name="magento_giftwrapping" resource="default" engine="innodb" comment="Enterprise Gift Wrapping Table">
+        <column xsi:type="int" name="wrapping_id" unsigned="true" nullable="false" identity="true"
+                comment="Wrapping Id"/>
+        <column xsi:type="smallint" name="status" unsigned="true" nullable="false" identity="false"
+                comment="Status"/>
+        <column xsi:type="decimal" name="base_price" scale="4" precision="12" unsigned="false" nullable="false"
+                comment="Base Price"/>
+        <column xsi:type="varchar" name="image" nullable="true" length="255" comment="Image"/>
+        <constraint xsi:type="primary" referenceId="PRIMARY">
+            <column name="wrapping_id"/>
+        </constraint>
+        <index referenceId="MAGENTO_GIFTWRAPPING_STATUS" indexType="btree">
+            <column name="status"/>
+        </index>
+    </table>
+    <table name="magento_giftwrapping_store_attributes" resource="default" engine="innodb"
+           comment="Enterprise Gift Wrapping Attribute Table">
+        <column xsi:type="int" name="wrapping_id" unsigned="true" nullable="false" identity="false"
+                comment="Wrapping Id"/>
+        <column xsi:type="smallint" name="store_id" unsigned="true" nullable="false" identity="false"
+                comment="Store Id"/>
+        <column xsi:type="varchar" name="design" nullable="false" length="255" comment="Design"/>
+        <constraint xsi:type="primary" referenceId="PRIMARY">
+            <column name="wrapping_id"/>
+            <column name="store_id"/>
+        </constraint>
+        <constraint xsi:type="foreign" referenceId="FK_8048F7FF66F3AAB2D429C60D0E4F8A58"
+                    table="magento_giftwrapping_store_attributes" column="wrapping_id"
+                    referenceTable="magento_giftwrapping" referenceColumn="wrapping_id" onDelete="CASCADE"/>
+        <constraint xsi:type="foreign" referenceId="MAGENTO_GIFTWRAPPING_STORE_ATTRIBUTES_STORE_ID_STORE_STORE_ID"
+                    table="magento_giftwrapping_store_attributes" column="store_id" referenceTable="store"
+                    referenceColumn="store_id" onDelete="CASCADE"/>
+        <index referenceId="MAGENTO_GIFTWRAPPING_STORE_ATTRIBUTES_STORE_ID" indexType="btree">
+            <column name="store_id"/>
+        </index>
+    </table>
+    <table name="magento_giftwrapping_website" resource="default" engine="innodb"
+           comment="Enterprise Gift Wrapping Website Table">
+        <column xsi:type="int" name="wrapping_id" unsigned="true" nullable="false" identity="false"
+                comment="Wrapping Id"/>
+        <column xsi:type="smallint" name="website_id" unsigned="true" nullable="false" identity="false"
+                comment="Website Id"/>
+        <constraint xsi:type="primary" referenceId="PRIMARY">
+            <column name="wrapping_id"/>
+            <column name="website_id"/>
+        </constraint>
+        <constraint xsi:type="foreign" referenceId="FK_9F4CF77669BFC319A247D8AB96B440B9" table="magento_giftwrapping_website"
+                    column="wrapping_id" referenceTable="magento_giftwrapping" referenceColumn="wrapping_id"
+                    onDelete="CASCADE"/>
+        <constraint xsi:type="foreign" referenceId="MAGENTO_GIFTWRAPPING_WEBSITE_WEBSITE_ID_STORE_WEBSITE_WEBSITE_ID"
+                    table="magento_giftwrapping_website" column="website_id" referenceTable="store_website"
+                    referenceColumn="website_id" onDelete="CASCADE"/>
+        <index referenceId="MAGENTO_GIFTWRAPPING_WEBSITE_WEBSITE_ID" indexType="btree">
+            <column name="website_id"/>
+        </index>
+    </table>
+    <table name="quote" resource="checkout" comment="Sales Flat Quote">
+        <column xsi:type="int" name="gw_id" unsigned="false" nullable="true" identity="false"
+                comment="Gw Id"/>
+        <column xsi:type="int" name="gw_allow_gift_receipt" unsigned="false" nullable="true"
+                identity="false" comment="Gw Allow Gift Receipt"/>
+        <column xsi:type="int" name="gw_add_card" unsigned="false" nullable="true" identity="false"
+                comment="Gw Add Card"/>
+        <column xsi:type="decimal" name="gw_base_price" scale="4" precision="12" unsigned="false" nullable="true"
+                comment="Gw Base Price"/>
+        <column xsi:type="decimal" name="gw_price" scale="4" precision="12" unsigned="false" nullable="true"
+                comment="Gw Price"/>
+        <column xsi:type="decimal" name="gw_items_base_price" scale="4" precision="12" unsigned="false" nullable="true"
+                comment="Gw Items Base Price"/>
+        <column xsi:type="decimal" name="gw_items_price" scale="4" precision="12" unsigned="false" nullable="true"
+                comment="Gw Items Price"/>
+        <column xsi:type="decimal" name="gw_card_base_price" scale="4" precision="12" unsigned="false" nullable="true"
+                comment="Gw Card Base Price"/>
+        <column xsi:type="decimal" name="gw_card_price" scale="4" precision="12" unsigned="false" nullable="true"
+                comment="Gw Card Price"/>
+        <column xsi:type="decimal" name="gw_base_tax_amount" scale="4" precision="12" unsigned="false" nullable="true"
+                comment="Gw Base Tax Amount"/>
+        <column xsi:type="decimal" name="gw_tax_amount" scale="4" precision="12" unsigned="false" nullable="true"
+                comment="Gw Tax Amount"/>
+        <column xsi:type="decimal" name="gw_items_base_tax_amount" scale="4" precision="12" unsigned="false"
+                nullable="true" comment="Gw Items Base Tax Amount"/>
+        <column xsi:type="decimal" name="gw_items_tax_amount" scale="4" precision="12" unsigned="false" nullable="true"
+                comment="Gw Items Tax Amount"/>
+        <column xsi:type="decimal" name="gw_card_base_tax_amount" scale="4" precision="12" unsigned="false"
+                nullable="true" comment="Gw Card Base Tax Amount"/>
+        <column xsi:type="decimal" name="gw_card_tax_amount" scale="4" precision="12" unsigned="false" nullable="true"
+                comment="Gw Card Tax Amount"/>
+        <column xsi:type="decimal" name="gw_base_price_incl_tax" scale="4" precision="12" unsigned="false"
+                nullable="true" comment="Gw Base Price Incl Tax"/>
+        <column xsi:type="decimal" name="gw_price_incl_tax" scale="4" precision="12" unsigned="false" nullable="true"
+                comment="Gw Price Incl Tax"/>
+        <column xsi:type="decimal" name="gw_items_base_price_incl_tax" scale="4" precision="12" unsigned="false"
+                nullable="true" comment="Gw Items Base Price Incl Tax"/>
+        <column xsi:type="decimal" name="gw_items_price_incl_tax" scale="4" precision="12" unsigned="false"
+                nullable="true" comment="Gw Items Price Incl Tax"/>
+        <column xsi:type="decimal" name="gw_card_base_price_incl_tax" scale="4" precision="12" unsigned="false"
+                nullable="true" comment="Gw Card Base Price Incl Tax"/>
+        <column xsi:type="decimal" name="gw_card_price_incl_tax" scale="4" precision="12" unsigned="false"
+                nullable="true" comment="Gw Card Price Incl Tax"/>
+    </table>
+    <table name="quote_address" resource="checkout" comment="Sales Flat Quote Address">
+        <column xsi:type="int" name="gw_id" unsigned="false" nullable="true" identity="false"
+                comment="Gw Id"/>
+        <column xsi:type="int" name="gw_allow_gift_receipt" unsigned="false" nullable="true"
+                identity="false" comment="Gw Allow Gift Receipt"/>
+        <column xsi:type="int" name="gw_add_card" unsigned="false" nullable="true" identity="false"
+                comment="Gw Add Card"/>
+        <column xsi:type="decimal" name="gw_base_price" scale="4" precision="12" unsigned="false" nullable="true"
+                comment="Gw Base Price"/>
+        <column xsi:type="decimal" name="gw_price" scale="4" precision="12" unsigned="false" nullable="true"
+                comment="Gw Price"/>
+        <column xsi:type="decimal" name="gw_items_base_price" scale="4" precision="12" unsigned="false" nullable="true"
+                comment="Gw Items Base Price"/>
+        <column xsi:type="decimal" name="gw_items_price" scale="4" precision="12" unsigned="false" nullable="true"
+                comment="Gw Items Price"/>
+        <column xsi:type="decimal" name="gw_card_base_price" scale="4" precision="12" unsigned="false" nullable="true"
+                comment="Gw Card Base Price"/>
+        <column xsi:type="decimal" name="gw_card_price" scale="4" precision="12" unsigned="false" nullable="true"
+                comment="Gw Card Price"/>
+        <column xsi:type="decimal" name="gw_base_tax_amount" scale="4" precision="12" unsigned="false" nullable="true"
+                comment="Gw Base Tax Amount"/>
+        <column xsi:type="decimal" name="gw_tax_amount" scale="4" precision="12" unsigned="false" nullable="true"
+                comment="Gw Tax Amount"/>
+        <column xsi:type="decimal" name="gw_items_base_tax_amount" scale="4" precision="12" unsigned="false"
+                nullable="true" comment="Gw Items Base Tax Amount"/>
+        <column xsi:type="decimal" name="gw_items_tax_amount" scale="4" precision="12" unsigned="false" nullable="true"
+                comment="Gw Items Tax Amount"/>
+        <column xsi:type="decimal" name="gw_card_base_tax_amount" scale="4" precision="12" unsigned="false"
+                nullable="true" comment="Gw Card Base Tax Amount"/>
+        <column xsi:type="decimal" name="gw_card_tax_amount" scale="4" precision="12" unsigned="false" nullable="true"
+                comment="Gw Card Tax Amount"/>
+        <column xsi:type="decimal" name="gw_base_price_incl_tax" scale="4" precision="12" unsigned="false"
+                nullable="true" comment="Gw Base Price Incl Tax"/>
+        <column xsi:type="decimal" name="gw_price_incl_tax" scale="4" precision="12" unsigned="false" nullable="true"
+                comment="Gw Price Incl Tax"/>
+        <column xsi:type="decimal" name="gw_items_base_price_incl_tax" scale="4" precision="12" unsigned="false"
+                nullable="true" comment="Gw Items Base Price Incl Tax"/>
+        <column xsi:type="decimal" name="gw_items_price_incl_tax" scale="4" precision="12" unsigned="false"
+                nullable="true" comment="Gw Items Price Incl Tax"/>
+        <column xsi:type="decimal" name="gw_card_base_price_incl_tax" scale="4" precision="12" unsigned="false"
+                nullable="true" comment="Gw Card Base Price Incl Tax"/>
+        <column xsi:type="decimal" name="gw_card_price_incl_tax" scale="4" precision="12" unsigned="false"
+                nullable="true" comment="Gw Card Price Incl Tax"/>
+    </table>
+    <table name="sales_order" resource="sales" comment="Sales Flat Order">
+        <column xsi:type="int" name="gw_id" unsigned="false" nullable="true" identity="false"
+                comment="Gw Id"/>
+        <column xsi:type="int" name="gw_allow_gift_receipt" unsigned="false" nullable="true"
+                identity="false" comment="Gw Allow Gift Receipt"/>
+        <column xsi:type="int" name="gw_add_card" unsigned="false" nullable="true" identity="false"
+                comment="Gw Add Card"/>
+        <column xsi:type="decimal" name="gw_base_price" scale="4" precision="12" unsigned="false" nullable="true"
+                comment="Gw Base Price"/>
+        <column xsi:type="decimal" name="gw_price" scale="4" precision="12" unsigned="false" nullable="true"
+                comment="Gw Price"/>
+        <column xsi:type="decimal" name="gw_items_base_price" scale="4" precision="12" unsigned="false" nullable="true"
+                comment="Gw Items Base Price"/>
+        <column xsi:type="decimal" name="gw_items_price" scale="4" precision="12" unsigned="false" nullable="true"
+                comment="Gw Items Price"/>
+        <column xsi:type="decimal" name="gw_card_base_price" scale="4" precision="12" unsigned="false" nullable="true"
+                comment="Gw Card Base Price"/>
+        <column xsi:type="decimal" name="gw_card_price" scale="4" precision="12" unsigned="false" nullable="true"
+                comment="Gw Card Price"/>
+        <column xsi:type="decimal" name="gw_base_tax_amount" scale="4" precision="12" unsigned="false" nullable="true"
+                comment="Gw Base Tax Amount"/>
+        <column xsi:type="decimal" name="gw_tax_amount" scale="4" precision="12" unsigned="false" nullable="true"
+                comment="Gw Tax Amount"/>
+        <column xsi:type="decimal" name="gw_items_base_tax_amount" scale="4" precision="12" unsigned="false"
+                nullable="true" comment="Gw Items Base Tax Amount"/>
+        <column xsi:type="decimal" name="gw_items_tax_amount" scale="4" precision="12" unsigned="false" nullable="true"
+                comment="Gw Items Tax Amount"/>
+        <column xsi:type="decimal" name="gw_card_base_tax_amount" scale="4" precision="12" unsigned="false"
+                nullable="true" comment="Gw Card Base Tax Amount"/>
+        <column xsi:type="decimal" name="gw_card_tax_amount" scale="4" precision="12" unsigned="false" nullable="true"
+                comment="Gw Card Tax Amount"/>
+        <column xsi:type="decimal" name="gw_base_price_incl_tax" scale="4" precision="12" unsigned="false"
+                nullable="true" comment="Gw Base Price Incl Tax"/>
+        <column xsi:type="decimal" name="gw_price_incl_tax" scale="4" precision="12" unsigned="false" nullable="true"
+                comment="Gw Price Incl Tax"/>
+        <column xsi:type="decimal" name="gw_items_base_price_incl_tax" scale="4" precision="12" unsigned="false"
+                nullable="true" comment="Gw Items Base Price Incl Tax"/>
+        <column xsi:type="decimal" name="gw_items_price_incl_tax" scale="4" precision="12" unsigned="false"
+                nullable="true" comment="Gw Items Price Incl Tax"/>
+        <column xsi:type="decimal" name="gw_card_base_price_incl_tax" scale="4" precision="12" unsigned="false"
+                nullable="true" comment="Gw Card Base Price Incl Tax"/>
+        <column xsi:type="decimal" name="gw_card_price_incl_tax" scale="4" precision="12" unsigned="false"
+                nullable="true" comment="Gw Card Price Incl Tax"/>
+        <column xsi:type="decimal" name="gw_base_price_invoiced" scale="4" precision="12" unsigned="false"
+                nullable="true" comment="Gw Base Price Invoiced"/>
+        <column xsi:type="decimal" name="gw_price_invoiced" scale="4" precision="12" unsigned="false" nullable="true"
+                comment="Gw Price Invoiced"/>
+        <column xsi:type="decimal" name="gw_items_base_price_invoiced" scale="4" precision="12" unsigned="false"
+                nullable="true" comment="Gw Items Base Price Invoiced"/>
+        <column xsi:type="decimal" name="gw_items_price_invoiced" scale="4" precision="12" unsigned="false"
+                nullable="true" comment="Gw Items Price Invoiced"/>
+        <column xsi:type="decimal" name="gw_card_base_price_invoiced" scale="4" precision="12" unsigned="false"
+                nullable="true" comment="Gw Card Base Price Invoiced"/>
+        <column xsi:type="decimal" name="gw_card_price_invoiced" scale="4" precision="12" unsigned="false"
+                nullable="true" comment="Gw Card Price Invoiced"/>
+        <column xsi:type="decimal" name="gw_base_tax_amount_invoiced" scale="4" precision="12" unsigned="false"
+                nullable="true" comment="Gw Base Tax Amount Invoiced"/>
+        <column xsi:type="decimal" name="gw_tax_amount_invoiced" scale="4" precision="12" unsigned="false"
+                nullable="true" comment="Gw Tax Amount Invoiced"/>
+        <column xsi:type="decimal" name="gw_items_base_tax_invoiced" scale="4" precision="12" unsigned="false"
+                nullable="true" comment="Gw Items Base Tax Invoiced"/>
+        <column xsi:type="decimal" name="gw_items_tax_invoiced" scale="4" precision="12" unsigned="false"
+                nullable="true" comment="Gw Items Tax Invoiced"/>
+        <column xsi:type="decimal" name="gw_card_base_tax_invoiced" scale="4" precision="12" unsigned="false"
+                nullable="true" comment="Gw Card Base Tax Invoiced"/>
+        <column xsi:type="decimal" name="gw_card_tax_invoiced" scale="4" precision="12" unsigned="false"
+                nullable="true" comment="Gw Card Tax Invoiced"/>
+        <column xsi:type="decimal" name="gw_base_price_refunded" scale="4" precision="12" unsigned="false"
+                nullable="true" comment="Gw Base Price Refunded"/>
+        <column xsi:type="decimal" name="gw_price_refunded" scale="4" precision="12" unsigned="false" nullable="true"
+                comment="Gw Price Refunded"/>
+        <column xsi:type="decimal" name="gw_items_base_price_refunded" scale="4" precision="12" unsigned="false"
+                nullable="true" comment="Gw Items Base Price Refunded"/>
+        <column xsi:type="decimal" name="gw_items_price_refunded" scale="4" precision="12" unsigned="false"
+                nullable="true" comment="Gw Items Price Refunded"/>
+        <column xsi:type="decimal" name="gw_card_base_price_refunded" scale="4" precision="12" unsigned="false"
+                nullable="true" comment="Gw Card Base Price Refunded"/>
+        <column xsi:type="decimal" name="gw_card_price_refunded" scale="4" precision="12" unsigned="false"
+                nullable="true" comment="Gw Card Price Refunded"/>
+        <column xsi:type="decimal" name="gw_base_tax_amount_refunded" scale="4" precision="12" unsigned="false"
+                nullable="true" comment="Gw Base Tax Amount Refunded"/>
+        <column xsi:type="decimal" name="gw_tax_amount_refunded" scale="4" precision="12" unsigned="false"
+                nullable="true" comment="Gw Tax Amount Refunded"/>
+        <column xsi:type="decimal" name="gw_items_base_tax_refunded" scale="4" precision="12" unsigned="false"
+                nullable="true" comment="Gw Items Base Tax Refunded"/>
+        <column xsi:type="decimal" name="gw_items_tax_refunded" scale="4" precision="12" unsigned="false"
+                nullable="true" comment="Gw Items Tax Refunded"/>
+        <column xsi:type="decimal" name="gw_card_base_tax_refunded" scale="4" precision="12" unsigned="false"
+                nullable="true" comment="Gw Card Base Tax Refunded"/>
+        <column xsi:type="decimal" name="gw_card_tax_refunded" scale="4" precision="12" unsigned="false"
+                nullable="true" comment="Gw Card Tax Refunded"/>
+    </table>
+    <table name="quote_item" resource="checkout" comment="Sales Flat Quote Item">
+        <column xsi:type="int" name="gw_id" unsigned="false" nullable="true" identity="false"
+                comment="Gw Id"/>
+        <column xsi:type="decimal" name="gw_base_price" scale="4" precision="12" unsigned="false" nullable="true"
+                comment="Gw Base Price"/>
+        <column xsi:type="decimal" name="gw_price" scale="4" precision="12" unsigned="false" nullable="true"
+                comment="Gw Price"/>
+        <column xsi:type="decimal" name="gw_base_tax_amount" scale="4" precision="12" unsigned="false" nullable="true"
+                comment="Gw Base Tax Amount"/>
+        <column xsi:type="decimal" name="gw_tax_amount" scale="4" precision="12" unsigned="false" nullable="true"
+                comment="Gw Tax Amount"/>
+    </table>
+    <table name="quote_address_item" resource="checkout" comment="Sales Flat Quote Address Item">
+        <column xsi:type="int" name="gw_id" unsigned="false" nullable="true" identity="false"
+                comment="Gw Id"/>
+        <column xsi:type="decimal" name="gw_base_price" scale="4" precision="12" unsigned="false" nullable="true"
+                comment="Gw Base Price"/>
+        <column xsi:type="decimal" name="gw_price" scale="4" precision="12" unsigned="false" nullable="true"
+                comment="Gw Price"/>
+        <column xsi:type="decimal" name="gw_base_tax_amount" scale="4" precision="12" unsigned="false" nullable="true"
+                comment="Gw Base Tax Amount"/>
+        <column xsi:type="decimal" name="gw_tax_amount" scale="4" precision="12" unsigned="false" nullable="true"
+                comment="Gw Tax Amount"/>
+    </table>
+    <table name="sales_order_item" resource="sales" comment="Sales Flat Order Item">
+        <column xsi:type="int" name="gw_id" unsigned="false" nullable="true" identity="false"
+                comment="Gw Id"/>
+        <column xsi:type="decimal" name="gw_base_price" scale="4" precision="12" unsigned="false" nullable="true"
+                comment="Gw Base Price"/>
+        <column xsi:type="decimal" name="gw_price" scale="4" precision="12" unsigned="false" nullable="true"
+                comment="Gw Price"/>
+        <column xsi:type="decimal" name="gw_base_tax_amount" scale="4" precision="12" unsigned="false" nullable="true"
+                comment="Gw Base Tax Amount"/>
+        <column xsi:type="decimal" name="gw_tax_amount" scale="4" precision="12" unsigned="false" nullable="true"
+                comment="Gw Tax Amount"/>
+        <column xsi:type="decimal" name="gw_base_price_invoiced" scale="4" precision="12" unsigned="false"
+                nullable="true" comment="Gw Base Price Invoiced"/>
+        <column xsi:type="decimal" name="gw_price_invoiced" scale="4" precision="12" unsigned="false" nullable="true"
+                comment="Gw Price Invoiced"/>
+        <column xsi:type="decimal" name="gw_base_tax_amount_invoiced" scale="4" precision="12" unsigned="false"
+                nullable="true" comment="Gw Base Tax Amount Invoiced"/>
+        <column xsi:type="decimal" name="gw_tax_amount_invoiced" scale="4" precision="12" unsigned="false"
+                nullable="true" comment="Gw Tax Amount Invoiced"/>
+        <column xsi:type="decimal" name="gw_base_price_refunded" scale="4" precision="12" unsigned="false"
+                nullable="true" comment="Gw Base Price Refunded"/>
+        <column xsi:type="decimal" name="gw_price_refunded" scale="4" precision="12" unsigned="false" nullable="true"
+                comment="Gw Price Refunded"/>
+        <column xsi:type="decimal" name="gw_base_tax_amount_refunded" scale="4" precision="12" unsigned="false"
+                nullable="true" comment="Gw Base Tax Amount Refunded"/>
+        <column xsi:type="decimal" name="gw_tax_amount_refunded" scale="4" precision="12" unsigned="false"
+                nullable="true" comment="Gw Tax Amount Refunded"/>
+    </table>
+    <table name="sales_invoice" resource="sales" comment="Sales Flat Invoice">
+        <column xsi:type="decimal" name="gw_base_price" scale="4" precision="12" unsigned="false" nullable="true"
+                comment="Gw Base Price"/>
+        <column xsi:type="decimal" name="gw_price" scale="4" precision="12" unsigned="false" nullable="true"
+                comment="Gw Price"/>
+        <column xsi:type="decimal" name="gw_items_base_price" scale="4" precision="12" unsigned="false" nullable="true"
+                comment="Gw Items Base Price"/>
+        <column xsi:type="decimal" name="gw_items_price" scale="4" precision="12" unsigned="false" nullable="true"
+                comment="Gw Items Price"/>
+        <column xsi:type="decimal" name="gw_card_base_price" scale="4" precision="12" unsigned="false" nullable="true"
+                comment="Gw Card Base Price"/>
+        <column xsi:type="decimal" name="gw_card_price" scale="4" precision="12" unsigned="false" nullable="true"
+                comment="Gw Card Price"/>
+        <column xsi:type="decimal" name="gw_base_tax_amount" scale="4" precision="12" unsigned="false" nullable="true"
+                comment="Gw Base Tax Amount"/>
+        <column xsi:type="decimal" name="gw_tax_amount" scale="4" precision="12" unsigned="false" nullable="true"
+                comment="Gw Tax Amount"/>
+        <column xsi:type="decimal" name="gw_items_base_tax_amount" scale="4" precision="12" unsigned="false"
+                nullable="true" comment="Gw Items Base Tax Amount"/>
+        <column xsi:type="decimal" name="gw_items_tax_amount" scale="4" precision="12" unsigned="false" nullable="true"
+                comment="Gw Items Tax Amount"/>
+        <column xsi:type="decimal" name="gw_card_base_tax_amount" scale="4" precision="12" unsigned="false"
+                nullable="true" comment="Gw Card Base Tax Amount"/>
+        <column xsi:type="decimal" name="gw_card_tax_amount" scale="4" precision="12" unsigned="false" nullable="true"
+                comment="Gw Card Tax Amount"/>
+    </table>
+    <table name="sales_creditmemo" resource="sales" comment="Sales Flat Creditmemo">
+        <column xsi:type="decimal" name="gw_base_price" scale="4" precision="12" unsigned="false" nullable="true"
+                comment="Gw Base Price"/>
+        <column xsi:type="decimal" name="gw_price" scale="4" precision="12" unsigned="false" nullable="true"
+                comment="Gw Price"/>
+        <column xsi:type="decimal" name="gw_items_base_price" scale="4" precision="12" unsigned="false" nullable="true"
+                comment="Gw Items Base Price"/>
+        <column xsi:type="decimal" name="gw_items_price" scale="4" precision="12" unsigned="false" nullable="true"
+                comment="Gw Items Price"/>
+        <column xsi:type="decimal" name="gw_card_base_price" scale="4" precision="12" unsigned="false" nullable="true"
+                comment="Gw Card Base Price"/>
+        <column xsi:type="decimal" name="gw_card_price" scale="4" precision="12" unsigned="false" nullable="true"
+                comment="Gw Card Price"/>
+        <column xsi:type="decimal" name="gw_base_tax_amount" scale="4" precision="12" unsigned="false" nullable="true"
+                comment="Gw Base Tax Amount"/>
+        <column xsi:type="decimal" name="gw_tax_amount" scale="4" precision="12" unsigned="false" nullable="true"
+                comment="Gw Tax Amount"/>
+        <column xsi:type="decimal" name="gw_items_base_tax_amount" scale="4" precision="12" unsigned="false"
+                nullable="true" comment="Gw Items Base Tax Amount"/>
+        <column xsi:type="decimal" name="gw_items_tax_amount" scale="4" precision="12" unsigned="false" nullable="true"
+                comment="Gw Items Tax Amount"/>
+        <column xsi:type="decimal" name="gw_card_base_tax_amount" scale="4" precision="12" unsigned="false"
+                nullable="true" comment="Gw Card Base Tax Amount"/>
+        <column xsi:type="decimal" name="gw_card_tax_amount" scale="4" precision="12" unsigned="false" nullable="true"
+                comment="Gw Card Tax Amount"/>
+    </table>
+</schema>

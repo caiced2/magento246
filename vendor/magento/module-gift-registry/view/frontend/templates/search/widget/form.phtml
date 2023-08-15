@@ -1,0 +1,191 @@
+<?php
+/**
+ * Copyright © Magento, Inc. All rights reserved.
+ * See COPYING.txt for license details.
+ */
+
+/** @var $block \Magento\GiftRegistry\Block\Search\Widget\Form */
+/** @var \Magento\Framework\View\Helper\SecureHtmlRenderer $secureRenderer */
+?>
+<?php if ($block->getEnabled() && $block->getTypesCollection()->getSize()): ?>
+    <div class="widget block block-giftregistry">
+        <div class="block-title">
+            <strong role="heading" aria-level="2"><?= $block->escapeHtml(__('Gift Registry Search')) ?></strong>
+        </div>
+        <div class="block-content">
+            <fieldset class="fieldset">
+                <?php  if ($block->useSearchFormSelect()): ?>
+                    <div class="field searchby required">
+                        <label for="search_by" class="label">
+                            <span><?= $block->escapeHtml(__('Search By')) ?></span>
+                        </label>
+                        <div class="control">
+                            <?= /* @noEscape */ $block->getSearchFormSelect() ?>
+                        </div>
+                    </div>
+                <?php endif; ?>
+
+                <?php if ($block->useNameForm()): ?>
+                    <form id="gr-quick-search-widget-name-form"
+                          action="<?= $block->escapeUrl($block->getActionUrl()) ?>"
+                          method="post"
+                          class="form form-giftregistry-search-widget"
+                          data-hasrequired="* <?= $block->escapeHtmlAttr(__('Please enter at least two letters.')) ?>"
+                    >
+                        <?php if ($block->useSearchFormSelect()): ?>
+                            <?= /* @noEscape */ $secureRenderer->renderTag(
+                                'style',
+                                [],
+                                '#gr-quick-search-widget-name-form { display:none; }',
+                                false
+                            ); ?>
+                        <?php endif;?>
+                        <fieldset class="fieldset">
+                            <div class="field name required">
+                                <?= $block->getBlockHtml('formkey') ?>
+                                <label for="quick-search-firstname" class="label">
+                                    <span><?= $block->escapeHtml(__('First Name')) ?></span>
+                                </label>
+                                <div class="control">
+                                    <input type="text"
+                                           class="input-text"
+                                           data-validate="{required:true, minlength:2}"
+                                           id="quick-search-firstname"
+                                           name="params[firstname]"
+                                    >
+                                </div>
+                            </div>
+                            <div class="field lastname required">
+                                <label for="quick-search-lastname" class="label">
+                                    <span><?= $block->escapeHtml(__('Last Name')) ?></span>
+                                </label>
+                                <div class="control">
+                                    <input type="text"
+                                           class="input-text"
+                                           data-validate="{required:true, minlength:2}"
+                                           id="quick-search-lastname"
+                                           name="params[lastname]"
+                                    >
+                                </div>
+                            </div>
+                            <div class="field type required">
+                                <label class="label"><span><?= $block->escapeHtml(__('Type')) ?></span></label>
+                                <div class="control"><?= $block->getTypeSelectHtml() ?></div>
+                            </div>
+                        </fieldset>
+                        <div class="actions-toolbar">
+                            <div class="primary">
+                                <input type="hidden" name="params[search]" value="type">
+                                <button type="submit"
+                                        title="<?= $block->escapeHtmlAttr(__('Search')) ?>"
+                                        class="action search">
+                                    <span><?= $block->escapeHtml(__('Search')) ?></span>
+                                </button>
+                            </div>
+                        </div>
+                    </form>
+                <?php endif; ?>
+
+                <?php if ($block->useEmailForm()): ?>
+                    <form id="gr-quick-search-widget-email-form"
+                          action="<?= $block->escapeUrl($block->getActionUrl()) ?>"
+                          method="post"
+                          class="form form-giftregistry-search-widget-email"
+                    >
+                        <?php if ($block->useSearchFormSelect()): ?>
+                            <?= /* @noEscape */ $secureRenderer->renderTag(
+                                'style',
+                                [],
+                                '#gr-quick-search-widget-email-form { display:none; }',
+                                false
+                            ); ?>
+                        <?php endif;?>
+                        <fieldset class="fieldset">
+                            <div class="field email required">
+                                <?= $block->getBlockHtml('formkey') ?>
+                                <label for="quick-search-email" class="label">
+                                    <span><?= $block->escapeHtml(__('Registrant Email')) ?></span>
+                                </label>
+                                <div class="control">
+                                    <input type="text"
+                                           class="input-text"
+                                           data-validate="{required:true, minlength:2,'validate-email':true}"
+                                           id="quick-search-email"
+                                           name="params[email]"
+                                    >
+                                </div>
+                            </div>
+                        </fieldset>
+                        <div class="actions-toolbar">
+                            <div class="primary">
+                                <input type="hidden" name="params[search]" value="email">
+                                <button type="submit"
+                                        title="<?= $block->escapeHtmlAttr(__('Search')) ?>"
+                                        class="action search">
+                                    <span><?= $block->escapeHtml(__('Search')) ?></span>
+                                </button>
+                            </div>
+                        </div>
+                    </form>
+                <?php endif; ?>
+
+                <?php if ($block->useIdForm()): ?>
+                    <form id="gr-quick-search-widget-id-form"
+                          action="<?= $block->escapeUrl($block->getActionUrl()) ?>"
+                          method="post"
+                          class="form form-giftregistry-search-widget-id"
+                    >
+                        <?php if ($block->useSearchFormSelect()): ?>
+                            <?= /* @noEscape */ $secureRenderer->renderTag(
+                                'style',
+                                [],
+                                '#gr-quick-search-widget-id-form { display:none; }',
+                                false
+                            ); ?>
+                        <?php endif;?>
+                        <fieldset class="fieldset">
+                            <div class="field id required">
+                                <?= $block->getBlockHtml('formkey') ?>
+                                <label for="quick-search-id" class="label">
+                                    <span><?= $block->escapeHtml(__('Gift Registry ID')) ?></span>
+                                </label>
+                                <div class="control">
+                                    <input type="text"
+                                           class="input-text"
+                                           data-validate="{required:true}"
+                                           id="quick-search-id"
+                                           name="params[id]"
+                                    >
+                                </div>
+                            </div>
+                        </fieldset>
+                        <div class="actions-toolbar">
+                            <div class="primary">
+                                <input type="hidden" name="params[search]" value="id" />
+                                <button type="submit"
+                                        title="<?= $block->escapeHtmlAttr(__('Search')) ?>"
+                                        class="action search">
+                                    <span><?= $block->escapeHtml(__('Search')) ?></span>
+                                </button>
+                            </div>
+                        </div>
+                    </form>
+                <?php endif; ?>
+            </fieldset>
+        </div>
+    </div>
+
+    <script type="text/x-magento-init">
+        {
+            "form[id^='gr-quick-search-widget']": {
+                "validation": {}
+            },
+            "#search-by": {
+                "searchByChanged": {}
+            }
+        }
+    </script>
+<?php endif; ?>
+
+
+

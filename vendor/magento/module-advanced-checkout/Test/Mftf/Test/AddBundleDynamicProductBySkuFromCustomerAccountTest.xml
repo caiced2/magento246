@@ -1,0 +1,94 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+/**
+ * Copyright © Magento, Inc. All rights reserved.
+ * See COPYING.txt for license details.
+ */
+-->
+
+<tests xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xsi:noNamespaceSchemaLocation="urn:magento:mftf:Test/etc/testSchema.xsd">
+    <test name="AddBundleDynamicProductBySkuFromCustomerAccountTest">
+        <annotations>
+            <features value="AdvancedCheckout"/>
+            <stories value="Add Product By SKU"/>
+            <title value="Add bundle dynamic product by sku from customer account test"/>
+            <description value="Add bundle dynamic product by sku from customer account"/>
+            <severity value="CRITICAL"/>
+            <testCaseId value="MC-14030"/>
+            <group value="AdvancedCheckout"/>
+            <group value="mtf_migrated"/>
+        </annotations>
+        <before>
+            <!-- Create customer -->
+            <createData entity="Simple_US_Customer" stepKey="createCustomer"/>
+
+            <!-- Create category and simple product -->
+            <createData entity="SimpleSubCategory" stepKey="createCategory"/>
+            <createData entity="_defaultProduct" stepKey="createSimpleProduct">
+                <requiredEntity createDataKey="createCategory"/>
+            </createData>
+
+            <!-- Create bundle product -->
+            <createData entity="ApiBundleProductPriceViewRange" stepKey="createBundleProduct">
+                <requiredEntity createDataKey="createCategory"/>
+            </createData>
+            <createData entity="DropDownBundleOption" stepKey="bundleOption">
+                <requiredEntity createDataKey="createBundleProduct"/>
+            </createData>
+            <createData entity="ApiBundleLink" stepKey="createNewBundleLink">
+                <requiredEntity createDataKey="createBundleProduct"/>
+                <requiredEntity createDataKey="bundleOption"/>
+                <requiredEntity createDataKey="createSimpleProduct"/>
+            </createData>
+
+            <!-- Reindex invalidated indices after product attribute has been created/deleted -->
+            <magentoCron groups="index" stepKey="reindexInvalidatedIndices"/>
+        </before>
+        <after>
+            <!-- Delete customer -->
+            <deleteData createDataKey="createCustomer" stepKey="deleteCustomer"/>
+
+            <!-- Delete category -->
+            <deleteData createDataKey="createCategory" stepKey="deleteCategory"/>
+
+            <!-- Delete bundle product data -->
+            <deleteData createDataKey="createSimpleProduct" stepKey="deleteSimpleProduct"/>
+            <deleteData createDataKey="createBundleProduct" stepKey="deleteBundleProduct"/>
+        </after>
+
+        <!-- Login to Frontend -->
+        <actionGroup ref="LoginToStorefrontActionGroup" stepKey="loginAsCustomer">
+            <argument name="Customer" value="$$createCustomer$$"/>
+        </actionGroup>
+
+        <!-- Open My Account > Order by SKU -->
+        <amOnPage stepKey="goToMyAccountPage" url="{{StorefrontCustomerDashboardPage.url}}"/>
+        <waitForPageLoad stepKey="waitForPageLoad"/>
+        <actionGroup ref="StorefrontCustomerGoToSidebarMenu" stepKey="goToSidebarMenu">
+            <argument name="menu" value="Order by SKU"/>
+        </actionGroup>
+
+        <!-- Fill data according dataset -->
+        <actionGroup ref="FillProductSkuAndQtyActionGroup" stepKey="fillProductQtyAndSkuForOrderProduct">
+            <argument name="sku" value="$$createBundleProduct.sku$$"/>
+            <argument name="quantity" value="{{ApiSimpleSingleQty.quantity}}"/>
+            <argument name="index" value="0"/>
+        </actionGroup>
+
+        <!-- Add product to cart -->
+        <waitForElementClickable selector="{{StorefrontCustomerOrderBySkuSection.addToCart}}" stepKey="waitForAddToCart"/>
+        <click selector="{{StorefrontCustomerOrderBySkuSection.addToCart}}" stepKey="clickAddToCart"/>
+
+        <!-- Assert product fail messages -->
+        <waitForElementVisible selector="{{StorefrontCustomerOrderBySkuSection.requiredAttentionMessage}}" stepKey="waitForPageAppeared"/>
+        <see selector="{{StorefrontCustomerOrderBySkuSection.requiredAttentionMessage}}" userInput="1 product requires your attention." stepKey="seeFailMessage" />
+        <see selector="{{StorefrontCustomerOrderBySkuSection.errorMessage}}" userInput="You need to choose options for your item." stepKey="assertProductFailMessage"/>
+
+        <!-- Assert specify product option link -->
+        <see selector="{{StorefrontCustomerOrderBySkuSection.optionsLink}}" userInput="Specify the product's options." stepKey="seeAddLink"/>
+
+        <!-- Assert cart is empty -->
+        <actionGroup ref="AssertMiniCartEmptyActionGroup" stepKey="seeMiniCartEmpty"/>
+    </test>
+</tests>

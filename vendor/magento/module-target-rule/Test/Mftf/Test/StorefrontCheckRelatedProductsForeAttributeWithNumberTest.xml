@@ -1,0 +1,117 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+ /**
+  * Copyright © Magento, Inc. All rights reserved.
+  * See COPYING.txt for license details.
+  */
+-->
+<tests xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xsi:noNamespaceSchemaLocation="urn:magento:mftf:Test/etc/testSchema.xsd">
+    <test name="StorefrontVerifyRelatedProductsForAlphanumericProductAttributeTest">
+        <annotations>
+            <stories value="Related rules don't work for a product attribute that has a number in its code."/>
+            <title value="Verify related products visible to storefront product detail page for alphanumeric product attributes automated by related rules."/>
+            <description value="Verify related products visible to storefront product detail page for alphanumeric product attributes automated by related rules."/>
+            <testCaseId value="AC-6402"/>
+            <useCaseId value="ACP2E-1027"/>
+            <severity value="AVERAGE"/>
+            <group value="targetRule"/>
+        </annotations>
+        <before>
+            <actionGroup ref="AdminLoginActionGroup" stepKey="LoginAsAdmin"/>
+            <!-- Create required prerequisites -->
+            <createData entity="SimpleSubCategory" stepKey="category1"/>
+            <createData entity="SimpleProduct" stepKey="simpleProduct1">
+                <requiredEntity createDataKey="category1"/>
+            </createData>
+            <createData entity="SimpleProduct" stepKey="simpleProduct2">
+                <requiredEntity createDataKey="category1"/>
+            </createData>
+            <createData entity="SimpleProduct" stepKey="simpleProduct3">
+                <requiredEntity createDataKey="category1"/>
+            </createData>
+        </before>
+        <after>
+            <actionGroup ref="DeleteTargetRuleByNameActionGroup" stepKey="deleteCreatedTargetRule">
+                <argument name="ruleName" value="TargetRuleRelatedProductsCategorySameAsMatchedProductCategories.ruleName"/>
+            </actionGroup>
+            <actionGroup ref="NavigateToEditProductAttributeActionGroup" stepKey="goToEditPage">
+                <argument name="ProductAttribute" value="{{textProductAttribute.attribute_code}}"/>
+            </actionGroup>
+            <click stepKey="clickDelete" selector="{{AttributePropertiesSection.DeleteAttribute}}"/>
+            <click stepKey="clickOk" selector="{{AttributeDeleteModalSection.confirm}}"/>
+            <waitForPageLoad stepKey="waitForDeletion"/>
+             <!--Delete prerequisites -->
+             <deleteData createDataKey="simpleProduct1" stepKey="deleteSimpleProduct1"/>
+             <deleteData createDataKey="simpleProduct2" stepKey="deleteSimpleProduct2"/>
+             <deleteData createDataKey="simpleProduct3" stepKey="deleteSimpleProduct3"/>
+             <deleteData createDataKey="category1" stepKey="deleteCategory1"/>
+            <actionGroup ref="AdminLogoutActionGroup" stepKey="logout"/>
+        </after>
+        <!--Navigate to Stores > Attributes > Product.-->
+        <actionGroup ref="AdminOpenProductAttributePageActionGroup" stepKey="goToProductAttributes"/>
+        <!--Create new Product Attribute as TextField, with code and default value.-->
+        <actionGroup ref="CreateProductAttributeWithTextFieldActionGroup" stepKey="createAttribute">
+            <argument name="attribute" value="textProductAttribute"/>
+        </actionGroup>
+
+        <!-- Set product attribute code to enable for Promo Rule Conditions -->
+        <actionGroup ref="NavigateToEditProductAttributeActionGroup" stepKey="navigateToSkuProductAttribute">
+            <argument name="ProductAttribute" value="{{textProductAttribute.attribute_code}}"/>
+        </actionGroup>
+        <actionGroup ref="ChangeUseForPromoRuleConditionsProductAttributeActionGroup" stepKey="changeUseForPromoRuleConditionsToYes">
+            <argument name="option" value="Yes"/>
+        </actionGroup>
+
+        <!-- Go to default attribute set edit page -->
+        <amOnPage url="{{AdminProductAttributeSetEditPage.url}}/{{AddToDefaultSet.attributeSetId}}/" stepKey="onAttributeSetEdit"/>
+        <!-- Assert created attribute in unassigned section -->
+        <see userInput="{{textProductAttribute.attribute_code}}" selector="{{AdminProductAttributeSetEditSection.unassignedAttributesTree}}" stepKey="seeAttributeInUnassigned"/>
+        <!-- Assign attribute to a group -->
+        <actionGroup ref="AssignAttributeToGroupActionGroup" stepKey="assignAttributeToGroup">
+            <argument name="group" value="Product Details"/>
+            <argument name="attribute" value="{{textProductAttribute.attribute_code}}"/>
+        </actionGroup>
+        <!-- Assert attribute in a group -->
+        <see userInput="{{textProductAttribute.attribute_code}}" selector="{{AdminProductAttributeSetEditSection.groupTree}}" stepKey="seeAttributeInGroup"/>
+        <!-- Save attribute set -->
+        <actionGroup ref="SaveAttributeSetActionGroup" stepKey="SaveAttributeSet"/>
+
+        <!--Create target rule related products as per data -->
+        <actionGroup ref="GoToTargetRulePage" stepKey="openTargetRulePage"/>
+        <actionGroup ref="ClickAddNewTargetRule" stepKey="clickAddRule"/>
+        <actionGroup ref="FillGeneralRuleInformation" stepKey="fillRuleFields">
+            <argument name="information" value="TargetRuleRelatedProductsCategorySameAsMatchedProductCategories"/>
+        </actionGroup>
+        <!-- Fill values in Product To Display tab -->
+        <click selector="{{AdminTargetRuleSection.productToDisplayTab}}" stepKey="clickProductToDisplayTab"/>
+        <click selector="{{AdminTargetRuleProductsToDisplaySection.selectCondition('1','1')}}" stepKey="clickToSelectCondition"/>
+        <selectOption selector="{{AdminTargetRuleProductsToDisplaySection.newAction}}" userInput="Category" stepKey="selectCategoryInNewCondition"/>
+        <!-- Fill condition 2: custom attribute-->
+        <click selector="{{AdminTargetRuleProductsToDisplaySection.selectCondition('2','1')}}" stepKey="clickOnPlusButton"/>
+        <selectOption selector="{{AdminTargetRuleProductsToDisplaySection.newAction}}" userInput="{{textProductAttribute.attribute_code}}" stepKey="selectAttributeInNewCondition"/>
+        <!-- Save target rule and verify AssertTargetRuleSuccessSaveMessage-->
+        <actionGroup ref="SaveTargetRule" stepKey="AssertTargetRuleSuccessSaveMessage"/>
+
+        <!--Go to the just created simple product pages and fill the recently created attribute value-->
+        <amOnPage url="{{AdminProductEditPage.url($simpleProduct1.id$)}}" stepKey="navigateToProductPage"/>
+        <fillField selector="{{AdminProductAttributesSection.attributeTextInputByCode(textProductAttribute.attribute_code)}}" userInput="{{textProductAttribute.attribute_code}}" stepKey="setCustomAttributeForProduct1"/>
+        <actionGroup ref="SaveProductFormActionGroup" stepKey="saveFirstSimpleProduct"/>
+        <amOnPage url="{{AdminProductEditPage.url($simpleProduct2.id$)}}" stepKey="navigateToProductPage2"/>
+        <fillField selector="{{AdminProductAttributesSection.attributeTextInputByCode(textProductAttribute.attribute_code)}}" userInput="{{textProductAttribute.attribute_code}}" stepKey="setCustomAttributeForProduct2"/>
+        <actionGroup ref="SaveProductFormActionGroup" stepKey="saveSecondSimpleProduct"/>
+        <amOnPage url="{{AdminProductEditPage.url($simpleProduct3.id$)}}" stepKey="navigateToProductPage3"/>
+        <fillField selector="{{AdminProductAttributesSection.attributeTextInputByCode(textProductAttribute.attribute_code)}}" userInput="{{textProductAttribute.attribute_code}}" stepKey="setCustomAttributeForProduct3"/>
+        <actionGroup ref="SaveProductFormActionGroup" stepKey="saveThirdSimpleProduct"/>
+
+        <!-- Go to first Product page -->
+        <amOnPage url="{{StorefrontProductPage.url($simpleProduct1.custom_attributes[url_key]$)}}" stepKey="goToFirstSimpleProductPage"/>
+        <waitForPageLoad stepKey="waitForFirstSimpleProductPage"/>
+        <!-- Move the page to the middle of the selected area. -->
+        <scrollTo selector="{{StorefrontProductRelatedProductsSection.relatedProductsActionsHeaderText}}" stepKey="scrollToAnchor"/>
+        <see selector="{{StorefrontProductRelatedProductsSection.relatedProductsActionsHeaderText}}" userInput="Check items to add to the cart" stepKey="assertRelatedProductHeaderInStorefront"/>
+        <see selector="{{StorefrontProductRelatedProductsSection.relatedProductsActionsHeaderText}}" userInput="select all" stepKey="assertRelatedProductHeaderLinkInStorefront"/>
+        <see selector="{{StorefrontProductRelatedProductsSection.relatedProductsListSectionText}}" userInput="$$simpleProduct2.name$$" stepKey="assertRelatedSecondSimpleProductNameInStorefront"/>
+        <see selector="{{StorefrontProductRelatedProductsSection.relatedProductsListSectionText}}" userInput="$$simpleProduct3.name$$" stepKey="assertRelatedThirdSimpleProductNameInStorefront"/>
+    </test>
+</tests>

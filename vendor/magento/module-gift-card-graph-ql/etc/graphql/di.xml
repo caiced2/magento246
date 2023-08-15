@@ -1,0 +1,95 @@
+<?xml version="1.0"?>
+<!--
+/**
+ * Copyright © Magento, Inc. All rights reserved.
+ * See COPYING.txt for license details.
+ */
+-->
+<config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="urn:magento:framework:ObjectManager/etc/config.xsd">
+    <type name="Magento\CatalogGraphQl\Model\ProductInterfaceTypeResolverComposite">
+        <arguments>
+            <argument name="productTypeNameResolvers" xsi:type="array">
+                <item name="giftcard_product_type_resolver" xsi:type="object">Magento\GiftCardGraphQl\Model\GiftCardProductTypeResolver</item>
+            </argument>
+        </arguments>
+    </type>
+    <type name="Magento\Framework\GraphQl\Schema\Type\Enum\DefaultDataMapper">
+        <arguments>
+            <argument name="map" xsi:type="array">
+                <item name="GiftCardTypeEnum" xsi:type="array">
+                    <item name="virtual" xsi:type="string">0</item>
+                    <item name="physical" xsi:type="string">1</item>
+                    <item name="combined" xsi:type="string">2</item>
+                </item>
+            </argument>
+        </arguments>
+    </type>
+    <type name="Magento\Framework\GraphQl\Schema\Type\Entity\DefaultMapper">
+        <arguments>
+            <argument name="map" xsi:type="array">
+                <item name="catalog_product" xsi:type="array">
+                    <item name="giftcard" xsi:type="string">GiftCardProduct</item>
+                </item>
+            </argument>
+        </arguments>
+    </type>
+    <type name="Magento\SalesGraphQl\Model\OrderItemInterfaceTypeResolverComposite">
+        <arguments>
+            <argument name="orderItemTypeResolvers" xsi:type="array">
+                <item name="giftcard_order_catalog_item_type_resolver" xsi:type="object">Magento\GiftCardGraphQl\Model\Resolver\OrderItem\OrderItemTypeResolver</item>
+            </argument>
+        </arguments>
+    </type>
+    <type name="Magento\SalesGraphQl\Model\InvoiceItemInterfaceTypeResolverComposite">
+        <arguments>
+            <argument name="invoiceItemTypeResolvers" xsi:type="array">
+                <item name="giftcard_invoice_catalog_item_type_resolver" xsi:type="object">Magento\GiftCardGraphQl\Model\Resolver\OrderItem\InvoiceItemTypeResolver</item>
+            </argument>
+        </arguments>
+    </type>
+    <type name="Magento\SalesGraphQl\Model\TypeResolver\OrderItem">
+        <arguments>
+            <argument name="productTypeMap" xsi:type="array">
+                <item name="giftcard" xsi:type="string">GiftCardOrderItem</item>
+            </argument>
+        </arguments>
+    </type>
+    <type name="Magento\SalesGraphQl\Model\TypeResolver\InvoiceItem">
+        <arguments>
+            <argument name="productTypeMap" xsi:type="array">
+                <item name="giftcard" xsi:type="string">GiftCardInvoiceItem</item>
+            </argument>
+        </arguments>
+    </type>
+    <type name="Magento\SalesGraphQl\Model\TypeResolver\CreditMemoItem">
+        <arguments>
+            <argument name="productTypeMap" xsi:type="array">
+                <item name="giftcard" xsi:type="string">GiftCardCreditMemoItem</item>
+            </argument>
+        </arguments>
+    </type>
+    <type name="Magento\SalesGraphQl\Model\TypeResolver\ShipmentItem">
+        <arguments>
+            <argument name="productTypeMap" xsi:type="array">
+                <item name="giftcard" xsi:type="string">GiftCardShipmentItem</item>
+            </argument>
+        </arguments>
+    </type>
+    <type name="Magento\WishlistGraphQl\Model\Resolver\Type\WishlistItemType">
+        <arguments>
+            <argument name="supportedTypes" xsi:type="array">
+                <item name="giftcard" xsi:type="string">GiftCardWishlistItem</item>
+            </argument>
+        </arguments>
+    </type>
+    <type name="Magento\UrlRewriteGraphQl\Model\RoutableInterfaceTypeResolver">
+        <arguments>
+            <argument name="productTypeNameResolvers" xsi:type="array">
+                <item name="giftcard_product_type_resolver" xsi:type="object">Magento\GiftCardGraphQl\Model\GiftCardProductTypeResolver</item>
+            </argument>
+        </arguments>
+    </type>
+    <type name="Magento\CatalogGraphQl\Model\Resolver\Products\DataProvider\Product\CollectionProcessorInterface">
+        <plugin name="additionalFields" type="Magento\GiftCardGraphQl\Model\Plugin\CollectionProcessorInterfacePlugin" />
+    </type>
+</config>

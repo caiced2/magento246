@@ -1,0 +1,75 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+ /**
+  * Copyright © Magento, Inc. All rights reserved.
+  * See COPYING.txt for license details.
+  */
+-->
+<tests xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xsi:noNamespaceSchemaLocation="urn:magento:mftf:Test/etc/testSchema.xsd">
+    <test name="AdminChangeScheduledUpdateFromStagingDashboardTest">
+        <annotations>
+            <features value="Staging"/>
+            <stories value="Staging updates"/>
+            <title value="Changing a scheduled update from the staging dashboard to the max year value."/>
+            <description value="Changing a scheduled update from the staging dashboard to the max year value."/>
+            <severity value="AVERAGE"/>
+            <testCaseId value="MC-25747"/>
+            <group value="staging"/>
+        </annotations>
+        <before>
+            <!-- Login to Admin page -->
+            <actionGroup ref="AdminLoginActionGroup" stepKey="loginAsAdmin"/>
+            <!-- Delete all Catalog Price Rules -->
+            <actionGroup ref="AdminCatalogPriceRuleDeleteAllActionGroup" stepKey="deleteAllCatalogPriceRule"/>
+            <!-- Create Catalog Price Rule -->
+            <createData entity="_defaultCatalogRule" stepKey="createCatalogPriceRule"/>
+        </before>
+        <after>
+            <!-- Open Catalog Price Rule to delete Staging Update -->
+            <actionGroup ref="OpenCatalogPriceRuleActionGroup" stepKey="openCatalogPriceRuleToDeleteStagingUpdate">
+                <argument name="ruleName" value="$createCatalogPriceRule.name$"/>
+            </actionGroup>
+            <!-- Delete Staging Update -->
+            <actionGroup ref="AdminRemoveCatalogPriceRuleFromUpdateActionGroup" stepKey="deleteStagingUpdate">
+                <argument name="updateName" value="{{S5UpdateNameStaging.updateName}}"/>
+            </actionGroup>
+            <!-- Delete Catalog Price Rule -->
+            <deleteData createDataKey="createCatalogPriceRule" stepKey="deleteCatalogPriceRule"/>
+            <!-- Clear Dashboard Staging filter -->
+            <actionGroup ref="StagingDashboardClearFiltersActionGroup" stepKey="clearDashboardStagingFilter"/>
+            <!-- Logout from Admin page -->
+            <actionGroup ref="AdminLogoutActionGroup" stepKey="logoutFromAdmin"/>
+        </after>
+
+        <!-- Open Catalog Price Rule for Edit -->
+        <actionGroup ref="OpenCatalogPriceRuleActionGroup" stepKey="openCatalogPriceRuleForEdit">
+            <argument name="ruleName" value="$createCatalogPriceRule.name$"/>
+        </actionGroup>
+
+        <!-- Create Staging Update for Catalog Price Rule -->
+        <actionGroup ref="scheduleNewUpdateActionGroup" stepKey="createStagingUpdateForCatalogPriceRule">
+            <argument name="staging" value="S5UpdateNameStaging"/>
+            <argument name="timeStart" value="+1 hour"/>
+            <argument name="timeEnd" value="+1 day"/>
+        </actionGroup>
+
+        <!-- Open Staging Update to edit from Staging Update Dashboard  -->
+        <actionGroup ref="navigateToViewStagingUpdateFromStagingDashboard" stepKey="openStagingUpdateToEdit">
+            <argument name="update" value="S5UpdateNameStaging"/>
+        </actionGroup>
+
+        <!-- Change "End Date" to the max year value -->
+        <comment userInput="Adding the comment to replace generate30YEndDate step key for preserving Backward Compatibility" stepKey="generate30YEndDate"/>
+        <comment userInput="Adding the comment to replace fill30YEndDate step key for preserving Backward Compatibility" stepKey="fill30YEndDate"/>
+        <generateDate date="01/19/2038 03:14:07 AM UTC" format="m/j/Y g:i A" stepKey="generate16YEndDate"/>
+        <fillField selector="{{AdminStagingEditSection.endDate}}" userInput="{$generate16YEndDate}" stepKey="fill16YEndDate"/>
+        <click selector="{{AdminMainActionsSection.save}}" stepKey="saveStagingUpdate"/>
+        <waitForElementVisible selector="{{AdminMessagesSection.success}}" stepKey="waitSuccessMessageAppeared"/>
+        <see selector="{{AdminMessagesSection.success}}" userInput="You saved the &#34;{{S5UpdateNameStaging.updateName}}&#34; update." stepKey="seeSuccessMessage"/>
+
+        <!-- See Staging Update in Dashboard  -->
+        <waitForElementVisible selector="{{AdminContentStagingDashboardSection.timeLineEventParameterized(S5UpdateNameStaging.updateName)}}" stepKey="waitForUpdateVisibleInDashboard"/>
+        <seeElement selector="{{AdminContentStagingDashboardSection.timeLineEventParameterized(S5UpdateNameStaging.updateName)}}" stepKey="assertUpdateInDashboard"/>
+    </test>
+</tests>

@@ -1,0 +1,133 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+ /**
+  * Copyright © Magento, Inc. All rights reserved.
+  * See COPYING.txt for license details.
+  */
+-->
+<tests xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xsi:noNamespaceSchemaLocation="urn:magento:mftf:Test/etc/testSchema.xsd">
+    <test name="AdminAddNestedBannerWithImageTest">
+        <annotations>
+            <title value="Content of Nested Dynamic block is rendered on Storefront"/>
+            <description value="Content of CMS page with nested Dynamic block is rendered on Storefront"/>
+            <severity value="MAJOR"/>
+            <testCaseId value="MAGETWO-95194"/>
+            <features value="Cms"/>
+            <stories value="Nested Dynamic Block"/>
+            <group value="Banner"/>
+        </annotations>
+        <before>
+            <actionGroup ref="AdminLoginActionGroup" stepKey="loginAsAdmin"/>
+            <actionGroup ref="AdminMediaGalleryEnhancedEnableActionGroup" stepKey="enableOldMediaGallery">
+                <argument name="enabled" value="0"/>
+            </actionGroup>
+            <magentoCLI command="config:set cms/wysiwyg/enabled enabled" stepKey="enableWYSIWYG"/>
+        </before>
+        <after>
+            <actionGroup ref="AdminMediaGalleryEnhancedEnableActionGroup" stepKey="disableOldMediaGallery">
+                <argument name="enabled" value="1"/>
+            </actionGroup>
+            <actionGroup ref="AdminLogoutActionGroup" stepKey="logout"/>
+        </after>
+        <!--Create a banner or a dynamic block with image as content-->
+        <comment userInput="Creating a banner with image as content" stepKey="comment1"/>
+        <amOnPage url="{{AdminBannerPage.url}}" stepKey="navigateToNewBanner"/>
+        <waitForPageLoad stepKey="waitForNewBannerPage" />
+        <click selector="{{AdminBannerBasicActionSection.Name}}" stepKey="focusOnField"/>
+        <fillField selector="{{AdminBannerBasicActionSection.Name}}" userInput="First Banner" stepKey="fillBannerName1" />
+        <conditionalClick selector="{{AdminBannerBasicActionSection.ContentTab}}" dependentSelector="{{BannerContentSection.checkIfContentTabOpen}}" stepKey="clickIfContentTabCloses1" visible="true"/>
+        <wait stepKey="waitingForContent" time="5" />
+        <waitForElementVisible selector="{{TinyMCESection.TinyMCE}}" stepKey="waitForTinyMCE" />
+        <click selector="{{TinyMCESection.InsertImageIcon}}" stepKey="clickOnImageIcon" />
+        <waitForPageLoad stepKey="waitForPageLoad3" />
+        <actionGroup ref="ClickBrowseBtnOnUploadPopupActionGroup" stepKey="clickBrowserBtn"/>
+        <actionGroup ref="VerifyMediaGalleryStorageActionsActionGroup" stepKey="verifyMediaGalleryStorageBtn"/>
+        <actionGroup ref="CreateImageFolderActionGroup" stepKey="createImageFolder">
+            <argument name="ImageFolder" value="ImageFolder"/>
+        </actionGroup>
+        <actionGroup ref="AttachImageActionGroup" stepKey="attachImage1">
+            <argument name="Image" value="ImageUpload"/>
+        </actionGroup>
+        <actionGroup ref="SaveImageActionGroup" stepKey="insertImage"/>
+        <actionGroup ref="FillOutUploadImagePopupActionGroup" stepKey="fillOutUploadImagePopup" />
+        <click selector="{{BannerContentSection.ShowHideBtn}}" stepKey="clickShowHideBtn" />
+        <waitForPageLoad stepKey="waitForPageLoad2" />
+        <click selector="{{AdminBannerBasicActionSection.Save}}" stepKey="clickSaveBanner" />
+        <waitForPageLoad stepKey="waitForPageLoad6" />
+        <see userInput="You saved the dynamic block." stepKey="seeSuccessMessage1"/>
+        <!--Create a banner or a dynamic block with Dynamic Block rotator as widget-->
+        <comment userInput="Creating a banner with Dynamic Block rotator as widget" stepKey="comment2"/>
+        <amOnPage url="{{AdminBannerPage.url}}" stepKey="navigateToNewBanner2"/>
+        <waitForPageLoad stepKey="waitForPageLoad" />
+        <click selector="{{AdminBannerBasicActionSection.Name}}" stepKey="focusOnField1"/>
+        <fillField selector="{{AdminBannerBasicActionSection.Name}}" userInput="Second Banner" stepKey="fillBannerName" />
+        <conditionalClick selector="{{AdminBannerBasicActionSection.ContentTab}}" dependentSelector="{{BannerContentSection.checkIfContentTabOpen}}" stepKey="clickIfContentTabCloses" visible="true"/>
+        <waitForElementVisible selector="{{TinyMCESection.TinyMCE}}" stepKey="waitForTinyMCE1" />
+        <seeElement selector="{{TinyMCESection.InsertWidgetIcon}}" stepKey="seeWidgetIcon1" />
+        <!--Insert Widget in wysiwyg content-->
+        <click selector="{{TinyMCESection.InsertWidgetIcon}}" stepKey="clickInsertWidgetIcon1" />
+        <waitForPageLoad stepKey="waitForPageLoadAfterWidgetInsert"/>
+        <see userInput="Inserting a widget does not create a widget instance." stepKey="seeMessage1" />
+        <see selector="{{WidgetSection.InsertWidgetBtnDisabled}}" userInput="Insert Widget" stepKey="1" />
+        <see selector="{{WidgetSection.CancelBtnEnabled}}" userInput="Cancel" stepKey="seeCancelBtnEnabled1" />
+        <selectOption selector="{{WidgetSection.WidgetType}}" userInput="Dynamic Blocks Rotator" stepKey="selectDynamicBlockRotator" />
+        <waitForLoadingMaskToDisappear stepKey="waitForLoading1" />
+        <see selector="{{WidgetSection.InsertWidgetBtnEnabled}}" userInput="Insert Widget" stepKey="seeInsertWidgetEnabled1" />
+        <scrollTo selector="{{WidgetOptions.BannerGrid}}" stepKey="scrollToBannerGrid"/>
+        <click selector="{{WidgetOptions.ResetFilter}}" stepKey="clickResetFilterBtn" />
+        <waitForElementVisible selector="{{WidgetOptions.BannerName('First Banner')}}" time="30" stepKey="waitForTinyMCE2" />
+        <click selector="{{WidgetOptions.BannerName('First Banner')}}" stepKey="selectBannerWithImage" />
+        <scrollToTopOfPage stepKey="scrollToTop"/>
+        <click selector="{{WidgetSection.InsertWidget}}" stepKey="clickInsertWidget" />
+        <waitForLoadingMaskToDisappear stepKey="waitForLoading3"/>
+        <click selector="{{AdminBannerBasicActionSection.Save}}" stepKey="saveBanner"/>
+        <waitForPageLoad stepKey="waitForPageLoad4" />
+        <see userInput="You saved the dynamic block." stepKey="seeSuccessMessage2"/>
+        <!--Create a CMS page and insert Widget -->
+        <comment userInput="Creating a CMS page and then insert a widget" stepKey="comment3"/>
+        <amOnPage url="{{CmsNewPagePage.url}}" stepKey="navigateToPage"/>
+        <waitForPageLoad stepKey="wait1"/>
+        <fillField selector="{{CmsNewPagePageBasicFieldsSection.pageTitle}}" userInput="{{_defaultCmsPage.title}}" stepKey="fillFieldTitle"/>
+        <click selector="{{CmsNewPagePageContentSection.header}}" stepKey="clickContentTab" />
+        <wait time="5" stepKey="waitForPageContent"/>
+        <waitForElementVisible selector="{{TinyMCESection.TinyMCE}}" stepKey="waitForTinyMCE3"/>
+        <seeElement selector="{{TinyMCESection.InsertWidgetIcon}}" stepKey="seeWidgetIcon2" />
+        <click selector="{{TinyMCESection.InsertWidgetIcon}}" stepKey="clickInsertWidgetIcon2" />
+        <waitForPageLoad stepKey="wait2"/>
+        <see userInput="Inserting a widget does not create a widget instance." stepKey="seeMessage2" />
+        <!--see Insert Widget button disabled-->
+        <see selector="{{WidgetSection.InsertWidgetBtnDisabled}}" userInput="Insert Widget" stepKey="seeInsertWidgetDisabled2" />
+        <!--see Cancel button enabed-->
+        <see selector="{{WidgetSection.CancelBtnEnabled}}" userInput="Cancel" stepKey="seeCancelBtnEnabled2" />
+        <!--Select "Widget Type"-->
+        <selectOption selector="{{WidgetSection.WidgetType}}" userInput="Dynamic Blocks Rotator" stepKey="selectDynamicBlockRotatorforPage" />
+        <waitForLoadingMaskToDisappear stepKey="waitForLoadingtoDisappear" />
+        <waitForPageLoad stepKey="waitForPageLoad5"/>
+        <see selector="{{WidgetSection.InsertWidgetBtnEnabled}}" userInput="Insert Widget" stepKey="seeInsertWidgetEnabled2" />
+        <scrollTo selector="{{WidgetOptions.BannerGrid}}" stepKey="scrollToBannerGrid2"/>
+        <click selector="{{WidgetOptions.ResetFilter}}" stepKey="clickResetFilterBtn2" />
+        <waitForLoadingMaskToDisappear stepKey="waitForLoading6"/>
+        <waitForElementVisible selector="{{WidgetOptions.BannerName('Second Banner')}}" time="30" stepKey="waitForBannerWithWidget" />
+        <click selector="{{WidgetOptions.BannerName('Second Banner')}}" stepKey="selectBannerWithRotator" />
+        <scrollToTopOfPage stepKey="scrollToTop2"/>
+        <click selector="{{WidgetSection.InsertWidget}}" stepKey="clickInsertWidget2" />
+        <waitForLoadingMaskToDisappear stepKey="waitForLoading7"/>
+        <scrollTo selector="{{CmsNewPagePageSeoSection.header}}" stepKey="scrollToSearchEngineTab" />
+        <click selector="{{CmsNewPagePageSeoSection.header}}" stepKey="clickExpandSearchEngineOptimisation"/>
+        <fillField selector="{{CmsNewPagePageSeoSection.urlKey}}" userInput="{{_defaultCmsPage.identifier}}" stepKey="fillFieldUrlKey"/>
+        <click selector="{{CmsNewPagePageActionsSection.expandSplitButton}}" stepKey="expandButtonMenu"/>
+        <waitForElementVisible selector="{{CmsNewPagePageActionsSection.splitButtonMenu}}" stepKey="waitForSplitButtonMenuVisible"/>
+        <click selector="{{CmsNewPagePageActionsSection.savePage}}" stepKey="clickSavePage3"/>
+        <see userInput="You saved the page." stepKey="seeSuccessMessage3"/>
+        <!--Reindex and flush cache-->
+        <magentoCLI command="cron:run --group=index" stepKey="runCronReindex"/>
+        <!--navigate to the test page-->
+        <amOnPage url="{{_defaultCmsPage.identifier}}" stepKey="amOnPageTestPage"/>
+        <waitForPageLoad stepKey="waitForTestPageToLoad" time="20"/>
+        <!--see content of the dynamic block on Storefront-->
+        <waitForElementVisible selector="{{StorefrontBannerSection.targetImage}}" stepKey="waitForImage" />
+        <seeElement selector="{{StorefrontBannerSection.targetImage}}" stepKey="assertBannerImage"/>
+        <seeElementInDOM selector="{{StorefrontBannerSection.ImageSource(ImageUpload.fileName,ImageUpload.extension)}}" stepKey="assertMediaSource"/>
+    </test>
+</tests>

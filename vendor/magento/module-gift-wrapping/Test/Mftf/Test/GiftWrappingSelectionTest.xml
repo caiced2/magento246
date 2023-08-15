@@ -1,0 +1,87 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+ /**
+  * Copyright © Magento, Inc. All rights reserved.
+  * See COPYING.txt for license details.
+  */
+-->
+
+<tests xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:noNamespaceSchemaLocation="urn:magento:mftf:Test/etc/testSchema.xsd">
+
+    <test name="GiftWrappingSelectionTest">
+        <annotations>
+            <features value="Checkout"/>
+            <stories value="MAGETWO-91563 - Gift wrapping selection does not display in shopping cart"/>
+            <title value="Displaying of Gift wrapping selection in shopping cart"/>
+            <description value="Displaying of Gift wrapping selection in shopping cart"/>
+            <severity value="MAJOR"/>
+            <testCaseId value="MAGETWO-94314"/>
+            <group value="giftWrapping"/>
+        </annotations>
+        <before>
+            <!--Create product-->
+            <createData entity="_defaultCategory" stepKey="createCategory"/>
+            <createData entity="ApiSimpleProduct" stepKey="createProduct">
+                <requiredEntity createDataKey="createCategory"/>
+            </createData>
+            <!--Login as admin-->
+            <actionGroup ref="AdminLoginActionGroup" stepKey="loginAsAdmin"/>
+        </before>
+
+        <after>
+            <actionGroup ref="AdminLoginActionGroup" stepKey="loginAsAdmin"/>
+            <!--Roll back-->
+            <actionGroup ref="AdminDeleteGiftWrappingActionGroup" stepKey="deleteGiftWrapping">
+                <argument name="giftWrappingDesign" value="Test Design"/>
+            </actionGroup>
+            <actionGroup ref="AdminLogoutActionGroup" stepKey="logout"/>
+            <deleteData createDataKey="createCategory" stepKey="deleteCategory"/>
+            <deleteData createDataKey="createProduct" stepKey="deleteProduct"/>
+            <createData entity="DefaultConfigGiftWrappingOptions" stepKey="DefaultGiftWrappingOptions"/>
+            <createData entity="DefaultConfigGiftMessageOptions" stepKey="restoreDefaultConfigGiftOptions"/>
+        </after>
+        <!--Edit product to set gift options-->
+        <actionGroup ref="SearchForProductOnBackendActionGroup" stepKey="searchForSimpleProduct1">
+            <argument name="product" value="$$createProduct$$"/>
+        </actionGroup>
+        <actionGroup ref="OpenEditProductOnBackendActionGroup" stepKey="openEditProduct1">
+            <argument name="product" value="$$createProduct$$"/>
+        </actionGroup>
+        <click selector="{{AdminProductGiftOptionsSection.giftOptions}}" stepKey="ClickToExpandGiftOptions"/>
+        <waitForPageLoad stepKey="waitForPageLoad"/>
+        <click selector="{{AdminProductGiftOptionsSection.giftMessageSwitchOption}}" stepKey="SetGiftMessageSwitchOption"/>
+        <click selector="{{AdminProductGiftOptionsSection.giftWrappingSwitchOption}}" stepKey="SetGiftWrappingSwitchOption"/>
+        <fillField selector="{{AdminProductGiftOptionsSection.priceForGiftWrapping}}" userInput="20" stepKey="setPrice"/>
+        <click selector="{{AdminProductFormActionSection.saveButton}}" stepKey="clickToSaveProduct"/>
+        <waitForPageLoad stepKey="waitForPageLoad1"/>
+        <see userInput="You saved the product." stepKey="CheckProductSaved"/>
+        <!--Create Gift Wrapping-->
+        <actionGroup ref="AdminGiftWrappingNewActionGroup" stepKey="createGiftWrapping">
+            <argument name="giftWrappingDesign" value="Test Design"/>
+            <argument name="giftWrappingWebsite" value="Main Website"/>
+            <argument name="giftWrappingPrice" value="20"/>
+        </actionGroup>
+        <!--Set gift wrapping configurations -->
+        <createData entity="SetGiftWrappingOptions" stepKey="GiftWrappingOptions"/>
+        <createData entity="EnableGiftMessageForOrder" stepKey="enableGiftMessageForOrder"/>
+        <actionGroup ref="AdminLogoutActionGroup" stepKey="logout"/>
+        <!--Go to Storefront and add product to card-->
+        <amOnPage url="$$createProduct.custom_attributes[url_key]$$.html" stepKey="goToProduct"/>
+        <waitForPageLoad stepKey="waitForPageLoad2"/>
+        <actionGroup ref="StorefrontAddProductToCartActionGroup" stepKey="StorefrontAddProductToCart">
+            <argument name="product" value="$$createProduct$$"/>
+            <argument name="productCount" value="1"/>
+        </actionGroup>
+        <actionGroup ref="ClickViewAndEditCartFromMiniCartActionGroup" stepKey="clickViewAndEditCartFromMiniCart"/>
+        <!--Select gift wrapping and verify that its added to product line item-->
+        <click selector="{{CheckoutCartGiftWrappingSection.storefrontGiftOption}}" stepKey="clickToAddGiftOption"/>
+        <waitForPageLoad stepKey="waitForPageLoad3"/>
+        <click selector="{{CheckoutCartGiftWrappingSection.giftWrappingPaper}}" stepKey="clickToAddPaper"/>
+        <waitForPageLoad stepKey="waitForPageLoad4"/>
+        <click selector="{{CheckoutCartGiftWrappingSection.update}}" stepKey="clickToUpdate"/>
+        <waitForPageLoad stepKey="waitForPageLoad5"/>
+        <see userInput="Gift wrapping: Test Design" stepKey="GiftWrappingIsAdded"/>
+    </test>
+
+</tests>

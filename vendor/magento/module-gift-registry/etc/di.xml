@@ -1,0 +1,41 @@
+<?xml version="1.0"?>
+<!--
+/**
+ * Copyright © Magento, Inc. All rights reserved.
+ * See COPYING.txt for license details.
+ */
+-->
+<config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="urn:magento:framework:ObjectManager/etc/config.xsd">
+    <preference for="Magento\GiftRegistry\Api\ShippingMethodManagementInterface" type="Magento\GiftRegistry\Model\ShippingMethodManagement" />
+    <preference for="Magento\GiftRegistry\Api\GuestCart\ShippingMethodManagementInterface" type="Magento\GiftRegistry\Model\GuestCart\ShippingMethodManagement" />
+    <preference for="Magento\GiftRegistry\Model\Item\Collection\FilterInterface" type="Magento\GiftRegistry\Model\Item\Collection\CompositeFilter"/>
+    <type name="Magento\Checkout\Api\ShippingInformationManagementInterface">
+        <plugin name="gift_registry_save_address" type="Magento\GiftRegistry\Model\Plugin\SaveAddress"/>
+    </type>
+    <type name="Magento\Quote\Model\Quote\Item\ToOrderItem">
+        <plugin name="gift_registry_item_from_quote_item" type="Magento\GiftRegistry\Model\Plugin\QuoteItem"/>
+    </type>
+    <type name="Magento\GiftRegistry\Model\ResourceModel\Helper">
+        <arguments>
+            <argument name="modulePrefix" xsi:type="string">giftregistry</argument>
+        </arguments>
+    </type>
+    <type name="Magento\GiftRegistry\Model\Config\Data">
+        <arguments>
+            <argument name="reader" xsi:type="object">Magento\GiftRegistry\Model\Config\Reader\Proxy</argument>
+        </arguments>
+    </type>
+    <type name="Magento\Framework\Module\Setup\Migration">
+        <arguments>
+            <argument name="compositeModules" xsi:type="array">
+                <item name="magento_giftregistry" xsi:type="string">Magento_GiftRegistry</item>
+            </argument>
+        </arguments>
+    </type>
+    <type name="Magento\Quote\Model\Quote\Address\ToOrderAddress">
+        <plugin name="gift_registry_quote_address_to_order_address" type="Magento\GiftRegistry\Model\Plugin\ConvertQuoteAddressToOrderAddress"/>
+    </type>
+    <type name="Magento\Quote\Model\Quote">
+        <plugin name="gift_registry_update_quote_item" type="Magento\GiftRegistry\Model\Plugin\UpdateQuoteItem"/>
+    </type>
+</config>

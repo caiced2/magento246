@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+ /**
+  * Copyright © Magento, Inc. All rights reserved.
+  * See COPYING.txt for license details.
+  */
+-->
+
+<tests xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xsi:noNamespaceSchemaLocation="urn:magento:mftf:Test/etc/testSchema.xsd">
+    <test name="BillingAddressOnCheckoutPaymentPageTest" extends="DefaultBillingAddressShouldBeCheckedOnPaymentPageTest">
+        <annotations>
+            <features value="Checkout"/>
+            <stories value="Checkout via the Storefront"/>
+            <title value="The billing address should display without errors if GTM is enabled."/>
+            <description value="The billing address should appear without a JS error if GTM is enabled."/>
+            <severity value="CRITICAL"/>
+            <testCaseId value="MC-39509"/>
+            <useCaseId value="MC-39072"/>
+            <group value="checkout"/>
+        </annotations>
+        <before>
+            <!-- Enable Google Tag Manager -->
+            <magentoCLI command="config:set {{GoogleAnalyticsEnabled.path}} {{GoogleAnalyticsEnabled.value}}" stepKey="enableGoogleAnalytics"/>
+            <magentoCLI command="config:set {{GoogleAnalyticsGoogleTagManagerType.path}} {{GoogleAnalyticsGoogleTagManagerType.value}}" stepKey="enableGTM"/>
+        </before>
+        <after>
+            <!-- Roll back configuration -->
+            <magentoCLI command="config:set {{GoogleAnalyticsTypeByDefault.path}} {{GoogleAnalyticsTypeByDefault.value}}" stepKey="enableGoogleAnalyticsDefaultType"/>
+            <magentoCLI command="config:set {{GoogleAnalyticsDisabledByDefault.path}} {{GoogleAnalyticsDisabledByDefault.value}}" stepKey="disableGoogleAnalytics"/>
+            <!--Logout from customer account-->
+            <actionGroup ref="StorefrontCustomerLogoutActionGroup" stepKey="logoutCustomer"/>
+        </after>
+        <checkOption selector="{{CheckoutPaymentSection.billingAddressNotSameCheckbox}}" stepKey="BillingAsShipmentSame"/>
+        <see selector="{{CheckoutPaymentSection.billingAddress}}" userInput="{{UK_Simple_Address.street[0]}}" stepKey="assertBillingAddressSameAsShipment"/>
+    </test>
+</tests>

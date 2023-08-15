@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+ /**
+  * Copyright © Magento, Inc. All rights reserved.
+  * See COPYING.txt for license details.
+  */
+-->
+
+<actionGroups xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:noNamespaceSchemaLocation="urn:magento:mftf:Test/etc/actionGroupSchema.xsd">
+    <actionGroup name="AdminCreateCatalogRuleStagingUpdateWithActiveNoActionGroup" extends="CreateCatalogRuleStagingUpdateActionGroup">
+        <remove keyForRemoval="selectActive"/>
+        <!--Assert that active toggle is on 3-th position-->
+        <grabAttributeFrom  userInput="data-index" selector="{{AdminUpdateBlockSection.activePosition}}" stepKey="grabAttributeFromDiv" after="fillEndDate"/>
+        <assertEquals stepKey="assertThatActiveIsOnThirdPosition" after="grabAttributeFromDiv">
+			<actualResult type="const">$grabAttributeFromDiv</actualResult>
+			<expectedResult type="const">'is_active'</expectedResult>
+        </assertEquals>
+        <conditionalClick selector="{{AdminUpdateBlockSection.isEnabled}}" dependentSelector="{{AdminUpdateBlockSection.activeIsEnabled}}" visible="true" stepKey="disableActiveBtn" after="assertThatActiveIsOnThirdPosition"/>
+    </actionGroup>
+</actionGroups>

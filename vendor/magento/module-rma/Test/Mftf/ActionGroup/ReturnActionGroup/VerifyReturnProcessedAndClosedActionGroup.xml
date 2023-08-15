@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+ /**
+  * Copyright © Magento, Inc. All rights reserved.
+  * See COPYING.txt for license details.
+  */
+-->
+<actionGroups xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:noNamespaceSchemaLocation="urn:magento:mftf:Test/etc/actionGroupSchema.xsd">
+    <actionGroup name="verifyReturnProcessedAndClosed">
+        <arguments>
+            <argument name="qty" type="string"/>
+            <argument name="qty_remaining" type="string"/>
+            <argument name="item" type="entity"/>
+            <argument name="product_entity"/>
+        </arguments>
+        <see selector="{{AdminReturnItemsSection.itemCheck('product')}}" userInput="{{product_entity.name}}" stepKey="seeProductName"/>
+        <see selector="{{AdminReturnItemsSection.itemCheck('sku')}}" userInput="{{product_entity.sku}}" stepKey="seeProductSku"/>
+        <see selector="{{AdminReturnItemsSection.itemCheck('condition')}}" userInput="{{item.condition}}" stepKey="seeItemCondition"/>
+        <see selector="{{AdminReturnItemsSection.itemCheck('resolution')}}" userInput="{{item.resolution}}" stepKey="seeItemResolution"/>
+        <see selector="{{AdminReturnItemsSection.itemCheck('status')}}" userInput="Approved" stepKey="seeItemStatus"/>
+        <see selector="{{AdminReturnItemsSection.itemProcess('ordered')}}" userInput="{{qty_remaining}}" stepKey="seeItemRemaining"/>
+        <see selector="{{AdminReturnItemsSection.itemProcess('requested')}}" userInput="{{qty}}" stepKey="seeItemRequested"/>
+        <see selector="{{AdminReturnItemsSection.itemProcess('authorized')}}" userInput="{{qty}}" stepKey="seeItemAuthorized"/>
+        <see selector="{{AdminReturnItemsSection.itemProcess('returned')}}" userInput="{{qty}}" stepKey="seeItemReturned"/>
+        <see selector="{{AdminReturnItemsSection.itemProcess('approved')}}" userInput="{{qty}}" stepKey="seeItemApproved"/>
+    </actionGroup>
+</actionGroups>

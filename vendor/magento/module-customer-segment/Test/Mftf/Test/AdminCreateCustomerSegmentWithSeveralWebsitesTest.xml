@@ -1,0 +1,112 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+ /**
+  * Copyright © Magento, Inc. All rights reserved.
+  * See COPYING.txt for license details.
+  */
+-->
+
+<tests xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xsi:noNamespaceSchemaLocation="urn:magento:mftf:Test/etc/testSchema.xsd">
+    <test name="AdminCreateCustomerSegmentWithSeveralWebsitesTest">
+        <annotations>
+            <stories value="Create Customer Segment Entity With Customer Conditions"/>
+            <title value="Create two customers in different websites and create customer segment with condition based on 'Newsletter Subscription'"/>
+            <description value="Admin should be able to create customer segment with condition based on 'Newsletter Subscription'"/>
+            <severity value="CRITICAL"/>
+            <testCaseId value="MC-14503"/>
+            <group value="CustomerSegment"/>
+            <group value="mtf_migrated"/>
+        </annotations>
+        <before>
+            <actionGroup ref="AdminLoginActionGroup" stepKey="LoginAsAdmin"/>
+            <actionGroup ref="AdminCreateCustomerWithWebsiteAndStoreViewActionGroup" stepKey="createCustomerWithWebsiteAndStoreView">
+                <argument name="customerData" value="Simple_US_Customer"/>
+                <argument name="address" value="US_Address_NY"/>
+                <argument name="website" value="{{_defaultWebsite.name}}"/>
+                <argument name="storeView" value="{{_defaultStore.name}}"/>
+            </actionGroup>
+
+            <!-- Create custom website -->
+            <actionGroup ref="AdminCreateWebsiteActionGroup" stepKey="createCustomWebsite">
+                <argument name="newWebsiteName" value="{{customWebsite.name}}"/>
+                <argument name="websiteCode" value="{{customWebsite.code}}"/>
+            </actionGroup>
+
+            <actionGroup ref="AdminCreateNewStoreGroupActionGroup" stepKey="createCustomStore">
+                <argument name="website" value="{{customWebsite.name}}"/>
+                <argument name="storeGroupName" value="{{customStoreGroup.name}}"/>
+                <argument name="storeGroupCode" value="{{customStoreGroup.code}}"/>
+            </actionGroup>
+
+            <actionGroup ref="AdminCreateStoreViewActionGroup" stepKey="createCustomStoreView">
+                <argument name="StoreGroup" value="customStoreGroup"/>
+                <argument name="customStore" value="customStoreGroup"/>
+            </actionGroup>
+            <magentoCron groups="index" stepKey="reindex"/>
+
+            <actionGroup ref="AdminCreateCustomerWithWebsiteAndStoreViewActionGroup" stepKey="createCustomerWithCustomWebsiteAndStoreView">
+                <argument name="customerData" value="Simple_US_CA_Customer"/>
+                <argument name="address" value="US_Address_NY"/>
+                <argument name="website" value="{{customWebsite.name}}"/>
+                <argument name="storeView" value="{{customStoreGroup.name}}"/>
+            </actionGroup>
+            <magentoCron groups="index" stepKey="reindexInvalidatedIndices"/>
+        </before>
+        <after>
+            <actionGroup ref="AdminDeleteCustomerActionGroup" stepKey="deleteCustomer">
+                <argument name="customerEmail" value="Simple_US_Customer.email"/>
+            </actionGroup>
+            <actionGroup ref="AdminDeleteCustomerActionGroup" stepKey="deleteSecondCustomer">
+                <argument name="customerEmail" value="Simple_US_CA_Customer.email"/>
+            </actionGroup>
+            <actionGroup ref="AdminDeleteWebsiteActionGroup" stepKey="deleteCustomWebsite">
+                <argument name="websiteName" value="{{customWebsite.name}}"/>
+            </actionGroup>
+            <magentoCron groups="index" stepKey="reindex"/>
+            <actionGroup ref="AdminLogoutActionGroup" stepKey="logout"/>
+        </after>
+
+        <!--Create segment -->
+        <amOnPage url="{{AdminCustomerSegmentIndexPage.url}}" stepKey="goToCustomerSegments"/>
+        <waitForPageLoad stepKey="waitForIndexPageLoad"/>
+        <click selector="{{AdminMainActionsSection.add}}" stepKey="addNewSegment"/>
+        <fillField selector="{{AdminCustomerSegmentEditSection.segmentName}}" userInput="{{CustomerSegmentDefault.name}}" stepKey="inputSegmentName"/>
+        <selectOption selector="{{AdminCustomerSegmentEditSection.assignToWebsite}}" stepKey="multiSelect" parameterArray="[{{_defaultWebsite.name}}, {{customWebsite.name}}]" />
+        <selectOption selector="{{AdminCustomerSegmentEditSection.status}}" userInput="{{CustomerSegmentDefault.is_active}}" stepKey="setStatusActive"/>
+        <selectOption selector="{{AdminCustomerSegmentEditSection.applyTo}}" userInput="{{CustomerSegmentDefault.apply_to}}" stepKey="setApplyTo"/>
+        <click selector="{{AdminMainActionsSection.saveAndContinue}}" stepKey="saveSegment"/>
+        <see selector="{{AdminMessagesSection.success}}" userInput="You saved the segment." stepKey="seeSuccessMessage"/>
+        <actionGroup ref="CliConsumerStartActionGroup" stepKey="startMessageQueue">
+            <argument name="consumerName" value="{{AdminCustomerSegmentConsumerData.consumerName}}"/>
+            <argument name="maxMessages" value="{{AdminCustomerSegmentConsumerData.messageLimit}}"/>
+        </actionGroup>
+        <reloadPage stepKey="refreshPage"/>
+        <waitForPageLoad stepKey="waitForPageLoaded"/>
+
+        <!--Fill conditions -->
+        <click selector="{{AdminCustomerSegmentEditSection.conditionsTab}}" stepKey="proceedToConditionsTab"/>
+        <click selector="{{AdminCustomerSegmentConditionsEditSection.addCondition}}" stepKey="clickToAddCondition" />
+        <selectOption userInput="Newsletter Subscription" selector="{{AdminCustomerSegmentConditionsEditSection.conditions}}" stepKey="selectCondition"/>
+        <waitForPageLoad stepKey="waitForConditionsToAppear"/>
+        <doubleClick selector="{{AdminCustomerSegmentConditionsEditSection.conditionValueChooserParam('1','subscribed')}}" stepKey="openSelect"/>
+        <selectOption userInput="not subscribed" selector="{{AdminCustomerSegmentConditionsEditSection.conditionValue}}" stepKey="selectOption"/>
+        <see userInput="Customer is not subscribed  to newsletter. " stepKey="seeCondition"/>
+        <click selector="{{AdminMainActionsSection.saveAndContinue}}" stepKey="saveAndContinueSegment"/>
+        <see userInput="You saved the segment." selector="{{AdminMessagesSection.success}}" stepKey="checkSuccessMessage"/>
+        <actionGroup ref="CliConsumerStartActionGroup" stepKey="startMessageQueue2">
+            <argument name="consumerName" value="{{AdminCustomerSegmentConsumerData.consumerName}}"/>
+            <argument name="maxMessages" value="{{AdminCustomerSegmentConsumerData.messageLimit}}"/>
+        </actionGroup>
+        <reloadPage stepKey="refreshPage2"/>
+        <waitForPageLoad stepKey="waitForPageLoaded2"/>
+        <!-- Check that customers are in segment -->
+        <actionGroup ref="AdminCheckCustomerInSegmentActionGroup" stepKey="checkCustomerInSegment">
+            <argument name="customer" value="Simple_US_Customer"/>
+        </actionGroup>
+
+        <actionGroup ref="AdminCheckCustomerInSegmentActionGroup" stepKey="checkSecondCustomerInSegment">
+            <argument name="customer" value="Simple_US_CA_Customer"/>
+        </actionGroup>
+    </test>
+</tests>

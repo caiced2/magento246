@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+ /**
+  * Copyright © Magento, Inc. All rights reserved.
+  * See COPYING.txt for license details.
+  */
+-->
+<actionGroups xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:noNamespaceSchemaLocation="urn:magento:mftf:Test/etc/actionGroupSchema.xsd">
+    <actionGroup name="DeleteTheUpdateActionGroup" extends="RemoveFromUpdateActionGroup">
+        <click selector="{{AdminRemoveFromUpdateSection.deleteTheUpdate}}" stepKey="clickDeleteTheUpdate"/>
+        <see selector="{{AdminMessagesSection.warningMessage}}" userInput="The product will be removed from the update and all scheduled changes will be lost." stepKey="seeWarning"/>
+        <click selector="{{AdminRemoveFromUpdateSection.done}}" stepKey="clickDone"/>
+        <dontSeeElement selector="{{AdminRemoveFromUpdateSection.title}}" stepKey="panelIsClosed"/>
+        <dontSeeElement selector="{{AdminScheduledChangesSection.scheduleDetails(fromStaging.updateName)}}" stepKey="dontSeeDeletedUpdate"/>
+    </actionGroup>
+</actionGroups>

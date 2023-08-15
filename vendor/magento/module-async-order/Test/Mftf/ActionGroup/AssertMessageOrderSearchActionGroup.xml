@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+ /**
+  * Copyright © Magento, Inc. All rights reserved.
+  * See COPYING.txt for license details.
+  */
+-->
+
+<actionGroups xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+              xsi:noNamespaceSchemaLocation="urn:magento:mftf:Test/etc/actionGroupSchema.xsd">
+    <actionGroup name="AssertMessageOrderSearchActionGroup">
+        <annotations>
+            <description>Validates that the provided Message/Message Type is present and correct.</description>
+        </annotations>
+        <arguments>
+            <argument name="message" type="string" defaultValue="Order information is not available yet. Try again in a couple of minutes."/>
+            <argument name="messageType" type="string" defaultValue="error"/>
+        </arguments>
+
+        <see userInput="{{message}}" selector="{{StorefrontGuestOrdersReturnsSearchSection.messageByType(messageType)}}" stepKey="verifyMessage"/>
+    </actionGroup>
+</actionGroups>

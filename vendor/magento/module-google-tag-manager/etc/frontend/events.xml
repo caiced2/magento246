@@ -1,0 +1,39 @@
+<?xml version="1.0"?>
+<!--
+/**
+ * Copyright © Magento, Inc. All rights reserved.
+ * See COPYING.txt for license details.
+ */
+-->
+<config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="urn:magento:framework:Event/etc/events.xsd">
+    <event name="checkout_onepage_controller_success_action">
+        <observer name="googleanalytics_order_success" instance="Magento\GoogleTagManager\Observer\SetGoogleAnalyticsOnOrderSuccessPageViewObserver" />
+    </event>
+    <event name="multishipping_checkout_controller_success_action">
+        <observer name="googleanalytics_order_success" instance="Magento\GoogleTagManager\Observer\SetGoogleAnalyticsOnOrderSuccessPageViewObserver" />
+    </event>
+
+    <event name="controller_action_postdispatch_checkout">
+        <observer name="googleanalytics_checkout_steps" instance="Magento\GoogleTagManager\Observer\SetGoogleAnalyticsOnCheckoutObserver" />
+    </event>
+    <event name="controller_action_postdispatch_checkout_cart_updatePost">
+        <observer name="googleanalytics_clear_session_cache" instance="Magento\GoogleTagManager\Observer\ClearSessionCartQuantityObserver" />
+    </event>
+    <event name="controller_action_postdispatch_enterprise_pagecache"><!--@todo-->
+        <observer name="googleanalytics_update_banner_placeholder" instance="Magento\GoogleTagManager\Observer\UpdateBannerPlaceholderInfoObserver" />
+    </event>
+    <event name="controller_action_postdispatch">
+        <observer name="googleanalytics_postdispatch" instance="Magento\GoogleTagManager\Observer\SendCookieOnCartActionCompleteObserver" />
+    </event>
+
+    <event name="render_block">
+        <observer name="googleanalytics_update_placeholder" instance="Magento\GoogleTagManager\Observer\UpdatePlaceholderInfoObserver" />
+    </event>
+    <event name="fpc_linked_block_render_after">
+        <observer name="googleanalytics_update_linked_product_placeholder" instance="Magento\GoogleTagManager\Observer\UpdateLinkedProductPlaceholderInfoObserver" />
+    </event>
+
+    <event name="checkout_cart_add_product_complete">
+        <observer name="googleanalytics_add_to_cart" instance="Magento\GoogleTagManager\Observer\AddToCartWithRedirect" />
+    </event>
+</config>

@@ -1,0 +1,103 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+ /**
+  * Copyright © Magento, Inc. All rights reserved.
+  * See COPYING.txt for license details.
+  */
+-->
+
+<tests xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xsi:noNamespaceSchemaLocation="urn:magento:mftf:Test/etc/testSchema.xsd">
+    <test name="StorefrontCheckThatQuoteItemPriceUpdatedAfterStagingUpdateTest">
+        <annotations>
+            <features value="QuoteStaging"/>
+            <stories value="Staging updates"/>
+            <title value="Check that product price in cart will be updated after scheduled update"/>
+            <description value="Check that price of product in cart will be updated according to new price from scheduled update"/>
+            <severity value="MAJOR" />
+            <testCaseId value="MC-42089"/>
+            <useCaseId value="MC-36811"/>
+            <group value="catalogStaging"/>
+            <group value="quoteStaging"/>
+        </annotations>
+        <before>
+            <createData entity="SimpleProduct2" stepKey="createProduct"/>
+            <createData entity="Simple_US_Customer" stepKey="createCustomer"/>
+            <actionGroup ref="AdminLoginActionGroup" stepKey="loginAsAdmin"/>
+        </before>
+        <after>
+            <actionGroup ref="StorefrontCustomerLogoutActionGroup" stepKey="customerLogout"/>
+            <deleteData createDataKey="createCustomer" stepKey="deleteCustomer"/>
+            <deleteData createDataKey="createProduct" stepKey="deleteProduct"/>
+            <actionGroup ref="AdminLogoutActionGroup" stepKey="logout"/>
+        </after>
+        <actionGroup ref="LoginToStorefrontActionGroup" stepKey="loginAsCustomer">
+            <argument name="Customer" value="$createCustomer$"/>
+        </actionGroup>
+        <actionGroup ref="OpenStoreFrontProductPageActionGroup" stepKey="goToProductPage">
+            <argument name="productUrlKey" value="$createProduct.custom_attributes[url_key]$"/>
+        </actionGroup>
+        <actionGroup ref="StorefrontAssertProductPriceOnProductPageActionGroup" stepKey="assertProductPrice">
+            <argument name="productPrice" value="$createProduct.price$"/>
+        </actionGroup>
+        <actionGroup ref="StorefrontAddProductToCartActionGroup" stepKey="addProductToCart">
+            <argument name="product" value="$createProduct$" />
+            <argument name="productCount" value="1" />
+        </actionGroup>
+        <actionGroup ref="StorefrontCartPageOpenActionGroup" stepKey="goToCheckoutCartPage"/>
+        <actionGroup ref="AssertStorefrontCheckoutCartItemsActionGroup" stepKey="assertProductItemInCheckOutCart">
+            <argument name="productName" value="$createProduct.name$"/>
+            <argument name="productSku" value="$createProduct.sku$"/>
+            <argument name="productPrice" value="$createProduct.price$"/>
+            <argument name="subtotal" value="$createProduct.price$" />
+            <argument name="qty" value="1"/>
+        </actionGroup>
+        <amOnPage url="{{AdminProductEditPage.url($createProduct.id$)}}" stepKey="openAdminEditProductPage"/>
+        <waitForPageLoad stepKey="waitForEditPageLoad"/>
+
+        <executeJS function="
+                var today = new Date();
+                var sec = today.getSeconds();
+                return sec > 50 ? (61-sec) : 0;" stepKey="needWait"/>
+        <wait time="$needWait" stepKey="conditionalWait"/>
+
+        <generateDate date="+1 minute" format="m/d/Y g:i A" stepKey="generateStartDate"/>
+        <executeJS function="var today = new Date();
+                var sec = today.getSeconds();
+                return 60 - sec;" stepKey="numSecondsLeft"/>
+        <executeJS function="return Math.floor(new Date() / 1000);" stepKey="getStartingTime"/>
+
+        <generateDate date="+1 week" format="m/d/Y g:i A" stepKey="generateEndDate"/>
+        <actionGroup ref="FillScheduleUpdateActionGroup" stepKey="createNewStagingUpdate">
+            <argument name="staging" value="S5UpdateNameStaging"/>
+            <argument name="timeStart" value="{$generateStartDate}"/>
+            <argument name="timeEnd" value="{$generateEndDate}"/>
+            <argument name="productPrice" value="50"/>
+        </actionGroup>
+
+        <executeJS function="return Math.floor(new Date() / 1000);" stepKey="getEndingTime"/>
+        <executeJS function="var timePassed = {$getEndingTime} - {$getStartingTime};
+                var timeLeft = {$numSecondsLeft} - timePassed;
+                return timeLeft > 0 ? timeLeft : 0;" stepKey="getTimeToWait"/>
+        <wait time="$getTimeToWait" stepKey="conditionalWait2"/>
+
+        <actionGroup ref="ApplyUpdatedRuleStagingByCron" stepKey="runCronTwiceToApplyStagingUpdate"/>
+        <actionGroup ref="CliIndexerReindexActionGroup" stepKey="reindex">
+            <argument name="indices" value=""/>
+        </actionGroup>
+        <actionGroup ref="OpenStoreFrontProductPageActionGroup" stepKey="goToProductPage2">
+            <argument name="productUrlKey" value="$createProduct.custom_attributes[url_key]$"/>
+        </actionGroup>
+        <actionGroup ref="StorefrontAssertProductPriceOnProductPageActionGroup" stepKey="assertProductPriceUpdated">
+            <argument name="productPrice" value="50"/>
+        </actionGroup>
+        <actionGroup ref="StorefrontCartPageOpenActionGroup" stepKey="goToCheckoutCartPageAfterUpdate"/>
+        <actionGroup ref="AssertStorefrontCheckoutCartItemsActionGroup" stepKey="assertProductItemInCheckOutCartAfterUpdate">
+            <argument name="productName" value="$createProduct.name$"/>
+            <argument name="productSku" value="$createProduct.sku$"/>
+            <argument name="productPrice" value="50"/>
+            <argument name="subtotal" value="50" />
+            <argument name="qty" value="1"/>
+        </actionGroup>
+    </test>
+</tests>

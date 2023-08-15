@@ -1,0 +1,107 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+ /**
+  * Copyright © Magento, Inc. All rights reserved.
+  * See COPYING.txt for license details.
+  */
+-->
+<tests xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xsi:noNamespaceSchemaLocation="urn:magento:mftf:Test/etc/testSchema.xsd">
+    <test name="AdminCreateTargetRuleRelatedProductsAndVerifyFrontendTest">
+        <annotations>
+            <stories value="Create Target Rule"/>
+            <title value="Admin Create Target Rule Related Products And Verify Frontend Test"/>
+            <description value="Test log in to Related Product Rules and Create Target Rule Related Products Test"/>
+            <testCaseId value="MC-14289"/>
+            <severity value="CRITICAL"/>
+            <group value="targetRule"/>
+            <group value="mtf_migrated"/>
+            <group value="cloud_smoke"/>
+        </annotations>
+        <before>
+            <createData entity="_defaultCategory" stepKey="createCategory1"/>
+            <createData entity="SimpleSubCategory" stepKey="createCategory2"/>
+
+            <!--Create product1 with category1-->
+            <createData entity="SimpleProduct" stepKey="createSimpleProduct1">
+                <requiredEntity createDataKey="createCategory1"/>
+            </createData>
+
+            <!--Create product2 with category2-->
+            <createData entity="_defaultProduct" stepKey="createSimpleProduct2">
+                <requiredEntity createDataKey="createCategory2"/>
+            </createData>
+
+            <actionGroup ref="AdminLoginActionGroup" stepKey="LoginAsAdmin"/>
+        </before>
+        <after>
+            <deleteData createDataKey="createCategory1" stepKey="deleteCategory1"/>
+            <deleteData createDataKey="createCategory2" stepKey="deleteCategory2"/>
+            <deleteData createDataKey="createSimpleProduct1" stepKey="deleteCreatedProduct1"/>
+            <deleteData createDataKey="createSimpleProduct2" stepKey="deleteCreatedProduct2"/>
+            <actionGroup ref="DeleteTargetRuleByNameActionGroup" stepKey="deleteCreatedTargetRule">
+                <argument name="ruleName" value="TargetRuleRelatedProductsCategorySameAsMatchedProductCategories.ruleName"/>
+            </actionGroup>
+            <actionGroup ref="AdminLogoutActionGroup" stepKey="logout"/>
+        </after>
+
+        <!--Create target rule related products as per data-->
+        <actionGroup ref="GoToTargetRulePage" stepKey="openTargetRulePage"/>
+        <actionGroup ref="ClickAddNewTargetRule" stepKey="clickAddRule"/>
+        <actionGroup ref="FillGeneralRuleInformation" stepKey="fillRuleFields">
+            <argument name="information" value="TargetRuleRelatedProductsCategorySameAsMatchedProductCategories"/>
+        </actionGroup>
+        <selectOption selector="{{AdminTargetRuleInformationSection.customerSegments}}" userInput="{{TargetRuleRelatedProductsCategorySameAsMatchedProductCategories.use_customer_segment}}" stepKey="selectAllFromCustomerSegment"/>
+
+        <!--Fill values in Product To Match tab-->
+        <click selector="{{AdminTargetRuleSection.productToMatchTab}}" stepKey="clickProductToMatchTab"/>
+        <click selector="{{AdminTargetRuleProductsToMatchSection.selectCondition('1','1')}}" stepKey="clickOnSelectCondition"/>
+        <selectOption selector="{{AdminTargetRuleProductsToMatchSection.conditionSelect('1')}}" userInput="Category" stepKey="selectNewCondition"/>
+        <waitForPageLoad stepKey="waitForCategoryConditionLoad1"/>
+        <click selector="{{AdminTargetRuleProductsToMatchSection.targetEllipsis}}" stepKey="clickTheEllipsis"/>
+        <fillField selector="{{AdminTargetRuleProductsToMatchSection.ruleFieldByIndex('1--1')}}" userInput="$$createCategory1.id$$" stepKey="fillCategoryId"/>
+
+        <!--Fill values in Product To Display tab-->
+        <click selector="{{AdminTargetRuleSection.productToDisplayTab}}" stepKey="clickProductToDisplayTab"/>
+        <click selector="{{AdminTargetRuleProductsToDisplaySection.selectCondition('1','1')}}" stepKey="clickToSelectCondition"/>
+        <selectOption selector="{{AdminTargetRuleProductsToDisplaySection.newAction}}" userInput="Category" stepKey="selectCategoryInNewCondition"/>
+        <waitForPageLoad stepKey="waitForCategoryConditionLoad2"/>
+        <click selector="{{AdminTargetRuleProductsToDisplaySection.selectCondition('1','2')}}" stepKey="clickSelect"/>
+        <selectOption selector="{{AdminTargetRuleProductsToDisplaySection.selectCategoryToggle('1--1')}}" userInput="Constant Value" stepKey="selectConstantValue"/>
+        <click selector="{{AdminTargetRuleProductsToDisplaySection.targetEllipsis}}" stepKey="clickEllipsis"/>
+        <click selector="{{AdminTargetRuleProductsToDisplaySection.openChooser}}" stepKey="clickOpenChooserIcon"/>
+        <waitForPageLoad stepKey="waitForOpenChooser"/>
+        <click selector="{{AdminTargetRuleProductsToDisplaySection.openChooserCategorySelect($$createCategory2.name$$)}}" stepKey="clickCategory"/>
+
+        <!--Save target rule and verify AssertTargetRuleSuccessSaveMessage-->
+        <actionGroup ref="SaveTargetRule" stepKey="AssertTargetRuleSuccessSaveMessage"/>
+
+        <!--Go to target rule grid page and verify AssertTargetRuleInGrid-->
+        <actionGroup ref="AssertTargetRuleInGridActionGroup" stepKey="verifyTargetRuleInGrid">
+            <argument name="ruleName" value="TargetRuleRelatedProductsCategorySameAsMatchedProductCategories"/>
+        </actionGroup>
+        <click selector="{{AdminTargetRuleGridFilterSection.rowByIndex('1')}}" stepKey="clickTargetRuleInGrid"/>
+        <waitForPageLoad stepKey="waitForTargetRuleFormPageToLoad"/>
+
+        <!--Go to target rule form page and verify AssertTargetRuleForm-->
+        <seeInField selector="{{AdminTargetRuleInformationSection.ruleName}}" userInput="{{TargetRuleRelatedProductsCategorySameAsMatchedProductCategories.ruleName}}" stepKey="seeRuleName"/>
+        <seeInField selector="{{AdminTargetRuleInformationSection.status}}" userInput="{{TargetRuleRelatedProductsCategorySameAsMatchedProductCategories.status}}" stepKey="seeStatus"/>
+        <seeInField selector="{{AdminTargetRuleInformationSection.applyTo}}" userInput="{{TargetRuleRelatedProductsCategorySameAsMatchedProductCategories.applyTo}}" stepKey="seeApplyTo"/>
+        <seeInField selector="{{AdminTargetRuleInformationSection.customerSegments}}" userInput="{{TargetRuleRelatedProductsCategorySameAsMatchedProductCategories.use_customer_segment}}" stepKey="seeAllInCustomerSegment"/>
+        <click selector="{{AdminTargetRuleSection.productToMatchTab}}" stepKey="clickProductToMatch"/>
+        <waitForPageLoad stepKey="waitForProductToMatchTabToOpen"/>
+        <see selector="{{AdminTargetRuleProductsToMatchSection.conditionsChildrenByIndex('1')}}" userInput="$$createCategory1.id$$" stepKey="seeCategory1Id"/>
+        <click selector="{{AdminTargetRuleSection.productToDisplayTab}}" stepKey="clickOnProductToDisplayTab"/>
+        <waitForPageLoad stepKey="waitForProductToDisplayTabToOpen"/>
+        <see selector="{{AdminTargetRuleProductsToDisplaySection.ruleActionsFieldset}}" userInput="$$createCategory2.id$$" stepKey="seeCategory2Id"/>
+
+        <!--Go to storefront page and verify product1-->
+        <actionGroup ref="AssertProductNameAndSkuInStorefrontProductPageByCustomAttributeUrlKeyActionGroup" stepKey="openProductPageAndVerifyProduct">
+            <argument name="product" value="$$createSimpleProduct1$$"/>
+        </actionGroup>
+
+        <!--Verify Product2 is present in related products section and AssertProductRelatedProducts-->
+        <scrollTo selector="{{StorefrontProductRelatedProductsSection.relatedProductsActionsHeaderText}}" stepKey="scrollToStorefrontProductRelatedProductsSectionHeader"/>
+        <seeElement selector="{{StorefrontProductRelatedProductsSection.relatedProductName($$createSimpleProduct2.name$$)}}" stepKey="seeProduct2InRelatedProductInStorefront"/>
+    </test>
+</tests>

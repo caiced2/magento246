@@ -1,0 +1,59 @@
+<?xml version="1.0"?>
+<!--
+/**
+ * Copyright © Magento, Inc. All rights reserved.
+ * See COPYING.txt for license details.
+ */
+-->
+<config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="urn:magento:framework:ObjectManager/etc/config.xsd">
+    <type name="Magento\Framework\GraphQl\Schema\Type\Enum\DefaultDataMapper">
+        <arguments>
+            <argument name="map" xsi:type="array">
+                <item name="ReturnShippingTrackingStatusType" xsi:type="array">
+                    <item name="information" xsi:type="string">0</item>
+                    <item name="error" xsi:type="string">1</item>
+                </item>
+                <item name="ReturnStatus" xsi:type="array">
+                    <item name="pending" xsi:type="string">pending</item>
+                    <item name="authorized" xsi:type="string">authorized</item>
+                    <item name="partially_authorized" xsi:type="string">partially_authorized</item>
+                    <item name="received" xsi:type="string">received</item>
+                    <item name="received_on_item" xsi:type="string">partially_received</item>
+                    <item name="approved" xsi:type="string">approved</item>
+                    <item name="approved_on_item" xsi:type="string">partially_approved</item>
+                    <item name="rejected" xsi:type="string">rejected</item>
+                    <item name="rejected_on_item" xsi:type="string">partially_rejected</item>
+                    <item name="denied" xsi:type="string">denied</item>
+                    <item name="closed" xsi:type="string">closed</item>
+                    <item name="processed_closed" xsi:type="string">processed_closed</item>
+                </item>
+                <item name="ReturnItemStatus" xsi:type="array">
+                    <item name="pending" xsi:type="string">pending</item>
+                    <item name="authorized" xsi:type="string">authorized</item>
+                    <item name="received" xsi:type="string">received</item>
+                    <item name="approved" xsi:type="string">approved</item>
+                    <item name="rejected" xsi:type="string">rejected</item>
+                    <item name="denied" xsi:type="string">denied</item>
+                </item>
+            </argument>
+        </arguments>
+    </type>
+    <type name="Magento\RmaGraphQl\Model\Formatter\RmaItem">
+        <arguments>
+            <argument name="metadataDataProvider" xsi:type="object">Magento\Rma\Model\Service\Eav\AttributeMetadataDataProvider</argument>
+        </arguments>
+    </type>
+    <type name="Magento\EavGraphQl\Model\Resolver\PageSpecificCustomAttributes">
+        <arguments>
+            <argument name="allowedPageTypes" xsi:type="array">
+                <item name="return_item_edit_form" xsi:type="array">
+                    <item name="model" xsi:type="object">Magento\Rma\Model\Service\RmaAttributesManagement</item>
+                    <item name="form" xsi:type="string">default</item>
+                </item>
+                <item name="return_items_listing" xsi:type="array">
+                    <item name="model" xsi:type="object">Magento\Rma\Model\Service\RmaAttributesManagement</item>
+                </item>
+            </argument>
+        </arguments>
+    </type>
+</config>

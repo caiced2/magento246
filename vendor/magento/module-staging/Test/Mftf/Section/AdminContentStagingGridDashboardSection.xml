@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+/**
+   * Copyright © Magento, Inc. All rights reserved.
+   * See COPYING.txt for license details.
+   */
+-->
+<sections xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+          xsi:noNamespaceSchemaLocation="urn:magento:mftf:Page/etc/SectionObject.xsd">
+    <section name="AdminContentStagingGridDashboardSection">
+        <element name="status" type="text" selector="//td[div='{{nameUpdate}}']/preceding-sibling::td/div" parameterized="true"/>
+        <element name="updateNameColumnGrid" type="text" selector="//*[contains(@class, 'data-grid-cell-content')]"/>
+        <element name="startDateColumnGrid" type="text" selector="//td[div='{{nameUpdate}}']/following-sibling::td[2]/div" parameterized="true"/>
+        <element name="endDateColumnGrid" type="text" selector="//td[div='{{nameUpdate}}']/following-sibling::td[3]/div" parameterized="true"/>
+        <element name="descriptionColumnGrid" type="text" selector="//td[div='{{nameUpdate}}']/following-sibling::td[4]/div" parameterized="true"/>
+        <element name="buttonSelect" type="button" selector="//td[div='{{nameUpdate}}']/following-sibling::td[5]/div/button" parameterized="true"/>
+        <element name="linkViewEdit" type="text" selector="//td[div='{{nameUpdate}}']/following-sibling::td[5]//a[contains(text(), 'View/Edit')]" parameterized="true" timeout="10"/>
+        <element name="linkPreview" type="text" selector="//td[div='{{nameUpdate}}']/following-sibling::td[5]//a[contains(text(), 'Preview')]" parameterized="true" timeout="10"/>
+    </section>
+</sections>

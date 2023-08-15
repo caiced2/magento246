@@ -1,0 +1,208 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+ /**
+  * Copyright © Magento, Inc. All rights reserved.
+  * See COPYING.txt for license details.
+  */
+-->
+
+<tests xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:noNamespaceSchemaLocation="urn:magento:mftf:Test/etc/testSchema.xsd">
+    <test name="MoveProductsByPositionFieldToLastSamePageGridModeTest">
+        <annotations>
+            <features value="VisualMerchandiser"/>
+            <stories value="[Visual Merchandiser] Assign/Unassign products to/from a category"/>
+            <title value="[Visual Merchandiser] Admin should be able to move assigned product position in the category by editing Position field in grid mode - move to last within same page"/>
+            <description value="[Visual Merchandiser] Admin should be able to move assigned product position in the category by editing Position field in grid mode - move to last within same page"/>
+            <severity value="MAJOR"/>
+            <testCaseId value="MC-2355"/>
+            <group value="VisualMerchandiser"/>
+        </annotations>
+        <before>
+            <actionGroup ref="AdminLoginActionGroup" stepKey="login"/>
+            <createData entity="_defaultCategory" stepKey="category"/>
+            <!-- Create 23 products so that grid can have more than one page -->
+            <createData entity="ApiSimpleProduct" stepKey="product1">
+                <requiredEntity createDataKey="category"/>
+            </createData>
+            <createData entity="ApiSimpleProduct" stepKey="product2">
+                <requiredEntity createDataKey="category"/>
+            </createData>
+            <createData entity="ApiSimpleProduct" stepKey="product3">
+                <requiredEntity createDataKey="category"/>
+            </createData>
+            <createData entity="ApiSimpleProduct" stepKey="product4">
+                <requiredEntity createDataKey="category"/>
+            </createData>
+            <createData entity="ApiSimpleProduct" stepKey="product5">
+                <requiredEntity createDataKey="category"/>
+            </createData>
+            <createData entity="ApiSimpleProduct" stepKey="product6">
+                <requiredEntity createDataKey="category"/>
+            </createData>
+            <createData entity="ApiSimpleProduct" stepKey="product7">
+                <requiredEntity createDataKey="category"/>
+            </createData>
+            <createData entity="ApiSimpleProduct" stepKey="product8">
+                <requiredEntity createDataKey="category"/>
+            </createData>
+            <createData entity="ApiSimpleProduct" stepKey="product9">
+                <requiredEntity createDataKey="category"/>
+            </createData>
+            <createData entity="ApiSimpleProduct" stepKey="product10">
+                <requiredEntity createDataKey="category"/>
+            </createData>
+            <createData entity="ApiSimpleProduct" stepKey="product11">
+                <requiredEntity createDataKey="category"/>
+            </createData>
+            <createData entity="ApiSimpleProduct" stepKey="product12">
+                <requiredEntity createDataKey="category"/>
+            </createData>
+            <createData entity="ApiSimpleProduct" stepKey="product13">
+                <requiredEntity createDataKey="category"/>
+            </createData>
+            <createData entity="ApiSimpleProduct" stepKey="product14">
+                <requiredEntity createDataKey="category"/>
+            </createData>
+            <createData entity="ApiSimpleProduct" stepKey="product15">
+                <requiredEntity createDataKey="category"/>
+            </createData>
+            <createData entity="ApiSimpleProduct" stepKey="product16">
+                <requiredEntity createDataKey="category"/>
+            </createData>
+            <createData entity="ApiSimpleProduct" stepKey="product17">
+                <requiredEntity createDataKey="category"/>
+            </createData>
+            <createData entity="ApiSimpleProduct" stepKey="product18">
+                <requiredEntity createDataKey="category"/>
+            </createData>
+            <createData entity="ApiSimpleProduct" stepKey="product19">
+                <requiredEntity createDataKey="category"/>
+            </createData>
+            <createData entity="ApiSimpleProduct" stepKey="product20">
+                <requiredEntity createDataKey="category"/>
+            </createData>
+            <createData entity="ApiSimpleProduct" stepKey="product21">
+                <requiredEntity createDataKey="category"/>
+            </createData>
+            <createData entity="ApiSimpleProduct" stepKey="product22">
+                <requiredEntity createDataKey="category"/>
+            </createData>
+            <createData entity="ApiSimpleProduct" stepKey="product23">
+                <requiredEntity createDataKey="category"/>
+            </createData>
+        </before>
+        <after>
+            <actionGroup ref="AdminLogoutActionGroup" stepKey="logout"/>
+            <deleteData createDataKey="product1" stepKey="deleteProduct1"/>
+            <deleteData createDataKey="product2" stepKey="deleteProduct2"/>
+            <deleteData createDataKey="product3" stepKey="deleteProduct3"/>
+            <deleteData createDataKey="product4" stepKey="deleteProduct4"/>
+            <deleteData createDataKey="product5" stepKey="deleteProduct5"/>
+            <deleteData createDataKey="product6" stepKey="deleteProduct6"/>
+            <deleteData createDataKey="product7" stepKey="deleteProduct7"/>
+            <deleteData createDataKey="product8" stepKey="deleteProduct8"/>
+            <deleteData createDataKey="product9" stepKey="deleteProduct9"/>
+            <deleteData createDataKey="product10" stepKey="deleteProduct10"/>
+            <deleteData createDataKey="product11" stepKey="deleteProduct11"/>
+            <deleteData createDataKey="product12" stepKey="deleteProduct12"/>
+            <deleteData createDataKey="product13" stepKey="deleteProduct13"/>
+            <deleteData createDataKey="product14" stepKey="deleteProduct14"/>
+            <deleteData createDataKey="product15" stepKey="deleteProduct15"/>
+            <deleteData createDataKey="product16" stepKey="deleteProduct16"/>
+            <deleteData createDataKey="product17" stepKey="deleteProduct17"/>
+            <deleteData createDataKey="product18" stepKey="deleteProduct18"/>
+            <deleteData createDataKey="product19" stepKey="deleteProduct19"/>
+            <deleteData createDataKey="product20" stepKey="deleteProduct20"/>
+            <deleteData createDataKey="product21" stepKey="deleteProduct21"/>
+            <deleteData createDataKey="product22" stepKey="deleteProduct22"/>
+            <deleteData createDataKey="product23" stepKey="deleteProduct23"/>
+            <deleteData createDataKey="category" stepKey="deleteCategory"/>
+        </after>
+        <!-- Re-position without saving -->
+
+        <!-- Go to admin category page -->
+        <actionGroup ref="GoToAdminCategoryPageByIdActionGroup" stepKey="goToAdminCategoryPage1">
+            <argument name="id" value="$$category.id$$"/>
+        </actionGroup>
+        <!-- Open products in category section -->
+        <actionGroup ref="OpenProductsInCategorySectionActionGroup" stepKey="OpenProductsInCategorySection1"/>
+        <!-- Prepare grid for testing -->
+        <actionGroup ref="DisableMatchProductsByRuleActionGroup" stepKey="DisableMatchProductsByRule1"/>
+        <actionGroup ref="SortProductsByCriteriaInCategoryActionGroup" stepKey="SelectSortOrderInProductInCategory1">
+            <argument name="criteria" value="Newest products first"/>
+        </actionGroup>
+        <!-- Switch to grid mode -->
+        <actionGroup ref="SwitchToGridModeProductInCategoryActionGroup" stepKey="switchToGrid1"/>
+        <!-- Save category and assert success message -->
+        <click selector="{{AdminCategoryMainActionsSection.SaveButton}}" stepKey="saveCategoryWithProducts1"/>
+        <see userInput="You saved the category" selector="{{AdminMessagesSection.nthSuccess('1')}}" stepKey="saveSuccess1"/>
+
+        <!-- Open products in category section -->
+        <actionGroup ref="OpenProductsInCategorySectionActionGroup" stepKey="OpenProductsInCategorySection2"/>
+        <!-- See total count 23 -->
+        <see userInput="23" selector="{{AdminCategoryProductsGridSection.totalCount}}" stepKey="seeTotalCount2"/>
+        <!-- Move row 18 to position 19 -->
+        <actionGroup ref="MoveProductByPositionFieldGridModeActionGroup" stepKey="MoveProductByPositionFieldGridMode2">
+            <argument name="rowFrom" value="18"/>
+            <argument name="rowTo" value="19"/>
+        </actionGroup>
+        <!-- Assert new positions -->
+        <see userInput="$$product7.id$$" selector="{{AdminCategoryProductsGridSection.rowId('17')}}" stepKey="seeRowId21"/>
+        <see userInput="$$product5.id$$" selector="{{AdminCategoryProductsGridSection.rowId('18')}}" stepKey="seeRowId22"/>
+        <see userInput="$$product4.id$$" selector="{{AdminCategoryProductsGridSection.rowId('19')}}" stepKey="seeRowId23"/>
+        <see userInput="$$product6.id$$" selector="{{AdminCategoryProductsGridSection.rowId('20')}}" stepKey="seeRowId24"/>
+
+        <!-- Perform reindex and flush cache -->
+        <magentoCLI command="cron:run --group=index" stepKey="runCronReindex"/>
+
+        <!-- Go to storefront category page -->
+        <actionGroup ref="GoToStorefrontCategoryPageByParametersActionGroup" stepKey="GoToStorefrontCategoryPage2">
+            <argument name="category" value="$$category.custom_attributes[url_key]$$"/>
+            <argument name="mode" value="list"/>
+            <argument name="numOfProductsPerPage" value="25"/>
+            <argument name="sortBy" value="position"/>
+        </actionGroup>
+        <see userInput="$$product7.name$$" selector="{{StorefrontCategoryMainSection.lineProductName('17')}}" stepKey="seeProductNameLine21"/>
+        <see userInput="$$product6.name$$" selector="{{StorefrontCategoryMainSection.lineProductName('18')}}" stepKey="seeProductNameLine22"/>
+        <see userInput="$$product5.name$$" selector="{{StorefrontCategoryMainSection.lineProductName('19')}}" stepKey="seeProductNameLine23"/>
+        <see userInput="$$product4.name$$" selector="{{StorefrontCategoryMainSection.lineProductName('20')}}" stepKey="seeProductNameLine24"/>
+        <see userInput="$$product3.name$$" selector="{{StorefrontCategoryMainSection.lineProductName('21')}}" stepKey="seeProductNameLine25"/>
+
+        <!-- Re-position with saving -->
+
+        <!-- Go to admin category page -->
+        <actionGroup ref="GoToAdminCategoryPageByIdActionGroup" stepKey="goToAdminCategoryPage3">
+            <argument name="id" value="$$category.id$$"/>
+        </actionGroup>
+        <!-- Open products in category section -->
+        <actionGroup ref="OpenProductsInCategorySectionActionGroup" stepKey="OpenProductsInCategorySection3"/>
+        <!-- Move row 18 to position 19 -->
+        <actionGroup ref="MoveProductByPositionFieldGridModeActionGroup" stepKey="MoveProductByPositionFieldGridMode3">
+            <argument name="rowFrom" value="18"/>
+            <argument name="rowTo" value="19"/>
+        </actionGroup>
+        <!-- Assert new positions -->
+        <see userInput="$$product7.id$$" selector="{{AdminCategoryProductsGridSection.rowId('17')}}" stepKey="seeRowId31"/>
+        <see userInput="$$product5.id$$" selector="{{AdminCategoryProductsGridSection.rowId('18')}}" stepKey="seeRowId32"/>
+        <see userInput="$$product4.id$$" selector="{{AdminCategoryProductsGridSection.rowId('19')}}" stepKey="seeRowId33"/>
+        <see userInput="$$product6.id$$" selector="{{AdminCategoryProductsGridSection.rowId('20')}}" stepKey="seeRowId34"/>
+
+        <!-- Save category and assert success message -->
+        <click selector="{{AdminCategoryMainActionsSection.SaveButton}}" stepKey="saveCategoryWithProducts3"/>
+        <see userInput="You saved the category" selector="{{AdminMessagesSection.nthSuccess('1')}}" stepKey="saveSuccess3"/>
+
+        <!-- Go to storefront category page -->
+        <actionGroup ref="GoToStorefrontCategoryPageByParametersActionGroup" stepKey="GoToStorefrontCategoryPage3">
+            <argument name="category" value="$$category.custom_attributes[url_key]$$"/>
+            <argument name="mode" value="list"/>
+            <argument name="numOfProductsPerPage" value="25"/>
+            <argument name="sortBy" value="position"/>
+        </actionGroup>
+        <see userInput="$$product7.name$$" selector="{{StorefrontCategoryMainSection.lineProductName('17')}}" stepKey="seeProductNameLine31"/>
+        <see userInput="$$product5.name$$" selector="{{StorefrontCategoryMainSection.lineProductName('18')}}" stepKey="seeProductNameLine32"/>
+        <see userInput="$$product4.name$$" selector="{{StorefrontCategoryMainSection.lineProductName('19')}}" stepKey="seeProductNameLine33"/>
+        <see userInput="$$product6.name$$" selector="{{StorefrontCategoryMainSection.lineProductName('20')}}" stepKey="seeProductNameLine34"/>
+        <see userInput="$$product3.name$$" selector="{{StorefrontCategoryMainSection.lineProductName('21')}}" stepKey="seeProductNameLine35"/>
+    </test>
+</tests>

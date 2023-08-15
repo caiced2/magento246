@@ -1,0 +1,85 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+ /**
+  * Copyright © Magento, Inc. All rights reserved.
+  * See COPYING.txt for license details.
+  */
+-->
+<tests xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xsi:noNamespaceSchemaLocation="urn:magento:mftf:Test/etc/testSchema.xsd">
+  <test name="AdminTestForCreatingStagingUpdateForProductWithUniqueAttributeInSetTest">
+    <annotations>
+      <stories value="Staging updates"/>
+      <title value="Test For Creating Staging Update For The Product"/>
+      <description value="Test For Creating Staging Update For Product With Unique Attribute"/>
+      <severity value="MAJOR"/>
+      <testCaseId value="AC-3980"/>
+      <group value="staging"/>
+    </annotations>
+    <before>
+      <actionGroup ref="AdminLoginActionGroup" stepKey="loginAsAdmin"/>
+      <!-- create category -->
+      <createData entity="_defaultCategory" stepKey="createCategory"/>
+      <!-- create 2 simple products -->
+      <createData entity="SimpleProduct" stepKey="createSimpleProduct1">
+        <field key="name">simple1</field>
+        <requiredEntity createDataKey="createCategory"/>
+      </createData>
+      <createData entity="SimpleProduct" stepKey="createSimpleProduct2">
+        <field key="name">simple2</field>
+        <requiredEntity createDataKey="createCategory"/>
+      </createData>
+    </before>
+    <after>
+      <deleteData createDataKey="createSimpleProduct1" stepKey="deleteSimpleProduct1"/>
+      <deleteData createDataKey="createSimpleProduct2" stepKey="deleteSimpleProduct2"/>
+      <deleteData createDataKey="createCategory" stepKey="deleteCategory"/>
+      <actionGroup ref="AdminLogoutActionGroup" stepKey="logout"/>
+    </after>
+    <!--Navigate to Product attribute page-->
+    <actionGroup ref="AdminNavigateToNewProductAttributePageActionGroup" stepKey="navigateToNewProductAttributePage"/>
+    <fillField userInput="test" selector="{{AttributePropertiesSection.DefaultLabel}}" stepKey="fillDefaultLabel"/>
+    <click selector="{{AttributePropertiesSection.AdvancedProperties}}" stepKey="clickOnAdvancedAttributeProperties"/>
+    <wait stepKey="waitForProperties" time="10"/>
+    <selectOption selector="{{AdvancedAttributePropertiesSection.UniqueValue}}" userInput="Yes" stepKey="fillAttributeCode"/>
+    <scrollTo selector="{{AdminProductFormSection.footerBlock}}" stepKey="scrollToFooter"/>
+    <click selector="{{AdminCreateNewProductAttributeSection.saveAttribute}}" stepKey="clickOnSaveAttribute"/>
+    <waitForPageLoad stepKey="waitForAttributeToSave"/>
+    <!--Navigate to Stores > Attributes > Product.-->
+    <actionGroup ref="AdminOpenProductAttributePageActionGroup" stepKey="goToProductAttributes"/>
+    <!-- Go to default attribute set edit page -->
+    <amOnPage url="{{AdminProductAttributeSetEditPage.url}}/{{AddToDefaultSet.attributeSetId}}/" stepKey="onAttributeSetEdit"/>
+    <dragAndDrop selector1="{{AdminProductAttributeSetSection.attribute('test')}}" selector2="{{AdminProductAttributeSetEditSection.attributeGroupExtender('sku')}}" stepKey="dragAndDrop"/>
+    <waitForPageLoad stepKey="waitForDragAndDrop"/>
+    <wait stepKey="waitForDrop" time="10"/>
+    <click selector="{{AdminProductAttributeSetSection.saveBtn}}" stepKey="clickSave2"/>
+    <wait stepKey="waitForSave" time="10"/>
+    <actionGroup ref="AdminProductPageOpenByIdActionGroup" stepKey="openProductForEdit">
+      <argument name="productId" value="$createSimpleProduct1.id$"/>
+    </actionGroup>
+    <!--click test element and enter value-->
+    <fillField selector="{{AdminProductFormSection.newAddedAttributeInput('test')}}" userInput="111" stepKey="fillTextAreaAttribute"/>
+    <actionGroup ref="SaveProductFormActionGroup" stepKey="saveProduct"/>
+    <!-- Create Schedule New Update -->
+    <click selector="{{AdminStagingSlideOutSection.scheduleNewUpdateBtn}}" stepKey="clickButtonSheduleNewUpdate"/>
+    <generateDate date="+1 day" format="m/d/Y g:i A" stepKey="generateStartDate"/>
+    <generateDate date="+3 day" format="m/d/Y g:i A" stepKey="generateEndDate"/>
+    <fillField selector="{{AdminStagingSlideOutSection.updateName}}" userInput="s5UpdateName" stepKey="fillUpdateName"/>
+    <fillField selector="{{AdminStagingSlideOutSection.startDate}}" userInput="{$generateStartDate}}" stepKey="fillStartDate"/>
+    <fillField selector="{{AdminStagingSlideOutSection.name}}" userInput="simple111" stepKey="fillFirstName"/>
+    <click selector="{{AdminStagingSlideOutSection.save}}" stepKey="clickSave"/>
+    <actionGroup ref="AdminProductPageOpenByIdActionGroup" stepKey="openProductForEditSecond">
+      <argument name="productId" value="$createSimpleProduct2.id$"/>
+    </actionGroup>
+    <!--click test element and enter value-->
+    <fillField selector="{{AdminProductFormSection.newAddedAttributeInput('test')}}" userInput="222" stepKey="fillCustomValue"/>
+    <actionGroup ref="SaveProductFormActionGroup" stepKey="saveProductAgain"/>
+    <!-- Create Schedule New Update -->
+    <click selector="{{AdminStagingSlideOutSection.scheduleNewUpdateBtn}}" stepKey="clickButtonSheduleNewUpdateSecond"/>
+    <generateDate date="+1 day" format="m/d/Y g:i A" stepKey="generateStartDateSecond"/>
+    <fillField selector="{{AdminStagingSlideOutSection.updateName}}" userInput="s5UpdateName" stepKey="fillUpdateNameSecond"/>
+    <fillField selector="{{AdminStagingSlideOutSection.startDate}}" userInput="{$generateStartDate}}" stepKey="fillStartDateSecond"/>
+    <fillField selector="{{AdminStagingSlideOutSection.name}}" userInput="simple222" stepKey="fillSecondName"/>
+    <click selector="{{AdminStagingSlideOutSection.save}}" stepKey="clickSaveSecond"/>
+  </test>
+</tests>

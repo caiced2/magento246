@@ -1,0 +1,76 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+/**
+ * Copyright © Magento, Inc. All rights reserved.
+ * See COPYING.txt for license details.
+ */
+-->
+
+<tests xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xsi:noNamespaceSchemaLocation="urn:magento:mftf:Test/etc/testSchema.xsd">
+    <test name="UpdateYesNoCustomerAttributeTest">
+        <annotations>
+            <features value="CustomerCustomAttributes"/>
+            <stories value="Update Customer Custom Attributes"/>
+            <title value="Update yes no customer attribute test"/>
+            <description value="Update yes/no customer attribute"/>
+            <severity value="MAJOR"/>
+            <testCaseId value="MC-14578"/>
+            <group value="CustomerCustomAttributes"/>
+            <group value="mtf_migrated"/>
+            <group value="pr_exclude"/>
+        </annotations>
+        <before>
+            <!-- Login as admin -->
+            <actionGroup ref="AdminLoginActionGroup" stepKey="LoginAsAdmin"/>
+        </before>
+        <after>
+            <!-- Logout admin -->
+            <actionGroup ref="AdminLogoutActionGroup" stepKey="logout"/>
+        </after>
+
+        <!-- Go to Stores > Customer -->
+        <amOnPage url="{{CustomerAttributesPage.url}}" stepKey="navigateToCustomerAttributes"/>
+        <waitForPageLoad stepKey="waitForAttributePageLoad"/>
+
+        <!-- Create customer attribute -->
+        <actionGroup ref="AdminCreateCustomerAttribute" stepKey="createYesNoAttribute">
+            <argument name="defaultLabel" value="{{AttributeYesNo.frontend_label}}"/>
+            <argument name="attributeCode" value="{{AttributeYesNo.attribute_code}}"/>
+            <argument name="inputType" value="{{AttributeYesNo.frontend_input}}"/>
+            <argument name="sortOrder" value="{{AttributeYesNo.sort_order}}"/>
+            <argument name="formToUse" value="Customer Registration"/>
+            <argument name="message" value="You saved the customer attribute."/>
+        </actionGroup>
+
+        <!-- Open created customer attribute -->
+        <actionGroup ref="FilterCustomerAttributesByAttributeCodeAndDefaultLabelActionGroup" stepKey="findCreatedAttribute">
+            <argument name="defaultLabel" value="{{AttributeYesNo.frontend_label}}"/>
+            <argument name="attributeCode" value="{{AttributeYesNo.attribute_code}}"/>
+        </actionGroup>
+        <click selector="{{AdminCustomerAttributeSection.firstAttribute}}" stepKey="clickFirstRow"/>
+
+        <!-- Change data according to dataset -->
+        <fillField selector="{{CustomerAccountSection.label}}" userInput="{{AttributeYesNoUpdate.frontend_label}}" stepKey="typeDefaultLabel"/>
+        <selectOption selector="{{CustomerAccountSection.valuesRequired}}" userInput="Yes" stepKey="setValuesRequired"/>
+        <selectOption selector="{{CustomerAccountSection.showInSF}}" userInput="{{AttributeYesNoUpdate.is_visible}}" stepKey="setSFOption"/>
+        <fillField selector="{{CustomerAccountSection.sortOrder}}" userInput="{{AttributeYesNoUpdate.sort_order}}" stepKey="typeSortOrder"/>
+        <click selector="{{AttributeEditSection.saveAttribute}}" stepKey="saveAttribute"/>
+        <waitForPageLoad stepKey="WaitForAttributeSaved"/>
+
+        <!-- Assert customer custom attribute success save message -->
+        <see selector="{{AdminMessagesSection.success}}" userInput="You saved the customer attribute." stepKey="verifyAttributeCreated"/>
+
+        <!-- Assert customer custom attribute in grid -->
+        <actionGroup ref="FilterCustomerAttributesByAttributeCodeAndDefaultLabelActionGroup" stepKey="findChangedAttribute">
+            <argument name="defaultLabel" value="{{AttributeYesNoUpdate.frontend_label}}"/>
+            <argument name="attributeCode" value="{{AttributeYesNo.attribute_code}}"/>
+        </actionGroup>
+        <seeElement selector="{{AdminCustomerAttributeSection.firstAttribute}}" stepKey="seeChangedAttribute"/>
+
+        <!-- Delete created attribute -->
+        <actionGroup ref="DeleteCustomerAttribute" stepKey="deleteCustomerAttribute">
+            <argument name="defaultLabel" value="{{AttributeYesNoUpdate.frontend_label}}"/>
+        </actionGroup>
+    </test>
+</tests>

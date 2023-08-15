@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+ /**
+  * Copyright © Magento, Inc. All rights reserved.
+  * See COPYING.txt for license details.
+  */
+-->
+
+<actionGroups xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+              xsi:noNamespaceSchemaLocation="urn:magento:mftf:Test/etc/actionGroupSchema.xsd">
+    <actionGroup name="StorefrontFillOrderBySkuWidgetActionGroup">
+        <arguments>
+            <argument name="product" type="entity"/>
+            <argument name="cartItem" type="entity" />
+            <argument name="rowNumber" defaultValue="0" type="string" />
+        </arguments>
+
+        <conditionalClick selector="{{StorefrontWidgetOrderBySKUSection.addItem}}" dependentSelector="{{StorefrontWidgetOrderBySKUSection.sku(rowNumber)}}" visible="false" stepKey="clickAddRow" />
+        <fillField selector="{{StorefrontWidgetOrderBySKUSection.sku(rowNumber)}}" userInput="{{product.sku}}" stepKey="fillProductSKU" />
+        <fillField selector="{{StorefrontWidgetOrderBySKUSection.qty(rowNumber)}}" userInput="{{cartItem.qty}}" stepKey="fillNumber" />
+    </actionGroup>
+</actionGroups>

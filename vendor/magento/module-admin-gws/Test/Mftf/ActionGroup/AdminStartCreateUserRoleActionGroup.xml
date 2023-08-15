@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+ /**
+  * Copyright © Magento, Inc. All rights reserved.
+  * See COPYING.txt for license details.
+  */
+-->
+<actionGroups xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+              xsi:noNamespaceSchemaLocation="urn:magento:mftf:Test/etc/actionGroupSchema.xsd">
+    <actionGroup name="AdminStartCreateUserRoleActionGroup">
+        <annotations>
+            <description>Open Admin Edit Role page. Fills role, user password, role scope and resource access. Leave the form open.</description>
+        </annotations>
+        <arguments>
+            <argument name="roleScope" type="string" defaultValue="Custom"/>
+            <argument name="storeName" type="string" defaultValue="{{_defaultStore.name}}"/>
+        </arguments>
+        <selectOption selector="{{AdminEditRoleResourcesSection.roleScopes}}" userInput="{{roleScope}}" after="clickToOpenRoleResources" stepKey="chooseRoleScope"/>
+        <checkOption selector="{{AdminEditRoleResourcesSection.storeNameCheckbox(storeName)}}" before="chooseResourceAccess" stepKey="chooseTheStore"/>
+    </actionGroup>
+</actionGroups>

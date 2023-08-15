@@ -1,0 +1,18 @@
+<?xml version="1.0"?>
+<!--
+/**
+ * Copyright © Magento, Inc. All rights reserved.
+ * See COPYING.txt for license details.
+ */
+-->
+<config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="urn:magento:module:Magento_VersionsCms:etc/menu_hierarchy.xsd">
+    <menuLayout name="content" label="Content" handle="magento_versionscms_hierarchy_menu_content" isDefault="true" />
+    <menuLayout name="left_column" label="Left Column" handle="magento_versionscms_hierarchy_menu_left_column">
+        <pageLayout handle="2columns-left" />
+        <pageLayout handle="3columns" />
+    </menuLayout>
+    <menuLayout name="right_column" label="Right Column" handle="magento_versionscms_hierarchy_menu_right_column">
+        <pageLayout handle="2columns-right" />
+        <pageLayout handle="3columns" />
+    </menuLayout>
+</config>

@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+ /**
+  * Copyright © Magento, Inc. All rights reserved.
+  * See COPYING.txt for license details.
+  */
+-->
+<actionGroups xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:noNamespaceSchemaLocation="urn:magento:mftf:Test/etc/actionGroupSchema.xsd">
+    <actionGroup name="AdminCustomerSegmentAddConditionActionGroup">
+        <arguments>
+            <argument name="conditionName" defaultValue="{{CustomerSegmentUpToDateCondition.name}}" type="string"/>
+            <argument name="defaultConditionOperator" defaultValue="{{CustomerSegmentUpToDateCondition.operator}}" type="string"/>
+            <argument name="conditionOperator" defaultValue="{{CustomerSegmentUpToDateCondition.operator}}" type="string"/>
+            <argument name="defaultConditionOperand" defaultValue="{{CustomerSegmentUpToDateCondition.operand}}" type="string"/>
+            <argument name="conditionOperand" defaultValue="1" type="string"/>
+            <argument name="parentLevel" defaultValue="1" type="string"/>
+            <argument name="level" defaultValue="1--1" type="string"/>
+        </arguments>
+        <click selector="{{AdminCustomerSegmentEditSection.conditionsTab}}" stepKey="openConditionsTab"/>
+        <waitForElementVisible selector="{{AdminCustomerSegmentConditionsEditSection.addConditionParam(parentLevel)}}" stepKey="waitAddConditionElement"/>
+        <click selector="{{AdminCustomerSegmentConditionsEditSection.addConditionParam(parentLevel)}}" stepKey="clickAddCondition" />
+        <waitForElementVisible selector="{{AdminCustomerSegmentConditionsEditSection.conditionsParam(parentLevel)}}" stepKey="waitForConditionSelectElement"/>
+        <selectOption selector="{{AdminCustomerSegmentConditionsEditSection.conditionsParam(parentLevel)}}" userInput="{{conditionName}}" stepKey="selectCondition"/>
+        <waitForElementVisible selector="{{AdminCustomerSegmentConditionsEditSection.conditionRuleParam(level,defaultConditionOperator)}}" stepKey="waitForConditionOperatorLink"/>
+        <click selector="{{AdminCustomerSegmentConditionsEditSection.conditionRuleParam(level,defaultConditionOperator)}}" stepKey="clickConditionOperatorLink"/>
+        <conditionalClick selector="{{AdminCustomerSegmentConditionsEditSection.conditionRuleParam(level,defaultConditionOperator)}}"
+                          dependentSelector="{{AdminCustomerSegmentConditionsEditSection.conditionRuleParam(level,defaultConditionOperator)}}"
+                          visible="true"
+                          stepKey="clickConditionOperatorLink2"/>
+        <waitForElementVisible selector="{{AdminCustomerSegmentConditionsEditSection.conditionOperatorParam(level)}}" stepKey="waitForConditionOperatorSelect"/>
+        <selectOption selector="{{AdminCustomerSegmentConditionsEditSection.conditionOperatorParam(level)}}" userInput="{{conditionOperator}}" stepKey="clickConditionOperatorSelect"/>
+        <waitForElementVisible selector="{{AdminCustomerSegmentConditionsEditSection.conditionRuleParam(level,defaultConditionOperand)}}" stepKey="waitForConditionOperandLink"/>
+        <click selector="{{AdminCustomerSegmentConditionsEditSection.conditionRuleParam(level,defaultConditionOperand)}}" stepKey="clickConditionOperandLink"/>
+        <conditionalClick selector="{{AdminCustomerSegmentConditionsEditSection.conditionRuleParam(level,defaultConditionOperand)}}"
+               dependentSelector="{{AdminCustomerSegmentConditionsEditSection.conditionRuleParam(level,defaultConditionOperand)}}"
+               visible="true"
+               stepKey="clickConditionOperandLink2"/>
+        <waitForElementVisible selector="{{AdminCustomerSegmentConditionsEditSection.conditionValueParam(level)}}" stepKey="waitForConditionOperandElement"/>
+        <fillField selector="{{AdminCustomerSegmentConditionsEditSection.conditionValueParam(level)}}" userInput="{{conditionOperand}}" stepKey="setConditionOperandValue"/>
+    </actionGroup>
+</actionGroups>

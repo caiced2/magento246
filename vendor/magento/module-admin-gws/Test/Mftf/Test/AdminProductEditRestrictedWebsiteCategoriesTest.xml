@@ -1,0 +1,157 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+ /**
+  * Copyright © Magento, Inc. All rights reserved.
+  * See COPYING.txt for license details.
+  */
+-->
+
+<tests xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xsi:noNamespaceSchemaLocation="urn:magento:mftf:Test/etc/testSchema.xsd">
+    <test name="AdminProductEditRestrictedWebsiteCategoriesTest">
+        <annotations>
+            <stories value="Restrict Website Categories"/>
+            <features value="AdminGws"/>
+            <title value="Restrict Website Categories on Product Edit Page"/>
+            <description value="Restrict Website Categories on Product Edit Page."/>
+            <severity value="MAJOR"/>
+            <testCaseId value="MC-34949"/>
+            <group value="catalog"/>
+        </annotations>
+        <before>
+            <createData entity="SimpleSubCategory" stepKey="createCategory"/>
+            <createData entity="SimpleProduct" stepKey="createSimpleProduct">
+                <requiredEntity createDataKey="createCategory"/>
+            </createData>
+            <createData entity="NewRootCategory" stepKey="createNewRootCategory"/>
+            <createData entity="SimpleRootSubCategory" stepKey="createSubCategoryRootCategory">
+                <requiredEntity createDataKey="createNewRootCategory"/>
+            </createData>
+
+            <actionGroup ref="AdminLoginActionGroup" stepKey="loginToAdminPanel"/>
+
+            <actionGroup ref="AdminCreateWebsiteActionGroup" stepKey="createWebsite">
+                <argument name="newWebsiteName" value="{{customWebsite.name}}"/>
+                <argument name="websiteCode" value="{{customWebsite.code}}"/>
+            </actionGroup>
+
+            <waitForPageLoad time="60" stepKey="waitForPageLoad1"/>
+
+            <actionGroup ref="CreateCustomStoreActionGroup" stepKey="createCustomStore">
+                <argument name="website" value="{{customWebsite.name}}"/>
+                <argument name="store" value="{{customStoreGroup.name}}"/>
+                <argument name="rootCategory" value="$$createNewRootCategory.name$$"/>
+            </actionGroup>
+
+            <waitForPageLoad time="60" stepKey="waitForPageLoad2"/>
+
+            <actionGroup ref="AdminCreateStoreViewActionGroup" stepKey="createCustomStoreView">
+                <argument name="StoreGroup" value="customStoreGroup"/>
+                <argument name="customStore" value="customStore"/>
+            </actionGroup>
+            <magentoCron groups="index" stepKey="reindex"/>
+
+            <waitForPageLoad time="60" stepKey="waitForPageLoad3"/>
+
+            <actionGroup ref="AdminCreateUserRoleWithScopeActionGroup" stepKey="createRestrictedAdminRole">
+                <argument name="role" value="RestrictedAdminRole"/>
+                <argument name="scopeName" value="{{customWebsite.name}}"/>
+            </actionGroup>
+
+            <waitForPageLoad time="60" stepKey="waitForPageLoad4"/>
+
+            <actionGroup ref="AdminCreateUserWithRoleActionGroup" stepKey="createRestrictedAdmin">
+                <argument name="role" value="RestrictedAdminRole"/>
+                <argument name="user" value="NewAdminUser"/>
+            </actionGroup>
+
+            <waitForPageLoad time="60" stepKey="waitForPageLoad5"/>
+
+            <actionGroup ref="SearchForProductOnBackendActionGroup" stepKey="searchForProductOnAdmin1eee">
+                <argument name="product" value="$$createSimpleProduct$$"/>
+            </actionGroup>
+
+            <waitForPageLoad time="60" stepKey="waitForPageLoad6"/>
+
+            <actionGroup ref="AdminProcessProductWebsitesActionGroup" stepKey="processProductWebsites">
+                <argument name="website" value="customWebsite"/>
+                <argument name="websiteToUnassign" value="_defaultWebsite"/>
+                <argument name="product" value="$$createSimpleProduct$$"/>
+            </actionGroup>
+
+            <waitForPageLoad time="60" stepKey="waitForPageLoad7"/>
+        </before>
+        <after>
+            <actionGroup ref="AdminLoginActionGroup" stepKey="loginToAdminPanel2"/>
+
+            <actionGroup ref="AdminDeleteCreatedUserActionGroup" stepKey="deleteAdminUser">
+                <argument name="user" value="NewAdminUser"/>
+            </actionGroup>
+
+            <actionGroup ref="AdminDeleteUserRoleWithSpecifiedPermissionActionGroup" stepKey="deleteRole">
+                <argument name="role" value="RestrictedAdminRole"/>
+            </actionGroup>
+
+            <actionGroup ref="AdminDeleteWebsiteActionGroup" stepKey="deleteWebsite">
+                <argument name="websiteName" value="{{customWebsite.name}}"/>
+            </actionGroup>
+
+            <magentoCLI stepKey="reindex" command="indexer:reindex"/>
+            <magentoCLI stepKey="flushCache" command="cache:flush"/>
+
+            <deleteData createDataKey="createSimpleProduct" stepKey="deleteSimpleProduct"/>
+            <deleteData createDataKey="createSubCategoryRootCategory" stepKey="deleteCreateSubCategoryRootCategory"/>
+            <deleteData createDataKey="createNewRootCategory" stepKey="deleteRootCategory"/>
+            <deleteData createDataKey="createCategory" stepKey="deleteCategory"/>
+            <actionGroup ref="AdminLogoutActionGroup" stepKey="logout3"/>
+        </after>
+
+        <actionGroup ref="AdminProductPageOpenByIdActionGroup" stepKey="navigateToProductPage">
+            <argument name="productId" value="$$createSimpleProduct.id$$"/>
+        </actionGroup>
+
+        <waitForPageLoad time="60" stepKey="waitForPageLoad8"/>
+
+        <actionGroup ref="AdminProductFormCategoryExistInCategoryListActionGroup" stepKey="checkExistCategoryInList1">
+            <argument name="categoryName" value="$$createCategory.name$$"/>
+        </actionGroup>
+
+        <actionGroup ref="AdminProductFormCategoryExistInCategoryListActionGroup" stepKey="checkExistCategoryInList2">
+            <argument name="categoryName" value="$$createNewRootCategory.name$$"/>
+        </actionGroup>
+
+        <actionGroup ref="AdminCheckNewProductCategoryButtonActionGroup" stepKey="seeCategoryButton" />
+
+        <actionGroup ref="AdminLogoutActionGroup" stepKey="logout1"/>
+
+        <actionGroup ref="AdminLoginActionGroup" stepKey="loginAsAdminWithRestrictedAdminRole">
+            <argument name="username" value="{{NewAdminUser.username}}"/>
+            <argument name="password" value="{{NewAdminUser.password}}"/>
+        </actionGroup>
+
+        <waitForPageLoad time="60" stepKey="waitForPageLoad9"/>
+
+        <actionGroup ref="SearchForProductOnBackendActionGroup" stepKey="searchForSimpleProduct">
+            <argument name="product" value="$$createSimpleProduct$$"/>
+        </actionGroup>
+
+        <actionGroup ref="OpenEditProductOnBackendActionGroup" stepKey="openEditProduct">
+            <argument name="product" value="$$createSimpleProduct$$"/>
+        </actionGroup>
+
+        <waitForPageLoad time="60" stepKey="waitForPageLoad10"/>
+
+        <actionGroup ref="AdminProductFormCategoryExistInCategoryListActionGroup" stepKey="checkExistCategoryInList3">
+            <argument name="categoryName" value="$$createNewRootCategory.name$$"/>
+        </actionGroup>
+
+        <actionGroup ref="AdminProductFormCategoryNotExistInCategoryListActionGroup"
+                     stepKey="checkNotExistCategoryInList">
+            <argument name="categoryName" value="$$createCategory.name$$"/>
+        </actionGroup>
+
+        <actionGroup ref="AdminCheckNoNewProductCategoryButtonActionGroup" stepKey="dontSeeCategoryButton" />
+
+        <actionGroup ref="AdminLogoutActionGroup" stepKey="logout2"/>
+    </test>
+</tests>

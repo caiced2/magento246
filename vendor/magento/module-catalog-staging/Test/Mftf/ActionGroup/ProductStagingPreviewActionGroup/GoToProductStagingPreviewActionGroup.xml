@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+ /**
+  * Copyright © Magento, Inc. All rights reserved.
+  * See COPYING.txt for license details.
+  */
+-->
+<actionGroups xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:noNamespaceSchemaLocation="urn:magento:mftf:Test/etc/actionGroupSchema.xsd">
+    <actionGroup name="GoToProductStagingPreview">
+        <arguments>
+            <argument name="productId" type="string" defaultValue="1"/>
+            <argument name="updateName" type="string" defaultValue="{{_defaultStaging.name}}"/>
+        </arguments>
+
+        <amOnPage url="{{AdminProductEditPage.url(productId)}}" stepKey="goToProductEditToSeePreview"/>
+        <click selector="{{AdminScheduledChangesSection.scheduleActions(updateName, 'Preview')}}" stepKey="clickPreview"/>
+        <switchToNextTab stepKey="switchToPreviewTab"/>
+        <waitForPageLoad time="30" stepKey="waitForPreviewTabLoad"/>
+    </actionGroup>
+</actionGroups>

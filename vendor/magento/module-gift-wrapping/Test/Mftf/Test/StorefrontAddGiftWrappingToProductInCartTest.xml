@@ -1,0 +1,73 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+ /**
+  * Copyright © Magento, Inc. All rights reserved.
+  * See COPYING.txt for license details.
+  */
+-->
+
+<tests xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xsi:noNamespaceSchemaLocation="urn:magento:mftf:Test/etc/testSchema.xsd">
+    <test name="StorefrontAddGiftWrappingToProductInCartTest">
+        <annotations>
+            <features value="GiftWrapping"/>
+            <stories value="Gift wrapping order"/>
+            <title value="Storefront add gift wrapping to product in cart test"/>
+            <description value="Update Gift Wrapping for items"/>
+            <severity value="CRITICAL"/>
+            <testCaseId value="MC-11971"/>
+            <group value="GiftWrapping"/>
+        </annotations>
+        <before>
+            <!-- Create gift wrapping -->
+            <createData entity="ApiGiftWrapping" stepKey="createGiftWrapping"/>
+
+            <!-- Create simple product -->
+            <createData entity="SimpleProduct2" stepKey="createProduct"/>
+        </before>
+        <after>
+            <!-- Delete simple product -->
+            <deleteData createDataKey="createProduct" stepKey="deleteProduct"/>
+
+            <!-- Delete Gift Wrapping -->
+            <deleteData createDataKey="createGiftWrapping" stepKey="deleteGiftWrapping"/>
+        </after>
+
+        <!-- Add product to cart -->
+        <amOnPage url="{{StorefrontProductPage.url($$createProduct.custom_attributes[url_key]$$)}}" stepKey="goToProductPage"/>
+        <waitForPageLoad stepKey="waitForPageLoad"/>
+        <actionGroup ref="StorefrontAddProductToCartActionGroup" stepKey="cartAddSimpleProductToCart">
+            <argument name="product" value="$$createProduct$$"/>
+            <argument name="productCount" value="1"/>
+        </actionGroup>
+
+        <!-- Go to cart page -->
+        <actionGroup ref="StorefrontOpenCartFromMinicartActionGroup" stepKey="GoToCheckoutFromMinicartActionGroup"/>
+
+        <!-- Expand gift option tab for item -->
+        <waitForPageLoad stepKey="waitForPageLoad2"/>
+        <waitForElementVisible selector="{{CheckoutCartGiftWrappingSection.cartItemGiftOption($$createProduct.name$$,'Gift options')}}" time="30" stepKey="waitForGiftOptionPresent"/>
+        <see selector="{{CheckoutCartGiftWrappingSection.cartItemGiftOption($$createProduct.name$$,'Gift options')}}" userInput="Gift options" stepKey="seeGiftOptionPresent"/>
+        <click selector="{{CheckoutCartGiftWrappingSection.clickCartItemGiftOptions($$createProduct.name$$)}}" stepKey="clickGiftOption"/>
+        <waitForElementVisible selector="{{CheckoutCartGiftWrappingSection.cartItemVisibleSmallImage}}" stepKey="waitVisibleImage"/>
+
+        <!-- Select gift wrapping -->
+        <click selector="{{CheckoutCartGiftWrappingSection.cartItemVisibleSmallImage}}" stepKey="clickSmallImage"/>
+
+        <!-- Assert gift wrapping in the cart -->
+        <see selector="{{CheckoutCartGiftWrappingSection.giftWrappingName}}" userInput="$$createGiftWrapping.design$$" stepKey="seeGiftWrappingName"/>
+        <see selector="{{CheckoutCartGiftWrappingSection.giftWrappingReqularPrice}}" userInput="$$createGiftWrapping.base_price$$" stepKey="seeGiftWrappingReqularPrice"/>
+
+        <!-- Click update button -->
+        <click selector="{{CheckoutCartGiftWrappingSection.cartItemClickButtonGiftUpdate($$createProduct.name$$)}}" stepKey="clickButtonGiftUpdate"/>
+        <waitForElementVisible selector="{{CheckoutCartGiftWrappingSection.giftWrappingItemsPrice}}" stepKey="waitForUpdating"/>
+
+        <!-- Assert shopping cart is present -->
+        <dontSee selector="{{AdminHeaderSection.pageNotFoundTitle}}" userInput="Whoops, our bad..." stepKey="dontSeeNotFoundMessage"/>
+
+        <!-- Assert Gift Wrapping for Items appears on Summary block -->
+        <waitForLoadingMaskToDisappear stepKey="waitForCartSummaryBlock"/>
+        <see selector="{{CheckoutCartGiftWrappingSection.giftWrappingTitle}}" userInput="Gift Wrapping for Items" stepKey="seeGiftWrappingTitle"/>
+        <see selector="{{CheckoutCartGiftWrappingSection.giftWrapping}}" userInput="$$createGiftWrapping.base_price$$" stepKey="seeGiftWrappingPrice"/>
+    </test>
+</tests>

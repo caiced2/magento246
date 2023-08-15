@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+ /**
+  * Copyright © Magento, Inc. All rights reserved.
+  * See COPYING.txt for license details.
+  */
+-->
+
+<actionGroups xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:noNamespaceSchemaLocation="urn:magento:mftf:Test/etc/actionGroupSchema.xsd">
+    <actionGroup name="AddNthConditionForMatchProductByRuleActionGroup">
+        <arguments>
+            <argument name="n" type="string"/>
+            <argument name="logic" type="string" defaultValue="OR"/>
+            <argument name="attribute" type="string"/>
+            <argument name="operator" type="string"/>
+            <argument name="value" type="string"/>
+        </arguments>
+        <executeJS function="return {{n}} - 1;" stepKey="nMinusOne"/>
+        <scrollTo selector="{{AdminCategoryProductsSection.addCondition}}" stepKey="scrollToArea"/>
+        <click selector="{{AdminCategoryProductsSection.addCondition}}" stepKey="clickAddCondition"/>
+        <selectOption userInput="{{logic}}" selector="{{AdminCategoryProductsSection.conditionLogic({$nMinusOne})}}" stepKey="selectLogic"/>
+        <waitForPageLoad stepKey="wait1"/>
+        <selectOption userInput="{{attribute}}" selector="{{AdminCategoryProductsSection.conditionAttribute(n)}}" stepKey="selectAttribute"/>
+        <waitForPageLoad stepKey="wait2"/>
+        <selectOption userInput="{{operator}}" selector="{{AdminCategoryProductsSection.conditionOperator(n)}}" stepKey="selectOperator"/>
+        <waitForPageLoad stepKey="wait3"/>
+        <fillField userInput="{{value}}" selector="{{AdminCategoryProductsSection.conditionValue(n)}}" stepKey="fillValue"/>
+        <waitForPageLoad stepKey="wait4"/>
+    </actionGroup>
+</actionGroups>

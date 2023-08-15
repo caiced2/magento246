@@ -1,0 +1,66 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+ /**
+  * Copyright © Magento, Inc. All rights reserved.
+  * See COPYING.txt for license details.
+  */
+-->
+<tests xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xsi:noNamespaceSchemaLocation="urn:magento:mftf:Test/etc/testSchema.xsd">
+    <test name="StorefrontCheckRelatedProductsCategoryBasedTargetRuleForSameCategoryTest">
+        <annotations>
+            <stories value="Create Target Rule"/>
+            <title value="Admin Create Category Based Target Rule And Verify on Frontend"/>
+            <description value="Test Related Product Rule for products from same category"/>
+            <testCaseId value="AC-3766"/>
+            <useCaseId value="ACP2E-809"/>
+            <severity value="AVERAGE"/>
+            <group value="targetRule"/>
+        </annotations>
+        <before>
+            <actionGroup ref="AdminLoginActionGroup" stepKey="LoginAsAdmin"/>
+            <createData entity="SimpleSubCategory" stepKey="createTestCategory"/>
+
+            <!--Create Products assigned to same Category-->
+            <createData entity="SimpleProduct" stepKey="createSimpleProduct1AssignedToTestCategory">
+                <requiredEntity createDataKey="createTestCategory"/>
+            </createData>
+            <createData entity="SimpleProduct" stepKey="createSimpleProduct2AssignedToTestCategory">
+                <requiredEntity createDataKey="createTestCategory"/>
+            </createData>
+        </before>
+        <after>
+            <deleteData createDataKey="createTestCategory" stepKey="deleteTestCategory"/>
+            <deleteData createDataKey="createSimpleProduct1AssignedToTestCategory" stepKey="deleteCreatedSimpleProduct1AssignedToTestCategory"/>
+            <deleteData createDataKey="createSimpleProduct2AssignedToTestCategory" stepKey="deleteCreatedSimpleProduct2AssignedToTestCategory"/>
+            <actionGroup ref="DeleteTargetRuleByNameActionGroup" stepKey="deleteCreatedTargetRule">
+                <argument name="ruleName" value="TargetRuleRelatedProductsCategorySameAsMatchedProductCategories.ruleName"/>
+            </actionGroup>
+            <actionGroup ref="AdminLogoutActionGroup" stepKey="logout"/>
+        </after>
+
+        <!--Create target rule related products as per data -->
+        <actionGroup ref="GoToTargetRulePage" stepKey="openTargetRulePage"/>
+        <actionGroup ref="ClickAddNewTargetRule" stepKey="clickAddRule"/>
+        <actionGroup ref="FillGeneralRuleInformation" stepKey="fillRuleFields">
+            <argument name="information" value="TargetRuleRelatedProductsCategorySameAsMatchedProductCategories"/>
+        </actionGroup>
+
+        <!-- Fill values in Product To Display tab -->
+        <click selector="{{AdminTargetRuleSection.productToDisplayTab}}" stepKey="clickProductToDisplayTab"/>
+        <click selector="{{AdminTargetRuleProductsToDisplaySection.selectCondition('1','1')}}" stepKey="clickToSelectCondition"/>
+        <selectOption selector="{{AdminTargetRuleProductsToDisplaySection.newAction}}" userInput="Category" stepKey="selectCategoryInNewCondition"/>
+
+        <!-- Save target rule and verify AssertTargetRuleSuccessSaveMessage-->
+        <actionGroup ref="SaveTargetRule" stepKey="AssertTargetRuleSuccessSaveMessage"/>
+
+        <!-- Go to storefront Product1 assigned to Category1 -->
+        <actionGroup ref="AssertProductNameAndSkuInStorefrontProductPageByCustomAttributeUrlKeyActionGroup" stepKey="openProductPageAndVerifyProduct">
+            <argument name="product" value="$$createSimpleProduct1AssignedToTestCategory$$"/>
+        </actionGroup>
+
+        <!-- Verify that Product2 from Category1 is visible -->
+        <scrollTo selector="{{StorefrontProductRelatedProductsSection.relatedProductsActionsHeaderText}}" stepKey="scrollToStorefrontProductRelatedProductsSectionHeader"/>
+        <seeElement selector="{{StorefrontProductRelatedProductsSection.relatedProductName($$createSimpleProduct2AssignedToTestCategory.name$$)}}" stepKey="seeSimpleProduct2InRelatedProductInStorefront"/>
+    </test>
+</tests>

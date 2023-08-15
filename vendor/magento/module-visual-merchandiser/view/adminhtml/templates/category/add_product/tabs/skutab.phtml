@@ -1,0 +1,32 @@
+<?php
+/**
+ * Copyright © Magento, Inc. All rights reserved.
+ * See COPYING.txt for license details.
+ */
+?>
+<?php /** @var \Magento\VisualMerchandiser\Block\Adminhtml\Category\AddProduct\Tabs\SkuTab $block */ ?>
+<div data-mage-init='{"Magento_VisualMerchandiser/js/mass_sku": {"massAssignButton": ".massassign-button", "massAssignUrl": "<?= $block->escapeUrl($block->getMassAssignUrl()) ?>"}}'>
+    <form id="add_product_sku_form">
+        <div class="massassign-messages" data-role="messages"></div>
+        <div class="admin__field">
+            <label class="admin__field-label" for="add_product_sku">
+                <span><?= $block->escapeHtml(__('Enter SKUs below, one per line')) ?></span>
+            </label>
+            <div class="admin__field-control">
+                <textarea name="add_product_sku"
+                          id="add_product_sku"
+                          class="admin__control-textarea massassign-textarea"
+                          cols="64"
+                          rows="16"></textarea>
+            </div>
+        </div>
+        <div class="massassign-buttons">
+            <button type="button" id="add_product_sku_add_button" class="action-primary massassign-button" role="assign">
+                <?= $block->escapeHtml(__('Assign')) ?>
+            </button>
+            <button type="button" id="add_product_sku_remove_button" class="action-secondary massassign-button" role="remove">
+                <?= $block->escapeHtml(__('Remove')) ?>
+            </button>
+        </div>
+    </form>
+</div>

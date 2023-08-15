@@ -1,0 +1,40 @@
+/**
+ * Copyright © Magento, Inc. All rights reserved.
+ * See COPYING.txt for license details.
+ */
+
+.field-open_amount_min .addon,
+.field-open_amount_max .addon {
+    direction: rtl;
+}
+
+.field-open_amount_min .addon > *,
+.field-open_amount_max .addon > * {
+    direction: ltr;
+}
+
+.field-open_amount_min .addon .addafter,
+.field-open_amount_max .addon .addafter {
+    border-width: 1px 0 1px 1px;
+}
+
+.field-open_amount_min .addon input:first-child,
+.field-open_amount_max .addon input:first-child {
+    border-radius: 0 2px 2px 0;
+}
+
+.eq-ie8 .field-open_amount_min .addon .addafter,
+.eq-ie8 .field-open_amount_max .addon .addafter {
+    border-width: 1px 1px 1px 0;
+}
+
+.field-open_amount_min input,
+.field-open_amount_max input {
+    border-width: 1px 1px 1px 0;
+}
+
+.field-open_amount_min input ~ label.addafter strong,
+.field-open_amount_max input ~ label.addafter strong {
+    margin-left: 2px;
+    margin-right: -2px;
+}

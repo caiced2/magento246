@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+ /**
+  * Copyright © Magento, Inc. All rights reserved.
+  * See COPYING.txt for license details.
+  */
+-->
+
+<tests xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="urn:magento:mftf:Test/etc/testSchema.xsd">
+    <test name="CheckingOfPreviewingRegistryUpdateEmailTest">
+        <annotations>
+            <features value="GiftRegistry"/>
+            <stories value="MAGETWO-66489: Fatal Error Previewing Registry Update Email"/>
+            <group value="giftRegistry"/>
+            <title value="Checking of Previewing Registry Update Email."/>
+            <description value="Preview should be loaded without errors and System should displays it "/>
+            <severity value="MAJOR"/>
+            <testCaseId value="MAGETWO-94107"/>
+        </annotations>
+
+        <before>
+            <actionGroup ref="AdminLoginActionGroup" stepKey="loginAsAdmin"/>
+        </before>
+
+        <after>
+            <!--Delete created Template-->
+            <actionGroup ref="DeleteEmailTemplateActionGroup" stepKey="deleteCreatedTemplate"/>
+            <click selector="{{AdminDataGridHeaderSection.clearFilters}}" stepKey="clearFilters"/>
+            <actionGroup ref="AdminLogoutActionGroup" stepKey="logout"/>
+        </after>
+
+        <!--Create new template-->
+        <actionGroup ref="CreateNewTemplateActionGroup" stepKey="createNewTemplate"/>
+        <actionGroup ref="PreviewEmailTemplateActionGroup" stepKey="previewTemplate"/>
+        <actionGroup ref="AssertEmailTemplateContentActionGroup" stepKey="assertTemplateContent">
+            <argument name="expectedContent" value="You can sign in to your account to view more details about this gift registry."/>
+        </actionGroup>
+    </test>
+</tests>

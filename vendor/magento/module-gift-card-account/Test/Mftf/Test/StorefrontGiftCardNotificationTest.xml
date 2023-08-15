@@ -1,0 +1,67 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+ /**
+  * Copyright © Magento, Inc. All rights reserved.
+  * See COPYING.txt for license details.
+  */
+-->
+
+<tests xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="urn:magento:mftf:Test/etc/testSchema.xsd">
+    <test name="StorefrontGiftCardNotificationTest">
+        <annotations>
+            <features value="GiftCardAccount"/>
+            <stories value="Apply gift cards"/>
+            <title value="System shows notification if GiftCard is added/removed"/>
+            <description value="System shows notification if GiftCard is added/removed"/>
+            <useCaseId value="MAGETWO-60846"/>
+            <testCaseId value="MC-25955"/>
+            <group value="giftCard"/>
+            <group value="giftCardAccount"/>
+            <severity value="AVERAGE"/>
+        </annotations>
+        <before>
+            <magentoCLI command="config:set {{EnableFlatRateConfigData.path}} {{EnableFlatRateConfigData.value}}" stepKey="enableFlatRate"/>   
+            <createData entity="SimpleProduct2" stepKey="createProduct"/>
+            <createData entity="GiftCardCodePool" stepKey="createCodePool"/>
+            <createData entity="GiftCardAccount100" stepKey="createGiftCard"/>
+            <actionGroup ref="AdminLoginActionGroup" stepKey="loginAsAdmin"/>
+
+        </before>
+        <after>
+            <deleteData createDataKey="createProduct" stepKey="deleteProduct"/>
+            <actionGroup ref="AdminDeleteAllGiftCardAccountsActionGroup" stepKey="removeAllGiftCardAccounts"/>
+            <actionGroup ref="AdminLogoutActionGroup" stepKey="logout"/>
+        </after>
+        <!--Grab Gift Card code-->
+        <amOnPage url="{{AdminGiftCardAccountGridPage.url}}" stepKey="goToGiftCardAccountsGrid"/>
+        <actionGroup ref="SortByIdDescendingActionGroup" stepKey="sortAccountsByIdDesc"/>
+        <click selector="{{AdminGridTableSection.row('1')}}" stepKey="clickPrereqAccount"/>
+        <waitForPageLoad stepKey="waitForAccountEditPage"/>
+        <grabTextFrom selector="{{AdminGiftCardAccountInformationSection.giftCardCode}}" stepKey="giftCardAccountCode"/>
+        <!--Go to Storefront and add product to cart -->
+        <actionGroup ref="AddSimpleProductToCartActionGroup" stepKey="AddProductToCart">
+            <argument name="product" value="$createProduct$"/>
+        </actionGroup>
+        <!--Proceed to shipment-->
+        <actionGroup ref="GoToCheckoutFromMinicartActionGroup" stepKey="goToCheckoutFromMinicart"/>
+        <!--Fill shipping form-->
+        <actionGroup ref="GuestCheckoutFillNewShippingAddressActionGroup" stepKey="fillGuestShippingAddress">
+            <argument name="customer" value="Simple_Customer_Without_Address"/>
+            <argument name="address" value="US_Address_TX"/>
+        </actionGroup>
+        <actionGroup ref="CheckoutSelectFlatRateShippingMethodActionGroup" stepKey="selectFlatRateShipping"/>
+        <actionGroup ref="StorefrontCheckoutClickNextOnShippingStepActionGroup" stepKey="goToBillingStep"/>
+        <!--Apply gift card code-->
+        <actionGroup ref="ApplyGiftCardToOrderActionGroup" stepKey="applyGiftCardToOrder">
+            <argument name="code" value="$giftCardAccountCode"/>
+        </actionGroup>
+        <!--Make sure that appropriate message is displayed-->
+        <actionGroup ref="AssertStorefrontGiftCardAppliedSuccessfullyActionGroup" stepKey="assertGiftCardMessage">
+            <argument name="code" value="$giftCardAccountCode"/>
+        </actionGroup>
+        <!-- Remove Gift Card and assert message -->
+        <actionGroup ref="StorefrontRemoveGiftCardCheckoutActionGroup" stepKey="removeGiftCardFromCheckoutPage">
+            <argument name="code" value="$giftCardAccountCode"/>
+        </actionGroup>
+    </test>
+</tests>

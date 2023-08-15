@@ -1,0 +1,28 @@
+<?xml version="1.0"?>
+<!--
+/**
+ * Copyright © Magento, Inc. All rights reserved.
+ * See COPYING.txt for license details.
+ */
+-->
+<!--
+@deprecated split database solution is deprecated and will be removed
+-->
+<config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="urn:magento:framework-foreign-key:etc/constraints.xsd">
+    <entity name="quote" resource="checkout">
+        <constraint name="quote_to_store" onDelete="CASCADE" referenceEntity="store">
+            <field name="store_id" reference="store_id"/>
+        </constraint>
+        <constraint name="quote_to_customer" onDelete="SET NULL" referenceEntity="customer_entity">
+            <field name="customer_id" reference="entity_id"/>
+        </constraint>
+    </entity>
+    <entity name="quote_item" resource="checkout">
+        <constraint name="quote_item_to_catalog_product_entity" onDelete="CASCADE" referenceEntity="catalog_product_entity">
+            <field name="product_id" reference="entity_id" />
+        </constraint>
+        <constraint name="quote_item_to_store" onDelete="CASCADE" referenceEntity="store">
+            <field name="store_id" reference="store_id" />
+        </constraint>
+    </entity>
+</config>

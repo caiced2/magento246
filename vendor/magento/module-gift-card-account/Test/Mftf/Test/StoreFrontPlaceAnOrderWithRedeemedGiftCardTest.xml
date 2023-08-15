@@ -1,0 +1,66 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+ /**
+  * Copyright © Magento, Inc. All rights reserved.
+  * See COPYING.txt for license details.
+  */
+-->
+
+<tests xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xsi:noNamespaceSchemaLocation="urn:magento:mftf:Test/etc/testSchema.xsd">
+    <test name="StoreFrontPlaceAnOrderWithRedeemedGiftCardTest">
+        <annotations>
+            <stories value="Place an order after redeeming gift card"/>
+            <title value="Place an order after redeeming gift card"/>
+            <description value="A customer should be able redeem gift card and place an order"/>
+            <severity value="MAJOR"/>
+            <testCaseId value="MAGETWO-95858"/>
+            <group value="GiftCardAccount"/>
+        </annotations>
+        <before>
+            <actionGroup ref="AdminLoginActionGroup" stepKey="loginAsAdmin"/>
+            <createData entity="Simple_US_Customer" stepKey="customer" >
+                <field key="group_id">1</field>
+            </createData>
+            <createData entity="_defaultCategory" stepKey="category"/>
+            <createData entity="_defaultProduct" stepKey="product">
+                <requiredEntity createDataKey="category"/>
+            </createData>
+            <createData entity="GiftCardCodePool" stepKey="createCodePool"/>
+        </before>
+        <after>
+            <deleteData createDataKey="product" stepKey="deleteProduct"/>
+            <deleteData createDataKey="category" stepKey="deleteCategory"/>
+            <deleteData createDataKey="customer" stepKey="deleteCustomer"/>
+        </after>
+        <actionGroup ref="AddGiftCardAccountActionGroup" stepKey="addGiftCardAccount">
+            <argument name="website" value="Main Website" />
+            <argument name="balanceAmount" value="50" />
+        </actionGroup>
+        <grabTextFrom selector="{{AdminGiftCardAccountGridSection.giftCardCode}}" stepKey="giftCardAccountCode"/>
+        <actionGroup ref="LoginToStorefrontActionGroup" stepKey="loginAsCustomer">
+            <argument name="Customer" value="$$customer$$"/>
+        </actionGroup>
+        <amOnPage url="{{StorefrontProductPage.url($$product.custom_attributes[url_key]$$)}}" stepKey="amOnStorefrontVirtualProductPage"/>
+        <waitForPageLoad stepKey="waitForProductPage"/>
+        <click selector="{{StorefrontProductInfoMainSection.AddToCart}}" stepKey="clickAddToCart"/>
+        <waitForPageLoad stepKey="waitForProductAddToCart"/>
+        <actionGroup ref="ClickViewAndEditCartFromMiniCartActionGroup" stepKey="goToShoppingCartFromMinicart"/>
+        <actionGroup ref="AddGiftCardToOrderFromCartActionGroup" stepKey="addGiftCardToOrder">
+            <argument name="code" value="$giftCardAccountCode"/>
+        </actionGroup>
+        <actionGroup ref="StoreFrontRedeemGiftCardActionGroup" stepKey="redeemGiftCard">
+            <argument name="code" value="$giftCardAccountCode"/>
+        </actionGroup>
+        <actionGroup ref="GoToCheckoutFromMinicartActionGroup" stepKey="goToCheckoutFromMinicart"/>
+        <actionGroup ref="StorefrontCheckoutClickNextButtonActionGroup" stepKey="clickNext"/>
+        <actionGroup ref="ClickPlaceOrderActionGroup" stepKey="clickPlaceOrder"/>
+        <see stepKey="seeSuccessMessage" userInput="Thank you for your purchase!"/>
+        <actionGroup ref="DeleteGiftCardAccountActionGroup" stepKey="deleteGiftCardAccount">
+            <argument name="giftCardAccountCode" value="{$giftCardAccountCode}"/>
+        </actionGroup>
+        <click selector="{{AdminGiftCardAccountGridSection.resetFilter}}" stepKey="clickResetFilterButton"/>
+        <waitForPageLoad stepKey="waitForFilterReset"/>
+        <actionGroup ref="AdminLogoutActionGroup" stepKey="logout"/>
+    </test>
+</tests>

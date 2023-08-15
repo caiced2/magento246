@@ -1,0 +1,62 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+ /**
+  * Copyright © Magento, Inc. All rights reserved.
+  * See COPYING.txt for license details.
+  */
+-->
+<tests xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="urn:magento:mftf:Test/etc/testSchema.xsd">
+    <test name="StorefrontMultipleWishlistChangeWishlistNameTest">
+        <annotations>
+            <features value="MultipleWishlist"/>
+            <stories value="Wishlist"/>
+            <title value="Change wishlist name with multiple wishlist enabled"/>
+            <description value="Registered customer should be able to change wishlist name when multiple wishlist enabled"/>
+            <severity value="CRITICAL"/>
+            <testCaseId value="MC-17639"/>
+            <useCaseId value="MAGETWO-99312"/>
+            <group value="wishlist"/>
+            <group value="cloud_smoke"/>
+        </annotations>
+        <before>
+            <createData entity="SimpleSubCategory" stepKey="createCategory"/>
+            <createData entity="SimpleProduct" stepKey="createProduct">
+                <requiredEntity createDataKey="createCategory"/>
+            </createData>
+            <createData entity="Simple_US_Customer" stepKey="createCustomer"/>
+            <createData entity="WishlistSetting" stepKey="enableMultipleWishlists"/>
+        </before>
+        <after>
+            <actionGroup ref="StorefrontCustomerLogoutActionGroup" stepKey="logoutStorefront"/>
+            <deleteData createDataKey="createProduct" stepKey="deleteProduct"/>
+            <deleteData createDataKey="createCategory" stepKey="deleteCategory"/>
+            <deleteData createDataKey="createCustomer" stepKey="deleteCustomer"/>
+            <createData entity="DefaultWishlistSetting" stepKey="restoreWishlishSetting"/>
+            <comment userInput="BIC workaround" stepKey="customerLogout"/>
+        </after>
+
+        <actionGroup ref="CliIndexerReindexActionGroup" stepKey="runCronReindex">
+            <argument name="indices" value=""/>
+        </actionGroup>
+
+        <!--Login as customer-->
+        <actionGroup ref="LoginToStorefrontActionGroup" stepKey="loginToStorefrontAccount">
+            <argument name="Customer" value="$$createCustomer$$"/>
+        </actionGroup>
+        <!-- Add product from category to the wishlist -->
+        <actionGroup ref="StorefrontNavigateCategoryPageActionGroup" stepKey="navigateToCategoryPage">
+            <argument name="category" value="$$createCategory$$"/>
+        </actionGroup>
+        <actionGroup ref="StorefrontCustomerAddCategoryProductToWishlistActionGroup2" stepKey="addProductToWishlist">
+            <argument name="productVar" value="$$createProduct$$"/>
+        </actionGroup>
+        <!-- Change Wishlist name at first time -->
+        <actionGroup ref="StorefrontEditWishlistNameActionGroup" stepKey="changeWishlistName">
+            <argument name="wishlistName" value="{{MultipleWishlistOne.name}}"/>
+        </actionGroup>
+        <!-- Change Wishlist name second time -->
+        <actionGroup ref="StorefrontEditWishlistNameActionGroup" stepKey="changeWishlistNameWhenPageCached">
+            <argument name="wishlistName" value="{{MultipleWishlistTwo.name}}"/>
+        </actionGroup>
+    </test>
+</tests>

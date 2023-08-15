@@ -1,0 +1,25 @@
+{
+    "name": "magento/module-multiple-wishlist-sample-data",
+    "description": "N/A",
+    "type": "magento2-module",
+    "license": [
+        "OSL-3.0",
+        "AFL-3.0"
+    ],
+    "version": "100.4.2",
+    "require": {
+        "php": "~8.1.0||~8.2.0",
+        "magento/module-wishlist": "101.2.*",
+        "magento/module-multiple-wishlist": "100.4.*",
+        "magento/module-wishlist-sample-data": "100.4.*"
+    },
+    "autoload": {
+        "files": [
+            "registration.php"
+        ],
+        "psr-4": {
+            "Magento\\MultipleWishlistSampleData\\": ""
+        }
+    }
+}
+

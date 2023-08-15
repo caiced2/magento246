@@ -1,0 +1,153 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+ /**
+  * Copyright © Magento, Inc. All rights reserved.
+  * See COPYING.txt for license details.
+  */
+-->
+<entities xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+          xsi:noNamespaceSchemaLocation="urn:magento:mftf:DataGenerator/etc/dataProfileSchema.xsd">
+    <entity name="_staging" type="stage">
+        <data key="update_name">Test Update Name</data>
+        <data key="start_date">02/9/2030</data>
+    </entity>
+    <entity name="_defaultStaging" type="stage">
+        <data key="name" unique="suffix">Test Update Name</data>
+        <data key="updateName" unique="suffix">Test Update Name</data>
+        <data key="description">Test Update Description</data>
+        <data key="entityName"  unique="suffix">New entity name</data>
+    </entity>
+    <entity name="UpdateForProductA" type="stage">
+      <data key="updateName" unique="suffix">ProductAUpdate</data>
+      <data key="updateDescription">Discount</data>
+      <data key="productPrice">50</data>
+      <data key="viewedit">View/Edit</data>
+    </entity>
+    <entity name="UpdateForProductA2" type="stage">
+      <data key="updateName" unique="suffix">ProductAUpdate</data>
+      <data key="updateDescription">Discount</data>
+      <data key="productPrice">25</data>
+      <data key="viewedit">View/Edit</data>
+    </entity>
+    <entity name="S5UpdateNameStaging" type="stage">
+        <data key="updateName" unique="suffix">S5UpdateName</data>
+        <data key="updateDescription">S5UpdateDescription</data>
+        <data key="viewedit">View/Edit</data>
+    </entity>
+    <entity name="S8UpdateNameStaging" type="stage">
+        <data key="updateName" unique="suffix">S8UpdateName</data>
+        <data key="updateDescription">S8UpdateDescription</data>
+    </entity>
+    <entity name="S18UpdateNameStaging" type="stage">
+        <data key="updateName" unique="suffix">S18UpdateName</data>
+        <data key="updateDescription">S18UpdateDescription</data>
+    </entity>
+  <!-- Content Dashboard Grid -->
+  <entity name="ContentDashboardGridColumns" type="contentdashboard_template_grid_column_header">
+    <data key="status">Status</data>
+    <data key="updateName">Update Name</data>
+    <data key="startTime">Start Time</data>
+    <data key="endTime">End Time</data>
+    <data key="description">Description</data>
+  </entity>
+    <entity name="UpdateWithoutEnd" type="Stage">
+        <data key="updateName">UpdateWithoutEnd</data>
+        <data key="updateDescription">Description: Update Width Out End</data>
+        <data key="scheduleMinutesAhead">3</data>
+        <data key="endDate"> </data>
+        <data key="productPrice">12</data>
+        <data key="start">Start</data>
+        <data key="end"> </data>
+        <data key="viewedit">View/Edit</data>
+        <data key="preview">Preview</data>
+    </entity>
+    <entity name="UpdateWithoutEndUnique_2MinutesAhead" type="Stage" extends="UpdateWithoutEnd">
+        <data key="updateName" unique="suffix">2MinuteUpdate</data>
+        <data key="updateDescription">Update Within 2 Minutes</data>
+        <data key="scheduleMinutesAhead">2</data>
+    </entity>
+    <entity name="UpdateWithoutEnd_1HourAhead" type="Stage" extends="UpdateWithoutEnd">
+        <data key="updateName" unique="suffix">60MinuteUpdate</data>
+        <data key="updateDescription">Update Within 60 Minutes</data>
+        <data key="scheduleMinutesAhead">60</data>
+    </entity>
+    <entity name="PermanentUpdateStaging" type="stage">
+        <data key="updateName" unique="suffix">Test_Staging</data>
+        <data key="updateDescription">Staging description</data>
+        <data key="startDate">+2 months</data>
+    </entity>
+    <entity name="UpdateWithStartDateInPast" type="stage">
+        <data key="updateName" unique="suffix">Test_Staging</data>
+        <data key="updateDescription">Staging description</data>
+        <data key="startDate">-2 months</data>
+    </entity>
+    <entity name="UpdateWithDatePlusTwoYears" type="stage">
+        <data key="updateName" unique="suffix">Test_Staging</data>
+        <data key="updateDescription">Staging description</data>
+        <data key="startDate">+24 months</data>
+        <data key="endDate">+26 months</data>
+    </entity>
+    <entity name="UpdateWithEndDateBeforeStartDate" type="stage">
+        <data key="updateName" unique="suffix">Test_Staging</data>
+        <data key="updateDescription">Staging description</data>
+        <data key="startDate">+9 months</data>
+        <data key="endDate">+3 months</data>
+    </entity>
+    <entity name="UpdateDatePlusTwoMinutes" type="stage">
+        <data key="updateName" unique="suffix">Test_Staging</data>
+        <data key="updateDescription">Staging description</data>
+        <data key="startDate">+2 minutes</data>
+    </entity>
+    <entity name="TemporaryUpdate" type="stage">
+        <data key="updateName" unique="suffix">Test_Staging</data>
+        <data key="updateDescription">Staging description</data>
+        <data key="startDate">+2 minutes</data>
+        <data key="endDate">+4 minutes</data>
+    </entity>
+    <entity name="UpdateWithDatePlusTwoDays" type="stage">
+        <data key="updateName" unique="suffix">Test_Staging</data>
+        <data key="updateDescription">Staging description</data>
+        <data key="startDate">+2 days</data>
+        <data key="endDate">+3 days</data>
+    </entity>
+    <entity name="UpdateWithInvalidDates" type="stage">
+        <data key="updateName" unique="suffix">Test_Staging</data>
+        <data key="updateDescription">Staging description</data>
+        <data key="startDate">+2 days</data>
+        <data key="endDate">-2 days</data>
+    </entity>
+    <entity name="TemporaryUpdatePlus5min" type="stage">
+        <data key="updateName" unique="suffix">Test_Staging</data>
+        <data key="updateDescription">Staging description</data>
+        <data key="startDate">+5 minutes</data>
+        <data key="endDate">+10 minutes</data>
+    </entity>
+    <entity name="UpdatePlus9Mouth" type="stage">
+        <data key="updateName" unique="suffix">Test_Staging</data>
+        <data key="updateDescription">Staging description</data>
+        <data key="startDate">+9 months</data>
+        <data key="endDate">+12 months</data>
+    </entity>
+    <entity name="TemporaryUpdatePlus8min" type="stage">
+        <data key="updateName" unique="suffix">Test_Staging</data>
+        <data key="updateDescription">Basic validation temporary update</data>
+        <data key="startDate">+8 minutes</data>
+        <data key="endDate">+11 minutes</data>
+    </entity>
+    <entity name="PermanentUpdatePlus5min" type="stage">
+        <data key="updateName" unique="suffix">Test_Staging</data>
+        <data key="updateDescription">Permanent Update validation with start date before current date</data>
+        <data key="startDate">+5 minutes</data>
+    </entity>
+    <entity name="TemporaryUpdatePlus7min" type="stage">
+        <data key="updateName" unique="suffix">Test_Staging</data>
+        <data key="updateDescription">Basic validation temporary update</data>
+        <data key="startDate">+7 minutes</data>
+        <data key="endDate">+12 minutes</data>
+    </entity>
+    <entity name="UpdateDatePlusOneMinute" type="stage">
+        <data key="updateName" unique="suffix">Test_Staging</data>
+        <data key="updateDescription">Staging description</data>
+        <data key="startDate">+1 minute</data>
+    </entity>
+</entities>

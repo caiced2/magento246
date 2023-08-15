@@ -1,0 +1,68 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+ /**
+  * Copyright © Magento, Inc. All rights reserved.
+  * See COPYING.txt for license details.
+  */
+-->
+<tests xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="urn:magento:mftf:Test/etc/testSchema.xsd">
+    <test name="PageBuilderDynamicBlockVerifyContainerAffordanceTest" extends="PageBuilderVerifyContainerAffordanceTest">
+        <annotations>
+            <features value="PageBuilder"/>
+            <stories value="Affordance"/>
+            <title value="Verify Container Content Types' Affordance with Dynamic Block"/>
+            <description value="Verify that the Container content types have the correct size affordance in admin. Verify that the affordance is not present in admin when rendering Container content types through a Dynamic Block, or when rendering the Container content types on the storefront."/>
+            <severity value="MAJOR"/>
+            <group value="pagebuilder"/>
+            <group value="pagebuilder-affordance"/>
+            <group value="pagebuilder-dynamic-block"/>
+        </annotations>
+        <before>
+            <createData entity="_defaultDynamicBlock" stepKey="createCMSBlock"/>
+            <actionGroup ref="NavigateToCreatedDynamicBlockActionGroup" stepKey="navigateToCreatedCMSBlockPage">
+                <argument name="Banner" value="$$createCMSBlock$$"/>
+            </actionGroup>
+            <actionGroup ref="removeContentTypeFromStageByIndex" stepKey="removeContentTypeFromStageByIndex">
+                <argument name="contentType" value="PageBuilderHtmlContentType"/>
+                <argument name="contentTypeNumber" value="1"/>
+            </actionGroup>
+            <actionGroup ref="confirmRemovalModal" stepKey="confirmRemovalModal"/>
+        </before>
+        <after>
+            <actionGroup ref="DeleteBannerActionGroup" stepKey="deleteCMSBlock">
+                <argument name="bannerName" value="$$createCMSBlock.name$$"/>
+            </actionGroup>
+        </after>
+        <actionGroup ref="saveEditPanelSettings" stepKey="saveEditPanelSettingsColumn1">
+            <argument name="baseContent" value="{{AdminBannerBasicActionSection.Save}}"/>
+        </actionGroup>
+        <actionGroup ref="saveEditPanelSettings" stepKey="saveEditPanelSettingsColumn2">
+            <argument name="baseContent" value="{{AdminBannerBasicActionSection.Save}}"/>
+        </actionGroup>
+        <actionGroup ref="saveEditPanelSettings" stepKey="saveEditPanelSettingsColumn3">
+            <argument name="baseContent" value="{{AdminBannerBasicActionSection.Save}}"/>
+        </actionGroup>
+        <actionGroup ref="saveEditPanelSettings" stepKey="saveEditPanelSettingsColumn4">
+            <argument name="baseContent" value="{{AdminBannerBasicActionSection.Save}}"/>
+        </actionGroup>
+        <actionGroup ref="saveEditPanelSettings" stepKey="saveEditPanelSettings">
+            <argument name="baseContent" value="{{AdminBannerBasicActionSection.Save}}"/>
+        </actionGroup>
+        <actionGroup ref="saveEditPanelSettings" stepKey="saveEditPanelSettings2">
+            <argument name="baseContent" value="{{AdminBannerBasicActionSection.Save}}"/>
+        </actionGroup>
+        <actionGroup ref="SaveAndContinueDynamicBlockActionGroup" stepKey="saveCMSBlock"/>
+        <actionGroup ref="expandPageBuilderPanelMenuSection" stepKey="expandPageBuilderPanelMenuSection3">
+            <argument name="contentType" value="PageBuilderDynamicBlockContentType"/>
+        </actionGroup>
+        <actionGroup ref="dragContentTypeToStage" stepKey="dragBlockToStage">
+            <argument name="contentType" value="PageBuilderDynamicBlockContentType"/>
+        </actionGroup>
+        <actionGroup ref="openPageBuilderEditPanel" stepKey="openPageBuilderEditPanel">
+            <argument name="contentType" value="PageBuilderDynamicBlockContentType"/>
+        </actionGroup>
+        <actionGroup ref="searchAndSelectDynamicBlockInGrid" stepKey="searchBlockInGrid">
+            <argument name="block" value="$$createCMSBlock$$"/>
+        </actionGroup>
+    </test>
+</tests>

@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+ /**
+  * Copyright © Magento, Inc. All rights reserved.
+  * See COPYING.txt for license details.
+  */
+-->
+
+<tests xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xsi:noNamespaceSchemaLocation="urn:magento:mftf:Test/etc/testSchema.xsd">
+    <test name="StorefrontMultipleWishlistMoveAndCopyItemOperationsTest" extends="StorefrontMultipleWishlistMoveAndCopyOperationsTest">
+        <annotations>
+            <features value="MultipleWishlist"/>
+            <stories value="Multiple Wishlist operations"/>
+            <title value="Storefront Multiple Wishlist item operations"/>
+            <description value="Storefront Multiple Wishlist check move and copy item operations"/>
+            <severity value="MAJOR"/>
+            <testCaseId value="MC-38265"/>
+            <useCaseId value="MC-34411"/>
+            <group value="wishlist"/>
+            <group value="multipleWishlist"/>
+        </annotations>
+
+        <remove keyForRemoval="selectProduct"/>
+        <remove keyForRemoval="selectProductAgain"/>
+
+        <actionGroup ref="StorefrontCustomerCopyProductToProvidedWishlistActionGroup" stepKey="copyProductToDefaultWishlist">
+            <argument name="productName" value="$createProduct.name$"/>
+        </actionGroup>
+
+        <actionGroup ref="StorefrontCustomerMoveProductToProvidedWishlistActionGroup" stepKey="moveProductToNewWishlist">
+            <argument name="productName" value="$createProduct.name$"/>
+            <argument name="wishlistName" value="list1"/>
+        </actionGroup>
+    </test>
+</tests>

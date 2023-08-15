@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+ /**
+  * Copyright © Magento, Inc. All rights reserved.
+  * See COPYING.txt for license details.
+  */
+-->
+<tests xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:noNamespaceSchemaLocation="urn:magento:mftf:Test/etc/testSchema.xsd">
+    <test name="PageBuilderDynamicBlockFullScreenCoversEntireScreenTest" extends="PageBuilderFullScreenCoversEntireScreenTest">
+        <annotations>
+            <features value="PageBuilder"/>
+            <stories value="Dynamic Block"/>
+            <title value="Verify that full-screen mode covers entire screen in Dynamic Block"/>
+            <description value="This test is to ensure that the PageBuilder full-screen mode covers the entire screen when opened for Dynamic Block."/>
+            <severity value="AVERAGE"/>
+            <useCaseId value="MC-13782"/>
+            <testCaseId value="MC-15165"/>
+            <group value="pagebuilder"/>
+            <group value="pagebuilder-ee"/>
+            <group value="pagebuilder-dynamic-block"/>
+            <group value="pagebuilder-fullScreen"/>
+        </annotations>
+        <before>
+            <createData entity="_emptyCmsPage" stepKey="createCMSPage" before="createDynamicBlock"/>
+            <createData entity="_defaultDynamicBlock" stepKey="createDynamicBlock" before="loginAsAdmin"/>
+            <actionGroup ref="NavigateToCreatedDynamicBlockActionGroup" stepKey="navigateToAPageWithPageBuilder">
+                <argument name="Banner" value="$$createDynamicBlock$$"/>
+            </actionGroup>
+            <actionGroup ref="switchToPageBuilderStage" stepKey="switchToPageBuilderStageAfterNavigateToDynamicBlock" after="navigateToAPageWithPageBuilder"/>
+            <actionGroup ref="removeContentTypeFromStageByIndex" stepKey="removeHTMLContentType" after="switchToPageBuilderStageAfterNavigateToDynamicBlock">
+                <argument name="contentType" value="PageBuilderHtmlContentType"/>
+                <argument name="contentTypeNumber" value="1"/>
+            </actionGroup>
+            <actionGroup ref="confirmRemovalModal" stepKey="switchToPageBuilderStage"/>
+        </before>
+        <after>
+            <deleteData createDataKey="createCMSPage" stepKey="deleteCMSPage" before="deleteDynamicBlock"/>
+            <actionGroup ref="DeleteBannerActionGroup" stepKey="deleteDynamicBlock" before="logout">
+                <argument name="bannerName" value="$$createDynamicBlock.name$$"/>
+            </actionGroup>
+        </after>
+    </test>
+</tests>

@@ -1,0 +1,32 @@
+<!--
+/**
+ * Copyright © Magento, Inc. All rights reserved.
+ * See COPYING.txt for license details.
+ */
+-->
+<div class="timeline-event-details" render="detailsTmpl"></div>
+<div class="timeline-event" attr="'data-tooltip-trigger': 'update-' + $index">
+    <strong class="timeline-event-title" ko-scope="requestChild('name')">
+        <text args="getLabel($row())"></text>
+    </strong>
+    <div class="timeline-event-info">
+        <div class="timeline-event-summary" ko-scope="requestChild('includes')">
+            <div class="staging-events-campaign-objects-count" text="countItems($row())"></div>
+        </div>
+    </div>
+    <div class="timeline-event-actions">
+        <button type="button"
+                attr="title: $t('To Start')"
+                class="timeline-action _tostart">
+            <span translate="'To Start'"></span>
+        </button>
+        <button type="button"
+                attr="title: $t('To End')"
+                class="timeline-action _toend">
+            <span translate="'To End'"></span>
+        </button>
+    </div>
+    <svg>
+        <use class="timeline-ending" xlink:href="#svg-ending"></use>
+    </svg>
+</div>

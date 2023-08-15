@@ -1,0 +1,72 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+ /**
+  * Copyright © Magento, Inc. All rights reserved.
+  * See COPYING.txt for license details.
+  */
+-->
+
+<tests xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:noNamespaceSchemaLocation="urn:magento:mftf:Test/etc/testSchema.xsd">
+    <test name="CreateNewAccountAfterCheckoutTest">
+        <annotations>
+            <features value="Customer"/>
+            <stories value="MAGETWO-91519 - Custom address attributes not stored when creating new account after checkout"/>
+            <title value="Creation of new account after checkout with added required customer's custom attribute"/>
+            <description value="Creation of new account after checkout with added required customer's custom attribute"/>
+            <severity value="CRITICAL"/>
+            <testCaseId value="MAGETWO-93749"/>
+            <group value="customer"/>
+            <group value="checkout"/>
+        </annotations>
+
+        <before>
+            <!--Login as admin-->
+            <actionGroup ref="AdminLoginActionGroup" stepKey="LoginAsAdmin"/>
+            <!--Create product-->
+            <createData stepKey="category" entity="SimpleSubCategory"/>
+            <createData stepKey="product" entity="SimpleProduct">
+                <requiredEntity createDataKey="category"/>
+            </createData>
+            <!--Create new attribute-->
+            <actionGroup ref="GoToCustomerAddress" stepKey="GoToCustomerAddress"/>
+            <actionGroup ref="AdminCreateNewAttribute" stepKey="AdminCreateNewAttribute"/>
+        </before>
+
+        <!--Add product to cart-->
+        <amOnPage url="/$$product.custom_attributes[url_key]$$.html" stepKey="GoToProduct"/>
+        <actionGroup ref="StorefrontAddToCartCustomOptionsProductPageActionGroup" stepKey="AddProductToCard">
+            <argument name="productName" value="$$product.name$$"/>
+        </actionGroup>
+        <!--Proceed to checkout-->
+        <actionGroup ref="GoToCheckoutFromMinicartActionGroup" stepKey="GoToCheckoutFromMinicartActionGroup"/>
+        <actionGroup ref="GuestCheckoutFillingShippingSectionCustomerAddress" stepKey="fillOrderShippingInfo">
+            <argument name="customerVar" value="CustomerData"/>
+            <argument name="customerAddressVar" value="US_Address_TX"/>
+        </actionGroup>
+        <!-- Checkout select Check/Money Order payment -->
+        <actionGroup ref="CheckoutSelectCheckMoneyOrderPaymentActionGroup" stepKey="selectCheckMoneyPayment"/>
+        <!--Place order -->
+        <actionGroup ref="CheckoutPlaceOrderActionGroup" stepKey="placeOrder">
+            <argument name="orderNumberMessage" value="CONST.successGuestCheckoutOrderNumberMessage" />
+            <argument name="emailYouMessage" value="CONST.successCheckoutEmailYouMessage"/>
+        </actionGroup>
+        <!--Create account-->
+        <click selector="{{CheckoutSuccessRegisterSection.createAccountButton}}" stepKey="clickToCreateAccount"/>
+        <fillField selector="{{StorefrontCustomerCreateFormSection.passwordField}}" userInput="{{CustomerData.password}}" stepKey="TypePassword"/>
+        <fillField selector="{{StorefrontCustomerCreateFormSection.confirmPasswordField}}" userInput="{{CustomerData.password}}" stepKey="TypeConfirmationPassword"/>
+        <click selector="{{StorefrontCustomerCreateFormSection.createAccountButton}}" stepKey="clickOnCreateAccount"/>
+        <waitForPageLoad stepKey="waitForAccountCreated"/>
+        <!--Account is created-->
+        <see userInput="Thank you for registering" stepKey="verifyAccountCreated"/>
+
+        <after>
+            <amOnPage url="{{AdminLoginPage.url}}" stepKey="GoToBackend"/>
+            <actionGroup ref="GoToCustomerAddress" stepKey="GoToCustomerAddress1"/>
+            <actionGroup ref="AdminDeleteAttribute" stepKey="AdminDeleteAttribute"/>
+            <deleteData stepKey="deleteCategory" createDataKey="category"/>
+            <deleteData stepKey="deleteProduct" createDataKey="product"/>
+            <actionGroup ref="AdminLogoutActionGroup" stepKey="logout"/>
+        </after>
+    </test>
+</tests>

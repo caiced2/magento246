@@ -1,0 +1,79 @@
+<?php
+/**
+ * Copyright © Magento, Inc. All rights reserved.
+ * See COPYING.txt for license details.
+ */
+
+// phpcs:disable Magento2.Files.LineLength
+?>
+<?php
+/**
+ * @see \Magento\AdvancedCheckout\Block\Adminhtml\Manage
+ */
+?>
+<?php
+/**
+ * @var $block \Magento\AdvancedCheckout\Block\Adminhtml\Manage
+ * @var \Magento\Framework\View\Helper\SecureHtmlRenderer $secureRenderer
+ */
+?>
+
+<?= $block->getChildHtml('checkout.js') ?>
+<?php
+$orderDataJson = $block->getOrderDataJson();
+$loadBlockUrl = $block->escapeJs($block->getLoadBlockUrl());
+$currencySymbol = $block->escapeJs($block->getCurrencySymbol($block->getCurrentCurrencyCode()));
+?>
+<?php $scriptString = <<<script
+    require([
+        "Magento_AdvancedCheckout/shopping_cart"
+    ], function(){
+        checkoutObj = new AdminCheckout({$orderDataJson});
+        checkoutObj.setLoadBaseUrl('{$loadBlockUrl}');
+        checkoutObj.setCurrencySymbol('{$currencySymbol}');
+    });
+script;
+?>
+<?= /* @noEscape */ $secureRenderer->renderTag('script', [], $scriptString, false);?>
+
+<?= $block->getChildHtml('checkout.store.switcher') ?>
+
+<div id="checkout_message">
+    <?= $block->getChildHtml('checkout.message') ?>
+</div>
+
+<div class="admin__page-section shopping-cart-items">
+    <div class="admin__page-section-title">
+        <strong class="title"><?= $block->escapeHtml(__('Shopping Cart Items')) ?></strong>
+    </div>
+
+    <div id="checkout_items" class="admin__table-wrapper">
+        <?= $block->getChildHtml('checkout.items') ?>
+    </div>
+
+    <div class="order-discounts">
+        <?= $block->getChildHtml('checkout.form_coupon') ?>
+
+        <div class="actions">
+            <?= $block->getChildHtml('update_button') ?>
+            <?= $block->getChildHtml('empty_customer_cart_button') ?>
+        </div>
+    </div>
+</div>
+
+
+<div id="checkout_errors" class="checkout-errors">
+    <?= $block->getChildHtml('errors') ?>
+</div>
+
+<div id="products_search" class="products-search order-search-items">
+    <div class="actions">
+        <?= $block->getChildHtml('addto_cart_button', false) ?>
+    </div>
+    <div id="products_search_accordion">
+        <?= $block->getChildHtml('checkout.accordion') ?>
+    </div>
+    <div class="actions">
+        <?= $block->getChildHtml('addto_cart_button', false) ?>
+    </div>
+</div>

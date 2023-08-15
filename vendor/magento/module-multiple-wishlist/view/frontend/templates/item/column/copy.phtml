@@ -1,0 +1,57 @@
+<?php
+/**
+ * Copyright © Magento, Inc. All rights reserved.
+ * See COPYING.txt for license details.
+ */
+
+// phpcs:disable Magento2.Templates.ThisInTemplate
+?>
+<?php
+    $item = $block->getItem();
+    $wishlists = $block->getWishlists();
+?>
+<?php if ($block->isMultipleEnabled() && (count($wishlists) || $block->canCreateWishlists($wishlists))) : ?>
+    <div class="split button"
+         data-wishlist-copy='{"copySelectedUrl":"<?= $block->escapeUrl($block->getCopySelectedUrl()) ?>", "copyItemUrl":"<?= $block->escapeUrl($block->getCopyItemUrl()) ?>"}'>
+        <div class="wishlist-dropdown addto-wishlist">
+            <span class="action toggle changeMagento2.Templates.ThisInTemplate"
+                  data-mage-init='{"dropdown":{}}'
+                  data-toggle="dropdown"
+                  data-trigger-keypress-button="true">
+                <span><?= $block->escapeHtml(__('Add to:')) ?></span>
+            </span>
+            <ul class="items dropdown" data-target="dropdown">
+                <?php foreach ($wishlists as $wishlist) : ?>
+                    <li class="item">
+                        <span role="button"
+                              tabindex="0"
+                              data-action-keypress="true"
+                              data-wishlist-copy-item='{"itemId":"<?= $block->escapeHtmlAttr($item->getId()) ?>", "wishlistId":"<?= $block->escapeHtmlAttr($wishlist->getId()) ?>"}'>
+                            <?= $block->escapeHtml($wishlist->getName()) ?>
+                        </span>
+                    </li>
+                <?php endforeach;?>
+                <?php if ($block->canCreateWishlists($wishlists)) : ?>
+                    <li class="item">
+                        <span role="button"
+                              tabindex="0"
+                              class="action new"
+                              data-action-keypress="true"
+                              data-wishlist-copy-item='{"itemId":"<?= $block->escapeHtmlAttr($item->getId()) ?>", "new":true}'>
+                            <span><?= $block->escapeHtml(__('Create New Wish List')) ?></span>
+                        </span>
+                    </li>
+                <?php endif;?>
+            </ul>
+        </div>
+    </div>
+<?php else : ?>
+    <a href="#"
+       class="action towishlist"
+       data-post='<?= /* @noEscape */ $this->helper(\Magento\Wishlist\Helper\Data::class)->getAddParams($item) ?>'
+       data-action="add-to-wishlist"
+       role="button"
+    >
+        <span><?= $block->escapeHtml(__('Wishlist')) ?></span>
+    </a>
+<?php endif; ?>

@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+ /**
+  * Copyright © Magento, Inc. All rights reserved.
+  * See COPYING.txt for license details.
+  */
+-->
+
+<actionGroups xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="urn:magento:mftf:Test/etc/actionGroupSchema.xsd">
+    <actionGroup name="StorefrontVerifyCustomerShippingAddressActionGroup">
+        <annotations>
+            <description>Verifies shipping address is present on the shipping page.</description>
+        </annotations>
+        <arguments>
+            <argument name="address"/>
+            <argument name="selector"/>
+        </arguments>
+
+        <see selector="{{selector}}" userInput="{{address.firstname}} {{address.lastname}}" stepKey="seeFirstnameAndLastname"/>
+        <see selector="{{selector}}" userInput="{{address.street[0]}}" stepKey="seeStreet"/>
+        <see selector="{{selector}}" userInput="{{address.city}}" stepKey="seeCity"/>
+        <see selector="{{selector}}" userInput="{{address.postcode}}" stepKey="seePostcode"/>
+        <see selector="{{selector}}" userInput="{{address.country}}" stepKey="seeCountry"/>
+    </actionGroup>
+</actionGroups>

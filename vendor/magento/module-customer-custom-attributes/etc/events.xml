@@ -1,0 +1,78 @@
+<?xml version="1.0"?>
+<!--
+/**
+ * Copyright © Magento, Inc. All rights reserved.
+ * See COPYING.txt for license details.
+ */
+-->
+<config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="urn:magento:framework:Event/etc/events.xsd">
+    <event name="sales_quote_load_after">
+        <observer name="magento_customercustomattributes" instance="Magento\CustomerCustomAttributes\Observer\SalesQuoteAfterLoad" />
+    </event>
+    <event name="sales_quote_address_collection_load_after">
+        <observer name="magento_customercustomattributes" instance="Magento\CustomerCustomAttributes\Observer\SalesQuoteAddressCollectionAfterLoad" />
+    </event>
+    <event name="sales_quote_save_after">
+        <observer name="magento_customercustomattributes" instance="Magento\CustomerCustomAttributes\Observer\SalesQuoteAfterSave" />
+    </event>
+    <event name="sales_quote_address_save_after">
+        <observer name="magento_customercustomattributes" instance="Magento\CustomerCustomAttributes\Observer\SalesQuoteAddressAfterSave" />
+    </event>
+    <event name="sales_order_load_after">
+        <observer name="magento_customercustomattributes" instance="Magento\CustomerCustomAttributes\Observer\SalesOrderAfterLoad" />
+    </event>
+    <event name="sales_order_address_load_after">
+        <observer name="magento_customercustomattributes" instance="Magento\CustomerCustomAttributes\Observer\SalesOrderAddressAfterLoad" />
+    </event>
+    <event name="sales_order_address_collection_load_after">
+        <observer name="magento_customercustomattributes" instance="Magento\CustomerCustomAttributes\Observer\SalesOrderAddressCollectionAfterLoad" />
+    </event>
+    <event name="sales_order_save_after">
+        <observer name="magento_customercustomattributes" instance="Magento\CustomerCustomAttributes\Observer\SalesOrderAfterSave" />
+    </event>
+    <event name="magento_customercustomattributes_attribute_save">
+        <observer name="magento_customercustomattributes" instance="Magento\CustomerCustomAttributes\Observer\EnterpriseCustomerAttributeSave" />
+    </event>
+    <event name="magento_customercustomattributes_attribute_delete">
+        <observer name="magento_customercustomattributes" instance="Magento\CustomerCustomAttributes\Observer\EnterpriseCustomerAttributeDelete" />
+    </event>
+    <event name="customer_entity_attribute_save_commit_after">
+        <observer name="magento_customercustomattributes" instance="Magento\CustomerCustomAttributes\Observer\EnterpriseCustomerAddressAttributeSave" />
+    </event>
+    <event name="customer_entity_attribute_delete_commit_after">
+        <observer name="magento_customercustomattributes" instance="Magento\CustomerCustomAttributes\Observer\EnterpriseCustomerAddressAttributeDelete" />
+    </event>
+    <event name="core_copy_fieldset_sales_convert_quote_to_order">
+        <observer name="magento_customercustomattributes" instance="Magento\CustomerCustomAttributes\Observer\CoreCopyFieldsetSalesConvertQuoteToOrder" />
+    </event>
+    <event name="sales_model_service_quote_submit_before">
+        <observer name="magento_customercustomattributes" instance="Magento\CustomerCustomAttributes\Observer\CoreCopyDataQuoteToOrder" />
+    </event>
+    <event name="core_copy_fieldset_sales_convert_quote_address_to_order_address">
+        <observer name="magento_customercustomattributes" instance="Magento\CustomerCustomAttributes\Observer\CoreCopyFieldsetSalesConvertQuoteAddressToOrderAddress" />
+    </event>
+    <event name="core_copy_fieldset_sales_copy_order_to_edit">
+        <observer name="magento_customercustomattributes" instance="Magento\CustomerCustomAttributes\Observer\CoreCopyFieldsetSalesCopyOrderToEdit" />
+    </event>
+    <event name="core_copy_fieldset_sales_copy_order_billing_address_to_order">
+        <observer name="magento_customercustomattributes" instance="Magento\CustomerCustomAttributes\Observer\CoreCopyFieldsetSalesCopyOrderBillingAddressToOrder" />
+    </event>
+    <event name="core_copy_fieldset_sales_copy_order_shipping_address_to_order">
+        <observer name="magento_customercustomattributes" instance="Magento\CustomerCustomAttributes\Observer\CoreCopyFieldsetSalesCopyOrderShippingAddressToOrder" />
+    </event>
+    <event name="core_copy_fieldset_customer_account_to_quote">
+        <observer name="magento_customercustomattributes" instance="Magento\CustomerCustomAttributes\Observer\CoreCopyFieldsetCustomerAccountToQuote" />
+    </event>
+    <event name="core_copy_fieldset_customer_address_to_quote_address">
+        <observer name="magento_customercustomattributes" instance="Magento\CustomerCustomAttributes\Observer\CoreCopyFieldsetCustomerAddressToQuoteAddress" />
+    </event>
+    <event name="core_copy_fieldset_checkout_onepage_quote_to_customer">
+        <observer name="magento_customercustomattributes" instance="Magento\CustomerCustomAttributes\Observer\CoreCopyFieldsetCheckoutOnepageQuoteToCustomer" />
+    </event>
+    <event name="core_copy_fieldset_sales_convert_quote_address_to_customer_address">
+        <observer name="magento_customercustomattributes" instance="Magento\CustomerCustomAttributes\Observer\CoreCopyFieldsetQuoteAddressToCustomerAddress" />
+    </event>
+    <event name="core_copy_fieldset_order_address_to_customer_address">
+        <observer name="magento_customercustomattributes" instance="Magento\CustomerCustomAttributes\Observer\CoreCopyFieldsetOrderAddressToCustomerAddress" />
+    </event>
+</config>

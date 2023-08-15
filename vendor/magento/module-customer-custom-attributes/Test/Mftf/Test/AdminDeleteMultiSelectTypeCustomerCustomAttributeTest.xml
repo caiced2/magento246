@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+ /**
+  * Copyright © Magento, Inc. All rights reserved.
+  * See COPYING.txt for license details.
+  */
+-->
+
+<tests xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xsi:noNamespaceSchemaLocation="urn:magento:mftf:Test/etc/testSchema.xsd">
+    <test name="AdminDeleteMultiSelectTypeCustomerCustomAttributeTest">
+        <annotations>
+            <group value="Customer Custom Attribute"/>
+            <stories value="Delete Customer Attribute"/>
+            <title value="Delete multi select type customer custom attribute"/>
+            <description value="Delete multi select type customer custom attribute and verify in customer attribute grid"/>
+            <severity value="MAJOR"/>
+            <testCaseId value="MC-14571"/>
+            <group value="mtf_migrated"/>
+            <group value="pr_exclude"/>
+        </annotations>
+
+        <before>
+            <actionGroup ref="AdminLoginActionGroup" stepKey="loginAsAdmin"/>
+            <!-- Navigate to Stores -> Customers and click 'Add New Attribute' button and create customer Text Field attribute -->
+            <actionGroup ref="AdminCreateCustomerCustomAttribute" stepKey="createAttribute">
+                <argument name="customerAttribute" value="AttributeMultipleSelectData"/>
+            </actionGroup>
+            <magentoCron groups="index" stepKey="reindex"/>
+        </before>
+        <after>
+            <magentoCron groups="index" stepKey="reindex"/>
+            <actionGroup ref="AdminLogoutActionGroup" stepKey="logout"/>
+        </after>
+
+        <!-- Select and Delete created Customer Attribute -->
+        <actionGroup ref="AdminDeleteCustomerCustomAttributeActionGroup" stepKey="delete">
+            <argument name="attributeLabel" value="{{AttributeMultipleSelectData.label}}"/>
+        </actionGroup>
+
+        <!-- Assert deleted attribute is not present in grid -->
+        <actionGroup ref="AssertDeletedCustomerAttributeNotInGridActionGroup" stepKey="assertCustomerAttributeNotInGrid">
+            <argument name="attributeLabel" value="{{AttributeMultipleSelectData.label}}"/>
+        </actionGroup>
+    </test>
+</tests>

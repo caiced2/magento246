@@ -1,0 +1,58 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+ /**
+  * Copyright © Magento, Inc. All rights reserved.
+  * See COPYING.txt for license details.
+  */
+-->
+
+<tests xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xsi:noNamespaceSchemaLocation="urn:magento:mftf:Test/etc/testSchema.xsd">
+    <test name="AdminStagingDashboardProvideAbilityToViewEditForUpdatesWithCartPriceRuleTest">
+        <annotations>
+            <stories value="[Staging] Cart Price Rule - Staging Dashboard provide ability to View/Edit for Updates with Cart Price Rule"/>
+            <title value="[Staging] Cart Price Rule - Staging Dashboard provide ability to View/Edit for Updates with Cart Price Rule"/>
+            <description value="[Staging] Cart Price Rule - Staging Dashboard provide ability to View/Edit for Updates with Cart Price Rule"/>
+            <severity value="BLOCKER"/>
+            <testCaseId value="MAGETWO-49366"/>
+            <group value="salesRuleStaging"/>
+        </annotations>
+
+        <before>
+            <actionGroup ref="AdminLoginActionGroup" stepKey="loginAsAdmin"/>
+            <!-- Create a cart price rule -->
+            <actionGroup ref="AdminCreateCartPriceRuleActionGroup" stepKey="createCartPriceRule">
+                <argument name="ruleName" value="TestSalesRule"/>
+            </actionGroup>
+        </before>
+
+        <after>
+            <!-- Delete the cart price rule -->
+            <actionGroup ref="DeleteCartPriceRuleByName" stepKey="deleteCartPriceRule">
+                <argument name="ruleName" value="{{TestSalesRule.name}}"/>
+            </actionGroup>
+            <actionGroup ref="StagingDashboardClearFiltersActionGroup" stepKey="clearStagingFilters"/>
+            <actionGroup ref="AdminLogoutActionGroup" stepKey="logout"/>
+        </after>
+        <!-- Create New Update For Rule  -->
+        <actionGroup ref="CreateSalesRulePermanentUpdateActionGroup" stepKey="createNewUpdateForRule">
+            <argument name="ruleName" value="TestSalesRule"/>
+            <argument name="schedule" value="Update006"/>
+        </actionGroup>
+
+        <!--Open Content Staging Dashboard -->
+        <actionGroup ref="changeStagingView" stepKey="changeDashboardView">
+            <argument name="view" value="timeline"/>
+        </actionGroup>
+        <actionGroup ref="StagingDashboardClearFiltersActionGroup" stepKey="clearStagingFiltersBeforeSearch"/>
+        <selectOption selector="{{AdminContentStagingDashboardSection.stagingViewTypeSelect}}" userInput="Timeline" stepKey="selectTimelineMode"/>
+        <fillField selector="{{AdminAssignToExistingUpdateSection.searchStagingName}}" userInput="{{Update006.name}}" stepKey="fillSearchStagingName5"/>
+        <click selector="{{AdminAssignToExistingUpdateSection.submitSearch}}" stepKey="clickSubmitSearch5"/>
+        <click selector="{{AdminContentStagingDashboardSection.timeLineEventParameterized(Update006.name)}}" stepKey="clickTimelineEvent2"/>
+        <waitForElementVisible selector="{{AdminContentStagingDashboardSection.stagingUpdatePopupTitle(Update006.name)}}" stepKey="waitForUpdatePopupAppears"/>
+        <click selector="{{AdminContentStagingDashboardSection.stagingEventsActions(Update006.name, Update006.viewedit)}}" stepKey="seePreview4"/>
+        <seeInField selector="{{AdminContentStagingUpdateSection.updateName}}" userInput="{{Update006.name}}" stepKey="seeUpdateName"/>
+        <seeInField selector="{{AdminContentStagingUpdateSection.updateDescription}}" userInput="{{Update006.description}}" stepKey="seeDescription"/>
+        <seeInField selector="{{AdminContentStagingUpdateSection.updateStartDate}}" userInput="{{Update006.startDate}}" stepKey="seeStartDate"/>
+    </test>
+</tests>

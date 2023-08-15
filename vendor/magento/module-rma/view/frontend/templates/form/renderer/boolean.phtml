@@ -1,0 +1,31 @@
+<?php
+/**
+ * Copyright © Magento, Inc. All rights reserved.
+ * See COPYING.txt for license details.
+ */
+//phpcs:disable Squiz.ControlStructures.ControlSignature.NewlineAfterOpenBrace
+//phpcs:disable Squiz.WhiteSpace.ScopeClosingBrace.ContentBefore
+//phpcs:disable Magento2.Files.LineLength.MaxExceeded
+?>
+<?php
+/* @var $block \Magento\CustomAttributeManagement\Block\Form\Renderer\Boolean */
+?>
+<?php
+$fieldCssClass = 'field field-' . $block->getHtmlId();
+$fieldCssClass .= $block->isRequired() ? ' required' : '';
+?>
+<div class="<?= $block->escapeHtmlAttr($fieldCssClass) ?>">
+    <label class="label" for="<?= $block->escapeHtmlAttr($block->getHtmlId()) ?>">
+        <span><?= $block->escapeHtml($block->getLabel()) ?></span>
+    </label>
+    <div class="control">
+        <select id="items:<?= $block->escapeHtmlAttr($block->getHtmlId()) ?><%- data._index_ %>" name="items[<%- data._index_ %>][<?= $block->escapeHtmlAttr($block->getFieldName()) ?>]"<?php if ($block->getHtmlClass()) : ?> class="select <?= $block->escapeHtmlAttr($block->getHtmlClass()) ?>"<?php endif;?>>
+            <?php foreach ($block->getOptions() as $option) :?>
+                <option value="<?= $block->escapeHtmlAttr($option['value']) ?>"<?php if ($option['value'] == $block->getValue()) : ?> selected="selected"<?php endif;?>><?= $block->escapeHtml($option['label']) ?></option>
+            <?php endforeach;?>
+        </select>
+        <?php if ($_message = $block->getAdditionalDescription()) : ?>
+            <div class="note"><?= $block->escapeHtml($_message) ?></div>
+        <?php endif; ?>
+    </div>
+</div>

@@ -1,0 +1,86 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+ /**
+  * Copyright © Magento, Inc. All rights reserved.
+  * See COPYING.txt for license details.
+  */
+-->
+
+<tests xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:noNamespaceSchemaLocation="urn:magento:mftf:Test/etc/testSchema.xsd">
+    <test name="UnassignProductsFromCategoryBySearchTest">
+        <annotations>
+            <features value="VisualMerchandiser"/>
+            <stories value="[Visual Merchandiser] Assign/Unassign products to/from a category"/>
+            <title value="[Visual Merchandiser] Admin should be able to unassign products from category by search"/>
+            <description value="[Visual Merchandiser] Admin should be able to unassign products from category by search"/>
+            <severity value="CRITICAL"/>
+            <testCaseId value="MC-174"/>
+            <group value="VisualMerchandiser"/>
+        </annotations>
+        <before>
+            <actionGroup ref="AdminLoginActionGroup" stepKey="login"/>
+            <createData entity="_defaultCategory" stepKey="category"/>
+            <createData entity="ApiSimpleProduct" stepKey="product1">
+                <requiredEntity createDataKey="category"/>
+            </createData>
+            <createData entity="ApiSimpleProduct" stepKey="product2">
+                <requiredEntity createDataKey="category"/>
+            </createData>
+            <createData entity="ApiSimpleProduct" stepKey="product3">
+                <requiredEntity createDataKey="category"/>
+            </createData>
+            <createData entity="ApiSimpleProduct" stepKey="product4">
+                <requiredEntity createDataKey="category"/>
+            </createData>
+            <createData entity="ApiSimpleProduct" stepKey="product5">
+                <requiredEntity createDataKey="category"/>
+            </createData>
+            <magentoCron stepKey="runIndexCronJobs" groups="index"/>
+        </before>
+        <after>
+            <actionGroup ref="AdminLogoutActionGroup" stepKey="logout"/>
+            <deleteData createDataKey="product1" stepKey="deleteProduct1"/>
+            <deleteData createDataKey="product2" stepKey="deleteProduct2"/>
+            <deleteData createDataKey="product3" stepKey="deleteProduct3"/>
+            <deleteData createDataKey="product4" stepKey="deleteProduct4"/>
+            <deleteData createDataKey="product5" stepKey="deleteProduct5"/>
+            <deleteData createDataKey="category" stepKey="deleteCategory"/>
+        </after>
+
+        <!-- Go to admin category page -->
+        <actionGroup ref="GoToAdminCategoryPageByIdActionGroup" stepKey="goToAdminCategoryPage">
+            <argument name="id" value="$$category.id$$"/>
+        </actionGroup>
+        <actionGroup ref="OpenProductsInCategorySectionActionGroup" stepKey="OpenProductsInCategorySection"/>
+        <!-- Unassign product by search -->
+        <actionGroup ref="GoToAddProductsBySearchActionGroup" stepKey="GoToAddProductsBySearch"/>
+        <see selector="{{AdminCategoryAddProductsModalSection.gridHeaderProductsTotal}}" userInput="5 selected" stepKey="see5Selected"/>
+        <actionGroup ref="SearchAProductForCategoryByKeywordActionGroup" stepKey="SearchAProductForCategoryByKeyword">
+            <argument name="keyword" value="$$product3.sku$$"/>
+        </actionGroup>
+        <see selector="{{AdminCategoryAddProductsModalSection.gridHeaderProductsTotal}}" userInput="1 records found" stepKey="see1Found"/>
+        <checkOption selector="{{AdminCategoryAddProductsModalSection.gridRowAssignToggle('1')}}" stepKey="clickToUnassign"/>
+        <click selector="{{AdminCategoryAddProductsModalSection.saveClose}}" stepKey="clickSaveClose"/>
+        <actionGroup ref="OpenProductsInCategorySectionActionGroup" stepKey="OpenProductsInCategorySection2"/>
+        <actionGroup ref="SwitchToGridModeProductInCategoryActionGroup" stepKey="switchToGrid"/>
+        <!-- Don't see product3 in category product grid -->
+        <see selector="{{AdminCategoryProductsGridSection.nameColumn}}" userInput="$$product1.name$$" stepKey="seeProduct1"/>
+        <see selector="{{AdminCategoryProductsGridSection.nameColumn}}" userInput="$$product2.name$$" stepKey="seeProduct2"/>
+        <dontSee selector="{{AdminCategoryProductsGridSection.nameColumn}}" userInput="$$product3.name$$" stepKey="dontSeeProduct3"/>
+        <see selector="{{AdminCategoryProductsGridSection.nameColumn}}" userInput="$$product4.name$$" stepKey="seeProduct4"/>
+        <see selector="{{AdminCategoryProductsGridSection.nameColumn}}" userInput="$$product5.name$$" stepKey="seeProduct5"/>
+        <!-- Save category and assert success message -->
+        <click selector="{{AdminCategoryMainActionsSection.SaveButton}}" stepKey="saveCategoryWithProducts"/>
+        <seeElement selector="{{AdminCategoryMessagesSection.SuccessMessage}}" stepKey="seeCategorySaveSuccess"/>
+        <!-- Go to storefront category page -->
+        <amOnPage url="{{StorefrontCategoryPage.url($$category.custom_attributes[url_key]$$)}}" stepKey="onCategoryPage"/>
+        <waitForPageLoad stepKey="waitForPageLoad"/>
+        <!-- Assert product3 not in storefront category page -->
+        <seeElement selector="{{StorefrontCategoryProductSection.ProductTitleByName($$product1.name$$)}}" stepKey="seeProduct12"/>
+        <seeElement selector="{{StorefrontCategoryProductSection.ProductTitleByName($$product2.name$$)}}" stepKey="seeProduct22"/>
+        <dontSeeElement selector="{{StorefrontCategoryProductSection.ProductTitleByName($$product3.name$$)}}" stepKey="dontSeeProduct32"/>
+        <seeElement selector="{{StorefrontCategoryProductSection.ProductTitleByName($$product4.name$$)}}" stepKey="seeProduct42"/>
+        <seeElement selector="{{StorefrontCategoryProductSection.ProductTitleByName($$product5.name$$)}}" stepKey="seeProduct52"/>
+    </test>
+</tests>

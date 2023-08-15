@@ -1,0 +1,66 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+ /**
+  * Copyright © Magento, Inc. All rights reserved.
+  * See COPYING.txt for license details.
+  */
+-->
+<tests xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:noNamespaceSchemaLocation="urn:magento:mftf:Test/etc/testSchema.xsd">
+    <test name="PageBuilderScheduleUpdateVerifyCanEditContentTypesFromOnClickOptionMenusTest" extends="PageBuilderCatalogProductVerifyCanEditContentTypesFromOnClickOptionMenusTest">
+        <annotations>
+            <features value="PageBuilder"/>
+            <stories value="Schedule Update - CMS Page"/>
+            <title value="Verify that user can edit content types from on-click option menus from Schedule Update"/>
+            <description value="This test is intended to ensure that users can edit content types from the on-click option menus within the PageBuilder stage for Schedule Update."/>
+            <severity value="BLOCKER"/>
+            <useCaseId value="MC-5773"/>
+            <testCaseId value="MC-13851"/>
+            <group value="pagebuilder"/>
+            <group value="pagebuilder-ee"/>
+            <group value="pagebuilder-staging"/>
+            <group value="pagebuilder-cms-page"/>
+            <group value="pagebuilder-slide"/>
+            <group value="pagebuilder-edit"/>
+        </annotations>
+        <before>
+            <createData entity="_emptyCmsPage" stepKey="createCMSPage" before="createPreReqCategory"/>
+            <comment userInput="---merging to remove step---" stepKey="createPreReqCategory"/>
+            <comment userInput="---merging to remove step---" stepKey="createProduct"/>
+            <actionGroup ref="navigateToCMSPage" stepKey="navigateToCreatedProductEditPage">
+                <argument name="CMSPage" value="$$createCMSPage$$"/>
+            </actionGroup>
+            <comment userInput="---merging to remove step---" stepKey="expandAdminProductSection"/>
+            <comment userInput="---merging to remove step---" stepKey="openPageBuilderForDescription"/>
+            <comment userInput="Create Schedule New Update" stepKey="commentCreateScheduleNewUpdate" after="openPageBuilderForDescription"/>
+            <actionGroup ref="navigateToStagingSlideout" stepKey="navigateToStagingSlideout" after="commentCreateScheduleNewUpdate"/>
+            <actionGroup ref="switchToPageBuilderStage" stepKey="switchToPageBuilderStage" after="navigateToStagingSlideout">
+                <argument name="sectionSelector" value="{{AdminStagingSlideOutSection.contentTab}}"/>
+                <argument name="sectionDependentSelector" value="{{AdminStagingSlideOutSection.stagingContentTab}}"/>
+            </actionGroup>
+        </before>
+        <after>
+            <deleteData createDataKey="createCMSPage" stepKey="deleteCreatedProduct"/>
+            <comment userInput="---merging to remove step---" stepKey="deleteCreatedCategory"/>
+            <comment userInput="---merging to remove step---" stepKey="NavigateToAndResetProductGridToDefaultView"/>
+        </after>
+        <!-- Saving Schedule Update -->
+        <comment userInput="Saving Schedule Update" stepKey="commentSaveProduct"/>
+        <actionGroup ref="createAndSaveScheduleUpdateOneDayInFuture" stepKey="saveProduct">
+            <argument name="stagingUpdate" value="_defaultStaging"/>
+        </actionGroup>
+        <actionGroup ref="openEditFormForStagingSlideOut" stepKey="expandAdminProductSection">
+            <argument name="schedule" value="_defaultStaging"/>
+        </actionGroup>
+        <actionGroup ref="switchToPageBuilderStage" stepKey="openPageBuilderForDescription">
+            <argument name="sectionSelector" value="{{AdminStagingSlideOutSection.contentTab}}"/>
+            <argument name="sectionDependentSelector" value="{{AdminStagingSlideOutSection.stagingContentTab}}"/>
+        </actionGroup>
+        <actionGroup ref="closeEditPanelSettings" stepKey="closeEditPanelSettings" after="seeBackgroundColorOnEditPanel"/>
+        <!-- Validate staging preview -->
+        <comment userInput="Validate staging preview" stepKey="commentValidateStorefront"/>
+        <actionGroup ref="openPreviewForScheduledUpdateFromSlideOut" stepKey="navigateToProductStorefront"/>
+        <actionGroup ref="exitPageBuilderFullScreen" stepKey="exitPageBuilderFullScreen2" before="navigateToProductStorefront"/>
+        <comment userInput="---merging to remove step---" stepKey="scrollToProductDescription"/>
+    </test>
+</tests>

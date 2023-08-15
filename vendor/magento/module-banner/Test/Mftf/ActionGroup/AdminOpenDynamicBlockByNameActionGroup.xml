@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+ /**
+  * Copyright © Magento, Inc. All rights reserved.
+  * See COPYING.txt for license details.
+  */
+-->
+<actionGroups xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+              xsi:noNamespaceSchemaLocation="urn:magento:mftf:Test/etc/actionGroupSchema.xsd">
+    <actionGroup name="AdminOpenDynamicBlockByNameActionGroup" extends="AdminFilterDynamicBlockGridByNameActionGroup">
+        <annotations>
+            <description>Navigate to created Dynamic block page by click row in table which contains created block name</description>
+        </annotations>
+        <amOnPage url="{{AdminDynamicBlockGridPage.url}}" before="clickResetFilter" stepKey="navigateToDynamicBlocksGrid"/>
+        <waitForPageLoad after="navigateToDynamicBlocksGrid" stepKey="waitForPageLoad"/>
+        <click selector="{{AdminDataGridTableSection.row('1')}}" stepKey="clickDynamicBlockName"/>
+        <waitForPageLoad stepKey="waitForBlockPageLoad"/>
+        <seeInTitle userInput="{{dynamicBlockName}}" stepKey="assertDynamicBlockNameTitle"/>
+    </actionGroup>
+</actionGroups>

@@ -1,0 +1,34 @@
+<?php
+/**
+ * Copyright © Magento, Inc. All rights reserved.
+ * See COPYING.txt for license details.
+ */
+
+// phpcs:disable Magento2.Files.LineLength.MaxExceeded
+?>
+<?php if ($block->getEnabled() && $block->getItem()) : ?>
+<script id="gift-registry-billing" type="text/x-magento-template">
+    <div class="field choice">
+        <input name="billing[use_for_shipping]"
+               id="billing:use_gift_registry_address"
+               value="2"
+               class="radio"
+               type="radio"
+        >
+        <label for="billing:use_gift_registry_address" class="label"><span><?= $block->escapeJs($block->escapeHtml(__('Ship to registrant\'s address'))) ?></span></label>
+    </div>
+</script>
+
+<script id="gift-registry-shipping" type="text/x-magento-template">
+    <div class="field choice">
+        <input type="checkbox"
+               title="<?= $block->escapeJs($block->escapeHtmlAttr(__('Use the gift registry shipping address'))) ?>"
+               class="checkbox"
+               value="<?= /* @noEscape */ $block->getAddressIdPrefix() ?><?= $block->escapeHtmlAttr($block->getItem()) ?>"
+               id="use_gr_address"
+               name="shipping_address_id"
+        />
+        <label for="use_gr_address" class="label"><span><?= $block->escapeHtml(__('Use the gift registry shipping address')) ?></span></label>
+    </div>
+</script>
+<?php endif; ?>

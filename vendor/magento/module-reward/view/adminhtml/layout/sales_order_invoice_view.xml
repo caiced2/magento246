@@ -1,0 +1,18 @@
+<?xml version="1.0"?>
+<!--
+/**
+ * Copyright © Magento, Inc. All rights reserved.
+ * See COPYING.txt for license details.
+ */
+-->
+<page xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="urn:magento:framework:View/Layout/etc/page_configuration.xsd">
+    <body>
+        <referenceBlock name="invoice_totals">
+            <block class="Magento\Sales\Block\Adminhtml\Order\Totals\Item" name="reward_points" template="Magento_Reward::sales/order/total.phtml">
+                <action method="setBeforeCondition">
+                    <argument name="condition" xsi:type="string">customerbalance</argument>
+                </action>
+            </block>
+        </referenceBlock>
+    </body>
+</page>

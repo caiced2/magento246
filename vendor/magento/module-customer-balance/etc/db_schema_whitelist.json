@@ -1,0 +1,88 @@
+{
+    "magento_customerbalance": {
+        "column": {
+            "balance_id": true,
+            "customer_id": true,
+            "website_id": true,
+            "amount": true,
+            "base_currency_code": true
+        },
+        "index": {
+            "MAGENTO_CUSTOMERBALANCE_WEBSITE_ID": true
+        },
+        "constraint": {
+            "PRIMARY": true,
+            "MAGENTO_CUSTOMERBALANCE_WEBSITE_ID_STORE_WEBSITE_WEBSITE_ID": true,
+            "MAGENTO_CUSTOMERBALANCE_CUSTOMER_ID_CUSTOMER_ENTITY_ENTITY_ID": true,
+            "MAGENTO_CUSTOMERBALANCE_CUSTOMER_ID_WEBSITE_ID": true
+        }
+    },
+    "magento_customerbalance_history": {
+        "column": {
+            "history_id": true,
+            "balance_id": true,
+            "updated_at": true,
+            "action": true,
+            "balance_amount": true,
+            "balance_delta": true,
+            "additional_info": true,
+            "is_customer_notified": true
+        },
+        "index": {
+            "MAGENTO_CUSTOMERBALANCE_HISTORY_BALANCE_ID": true
+        },
+        "constraint": {
+            "PRIMARY": true,
+            "FK_2F00673A61BFB69DB9566CB6D775C80B": true
+        }
+    },
+    "quote": {
+        "column": {
+            "customer_balance_amount_used": true,
+            "base_customer_bal_amount_used": true,
+            "use_customer_balance": true
+        }
+    },
+    "quote_address": {
+        "column": {
+            "base_customer_balance_amount": true,
+            "customer_balance_amount": true
+        }
+    },
+    "sales_order": {
+        "column": {
+            "base_customer_balance_amount": true,
+            "customer_balance_amount": true,
+            "base_customer_balance_invoiced": true,
+            "customer_balance_invoiced": true,
+            "base_customer_balance_refunded": true,
+            "customer_balance_refunded": true,
+            "bs_customer_bal_total_refunded": true,
+            "customer_bal_total_refunded": true
+        }
+    },
+    "sales_invoice": {
+        "column": {
+            "base_customer_balance_amount": true,
+            "customer_balance_amount": true
+        }
+    },
+    "sales_creditmemo": {
+        "column": {
+            "base_customer_balance_amount": true,
+            "customer_balance_amount": true,
+            "bs_customer_bal_total_refunded": true,
+            "customer_bal_total_refunded": true
+        }
+    },
+    "sales_order_grid": {
+        "column": {
+            "refunded_to_store_credit": true
+        }
+    },
+    "magento_sales_order_grid_archive": {
+        "column": {
+            "refunded_to_store_credit": true
+        }
+    }
+}

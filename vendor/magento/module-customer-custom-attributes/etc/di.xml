@@ -1,0 +1,149 @@
+<?xml version="1.0"?>
+<!--
+/**
+ * Copyright © Magento, Inc. All rights reserved.
+ * See COPYING.txt for license details.
+ */
+-->
+<config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="urn:magento:framework:ObjectManager/etc/config.xsd">
+    <preference for="Magento\Quote\Model\Quote\Address\CustomAttributeListInterface"
+                type="Magento\CustomerCustomAttributes\Model\Quote\Address\CustomAttributeList" />
+    <preference for="Magento\Customer\Model\Address\CustomAttributeListInterface"
+                type="Magento\CustomerCustomAttributes\Model\Quote\Address\CustomAttributeList" />
+    <preference for="Magento\CustomerCustomAttributes\Model\Customer\TemporaryFileStorageInterface"
+                type="Magento\CustomerCustomAttributes\Model\Customer\TemporaryFileSessionStorage" />
+    <type name="Magento\CustomerCustomAttributes\Helper\Data">
+        <arguments>
+            <argument name="customerAddress" xsi:type="object">Magento\CustomerCustomAttributes\Helper\Address\Proxy</argument>
+            <argument name="customerCustomer" xsi:type="object">Magento\CustomerCustomAttributes\Helper\Customer\Proxy</argument>
+        </arguments>
+    </type>
+    <type name="Magento\CustomerCustomAttributes\Model\ResourceModel\Sales\Order">
+        <arguments>
+            <argument name="connectionName" xsi:type="string">sales</argument>
+        </arguments>
+    </type>
+    <type name="Magento\CustomerCustomAttributes\Model\ResourceModel\Sales\Order\Address">
+        <arguments>
+            <argument name="connectionName" xsi:type="string">sales</argument>
+        </arguments>
+    </type>
+    <type name="Magento\Checkout\Block\Checkout\LayoutProcessor">
+        <arguments>
+            <argument name="options" xsi:type="object">Magento\CustomerCustomAttributes\Model\Options</argument>
+        </arguments>
+    </type>
+    <type name="Magento\Sales\Block\Adminhtml\Order\Create\Form\Address">
+        <arguments>
+            <argument name="options" xsi:type="object">Magento\CustomerCustomAttributes\Model\Options</argument>
+        </arguments>
+    </type>
+    <type name="Magento\Quote\Model\Quote\Address\ToOrderAddress">
+        <plugin name="convertQuoteAddressToOrderAddress" type="Magento\CustomerCustomAttributes\Model\Plugin\ConvertQuoteAddressToOrderAddress"/>
+    </type>
+    <type name="Magento\Quote\Model\Quote\Address">
+        <plugin name="convertQuoteAddressToCustomerAddress" type="Magento\CustomerCustomAttributes\Model\Plugin\ConvertQuoteAddressToCustomerAddress"/>
+    </type>
+    <type name="Magento\Customer\Block\Widget\Name">
+        <plugin name="formatPrefixSuffixOptions" type="Magento\CustomerCustomAttributes\Plugin\FormatPrefixSuffixOptions"/>
+    </type>
+    <virtualType name="QuoteRelationsComposite">
+        <arguments>
+            <argument name="relationProcessors" xsi:type="array">
+                <item name="custom_attribute" xsi:type="object">Magento\CustomerCustomAttributes\Model\Quote\Relation</item>
+            </argument>
+        </arguments>
+    </virtualType>
+    <type name="Magento\Customer\Model\Address">
+        <plugin name="updateDataCustomerAddress" type="Magento\CustomerCustomAttributes\Model\Plugin\AddCustomAttributesToCustomerAddress"/>
+    </type>
+    <virtualType name="OrderAddressRelationsComposite" type="Magento\Framework\Model\ResourceModel\Db\VersionControl\RelationComposite">
+        <arguments>
+            <argument name="relationProcessors" xsi:type="array">
+                <item name="save_customer_custom_attributes"
+                      xsi:type="object">Magento\CustomerCustomAttributes\Model\ResourceModel\Sales\Address\Relation</item>
+            </argument>
+        </arguments>
+    </virtualType>
+    <type name="Magento\Sales\Model\ResourceModel\Order\Address">
+        <arguments>
+            <argument name="entityRelationComposite" xsi:type="object">OrderAddressRelationsComposite</argument>
+        </arguments>
+    </type>
+    <type name="Magento\Framework\Webapi\ServiceInputProcessor">
+        <arguments>
+            <argument name="customAttributePreprocessors" xsi:type="array">
+                <item name="file_processor" xsi:type="object">Magento\CustomerCustomAttributes\Model\Customer\Address\Attributes\Preprocessor\File</item>
+                <item name="multiselect_processor" xsi:type="object">Magento\CustomerCustomAttributes\Model\Customer\Address\Attributes\Preprocessor\Multiselect</item>
+            </argument>
+        </arguments>
+    </type>
+    <type name="Magento\CustomerCustomAttributes\Block\Checkout\LayoutProcessor">
+        <arguments>
+            <argument name="merger" xsi:type="object">Magento\CustomerCustomAttributes\Block\Checkout\AttributeMerger</argument>
+        </arguments>
+    </type>
+    <type name="Magento\CustomAttributeManagement\Block\Form">
+        <plugin name="set_customer_custom_attribute_for_company" type="Magento\CustomerCustomAttributes\Plugin\Customer\Block\Form\CustomerCustomAttributePlugin" />
+    </type>
+    <type name="Magento\Checkout\Api\PaymentInformationManagementInterface">
+        <plugin name="process_billing_custom_customer_attributes" type="Magento\CustomerCustomAttributes\Model\Plugin\ProcessCustomerBillingAddressCustomAttributes"/>
+    </type>
+    <type name="Magento\Checkout\Api\ShippingInformationManagementInterface">
+        <plugin name="process_shipping_custom_customer_attributes" type="Magento\CustomerCustomAttributes\Model\Plugin\ProcessCustomerShippingAddressCustomAttributes"/>
+    </type>
+    <type name="Magento\Checkout\Api\GuestPaymentInformationManagementInterface">
+        <plugin name="process_billing_custom_guest_attributes" type="Magento\CustomerCustomAttributes\Model\Plugin\ProcessGuestBillingAddressCustomAttributes"/>
+    </type>
+    <type name="Magento\Checkout\Api\GuestShippingInformationManagementInterface">
+        <plugin name="process_shipping_custom_guest_attributes" type="Magento\CustomerCustomAttributes\Model\Plugin\ProcessGuestShippingAddressCustomAttributes"/>
+    </type>
+    <type name="Magento\CustomerCustomAttributes\Model\CustomerAddressCustomAttributesProcessor">
+        <arguments>
+            <argument name="processors" xsi:type="array">
+                <item name="array_type_of_value" xsi:type="object">
+                    Magento\CustomerCustomAttributes\Model\Customer\Address\Attributes\Processors\ArrayTypeOfValue
+                </item>
+            </argument>
+        </arguments>
+    </type>
+    <virtualType name="CustomerFileAttribute" type="Magento\CustomerCustomAttributes\ViewModel\FileAttribute">
+        <arguments>
+            <argument name="uploadUrl" xsi:type="string">customer_custom_attributes/customer_file/upload</argument>
+            <argument name="entityType" xsi:type="string">customer</argument>
+            <argument name="downloadUrl" xsi:type="string">customer_custom_attributes/index/viewfile</argument>
+        </arguments>
+    </virtualType>
+    <virtualType name="AddressFileAttribute" type="Magento\CustomerCustomAttributes\ViewModel\FileAttribute">
+        <arguments>
+            <argument name="uploadUrl" xsi:type="string">customer_custom_attributes/address_file/upload</argument>
+            <argument name="entityType" xsi:type="string">customer_address</argument>
+            <argument name="downloadUrl" xsi:type="string">customer_custom_attributes/address_file/viewfile</argument>
+        </arguments>
+    </virtualType>
+    <virtualType name="CustomerFileDownload" type="Magento\CustomerCustomAttributes\Model\Customer\FileDownload">
+        <arguments>
+            <argument name="entityType" xsi:type="string">customer</argument>
+        </arguments>
+    </virtualType>
+    <virtualType name="AddressFileDownload" type="Magento\CustomerCustomAttributes\Model\Customer\FileDownload">
+        <arguments>
+            <argument name="entityType" xsi:type="string">customer_address</argument>
+        </arguments>
+    </virtualType>
+    <type name="Magento\CustomerCustomAttributes\Controller\Index\Viewfile">
+        <arguments>
+            <argument name="fileDownload" xsi:type="object">CustomerFileDownload</argument>
+        </arguments>
+    </type>
+    <type name="Magento\CustomerCustomAttributes\Controller\Address\File\Viewfile">
+        <arguments>
+            <argument name="fileDownload" xsi:type="object">AddressFileDownload</argument>
+        </arguments>
+    </type>
+    <type name="Magento\CustomerCustomAttributes\Model\Customer\TemporaryFileSessionStorage">
+        <arguments>
+            <argument name="session" xsi:type="object">Magento\Customer\Model\Session\Proxy</argument>
+        </arguments>
+    </type>
+</config>

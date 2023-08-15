@@ -1,0 +1,118 @@
+<?xml version="1.0"?>
+<!--
+/**
+ * Copyright © Magento, Inc. All rights reserved.
+ * See COPYING.txt for license details.
+ */
+-->
+<schema xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:noNamespaceSchemaLocation="urn:magento:framework:Setup/Declaration/Schema/etc/schema.xsd">
+    <table name="magento_giftcardaccount" resource="default" engine="innodb" comment="Enterprise Giftcardaccount">
+        <column xsi:type="int" name="giftcardaccount_id" unsigned="true" nullable="false" identity="true"
+                comment="Giftcardaccount Id"/>
+        <column xsi:type="varchar" name="code" nullable="false" length="255" comment="Code"/>
+        <column xsi:type="smallint" name="status" unsigned="false" nullable="false" identity="false"
+                comment="Status"/>
+        <column xsi:type="date" name="date_created" nullable="false" comment="Date Created"/>
+        <column xsi:type="date" name="date_expires" comment="Date Expires"/>
+        <column xsi:type="smallint" name="website_id" unsigned="true" nullable="false" identity="false"
+                default="0" comment="Website Id"/>
+        <column xsi:type="decimal" name="balance" scale="4" precision="20" unsigned="false" nullable="false"
+                default="0" comment="Balance"/>
+        <column xsi:type="smallint" name="state" unsigned="false" nullable="false" identity="false"
+                default="0" comment="State"/>
+        <column xsi:type="smallint" name="is_redeemable" unsigned="false" nullable="false" identity="false"
+                default="1" comment="Is Redeemable"/>
+        <constraint xsi:type="primary" referenceId="PRIMARY">
+            <column name="giftcardaccount_id"/>
+        </constraint>
+        <constraint xsi:type="foreign" referenceId="MAGENTO_GIFTCARDACCOUNT_WEBSITE_ID_STORE_WEBSITE_WEBSITE_ID"
+                    table="magento_giftcardaccount" column="website_id" referenceTable="store_website"
+                    referenceColumn="website_id" onDelete="CASCADE"/>
+        <index referenceId="MAGENTO_GIFTCARDACCOUNT_WEBSITE_ID" indexType="btree">
+            <column name="website_id"/>
+        </index>
+        <index referenceId="MAGENTO_GIFTCARDACCOUNT_CODE" indexType="btree">
+            <column name="code"/>
+        </index>
+    </table>
+    <table name="magento_giftcardaccount_pool" resource="default" engine="innodb"
+           comment="Enterprise Giftcardaccount Pool">
+        <column xsi:type="varchar" name="code" nullable="false" length="255" comment="Code"/>
+        <column xsi:type="smallint" name="status" unsigned="false" nullable="false" identity="false"
+                default="0" comment="Status"/>
+        <constraint xsi:type="primary" referenceId="PRIMARY">
+            <column name="code"/>
+        </constraint>
+    </table>
+    <table name="magento_giftcardaccount_history" resource="default" engine="innodb"
+           comment="Enterprise Giftcardaccount History">
+        <column xsi:type="int" name="history_id" unsigned="true" nullable="false" identity="true"
+                comment="History Id"/>
+        <column xsi:type="int" name="giftcardaccount_id" unsigned="true" nullable="false" identity="false"
+                default="0" comment="Giftcardaccount Id"/>
+        <column xsi:type="timestamp" name="updated_at" on_update="false" nullable="true" comment="Updated At"/>
+        <column xsi:type="smallint" name="action" unsigned="true" nullable="false" identity="false"
+                default="0" comment="Action"/>
+        <column xsi:type="decimal" name="balance_amount" scale="4" precision="20" unsigned="false" nullable="false"
+                default="0" comment="Balance Amount"/>
+        <column xsi:type="decimal" name="balance_delta" scale="4" precision="20" unsigned="false" nullable="false"
+                default="0" comment="Balance Delta"/>
+        <column xsi:type="varchar" name="additional_info" nullable="true" length="255" comment="Additional Info"/>
+        <constraint xsi:type="primary" referenceId="PRIMARY">
+            <column name="history_id"/>
+        </constraint>
+        <constraint xsi:type="foreign" referenceId="FK_245B3CFF19EAF3077D3E0C5416773ECA"
+                    table="magento_giftcardaccount_history" column="giftcardaccount_id"
+                    referenceTable="magento_giftcardaccount" referenceColumn="giftcardaccount_id" onDelete="CASCADE"/>
+        <index referenceId="MAGENTO_GIFTCARDACCOUNT_HISTORY_GIFTCARDACCOUNT_ID" indexType="btree">
+            <column name="giftcardaccount_id"/>
+        </index>
+    </table>
+    <table name="quote" resource="checkout" comment="Sales Flat Quote">
+        <column xsi:type="text" name="gift_cards" nullable="true" comment="Gift Cards"/>
+        <column xsi:type="decimal" name="gift_cards_amount" scale="4" precision="20" unsigned="false" nullable="true"
+                comment="Gift Cards Amount"/>
+        <column xsi:type="decimal" name="base_gift_cards_amount" scale="4" precision="20" unsigned="false"
+                nullable="true" comment="Base Gift Cards Amount"/>
+        <column xsi:type="decimal" name="gift_cards_amount_used" scale="4" precision="20" unsigned="false"
+                nullable="true" comment="Gift Cards Amount Used"/>
+        <column xsi:type="decimal" name="base_gift_cards_amount_used" scale="4" precision="20" unsigned="false"
+                nullable="true" comment="Base Gift Cards Amount Used"/>
+    </table>
+    <table name="quote_address" resource="checkout" comment="Sales Flat Quote Address">
+        <column xsi:type="decimal" name="gift_cards_amount" scale="4" precision="20" unsigned="false" nullable="true"
+                comment="Gift Cards Amount"/>
+        <column xsi:type="decimal" name="base_gift_cards_amount" scale="4" precision="20" unsigned="false"
+                nullable="true" comment="Base Gift Cards Amount"/>
+        <column xsi:type="text" name="gift_cards" nullable="true" comment="Gift Cards"/>
+        <column xsi:type="text" name="used_gift_cards" nullable="true" comment="Used Gift Cards"/>
+    </table>
+    <table name="sales_order" resource="sales" comment="Sales Flat Order">
+        <column xsi:type="text" name="gift_cards" nullable="true" comment="Gift Cards"/>
+        <column xsi:type="decimal" name="base_gift_cards_amount" scale="4" precision="20" unsigned="false"
+                nullable="true" comment="Base Gift Cards Amount"/>
+        <column xsi:type="decimal" name="gift_cards_amount" scale="4" precision="20" unsigned="false" nullable="true"
+                comment="Gift Cards Amount"/>
+        <column xsi:type="decimal" name="base_gift_cards_invoiced" scale="4" precision="20" unsigned="false"
+                nullable="true" comment="Base Gift Cards Invoiced"/>
+        <column xsi:type="decimal" name="gift_cards_invoiced" scale="4" precision="20" unsigned="false" nullable="true"
+                comment="Gift Cards Invoiced"/>
+        <column xsi:type="decimal" name="base_gift_cards_refunded" scale="4" precision="20" unsigned="false"
+                nullable="true" comment="Base Gift Cards Refunded"/>
+        <column xsi:type="decimal" name="gift_cards_refunded" scale="4" precision="20" unsigned="false" nullable="true"
+                comment="Gift Cards Refunded"/>
+    </table>
+    <table name="sales_invoice" resource="sales" comment="Sales Flat Invoice">
+        <column xsi:type="decimal" name="base_gift_cards_amount" scale="4" precision="20" unsigned="false"
+                nullable="true" comment="Base Gift Cards Amount"/>
+        <column xsi:type="decimal" name="gift_cards_amount" scale="4" precision="20" unsigned="false" nullable="true"
+                comment="Gift Cards Amount"/>
+    </table>
+    <table name="sales_creditmemo" resource="sales" comment="Sales Flat Creditmemo">
+        <column xsi:type="decimal" name="base_gift_cards_amount" scale="4" precision="20" unsigned="false"
+                nullable="true" comment="Base Gift Cards Amount"/>
+        <column xsi:type="decimal" name="gift_cards_amount" scale="4" precision="20" unsigned="false" nullable="true"
+                comment="Gift Cards Amount"/>
+    </table>
+</schema>

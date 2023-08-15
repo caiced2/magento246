@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+ /**
+  * Copyright © Magento, Inc. All rights reserved.
+  * See COPYING.txt for license details.
+  */
+-->
+<operations xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:noNamespaceSchemaLocation="urn:magento:mftf:DataGenerator/etc/dataOperation.xsd">
+    <operation name="createDynamicBlock" dataType="dynamicBlock" type="create" auth="adminFormKey" url="/admin/banner/save/back/edit" successRegex="/messages-message-success/" returnRegex="/(?&lt;=banner\/edit\/id\/)[.\d+]/" method="POST">
+        <field key="banner_id">integer</field>
+        <field key="store_id" required="true">integer</field>
+        <field key="content_readonly">boolean</field>
+        <field key="readonly">boolean</field>
+        <field key="store_contents">string</field>
+        <field key="default_contents" required="true">string</field>
+        <field key="use_default_value">boolean</field>
+        <field key="show_use_default_value">boolean</field>
+        <field key="is_enabled" required="true">integer</field>
+        <field key="name" required="true">string</field>
+    </operation>
+</operations>

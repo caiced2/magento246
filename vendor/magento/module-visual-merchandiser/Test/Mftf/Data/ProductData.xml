@@ -1,0 +1,64 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+ /**
+  * Copyright © Magento, Inc. All rights reserved.
+  * See COPYING.txt for license details.
+  */
+-->
+
+<entities xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+          xsi:noNamespaceSchemaLocation="urn:magento:mftf:DataGenerator/etc/dataProfileSchema.xsd">
+    <entity name="Qty_55" type="stock_item">
+        <data key="qty">55</data>
+        <data key="is_in_stock">true</data>
+    </entity>
+    <entity name="EavStock55" type="product_extension_attribute">
+        <requiredEntity type="stock_item">Qty_55</requiredEntity>
+    </entity>
+    <entity name="SimpleProductWithQty100" type="product" extends="_defaultProduct">
+        <data key="name" unique="suffix">Simple Product 1</data>
+        <data key="price">100.00</data>
+        <data key="urlKey" unique="suffix">Simple Product 1</data>
+        <data key="status">1</data>
+        <data key="quantity">100</data>
+        <data key="weight">1</data>
+        <requiredEntity type="product_extension_attribute">EavStock100</requiredEntity>
+        <requiredEntity type="custom_attribute_array">CustomAttributeCategoryIds</requiredEntity>
+    </entity>
+    <entity name="SimpleProductWithQty777" type="product" extends="_defaultProduct">
+        <data key="name" unique="suffix">Simple Product 2</data>
+        <data key="price">77.00</data>
+        <data key="urlKey" unique="suffix">Simple Product 2</data>
+        <data key="status">1</data>
+        <data key="quantity">777</data>
+        <data key="weight">1</data>
+        <requiredEntity type="product_extension_attribute">EavStock777</requiredEntity>
+        <requiredEntity type="custom_attribute_array">CustomAttributeCategoryIds</requiredEntity>
+    </entity>
+    <entity name="SimpleProductWithQty1" type="product" extends="_defaultProduct">
+        <data key="name" unique="suffix">Simple Product 3</data>
+        <data key="price">1.00</data>
+        <data key="urlKey" unique="suffix">Simple Product 3</data>
+        <data key="status">1</data>
+        <data key="quantity">1</data>
+        <data key="weight">1</data>
+        <requiredEntity type="product_extension_attribute">EavStock1</requiredEntity>
+        <requiredEntity type="custom_attribute_array">CustomAttributeCategoryIds</requiredEntity>
+    </entity>
+    <entity name="ConfigurableProductWithQty55" type="product" extends="ApiConfigurableProduct">
+        <data key="name" unique="suffix">Configurable Product 1</data>
+        <data key="price">55.00</data>
+        <data key="urlKey" unique="suffix">Configurable Product 1</data>
+        <data key="status">1</data>
+        <data key="quantity">55</data>
+        <data key="optionName1" unique="suffix">White</data>
+        <data key="optionName2" unique="suffix">Red</data>
+        <data key="optionName3" unique="suffix">Blue</data>
+        <data key="quantityForOption1">5</data>
+        <data key="quantityForOption2">105</data>
+        <data key="quantityForOption3">600</data>
+        <data key="weight">1</data>
+        <requiredEntity type="product_extension_attribute">EavStock55</requiredEntity>
+        <requiredEntity type="custom_attribute_array">CustomAttributeCategoryIds</requiredEntity>
+    </entity>
+</entities>

@@ -1,0 +1,267 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+ /**
+  * Copyright © Magento, Inc. All rights reserved.
+  * See COPYING.txt for license details.
+  */
+-->
+
+<tests xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xsi:noNamespaceSchemaLocation="urn:magento:mftf:Test/etc/testSchema.xsd">
+    <test name="StorefrontApplyCategoryPermissionsToChildCategoryTest">
+        <annotations>
+            <features value="CatalogPermissions"/>
+            <stories value="Apply Category Permissions to subcategories and check price ranges in layered navigation"/>
+            <title value="Apply Category Permissions to subcategories"/>
+            <description value="This test verifies that if subcategory will have category permissions price ranges in layered navigation will be displayed correctly"/>
+            <severity value="CRITICAL"/>
+            <useCaseId value="MC-31395"/>
+            <testCaseId value="MC-27296"/>
+            <group value="catalogPermissions"/>
+        </annotations>
+
+        <before>
+            <actionGroup ref="AdminLoginActionGroup" stepKey="loginAsAdmin"/>
+            <actionGroup ref="DeleteAllProductsUsingProductGridActionGroup" stepKey="deleteAllProductsToMakeTestMoreStable"/>
+            <createData entity="ApiCategory" stepKey="createParentCategory"/>
+            <createData entity="NewSubCategoryWithParent" stepKey="createSubCategory">
+                <requiredEntity createDataKey="createParentCategory"/>
+            </createData>
+            <createData entity="NewSubCategoryWithParent" stepKey="createSecondSubCategory">
+                <requiredEntity createDataKey="createParentCategory"/>
+            </createData>
+            <createData entity="ApiSimpleProduct" stepKey="product1">
+                <field key="price">1.00</field>
+                <requiredEntity createDataKey="createSubCategory"/>
+            </createData>
+            <createData entity="ApiSimpleProduct" stepKey="product2">
+                <field key="price">10.00</field>
+                <requiredEntity createDataKey="createSubCategory"/>
+            </createData>
+            <createData entity="ApiSimpleProduct" stepKey="product3">
+                <field key="price">100.00</field>
+                <requiredEntity createDataKey="createSecondSubCategory"/>
+            </createData>
+            <createData entity="ApiSimpleProduct" stepKey="product4">
+                <field key="price">1000.00</field>
+                <requiredEntity createDataKey="createSecondSubCategory"/>
+            </createData>
+            <createData entity="Simple_US_Customer" stepKey="generalCustomer"/>
+            <createData entity="Simple_US_Customer" stepKey="wholesaleCustomer"/>
+            <actionGroup ref="CliCatalogCategoryPermissionsConfigurationActionGroup" stepKey="enableCatalogCategoryPermission">
+                <argument name="disallowCatalogSearchBy" value="{{CategoryPermissionsDenyCatalogSearchForGeneralCustomerGroupConfigData.value}}"/>
+            </actionGroup>
+
+            <actionGroup ref="AdminUpdateCustomerGroupByEmailActionGroup" stepKey="updateCustomerGroup">
+                <argument name="emailAddress" value="$wholesaleCustomer.email$"/>
+                <argument name="customerGroup" value="Wholesale"/>
+            </actionGroup>
+            <actionGroup ref="GoToAdminCategoryPageByIdActionGroup" stepKey="amOnEditSubCategoryPage">
+                <argument name="id" value="$createSubCategory.id$"/>
+            </actionGroup>
+            <actionGroup ref="AdminAddCategoryPermissionsActionGroup" stepKey="addCategoryPermissionsForGeneralGroup">
+                <argument name="permissionNumber" value="1"/>
+                <argument name="customerGroup" value="General"/>
+                <argument name="browsingCategoryPermission" value="allow"/>
+                <argument name="displayProductPricesPermission" value="deny"/>
+            </actionGroup>
+            <actionGroup ref="AdminAddCategoryPermissionsActionGroup" stepKey="addCategoryPermissionsForWholesaleGroup">
+                <argument name="permissionNumber" value="2"/>
+                <argument name="customerGroup" value="Wholesale"/>
+                <argument name="browsingCategoryPermission" value="deny"/>
+            </actionGroup>
+            <actionGroup ref="AdminSaveCategoryFormActionGroup" stepKey="saveCategoryForm"/>
+            <magentoCron groups="index" stepKey="reindex"/>
+        </before>
+
+        <after>
+            <deleteData createDataKey="product1" stepKey="deleteProduct1"/>
+            <deleteData createDataKey="product2" stepKey="deleteProduct2"/>
+            <deleteData createDataKey="product3" stepKey="deleteProduct3"/>
+            <deleteData createDataKey="product4" stepKey="deleteProduct4"/>
+            <deleteData createDataKey="createSubCategory" stepKey="deleteSubCategory" />
+            <deleteData createDataKey="createSecondSubCategory" stepKey="deleteSecondSubCategory" />
+            <deleteData createDataKey="createParentCategory" stepKey="deleteParentCategory"/>
+            <actionGroup ref="StorefrontCustomerLogoutActionGroup" stepKey="wholesaleCustomerLogout"/>
+            <deleteData createDataKey="generalCustomer" stepKey="deleteGeneralCustomer"/>
+            <deleteData createDataKey="wholesaleCustomer" stepKey="deleteWholesaleCustomer"/>
+            <actionGroup ref="CliCatalogCategoryPermissionsConfigurationActionGroup" stepKey="disableCatalogCategoryPermission">
+                <argument name="enableCatalogPermission" value="{{CategoryPermissionsDisableConfigData.value}}"/>
+            </actionGroup>
+            <amOnPage url="{{AdminCustomerPage.url}}" stepKey="amOnCustomerGridPage"/>
+            <actionGroup ref="ClearFiltersAdminDataGridActionGroup" stepKey="clearCustomerGridFilter"/>
+            <actionGroup ref="AdminLogoutActionGroup" stepKey="logoutOfAdmin"/>
+        </after>
+
+        <actionGroup ref="StorefrontOpenHomePageActionGroup" stepKey="goToStorefrontPage"/>
+        <actionGroup ref="StorefrontCheckQuickSearchStringActionGroup" stepKey="searchForCreatedProducts">
+            <argument name="phrase" value="API Simple"/>
+        </actionGroup>
+        <dontSee selector="{{StorefrontCatalogSearchMainSection.message}}" userInput="Your search returned no results." stepKey="seeCantFindProductOneMessage"/>
+        <see userInput="$product1.name$" selector="{{StorefrontCatalogSearchMainSection.searchResults}}" stepKey="seeProduct1"/>
+        <see userInput="$product2.name$" selector="{{StorefrontCatalogSearchMainSection.searchResults}}" stepKey="seeProduct2"/>
+        <see userInput="$product3.name$" selector="{{StorefrontCatalogSearchMainSection.searchResults}}" stepKey="seeProduct3"/>
+        <see userInput="$product4.name$" selector="{{StorefrontCatalogSearchMainSection.searchResults}}" stepKey="seeProduct4"/>
+
+        <actionGroup ref="StorefrontNavigateCategoryPageActionGroup" stepKey="goToParentCategoryPage">
+            <argument name="category" value="$createParentCategory$"/>
+        </actionGroup>
+
+        <actionGroup ref="AssertStorefrontAttributeOptionQuantityInLayeredNavigationActionGroup" stepKey="assertFirstSubcategoryFilterQuantity">
+            <argument name="attributeLabel" value="Category"/>
+            <argument name="attributeOptionLabel" value="$createSubCategory.label$"/>
+            <argument name="attributeOptionPosition" value="1"/>
+            <argument name="attributeOptionQuantity" value="2"/>
+        </actionGroup>
+        <actionGroup ref="AssertStorefrontAttributeOptionQuantityInLayeredNavigationActionGroup" stepKey="assertSecondSubcategoryFilterQuantity">
+            <argument name="attributeLabel" value="Category"/>
+            <argument name="attributeOptionLabel" value="$createSecondSubCategory.label$"/>
+            <argument name="attributeOptionPosition" value="2"/>
+            <argument name="attributeOptionQuantity" value="2"/>
+        </actionGroup>
+
+        <click selector="{{StorefrontCategorySidebarSection.activeFilterOptionItemByPosition('1')}}" stepKey="selectFirstSubCategoryFilter"/>
+
+        <seeElement selector="{{StorefrontCategoryProductSection.ProductTitleByName($product1.name$)}}" stepKey="seeProduct1Name"/>
+        <seeElement selector="{{StorefrontCategoryProductSection.ProductTitleByName($product2.name$)}}" stepKey="seeProduct2Name"/>
+        <seeElement selector="{{StorefrontCategoryProductSection.productPriceFinal($product1.price$.00)}}" stepKey="seeProduct1Price"/>
+        <seeElement selector="{{StorefrontCategoryProductSection.productPriceFinal($product2.price$.00)}}" stepKey="seeProduct2Price"/>
+
+        <actionGroup ref="LoginToStorefrontActionGroup" stepKey="loginAsGeneralCustomer">
+            <argument name="Customer" value="$generalCustomer$" />
+        </actionGroup>
+
+        <actionGroup ref="StorefrontNavigateToCategoryUrlActionGroup" stepKey="openFirstSubCategoryPage">
+            <argument name="categoryUrl" value="$createParentCategory.custom_attributes[url_key]$/$createSubCategory.custom_attributes[url_key]$"/>
+        </actionGroup>
+        <dontSeeElement selector="{{StorefrontCategoryProductSection.productPriceFinal($product1.price$.00)}}" stepKey="dontSeeProduct1Price"/>
+        <dontSeeElement selector="{{StorefrontCategoryProductSection.productPriceFinal($product2.price$.00)}}" stepKey="dontSeeProduct2Price"/>
+
+        <actionGroup ref="StorefrontNavigateCategoryPageActionGroup" stepKey="goToParentCategoryPageAgain">
+            <argument name="category" value="$createParentCategory$"/>
+        </actionGroup>
+        <actionGroup ref="AssertStorefrontAttributeOptionQuantityInLayeredNavigationActionGroup" stepKey="assertFirstPriceOptionFilterQuantityInParentCategory">
+            <argument name="attributeLabel" value="Price"/>
+            <argument name="attributeOptionLabel" value="$0.00 - $999.99"/>
+            <argument name="attributeOptionPosition" value="1"/>
+            <argument name="attributeOptionQuantity" value="1"/>
+        </actionGroup>
+        <actionGroup ref="AssertStorefrontAttributeOptionQuantityInLayeredNavigationActionGroup" stepKey="assertSecondPriceOptionFilterQuantityInParentCategory">
+            <argument name="attributeLabel" value="Price"/>
+            <argument name="attributeOptionLabel" value="$1,000.00 and above"/>
+            <argument name="attributeOptionPosition" value="2"/>
+            <argument name="attributeOptionQuantity" value="1"/>
+        </actionGroup>
+        <seeElement selector="{{StorefrontCategoryProductSection.ProductTitleByName($product1.name$)}}" stepKey="seeProduct1Name2"/>
+        <seeElement selector="{{StorefrontCategoryProductSection.ProductTitleByName($product2.name$)}}" stepKey="seeProduct2Name2"/>
+        <seeElement selector="{{StorefrontCategoryProductSection.ProductTitleByName($product3.name$)}}" stepKey="seeProduct3Name"/>
+        <seeElement selector="{{StorefrontCategoryProductSection.ProductTitleByName($product4.name$)}}" stepKey="seeProduct4Name"/>
+        <dontSeeElement selector="{{StorefrontCategoryProductSection.productPriceFinal($product1.price$.00)}}" stepKey="dontSeeProduct1Price2"/>
+        <dontSeeElement selector="{{StorefrontCategoryProductSection.productPriceFinal($product2.price$.00)}}" stepKey="dontSeeProduct2Price2"/>
+        <seeElement selector="{{StorefrontCategoryProductSection.productPriceFinal($product3.price$.00)}}" stepKey="seeProduct3Price"/>
+        <seeElement selector="{{StorefrontCategoryProductSection.productPriceFinal('1,000.00')}}" stepKey="seeProduct4Price"/>
+
+        <actionGroup ref="StorefrontCustomerLogoutActionGroup" stepKey="generalCustomerLogout"/>
+        <actionGroup ref="LoginToStorefrontActionGroup" stepKey="loginAsWholesaleCustomer">
+            <argument name="Customer" value="$wholesaleCustomer$" />
+        </actionGroup>
+
+        <actionGroup ref="CliIndexerReindexActionGroup" stepKey="reindexInvalidatedIndexers">
+            <argument name="indices" value=""/>
+        </actionGroup>
+
+        <actionGroup ref="StorefrontAssertSubCategoryNameIsNotShownInMenuActionGroup" stepKey="doNotSeeFirstSubcategoryOnNavigation">
+            <argument name="categoryName" value="$createSubCategory.name$"/>
+            <argument name="parentCategoryName" value="$createParentCategory.name$"/>
+        </actionGroup>
+        <actionGroup ref="AssertPageByUrlRewriteIsNotFoundActionGroup" stepKey="assertFirstSubcategoryWontOpen">
+            <argument name="requestPath" value="$createSubCategory.custom_attributes[url_key]$.html"/>
+        </actionGroup>
+
+        <actionGroup ref="StorefrontNavigateCategoryPageActionGroup" stepKey="goToParentCategoryPageOneMore">
+            <argument name="category" value="$createParentCategory$"/>
+        </actionGroup>
+
+        <dontSeeElement selector="{{StorefrontCategoryProductSection.ProductTitleByName($product1.name$)}}" stepKey="dontSeeProduct1Name"/>
+        <dontSeeElement selector="{{StorefrontCategoryProductSection.ProductTitleByName($product2.name$)}}" stepKey="dontSeeProduct2Name"/>
+        <seeElement selector="{{StorefrontCategoryProductSection.ProductTitleByName($product3.name$)}}" stepKey="seeProduct3Name2"/>
+        <seeElement selector="{{StorefrontCategoryProductSection.ProductTitleByName($product4.name$)}}" stepKey="seeProduct4Name2"/>
+
+        <actionGroup ref="AssertStorefrontAttributeOptionQuantityInLayeredNavigationActionGroup" stepKey="assertFirstPriceFilterQuantityInParentCategory2">
+            <argument name="attributeLabel" value="Price"/>
+            <argument name="attributeOptionLabel" value="$0.00 - $999.99"/>
+            <argument name="attributeOptionPosition" value="1"/>
+            <argument name="attributeOptionQuantity" value="1"/>
+        </actionGroup>
+        <actionGroup ref="AssertStorefrontAttributeOptionQuantityInLayeredNavigationActionGroup" stepKey="assertSecondPriceFilterQuantityInParentCategory2">
+            <argument name="attributeLabel" value="Price"/>
+            <argument name="attributeOptionLabel" value="$1,000.00 and above"/>
+            <argument name="attributeOptionPosition" value="2"/>
+            <argument name="attributeOptionQuantity" value="1"/>
+        </actionGroup>
+
+        <actionGroup ref="CliCatalogCategoryPermissionsConfigurationActionGroup" stepKey="enableCatalogCategoryPermission">
+            <argument name="displayProductPrices" value="{{CategoryPermissionsDisplayProductPricesDefaultConfigData.value}}"/>
+        </actionGroup>
+
+        <actionGroup ref="GoToAdminCategoryPageByIdActionGroup" stepKey="amOnEditSubCategoryPage2">
+            <argument name="id" value="$createSubCategory.id$"/>
+        </actionGroup>
+        <actionGroup ref="AdminDeleteCategoryPermissionsActionGroup" stepKey="deleteSubCategoryPermission"/>
+        <actionGroup ref="AdminDeleteCategoryPermissionsActionGroup" stepKey="deleteSubCategoryPermission2">
+            <argument name="permissionNumber" value="2"/>
+        </actionGroup>
+        <actionGroup ref="AdminSaveCategoryFormActionGroup" stepKey="saveSubcategory"/>
+
+        <actionGroup ref="GoToAdminCategoryPageByIdActionGroup" stepKey="amOnEditSecondSubCategoryPage">
+            <argument name="id" value="$createSecondSubCategory.id$"/>
+        </actionGroup>
+        <actionGroup ref="AdminAddCategoryPermissionsActionGroup" stepKey="addCategoryPermissionsForAllCustomers">
+            <argument name="permissionNumber" value="1"/>
+            <argument name="customerGroup" value="All Customer Groups"/>
+            <argument name="browsingCategoryPermission" value="allow"/>
+            <argument name="displayProductPricesPermission" value="allow"/>
+            <argument name="addToCartPermission" value="allow"/>
+        </actionGroup>
+        <actionGroup ref="AdminSaveCategoryFormActionGroup" stepKey="saveSecondSubcategory"/>
+
+        <actionGroup ref="CliIndexerReindexActionGroup" stepKey="reindexInvalidatedIndexers2">
+            <argument name="indices" value=""/>
+        </actionGroup>
+
+        <actionGroup ref="StorefrontOpenHomePageActionGroup" stepKey="goToStorefrontPage2"/>
+
+        <actionGroup ref="StorefrontNavigateToCategoryUrlActionGroup" stepKey="openFirstSubCategoryPageAgain">
+            <argument name="categoryUrl" value="$createParentCategory.custom_attributes[url_key]$/$createSubCategory.custom_attributes[url_key]$"/>
+        </actionGroup>
+
+        <dontSeeElement selector="{{StorefrontCategoryProductSection.productPriceFinal($product1.price$.00)}}" stepKey="dontSeeProduct1Price3"/>
+        <dontSeeElement selector="{{StorefrontCategoryProductSection.productPriceFinal($product2.price$.00)}}" stepKey="dontSeeProduct2Price3"/>
+
+        <actionGroup ref="StorefrontNavigateToCategoryUrlActionGroup" stepKey="openSecondSubCategoryPage">
+            <argument name="categoryUrl" value="$createParentCategory.custom_attributes[url_key]$/$createSecondSubCategory.custom_attributes[url_key]$"/>
+        </actionGroup>
+        <seeElement selector="{{StorefrontCategoryProductSection.productPriceFinal($product3.price$.00)}}" stepKey="seeProduct3Price2"/>
+        <seeElement selector="{{StorefrontCategoryProductSection.productPriceFinal('1,000.00')}}" stepKey="seeProduct4Price2"/>
+
+        <actionGroup ref="AssertStorefrontAttributeOptionQuantityInLayeredNavigationActionGroup" stepKey="assertFirstPriceFilterQuantityInSecondSubCategory">
+            <argument name="attributeLabel" value="Price"/>
+            <argument name="attributeOptionLabel" value="$0.00 - $999.99"/>
+            <argument name="attributeOptionPosition" value="1"/>
+            <argument name="attributeOptionQuantity" value="1"/>
+        </actionGroup>
+        <actionGroup ref="AssertStorefrontAttributeOptionQuantityInLayeredNavigationActionGroup" stepKey="assertSecondPriceFilterQuantityInSecondSubCategory">
+            <argument name="attributeLabel" value="Price"/>
+            <argument name="attributeOptionLabel" value="$1,000.00 and above"/>
+            <argument name="attributeOptionPosition" value="2"/>
+            <argument name="attributeOptionQuantity" value="1"/>
+        </actionGroup>
+
+        <click selector="{{StorefrontCategorySidebarSection.activeFilterOptionItemByPosition('1')}}" stepKey="selectFirstPriceFilter"/>
+
+        <seeElement selector="{{StorefrontCategoryProductSection.ProductTitleByName($product3.name$)}}" stepKey="seeProduct3Name3"/>
+        <seeElement selector="{{StorefrontCategoryProductSection.productPriceFinal($product3.price$.00)}}" stepKey="seeProduct3Price3"/>
+        <dontSeeElement selector="{{StorefrontCategoryProductSection.ProductTitleByName($product4.name$)}}" stepKey="dontSeeProduct4Name"/>
+        <dontSeeElement selector="{{StorefrontCategoryProductSection.productPriceFinal('1,000.00')}}" stepKey="dontSeeProduct4Price"/>
+    </test>
+</tests>

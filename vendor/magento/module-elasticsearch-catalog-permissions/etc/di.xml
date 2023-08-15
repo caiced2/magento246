@@ -1,0 +1,78 @@
+<?xml version="1.0"?>
+<!--
+/**
+ * Copyright © Magento, Inc. All rights reserved.
+ * See COPYING.txt for license details.
+ */
+-->
+<config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="urn:magento:framework:ObjectManager/etc/config.xsd">
+    <preference for="Magento\Elasticsearch\Model\Adapter\FieldMapper\Product\FieldProviderInterface" type="categoryPermissionsCompositeFieldProvider" />
+    <preference for="elasticsearch5FieldProvider" type="elasticsearch5CategoryPermissionsCompositeFieldProvider" />
+    <preference for="additionalFieldsProviderForElasticsearch" type="categoryPermissionsAdditionalFieldsForElasticsearchDataMapper" />
+    <preference for="Magento\Elasticsearch\Model\Adapter\FieldMapper\Product\FieldProvider\FieldName\Resolver\CompositeResolver"
+                type="Magento\ElasticsearchCatalogPermissions\Model\Adapter\FieldMapper\Product\FieldProvider\FieldName\Resolver\CompositeResolver" />
+    <preference for="elasticsearch5FieldNameResolver"
+                type="Magento\ElasticsearchCatalogPermissions\Elasticsearch5\Model\Adapter\FieldMapper\Product\FieldProvider\FieldName\Resolver\CompositeResolver" />
+
+    <virtualType name="categoryPermissionsCompositeFieldProvider" type="Magento\Elasticsearch\Model\Adapter\FieldMapper\Product\CompositeFieldProvider">
+        <arguments>
+            <argument name="providers" xsi:type="array">
+                <item name="categoryPermissionsDynamicFields" xsi:type="object">\Magento\ElasticsearchCatalogPermissions\Model\Adapter\FieldMapper\Product\FieldProvider\CategoryPermissionsField</item>
+            </argument>
+        </arguments>
+    </virtualType>
+    <virtualType name="elasticsearch5CategoryPermissionsCompositeFieldProvider" type="elasticsearch5FieldProvider">
+        <arguments>
+            <argument name="providers" xsi:type="array">
+                <item name="categoryPermissionsDynamicFields" xsi:type="object">elasticsearch5CategoryPermissionsDynamicFieldsProvider</item>
+            </argument>
+        </arguments>
+    </virtualType>
+    <virtualType name="elasticsearch5CategoryPermissionsDynamicFieldsProvider" type="\Magento\ElasticsearchCatalogPermissions\Model\Adapter\FieldMapper\Product\FieldProvider\CategoryPermissionsField">
+        <arguments>
+            <argument name="fieldTypeConverter" xsi:type="object">Magento\Elasticsearch\Elasticsearch5\Model\Adapter\FieldMapper\Product\FieldProvider\FieldType\Converter</argument>
+            <argument name="indexTypeConverter" xsi:type="object">Magento\Elasticsearch\Elasticsearch5\Model\Adapter\FieldMapper\Product\FieldProvider\FieldIndex\Converter</argument>
+        </arguments>
+    </virtualType>
+    <virtualType name="categoryPermissionsAdditionalFieldsForElasticsearchDataMapper" type="additionalFieldsProviderForElasticsearch">
+        <arguments>
+            <argument name="fieldsProviders" xsi:type="array">
+                <item name="categories" xsi:type="object">Magento\Elasticsearch\Elasticsearch5\Model\Adapter\BatchDataMapper\CategoryFieldsProviderProxy</item>
+                <item name="prices" xsi:type="object">Magento\Elasticsearch\Model\Adapter\BatchDataMapper\PriceFieldsProvider</item>
+                <item name="categoryPermissions" xsi:type="object">Magento\ElasticsearchCatalogPermissions\Model\Adapter\BatchDataMapper\CategoryPermissionsFieldsProvider</item>
+            </argument>
+        </arguments>
+    </virtualType>
+    <type name="\Magento\ElasticsearchCatalogPermissions\Model\Adapter\FieldMapper\Product\FieldProvider\FieldName\Resolver\CompositeResolver">
+        <arguments>
+            <argument name="items" xsi:type="array">
+                <item name="categoryPermission" xsi:type="object" sortOrder="1">\Magento\ElasticsearchCatalogPermissions\Model\Adapter\FieldMapper\Product\FieldProvider\FieldName\Resolver\CategoryPermission</item>
+                <item name="notEav" xsi:type="object" sortOrder="10">\Magento\Elasticsearch\Model\Adapter\FieldMapper\Product\FieldProvider\FieldName\Resolver\NotEavAttribute</item>
+                <item name="special" xsi:type="object" sortOrder="20">\Magento\Elasticsearch\Model\Adapter\FieldMapper\Product\FieldProvider\FieldName\Resolver\SpecialAttribute</item>
+                <item name="price" xsi:type="object" sortOrder="30">\Magento\Elasticsearch\Model\Adapter\FieldMapper\Product\FieldProvider\FieldName\Resolver\Price</item>
+                <item name="categoryName" xsi:type="object" sortOrder="40">\Magento\Elasticsearch\Model\Adapter\FieldMapper\Product\FieldProvider\FieldName\Resolver\CategoryName</item>
+                <item name="position" xsi:type="object" sortOrder="50">\Magento\Elasticsearch\Model\Adapter\FieldMapper\Product\FieldProvider\FieldName\Resolver\Position</item>
+                <item name="default" xsi:type="object" sortOrder="60">\Magento\Elasticsearch\Model\Adapter\FieldMapper\Product\FieldProvider\FieldName\Resolver\DefaultResolver</item>
+            </argument>
+        </arguments>
+    </type>
+    <type name="Magento\ElasticsearchCatalogPermissions\Elasticsearch5\Model\Adapter\FieldMapper\Product\FieldProvider\FieldName\Resolver\CompositeResolver">
+        <arguments>
+            <argument name="items" xsi:type="array">
+                <item name="categoryPermission" xsi:type="object" sortOrder="1">\Magento\ElasticsearchCatalogPermissions\Model\Adapter\FieldMapper\Product\FieldProvider\FieldName\Resolver\CategoryPermission</item>
+                <item name="notEav" xsi:type="object" sortOrder="10">\Magento\Elasticsearch\Model\Adapter\FieldMapper\Product\FieldProvider\FieldName\Resolver\NotEavAttribute</item>
+                <item name="special" xsi:type="object" sortOrder="20">\Magento\Elasticsearch\Model\Adapter\FieldMapper\Product\FieldProvider\FieldName\Resolver\SpecialAttribute</item>
+                <item name="price" xsi:type="object" sortOrder="30">\Magento\Elasticsearch\Model\Adapter\FieldMapper\Product\FieldProvider\FieldName\Resolver\Price</item>
+                <item name="categoryName" xsi:type="object" sortOrder="40">\Magento\Elasticsearch\Model\Adapter\FieldMapper\Product\FieldProvider\FieldName\Resolver\CategoryName</item>
+                <item name="position" xsi:type="object" sortOrder="50">\Magento\Elasticsearch\Model\Adapter\FieldMapper\Product\FieldProvider\FieldName\Resolver\Position</item>
+                <item name="default" xsi:type="object" sortOrder="60">elasticsearch5FieldNameDefaultResolver</item>
+            </argument>
+        </arguments>
+    </type>
+    <type name="Magento\CatalogSearch\Model\ResourceModel\Fulltext\Collection">
+        <plugin name="add_catalog_permissions_information" type="Magento\ElasticsearchCatalogPermissions\Plugin\AddCategoryPermissionsToFulltextCollection" />
+    </type>
+    <type name="Magento\CatalogSearch\Model\ResourceModel\Advanced\Collection">
+        <plugin name="add_catalog_permissions_information" type="Magento\ElasticsearchCatalogPermissions\Plugin\AddCategoryPermissionsToCollection" />
+    </type>
+</config>

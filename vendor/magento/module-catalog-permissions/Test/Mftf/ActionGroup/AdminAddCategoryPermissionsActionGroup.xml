@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+ /**
+  * Copyright © Magento, Inc. All rights reserved.
+  * See COPYING.txt for license details.
+  */
+-->
+
+<actionGroups xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:noNamespaceSchemaLocation="urn:magento:mftf:Test/etc/actionGroupSchema.xsd">
+    <actionGroup name="AdminAddCategoryPermissionsActionGroup">
+        <annotations>
+            <description>Adds Category Permissions.</description>
+        </annotations>
+        <arguments>
+            <argument name="permissionNumber" type="string" defaultValue="1"/>
+            <argument name="customerGroup" type="string" defaultValue="NOT LOGGED IN"/>
+            <argument name="browsingCategoryPermission" type="string" defaultValue="default"/>
+            <argument name="displayProductPricesPermission" type="string" defaultValue="default"/>
+            <argument name="addToCartPermission" type="string" defaultValue="default"/>
+        </arguments>
+
+        <scrollTo selector="{{AdminCategoryPermissionsSection.sectionHeader}}" stepKey="scrollToCategoryPermissionsTab"/>
+        <conditionalClick selector="{{AdminCategoryPermissionsSection.sectionHeader}}" dependentSelector="{{AdminCategoryPermissionsSection.newPermissionButton}}" visible="false" stepKey="openCategoryPermissionsTab"/>
+        <waitForElementVisible selector="{{AdminCategoryPermissionsSection.newPermissionButton}}" stepKey="waitForNewPermissionButtonVisible"/>
+        <click selector="{{AdminCategoryPermissionsSection.newPermissionButton}}" stepKey="clickOnNewPermissionButton"/>
+        <waitForElementVisible selector="{{AdminCategoryPermissionsSection.selectCustomerGroup(permissionNumber)}}" stepKey="waitForSelectCustomerGroupVisible"/>
+        <selectOption selector="{{AdminCategoryPermissionsSection.selectCustomerGroup(permissionNumber)}}" userInput="{{customerGroup}}" stepKey="selectCustomerGroup"/>
+        <checkOption selector="{{AdminCategoryPermissionsSection.grantCatalogCategoryView(permissionNumber, browsingCategoryPermission)}}" stepKey="checkCatalogCategoryViewPermission"/>
+        <checkOption selector="{{AdminCategoryPermissionsSection.grantCatalogProductPrice(permissionNumber, displayProductPricesPermission)}}" stepKey="checkCatalogProductPricePermission"/>
+        <checkOption selector="{{AdminCategoryPermissionsSection.grantCheckoutItems(permissionNumber, addToCartPermission)}}" stepKey="checkCheckoutItemsPermission"/>
+    </actionGroup>
+</actionGroups>

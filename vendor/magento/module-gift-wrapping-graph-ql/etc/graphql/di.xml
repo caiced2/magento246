@@ -1,0 +1,28 @@
+<?xml version="1.0"?>
+<!--
+/**
+ * Copyright © Magento, Inc. All rights reserved.
+ * See COPYING.txt for license details.
+ */
+-->
+<config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:noNamespaceSchemaLocation="urn:magento:framework:ObjectManager/etc/config.xsd">
+    <type name="Magento\StoreGraphQl\Model\Resolver\Store\StoreConfigDataProvider">
+        <arguments>
+            <argument name="extendedConfigData" xsi:type="array">
+                <item name="allow_gift_wrapping_on_order" xsi:type="string">sales/gift_options/wrapping_allow_order</item>
+                <item name="allow_gift_wrapping_on_order_items" xsi:type="string">sales/gift_options/wrapping_allow_items</item>
+                <item name="allow_gift_receipt" xsi:type="string">sales/gift_options/allow_gift_receipt</item>
+                <item name="allow_printed_card" xsi:type="string">sales/gift_options/allow_printed_card</item>
+                <item name="printed_card_price" xsi:type="string">sales/gift_options/printed_card_price</item>
+                <item name="cart_gift_wrapping" xsi:type="string">tax/cart_display/gift_wrapping</item>
+                <item name="cart_printed_card" xsi:type="string">tax/cart_display/printed_card</item>
+                <item name="sales_gift_wrapping" xsi:type="string">tax/sales_display/gift_wrapping</item>
+                <item name="sales_printed_card" xsi:type="string">tax/sales_display/printed_card</item>
+            </argument>
+        </arguments>
+    </type>
+    <type name="Magento\QuoteGraphQl\Model\Resolver\UpdateCartItems">
+        <plugin name="set-gift-wrapping-id-resolver" type="Magento\GiftWrappingGraphQl\Plugin\Mutation\SetGiftWrappingId"/>
+    </type>
+</config>

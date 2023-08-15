@@ -1,0 +1,98 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+ /**
+  * Copyright © Magento, Inc. All rights reserved.
+  * See COPYING.txt for license details.
+  */
+-->
+
+<tests xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xsi:noNamespaceSchemaLocation="urn:magento:mftf:Test/etc/testSchema.xsd">
+    <test name="StorefrontVerifyDownloadableProductLinksWithScheduleUpdateTest">
+        <annotations>
+            <features value="DownloadableStaging"/>
+            <stories value="Create scheduled product updates"/>
+            <title value="Create Scheduled Update for Downloadable Product with Links"/>
+            <description value="Verify Downloadable Links on Product details page using Staging Preview"/>
+            <severity value="CRITICAL"/>
+            <testCaseId value="MC-40799"/>
+            <useCaseId value="MC-39784"/>
+            <group value="staging"/>
+            <group value="downloadableStaging"/>
+        </annotations>
+        <before>
+            <!-- Add downloadable domains -->
+            <magentoCLI command="downloadable:domains:add example.com static.magento.com" stepKey="addDownloadableDomain"/>
+
+            <!-- Create Downloadable Product -->
+            <createData entity="ApiDownloadableProduct" stepKey="createDownloadableProduct"/>
+            <createData entity="ApiDownloadableLink" stepKey="addDownloadableLink">
+                <requiredEntity createDataKey="createDownloadableProduct"/>
+            </createData>
+
+            <!-- Login as Admin -->
+            <actionGroup ref="AdminLoginActionGroup" stepKey="loginAsAdmin"/>
+        </before>
+        <after>
+            <!-- Remove downloadable domains -->
+            <magentoCLI command="downloadable:domains:remove example.com static.magento.com" stepKey="removeDownloadableDomain"/>
+
+            <!-- Delete Downloadable Product -->
+            <deleteData createDataKey="createDownloadableProduct" stepKey="deleteProduct"/>
+
+            <!-- Logout from Admin -->
+            <actionGroup ref="AdminLogoutActionGroup" stepKey="logoutFromAdmin"/>
+        </after>
+
+        <!-- Open Product edit page -->
+        <actionGroup ref="AdminProductPageOpenByIdActionGroup" stepKey="goToProductEditPage">
+            <argument name="productId" value="$createDownloadableProduct.id$"/>
+        </actionGroup>
+
+        <!-- Create Schedule Update -->
+        <generateDate date="+1 day" format="m/d/Y g:i A" stepKey="generateStartDate"/>
+        <generateDate date="+7 day" format="m/d/Y g:i A" stepKey="generateEndDate"/>
+        <actionGroup ref="FillScheduleUpdateActionGroup" stepKey="createNewStagingUpdate">
+            <argument name="staging" value="S5UpdateNameStaging"/>
+            <argument name="timeStart" value="{$generateStartDate}"/>
+            <argument name="timeEnd" value="{$generateEndDate}"/>
+        </actionGroup>
+
+        <!-- Add another Downloadable Link and save Product -->
+        <checkOption selector="{{AdminProductDownloadableSection.isLinksPurchasedSeparately}}" stepKey="checkLinksPurchasedSeparately"/>
+        <actionGroup ref="AddDownloadableProductLinkActionGroup" stepKey="addDownloadableLink">
+            <argument name="link" value="downloadableLink"/>
+        </actionGroup>
+        <actionGroup ref="SaveProductFormActionGroup" stepKey="saveProduct"/>
+
+        <!-- Open Product Staging preview -->
+        <actionGroup ref="GoToProductStagingPreview" stepKey="openStagingPreviewPage">
+            <argument name="productId" value="$createDownloadableProduct.id$"/>
+            <argument name="updateName" value="{{S5UpdateNameStaging.updateName}}"/>
+        </actionGroup>
+        <actionGroup ref="FocusOnStagingPreviewIframe" stepKey="focusOnStagedProductPreview"/>
+
+        <!-- Check for Downloadable Links -->
+        <actionGroup ref="AssertStorefrontLinkOnDownloadableProductPageActionGroup" stepKey="seeFirstLink">
+            <argument name="linkTitle" value="{{ApiDownloadableLink.title}}"/>
+        </actionGroup>
+        <actionGroup ref="AssertStorefrontNoLinkOnDownloadableProductPageActionGroup" stepKey="dontSeeSecondLink"/>
+
+        <!-- Change Preview Version -->
+        <actionGroup ref="FocusOnHostPage" stepKey="focusBackToStagedProductStagingPreviewHeader"/>
+        <generateDate date="+8 day" format="M j, Y g:i A" stepKey="generateVersionExpiredDate"/>
+        <actionGroup ref="ChangePreviewVersion" stepKey="switchToRollBackedProductPreview">
+            <argument name="version" value="{$generateVersionExpiredDate}"/>
+        </actionGroup>
+        <actionGroup ref="FocusOnStagingPreviewIframe" stepKey="focusToRollBackedProductPreview"/>
+
+        <!-- Check for Downloadable Links after Schedule Update is complete -->
+        <actionGroup ref="AssertStorefrontLinkOnDownloadableProductPageActionGroup" stepKey="seeFirstLinkAgain">
+            <argument name="linkTitle" value="{{ApiDownloadableLink.title}}"/>
+        </actionGroup>
+        <actionGroup ref="AssertStorefrontLinkOnDownloadableProductPageActionGroup" stepKey="seeSecondLink"/>
+
+        <!-- Close Preview tab -->
+        <closeTab stepKey="closePreviewTab"/>
+    </test>
+</tests>

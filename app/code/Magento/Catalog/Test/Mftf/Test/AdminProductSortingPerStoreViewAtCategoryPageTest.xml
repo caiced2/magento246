@@ -1,0 +1,277 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+ /**
+  * Copyright © Magento, Inc. All rights reserved.
+  * See COPYING.txt for license details.
+  */
+-->
+
+<tests xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xsi:noNamespaceSchemaLocation="urn:magento:mftf:Test/etc/testSchema.xsd">
+  <test name="AdminProductSortingPerStoreViewAtCategoryPageTest">
+    <annotations>
+      <features value="Catalog"/>
+      <stories value="Create websites"/>
+      <title value="Product Sorting per Store View at Category page"/>
+      <description value="Product Sorting per Store View at Category page"/>
+      <severity value="MAJOR"/>
+      <testCaseId value="AC-4138"/>
+      <group value="Catalog"/>
+    </annotations>
+
+    <before>
+      <actionGroup ref="AdminLoginActionGroup" stepKey="login"/>
+
+      <!--Step 1. Create First website,store and store views-->
+      <actionGroup ref="AdminSystemStoreOpenPageActionGroup" stepKey="goToAdminSystemStorePage"/>
+      <actionGroup ref="AdminCreateWebsiteActionGroup" stepKey="adminCreateNewWebsite">
+        <argument name="newWebsiteName" value="{{NewWebSiteData.name}}"/>
+        <argument name="websiteCode" value="{{NewWebSiteData.code}}"/>
+      </actionGroup>
+      <actionGroup ref="AdminCreateNewStoreGroupActionGroup" stepKey="adminCreateNewStore">
+        <argument name="website" value="{{NewWebSiteData.name}}"/>
+        <argument name="storeGroupName" value="{{NewStoreData.name}}"/>
+        <argument name="storeGroupCode" value="{{NewStoreData.code}}"/>
+      </actionGroup>
+
+      <actionGroup ref="AdminCreateStoreViewActionGroup" stepKey="createStoreView1">
+        <argument name="StoreGroup" value="NewStoreData"/>
+        <argument name="customStore" value="storeViewData1"/>
+      </actionGroup>
+
+      <magentoCron groups="index" stepKey="reindex"/>
+
+      <!--Step 2. Create Second website,store and store views-->
+      <actionGroup ref="AdminCreateWebsiteActionGroup" stepKey="createWebsite" >
+        <argument name="newWebsiteName" value="{{customWebsite.name}}"/>
+        <argument name="websiteCode" value="{{customWebsite.code}}"/>
+      </actionGroup>
+      <actionGroup ref="AdminCreateNewStoreGroupActionGroup" stepKey="createStore" >
+        <argument name="website" value="{{customWebsite.name}}"/>
+        <argument name="storeGroupName" value="{{customStoreGroup.name}}"/>
+        <argument name="storeGroupCode" value="{{customStoreGroup.code}}"/>
+      </actionGroup>
+      <actionGroup ref="AdminCreateStoreViewActionGroup" stepKey="createStoreView2">
+        <argument name="StoreGroup" value="customStoreGroup"/>
+        <argument name="customStore" value="storeViewData2"/>
+      </actionGroup>
+
+      <!--Step 3. create category and simple products -->
+      <createData entity="SimpleSubCategory" stepKey="createCategory"/>
+      <createData entity="SimpleProduct" stepKey="createSimpleProduct1">
+        <requiredEntity createDataKey="createCategory"/>
+        <field key="price">35</field>
+      </createData>
+      <createData entity="_defaultProduct" stepKey="createSimpleProduct2">
+        <requiredEntity createDataKey="createCategory"/>
+        <field key="price">3</field>
+      </createData>
+      <createData entity="SimpleProduct3" stepKey="createSimpleProduct3">
+        <requiredEntity createDataKey="createCategory"/>
+        <field key="price">10</field>
+      </createData>
+      <createData entity="_defaultProduct" stepKey="createSimpleProduct4">
+        <requiredEntity createDataKey="createCategory"/>
+        <field key="price">100</field>
+      </createData>
+      <createData entity="ApiSimpleProduct" stepKey="createSimpleProduct5">
+        <requiredEntity createDataKey="createCategory"/>
+        <field key="price">60</field>
+      </createData>
+      <createData entity="ApiSimpleProduct" stepKey="createSimpleProduct6">
+        <requiredEntity createDataKey="createCategory"/>
+        <field key="price">20</field>
+      </createData>
+      <createData entity="SimpleProduct" stepKey="createSimpleProduct7">
+        <requiredEntity createDataKey="createCategory"/>
+        <field key="price">77</field>
+      </createData>
+
+      <!--Step 4. Open product page Assign all product to custom website and save-->
+      <!-- Open 1 product page -->
+      <actionGroup ref="AdminProductPageOpenByIdActionGroup" stepKey="visitAdminProductPageForSimpleProduct1">
+        <argument name="productId" value="$$createSimpleProduct1.id$$"/>
+      </actionGroup>
+
+      <!-- Assign product to custom website and save-->
+      <actionGroup ref="AdminAssignProductInWebsiteActionGroup" stepKey="selectSimpleProduct1InWebsites">
+        <argument name="website" value="{{NewWebSiteData.name}}"/>
+      </actionGroup>
+      <actionGroup ref="SaveProductFormActionGroup" stepKey="clickSaveButtonForSimpleProduct1"/>
+
+      <!--Open 2 product page -->
+      <actionGroup ref="AdminProductPageOpenByIdActionGroup" stepKey="visitAdminProductPageForSimpleProduct2">
+        <argument name="productId" value="$$createSimpleProduct2.id$$"/>
+      </actionGroup>
+
+      <!--Assign product to custom website and save-->
+      <actionGroup ref="AdminAssignProductInWebsiteActionGroup" stepKey="selectSimpleProduct2InWebsites">
+        <argument name="website" value="{{customWebsite.name}}"/>
+      </actionGroup>
+      <actionGroup ref="SaveProductFormActionGroup" stepKey="clickSaveButtonForSimpleProduct2"/>
+
+      <!--Open 3 product page -->
+      <actionGroup ref="AdminProductPageOpenByIdActionGroup" stepKey="visitAdminProductPageForSimpleProduct3">
+        <argument name="productId" value="$$createSimpleProduct3.id$$"/>
+      </actionGroup>
+
+      <!--Assign product to custom website and save-->
+      <actionGroup ref="AdminAssignProductInWebsiteActionGroup" stepKey="selectSimpleProduct3InWebsites">
+        <argument name="website" value="{{NewWebSiteData.name}}"/>
+      </actionGroup>
+      <actionGroup ref="SaveProductFormActionGroup" stepKey="clickSaveButtonForSimpleProduct3"/>
+
+      <!--Open 4 product page -->
+      <actionGroup ref="AdminProductPageOpenByIdActionGroup" stepKey="visitAdminProductPageForSimpleProduct4">
+        <argument name="productId" value="$$createSimpleProduct4.id$$"/>
+      </actionGroup>
+
+      <!--Assign product to custom website and save-->
+      <actionGroup ref="AdminAssignProductInWebsiteActionGroup" stepKey="selectSimpleProduct4InWebsites">
+        <argument name="website" value="{{customWebsite.name}}"/>
+      </actionGroup>
+      <actionGroup ref="SaveProductFormActionGroup" stepKey="clickSaveButtonForSimpleProduct4"/>
+
+      <!--Open 5 product page -->
+      <actionGroup ref="AdminProductPageOpenByIdActionGroup" stepKey="visitAdminProductPageForSimpleProduct5">
+        <argument name="productId" value="$$createSimpleProduct5.id$$"/>
+      </actionGroup>
+
+      <!--Assign product to custom website and save-->
+      <actionGroup ref="AdminAssignProductInWebsiteActionGroup" stepKey="selectSimpleProduct5InWebsites">
+        <argument name="website" value="{{customWebsite.name}}"/>
+      </actionGroup>
+      <actionGroup ref="SaveProductFormActionGroup" stepKey="clickSaveButtonForSimpleProduct5"/>
+
+      <!--Open 6 product page -->
+      <actionGroup ref="AdminProductPageOpenByIdActionGroup" stepKey="visitAdminProductPageForSimpleProduct6">
+        <argument name="productId" value="$$createSimpleProduct6.id$$"/>
+      </actionGroup>
+
+      <!--Assign product to custom website and save-->
+      <actionGroup ref="AdminAssignProductInWebsiteActionGroup" stepKey="selectSimpleProduct6InWebsites">
+        <argument name="website" value="{{NewWebSiteData.name}}"/>
+      </actionGroup>
+      <actionGroup ref="SaveProductFormActionGroup" stepKey="clickSaveButtonForSimpleProduct6"/>
+
+      <!--Open 7 product page -->
+      <actionGroup ref="AdminProductPageOpenByIdActionGroup" stepKey="visitAdminProductPageForSimpleProduct7">
+        <argument name="productId" value="$$createSimpleProduct7.id$$"/>
+      </actionGroup>
+
+      <!--Assign product to custom website and save-->
+      <actionGroup ref="AdminAssignProductInWebsiteActionGroup" stepKey="selectSimpleProduct7InWebsites">
+        <argument name="website" value="{{customWebsite.name}}"/>
+      </actionGroup>
+      <actionGroup ref="AdminAssignProductInWebsiteActionGroup" stepKey="selectAnotherSimpleProduct7InWebsites">
+        <argument name="website" value="{{NewWebSiteData.name}}"/>
+      </actionGroup>
+      <actionGroup ref="SaveProductFormActionGroup" stepKey="clickSaveButtonForSimpleProduct7"/>
+    </before>
+
+    <!--Step 5. Open Category Page and select storeview1 -->
+    <actionGroup ref="SwitchCategoryWebSiteStoreViewActionGroup" stepKey="SwitchStoreView">
+      <argument name="Store" value="{{storeViewData1.name}}"/>
+      <argument name="CatName" value="SimpleSubCategory.name"/>
+    </actionGroup>
+
+    <!-- Step 6. Navigate to Products in Category selector and click on selector -->
+    <actionGroup ref="OpenProductsInCategorySectionActionGroup" stepKey="openProductsInCategorySectionBeforeSort"/>
+
+    <!-- Step 7. sort products by name_a_z -->
+    <actionGroup ref="AdminSortingWithoutRuleProductsInCategoryPageActionGroup" stepKey="SortingByNameAtoZ">
+      <argument name="sorting" value="{{SmartCategoryAutomaticSorting.name_a_z}}"/>
+    </actionGroup>
+
+    <!-- Step 8. Click Save Button on Category Page -->
+    <actionGroup ref="AdminSaveCategoryFormActionGroup" stepKey="clickSaveButton"/>
+    <waitForPageLoad stepKey="waitForPageCategoryPageToLoad"/>
+
+    <!-- Step 9. Navigate to Products in Category selector in Admin after sorting-->
+    <actionGroup ref="OpenProductsInCategorySectionActionGroup" stepKey="openProductsInCategorySectionAfterSort"/>
+    <scrollTo selector="{{AdminCategoryProductsSection.sectionHeader}}" stepKey="scrollToBottom"/>
+
+    <!-- Step 10. Assert all position of product in Admin in Category Page after sorting-->
+    <!-- Assert first position of product in Admin in Category Page-->
+    <actionGroup ref="AdminCheckProductPositionInCategoryProductsGridActionGroup" stepKey="assertSimpleProduct6InGrid">
+      <argument name="productName" value="$createSimpleProduct6.name$"/>
+      <argument name="position" value="1"/>
+    </actionGroup>
+
+    <!-- Assert second position of product in Admin in Category Page-->
+    <actionGroup ref="AdminCheckProductPositionInCategoryProductsGridActionGroup" stepKey="assertSimpleProduct3InGrid">
+      <argument name="productName" value="$createSimpleProduct3.name$"/>
+      <argument name="position" value="2"/>
+    </actionGroup>
+
+    <!--Assert third position of product in Admin in Category Page-->
+    <actionGroup ref="AdminCheckProductPositionInCategoryProductsGridActionGroup" stepKey="assertSimpleProduct1InGrid">
+      <argument name="productName" value="$createSimpleProduct1.name$"/>
+      <argument name="position" value="3"/>
+    </actionGroup>
+
+    <!--Assert fourth position of product in Admin in Category Page-->
+    <actionGroup ref="AdminCheckProductPositionInCategoryProductsGridActionGroup" stepKey="assertSimpleProduct7InGrid">
+      <argument name="productName" value="$createSimpleProduct7.name$"/>
+      <argument name="position" value="4"/>
+    </actionGroup>
+
+    <magentoCLI command="indexer:reindex" stepKey="performReindex"/>
+    <magentoCLI command="cache:flush" stepKey="cleanCache"/>
+
+    <!--Step 11. switch storeview 2 -->
+    <actionGroup ref="SwitchCategoryWebSiteStoreViewActionGroup" stepKey="SwitchStoreView2">
+      <argument name="Store" value="{{storeViewData2.name}}"/>
+      <argument name="CatName" value="SimpleSubCategory.name"/>
+    </actionGroup>
+
+    <!-- Step 12. Navigate to Products in Category selector and click on selector -->
+    <actionGroup ref="OpenProductsInCategorySectionActionGroup" stepKey="openProductsInCategorySectionDefaultSort"/>
+    <scrollTo selector="{{AdminCategoryProductsSection.sectionHeader}}" stepKey="scrollToBottomForDefaultSorting"/>
+
+    <!-- Step 13. Assert all position of product in Admin in Category Page default sorting-->
+    <!-- Assert first position of product in Admin in Category Page-->
+    <actionGroup ref="AdminCheckProductPositionInCategoryProductsGridActionGroup" stepKey="assertSimpleProduct5InGrid">
+      <argument name="productName" value="$createSimpleProduct5.name$"/>
+      <argument name="position" value="1"/>
+    </actionGroup>
+
+    <!-- Assert second position of product in Admin in Category Page-->
+    <actionGroup ref="AdminCheckProductPositionInCategoryProductsGridActionGroup" stepKey="assertSimpleProduct4InGrid">
+      <argument name="productName" value="$createSimpleProduct4.name$"/>
+      <argument name="position" value="2"/>
+    </actionGroup>
+
+    <!--Assert third position of product in Admin in Category Page-->
+    <actionGroup ref="AdminCheckProductPositionInCategoryProductsGridActionGroup" stepKey="assertSimpleProduct2InGrid">
+      <argument name="productName" value="$createSimpleProduct2.name$"/>
+      <argument name="position" value="3"/>
+    </actionGroup>
+
+    <!--Assert fourth position of product in Admin in Category Page-->
+    <actionGroup ref="AdminCheckProductPositionInCategoryProductsGridActionGroup" stepKey="assertSimpleProduct7AgainInGrid">
+      <argument name="productName" value="$createSimpleProduct7.name$"/>
+      <argument name="position" value="4"/>
+    </actionGroup>
+
+    <after>
+      <!--Step 14. Delete First Website -->
+      <actionGroup ref="AdminDeleteWebsiteActionGroup" stepKey="deleteWebsite1">
+        <argument name="websiteName" value="{{NewWebSiteData.name}}"/>
+      </actionGroup>
+      <!--Step 15. Delete Second Website -->
+      <actionGroup ref="AdminDeleteWebsiteActionGroup" stepKey="deleteWebsite2">
+        <argument name="websiteName" value="{{customWebsite.name}}"/>
+      </actionGroup>
+      <!--Step 16. Delete category, simple product -->
+      <deleteData createDataKey="createCategory" stepKey="deleteCategory"/>
+      <deleteData createDataKey="createSimpleProduct1" stepKey="deleteSimpleProduct1"/>
+      <deleteData createDataKey="createSimpleProduct2" stepKey="deleteSimpleProduct2"/>
+      <deleteData createDataKey="createSimpleProduct3" stepKey="deleteSimpleProduct3"/>
+      <deleteData createDataKey="createSimpleProduct4" stepKey="deleteSimpleProduct4"/>
+      <deleteData createDataKey="createSimpleProduct5" stepKey="deleteSimpleProduct5"/>
+      <deleteData createDataKey="createSimpleProduct6" stepKey="deleteSimpleProduct6"/>
+      <deleteData createDataKey="createSimpleProduct7" stepKey="deleteSimpleProduct7"/>
+    </after>
+  </test>
+</tests>

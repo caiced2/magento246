@@ -1,0 +1,18 @@
+<?xml version="1.0"?>
+<!--
+/**
+ * Copyright © Magento, Inc. All rights reserved.
+ * See COPYING.txt for license details.
+ */
+-->
+<config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="urn:magento:module:Magento_Analytics:etc/analytics.xsd">
+    <file name="pagebuilder_dynamicblock">
+        <providers>
+            <reportProvider name="pagebuilder_dynamicblock" class="Magento\PageBuilderAnalytics\Model\ContentTypeUsageReportProvider">
+                <parameters>
+                    <name>pagebuilder_dynamicblock</name>
+                </parameters>
+            </reportProvider>
+        </providers>
+    </file>
+</config>

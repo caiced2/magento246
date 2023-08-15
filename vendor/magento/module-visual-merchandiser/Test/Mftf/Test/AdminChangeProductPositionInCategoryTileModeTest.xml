@@ -1,0 +1,114 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+ /**
+  * Copyright © Magento, Inc. All rights reserved.
+  * See COPYING.txt for license details.
+  */
+-->
+
+<tests xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xsi:noNamespaceSchemaLocation="urn:magento:mftf:Test/etc/testSchema.xsd">
+    <test name="AdminChangeProductPositionInCategoryTileModeTest">
+        <annotations>
+            <features value="VisualMerchandiser"/>
+            <stories value="Assign/Unassign products to/from a category"/>
+            <title value="[Visual Merchandiser] Admin should be able to move assigned product position in category for tile view"/>
+            <description value="Admin should be able to move assigned product position in category for tile view"/>
+            <severity value="MAJOR"/>
+            <testCaseId value="MC-177"/>
+            <group value="VisualMerchandiser"/>
+        </annotations>
+        <before>
+            <!-- Create category -->
+            <createData entity="_defaultCategory" stepKey="createCategory"/>
+            <!-- Create simple products -->
+            <createData entity="ApiSimpleProduct" stepKey="createFirstProduct">
+                <requiredEntity createDataKey="createCategory"/>
+            </createData>
+            <createData entity="ApiSimpleProduct" stepKey="createSecondProduct">
+                <requiredEntity createDataKey="createCategory"/>
+            </createData>
+            <createData entity="ApiSimpleProduct" stepKey="createThirdProduct">
+                <requiredEntity createDataKey="createCategory"/>
+            </createData>
+            <createData entity="ApiSimpleProduct" stepKey="createFourthProduct">
+                <requiredEntity createDataKey="createCategory"/>
+            </createData>
+            <createData entity="ApiSimpleProduct" stepKey="createFifthProduct">
+                <requiredEntity createDataKey="createCategory"/>
+            </createData>
+            <!-- Login as Admin -->
+            <actionGroup ref="AdminLoginActionGroup" stepKey="loginAsAdmin"/>
+        </before>
+        <after>
+            <!-- Delete created data -->
+            <deleteData createDataKey="createFirstProduct" stepKey="deleteFirstProduct"/>
+            <deleteData createDataKey="createSecondProduct" stepKey="deleteSecondProduct"/>
+            <deleteData createDataKey="createThirdProduct" stepKey="deleteThirdProduct"/>
+            <deleteData createDataKey="createFourthProduct" stepKey="deleteFourthProduct"/>
+            <deleteData createDataKey="createFifthProduct" stepKey="deleteFifthProduct"/>
+            <deleteData createDataKey="createCategory" stepKey="deleteCategory"/>
+            <!-- Admin logout -->
+            <actionGroup ref="AdminLogoutActionGroup" stepKey="adminLogout"/>
+        </after>
+
+        <!-- Go to admin category page -->
+        <actionGroup ref="GoToAdminCategoryPageByIdActionGroup" stepKey="goToAdminCategoryPage">
+            <argument name="id" value="$$createCategory.id$$"/>
+        </actionGroup>
+
+        <!-- Open Products in Category section -->
+        <actionGroup ref="OpenProductsInCategorySectionActionGroup" stepKey="openProductsInCategorySection"/>
+
+        <!-- Switch to Tile mode -->
+        <actionGroup ref="SwitchToTileModeProductInCategoryActionGroup" stepKey="switchModeToTile"/>
+
+        <!-- Change products positions: move row 0 to position 4 -->
+        <actionGroup ref="MoveProductByPositionFieldTileModeActionGroup" stepKey="moveProductByPositionFieldTileMode">
+            <argument name="tileFrom" value="1"/>
+            <argument name="tileTo" value="4"/>
+        </actionGroup>
+
+        <!-- Save category -->
+        <actionGroup ref="ClickSaveButtonActionGroup" stepKey="clickSaveCategory">
+            <argument name="message" value="You saved the category."/>
+        </actionGroup>
+
+        <!-- Check new positions -->
+        <actionGroup ref="OpenProductsInCategorySectionActionGroup" stepKey="openProductsInCategoryTab"/>
+        <see userInput="$$createFourthProduct.name$$" selector="{{AdminCategoryProductsTileSection.nThProductName('1')}}" stepKey="seeProductInFirstPosition"/>
+        <see userInput="$$createThirdProduct.name$$" selector="{{AdminCategoryProductsTileSection.nThProductName('2')}}" stepKey="seeProductInSecondPosition"/>
+        <see userInput="$$createSecondProduct.name$$" selector="{{AdminCategoryProductsTileSection.nThProductName('3')}}" stepKey="seeProductInThirdPosition"/>
+        <see userInput="$$createFirstProduct.name$$" selector="{{AdminCategoryProductsTileSection.nThProductName('4')}}" stepKey="seeProductInFourthPosition"/>
+        <see userInput="$$createFifthProduct.name$$" selector="{{AdminCategoryProductsTileSection.nThProductName('5')}}" stepKey="seeProductInFifthPosition"/>
+
+        <!--Run full reindex and clear caches -->
+        <magentoCLI command="cron:run --group=index" stepKey="runCronReindex"/>
+
+        <!-- Go to category page on Storefront -->
+        <amOnPage url="{{StorefrontCategoryPage.url($$createCategory.custom_attributes[url_key]$$)}}" stepKey="navigateToCategoryPage"/>
+        <waitForPageLoad stepKey="waitForStorefrontCategoryPageLoad"/>
+
+        <!-- Assert products positions on Storefront -->
+        <actionGroup ref="AssertStorefrontElementVisibleActionGroup" stepKey="seeFirstProductPosition">
+            <argument name="selector" value="{{StorefrontCategoryProductSection.ProductTitleByNumber('1')}}"/>
+            <argument name="userInput" value="$$createFourthProduct.name$$"/>
+        </actionGroup>
+        <actionGroup ref="AssertStorefrontElementVisibleActionGroup" stepKey="seeSecondProductPosition">
+            <argument name="selector" value="{{StorefrontCategoryProductSection.ProductTitleByNumber('2')}}"/>
+            <argument name="userInput" value="$$createThirdProduct.name$$"/>
+        </actionGroup>
+        <actionGroup ref="AssertStorefrontElementVisibleActionGroup" stepKey="seeThirdProductPosition">
+            <argument name="selector" value="{{StorefrontCategoryProductSection.ProductTitleByNumber('3')}}"/>
+            <argument name="userInput" value="$$createSecondProduct.name$$"/>
+        </actionGroup>
+        <actionGroup ref="AssertStorefrontElementVisibleActionGroup" stepKey="seeFourthProductPosition">
+            <argument name="selector" value="{{StorefrontCategoryProductSection.ProductTitleByNumber('4')}}"/>
+            <argument name="userInput" value="$$createFirstProduct.name$$"/>
+        </actionGroup>
+        <actionGroup ref="AssertStorefrontElementVisibleActionGroup" stepKey="seeFifthProductPosition">
+            <argument name="selector" value="{{StorefrontCategoryProductSection.ProductTitleByNumber('5')}}"/>
+            <argument name="userInput" value="$$createFifthProduct.name$$"/>
+        </actionGroup>
+    </test>
+</tests>

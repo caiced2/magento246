@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+ /**
+  * Copyright © Magento, Inc. All rights reserved.
+  * See COPYING.txt for license details.
+  */
+-->
+
+<sections xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:noNamespaceSchemaLocation="urn:magento:mftf:Page/etc/SectionObject.xsd">
+    <section name="AdminReturnGridSection">
+        <element name="rowCheckbox" type="checkbox" selector="#rmaGrid_table tr:nth-of-type({{row}}) [data-role='select-row']" parameterized="true"/>
+        <element name="rowOrderId" type="text" selector="#rmaGrid_table tr:nth-of-type({{row}}) .col-order_increment_id" parameterized="true"/>
+        <element name="rowStatus" type="text" selector="#rmaGrid_table tr:nth-of-type({{row}}) td.col-status" parameterized="true"/>
+        <element name="rowViewAction" type="button" selector="#rmaGrid_table tr:nth-of-type({{row}}) .col-action>a[href*='rma/edit']" parameterized="true" timeout="30"/>
+    </section>
+</sections>

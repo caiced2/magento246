@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+/**
+ * Copyright © Magento, Inc. All rights reserved.
+ * See COPYING.txt for license details.
+ */
+-->
+<form xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="urn:magento:module:Magento_Ui:etc/ui_configuration.xsd">
+    <fieldset name="related_catalogrule_banners" sortOrder="60">
+        <settings>
+            <collapsible>true</collapsible>
+            <label translate="true">Related Dynamic Blocks</label>
+        </settings>
+        <insertListing name="related_catalogrule_banners_grid">
+            <argument name="data" xsi:type="array">
+                <item name="config" xsi:type="array">
+                    <item name="externalTransfer" xsi:type="boolean">true</item>
+                </item>
+            </argument>
+            <settings>
+                <dataLinks>
+                    <exports>false</exports>
+                    <imports>true</imports>
+                </dataLinks>
+                <externalProvider>related_catalogrule_banners_grid.related_catalogrule_banners_grid_data_source</externalProvider>
+                <selectionsProvider>related_catalogrule_banners_grid.related_catalogrule_banners_grid.related_catalogrule_banners_columns.ids</selectionsProvider>
+                <autoRender>true</autoRender>
+                <dataScope>related_banners</dataScope>
+                <ns>related_catalogrule_banners_grid</ns>
+                <exports>
+                    <link name="ruleId">${ $.externalProvider }:params.rule_id</link>
+                </exports>
+                <imports>
+                    <link name="ruleId">${ $.provider }:data.rule_id</link>
+                </imports>
+            </settings>
+        </insertListing>
+    </fieldset>
+</form>

@@ -1,0 +1,31 @@
+{
+    "name": "magento/module-gift-wrapping-staging",
+    "description": "N/A",
+    "type": "magento2-module",
+    "license": [
+        "proprietary"
+    ],
+    "config": {
+        "sort-packages": true
+    },
+    "version": "100.4.3",
+    "require": {
+        "lib-libxml": "*",
+        "magento/framework": "103.0.*",
+        "magento/magento-composer-installer": "*",
+        "php": "~8.1.0||~8.2.0"
+    },
+    "suggest": {
+        "magento/module-gift-wrapping": "101.2.*",
+        "magento/module-staging": "101.2.*"
+    },
+    "autoload": {
+        "files": [
+            "registration.php"
+        ],
+        "psr-4": {
+            "Magento\\GiftWrappingStaging\\": ""
+        }
+    }
+}
+

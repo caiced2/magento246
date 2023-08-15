@@ -1,0 +1,93 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+ /**
+  * Copyright © Magento, Inc. All rights reserved.
+  * See COPYING.txt for license details.
+  */
+-->
+
+<tests xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xsi:noNamespaceSchemaLocation="urn:magento:mftf:Test/etc/testSchema.xsd">
+    <test name="AdminCustomAttributeNotVisibleInStoreFrontAndCreateOrderWithNewCustomerTest">
+        <annotations>
+            <features value="CustomerCustomAttribute"/>
+            <title value="Check Customer custom attribute value saved in new order with new customer"/>
+            <stories value="Check Customer custom attribute value saved in new order with new customer"/>
+            <testCaseId value="AC-2603"/>
+            <useCaseId value="ACP2E-550"/>
+            <severity value="MAJOR"/>
+            <description value="Customer custom attribute with visible on StoreFront as No, when trying to create new order with new customer value of custom attribute should be saved."/>
+            <group value="customerCustomAttributes"/>
+        </annotations>
+        <before>
+            <actionGroup ref="AdminLoginActionGroup" stepKey="login"/>
+
+            <!-- Create product -->
+            <createData entity="SimpleProduct2" stepKey="createSimpleProduct"/>
+
+            <!-- Go to Customer attribute page -->
+            <amOnPage url="{{CustomerAttributesPage.url}}" stepKey="navigateToCustomerAttributePage"/>
+
+            <!-- Create new customer attribute -->
+            <actionGroup ref="AdminCreateCustomerNewAttributeActionGroup" stepKey="createCustomerTextFieldAttribute">
+                <argument name="defaultLabel" value="{{AttributeTextFieldData.label}}"/>
+                <argument name="attributeCode" value="{{AttributeTextFieldData.code}}"/>
+                <argument name="inputType" value="{{AttributeTextFieldData.inputType}}"/>
+                <argument name="valuesRequired" value="No"/>
+                <argument name="showInSF" value="No"/>
+                <argument name="formToUse" value="Admin Checkout"/>
+            </actionGroup>
+        </before>
+        <after>
+            <!-- Delete product -->
+            <deleteData createDataKey="createSimpleProduct" stepKey="deleteSimpleProduct"/>
+
+            <!-- Delete customer attribute -->
+            <amOnPage url="{{CustomerAttributesPage.url}}" stepKey="navigateToCustomerAttributePage"/>
+            <actionGroup ref="DeleteCustomerAttribute" stepKey="deleteCustomerAttribute">
+                <argument name="defaultLabel" value="{{AttributeTextFieldData.label}}"/>
+            </actionGroup>
+
+            <!-- Delete customer -->
+            <actionGroup ref="AdminDeleteCustomerActionGroup" stepKey="deleteCustomer">
+                <argument name="customerEmail" value="Simple_US_Customer.email"/>
+            </actionGroup>
+
+            <actionGroup ref="AdminLogoutActionGroup" stepKey="logout"/>
+        </after>
+
+        <!-- Open Create New Order page with New customer -->
+        <actionGroup ref="NavigateToNewOrderPageNewCustomerActionGroup" stepKey="navigateToNewOrderPageWithNewCustomer"/>
+
+        <!-- Add Product to Order by Sku -->
+        <actionGroup ref="AdminAddProductToOrderBySKU" stepKey="addProductToOrderBySku">
+            <argument name="productSKU" value="$$createSimpleProduct.sku$$"/>
+            <argument name="productNumber" value="0"/>
+        </actionGroup>
+
+        <!-- Added product to new order for new customer -->
+
+        <!--Fill customer email and created attribute-->
+        <fillField selector="{{AdminOrderFormAccountSection.email}}" userInput="{{Simple_US_Customer.email}}" stepKey="fillCustomerEmail"/>
+        <fillField selector="input[name='order[account][{{AttributeTextFieldData.code}}]']" userInput="Test Attr Value" stepKey="fillAttributeValue"/>
+
+        <!--Fill customer address-->
+        <actionGroup ref="FillOrderCustomerInformationActionGroup" stepKey="fillCustomerInformation">
+            <argument name="customer" value="Simple_US_Customer"/>
+            <argument name="address" value="US_Address_NY"/>
+        </actionGroup>
+
+        <!--Select order shipping method and submit order-->
+        <actionGroup ref="OrderSelectFlatRateShippingActionGroup" stepKey="orderSelectFlatRateShippingMethod"/>
+        <actionGroup ref="AdminSubmitOrderActionGroup" stepKey="submitOrder"/>
+
+        <!--Open customer page in admin created during order creation-->
+        <actionGroup ref="OpenEditCustomerFromAdminActionGroup" stepKey="openEditCustomerPage">
+            <argument name="customer" value="Simple_US_Customer"/>
+        </actionGroup>
+
+        <!--Assert customer attribute is present-->
+        <actionGroup ref="AdminOpenAccountInformationTabFromCustomerEditPageActionGroup" stepKey="clickTabAccountInfo"/>
+        <seeInField userInput="Test Attr Value" selector="{{AdminCustomerAccountAttributeSection.customAttributeInput(AttributeTextFieldData.code)}}" stepKey="seeCustomAttributeValue"/>
+    </test>
+</tests>

@@ -1,0 +1,198 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+ /**
+  * Copyright © Magento, Inc. All rights reserved.
+  * See COPYING.txt for license details.
+  */
+-->
+
+<tests xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xsi:noNamespaceSchemaLocation="urn:magento:mftf:Test/etc/testSchema.xsd">
+    <test name="AdminDeleteStagingUpdateForCategoryInUseTest">
+        <annotations>
+            <features value="CatalogStaging"/>
+            <stories value="Category staging update"/>
+            <title value="Delete category update when the category is used"/>
+            <description value="Admin should be able to delete category update when the category is used"/>
+            <severity value="CRITICAL"/>
+            <testCaseId value="MC-13131"/>
+            <group value="staging"/>
+            <group value="catalog_staging"/>
+            <group value="catalog"/>
+        </annotations>
+        <before>
+            <!--Enable catalog category permissions-->
+            <magentoCLI command="config:set {{CategoryPermissionsEnableConfigData.path}} {{CategoryPermissionsEnableConfigData.value}}" stepKey="enableCategoryPermissionsConfig"/>
+            <magentoCLI command="config:set {{CategoryPermissionsAllowBrowsingCategoryForEveryoneConfigData.path}} {{CategoryPermissionsAllowBrowsingCategoryForEveryoneConfigData.value}}" stepKey="setYesForAllAllowBrowsingCategoryConfig"/>
+            <magentoCLI command="config:set {{CategoryPermissionsDisplayProductPricesForEveryoneConfigData.path}} {{CategoryPermissionsDisplayProductPricesForEveryoneConfigData.value}}" stepKey="setYesForAllDisplayProductPricesConfig"/>
+            <magentoCLI command="config:set {{CategoryPermissionsAllowAddingToCartForEveryoneConfigData.path}} {{CategoryPermissionsAllowAddingToCartForEveryoneConfigData.value}}" stepKey="setYesForAllAllowAddingToCartConfig"/>
+            <!--Create category-->
+            <createData entity="_defaultCategory" stepKey="createCategory"/>
+            <!--Create product-->
+            <createData entity="ApiSimpleProduct" stepKey="createProduct">
+                <requiredEntity createDataKey="createCategory"/>
+            </createData>
+            <!--Create customer-->
+            <createData entity="Simple_US_Customer" stepKey="createCustomer"/>
+            <!--Create a catalog rule for the category-->
+            <createData entity="CatalogRuleToPercent" stepKey="createCatalogPriceRule">
+                <field key="customer_group_ids">1</field>
+                <field key="simple_action">by_percent</field>
+                <field key="discount_amount">50</field>
+            </createData>
+            <!--Login to Admin Page-->
+            <actionGroup ref="AdminLoginActionGroup" stepKey="loginAsAdmin"/>
+            <!--Create a custom url rewrite for the category-->
+            <actionGroup ref="AdminAddUrlRewriteActionGroup" stepKey="createCustomUrlRewrite">
+                <argument name="category" value="$$createCategory.name$$"/>
+                <argument name="customUrlRewriteValue" value="For Category"/>
+                <argument name="storeValue" value="Default Store View"/>
+                <argument name="requestPath" value="{{defaultUrlRewrite.request_path}}"/>
+                <argument name="redirectTypeValue" value="No"/>
+                <argument name="description" value="Url rewrite for the category"/>
+            </actionGroup>
+            <!--Set condition for catalog price rule-->
+            <actionGroup ref="OpenCatalogPriceRuleActionGroup" stepKey="openCatalogRuleToSetCondition">
+                <argument name="ruleName" value="$createCatalogPriceRule.name$"/>
+            </actionGroup>
+            <actionGroup ref="AdminFillCatalogRuleConditionActionGroup" stepKey="setConditionForCatalogPriceRule">
+                <argument name="condition" value="{{CatalogRuleProductConditions.categoryIds}}"/>
+                <argument name="conditionType" value="is"/>
+                <argument name="conditionValue" value="$createCategory.id$"/>
+            </actionGroup>
+            <actionGroup ref="ClickSaveButtonActionGroup" stepKey="saveCatalogPriceRule">
+                <argument name="message" value="You saved the rule."/>
+            </actionGroup>
+            <!--Create a catalog event for the category-->
+            <actionGroup ref="AdminCreateCatalogEventWithDisplayCountdownActionGroup" stepKey="createCatalogEventForCategory">
+                <argument name="categoryId" value="$createCategory.id$"/>
+            </actionGroup>
+            <!--Add permissions for category-->
+            <actionGroup ref="OpenCategoryFromCategoryTreeActionGroup" stepKey="goToCategoryAdminPage">
+                <argument name="category" value="$createCategory.name$"/>
+            </actionGroup>
+            <actionGroup ref="AdminAddCategoryPermissionsActionGroup" stepKey="addCategoryPermissionsForNotLoggedInGroup">
+                <argument name="permissionNumber" value="1"/>
+                <argument name="customerGroup" value="NOT LOGGED IN"/>
+                <argument name="browsingCategoryPermission" value="allow"/>
+                <argument name="displayProductPricesPermission" value="deny"/>
+                <argument name="addToCartPermission" value="deny"/>
+            </actionGroup>
+            <actionGroup ref="AdminAddCategoryPermissionsActionGroup" stepKey="addCategoryPermissionsForGeneralGroup">
+                <argument name="permissionNumber" value="2"/>
+                <argument name="customerGroup" value="All Customer Groups"/>
+                <argument name="browsingCategoryPermission" value="allow"/>
+                <argument name="displayProductPricesPermission" value="allow"/>
+                <argument name="addToCartPermission" value="allow"/>
+            </actionGroup>
+            <actionGroup ref="AdminSaveCategoryFormActionGroup" stepKey="saveCategoryPermissions"/>
+            <!--Login to storefront by customer-->
+            <actionGroup ref="LoginToStorefrontActionGroup" stepKey="customerLogin">
+                <argument name="Customer" value="$createCustomer$"/>
+            </actionGroup>
+            <!--Add product to cart-->
+            <amOnPage url="{{StorefrontCategoryPage.url($createCategory.custom_attributes[url_key]$)}}" stepKey="goToCategoryPage"/>
+            <actionGroup ref="StorefrontAddProductToCartFromCategoryActionGroup" stepKey="addProductToCart">
+                <argument name="productName" value="$createProduct.name$"/>
+            </actionGroup>
+            <!--Add product to WishList-->
+            <actionGroup ref="StorefrontCustomerAddCategoryProductToWishlistActionGroup" stepKey="addToWishlist">
+                <argument name="productVar" value="$createProduct$"/>
+            </actionGroup>
+            <!--Create an email reminder based on shopping cart condition-->
+            <actionGroup ref="AdminAddEmailReminderWithShoppingCartConditionActionGroup" stepKey="createEmailReminder">
+                <argument name="reminder" value="SimpleReminderAbandonedCart"/>
+            </actionGroup>
+            <!--Create a widget using the category-->
+            <actionGroup ref="AdminCreateCatalogProductWidgetActionGroup" stepKey="createWidget">
+                <argument name="widget" value="CatalogCategoryLinkWidget"/>
+                <argument name="categoryName" value="$createCategory.name$"/>
+            </actionGroup>
+            <!--Flush cache to display widget on the page-->
+            <actionGroup ref="CliCacheFlushActionGroup" stepKey="flushCache">
+                <argument name="tags" value=""/>
+            </actionGroup>
+        </before>
+        <after>
+            <!--Disable catalog category permissions-->
+            <magentoCLI command="config:set {{CategoryPermissionsDisableConfigData.path}} {{CategoryPermissionsDisableConfigData.value}}" stepKey="disableCategoryPermissionsConfig"/>
+            <magentoCLI command="config:set {{CategoryPermissionsAllowBrowsingCategoryDefaultConfigData.path}} {{CategoryPermissionsAllowBrowsingCategoryDefaultConfigData.value}}" stepKey="setDefaultAllowBrowsingCategoryConfig"/>
+            <magentoCLI command="config:set {{CategoryPermissionsDisplayProductPricesDefaultConfigData.path}} {{CategoryPermissionsDisplayProductPricesDefaultConfigData.value}}" stepKey="setDefaultDisplayProductPricesConfig"/>
+            <magentoCLI command="config:set {{CategoryPermissionsAllowAddingToCartDefaultConfigData.path}} {{CategoryPermissionsAllowAddingToCartDefaultConfigData.value}}" stepKey="setDefaultAllowAddingToCartConfig"/>
+            <!--Logout from Storefront-->
+            <actionGroup ref="StorefrontCustomerLogoutActionGroup" stepKey="logoutStorefront"/>
+            <!--Delete created entities-->
+            <deleteData createDataKey="createCategory" stepKey="deleteCategory"/>
+            <deleteData createDataKey="createProduct" stepKey="deleteProduct"/>
+            <deleteData createDataKey="createCustomer" stepKey="deleteCustomer"/>
+            <deleteData createDataKey="createCatalogPriceRule" stepKey="deleteCatalogPriceRule"/>
+            <!--Delete email reminder-->
+            <actionGroup ref="AdminDeleteEmailReminderActionGroup" stepKey="deleteEmailReminder">
+                <argument name="ruleName" value="{{SimpleReminderAbandonedCart.ruleName}}"/>
+            </actionGroup>
+            <actionGroup ref="ClearFiltersAdminDataGridActionGroup" stepKey="clearEmailRemindersFilters"/>
+            <!--Delete widget-->
+            <actionGroup ref="AdminDeleteWidgetActionGroup" stepKey="deleteWidget">
+                <argument name="widget" value="CatalogCategoryLinkWidget"/>
+            </actionGroup>
+            <actionGroup ref="ClearFiltersAdminDataGridActionGroup" stepKey="clearWidgetsFilters"/>
+            <comment userInput="BIC workaround" stepKey="logoutCustomerFromStorefront"/>
+            <!--Logout from Admin page-->
+            <actionGroup ref="AdminLogoutActionGroup" stepKey="logoutFromAdminPage"/>
+        </after>
+
+        <!--Go to category admin page-->
+        <actionGroup ref="GoToAdminCategoryPageByIdActionGroup" stepKey="goToCategoryPageOnAdmin">
+            <argument name="id" value="$createCategory.id$"/>
+        </actionGroup>
+
+        <!--Create staging update for category-->
+        <generateDate date="+1 day" format="m/j/Y g:i A" stepKey="categoryUpdateStartDate"/>
+        <generateDate date="+2 day" format="m/j/Y g:i A" stepKey="categoryUpdateEndDate"/>
+        <click selector="{{AdminStagingSlideOutSection.scheduleNewUpdateBtn}}" stepKey="clickNewUpdate"/>
+        <actionGroup ref="FillScheduleUpdateHeaderForProductActionGroup" stepKey="fillScheduleUpdate">
+            <argument name="staging" value="S5UpdateNameStaging"/>
+            <argument name="timeStart" value="{$categoryUpdateStartDate}"/>
+            <argument name="timeEnd" value="{$categoryUpdateEndDate}"/>
+        </actionGroup>
+        <actionGroup ref="SaveScheduleUpdateForProductActionGroup" stepKey="saveScheduleUpdateForCategory">
+            <argument name="staging" value="S5UpdateNameStaging"/>
+        </actionGroup>
+
+        <!--Delete created staging update for category -->
+        <actionGroup ref="DeleteCategoryUpdateActionGroup" stepKey="deleteCategoryStagingUpdate">
+            <argument name="fromStaging" value="S5UpdateNameStaging"/>
+        </actionGroup>
+
+        <!--Go to category page on Storefront-->
+        <amOnPage url="{{StorefrontCategoryPage.url($createCategory.custom_attributes[url_key]$)}}" stepKey="goToCategoryPageOnStorefront"/>
+
+        <!--Assert that catalog rule is still applied to the category-->
+        <seeElement selector="{{StorefrontCategoryProductSection.productPriceFinal('61.50')}}" stepKey="assertProductFinalPrice"/>
+        <!--Assert that catalog event is still displayed for the category according to its status -->
+        <seeElement selector="{{StorefrontCategoryEventSection.blockCategoryEvent}}" stepKey="assertBlockCategoryEvent"/>
+
+        <!--Logout from Storefront-->
+        <actionGroup ref="StorefrontCustomerLogoutActionGroup" stepKey="logoutFromStorefront"/>
+        <!--Assert that category permissions are applied-->
+        <amOnPage url="{{StorefrontCategoryPage.url($createCategory.custom_attributes[url_key]$)}}" stepKey="goToCategoryPageOnStorefrontAfterCustomerLogout"/>
+        <scrollTo selector="{{StorefrontCategoryProductSection.ProductInfoByName($createProduct.name$)}}" stepKey="scrollToProduct"/>
+        <moveMouseOver selector="{{StorefrontCategoryProductSection.ProductInfoByName($createProduct.name$)}}" stepKey="moveMouseOverProduct"/>
+        <dontSeeElement selector="{{StorefrontCategoryProductSection.ProductAddToCartByName($createProduct.name$)}}" stepKey="assertAddToCartButtonDontVisible"/>
+
+        <!--Assert that category can be opened by custom url-->
+        <amOnPage url="/{{defaultUrlRewrite.request_path}}" stepKey="openCustomCategoryUrl"/>
+        <see selector="{{StorefrontCategoryMainSection.CategoryTitle}}" userInput="$createCategory.name$" stepKey="assertCategoryName"/>
+
+        <!--Assert that widget is displayed-->
+        <seeElement selector="{{StorefrontWidgetsSection.widgetCategoryLinkByName($createCategory.name$)}}" stepKey="assertWidgetDisplayed"/>
+
+        <!--Run email reminder and assert that customer is matched-->
+        <actionGroup ref="AdminRunEmailReminderActionGroup" stepKey="runEmailReminder">
+            <argument name="ruleName" value="{{SimpleReminderAbandonedCart.ruleName}}"/>
+        </actionGroup>
+        <click selector="{{AdminEmailReminderRuleFormNavigationSection.matchedCustomersTab}}" stepKey="goToCustomersMatchedTag" />
+        <waitForElementVisible selector="{{AdminEmailReminderRuleFormMatchedCustomersSection.emailCustomerColumn}}" stepKey="waitForCustomersMatchedTag" />
+        <see selector="{{AdminEmailReminderRuleFormMatchedCustomersSection.emailCustomerColumn}}" userInput="$createCustomer.email$" stepKey="assertCustomerMatched"/>
+    </test>
+</tests>

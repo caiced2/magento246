@@ -1,0 +1,119 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+ /**
+  * Copyright © Magento, Inc. All rights reserved.
+  * See COPYING.txt for license details.
+  */
+-->
+
+<tests xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:noNamespaceSchemaLocation="urn:magento:mftf:Test/etc/testSchema.xsd">
+    <test name="StorefrontQuickCheckoutMultipleCreditMemosTest">
+        <annotations>
+            <features value="MagentoQuickCheckout"/>
+            <stories value="Multiple credit memos"/>
+            <title value="Can create multiple credit memos for order placed with Quick Checkout"/>
+            <description value="Merchant can create multiple credit memos for the order placed with Quick Checkout"/>
+            <severity value="CRITICAL"/>
+            <testCaseId value="multiple-credit-memos"/>
+            <group value="quick-checkout"/>
+        </annotations>
+        <before>
+            <magentoCLI command="config:set {{EnableFreeShippingConfigData.path}} {{EnableFreeShippingConfigData.value}}" stepKey="enableFreeShipping"/>
+            <!-- Login -->
+            <actionGroup ref="AdminLoginActionGroup" stepKey="login"/>
+            <actionGroup ref="AdminConfigureQuickCheckoutActionGroup" stepKey="configurePaymentMethod"/>
+            <!-- Create Product -->
+            <createData entity="_defaultCategory" stepKey="createCategory"/>
+            <createData entity="_defaultProduct" stepKey="createProduct">
+                <requiredEntity createDataKey="createCategory"/>
+            </createData>
+            <!-- Create Customer -->
+            <createData entity="Simple_US_Customer" stepKey="createCustomer"/>
+        </before>
+        <after>
+            <magentoCLI command="config:set {{DisableFreeShippingMethod.path}} {{DisableFreeShippingMethod.value}}" stepKey="disableFreeShipping"/>
+            <actionGroup ref="AdminDisableQuickCheckoutActionGroup" stepKey="disablePaymentMethod"/>
+            <!-- Delete product -->
+            <deleteData stepKey="deleteCategory" createDataKey="createCategory"/>
+            <deleteData stepKey="deleteProduct" createDataKey="createProduct"/>
+            <!--Delete customer -->
+            <deleteData stepKey="deleteCustomer" createDataKey="createCustomer"/>
+            <!-- Logout -->
+            <actionGroup ref="AdminLogoutActionGroup" stepKey="logoutFromAdmin"/>
+        </after>
+
+        <!-- Login to storefront as previously created customer -->
+        <actionGroup ref="LoginToStorefrontActionGroup" stepKey="loginAsCustomer">
+            <argument name="Customer" value="$$createCustomer$$"/>
+        </actionGroup>
+        <amOnPage url="{{StorefrontCategoryPage.url($$createCategory.name$$)}}" stepKey="navigateToCategoryPage"/>
+        <actionGroup ref="StorefrontAddProductToCartFromCategoryActionGroup" stepKey="addProductToCart">
+            <argument name="productName" value="$$createProduct.name$$"/>
+        </actionGroup>
+        <actionGroup ref="StorefrontAddProductToCartFromCategoryActionGroup" stepKey="addSecondProductToCart">
+            <argument name="productName" value="$$createProduct.name$$"/>
+        </actionGroup>
+        <actionGroup ref="GoToCheckoutFromMinicartActionGroup" stepKey="goToCheckoutFromMinicart"/>
+        <actionGroup ref="StorefrontSetShippingMethodActionGroup" stepKey="selectFreeShippingMethod">
+            <argument name="shippingMethodName" value="{{freeTitleDefault.value}}"/>
+        </actionGroup>
+        <actionGroup ref="StorefrontCheckoutClickNextButtonActionGroup" stepKey="clickNext"/>
+
+        <actionGroup ref="StorefrontSelectPaymentMethodActionGroup" stepKey="selectPaymentMethod"/>
+        <actionGroup ref="StorefrontFillCreditCardFormActionGroup" stepKey="fillCreditCardForm"/>
+        <waitForElementVisible selector="{{CheckoutPaymentSection.MagentoPaymentsHostedFieldsPlaceOrderButton}}" stepKey="waitPlaceOrderButton"/>
+        <click selector="{{CheckoutPaymentSection.MagentoPaymentsHostedFieldsPlaceOrderButton}}" stepKey="clickPlaceOrderButton"/>
+
+        <!-- I see order successful page -->
+        <waitForLoadingMaskToDisappear stepKey="waitForLoadingMaskToDisappear"/>
+        <actionGroup ref="AssertStorefrontCheckoutSuccessActionGroup" stepKey="assertCheckoutSuccess"/>
+        <grabTextFrom selector="{{CheckoutSuccessMainSection.orderNumber22}}" stepKey="getOrderNumber"/>
+
+        <!-- Capture the order -->
+        <actionGroup ref="OpenOrderByIdActionGroup" stepKey="openOrderPage">
+            <argument name="orderId" value="{$getOrderNumber}"/>
+        </actionGroup>
+        <actionGroup ref="AdminOrderViewCheckStatusActionGroup" stepKey="checkOrderStatus">
+            <argument name="status" value="Processing"/>
+        </actionGroup>
+        <actionGroup ref="AdminFastCreateInvoiceActionGroup" stepKey="createInvoice"/>
+        <see selector="{{AdminInvoiceTotalSection.grandTotal}}" userInput="$246.00" stepKey="seeCorrectGrandTotal"/>
+
+        <!-- Create credit memo -->
+        <actionGroup ref="AdminCreateCreditMemoFromInvoiceActionGroup" stepKey="fillCreditMemoRefund">
+            <argument name="itemQtyToRefund" value="1"/>
+        </actionGroup>
+        <actionGroup ref="AdminClickRefundOnlineOnCreditMemoPageActionGroup" stepKey="createCreditMemo"/>
+
+        <click selector="{{AdminOrderDetailsOrderViewSection.creditMemos}}" stepKey="clickCreditMemoTab"/>
+        <waitForPageLoad stepKey="waitForTabLoad"/>
+        <grabTextFrom selector="{{AdminCreditMemosGridSection.memoId}}" stepKey="grabMemoId"/>
+        <assertNotEmpty stepKey="assertMemoIdIsNotEmpty" after="grabMemoId">
+            <actualResult type="const">$grabMemoId</actualResult>
+        </assertNotEmpty>
+        <click selector="{{AdminCreditMemosGridSection.memoId}}" stepKey="clickView"/>
+        <waitForPageLoad stepKey="waitForCreditMemo"/>
+
+        <!-- Assert credit memo grand total -->
+        <scrollTo selector="{{AdminCreditMemoTotalSection.grandTotal}}" stepKey="scrollToTotal"/>
+        <see selector="{{AdminCreditMemoTotalSection.grandTotal}}" userInput="$123.00" stepKey="assertRefundOnCreditMemoTab"/>
+
+        <!-- Assert credit memo item qty -->
+        <scrollTo selector="{{AdminCreditMemoViewItemsSection.blockItemsRefunded}}" stepKey="scrollToRefundedItems"/>
+        <see userInput="1" selector="{{AdminCreditMemoViewItemsSection.productQty}}" stepKey="seeQty"/>
+
+        <!-- Create another credit memo -->
+        <actionGroup ref="OpenOrderByIdActionGroup" stepKey="openOrderPage2">
+            <argument name="orderId" value="{$getOrderNumber}"/>
+        </actionGroup>
+        <click selector="{{AdminOrderDetailsOrderViewSection.invoices}}" stepKey="openInvoicesTab"/>
+        <waitForElementVisible selector="{{AdminOrderInvoicesTabSection.viewGridRow('1')}}" stepKey="waitForInvoicesTabOpen"/>
+        <click selector="{{AdminOrderInvoicesTabSection.viewGridRow('1')}}" stepKey="viewInvoice"/>
+        <waitForPageLoad stepKey="waitForInvoiceOpen"/>
+        <actionGroup ref="AdminCreateCreditMemoFromInvoiceActionGroup" stepKey="fillCreditMemoRefund2">
+            <argument name="itemQtyToRefund" value="1"/>
+        </actionGroup>
+        <actionGroup ref="AdminClickRefundOnlineOnCreditMemoPageActionGroup" stepKey="createSecondCreditMemo"/>
+    </test>
+</tests>

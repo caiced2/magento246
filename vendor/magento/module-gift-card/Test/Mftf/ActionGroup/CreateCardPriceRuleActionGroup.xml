@@ -1,0 +1,28 @@
+<?xml version="1.0"?>
+<!--
+/**
+ * Copyright © Magento, Inc. All rights reserved.
+ * See COPYING.txt for license details.
+ */
+-->
+<actionGroups xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+              xsi:noNamespaceSchemaLocation="urn:magento:mftf:Test/etc/actionGroupSchema.xsd">
+    <actionGroup name="CreateCardPriceRuleActionGroup">
+        <click selector="{{CreateCardPriceRuleSection.market}}" stepKey="clickOnMarketing"/>
+        <waitForPageLoad stepKey="waitForPageMarketingIsLoaded"/>
+        <click selector="{{CreateCardPriceRuleSection.discount}}" stepKey="CreateDiscountSection"/>
+        <waitForPageLoad stepKey="waitForPageDiscountAccountIsLoaded"/>
+        <click selector="{{CreateCardPriceRuleSection.add}}" stepKey="ClickToAddDiscount"/>
+        <waitForPageLoad stepKey="waitForPageDiscountPageIsLoaded"/>
+        <fillField selector="{{CreateCardPriceRuleSection.ruleName}}" userInput="discount" stepKey="setRuleName"/>
+        <click selector="{{CreateCardPriceRuleSection.selectWebSite}}" stepKey="clickToSelectWebsite"/>
+        <click selector="{{CreateCardPriceRuleSection.customerGroup}}" stepKey="clickToSelectCustomerGroup"/>
+        <click selector="{{CreateCardPriceRuleSection.coupon}}" stepKey="clickToExpandCoupons"/>
+        <click selector="{{CreateCardPriceRuleSection.specificCoupon}}" stepKey="clickToSelectCoupons"/>
+        <fillField selector="{{CreateCardPriceRuleSection.code}}" userInput="{{cardCode.priceCard}}" stepKey="setCode"/>
+        <fillField selector="{{CreateCardPriceRuleSection.priority}}" userInput="0" stepKey="setPriority"/>
+        <click selector="{{CreateCardPriceRuleSection.actions}}" stepKey="clickToExpandActions"/>
+        <fillField selector="{{CreateCardPriceRuleSection.amount}}" userInput="50" stepKey="setAmountForDiscount"/>
+        <click selector="{{CreateCardPriceRuleSection.save}}" stepKey="clickToSaveGiftCard"/>
+    </actionGroup>
+</actionGroups>

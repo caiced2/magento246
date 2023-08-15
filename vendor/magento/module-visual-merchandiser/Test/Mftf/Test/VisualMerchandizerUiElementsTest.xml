@@ -1,0 +1,117 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+ /**
+  * Copyright © Magento, Inc. All rights reserved.
+  * See COPYING.txt for license details.
+  */
+-->
+
+<tests xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:noNamespaceSchemaLocation="urn:magento:mftf:Test/etc/testSchema.xsd">
+    <test name="VisualMerchandizerUiElementsTest">
+        <annotations>
+            <features value="VisualMerchandiser"/>
+            <stories value="[Visual Merchandiser] Assign/Unassign products to/from a category"/>
+            <title value="[Visual Merchandiser] UI elements checks"/>
+            <description value="[Visual Merchandiser] UI elements checks"/>
+            <severity value="MAJOR"/>
+            <testCaseId value="MC-388"/>
+            <group value="VisualMerchandiser"/>
+            <skip>
+                <issueId value="MAGETWO-70696"/>
+                <issueId value="MQE-1067"/>
+            </skip>
+            <group value="pr_exclude"/>
+        </annotations>
+        <before>
+            <actionGroup ref="AdminLoginActionGroup" stepKey="login"/>
+            <createData entity="_defaultCategory" stepKey="category"/>
+            <createData entity="ApiSimpleProduct" stepKey="productInCategory">
+                <requiredEntity createDataKey="category"/>
+            </createData>
+            <createData entity="SimpleProduct2" stepKey="productNotInCategory"/>
+            <createData entity="SimpleProduct2" stepKey="productNotInCategory2"/>
+        </before>
+        <after>
+            <actionGroup ref="AdminLogoutActionGroup" stepKey="logout"/>
+            <deleteData createDataKey="productInCategory" stepKey="deleteProduct1"/>
+            <deleteData createDataKey="productNotInCategory" stepKey="deleteProduct2"/>
+            <deleteData createDataKey="productNotInCategory2" stepKey="deleteProduct3"/>
+            <deleteData createDataKey="category" stepKey="deleteCategory"/>
+        </after>
+
+        <!-- Go to admin category page -->
+        <actionGroup ref="GoToAdminCategoryPageByIdActionGroup" stepKey="goToAdminCategoryPage">
+            <argument name="id" value="$$category.id$$"/>
+        </actionGroup>
+        <!-- Open products in category section -->
+        <actionGroup ref="OpenProductsInCategorySectionActionGroup" stepKey="OpenProductsInCategorySection"/>
+        <!-- check UI elements after enabling match products by rule -->
+        <actionGroup ref="EnableMatchProductsByRuleActionGroup" stepKey="EnableMatchProductsByRule"/>
+        <dontSeeElement selector="{{AdminCategoryProductsSection.addProducts}}" stepKey="dontSeeAddProductsButton"/>
+        <!-- check UI elements after disabling match products by rule -->
+        <actionGroup ref="DisableMatchProductsByRuleActionGroup" stepKey="DisableMatchProductsByRule"/>
+        <seeElement selector="{{AdminCategoryProductsSection.addProducts}}" stepKey="seeAddProductsButton"/>
+        <!-- Go to add products by Sku -->
+        <actionGroup ref="GoToAddProductsBySkuActionGroup" stepKey="GoToAddProductsBySku"/>
+        <!-- Check UI elements while trying to assign product with empty sku -->
+        <click selector="{{AdminCategoryAddProductsModalSection.assign}}" stepKey="clickAssign1"/>
+        <see userInput="No SKU entered" selector="{{AdminCategoryAddProductsModalSection.errorMessage}}" stepKey="seeError1"/>
+        <!-- Check UI elements while trying to removing product with empty sku -->
+        <click selector="{{AdminCategoryAddProductsModalSection.remove}}" stepKey="clickRemove1"/>
+        <see userInput="No SKU entered" selector="{{AdminCategoryAddProductsModalSection.errorMessage}}" stepKey="seeError2"/>
+        <!-- Check UI elements for save and close button being disabled -->
+        <!-- Skipped due to MAGETWO-70696 -->
+        <!-- Enter product SKUs -->
+        <pressKey selector="{{AdminCategoryAddProductsModalSection.productSkuInput}}" userInput="$$productInCategory.sku$$" stepKey="pressKey1"/>
+        <pressKey selector="{{AdminCategoryAddProductsModalSection.productSkuInput}}" parameterArray="[\Facebook\WebDriver\WebDriverKeys::ENTER]" stepKey="pressKey2"/>
+        <pressKey selector="{{AdminCategoryAddProductsModalSection.productSkuInput}}" userInput="$$productNotInCategory.sku$$" stepKey="pressKey3"/>
+        <pressKey selector="{{AdminCategoryAddProductsModalSection.productSkuInput}}" parameterArray="[\Facebook\WebDriver\WebDriverKeys::ENTER]" stepKey="pressKey4"/>
+        <pressKey selector="{{AdminCategoryAddProductsModalSection.productSkuInput}}" userInput="Invalid Sku" stepKey="pressKey5"/>
+        <!-- Check UI elements after assigning products -->
+        <click selector="{{AdminCategoryAddProductsModalSection.assign}}" stepKey="clickAssign2"/>
+        <see userInput="2 SKU(s) processed successfully" selector="{{AdminCategoryAddProductsModalSection.successMessage}}" stepKey="seeSuccess1"/>
+        <see userInput="Products with the following SKUs do not exist: Invalid Sku" selector="{{AdminCategoryAddProductsModalSection.errorMessage}}" stepKey="seeError3"/>
+        <click selector="{{AdminCategoryAddProductsModalSection.saveClose}}" stepKey="clickSaveClose"/>
+        <!-- See products in category product grid -->
+        <actionGroup ref="SwitchToGridModeProductInCategoryActionGroup" stepKey="switchToGrid1"/>
+        <actionGroup ref="SeeProductInProductCategoryGridForCurrentCategoryActionGroup" stepKey="seeProduct1">
+            <argument name="product" value="$$productInCategory$$"/>
+        </actionGroup>
+        <actionGroup ref="SeeProductInProductCategoryGridForCurrentCategoryActionGroup" stepKey="seeProduct2">
+            <argument name="product" value="$$productNotInCategory$$"/>
+        </actionGroup>
+        <!-- Go to add products by Sku -->
+        <actionGroup ref="GoToAddProductsBySkuActionGroup" stepKey="GoToAddProductsBySku2"/>
+        <!-- Check UI elements for previous SKUs still displayed -->
+        <grabAttributeFrom selector="{{AdminCategoryAddProductsModalSection.productSkuInput}}" userInput="value" stepKey="grabText"/>
+        <assertStringContainsString stepKey="assertTextArea1">
+            <expectedResult type="string">$$productInCategory.sku$$</expectedResult>
+            <actualResult type="string">{$grabText}</actualResult>
+        </assertStringContainsString>
+        <assertStringContainsString stepKey="assertTextArea2">
+            <expectedResult type="string">$$productNotInCategory.sku$$</expectedResult>
+            <actualResult type="string">{$grabText}</actualResult>
+        </assertStringContainsString>
+        <assertStringContainsString stepKey="assertTextArea3">
+            <expectedResult type="string">Invalid Sku</expectedResult>
+            <actualResult type="string">{$grabText}</actualResult>
+        </assertStringContainsString>
+        <!-- Enter product SKUs -->
+        <fillField userInput="" selector="{{AdminCategoryAddProductsModalSection.productSkuInput}}" stepKey="emptyField"/>
+        <pressKey selector="{{AdminCategoryAddProductsModalSection.productSkuInput}}" userInput="$$productNotInCategory.sku$$" stepKey="pressKey11"/>
+        <pressKey selector="{{AdminCategoryAddProductsModalSection.productSkuInput}}" parameterArray="[\Facebook\WebDriver\WebDriverKeys::ENTER]" stepKey="pressKey12"/>
+        <pressKey selector="{{AdminCategoryAddProductsModalSection.productSkuInput}}" userInput="$$productNotInCategory2.sku$$" stepKey="pressKey13"/>
+        <pressKey selector="{{AdminCategoryAddProductsModalSection.productSkuInput}}" parameterArray="[\Facebook\WebDriver\WebDriverKeys::ENTER]" stepKey="pressKey14"/>
+        <pressKey selector="{{AdminCategoryAddProductsModalSection.productSkuInput}}" userInput="Invalid Sku" stepKey="pressKey15"/>
+        <!-- Check UI elements after removing products -->
+        <click selector="{{AdminCategoryAddProductsModalSection.remove}}" stepKey="clickRemove"/>
+        <see userInput="2 SKU(s) processed successfully" selector="{{AdminCategoryAddProductsModalSection.successMessage}}" stepKey="seeSuccess11"/>
+        <see userInput="Products with the following SKUs do not exist: Invalid Sku" selector="{{AdminCategoryAddProductsModalSection.errorMessage}}" stepKey="seeError13"/>
+        <click selector="{{AdminCategoryAddProductsModalSection.saveClose}}" stepKey="clickSaveClose2"/>
+        <!-- Don't see removed product in category product grid -->
+        <actionGroup ref="SwitchToGridModeProductInCategoryActionGroup" stepKey="switchToGrid2"/>
+        <dontSee selector="{{AdminCategoryProductsGridSection.nameColumn}}" userInput="$$productNotInCategory.name$$" stepKey="seeProductNameInGrid"/>
+        <dontSee selector="{{AdminCategoryProductsGridSection.skuColumn}}" userInput="$$productNotInCategory.sku$$" stepKey="seeProductSkuInGrid"/>
+    </test>
+</tests>

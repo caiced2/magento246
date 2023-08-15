@@ -1,0 +1,56 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+ /**
+  * Copyright © Magento, Inc. All rights reserved.
+  * See COPYING.txt for license details.
+  */
+-->
+
+<tests xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xsi:noNamespaceSchemaLocation="urn:magento:mftf:Test/etc/testSchema.xsd">
+    <test name="AdminUnassignAllProductsFromCategoryGridModeTest" extends="AdminUnassignProductsFromCategoryGridModeTest">
+        <annotations>
+            <features value="VisualMerchandiser"/>
+            <stories value="Assign/Unassign products to/from a category"/>
+            <title value="Admin should be able to unassign all products even last product from category by clicking unassign link"/>
+            <description value="Admin should be able to unassign all products even last product from category by clicking unassign link"/>
+            <severity value="CRITICAL"/>
+            <useCaseId value="MC-43076"/>
+            <testCaseId value="MC-42659"/>
+            <group value="visualMerchandiser"/>
+        </annotations>
+
+        <!-- Remove the 1st product item -->
+        <click selector="{{AdminCategoryProductsGridSection.rowUnassign('1')}}" after="dontSeeProduct2InGrid" stepKey="removeFirstProductItemAgain"/>
+
+        <!-- See total count 1 -->
+        <actionGroup ref="AssertAdminProductsInCategoryGridModeTotalCountActionGroup" after="removeFirstProductItemAgain" stepKey="seeTotalCountOfProductsEquals1AfterRemovingAgain">
+            <argument name="amount" value="1"/>
+        </actionGroup>
+        <actionGroup ref="AdminSaveCategoryFormActionGroup" after="seeTotalCountOfProductsEquals1AfterRemovingAgain" stepKey="saveCategoryWithOneProduct"/>
+        <actionGroup ref="AdminCategoryPageOpenProductsInCategorySectionActionGroup" after="saveCategoryWithOneProduct" stepKey="openProductsInCategorySectionFifth"/>
+        <actionGroup ref="AssertAdminProductsInCategoryGridModeTotalCountActionGroup" after="openProductsInCategorySectionFifth" stepKey="seeTotalCountOfProductsEquals1AfterSave">
+            <argument name="amount" value="1"/>
+        </actionGroup>
+
+        <!-- Remove the 3rd last product item -->
+        <click selector="{{AdminCategoryProductsGridSection.rowUnassign('1')}}" after="seeTotalCountOfProductsEquals1AfterSave" stepKey="remove3rdLastProductItemAgain"/>
+
+        <!-- See total count 0 -->
+        <actionGroup ref="AssertAdminProductsInCategoryGridModeTotalCountActionGroup" after="remove3rdLastProductItemAgain" stepKey="seeTotalCountOfProductsEquals0AfterRemovingAgain">
+            <argument name="amount" value="0"/>
+        </actionGroup>
+
+        <actionGroup ref="AdminSaveCategoryFormActionGroup" after="seeTotalCountOfProductsEquals0AfterRemovingAgain" stepKey="saveCategoryWithLastProductRemoved"/>
+        <actionGroup ref="AdminCategoryPageOpenProductsInCategorySectionActionGroup" after="saveCategoryWithLastProductRemoved" stepKey="openProductsInCategorySectionSixth"/>
+        <actionGroup ref="AssertAdminProductsInCategoryGridModeTotalCountActionGroup" after="openProductsInCategorySectionSixth" stepKey="seeTotalCountOfProductsEquals0AfterSave">
+            <argument name="amount" value="0"/>
+        </actionGroup>
+
+        <!-- See total count 0 after all product removed -->
+        <actionGroup ref="AdminCategoryPageOpenProductsInCategorySectionActionGroup" after="seeTotalCountOfProductsEquals0AfterSave" stepKey="openProductsInCategorySectionSeventh"/>
+        <actionGroup ref="AssertAdminProductsInCategoryGridModeTotalCountActionGroup" after="openProductsInCategorySectionSeventh" stepKey="seeTotalCountOfProductsEquals0IfWeSaveChanges">
+            <argument name="amount" value="0"/>
+        </actionGroup>
+    </test>
+</tests>

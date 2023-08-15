@@ -1,0 +1,136 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+ /**
+  * Copyright © Magento, Inc. All rights reserved.
+  * See COPYING.txt for license details.
+  */
+-->
+<tests xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xsi:noNamespaceSchemaLocation="urn:magento:mftf:Test/etc/testSchema.xsd">
+    <test name="ProdBelongsToCategoriesWithAndWithoutEventShowTest">
+        <annotations>
+            <stories value="Without Event"/>
+            <title value="Products tied to categories with or without events determine product availability"/>
+            <description value="Product belonging to categories with no event can be purchased. Products belonging to categories with future or expired events cannot be purchased unless also added to categories with no event."/>
+            <features value="CatalogEvent"/>
+            <severity value="AVERAGE"/>
+            <testCaseId value="MC-13493"/>
+            <useCaseId value="MC-10966"/>
+            <group value="catalogEvent"/>
+        </annotations>
+        <before>
+            <!-- Create 3 categories -->
+            <comment userInput="Create 3 subCategories" stepKey="createThreeSubCategories"/>
+            <createData entity="SimpleSubCategory" stepKey="createCategory1"/>
+            <createData entity="SimpleSubCategory" stepKey="createCategory2"/>
+            <createData entity="SimpleSubCategory" stepKey="createCategory3"/>
+            <actionGroup ref="AdminLoginActionGroup" stepKey="loginAsAdmin"/>
+            <!-- Create upcoming and closed catalog events for first two categories -->
+            <comment userInput="Create upcoming and closed catalog events for first two categories" stepKey="createEvents"/>
+            <generateDate date="+1 day" format="m/j/Y g:i A" stepKey="generateStartDate1"/>
+            <generateDate date="+2 day" format="m/j/Y g:i A" stepKey="generateEndDate1"/>
+            <actionGroup ref="CreateCatalogEventActionGroup" stepKey="createCatalogEvent1">
+                <argument name="categoryId" value="$$createCategory1.id$$"/>
+                <argument name="startDate" value="{$generateStartDate1}"/>
+                <argument name="endDate" value="{$generateEndDate1}"/>
+            </actionGroup>
+            <generateDate date="-3 day" format="m/j/Y g:i A" stepKey="generateStartDate2"/>
+            <generateDate date="-2 day" format="m/j/Y g:i A" stepKey="generateEndDate2"/>
+            <actionGroup ref="CreateCatalogEventActionGroup" stepKey="createCatalogEvent2">
+                <argument name="categoryId" value="$$createCategory2.id$$"/>
+                <argument name="startDate" value="{$generateStartDate2}"/>
+                <argument name="endDate" value="{$generateEndDate2}"/>
+            </actionGroup>
+            <!-- Create 5 simple products with categories -->
+            <createData entity="SimpleProduct" stepKey="createSimpleProduct1">
+                <requiredEntity createDataKey="createCategory1"/>
+            </createData>
+            <createData entity="SimpleProduct" stepKey="createSimpleProduct2">
+                <requiredEntity createDataKey="createCategory2"/>
+            </createData>
+            <createData entity="SimpleProduct" stepKey="createSimpleProduct3">
+                <requiredEntity createDataKey="createCategory3"/>
+            </createData>
+            <createData entity="SimpleProduct" stepKey="createSimpleProduct13">
+                <requiredEntity createDataKey="createCategory1"/>
+            </createData>
+            <createData entity="SimpleProduct" stepKey="createSimpleProduct23">
+                <requiredEntity createDataKey="createCategory2"/>
+            </createData>
+            <!-- Add one more category with no event to last 2 products -->
+            <comment userInput="Add one more category with no event to last 2 products" stepKey="addCategoriesToLastTwoProds"/>
+            <amOnPage url="{{AdminProductEditPage.url($$createSimpleProduct13.id$$)}}" stepKey="goToProduct4EditPage"/>
+            <waitForPageLoad stepKey="waitForProductEditPageLoad1"/>
+            <actionGroup ref="SetCategoryByNameActionGroup" stepKey="addCategoryToProduct13">
+                <argument name="categoryName" value="$$createCategory3.name$$"/>
+            </actionGroup>
+            <actionGroup ref="SaveProductFormActionGroup" stepKey="saveProduct13"/>
+            <amOnPage url="{{AdminProductEditPage.url($$createSimpleProduct23.id$$)}}" stepKey="goToProduct5EditPage"/>
+            <waitForPageLoad stepKey="waitForProductEditPageLoad2"/>
+            <actionGroup ref="SetCategoryByNameActionGroup" stepKey="addCategoryToProduct23">
+                <argument name="categoryName" value="$$createCategory3.name$$"/>
+            </actionGroup>
+            <actionGroup ref="SaveProductFormActionGroup" stepKey="saveProduct23"/>
+        </before>
+        <after>
+            <!-- Delete all categories and products, then log out -->
+            <comment userInput="Delete all categories and products, then log out" stepKey="deleteCreatedData"/>
+            <deleteData createDataKey="createCategory1" stepKey="deleteCategory1"/>
+            <deleteData createDataKey="createCategory2" stepKey="deleteCategory2"/>
+            <deleteData createDataKey="createCategory3" stepKey="deleteCategory3"/>
+            <deleteData createDataKey="createSimpleProduct1" stepKey="deleteSimpleProduct1"/>
+            <deleteData createDataKey="createSimpleProduct2" stepKey="deleteSimpleProduct2"/>
+            <deleteData createDataKey="createSimpleProduct3" stepKey="deleteSimpleProduct3"/>
+            <deleteData createDataKey="createSimpleProduct13" stepKey="deleteSimpleProduct13"/>
+            <deleteData createDataKey="createSimpleProduct23" stepKey="deleteSimpleProduct23"/>
+            <actionGroup ref="AdminLogoutActionGroup" stepKey="logout"/>
+        </after>
+        <!-- Check that it is not possible to purchase first and second products from products page -->
+        <comment userInput="Check that it is not possible to purchase first and second products from products page" stepKey="checkPurchasePermissions1"/>
+        <amOnPage url="{{StorefrontProductPage.url($$createSimpleProduct1.custom_attributes[url_key]$$)}}" stepKey="amOnFirstProductPage"/>
+        <waitForPageLoad stepKey="waitForStoreFrontProd1Load"/>
+        <dontSeeElement selector="{{StorefrontProductActionSection.addToCart}}" stepKey="dontSeeAddToCart1"/>
+        <amOnPage url="{{StorefrontProductPage.url($$createSimpleProduct2.custom_attributes[url_key]$$)}}" stepKey="amOnSecondProductPage"/>
+        <waitForPageLoad stepKey="waitForStoreFrontProd2Load"/>
+        <dontSeeElement selector="{{StorefrontProductActionSection.addToCart}}" stepKey="dontSeeAddToCart2"/>
+        <!-- Check that it is possible to purchase fourth and fifth products from products page -->
+        <comment userInput="Check that it is possible to purchase fourth and fifth products from products page" stepKey="checkPurchasePermissions2"/>
+        <amOnPage url="{{StorefrontProductPage.url($$createSimpleProduct13.custom_attributes[url_key]$$)}}" stepKey="amOnFourthProductPage"/>
+        <waitForPageLoad stepKey="waitForStoreFrontProd13Load"/>
+        <seeElement selector="{{StorefrontProductActionSection.addToCart}}" stepKey="seeAddToCart1"/>
+        <amOnPage url="{{StorefrontProductPage.url($$createSimpleProduct23.custom_attributes[url_key]$$)}}" stepKey="amOnFifthProductPage"/>
+        <waitForPageLoad stepKey="waitForStoreFrontProd23Load"/>
+        <seeElement selector="{{StorefrontProductActionSection.addToCart}}" stepKey="seeAddToCart2"/>
+        <!-- Check 'Add to Cart' button absence in category pages with upcoming/closed events -->
+        <comment userInput="Check 'Add to Cart' button absence in category pages with upcoming/closed events" stepKey="checkPurchasePermissions3"/>
+        <amOnPage url="{{StorefrontCategoryPage.url($$createCategory1.custom_attributes[url_key]$$)}}" stepKey="navigateToFirstCategoryPage"/>
+        <waitForPageLoad stepKey="waitForStoreFrontCategory1PageLoad"/>
+        <actionGroup ref="StorefrontCheckAddToCartButtonAbsenceActionGroup" stepKey="checkCartAbsence1">
+            <argument name="product" value="$$createSimpleProduct1$$"/>
+        </actionGroup>
+        <actionGroup ref="StorefrontCheckAddToCartButtonAbsenceActionGroup" stepKey="checkCartAbsence2">
+            <argument name="product" value="$$createSimpleProduct13$$"/>
+        </actionGroup>
+        <amOnPage url="{{StorefrontCategoryPage.url($$createCategory2.custom_attributes[url_key]$$)}}" stepKey="navigateToSecondCategoryPage"/>
+        <waitForPageLoad stepKey="waitForStoreFrontCategory2PageLoad"/>
+        <actionGroup ref="StorefrontCheckAddToCartButtonAbsenceActionGroup" stepKey="checkCartAbsence3">
+            <argument name="product" value="$$createSimpleProduct2$$"/>
+        </actionGroup>
+        <actionGroup ref="StorefrontCheckAddToCartButtonAbsenceActionGroup" stepKey="checkCartAbsence4">
+            <argument name="product" value="$$createSimpleProduct23$$"/>
+        </actionGroup>
+        <amOnPage url="{{StorefrontCategoryPage.url($$createCategory3.custom_attributes[url_key]$$)}}" stepKey="navigateToThirdCategoryPage"/>
+        <waitForPageLoad stepKey="waitForStoreFrontCategory3PageLoad"/>
+        <!-- Check 'Add to Cart' button presence in category pages with no event -->
+        <comment userInput="Check 'Add to Cart' button presence in category pages with no event" stepKey="checkPurchasePermissions4"/>
+        <actionGroup ref="StorefrontCheckCategorySimpleProductActionGroup" stepKey="checkCartPresence1">
+            <argument name="product" value="$$createSimpleProduct3$$"/>
+        </actionGroup>
+        <actionGroup ref="StorefrontCheckCategorySimpleProductActionGroup" stepKey="checkCartPresence2">
+            <argument name="product" value="$$createSimpleProduct13$$"/>
+        </actionGroup>
+        <actionGroup ref="StorefrontCheckCategorySimpleProductActionGroup" stepKey="checkCartPresence3">
+            <argument name="product" value="$$createSimpleProduct23$$"/>
+        </actionGroup>
+    </test>
+</tests>

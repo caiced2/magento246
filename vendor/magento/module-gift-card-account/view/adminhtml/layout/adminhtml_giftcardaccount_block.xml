@@ -1,0 +1,136 @@
+<?xml version="1.0"?>
+<!--
+/**
+ * Copyright © Magento, Inc. All rights reserved.
+ * See COPYING.txt for license details.
+ */
+-->
+<page xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="urn:magento:framework:View/Layout/etc/page_configuration.xsd">
+    <body>
+        <referenceBlock name="adminhtml.gift.card.account.grid.container">
+            <block class="Magento\Backend\Block\Widget\Grid" name="gift.card.account.grid" as="grid">
+                <arguments>
+                    <argument name="id" xsi:type="string">giftcardaccountGrid</argument>
+                    <argument name="dataSource" xsi:type="object" shared="false">Magento\GiftCardAccount\Model\ResourceModel\Giftcardaccount\Collection</argument>
+                    <argument name="default_sort" xsi:type="string">giftcardaccount_id</argument>
+                    <argument name="default_dir" xsi:type="string">desc</argument>
+                    <argument name="save_parameters_in_session" xsi:type="string">1</argument>
+                    <argument name="use_ajax" xsi:type="string">1</argument>
+                    <argument name="var_name_filter" xsi:type="string">giftcardaccount_filter</argument>
+                    <argument name="grid_url" xsi:type="url" path="*/*/grid">
+                        <param name="_current">1</param>
+                    </argument>
+                </arguments>
+                <block class="Magento\Backend\Block\Widget\Grid\Export" name="gift.card.account.grid.export" as="grid.export">
+                    <arguments>
+                        <argument name="exportTypes" xsi:type="array">
+                            <item name="csv" xsi:type="array">
+                                <item name="urlPath" xsi:type="string">*/*/exportCsv</item>
+                                <item name="label" xsi:type="string" translate="true">CSV</item>
+                            </item>
+                            <item name="excel" xsi:type="array">
+                                <item name="urlPath" xsi:type="string">*/*/exportMsxml</item>
+                                <item name="label" xsi:type="string" translate="true">Excel XML</item>
+                            </item>
+                        </argument>
+                    </arguments>
+                </block>
+                <block class="Magento\Backend\Block\Widget\Grid\Massaction" name="gift.card.account.grid.massaction" as="grid.massaction">
+                    <arguments>
+                        <argument name="massaction_id_field" xsi:type="string">giftcardaccount_id</argument>
+                        <argument name="form_field_name" xsi:type="string">giftcardaccount</argument>
+                        <argument name="use_select_all" xsi:type="string">1</argument>
+                        <argument name="options" xsi:type="array">
+                            <item name="delete" xsi:type="array">
+                                <item name="label" xsi:type="string" translate="true">Delete</item>
+                                <item name="url" xsi:type="string">*/*/massDelete</item>
+                                <item name="confirm" xsi:type="string" translate="true">Are you sure you want to delete these gift card accounts?</item>
+                            </item>
+                        </argument>
+                    </arguments>
+                </block>
+                <block class="Magento\Backend\Block\Widget\Grid\ColumnSet" name="adminhtml.logging.archive.grid.columnSet" as="grid.columnSet">
+                    <arguments>
+                        <argument name="rowUrl" xsi:type="array">
+                            <item name="path" xsi:type="string">*/*/edit</item>
+                            <item name="extraParamsTemplate" xsi:type="array">
+                                <item name="id" xsi:type="string">getId</item>
+                            </item>
+                        </argument>
+                    </arguments>
+                    <block class="Magento\Backend\Block\Widget\Grid\Column" name="adminhtml.logging.archive.grid.columnSet.giftcardaccount_id" as="giftcardaccount_id">
+                        <arguments>
+                            <argument name="header" xsi:type="string" translate="true">ID</argument>
+                            <argument name="type" xsi:type="string">number</argument>
+                            <argument name="index" xsi:type="string">giftcardaccount_id</argument>
+                            <argument name="column_css_class" xsi:type="string">col-id</argument>
+                            <argument name="header_css_class" xsi:type="string">col-id</argument>
+                        </arguments>
+                    </block>
+                    <block class="Magento\Backend\Block\Widget\Grid\Column" name="adminhtml.logging.archive.grid.columnSet.code" as="code">
+                        <arguments>
+                            <argument name="header" xsi:type="string" translate="true">Code</argument>
+                            <argument name="index" xsi:type="string">code</argument>
+                        </arguments>
+                    </block>
+                    <block class="Magento\Backend\Block\Widget\Grid\Column\Multistore" name="adminhtml.logging.archive.grid.columnSet.website" as="website">
+                        <arguments>
+                            <argument name="header" xsi:type="string" translate="true">Website</argument>
+                            <argument name="type" xsi:type="string">options</argument>
+                            <argument name="index" xsi:type="string">website_id</argument>
+                            <argument name="column_css_class" xsi:type="string">col-store</argument>
+                            <argument name="header_css_class" xsi:type="string">col-store</argument>
+                            <argument name="options" xsi:type="options" model="Magento\Config\Model\Config\Source\Website\OptionHash"/>
+                        </arguments>
+                    </block>
+                    <block class="Magento\Backend\Block\Widget\Grid\Column" name="adminhtml.logging.archive.grid.columnSet.date_created" as="date_created">
+                        <arguments>
+                            <argument name="header" xsi:type="string" translate="true">Created</argument>
+                            <argument name="index" xsi:type="string">date_created</argument>
+                            <argument name="column_css_class" xsi:type="string">col-date</argument>
+                            <argument name="header_css_class" xsi:type="string">col-date</argument>
+                            <argument name="type" xsi:type="string">date</argument>
+                            <argument name="timezone" xsi:type="boolean">false</argument>
+                        </arguments>
+                    </block>
+                    <block class="Magento\Backend\Block\Widget\Grid\Column" name="adminhtml.logging.archive.grid.columnSet.date_expires" as="date_expires">
+                        <arguments>
+                            <argument name="header" xsi:type="string" translate="true">End</argument>
+                            <argument name="index" xsi:type="string">date_expires</argument>
+                            <argument name="type" xsi:type="string">date</argument>
+                            <argument name="timezone" xsi:type="boolean">false</argument>
+                            <argument name="column_css_class" xsi:type="string">col-date</argument>
+                            <argument name="header_css_class" xsi:type="string">col-date</argument>
+                            <argument name="default" xsi:type="string">--</argument>
+                        </arguments>
+                    </block>
+                    <block class="Magento\Backend\Block\Widget\Grid\Column" name="adminhtml.logging.archive.grid.columnSet.status" as="status">
+                        <arguments>
+                            <argument name="header" xsi:type="string" translate="true">Active</argument>
+                            <argument name="index" xsi:type="string">status</argument>
+                            <argument name="type" xsi:type="string">options</argument>
+                            <argument name="options" xsi:type="options" model="Magento\GiftCardAccount\Model\ResourceModel\Giftcardaccount\Grid\Active"/>
+                        </arguments>
+                    </block>
+                    <block class="Magento\Backend\Block\Widget\Grid\Column" name="adminhtml.logging.archive.grid.columnSet.state" as="state">
+                        <arguments>
+                            <argument name="header" xsi:type="string" translate="true">Status</argument>
+                            <argument name="index" xsi:type="string">state</argument>
+                            <argument name="type" xsi:type="string">options</argument>
+                            <argument name="options" xsi:type="options" model="Magento\GiftCardAccount\Model\ResourceModel\Giftcardaccount\Grid\Status"/>
+                        </arguments>
+                    </block>
+                    <block class="Magento\Backend\Block\Widget\Grid\Column" name="adminhtml.logging.archive.grid.columnSet.balance" as="balance">
+                        <arguments>
+                            <argument name="header" xsi:type="string" translate="true">Balance</argument>
+                            <argument name="index" xsi:type="string">balance</argument>
+                            <argument name="type" xsi:type="string">currency</argument>
+                            <argument name="currency" xsi:type="string">base_currency_code</argument>
+                            <argument name="renderer" xsi:type="string">Magento\GiftCardAccount\Block\Adminhtml\Widget\Grid\Column\Renderer\Currency</argument>
+                        </arguments>
+                    </block>
+                </block>
+            </block>
+        </referenceBlock>
+    </body>
+</page>

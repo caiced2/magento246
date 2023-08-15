@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+ /**
+  * Copyright © Magento, Inc. All rights reserved.
+  * See COPYING.txt for license details.
+  */
+-->
+
+<actionGroups xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+              xsi:noNamespaceSchemaLocation="urn:magento:mftf:Test/etc/actionGroupSchema.xsd">
+    <actionGroup name="AdminAddProductToShoppingCartFromLastOrderedItemsActionGroup">
+        <annotations>
+            <description>Expands the Last Ordered Items tab and adds a product</description>
+        </annotations>
+        <arguments>
+            <argument name="productName" type="string"  defaultValue="{{SimpleProduct.name}}"/>
+            <argument name="productQty" type="string" defaultValue="1"/>
+        </arguments>
+        <scrollTo selector="{{AdminManageShoppingCartSection.lastOrderedItemsTab}}" stepKey="scrollToTab"/>
+        <conditionalClick selector="{{AdminManageShoppingCartSection.lastOrderedItemsTab}}" dependentSelector="{{AdminManageShoppingCartSection.lastOrderedItemsGrid}}" visible="false" stepKey="openLastOrderedItemsTab"/>
+        <click selector="{{AdminManageShoppingCartSection.lastOrderedItemsCheckbox('productName')}}" stepKey="selectProduct"/>
+        <click selector="{{AdminManageShoppingCartSection.addSelectionsToMyCartSecondButton}}" stepKey="clickAddSelectionToMyCartSecondButton"/>
+        <waitForPageLoad stepKey="waitForProductLoad"/>
+        <scrollToTopOfPage stepKey="scrollToTopOfThePage"/>
+        <seeElement selector="{{AdminCustomerShoppingCartProductItemSection.addedProductName('productName')}}" stepKey="seeAddedProduct"/>
+        <seeInField userInput="{{productQty}}" selector="{{AdminCustomerShoppingCartProductItemSection.addedProductQty('productName')}}" stepKey="checkCorrectQty"/>
+    </actionGroup>
+</actionGroups>

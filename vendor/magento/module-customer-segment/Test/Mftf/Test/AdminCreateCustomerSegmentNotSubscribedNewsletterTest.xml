@@ -1,0 +1,135 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+ /**
+  * Copyright © Magento, Inc. All rights reserved.
+  * See COPYING.txt for license details.
+  */
+-->
+
+<tests xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xsi:noNamespaceSchemaLocation="urn:magento:mftf:Test/etc/testSchema.xsd">
+    <test name="AdminCreateCustomerSegmentNotSubscribedNewsletterTest">
+        <annotations>
+            <stories value="Create Customer Segment Entity With Customer Conditions"/>
+            <title value="Create customer segment with condition based on 'Newsletter Subscription' and customer is not subscribed to newsletter"/>
+            <description value="Admin should be able to create customer segment with condition based on 'Newsletter Subscription' and customer is not subscribed to newsletter"/>
+            <severity value="CRITICAL"/>
+            <testCaseId value="MC-14501"/>
+            <group value="CustomerSegment"/>
+            <group value="mtf_migrated"/>
+        </annotations>
+        <before>
+            <actionGroup ref="AdminLoginActionGroup" stepKey="LoginAsAdmin"/>
+            <!--Test customer is created-->
+            <createData entity="Simple_US_Customer" stepKey="createCustomer"/>
+            <!--Test simple product is created-->
+            <createData entity="_defaultCategory" stepKey="createCategory"/>
+            <createData entity="_defaultProduct" stepKey="createProduct">
+                <field key="price">10</field>
+                <field key="quantity">1000</field>
+                <requiredEntity createDataKey="createCategory"/>
+            </createData>
+        </before>
+        <after>
+            <deleteData createDataKey="createCategory" stepKey="deleteCategory"/>
+            <deleteData createDataKey="createProduct" stepKey="deleteProduct"/>
+            <deleteData createDataKey="createCustomer" stepKey="deleteCustomer"/>
+            <actionGroup ref="AdminDeleteCartPriceRuleActionGroup" stepKey="deleteCartPriceRule">
+                <argument name="ruleName" value="SegmentCartPriceRule" />
+            </actionGroup>
+            <actionGroup ref="FindAndDeleteCustomerSegmentActionGroup" stepKey="deleteSegment">
+                <argument name="segmentName" value="{{CustomerSegmentDefault.name}}"/>
+            </actionGroup>
+            <magentoCron groups="index" stepKey="reindex"/>
+            <actionGroup ref="AdminLogoutActionGroup" stepKey="logout"/>
+        </after>
+
+        <!--Navigate to CUSTOMERS->Segment > Click 'Add Segment' button -->
+        <actionGroup ref="CreateCustomerSegmentWithContinueEditActionGroup" stepKey="createCustomerSegment">
+            <argument name="customerSegment" value="CustomerSegmentDefault"/>
+        </actionGroup>
+        <click selector="{{AdminCustomerSegmentEditSection.conditionsTab}}" stepKey="proceedToConditionsTab"/>
+
+        <!-- Fill all fields according to dataset and click 'Save and Continue Edit' button -->
+        <click selector="{{AdminCustomerSegmentConditionsEditSection.addCondition}}" stepKey="clickToAddCondition" />
+        <selectOption userInput="Newsletter Subscription" selector="{{AdminCustomerSegmentConditionsEditSection.conditions}}" stepKey="selectCondition"/>
+        <waitForPageLoad stepKey="waitForConditionsToAppear"/>
+        <doubleClick selector="{{AdminCustomerSegmentConditionsEditSection.conditionValueChooserParam('1','subscribed')}}" stepKey="openSelect"/>
+        <selectOption userInput="not subscribed" selector="{{AdminCustomerSegmentConditionsEditSection.conditionValueParam('1--1')}}" stepKey="selectOption"/>
+        <see userInput="Customer is not subscribed  to newsletter. " stepKey="seeCondition"/>
+        <click selector="{{AdminMainActionsSection.saveAndContinue}}" stepKey="saveSegment"/>
+        <see userInput="You saved the segment." selector="{{AdminMessagesSection.success}}" stepKey="checkSuccessMessage"/>
+        <actionGroup ref="CliConsumerStartActionGroup" stepKey="startMessageQueue">
+            <argument name="consumerName" value="{{AdminCustomerSegmentConsumerData.consumerName}}"/>
+            <argument name="maxMessages" value="{{AdminCustomerSegmentConsumerData.messageLimit}}"/>
+        </actionGroup>
+        <reloadPage stepKey="refreshPage"/>
+        <waitForPageLoad stepKey="waitForPageLoaded"/>
+        <actionGroup ref="AdminCheckCustomerInSegmentActionGroup" stepKey="checkCustomerInSegment">
+            <argument name="customer" value="$createCustomer$"/>
+        </actionGroup>
+
+        <!-- Go to frontend and logged as Customer and in footer part of the page, input email in field for subscribe. Click "Subscribe" button -->
+        <actionGroup ref="LoginToStorefrontActionGroup" stepKey="loginAsCustomer">
+        <argument name="Customer" value="$createCustomer$"/>
+        </actionGroup>
+
+        <amOnPage url="{{StorefrontCustomerDashboardPage.url}}" stepKey="onAccountPage"/>
+        <waitForPageLoad stepKey="waitForCustomerPage"/>
+        <scrollTo selector="{{StorefrontCustomerFooterSection.footerBlock}}" stepKey="scrollToFooter"/>
+        <fillField userInput="$createCustomer.email$" selector="{{StorefrontCustomerFooterSection.formSubscribe}}" stepKey="giveEmail"/>
+        <click selector="{{StorefrontCustomerFooterSection.buttonSubscribe}}" stepKey="clickSubscribeButton"/>
+
+        <actionGroup ref="FindAndOpenCustomerSegmentActionGroup" stepKey="goToSegmentPage">
+            <argument name="segmentName" value="{{CustomerSegmentDefault.name}}"/>
+        </actionGroup>
+
+        <actionGroup ref="AdminCheckCustomerNotMatchedSegmentActionGroup" stepKey="checkCustomerNotInSegment">
+            <argument name="customer" value="$createCustomer$"/>
+        </actionGroup>
+        <click selector="{{AdminMainActionsSection.saveAndContinue}}" stepKey="applyChangesInSegment"/>
+
+        <!-- Change segment conditions "Customer is subscribed  to newsletter."-->
+        <click selector="{{AdminCustomerSegmentEditSection.conditionsTab}}" stepKey="goToConditionsTab"/>
+        <waitForPageLoad stepKey="waitForPageLoad"/>
+        <doubleClick selector="{{AdminCustomerSegmentConditionsEditSection.conditionValueChooserParam('1','not subscribed')}}" stepKey="setNewSelect"/>
+        <selectOption userInput="subscribed" selector="{{AdminCustomerSegmentConditionsEditSection.conditionValueParam('1--1')}}" stepKey="selectNewOption"/>
+        <see userInput="Customer is subscribed  to newsletter. " stepKey="seeSubscribed"/>
+        <click selector="{{AdminMainActionsSection.saveAndContinue}}" stepKey="saveChangesInSegment"/>
+        <see userInput="You saved the segment." selector="{{AdminMessagesSection.success}}" stepKey="seeSuccessMessage"/>
+        <actionGroup ref="CliConsumerStartActionGroup" stepKey="startMessageQueue2">
+            <argument name="consumerName" value="{{AdminCustomerSegmentConsumerData.consumerName}}"/>
+            <argument name="maxMessages" value="{{AdminCustomerSegmentConsumerData.messageLimit}}"/>
+        </actionGroup>
+        <reloadPage stepKey="refreshPage2"/>
+        <waitForPageLoad stepKey="waitForPageLoaded2"/>
+        <actionGroup ref="AdminCheckCustomerInSegmentActionGroup" stepKey="checkCustomerIsInSegment">
+            <argument name="customer" value="$createCustomer$"/>
+        </actionGroup>
+
+        <!--Navigate to MARKETING->Cart Price Rule and click "+", then fill all required data according to dataset and save rule-->
+        <actionGroup ref="AdminCreateCartPriceRuleAndStayOnEditActionGroup" stepKey="createCartPriceRule">
+            <argument name="ruleName" value="SegmentCartPriceRule"/>
+        </actionGroup>
+
+        <actionGroup ref="SetCartAttributeConditionWithSegmentForCartPriceRuleActionGroup" stepKey="setSegment">
+            <argument name="attributeName" value="Customer Segment"/>
+            <argument name="value" value="CustomerSegmentDefault"/>
+        </actionGroup>
+
+        <!--Perform assertions-->
+        <amOnPage url="{{StorefrontCategoryPage.url($createCategory.custom_attributes[url_key]$)}}" stepKey="onCategoryPage"/>
+        <waitForPageLoad stepKey="waitForCategoryPageLoad"/>
+
+        <actionGroup ref="StorefrontAddSimpleProductToCartActionGroup" stepKey="addProductToCart">
+            <argument name="product" value="$createProduct$"/>
+        </actionGroup>
+
+        <actionGroup ref="StorefrontOpenCartFromMinicartActionGroup" stepKey="openCart"/>
+        <actionGroup ref="StorefrontCheckCartDiscountAndSummaryActionGroup" stepKey="checkTotalPrice">
+            <argument name="product" value="$createProduct$"/>
+            <argument name="total" value="10.00"/>
+            <argument name="discount" value="5.00"/>
+        </actionGroup>
+    </test>
+</tests>

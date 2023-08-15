@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+ /**
+  * Copyright © Magento, Inc. All rights reserved.
+  * See COPYING.txt for license details.
+  */
+-->
+
+<tests xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xsi:noNamespaceSchemaLocation="urn:magento:mftf:Test/etc/testSchema.xsd">
+    <test name="StorefrontGiftWrappingWithMultishippingCheckoutWhenCartPageIsOpenedInAnotherTabTest" extends="StorefrontProcessMultishippingCheckoutWhenCartPageIsOpenedInAnotherTabTest">
+        <annotations>
+            <features value="GiftWrapping"/>
+            <stories value="Gift wrapping multishipping"/>
+            <title value="Process multishipping checkout with gift wrapping when Cart page is opened in another tab"/>
+            <description value="Process multishipping checkout with gift wrapping when Cart page is opened in another tab"/>
+            <severity value="MAJOR"/>
+            <testCaseId value="MC-17871"/>
+            <useCaseId value="MC-17469"/>
+            <group value="giftWrapping"/>
+        </annotations>
+        <before>
+            <magentoCLI command="config:set sales/gift_options/allow_order 1" stepKey="allowGiftMessagesOnOrderLevel"/>
+            <magentoCLI command="config:set sales/gift_options/allow_items 1" stepKey="allowGiftMessagesForOrderItems"/>
+            <magentoCLI command="config:set sales/gift_options/wrapping_allow_order 1" stepKey="allowGiftWrappingOnOrderLevel"/>
+            <magentoCLI command="config:set sales/gift_options/wrapping_allow_items 1" stepKey="allowGiftWrappingForOrderItems"/>
+        </before>
+        <after>
+            <magentoCLI command="config:set sales/gift_options/allow_order 0" stepKey="defaultGiftMessagesOnOrderLevel"/>
+            <magentoCLI command="config:set sales/gift_options/allow_items 0" stepKey="defaultGiftMessagesForOrderItems"/>
+        </after>
+        <!--  Add gift message for the first item -->
+        <waitForElementVisible selector="{{CheckoutCartGiftWrappingSection.storefrontGiftOption('$$createFirstProduct.name$$')}}" after="amOnShoppingCartPage" stepKey="waitForAddGiftOptionForTheFirstProductVisible" />
+        <click selector="{{CheckoutCartGiftWrappingSection.storefrontGiftOption('$$createFirstProduct.name$$')}}" after="waitForAddGiftOptionForTheFirstProductVisible" stepKey="clickToAddGiftOptionForTheFirstProduct"/>
+        <waitForElementVisible selector="{{CheckoutCartGiftWrappingSection.cartItemGiftMessage}}" after="clickToAddGiftOptionForTheFirstProduct" stepKey="waitForGiftMessageBlockVisible"/>
+        <fillField selector="{{StorefrontCheckoutCartGiftMessageSection.giftItemMessage('1')}}" userInput="Message for the first item" after="waitForGiftMessageBlockVisible" stepKey="fillFieldFirstGiftMessage"/>
+        <click selector="{{CheckoutCartGiftWrappingSection.update}}" after="fillFieldFirstGiftMessage" stepKey="clickToUpdateFirst"/>
+        <waitForPageLoad stepKey="waitForPageLoad" after="clickToUpdateFirst"/>
+        <!-- Add gift message for the second item -->
+        <click selector="{{CheckoutCartGiftWrappingSection.clickCartItemGiftOptions('$$createSecondProduct.name$$')}}" stepKey="clickGiftOption" after="waitForPageLoad"/>
+        <waitForElementVisible selector="{{CheckoutCartGiftWrappingSection.cartItemGiftMessage}}" stepKey="waitForGiftMessageModuleVisible" after="clickGiftOption"/>
+        <fillField selector="{{StorefrontCheckoutCartGiftMessageSection.giftItemMessage('2')}}" userInput="Message for the second item" stepKey="fillFieldSecondGiftMessage" after="waitForGiftMessageModuleVisible"/>
+        <click selector="{{CheckoutCartGiftWrappingSection.update}}" stepKey="clickToUpdateSecond" after="fillFieldSecondGiftMessage"/>
+    </test>
+</tests>

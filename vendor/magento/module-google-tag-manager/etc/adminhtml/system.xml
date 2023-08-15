@@ -1,0 +1,161 @@
+<?xml version="1.0"?>
+<!--
+/**
+ * Copyright © Magento, Inc. All rights reserved.
+ * See COPYING.txt for license details.
+ */
+-->
+
+<config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="urn:magento:module:Magento_Config:etc/system_file.xsd">
+    <system>
+        <section id="google" translate="label" type="text" showInDefault="1" showInWebsite="1" showInStore="1">
+            <group id="analytics" translate="label">
+                <label>Google Analytics</label>
+                <field id="type" translate="label" showInDefault="1" showInWebsite="1" showInStore="1" sortOrder="20" type="select">
+                    <label>Account type</label>
+                    <source_model>Magento\GoogleTagManager\Model\Config\Source\AccountType</source_model>
+                    <depends>
+                        <field id="*/*/active">1</field>
+                    </depends>
+                </field>
+
+                <field id="account" translate="label" sortOrder="30" type="text">
+                    <depends>
+                        <field id="type">universal</field>
+                    </depends>
+                </field>
+
+                <field id="container_id" translate="label" showInDefault="1" showInWebsite="1" showInStore="1" sortOrder="50" type="text">
+                    <label>Container Id</label>
+                    <depends>
+                        <field id="type">tag_manager</field>
+                        <field id="*/*/active">1</field>
+                    </depends>
+                </field>
+                <field id="catalog_page_list_value" translate="label" showInDefault="1" showInWebsite="1" showInStore="1" sortOrder="60" type="text">
+                    <label>List property for the catalog page</label>
+                    <tooltip>Used in the JSON content to specify the source of data</tooltip>
+                    <depends>
+                        <field id="type">tag_manager</field>
+                        <field id="*/*/active">1</field>
+                    </depends>
+                </field>
+                <field id="crosssell_block_list_value" translate="label" showInDefault="1" showInWebsite="1" showInStore="1" sortOrder="70" type="text">
+                    <label>List property for the cross-sell block</label>
+                    <tooltip>Used in the JSON content to specify the source of data</tooltip>
+                    <depends>
+                        <field id="type">tag_manager</field>
+                        <field id="*/*/active">1</field>
+                    </depends>
+                </field>
+                <field id="upsell_block_list_value" translate="label" showInDefault="1" showInWebsite="1" showInStore="1" sortOrder="80" type="text">
+                    <label>List property for the up-sell block</label>
+                    <tooltip>Used in the JSON content to specify the source of data</tooltip>
+                    <depends>
+                        <field id="type">tag_manager</field>
+                        <field id="*/*/active">1</field>
+                    </depends>
+                </field>
+                <field id="related_block_list_value" translate="label" showInDefault="1" showInWebsite="1" showInStore="1" sortOrder="90" type="text">
+                    <label>List property for the related products block</label>
+                    <tooltip>Used in the JSON content to specify the source of data</tooltip>
+                    <depends>
+                        <field id="type">tag_manager</field>
+                        <field id="*/*/active">1</field>
+                    </depends>
+                </field>
+                <field id="search_page_list_value" translate="label" showInDefault="1" showInWebsite="1" showInStore="1" sortOrder="100" type="text">
+                    <label>List property for the search results page</label>
+                    <tooltip>Used in the JSON content to specify the source of data</tooltip>
+                    <depends>
+                        <field id="type">tag_manager</field>
+                        <field id="*/*/active">1</field>
+                    </depends>
+                </field>
+                <field id="promotions_list_value" translate="label" showInDefault="1" showInWebsite="1" showInStore="1" sortOrder="110" type="text">
+                    <label>’Internal Promotions’ for promotions field “Label”.</label>
+                    <tooltip>Used in the JSON content to specify the source of data</tooltip>
+                    <depends>
+                        <field id="type">tag_manager</field>
+                        <field id="*/*/active">1</field>
+                    </depends>
+                </field>
+            </group>
+            <group id="gtag">
+                <group id="analytics4" translate="label">
+                    <label>Google Analytics4</label>
+                    <field id="type" translate="label" showInDefault="1" showInWebsite="1" showInStore="1" sortOrder="20" type="select">
+                        <label>Account type</label>
+                        <source_model>Magento\GoogleTagManager\Model\Config\Source\GtagAccountType</source_model>
+                        <depends>
+                            <field id="*/*/*/active">1</field>
+                        </depends>
+                    </field>
+                    <field id="measurement_id" translate="label" type="text" sortOrder="30" showInDefault="1" showInWebsite="1" showInStore="1">
+                        <label>Measurement ID</label>
+                        <comment>(ex. G-XXXXXXXX)</comment>
+                        <validate>required-entry</validate>
+                        <depends>
+                            <field id="type">analytics4</field>
+                        </depends>
+                    </field>
+                    <field id="container_id" translate="label" showInDefault="1" showInWebsite="1" showInStore="1" sortOrder="50" type="text">
+                        <label>Container Id</label>
+                        <depends>
+                            <field id="type">tag_manager</field>
+                            <field id="*/*/*/active">1</field>
+                        </depends>
+                    </field>
+                    <field id="catalog_page_list_value" translate="label" showInDefault="1" showInWebsite="1" showInStore="1" sortOrder="60" type="text">
+                        <label>List property for the catalog page</label>
+                        <tooltip>Used in the JSON content to specify the source of data</tooltip>
+                        <depends>
+                            <field id="type">tag_manager</field>
+                            <field id="*/*/*/active">1</field>
+                        </depends>
+                    </field>
+                    <field id="crosssell_block_list_value" translate="label" showInDefault="1" showInWebsite="1" showInStore="1" sortOrder="70" type="text">
+                        <label>List property for the cross-sell block</label>
+                        <tooltip>Used in the JSON content to specify the source of data</tooltip>
+                        <depends>
+                            <field id="type">tag_manager</field>
+                            <field id="*/*/*/active">1</field>
+                        </depends>
+                    </field>
+                    <field id="upsell_block_list_value" translate="label" showInDefault="1" showInWebsite="1" showInStore="1" sortOrder="80" type="text">
+                        <label>List property for the up-sell block</label>
+                        <tooltip>Used in the JSON content to specify the source of data</tooltip>
+                        <depends>
+                            <field id="type">tag_manager</field>
+                            <field id="*/*/*/active">1</field>
+                        </depends>
+                    </field>
+                    <field id="related_block_list_value" translate="label" showInDefault="1" showInWebsite="1" showInStore="1" sortOrder="90" type="text">
+                        <label>List property for the related products block</label>
+                        <tooltip>Used in the JSON content to specify the source of data</tooltip>
+                        <depends>
+                            <field id="type">tag_manager</field>
+                            <field id="*/*/*/active">1</field>
+                        </depends>
+                    </field>
+                    <field id="search_page_list_value" translate="label" showInDefault="1" showInWebsite="1" showInStore="1" sortOrder="100" type="text">
+                        <label>List property for the search results page</label>
+                        <tooltip>Used in the JSON content to specify the source of data</tooltip>
+                        <depends>
+                            <field id="type">tag_manager</field>
+                            <field id="*/*/*/active">1</field>
+                        </depends>
+                    </field>
+                    <field id="promotions_list_value" translate="label" showInDefault="1" showInWebsite="1" showInStore="1" sortOrder="110" type="text">
+                        <label>’Internal Promotions’ for promotions field “Label”.</label>
+                        <tooltip>Used in the JSON content to specify the source of data</tooltip>
+                        <depends>
+                            <field id="type">tag_manager</field>
+                            <field id="*/*/*/active">1</field>
+                        </depends>
+                    </field>
+                </group>
+            </group>
+        </section>
+    </system>
+</config>

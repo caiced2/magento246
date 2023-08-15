@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+ /**
+  * Copyright © Magento, Inc. All rights reserved.
+  * See COPYING.txt for license details.
+  */
+-->
+
+<sections xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:noNamespaceSchemaLocation="urn:magento:mftf:Page/etc/SectionObject.xsd">
+    <section name="AdminCategoryAddProductsModalSection">
+        <element name="searchAllProducts" type="button" selector="[aria-labelledby='catalog_category_add_product_name_tab']" timeout="30"/>
+        <element name="searchLoadingMask" type="text" selector="#catalog_category_add_product_name_tab_content .admin__data-grid-loading-mask"/>
+        <element name="filters" type="button" selector="#catalog_category_add_product_tabs_content button[data-action='grid-filter-expand']" timeout="30"/>
+        <element name="nameFilter" type="input" selector="#catalog_category_add_product_name_tab_content .admin__data-grid-filters input[name='name']"/>
+        <element name="skuFilter" type="input" selector="#catalog_category_add_product_name_tab_content .admin__data-grid-filters input[name='sku']"/>
+        <element name="applyFilters" type="button" selector="#catalog_category_add_product_tabs_content button[data-action='grid-filter-apply']" timeout="30"/>
+        <element name="searchKeyword" type="input" selector="#catalog_category_add_product_name_tab_content #fulltext"/>
+        <element name="searchFullText" type="button" selector="#catalog_category_add_product_name_tab_content .data-grid-search-control-wrap .action-submit" timeout="30"/>
+        <element name="clearAll" type="button" selector="#catalog_category_add_product_name_tab_content .action-tertiary.action-clear" timeout="30"/>
+        <element name="gridRowAssignToggle" type="button" selector="#catalog_category_add_product_name_tab_content tbody>tr:nth-of-type({{row}})>.data-grid-onoff-cell>div" parameterized="true" timeout="10"/>
+        <element name="gridHeaderProductsTotal" type="text" selector="#catalog_category_add_product_name_tab_content .admin__control-support-text:first-child"/>
+        <element name="gridRowCheck" type="checkbox" selector="table.data-grid tr:nth-of-type({{row}}) input.admin__actions-switch-checkbox" parameterized="true"/>
+        <element name="gridActionToggle" type="button" selector="button.action-multicheck-toggle"/>
+        <element name="gridSelectAll" type="button" selector="ul.action-menu li:nth-child(1)" timeout="30"/>
+        <element name="gridSelectAllOnThisPage" type="button" selector="ul.action-menu li:nth-child(3)" timeout="30"/>
+        <element name="addProductBySku" type="button" selector="[aria-labelledby='catalog_category_add_product_sku_tab']" timeout="15"/>
+        <element name="productSkuInput" type="textarea" selector="#add_product_sku"/>
+        <element name="assign" type="button" selector="#add_product_sku_add_button" timeout="30"/>
+        <element name="remove" type="button" selector="#add_product_sku_remove_button" timeout="30"/>
+        <element name="saveClose" type="button" selector=".modal-footer button[data-role='action']" timeout="30"/>
+        <element name="errorMessage" type="text" selector="#add_product_sku_form .message.message-error.error>div"/>
+        <element name="successMessage" type="text" selector="#add_product_sku_form .message.message-success.success>div"/>
+        <element name="modalTitle" type="text" selector="aside.modal-popup h1.modal-title"/>
+        <element name="modalContent" type="block" selector="aside.modal-popup div[data-role='catalog_category_add_product_content']"/>
+        <element name="messageByType" type="text" selector="#add_product_sku_form .messages .message-{{messageType}}" parameterized="true"/>
+    </section>
+</sections>

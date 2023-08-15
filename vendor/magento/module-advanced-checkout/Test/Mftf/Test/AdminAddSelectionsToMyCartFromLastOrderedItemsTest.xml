@@ -1,0 +1,71 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+ /**
+  * Copyright © Magento, Inc. All rights reserved.
+  * See COPYING.txt for license details.
+  */
+-->
+
+<tests xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="urn:magento:mftf:Test/etc/testSchema.xsd">
+    <test name="AdminAddSelectionsToMyCartFromLastOrderedItemsTest">
+        <annotations>
+            <features value="AdvancedCheckout"/>
+            <stories value="Manage Shopping Cart"/>
+            <title value="Admin can add products to shopping cart from customer page"/>
+            <description value="Admin can add products to shopping cart from customer page"/>
+            <severity value="MAJOR"/>
+            <testCaseId value="MC-36626"/>
+            <useCaseId value="MC-35313"/>
+            <group value="advancedCheckout"/>
+        </annotations>
+        <before>
+            <createData entity="SimpleProduct2" stepKey="simpleProduct"/>
+            <createData entity="Simple_US_Customer" stepKey="createCustomer"/>
+            <magentoCron groups="index" stepKey="reindex"/>
+            <actionGroup ref="AdminLoginActionGroup" stepKey="loginAsAdmin"/>
+        </before>
+        <after>
+            <deleteData createDataKey="simpleProduct" stepKey="deleteSimpleProduct"/>
+            <deleteData createDataKey="createCustomer" stepKey="deleteCustomer"/>
+            <actionGroup ref="AdminLogoutActionGroup" stepKey="logout"/>
+        </after>
+        <!-- Login Customer Storefront -->
+        <actionGroup ref="LoginToStorefrontActionGroup" stepKey="customerLogin">
+            <argument name="Customer" value="$createCustomer$" />
+        </actionGroup>
+        <!--Open the Product Page and Add the product to Cart-->
+        <amOnPage url="{{StorefrontProductPage.url($simpleProduct.custom_attributes[url_key]$)}}" stepKey="navigateToSimpleProductPage"/>
+        <waitForPageLoad stepKey="waitForSimpleProductPageLoad"/>
+        <actionGroup ref="AddToCartFromStorefrontProductPageActionGroup" stepKey="addToCartFromStorefrontProductPage">
+            <argument name="productName" value="$simpleProduct.name$"/>
+        </actionGroup>
+        <!--Go to Checkout-->
+        <actionGroup ref="GoToCheckoutFromMinicartActionGroup" stepKey="goToCheckoutFromMinicart"/>
+        <!--Select shipping method-->
+        <actionGroup ref="CheckoutSelectFlatRateShippingMethodActionGroup" stepKey="selectFlatRateShippingMethod"/>
+        <actionGroup ref="StorefrontCheckoutClickNextOnShippingStepActionGroup" stepKey="clickNext"/>
+        <!--Select payment method-->
+        <actionGroup ref="CheckoutSelectCheckMoneyOrderPaymentActionGroup" stepKey="selectPaymentMethod"/>
+        <!-- Place Order -->
+        <actionGroup ref="CheckoutPlaceOrderActionGroup" stepKey="placeOrder">
+            <argument name="orderNumberMessage" value="CONST.successCheckoutOrderNumberMessage"/>
+            <argument name="emailYouMessage" value="CONST.successCheckoutEmailYouMessage"/>
+        </actionGroup>
+        <!--Open customer for edit-->
+        <actionGroup ref="OpenEditCustomerFromAdminActionGroup" stepKey="openCustomerEditPage">
+            <argument name="customer" value="$createCustomer$" />
+        </actionGroup>
+        <!--Click on Manage Shopping Cart-->
+        <click selector="{{AdminCustomerMainActionsSection.manageShoppingCart}}" stepKey="clickManageShoppingCartButton"/>
+        <waitForPageLoad stepKey="waitForPageLoaded"/>
+        <!--Add Product to Shopping Cart from Last Ordered Items tab-->
+        <actionGroup ref="AdminAddProductToShoppingCartFromLastOrderedItemsActionGroup" stepKey="addProductToShoppingCartFromLastOrderedItems">
+            <argument name="productName" value="$simpleProduct.name$" />
+        </actionGroup>
+        <!--Add Product To Shopping Cart from Product tab-->
+        <actionGroup ref="AdminAddProductToShoppingCartActionGroup" stepKey="addProductToShoppingCart">
+            <argument name="productName" value="$simpleProduct.name$" />
+        </actionGroup>
+        <seeInField userInput="2" selector="{{AdminCustomerShoppingCartProductItemSection.addedProductQty($simpleProduct.name$)}}" stepKey="seeCorrectQty"/>
+    </test>
+</tests>

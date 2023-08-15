@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+ /**
+  * Copyright © Magento, Inc. All rights reserved.
+  * See COPYING.txt for license details.
+  */
+-->
+
+<actionGroups xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:noNamespaceSchemaLocation="urn:magento:mftf:Test/etc/actionGroupSchema.xsd">
+    <actionGroup name="AdminCreateCatalogEventWithDisplayCountdownActionGroup" extends="CreateCatalogEventActionGroup">
+        <annotations>
+            <description>EXTENDS: CreateCatalogEventActionGroup. Creates Catalog Event with Display Countdown Ticker On.</description>
+        </annotations>
+        <arguments>
+            <argument name="imageFileName" type="string" defaultValue="magento.jpg"/>
+        </arguments>
+
+        <attachFile selector="{{CatalogEventInfoSection.image}}" userInput="{{imageFileName}}" after="fillEndDate" stepKey="uploadImage"/>
+        <checkOption selector="{{CatalogEventInfoSection.displayOnCategory}}" after="uploadImage" stepKey="checkDisplayOnCategoryOption"/>
+        <checkOption selector="{{CatalogEventInfoSection.displayOnProduct}}" after="checkDisplayOnCategoryOption" stepKey="checkDisplayOnProductOption"/>
+    </actionGroup>
+</actionGroups>

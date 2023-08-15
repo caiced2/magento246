@@ -1,0 +1,1 @@
+/var/www/html/vendor/magento/module-page-builder/view/base/web/js/content-type/row/appearance/default/widget.js

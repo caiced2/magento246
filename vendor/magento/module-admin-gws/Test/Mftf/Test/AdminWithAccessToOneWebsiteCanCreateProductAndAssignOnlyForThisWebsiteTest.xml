@@ -1,0 +1,91 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+ /**
+  * Copyright © Magento, Inc. All rights reserved.
+  * See COPYING.txt for license details.
+  */
+-->
+<tests xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="urn:magento:mftf:Test/etc/testSchema.xsd">
+    <test name="AdminWithAccessToOneWebsiteCanCreateProductAndAssignOnlyForThisWebsiteTest">
+        <annotations>
+            <features value="AdminGws"/>
+            <stories value="Restrict users"/>
+            <title value="[2.3] Admin with access to one website can create product and assign only for this website"/>
+            <description value="As admin with role access only to one website, I can assign new product only for this website"/>
+            <severity value="CRITICAL"/>
+            <testCaseId value="MC-6454"/>
+            <group value="userRole"/>
+        </annotations>
+        <before>
+            <!-- 2 websites / 2 store / 2 store views are created: Main Website, Website2 -->
+            <createData entity="secondCustomWebsite" stepKey="createCustomWebsite"/>
+            <actionGroup ref="AdminLoginActionGroup" stepKey="login"/>
+            <actionGroup ref="AdminStoreGroupCreateActionGroup" stepKey="createNewStore">
+                <argument name="Website" value="secondCustomWebsite"/>
+                <argument name="storeGroup" value="customStoreGroup"/>
+            </actionGroup>
+            <actionGroup ref="AdminCreateStoreViewActionGroup" stepKey="createCustomStoreView">
+                <argument name="StoreGroup" value="customStoreGroup"/>
+                <argument name="customStore" value="customStoreEN"/>
+            </actionGroup>
+            <magentoCron groups="index" stepKey="reindex"/>
+            <!-- Created user role Limited with access only to Website2 -->
+            <actionGroup ref="AdminCreateUserRoleWithScopeActionGroup" stepKey="createRestrictedAdminRole">
+                <argument name="role" value="RestrictedAdminRole"/>
+                <argument name="scopeName" value="$createCustomWebsite.website[name]$"/>
+            </actionGroup>
+            <!-- Create user Test for role Limited -->
+            <actionGroup ref="AdminCreateUserWithRoleActionGroup" stepKey="createRestrictedAdmin">
+                <argument name="role" value="RestrictedAdminRole"/>
+                <argument name="user" value="NewAdminUser"/>
+            </actionGroup>
+            <actionGroup ref="AdminLogoutActionGroup" stepKey="logoutOfAdmin"/>
+        </before>
+        <after>
+            <actionGroup ref="AdminLogoutActionGroup" stepKey="logoutAsTestAdminUser"/>
+            <actionGroup ref="AdminLoginActionGroup" stepKey="loginAsAdmin"/>
+            <actionGroup ref="AdminDeleteCustomUserActionGroup" stepKey="deleteUser">
+                <argument name="user" value="NewAdminUser"/>
+            </actionGroup>
+            <actionGroup ref="ClearFiltersAdminDataGridActionGroup" stepKey="resetUserFilters"/>
+            <actionGroup ref="AdminDeleteUserRoleActionGroup" stepKey="deleteRole">
+                <argument name="roleName" value="{{RestrictedAdminRole.name}}"/>
+            </actionGroup>
+            <actionGroup ref="ClearFiltersAdminDataGridActionGroup" stepKey="resetRoleFilters"/>
+            <actionGroup ref="DeleteCustomWebsiteActionGroup" stepKey="deleteCustomWeWebsite">
+                <argument name="websiteName" value="$createCustomWebsite.website[name]$"/>
+            </actionGroup>
+            <actionGroup ref="ClearFiltersAdminDataGridActionGroup" stepKey="resetWebsiteFilters"/>
+            <magentoCron groups="index" stepKey="reindex"/>
+            <actionGroup ref="AdminLogoutActionGroup" stepKey="logoutAsAdminUser"/>
+        </after>
+        <!-- 1. Login into admin panel as Test user -->
+        <actionGroup ref="AdminLoginActionGroup" stepKey="loginAsNewAdminUser">
+            <argument name="username" value="{{NewAdminUser.username}}"/>
+            <argument name="password" value="{{NewAdminUser.password}}"/>
+        </actionGroup>
+        <actionGroup ref="AssertAdminDashboardPageIsVisibleActionGroup" stepKey="seeDashboardPage"/>
+        <!-- 2. Open Catalog -> Products -->
+        <actionGroup ref="AdminOpenCatalogProductPageActionGroup" stepKey="goToCatalogProductPage"/>
+        <!-- 3. Click on Add new Product  -->
+        <actionGroup ref="GoToCreateProductPageActionGroup" stepKey="clickAddProductButton"/>
+        <!-- 4. Scrolling to Product in Websites menu  -->
+        <actionGroup ref="AssertWebsiteIsAvailableInProductWebsitesActionGroup" stepKey="seeCheckboxForCustomWebsite">
+            <argument name="website" value="$createCustomWebsite.website[name]$"/>
+        </actionGroup>
+        <actionGroup ref="AssertWebsiteIsNotAvailableInProductWebsitesActionGroup" stepKey="dontSeeCheckboxForMainWebsite">
+            <argument name="website" value="{{_defaultWebsite.name}}"/>
+        </actionGroup>
+        <!-- 5. Fill all necessary fields and save Product -->
+        <actionGroup ref="FillMainProductFormActionGroup" stepKey="fillAllNecessaryFields">
+            <argument name="product" value="SimpleProduct"/>
+        </actionGroup>
+        <actionGroup ref="SaveProductFormActionGroup" stepKey="clickSaveButton"/>
+        <actionGroup ref="AssertProductIsAssignedToWebsiteActionGroup" stepKey="seeCustomWebsiteIsChecked">
+            <argument name="website" value="$createCustomWebsite.website[name]$"/>
+        </actionGroup>
+        <actionGroup ref="AssertWebsiteIsNotAvailableInProductWebsitesActionGroup" stepKey="dontSeeCheckboxForMainWebsiteAfterSaved">
+            <argument name="website" value="{{_defaultWebsite.name}}"/>
+        </actionGroup>
+    </test>
+</tests>

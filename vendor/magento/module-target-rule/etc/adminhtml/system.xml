@@ -1,0 +1,49 @@
+<?xml version="1.0"?>
+<!--
+/**
+ * Copyright © Magento, Inc. All rights reserved.
+ * See COPYING.txt for license details.
+ */
+-->
+<config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="urn:magento:module:Magento_Config:etc/system_file.xsd">
+    <system>
+        <section id="catalog">
+            <group id="magento_targetrule" translate="label" showInDefault="1" showInWebsite="0" showInStore="0" sortOrder="900">
+                <label>Rule-Based Product Relations</label>
+                <field id="related_position_limit" translate="label" sortOrder="5" showInDefault="1" showInWebsite="0" showInStore="0">
+                    <label>Maximum Number of Products in Related Products List</label>
+                </field>
+                <field id="related_position_behavior" translate="label" type="select" sortOrder="10" showInDefault="1" showInWebsite="0" showInStore="0">
+                    <label>Show Related Products</label>
+                    <source_model>Magento\TargetRule\Model\Source\Position</source_model>
+                </field>
+                <field id="related_rotation_mode" translate="label" type="select" sortOrder="13" showInDefault="1" showInWebsite="0" showInStore="0">
+                    <label>Rotation Mode for Products in Related Product List</label>
+                    <source_model>Magento\TargetRule\Model\Source\Rotation</source_model>
+                </field>
+                <field id="crosssell_position_limit" translate="label" sortOrder="15" showInDefault="1" showInWebsite="0" showInStore="0">
+                    <label>Maximum Number of Products in Cross-Sell Product List</label>
+                </field>
+                <field id="crosssell_position_behavior" translate="label" type="select" sortOrder="20" showInDefault="1" showInWebsite="0" showInStore="0">
+                    <label>Show Cross-Sell Products</label>
+                    <source_model>Magento\TargetRule\Model\Source\Position</source_model>
+                </field>
+                <field id="crosssell_rotation_mode" translate="label" type="select" sortOrder="23" showInDefault="1" showInWebsite="0" showInStore="0">
+                    <label>Rotation Mode for Products in Cross-Sell Product List</label>
+                    <source_model>Magento\TargetRule\Model\Source\Rotation</source_model>
+                </field>
+                <field id="upsell_position_limit" translate="label" sortOrder="25" showInDefault="1" showInWebsite="0" showInStore="0">
+                    <label>Maximum Number of Products in Upsell Product List</label>
+                </field>
+                <field id="upsell_position_behavior" translate="label" type="select" sortOrder="30" showInDefault="1" showInWebsite="0" showInStore="0">
+                    <label>Show Upsell Products</label>
+                    <source_model>Magento\TargetRule\Model\Source\Position</source_model>
+                </field>
+                <field id="upsell_rotation_mode" translate="label" type="select" sortOrder="33" showInDefault="1" showInWebsite="0" showInStore="0">
+                    <label>Rotation Mode for Products in Upsell Product List</label>
+                    <source_model>Magento\TargetRule\Model\Source\Rotation</source_model>
+                </field>
+            </group>
+        </section>
+    </system>
+</config>

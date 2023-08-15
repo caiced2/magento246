@@ -1,0 +1,25 @@
+<?php
+/**
+ * Copyright © Magento, Inc. All rights reserved.
+ * See COPYING.txt for license details.
+ */
+
+/** @var \Magento\QuickCheckout\Block\Adminhtml\System\Config\ConfigureCallbackUrl $block */
+/** @var \Magento\Framework\Escaper $escaper */
+?>
+
+<button class="scalable" type="button" id="<?= $block->getHtmlId() ?>">
+    <span>
+        <?= $escaper->escapeHtml($block->getButtonLabel()) ?>
+    </span>
+</button>
+
+<p id="<?= $block->getHtmlId() ?>_result" class="note"></p>
+
+<script type="text/x-magento-init">
+    {
+        "#<?= $block->getHtmlId() ?>": {
+            "configureCallbackUrl": <?= /* @noEscape */ $block->getBlockConfigAsJson() ?>
+        }
+    }
+</script>

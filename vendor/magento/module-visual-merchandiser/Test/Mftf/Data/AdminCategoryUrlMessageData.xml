@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+ /**
+  * Copyright © Magento, Inc. All rights reserved.
+  * See COPYING.txt for license details.
+  */
+-->
+
+<entities xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+          xsi:noNamespaceSchemaLocation="urn:magento:mftf:DataGenerator/etc/dataProfileSchema.xsd">
+    <entity name="AdminCategoryErrorMessagesData" type="category">
+        <data key="urlKeyExistErrorMessage">The value specified in the URL Key field would generate a URL that already exists.</data>
+        <data key="urlKeyExistResolveErrorMessage">To resolve this conflict, you can either change the value of the URL Key field
+            (located in the Search Engine Optimization section) to a unique value, or change the Request Path fields in all locations listed below:</data>
+    </entity>
+</entities>

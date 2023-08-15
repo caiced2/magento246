@@ -1,0 +1,82 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+ /**
+  * Copyright © Magento, Inc. All rights reserved.
+  * See COPYING.txt for license details.
+  */
+-->
+
+<tests xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xsi:noNamespaceSchemaLocation="urn:magento:mftf:Test/etc/testSchema.xsd">
+    <test name="UpdateCancelPaymentMethodTest">
+        <annotations>
+            <stories value="MAGETWO-91704 - Can't cancel/change payment method after chosen Store Credit"/>
+            <title value="Check that user can cancel/change payment method after chosen Store Credit"/>
+            <description value="Check that user can cancel/change payment method after chosen Store Credit"/>
+            <severity value="MAJOR"/>
+            <testCaseId value="MAGETWO-94315"/>
+            <group value="customerBalance"/>
+            <skip>
+                <issueId value="MQE-1576"/>
+            </skip>
+            <group value="pr_exclude"/>
+        </annotations>
+        <before>
+            <actionGroup ref="AdminLoginActionGroup" stepKey="login"/>
+            <createData entity="_defaultCategory" stepKey="createCategory"/>
+            <!--Create product-->
+            <createData entity="SimpleProduct" stepKey="createProduct">
+                <requiredEntity createDataKey="createCategory"/>
+            </createData>
+            <createData entity="Simple_US_Customer" stepKey="createSimpleUsCustomer">
+                <field key="group_id">1</field>
+            </createData>
+            <magentoCron groups="index" stepKey="reindex"/>
+            <actionGroup ref="OpenEditCustomerFromAdminActionGroup" stepKey="openCustomerEdit">
+                <argument name="customer" value="$$createSimpleUsCustomer$$" />
+            </actionGroup>
+            <actionGroup ref="UpdateCustomerStoreCreditBalanceAdminActionGroup" stepKey="updateStoreCreditFromAdmin">
+                <argument name="storeCredit" value="500" />
+            </actionGroup>
+            <createData entity="BraintreeConfig" stepKey="BraintreeConfigurationData"/>
+            <createData entity="CustomBraintreeConfigurationData" stepKey="CustomBraintreeConfigurationData"/>
+        </before>
+
+        <!--Create new order-->
+        <actionGroup ref="NavigateToNewOrderPageExistingCustomerActionGroup" stepKey="CreateNewOrder">
+            <argument name="customer" value="Simple_US_Customer"/>
+        </actionGroup>
+        <click  selector="{{AdminOrderFormItemsSection.addProducts}}" stepKey="clickToAddProduct"/>
+        <waitForPageLoad stepKey="waitForProductsOpened"/>
+        <!--Add product to order-->
+        <click  selector="{{AdminOrderFormItemsSection.rowCheck('1')}}" stepKey="clickToSelectProduct"/>
+        <click  selector="{{AdminOrderFormItemsSection.addSelected}}" stepKey="clickToAddProductToOrder"/>
+        <waitForPageLoad stepKey="waitForPageLoad"/>
+        <!--Check Payment method sections-->
+        <click selector="{{AdminOrderFormTotalSection.useCustomerBalance}}" stepKey="clickOnUseCustomerBalance"/>
+        <waitForPageLoad stepKey="waitForPageLoad1"/>
+
+        <see userInput="Use Store Credit ($500.00 available)" stepKey="seeMessage"/>
+        <waitForPageLoad stepKey="waitForPageLoad3"/>
+        <dontSee userInput="Credit Card (Braintree)" stepKey="dontSeeMessage1"/>
+        <dontSee userInput="Check / Money order" stepKey="dontSeeMessage2"/>
+        <dontSee userInput="Stored Cards (Braintree)" stepKey="dontSeeMessage3"/>
+        <waitForPageLoad stepKey="waitForPageLoad2"/>
+        <click selector="{{AdminOrderFormTotalSection.useCustomerBalance}}" stepKey="clickNotUseCustomerBalance1"/>
+        <waitForPageLoad stepKey="waitForPageLoad4"/>
+        <see userInput="Credit Card (Braintree)" stepKey="seeMessage1"/>
+        <see userInput="Check / Money order" stepKey="seeMessage2"/>
+        <see userInput="Stored Cards (Braintree)" stepKey="seeMessage3"/>
+
+        <after>
+            <actionGroup ref="AdminLogoutActionGroup" stepKey="logout"/>
+            <deleteData createDataKey="createSimpleUsCustomer" stepKey="deleteCustomer"/>
+            <!--Delete product-->
+            <deleteData createDataKey="createProduct" stepKey="deleteProduct"/>
+            <!--Delete category-->
+            <deleteData createDataKey="createCategory" stepKey="deleteCategory"/>
+            <createData entity="DefaultBraintreeConfig" stepKey="DefaultBraintreeConfig"/>
+            <createData entity="RollBackCustomBraintreeConfigurationData" stepKey="RollBackCustomBraintreeConfigurationData"/>
+        </after>
+    </test>
+</tests>

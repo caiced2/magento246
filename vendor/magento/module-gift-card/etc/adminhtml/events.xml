@@ -1,0 +1,15 @@
+<?xml version="1.0"?>
+<!--
+/**
+ * Copyright © Magento, Inc. All rights reserved.
+ * See COPYING.txt for license details.
+ */
+-->
+<config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="urn:magento:framework:Event/etc/events.xsd">
+    <event name="adminhtml_catalog_product_edit_prepare_form">
+        <observer name="magento_giftcard_product_edit_prepare_form" instance="Magento\GiftCard\Observer\SetAmountsRendererInForm" />
+    </event>
+    <event name="adminhtml_catalog_product_form_prepare_excluded_field_list">
+        <observer name="magento_giftcard_product_excluded_field_list" instance="Magento\GiftCard\Observer\UpdateExcludedFieldList" />
+    </event>
+</config>

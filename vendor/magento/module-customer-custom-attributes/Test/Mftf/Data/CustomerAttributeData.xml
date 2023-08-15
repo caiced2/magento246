@@ -1,0 +1,145 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+ /**
+  * Copyright © Magento, Inc. All rights reserved.
+  * See COPYING.txt for license details.
+  */
+-->
+
+<entities xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+          xsi:noNamespaceSchemaLocation="urn:magento:mftf:DataGenerator/etc/dataProfileSchema.xsd">
+    <entity name="AttributeTextFieldData" type="data">
+        <data key="label" unique="suffix">TextField</data>
+        <data key="code" unique="suffix">text_field</data>
+        <data key="inputType">Text Field</data>
+        <data key="is_used_for_customer_segment">Yes</data>
+        <data key="sortOrder">1</data>
+        <data key="is_used_in_grid">Yes</data>
+        <data key="is_visible">Yes</data>
+        <array key="used_in_forms">
+            <item>Customer Registration</item>
+            <item>Customer Account Edit</item>
+            <item>Admin Checkout</item>
+        </array>
+    </entity>
+    <entity name="AttributeTextAreaData" type="data">
+        <data key="label" unique="suffix">TextArea</data>
+        <data key="code" unique="suffix">text_area</data>
+        <data key="inputType">Text Area</data>
+        <data key="is_used_for_customer_segment">Yes</data>
+        <data key="sortOrder">1</data>
+        <data key="is_used_in_grid">Yes</data>
+        <data key="is_visible">Yes</data>
+        <array key="used_in_forms">
+            <item>Customer Registration</item>
+            <item>Customer Account Edit</item>
+            <item>Admin Checkout</item>
+        </array>
+    </entity>
+    <entity name="AttributeMultipleLineData" type="data">
+        <data key="label" unique="suffix">MultipleLine</data>
+        <data key="code" unique="suffix">multiple_line</data>
+        <data key="inputType">Multiple Line</data>
+        <data key="multiline_count">2</data>
+        <data key="is_used_in_grid">Yes</data>
+        <data key="is_used_for_customer_segment">Yes</data>
+        <data key="sortOrder">1</data>
+        <data key="is_visible">Yes</data>
+        <array key="used_in_forms">
+            <item>Customer Registration</item>
+            <item>Customer Account Edit</item>
+            <item>Admin Checkout</item>
+        </array>
+    </entity>
+    <entity name="AttributeDateData" type="data">
+        <data key="frontend_label" unique="suffix">date</data>
+        <data key="label" unique="suffix">Date</data>
+        <data key="code" unique="suffix">date</data>
+        <data key="inputType">Date</data>
+        <data key="multiline_count">2</data>
+        <data key="inputFilter">Normalize Date</data>
+        <data key="is_used_in_grid">Yes</data>
+        <data key="is_used_for_customer_segment">Yes</data>
+        <data key="sortOrder">1</data>
+        <data key="is_visible">Yes</data>
+        <array key="used_in_forms">
+            <item>Customer Registration</item>
+            <item>Customer Account Edit</item>
+            <item>Admin Checkout</item>
+        </array>
+    </entity>
+    <entity name="AttributeDropdownNewData" type="data">
+        <data key="label" unique="suffix">Dropdown</data>
+        <data key="code" unique="suffix">dropdown</data>
+        <data key="inputType">Dropdown</data>
+        <data key="sortOrder">10</data>
+        <data key="is_used_in_grid">Yes</data>
+        <data key="is_used_for_customer_segment">Yes</data>
+        <data key="firstOption">dropdown_option_1</data>
+        <data key="secondOption">dropdown_option_2</data>
+        <data key="is_visible">Yes</data>
+        <array key="used_in_forms">
+            <item>Customer Registration</item>
+            <item>Customer Account Edit</item>
+            <item>Admin Checkout</item>
+        </array>
+    </entity>
+    <entity name="AttributeMultipleSelectData" type="data">
+        <data key="label" unique="suffix">MultipleSelect</data>
+        <data key="code" unique="suffix">multipleelect</data>
+        <data key="inputType">Multiple Select</data>
+        <data key="sortOrder">20</data>
+        <data key="is_used_in_grid">Yes</data>
+        <data key="firstOption">multiple_option_1</data>
+        <data key="secondOption">multiple_option_2</data>
+        <data key="is_used_for_customer_segment">Yes</data>
+        <data key="is_visible">Yes</data>
+        <array key="used_in_forms">
+            <item>Customer Registration</item>
+            <item>Customer Account Edit</item>
+            <item>Admin Checkout</item>
+        </array>
+    </entity>
+    <entity name="AttributeYesNoData" type="data">
+        <data key="label" unique="suffix">YesNo</data>
+        <data key="code" unique="suffix">yes_no</data>
+        <data key="inputType">Yes/No</data>
+        <data key="sortOrder">20</data>
+        <data key="is_used_in_grid">Yes</data>
+        <data key="is_used_for_customer_segment">Yes</data>
+        <data key="is_visible">Yes</data>
+        <array key="used_in_forms">
+            <item>Customer Registration</item>
+            <item>Customer Account Edit</item>
+            <item>Admin Checkout</item>
+        </array>
+    </entity>
+    <entity name="AttributeFileData" type="data">
+        <data key="label" unique="suffix">FileAttachment</data>
+        <data key="code" unique="suffix">fileattachment</data>
+        <data key="inputType">File (attachment)</data>
+        <data key="sortOrder">20</data>
+        <data key="is_used_in_grid">Yes</data>
+        <data key="is_used_for_customer_segment">Yes</data>
+        <data key="is_visible">Yes</data>
+        <array key="used_in_forms">
+            <item>Customer Registration</item>
+            <item>Customer Account Edit</item>
+            <item>Admin Checkout</item>
+        </array>
+    </entity>
+    <entity name="AttributeImageFileData" type="data">
+        <data key="label" unique="suffix">ImageFile</data>
+        <data key="code" unique="suffix">imagefile</data>
+        <data key="inputType">Image File</data>
+        <data key="sortOrder">20</data>
+        <data key="is_used_in_grid">Yes</data>
+        <data key="is_used_for_customer_segment">Yes</data>
+        <data key="is_visible">Yes</data>
+        <array key="used_in_forms">
+            <item>Customer Registration</item>
+            <item>Customer Account Edit</item>
+            <item>Admin Checkout</item>
+        </array>
+    </entity>
+</entities>

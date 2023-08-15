@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+ /**
+  * Copyright © Magento, Inc. All rights reserved.
+  * See COPYING.txt for license details.
+  */
+-->
+
+<sections xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:noNamespaceSchemaLocation="urn:magento:mftf:Page/etc/SectionObject.xsd">
+    <section name="AdminProductScheduledUpdateImagesSection">
+        <element name="productImagesToggle" type="button" selector=".scheduled-changes-modal-slide div[data-index=gallery] .admin__collapsible-title"/>
+        <element name="imageFile" type="text" selector="//*[contains(@class, 'scheduled-changes-modal-slide')]//*[@id='staging_media_gallery_content']//img[contains(@src, '{{url}}')]" parameterized="true"/>
+        <element name="altText" type="textarea" selector=".modal-slide._show:not(.scheduled-changes-modal-slide) textarea[data-role='image-description']"/>
+        <element name="imageUploadButton" type="button" selector=".scheduled-changes-modal-slide div.image div.fileinput-button"/>
+        <element name="imageFileUpload" type="input" selector=".scheduled-changes-modal-slide #fileupload"/>
+        <element name="uploadProgressBar" type="text" selector=".scheduled-changes-modal-slide .uploader .file-row"/>
+        <element name="removeByFilename" type="text" selector="//*[@id='staging_media_gallery_content']//img[contains(@src, '{{url}}')]/ancestor::div[@data-role='image']//button[@data-role='delete-button']" parameterized="true"/>
+    </section>
+</sections>

@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+ /**
+  * Copyright © Magento, Inc. All rights reserved.
+  * See COPYING.txt for license details.
+  */
+-->
+<sections xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:noNamespaceSchemaLocation="urn:magento:mftf:Page/etc/SectionObject.xsd">
+    <section name="AdminCustomerAddressAttributeSection">
+        <element name="firstAttribute" type="text" selector="//*[@id='customerAddressAttributeGrid_table']/tbody/tr[1]/td[contains(@class,'col-attr-code')]" timeout="30"/>
+        <element name="options" type="button" selector="//a[contains(@class,'ui-tabs-anchor')]/span[contains(text(),'Options')]" timeout="30"/>
+        <element name="optionTabIsOpen" type="button" selector="//li[contains(@class,'ui-state-active')]/a/span[contains(text(),'Options')]"/>
+        <element name="addOptionsButton" type="button" selector="#add_new_option_button"/>
+        <element name="addOptionsField" type="button" selector="//input[@name='option[value][option_{{arg1}}][0]']" parameterized="true"/>
+        <element name="optionStoreLabelField" type="input" selector="//input[@name='option[value][option_{{optionNumber}}][{{optionScope}}]']" parameterized="true"/>
+        <element name="pageHeader" type="button" selector=".page-header.row"/>
+    </section>
+</sections>

@@ -1,0 +1,146 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+ /**
+  * Copyright © Magento, Inc. All rights reserved.
+  * See COPYING.txt for license details.
+  */
+-->
+
+<tests xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xsi:noNamespaceSchemaLocation="urn:magento:mftf:Test/etc/testSchema.xsd">
+    <test name="AdminAssertCustomCustomersAttributeValueInOrderTest">
+        <annotations>
+            <features value="CustomerCustomAttribute"/>
+            <stories value="Customer Address Custom Attributes"/>
+            <title value="Verify Custom address attributes are not correctly displayed in the order details page in the my account area and in the backend"/>
+            <description value="Verify that custom customer addresses attributes correctly displayed on the Admin and Storefront"/>
+            <severity value="CRITICAL"/>
+            <testCaseId value="MC-38002"/>
+            <group value="customerCustomAttributes"/>
+        </annotations>
+        <before>
+            <!--Create a customer, category, product-->
+            <createData entity="Simple_Customer_Without_Address" stepKey="customer"/>
+            <createData entity="SimpleProduct2" stepKey="simpleProduct"/>
+            <!--Log in to admin-->
+            <actionGroup ref="AdminLoginActionGroup" stepKey="adminLogin"/>
+            <!--Create customer address attributes-->
+            <actionGroup ref="AdminNavigateToCustomerAddressAttributesPageActionGroup" stepKey="openCustomerAddressAttributes"/>
+            <actionGroup ref="AdminCreateCustomerNewAttribute" stepKey="createDropdownAttribute">
+                <argument name="defaultLabel" value="{{AttributeDropdownData.label}}"/>
+                <argument name="attributeCode" value="test_dropdown_attr"/>
+                <argument name="inputType" value="{{AttributeDropdownData.inputType}}"/>
+                <argument name="sortOrder" value="{{AttributeDropdownData.sortOrder}}"/>
+                <argument name="sortOrder" value="20"/>
+            </actionGroup>
+            <actionGroup ref="FilterCustomerAttributesByAttributeCodeActionGroup" stepKey="findFirstNameAttribute">
+                <argument name="attributeCode" value="test_dropdown_attr"/>
+            </actionGroup>
+            <click selector="{{AdminCustomerAddressAttributeSection.firstAttribute}}" stepKey="openFilteredAttribute"/>
+            <actionGroup ref="AdminCustomerAttributeOpenAttributeOptionsTabActionGroup" stepKey="openAttributeOptionsTab"/>
+            <actionGroup ref="AdminCustomerDropdownAttributeAddOptionActionGroup" stepKey="addFirstDropdownOption">
+                <argument name="optionNumber" value="0"/>
+            </actionGroup>
+            <actionGroup ref="AdminCustomerDropdownAttributeAddOptionActionGroup" stepKey="addSecondDropdownOption">
+                <argument name="storeFrontOptionTitle" value="AttributeDropdownData.secondOption"/>
+                <argument name="adminOptionTitle" value="AttributeDropdownData.secondOption"/>
+                <argument name="optionNumber" value="1"/>
+            </actionGroup>
+            <actionGroup ref="ClickSaveButtonActionGroup" stepKey="saveAddress">
+                <argument name="message" value="You saved the customer address attribute."/>
+            </actionGroup>
+            <actionGroup ref="AdminCreateCustomerNewAttributeWithRequiredValues" stepKey="createTextFieldAttribute">
+                <argument name="defaultLabel" value="{{AttributeTextField.frontend_label}}"/>
+                <argument name="attributeCode" value="test_text_attr"/>
+                <argument name="inputType" value="{{AttributeTextField.frontend_input}}"/>
+                <argument name="sortOrder" value="20"/>
+            </actionGroup>
+        </before>
+        <after>
+            <!--Delete customer and product-->
+            <deleteData createDataKey="customer" stepKey="deleteCustomer"/>
+            <deleteData createDataKey="simpleProduct" stepKey="deleteProduct"/>
+            <!--Return templates to default-->
+            <amOnPage url="{{AdminCustomerConfigPage.url('')}}" stepKey="goToCustomerConfigPage"/>
+            <actionGroup ref="ChangeDynamicBlockScopeActionGroup" stepKey="selectDefaultScope"/>
+            <conditionalClick selector="{{AdminCustomerConfigAddressTemplateSection.addressTemplatesTab}}" dependentSelector="{{AdminCustomerConfigAddressTemplateSection.addressTemplatesTabIsOpen}}" visible="false" stepKey="expandAddressTemplateTab"/>
+            <checkOption selector="{{AdminCustomerConfigAddressTemplateSection.addressTemplateTypeDefaultCheckbox(templateTypeText.templateType)}}" stepKey="checkUseSystemConfigForAddressTemlateTypeText"/>
+            <checkOption selector="{{AdminCustomerConfigAddressTemplateSection.addressTemplateTypeDefaultCheckbox(templateTypeOneLine.templateType)}}" stepKey="checkUseSystemConfigForAddressTemlateTypeOneLine"/>
+            <checkOption selector="{{AdminCustomerConfigAddressTemplateSection.addressTemplateTypeDefaultCheckbox(templateTypeHtml.templateType)}}" stepKey="checkUseSystemConfigForAddressTemlateTypeHtml"/>
+            <actionGroup ref="SaveStoreConfigurationActionGroup" stepKey="saveConfiguration"/>
+            <!--Delete previously created custom attribute-->
+            <actionGroup ref="AdminNavigateToCustomerAddressAttributesPageActionGroup" stepKey="goToCustomerAddressAttributesPage"/>
+            <actionGroup ref="AdminDeleteCustomerAttribute" stepKey="adminDeleteDropdownAttribute">
+                <argument name="defaultLabel" value="{{AttributeDropdownData.label}}"/>
+            </actionGroup>
+            <actionGroup ref="AdminDeleteCustomerAttribute" stepKey="adminDeleteTextAttribute">
+                <argument name="defaultLabel" value="{{AttributeTextField.frontend_label}}"/>
+            </actionGroup>
+            <!--Log out from admin-->
+            <actionGroup ref="AdminLogoutActionGroup" stepKey="adminLogout"/>
+        </after>
+        <amOnPage url="{{AdminCustomerConfigPage.url('')}}" stepKey="openCustomerConfigPage"/>
+        <actionGroup ref="AdminSwitchStoreViewActionGroup" stepKey="swichToDefaultStoreView">
+            <argument name="storeView" value="_defaultStore.name"/>
+        </actionGroup>
+        <!--Add custom attributes in the templates-->
+        <actionGroup ref="AdminCustomerConfigExpandAddressTemplatesTabActionGroup" stepKey="expandAddressTemplateTab"/>
+        <grabValueFrom selector="{{AdminCustomerConfigAddressTemplateSection.addressTemplateTypeValueInput(templateTypeText.templateType)}}" stepKey="grabDefaultTextValue"/>
+        <actionGroup ref="AdminCustomerConfigSetCustomAddressTemplateByTypeActionGroup" stepKey="changeTextTemplate">
+            <argument name="templateValue" value="{{var test_dropdown_attr}}  {{var test_text_attr}} {$grabDefaultTextValue}"/>
+            <argument name="templateType" value="{{templateTypeText.templateType}}"/>
+        </actionGroup>
+        <grabValueFrom selector="{{AdminCustomerConfigAddressTemplateSection.addressTemplateTypeValueInput(templateTypeOneLine.templateType)}}" stepKey="grabDefaultOneLineValue"/>
+        <actionGroup ref="AdminCustomerConfigSetCustomAddressTemplateByTypeActionGroup" stepKey="changeOneLineTemplate">
+            <argument name="templateValue" value="{{var test_dropdown_attr}}  {{var test_text_attr}} {$grabDefaultOneLineValue}"/>
+            <argument name="templateType" value="{{templateTypeOneLine.templateType}}"/>
+        </actionGroup>
+        <grabValueFrom selector="{{AdminCustomerConfigAddressTemplateSection.addressTemplateTypeValueInput(templateTypeHtml.templateType)}}" stepKey="grabDefaultHtmlValue"/>
+        <actionGroup ref="AdminCustomerConfigSetCustomAddressTemplateByTypeActionGroup" stepKey="changeHtmlTemplate">
+            <argument name="templateValue" value="{{var test_dropdown_attr}}  {{var test_text_attr}} {$grabDefaultHtmlValue}"/>
+            <argument name="templateType" value="{{templateTypeHtml.templateType}}"/>
+        </actionGroup>
+        <click selector="{{AdminCustomerConfigAddressTemplateSection.addressTemplatesTab}}" stepKey="closeAddressTemplateTab"/>
+        <actionGroup ref="SaveStoreConfigurationActionGroup" stepKey="saveTemplateWithCustomData"/>
+        <!--Login to Storefront-->
+        <actionGroup ref="LoginToStorefrontActionGroup" stepKey="loginAsCustomerToStorefront">
+            <argument name="Customer" value="$customer$"/>
+        </actionGroup>
+        <actionGroup ref="StorefrontCustomerGoToSidebarMenu" stepKey="goToAddressBook">
+            <argument name="menu" value="Address Book"/>
+        </actionGroup>
+        <!-- Click Add New Address button -->
+        <click selector="{{StorefrontCustomerAddressesSection.addNewAddress}}" stepKey="clickAddNewAddressButton"/>
+        <!-- Fill all required address fields -->
+        <actionGroup ref="FillNewCustomerAddressRequiredFieldsActionGroup" stepKey="fillNewAddressFields">
+            <argument name="address" value="US_Address_California"/>
+        </actionGroup>
+        <!-- Fill new address attribute fields -->
+        <fillField selector="{{StoreFrontCustomerAdvancedAttributesSection.textFieldAttribute('test_text_attr')}}" userInput="textAttrDefaultValue" stepKey="fillNewAddressAttribute"/>
+        <selectOption selector="{{StoreFrontCustomerAdvancedAttributesSection.dropDownAttribute('test_dropdown_attr')}}" userInput="{{AttributeDropdownData.firstOption}}"  stepKey="setSelectAttributeValue"/>
+        <!-- Save new address -->
+        <actionGroup ref="StorefrontSaveCustomerAddressActionGroup" stepKey="saveAddress"/>
+        <!--Place order from storefront-->
+        <actionGroup ref="AddSimpleProductToCartActionGroup" stepKey="addToCartFromStorefrontProductPage">
+            <argument name="product" value="$simpleProduct$"/>
+        </actionGroup>
+        <actionGroup ref="StorefrontCartPageOpenActionGroup" stepKey="openCart"/>
+        <actionGroup ref="PlaceOrderWithLoggedUserActionGroup" stepKey="placeOrder"/>
+        <!--Open order on storefront and check attributes-->
+        <actionGroup ref="StorefrontClickOrderLinkFromCheckoutSuccessPageActionGroup" stepKey="openOrderFromSuccessPage"/>
+        <grabFromCurrentUrl regex="~/order_id/(\d+)/~" stepKey="grabOrderId"/>
+        <scrollTo selector="{{StorefrontOrderDetailsSection.billingAddressBlock}}" stepKey="scrollToAddress"/>
+        <see selector="{{StorefrontOrderDetailsSection.billingAddressBlock}}" userInput="{{AttributeDropdownData.firstOption}}" stepKey="seeDropdownValueInBillingAddressStorefront"/>
+        <see selector="{{StorefrontOrderDetailsSection.billingAddressBlock}}" userInput="textAttrDefaultValue" stepKey="seeTextValueInBillingAddressStorefront"/>
+        <see selector="{{StorefrontOrderDetailsSection.shippingAddressBlock}}" userInput="{{AttributeDropdownData.firstOption}}" stepKey="seeDropdownValueInShippingAddressStorefront"/>
+        <see selector="{{StorefrontOrderDetailsSection.shippingAddressBlock}}" userInput="textAttrDefaultValue" stepKey="seeTextValueInShippingAddressStorefront"/>
+        <!--Open order on admin and check attributes-->
+        <actionGroup ref="AdminOpenOrderByEntityIdActionGroup" stepKey="openOrderByIdInAdmin">
+            <argument name="entityId" value="$grabOrderId"/>
+        </actionGroup>
+        <see selector="{{AdminOrderAddressInformationSection.shippingAddress}}" userInput="{{AttributeDropdownData.firstOption}}" stepKey="seeDropdownValueInShippingAddressAdmin"/>
+        <see selector="{{AdminOrderAddressInformationSection.shippingAddress}}" userInput="textAttrDefaultValue" stepKey="seeTextValueInShippingAddressAdmin"/>
+        <see selector="{{AdminOrderAddressInformationSection.billingAddress}}" userInput="{{AttributeDropdownData.firstOption}}" stepKey="seeDropdownValueInBillingAddressAdmin"/>
+        <see selector="{{AdminOrderAddressInformationSection.billingAddress}}" userInput="textAttrDefaultValue" stepKey="seeTextValueInBillingAddressAdmin"/>
+    </test>
+</tests>

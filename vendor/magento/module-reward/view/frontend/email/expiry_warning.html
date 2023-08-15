@@ -1,0 +1,39 @@
+<!--
+/**
+ * Copyright © Magento, Inc. All rights reserved.
+ * See COPYING.txt for license details.
+ */
+-->
+<!--@subject {{trans "Reward Points Expiry Warning at %store_name" store_name=$store.frontend_name}} @-->
+<!--@vars {
+"var reward_amount_now":"Current Money Amount",
+"var points_balance":"Current Points Amount",
+"var customer_name|escape":"Customer Name",
+"template config_path=\"design\/email\/footer_template\"":"Email Footer Template",
+"template config_path=\"design\/email\/header_template\"":"Email Header Template",
+"var logo_alt":"Email Logo Image Alt",
+"var logo_url":"Email Logo Image URL",
+"var remaining_days":"Points expiration remaining days",
+"var points_expiring":"Points that will be expired",
+"config path='trans_email\/ident_sales\/email'":"Sales Contact Email",
+"config path='general\/store_information\/phone'":"Sales Contact Phone",
+"var store.frontend_name":"Store Name",
+"store url=\"\"":"Store URL",
+"var unsubscription_url":"Unsubscription URL",
+"var update_message":"Update Message"
+} @-->
+
+{{template config_path="design/email/header_template"}}
+
+<p class="greeting">{{trans "%name," name=$customer_name}}</p>
+
+<p>{{trans "There are %remaining_days day(s) remaining to use %points_expiring of your reward points." remaining_days=$remaining_days points_expiring=$points_expiring}}</p>
+<p>{{trans "After %remaining_days day(s) these points will expire." remaining_days=$remaining_days}}</p>
+
+<p>
+    {{trans "You have a total of %points_balance points that may be used in our store:" points_balance=$points_balance}}
+    <a href="{{store url=""}}">{{var store.frontend_name}}</a>.
+</p>
+<p>{{trans '<a href="%unsubscription_url">Unsubscribe</a> from these notifications.' unsubscription_url=$unsubscription_url |raw}}</p>
+
+{{template config_path="design/email/footer_template"}}

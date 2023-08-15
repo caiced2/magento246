@@ -1,0 +1,9 @@
+{
+    "authorization_role": {
+        "column": {
+            "gws_is_all": true,
+            "gws_websites": true,
+            "gws_store_groups": true
+        }
+    }
+}

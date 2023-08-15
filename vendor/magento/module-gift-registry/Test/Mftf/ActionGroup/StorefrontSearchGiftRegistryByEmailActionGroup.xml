@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+ /**
+  * Copyright © Magento, Inc. All rights reserved.
+  * See COPYING.txt for license details.
+  */
+-->
+<actionGroups xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+              xsi:noNamespaceSchemaLocation="urn:magento:mftf:Test/etc/actionGroupSchema.xsd">
+    <actionGroup name="StorefrontSearchGiftRegistryByEmailActionGroup">
+        <annotations>
+            <description>In the gift registry search widget, use Gift Registry search by email</description>
+        </annotations>
+        <arguments>
+            <argument name="email" defaultValue="{{Simple_US_Customer.email}}" type="string"/>
+        </arguments>
+        <waitForElementVisible selector="{{StorefrontGiftRegistryWidgetOnPageSection.searchBySelect}}" stepKey="waitForSearchSelect"/>
+        <selectOption selector="{{StorefrontGiftRegistryWidgetOnPageSection.searchBySelect}}" userInput="email" stepKey="selectSearchType"/>
+        <waitForElementVisible selector="{{StorefrontGiftRegistryWidgetOnPageSection.emailInput}}" stepKey="waitForInputs"/>
+        <fillField selector="{{StorefrontGiftRegistryWidgetOnPageSection.emailInput}}" userInput="{{email}}" stepKey="enterEmail"/>
+        <click selector="{{StorefrontGiftRegistryWidgetOnPageSection.activeSearchButton}}" stepKey="clickactiveSearchButton"/>
+    </actionGroup>
+</actionGroups>

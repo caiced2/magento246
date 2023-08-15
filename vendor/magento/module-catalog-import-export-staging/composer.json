@@ -1,0 +1,31 @@
+{
+    "name": "magento/module-catalog-import-export-staging",
+    "description": "N/A",
+    "type": "magento2-module",
+    "license": [
+        "proprietary"
+    ],
+    "config": {
+        "sort-packages": true
+    },
+    "version": "100.4.3",
+    "require": {
+        "magento/framework": "103.0.*",
+        "magento/module-catalog": "104.0.*",
+        "magento/module-catalog-staging": "100.4.*",
+        "magento/module-staging": "101.2.*",
+        "php": "~8.1.0||~8.2.0"
+    },
+    "suggest": {
+        "magento/module-catalog-import-export": "101.1.*"
+    },
+    "autoload": {
+        "files": [
+            "registration.php"
+        ],
+        "psr-4": {
+            "Magento\\CatalogImportExportStaging\\": ""
+        }
+    }
+}
+

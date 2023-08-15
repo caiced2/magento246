@@ -1,0 +1,44 @@
+<?php
+/**
+ * Copyright © Magento, Inc. All rights reserved.
+ * See COPYING.txt for license details.
+ */
+
+/**
+ * @var \Magento\Framework\View\Helper\SecureHtmlRenderer $secureRenderer
+ */
+?>
+
+<?php
+/** @var \Magento\QuickCheckout\ViewModel\Metadata $metadata */
+$metadata = $block->getMetadata();
+$scriptString = '
+    window.addEventListener("load", function() {
+        function sendTracking() {
+            var storedTrackingDataJson = localStorage.getItem("quick_checkout_tracking");
+            var storedTrackingData = storedTrackingDataJson ? JSON.parse(storedTrackingDataJson) : {};
+            var currentUserId = "' . $block->escapeJs($metadata->getCurrentAdminUser()) . '";
+            var currentUserHash = "' . $block->escapeJs($metadata->getTrackingDataHash()) . '";
+
+            if (storedTrackingData[currentUserId] !== currentUserHash) {
+                window.aptrinsic("identify",
+                    JSON.parse(\'' . json_encode($metadata->getTrackingUserData()) . '\'),
+                    JSON.parse(\'' . json_encode($metadata->getTrackingAccountData()) . '\')
+                );
+
+                localStorage.setItem(
+                    "quick_checkout_tracking",
+                    JSON.stringify(
+                        Object.assign({}, storedTrackingData, { [currentUserId]: currentUserHash })
+                    )
+                );
+            }
+        }
+
+        window.aptrinsic && sendTracking()
+    })';
+
+?>
+
+<?= /* @noEscape */ $secureRenderer->renderTag('script', [], $scriptString, false); ?>
+

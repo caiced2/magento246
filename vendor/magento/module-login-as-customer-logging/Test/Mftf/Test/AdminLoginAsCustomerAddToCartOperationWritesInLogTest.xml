@@ -1,0 +1,82 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+ /**
+  * Copyright © Magento, Inc. All rights reserved.
+  * See COPYING.txt for license details.
+  */
+-->
+
+<tests xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xsi:noNamespaceSchemaLocation="urn:magento:mftf:Test/etc/testSchema.xsd">
+    <test name="AdminLoginAsCustomerAddToCartOperationWritesInLogTest">
+        <annotations>
+            <features value="Login as Customer"/>
+            <stories value="Add Product to Cart operation is written in log"/>
+            <title value="'Verify that Add Product to Cart' operation is written in log"/>
+            <description value="Customer adds product in session to cart and operation is written in log"/>
+            <severity value="CRITICAL"/>
+            <group value="login_as_customer"/>
+        </annotations>
+        <before>
+            <magentoCLI command="config:set {{LoginAsCustomerConfigDataEnabled.path}} 1" stepKey="enableLoginAsCustomer"/>
+            <actionGroup ref="CliCacheFlushActionGroup" stepKey="flushConfigCache">
+                <argument name="tags" value="config"/>
+            </actionGroup>
+            <createData entity="_defaultCategory" stepKey="createCategory"/>
+            <createData entity="SimpleProduct" stepKey="createProduct">
+                <requiredEntity createDataKey="createCategory"/>
+            </createData>
+            <createData entity="Simple_US_Customer_Assistance_Allowed" stepKey="createCustomer"/>
+
+            <actionGroup ref="AdminLoginActionGroup" stepKey="login"/>
+        </before>
+        <after>
+            <actionGroup ref="AdminLogoutActionGroup" stepKey="logout"/>
+
+            <deleteData createDataKey="createCustomer" stepKey="deleteCustomer"/>
+            <deleteData createDataKey="createCategory" stepKey="deleteCategory"/>
+            <deleteData createDataKey="createProduct" stepKey="deleteProduct"/>
+            <magentoCLI command="config:set {{LoginAsCustomerConfigDataEnabled.path}} 0" stepKey="disableLoginAsCustomer"/>
+            <actionGroup ref="CliCacheFlushActionGroup" stepKey="flushConfigCache">
+                <argument name="tags" value="config"/>
+            </actionGroup>
+        </after>
+
+        <!-- Verify 'Login as Customer' button is next to the 'Back button' on the left -->
+        <amOnPage url="{{AdminEditCustomerPage.url($$createCustomer.id$$)}}" stepKey="gotoCustomerPage"/>
+        <waitForPageLoad stepKey="waitForCustomerPageLoad"/>
+        <seeElement selector="{{AdminNewCustomerGroupSection.backBtn}} + {{AdminCustomerMainActionsSection.loginAsCustomer}}" stepKey="loginAsCustomerLocatesNearBackButton"/>
+
+        <!-- Admin Login as Customer -->
+        <actionGroup ref="AdminLoginAsCustomerLoginFromCustomerPageActionGroup" stepKey="loginAsCustomerFromCustomerPage">
+            <argument name="customerId" value="$$createCustomer.id$$"/>
+        </actionGroup>
+
+        <!-- Add product to cart -->
+        <actionGroup ref="OpenStoreFrontProductPageActionGroup" stepKey="openProductPage">
+            <argument name="productUrlKey" value="$$createProduct.custom_attributes[url_key]$$"/>
+        </actionGroup>
+        <actionGroup ref="StorefrontAddProductToCartActionGroup" stepKey="addProductToCart">
+            <argument name="product" value="$$createProduct$$"/>
+            <argument name="productCount" value="1"/>
+        </actionGroup>
+        <closeTab stepKey="closeTab"/>
+
+        <!-- Go to Reports log and sort by asc -->
+        <actionGroup ref="AdminOpenActionLogsReportPageActionGroup" stepKey="openActionLogsReportPage"/>
+        <actionGroup ref="AdminLogsReportSelectSortByAscActionGroup" stepKey="sortByAsc"/>
+        <actionGroup ref="AdminGridFilterResetActionGroup" stepKey="clearGridFilters"/>
+
+        <!-- Assert report log row -->
+        <actionGroup ref="AdminAssertReportLogInGridActionGroup" stepKey="assertRow">
+            <argument name="actionGroup" value="Login as Customer"/>
+            <argument name="action" value="Add to Cart"/>
+            <argument name="fullActionName" value="checkout_cart_add"/>
+            <argument name="details" value="Product sku = $$createProduct.sku$$, qty = 1 has been added to cart for customer id $$createCustomer.id$$, email $$createCustomer.email$$"/>
+        </actionGroup>
+
+        <!-- Click view details link and verify admin user link -->
+        <click selector="{{AdminActionLogReportGridSection.viewLink}}" stepKey="clickViewDetailsLink"/>
+        <actionGroup ref="AdminAssertReportLogEntryAdminLinkActionGroup" stepKey="verifyAdminUserLink"/>
+    </test>
+</tests>

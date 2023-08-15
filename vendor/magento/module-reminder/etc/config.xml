@@ -1,0 +1,22 @@
+<?xml version="1.0"?>
+<!--
+/**
+ * Copyright © Magento, Inc. All rights reserved.
+ * See COPYING.txt for license details.
+ */
+-->
+<config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="urn:magento:module:Magento_Store:etc/config.xsd">
+    <default>
+        <promo>
+            <magento_reminder>
+                <enabled>1</enabled>
+                <frequency>I</frequency>
+                <interval>15</interval>
+                <minutes>0</minutes>
+                <limit>100</limit>
+                <threshold>1</threshold>
+                <identity>general</identity>
+            </magento_reminder>
+        </promo>
+    </default>
+</config>

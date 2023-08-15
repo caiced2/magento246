@@ -1,0 +1,60 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+ /**
+  * Copyright © Magento, Inc. All rights reserved.
+  * See COPYING.txt for license details.
+  */
+-->
+<tests xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:noNamespaceSchemaLocation="urn:magento:mftf:Test/etc/testSchema.xsd">
+    <test name="DynamicBlockTextHeightConsistencyOnStorefrontTest" extends="TextHeightConsistencyBetweenContentTypeAndBlockOnStorefrontTest">
+        <annotations>
+            <features value="PageBuilder"/>
+            <stories value="Text"/>
+            <title value="Height consistency of text in PageBuilder storefront (MC-4254)"/>
+            <description value="Verify text height consistent whether in text content type or text content type inside dynamic block"/>
+            <severity value="AVERAGE"/>
+            <useCaseId value="MC-4254"/>
+            <testCaseId value="MC-13793"/>
+            <group value="pagebuilder"/>
+            <group value="pagebuilder-ee"/>
+            <group value="pagebuilder-dynamic-block"/>
+            <group value="pagebuilder-dynamic-block-content"/>
+            <group value="pagebuilder-text"/>
+        </annotations>
+        <before>
+            <createData entity="_defaultDynamicBlock" stepKey="createDynamicBlock"/>
+        </before>
+        <after>
+            <comment userInput="---merging to remove step---" stepKey="deletePreReqBlock"/>
+            <actionGroup ref="DeleteBannerActionGroup" stepKey="deleteDynamicBlock" after="deletePreReqCMSPage">
+                <argument name="bannerName" value="$$createDynamicBlock.name$$"/>
+            </actionGroup>
+            <actionGroup ref="AdminLogoutActionGroup" stepKey="logoutAfter"/>
+        </after>
+        <actionGroup ref="NavigateToCreatedDynamicBlockActionGroup" stepKey="navigateToCreatedCmsBlock">
+            <argument name="Banner" value="$$createDynamicBlock$$"/>
+        </actionGroup>
+        <actionGroup ref="removeContentTypeFromStageByIndex" stepKey="removeHTMLContentType" after="dragRowToRootContainer">
+            <argument name="contentType" value="PageBuilderHtmlContentType"/>
+            <argument name="contentTypeNumber" value="1"/>
+        </actionGroup>
+        <actionGroup ref="confirmRemovalModal" stepKey="confirmRemovalModal" after="removeHTMLContentType"/>
+        <actionGroup ref="SaveAndContinueDynamicBlockActionGroup" stepKey="saveBlock"/>
+        <actionGroup ref="expandPageBuilderPanelMenuSection" stepKey="expandMenuSectionForBlock">
+            <argument name="contentType" value="PageBuilderDynamicBlockContentType"/>
+        </actionGroup>
+        <actionGroup ref="dragContentTypeToStage" stepKey="dragBlockOntoStage">
+            <argument name="contentType" value="PageBuilderDynamicBlockContentType"/>
+        </actionGroup>
+        <actionGroup ref="openPageBuilderEditPanel" stepKey="openEditAfterDrop">
+            <argument name="contentType" value="PageBuilderDynamicBlockContentType"/>
+        </actionGroup>
+        <actionGroup ref="searchAndSelectDynamicBlockInGrid" stepKey="searchBlockInGrid">
+            <argument name="block" value="$$createDynamicBlock$$"/>
+        </actionGroup>
+        <waitForElementVisible selector="{{DynamicBlockOnForm.blockTitle('$$createDynamicBlock.name$$')}}" stepKey="waitToSeeBlockTitle"/>
+        <seeElement selector="{{DynamicBlockOnForm.blockTitle('$$createDynamicBlock.name$$')}}" stepKey="seeBlockTitleOnForm"/>
+        <executeJS function="return document.evaluate(&quot;{{DynamicBlockOnStorefront.text('1', '1'))}}&quot;, document.body).iterateNext().offsetHeight;" stepKey="getBlockTextOnStorefrontHeight"/>
+    </test>
+</tests>

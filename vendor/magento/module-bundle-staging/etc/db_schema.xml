@@ -1,0 +1,94 @@
+<?xml version="1.0"?>
+<!--
+/**
+ * Copyright © Magento, Inc. All rights reserved.
+ * See COPYING.txt for license details.
+ */
+-->
+<schema xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:noNamespaceSchemaLocation="urn:magento:framework:Setup/Declaration/Schema/etc/schema.xsd">
+    <table name="catalog_product_bundle_option" resource="default" comment="Catalog Product Bundle Option">
+        <column xsi:type="int" name="option_id" unsigned="true" nullable="false" identity="false"
+                comment="Option Id"/>
+        <constraint xsi:type="foreign" referenceId="CAT_PRD_BNDL_OPT_PARENT_ID_CAT_PRD_ENTT_ENTT_ID" disabled="1"/>
+        <constraint xsi:type="foreign" referenceId="CAT_PRD_BNDL_OPT_PARENT_ID_CAT_PRD_ENTT_ROW_ID"
+                    table="catalog_product_bundle_option" column="parent_id" referenceTable="catalog_product_entity"
+                    referenceColumn="row_id" onDelete="CASCADE"/>
+        <constraint xsi:type="foreign" referenceId="CAT_PRD_BNDL_OPT_OPT_ID_SEQUENCE_PRD_BNDL_OPT_SEQUENCE_VAL"
+                    table="catalog_product_bundle_option" column="option_id"
+                    referenceTable="sequence_product_bundle_option" referenceColumn="sequence_value"
+                    onDelete="CASCADE"/>
+        <constraint xsi:type="primary" referenceId="PRIMARY" disabled="1"/>
+        <constraint xsi:type="primary" referenceId="PK_CATALOG_PRODUCT_BUNDLE_OPTION">
+            <column name="option_id"/>
+            <column name="parent_id"/>
+        </constraint>
+    </table>
+    <table name="sequence_product_bundle_option" resource="default" engine="innodb">
+        <column xsi:type="int" name="sequence_value" unsigned="true" nullable="false" identity="true"/>
+        <constraint xsi:type="primary" referenceId="PRIMARY">
+            <column name="sequence_value"/>
+        </constraint>
+    </table>
+    <table name="catalog_product_bundle_option_value" resource="default" comment="Catalog Product Bundle Option Value">
+        <constraint xsi:type="foreign" referenceId="CAT_PRD_BNDL_OPT_VAL_OPT_ID_CAT_PRD_BNDL_OPT_OPT_ID" disabled="1"/>
+        <constraint xsi:type="foreign" referenceId="CAT_PRD_BNDL_OPT_VAL_OPT_ID_SEQUENCE_PRD_BNDL_OPT_SEQUENCE_VAL"
+                    table="catalog_product_bundle_option_value" column="option_id"
+                    referenceTable="sequence_product_bundle_option" referenceColumn="sequence_value"
+                    onDelete="CASCADE"/>
+        <constraint xsi:type="foreign" referenceId="CAT_PRD_BNDL_OPT_VAL_PARENT_PRD_ID_CAT_PRD_ENTT_ROW_ID"
+                    table="catalog_product_bundle_option_value" column="parent_product_id"
+                    referenceTable="catalog_product_entity" referenceColumn="row_id" onDelete="CASCADE"/>
+    </table>
+    <table name="catalog_product_bundle_selection" resource="default" comment="Catalog Product Bundle Selection">
+        <column xsi:type="int" name="selection_id" unsigned="true" nullable="false" identity="false"
+                comment="Selection Id"/>
+        <column xsi:type="int" name="parent_product_id" unsigned="true" nullable="false" identity="false"
+                comment="Parent Product Id"/>
+        <constraint xsi:type="foreign" referenceId="CAT_PRD_BNDL_SELECTION_OPT_ID_CAT_PRD_BNDL_OPT_OPT_ID" disabled="1"/>
+        <constraint xsi:type="foreign" referenceId="CAT_PRD_BNDL_SELECTION_OPT_ID_SEQUENCE_PRD_BNDL_OPT_SEQUENCE_VAL"
+                    table="catalog_product_bundle_selection" column="option_id"
+                    referenceTable="sequence_product_bundle_option" referenceColumn="sequence_value"
+                    onDelete="CASCADE"/>
+        <constraint xsi:type="foreign" referenceId="FK_606117FEB5F50D0182CEC9D260C05DD2"
+                    table="catalog_product_bundle_selection" column="selection_id"
+                    referenceTable="sequence_product_bundle_selection" referenceColumn="sequence_value"
+                    onDelete="CASCADE"/>
+        <constraint xsi:type="foreign" referenceId="CAT_PRD_BNDL_SELECTION_PARENT_PRD_ID_CAT_PRD_ENTT_ROW_ID"
+                    table="catalog_product_bundle_selection" column="parent_product_id"
+                    referenceTable="catalog_product_entity" referenceColumn="row_id" onDelete="CASCADE"/>
+        <constraint xsi:type="foreign" referenceId="CAT_PRD_BNDL_SELECTION_PRD_ID_CAT_PRD_ENTT_ENTT_ID" disabled="1"/>
+        <constraint xsi:type="foreign" referenceId="CAT_PRD_BNDL_SELECTION_PRD_ID_SEQUENCE_PRD_SEQUENCE_VAL"
+                    table="catalog_product_bundle_selection" column="product_id" referenceTable="sequence_product"
+                    referenceColumn="sequence_value" onDelete="CASCADE"/>
+        <constraint xsi:type="primary" referenceId="PRIMARY" disabled="1"/>
+        <constraint xsi:type="primary" referenceId="PK_CATALOG_PRODUCT_BUNDLE_SELECTION">
+            <column name="selection_id"/>
+            <column name="parent_product_id"/>
+        </constraint>
+    </table>
+    <table name="sequence_product_bundle_selection" resource="default" engine="innodb">
+        <column xsi:type="int" name="sequence_value" unsigned="true" nullable="false" identity="true"/>
+        <constraint xsi:type="primary" referenceId="PRIMARY">
+            <column name="sequence_value"/>
+        </constraint>
+    </table>
+    <table name="catalog_product_bundle_selection_price" resource="default"
+           comment="Catalog Product Bundle Selection Price">
+        <constraint xsi:type="foreign" referenceId="DCF37523AA05D770A70AA4ED7C2616E4" disabled="1"/>
+        <constraint xsi:type="foreign" referenceId="FK_DCF37523AA05D770A70AA4ED7C2616E4" disabled="1"/>
+        <constraint xsi:type="foreign" referenceId="FK_AE9FDBF7988FB6BE3E04D91DA2CFB273"
+                    table="catalog_product_bundle_selection_price" column="selection_id"
+                    referenceTable="sequence_product_bundle_selection" referenceColumn="sequence_value"
+                    onDelete="CASCADE"/>
+        <constraint xsi:type="foreign" referenceId="CAT_PRD_BNDL_SELECTION_PRICE_PARENT_PRD_ID_CAT_PRD_ENTT_ROW_ID"
+                    table="catalog_product_bundle_selection_price" column="parent_product_id"
+                    referenceTable="catalog_product_entity" referenceColumn="row_id" onDelete="CASCADE"/>
+    </table>
+    <table name="catalog_product_bundle_price_index" resource="default" comment="Catalog Product Bundle Price Index">
+        <constraint xsi:type="foreign" referenceId="CAT_PRD_BNDL_PRICE_IDX_ENTT_ID_CAT_PRD_ENTT_ENTT_ID" disabled="1"/>
+        <constraint xsi:type="foreign" referenceId="CAT_PRD_BNDL_PRICE_IDX_ENTT_ID_SEQUENCE_PRD_SEQUENCE_VAL"
+                    table="catalog_product_bundle_price_index" column="entity_id" referenceTable="sequence_product"
+                    referenceColumn="sequence_value" onDelete="CASCADE"/>
+    </table>
+</schema>

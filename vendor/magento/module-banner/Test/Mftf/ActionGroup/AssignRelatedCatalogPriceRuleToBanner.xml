@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+ /**
+  * Copyright © Magento, Inc. All rights reserved.
+  * See COPYING.txt for license details.
+  */
+-->
+<actionGroups xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+              xsi:noNamespaceSchemaLocation="urn:magento:mftf:Test/etc/actionGroupSchema.xsd">
+    <actionGroup name="AssignBannerToWidgetActionGroup">
+        <arguments>
+            <argument name="Banner" defaultValue="sampleBanner" />
+        </arguments>
+        <amOnPage url="{{AdminDynamicBlockGridPage.url}}" stepKey="amOnBannerGrid" />
+        <click selector="{{AdminDynamicBlockGridTableSection.title('$$Banner.title$$')}}" stepKey="navigateToBanner" />
+        <waitForPageLoad stepKey="waitForPageLoad1" />
+        <click selector="{{RelatedPromotionsSection.AddCatalogPriceRules" stepKey="clickAddCatalogPriceRulesButton" />
+        <waitForLoadingMaskToDisappear stepKey="waitForLoading" />
+        <click selector="//*[@id='idscheck1']" stepKey="clickFirstRowCheckbox" />
+        <click selector="{{RelatedPromotionsSection.AddSelectedRulesButton}}" stepKey="clickAddSelectedRulesButton" />
+        <click selector="{{AdminBannerBasicActionSection.Save}}" stepKey="clickSaveButton" />
+    </actionGroup>
+</actionGroups>

@@ -1,0 +1,87 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+ /**
+  * Copyright © Magento, Inc. All rights reserved.
+  * See COPYING.txt for license details.
+  */
+-->
+
+<tests xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xsi:noNamespaceSchemaLocation="urn:magento:mftf:Test/etc/testSchema.xsd">
+    <test name="StoreFrontCustomerCustomAttributesMultiSelectTest">
+        <annotations>
+            <features value="Customer"/>
+            <stories value="Custom attributes"/>
+            <title value="Custom address attribute Multiselect are not correctly displayed on checkout and order page"/>
+            <description value="Custom address attribute Multiselect are not correctly displayed on checkout and order page"/>
+            <severity value="MAJOR"/>
+            <testCaseId value="MC-38173"/>
+            <useCaseId value="MC-38114"/>
+            <group value="customer"/>
+            <group value="checkout"/>
+        </annotations>
+        <before>
+            <!--Login as admin-->
+            <actionGroup ref="AdminLoginActionGroup" stepKey="LoginAsAdmin"/>
+            <!--Create category-->
+            <createData stepKey="category" entity="SimpleSubCategory"/>
+            <!--Create product-->
+            <createData stepKey="product" entity="SimpleProduct">
+                <requiredEntity createDataKey="category"/>
+            </createData>
+        </before>
+        <after>
+            <!--Delete multiselect attribute-->
+            <actionGroup ref="AdminDeleteCustomerAttribute" stepKey="adminDeleteSecondCustomerAttribute">
+                <argument name="defaultLabel" value="{{AttributeMultipleData.label}}"/>
+            </actionGroup>
+            <!--Delete Category -->
+            <deleteData stepKey="deleteCategory" createDataKey="category"/>
+            <!--Delete Product -->
+            <deleteData stepKey="deleteProduct" createDataKey="product"/>
+            <!--Logout from admin -->
+            <actionGroup ref="AdminLogoutActionGroup" stepKey="logOut"/>
+        </after>
+
+        <!--Navigate to customer address attributes page-->
+        <amOnPage url="{{CustomerAddressAttributesPage.url}}" stepKey="navigateToCustomerAddress"/>
+        <waitForPageLoad stepKey="waitForCustomerAttributePageLoaded"/>
+        <!--Create new multiselect attribute-->
+        <actionGroup ref="AdminAddOptionsCustomerAttribute" stepKey="adminCreateCustomerSecondAttribute">
+            <argument name="defaultLabel" value="{{AttributeMultipleData.label}}"/>
+            <argument name="attributeCode" value="{{AttributeMultipleData.code}}"/>
+            <argument name="inputType" value="{{AttributeMultipleData.inputType}}"/>
+            <argument name="sortOrder" value="{{AttributeMultipleData.sortOrder}}"/>
+            <argument name="firstOption" value="{{AttributeMultipleData.firstOption}}"/>
+            <argument name="secondOption" value="{{AttributeMultipleData.secondOption}}"/>
+        </actionGroup>
+        <!--Go to Storefront. Add product to cart-->
+        <amOnPage url="{{StorefrontProductPage.url($$product.custom_attributes[url_key]$$)}}" stepKey="goToProductPage"/>
+        <actionGroup ref="StorefrontAddToCartCustomOptionsProductPageActionGroup" stepKey="AddProductToCard">
+            <argument name="productName" value="$$product.name$$"/>
+        </actionGroup>
+        <!--Proceed to checkout-->
+        <actionGroup ref="GoToCheckoutFromMinicartActionGroup" stepKey="goToCheckout"/>
+        <waitForPageLoad stepKey="waitForCheckoutPageLoad"/>
+        <!--select first and second options of the multiselect-->
+        <selectOption selector="{{StorefrontCustomerAddressAttributeSection.dropdownField(AttributeMultipleData.code)}}"
+                      parameterArray="[{{AttributeMultipleData.firstOption}},{{AttributeMultipleData.secondOption}}]"
+                      stepKey="selectFirstAndSecondOfMultiSelect"/>
+        <!--Fill required fields with valid data and click Update -->
+        <actionGroup ref="GuestCheckoutFillingShippingSectionActionGroup" stepKey="guestCheckoutFillingShippingSection">
+            <argument name="customerVar" value="CustomerEntityOne" />
+            <argument name="customerAddressVar" value="CustomerAddressSimple" />
+        </actionGroup>
+        <!--Select money order payment -->
+        <actionGroup ref="CheckoutSelectCheckMoneyOrderPaymentActionGroup" stepKey="guestSelectCheckMoneyOrderPayment" />
+        <!--Check billing address information -->
+        <actionGroup ref="CheckBillingAddressInCheckoutActionGroup" stepKey="guestSeeAddress">
+            <argument name="customerVar" value="CustomerEntityOne" />
+            <argument name="customerAddressVar" value="CustomerAddressSimple" />
+        </actionGroup>
+        <!--Assert that selected multiselect options are displayed in billing address-->
+        <see userInput="{{AttributeMultipleData.firstOption}}, {{AttributeMultipleData.secondOption}}"
+             selector="{{CheckoutPaymentSection.billingAddress}}"
+             stepKey="assertBillingAddressCity"/>
+    </test>
+</tests>

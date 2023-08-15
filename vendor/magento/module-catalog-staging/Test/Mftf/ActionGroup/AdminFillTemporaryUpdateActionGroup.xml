@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+ /**
+  * Copyright © Magento, Inc. All rights reserved.
+  * See COPYING.txt for license details.
+  */
+-->
+
+<actionGroups xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+              xsi:noNamespaceSchemaLocation="urn:magento:mftf:Test/etc/actionGroupSchema.xsd">
+
+    <actionGroup name="AdminFillTemporaryUpdateActionGroup">
+        <arguments>
+            <argument name="stage" type="entity"/>
+        </arguments>
+        <!-- Create the staging update -->
+        <generateDate date="{{stage.startDate}}" format="m/d/Y g:i A"  stepKey="generateStartDate"/>
+        <generateDate date="{{stage.endDate}}" format="m/d/Y g:i A" stepKey="generateEndDate"/>
+        <!-- Fill out the staging details -->
+        <click selector="{{AdminStagingSlideOutSection.scheduleNewUpdateBtn}}" stepKey="scheduleNewUpdateBtn"/>
+        <fillField selector="{{AdminStagingSlideOutSection.updateName}}" userInput="{{stage.updateName}}" stepKey="fillName"/>
+        <fillField selector="{{AdminStagingSlideOutSection.updateDescription}}" userInput="{{stage.updateDescription}}" stepKey="fillDescription" />
+        <fillField selector="{{AdminStagingSlideOutSection.startDate}}" userInput="{$generateStartDate}" stepKey="fillStartDate"/>
+        <fillField selector="{{AdminStagingSlideOutSection.endDate}}" userInput="{$generateEndDate}" stepKey="fillEndDate"/>
+    </actionGroup>
+</actionGroups>

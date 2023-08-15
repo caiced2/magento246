@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+ /**
+  * Copyright © Magento, Inc. All rights reserved.
+  * See COPYING.txt for license details.
+  */
+-->
+<actionGroups xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+              xsi:noNamespaceSchemaLocation="urn:magento:mftf:Test/etc/actionGroupSchema.xsd">
+    <actionGroup name="AdminCreateAndEditCustomerAttributeActionGroup">
+        <arguments>
+            <argument name="customerAttribute" type="entity"/>
+        </arguments>
+        <amOnPage url="{{CustomerAttributesPage.url}}" stepKey="onPageAttribute"/>
+        <waitForPageLoad stepKey="waitForPageLoad"/>
+        <click selector="{{CustomerAccountSection.newAttribute}}" stepKey="clickToCreateAttribute"/>
+        <waitForPageLoad stepKey="waitForNewAttributePageLoaded"/>
+        <fillField selector="{{CustomerAccountSection.label}}" userInput="{{customerAttribute.frontend_label}}" stepKey="TypeDefaultLabel"/>
+        <fillField selector="{{CustomerAccountSection.code}}" userInput="{{customerAttribute.attribute_code}}" stepKey="TypeAttributeCode"/>
+        <selectOption selector="{{CustomerAccountSection.inputType}}" userInput="{{customerAttribute.frontend_input}}" stepKey="selectInputType"/>
+        <selectOption selector="{{CustomerAccountSection.valuesRequired}}" userInput="{{customerAttribute.is_required}}" stepKey="setValuesRequired" />
+        <selectOption selector="{{CustomerAccountSection.usedForSegment}}" userInput="{{customerAttribute.is_used_for_customer_segment}}" stepKey="setUseInCustomerSegment"/>
+        <selectOption selector="{{CustomerAccountSection.showInSF}}" userInput="{{customerAttribute.is_visible}}" stepKey="setSFOption" />
+        <fillField selector="{{CustomerAccountSection.sortOrder}}" userInput="{{customerAttribute.sort_order}}" stepKey="TypeSortOrder"/>
+        <selectOption selector="{{CustomerAccountSection.selectFormToUse}}" parameterArray="[{{customerAttribute.used_in_forms}}]" stepKey="setFormsToUse"/>
+        <click selector="{{AttributeEditSection.saveAndContinue}}" stepKey="saveAttribute"/>
+        <waitForPageLoad stepKey="WaitForAttributeSaved"/>
+        <waitForText userInput="You saved the customer attribute." stepKey="waitForAttributeCreated" time="30" />
+    </actionGroup>
+</actionGroups>

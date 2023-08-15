@@ -1,0 +1,60 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+ /**
+  * Copyright © Magento, Inc. All rights reserved.
+  * See COPYING.txt for license details.
+  */
+-->
+
+<tests xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xsi:noNamespaceSchemaLocation="urn:magento:mftf:Test/etc/testSchema.xsd">
+    <test name="StoreFrontCheckingGiftOptionsTest">
+        <annotations>
+            <features value="Gift"/>
+            <stories value="Checking Gift Options on front end order page"/>
+            <title value="Checking Gift Options on front end order page"/>
+            <description value="Admin should be able to control gift options"/>
+            <severity value="MAJOR"/>
+            <testCaseId value="MAGETWO-94209"/>
+            <group value="Gift"/>
+        </annotations>
+        <before>
+            <createData stepKey="category" entity="SimpleSubCategory"/>
+            <createData stepKey="product1" entity="SimpleProduct">
+                <requiredEntity createDataKey="category"/>
+            </createData>
+            <createData stepKey="product2" entity="SimpleProduct">
+                <requiredEntity createDataKey="category"/>
+            </createData>
+            <createData entity="Simple_US_Customer" stepKey="customer"/>
+            <createData entity="EnableGiftWrappingForOrderItemsOnly" stepKey="enableGiftWrappingForOrderItemsOnly"/>
+            <createData entity="DefaultConfigGiftMessageOptions" stepKey="disableGiftMessage"/>
+
+            <actionGroup ref="AdminLoginActionGroup" stepKey="loginAsAdmin"/>
+            <actionGroup ref="LoginToStorefrontActionGroup" stepKey="loginToStorefrontAccount">
+                <argument name="Customer" value="$$customer$$"/>
+            </actionGroup>
+        </before>
+
+        <amOnPage url="$$product1.custom_attributes[url_key]$$.html" stepKey="goToProduct1"/>
+        <actionGroup ref="AddToCartFromStorefrontProductPageActionGroup" stepKey="addToCartFromStorefrontProduct1">
+            <argument name="productName" value="$$product1.name$$"/>
+        </actionGroup>
+        <amOnPage url="$$product2.custom_attributes[url_key]$$.html" stepKey="goToProduct2"/>
+        <actionGroup ref="AddToCartFromStorefrontProductPageActionGroup" stepKey="addToCartFromStorefrontProduct2">
+            <argument name="productName" value="$$product2.name$$"/>
+        </actionGroup>
+        <actionGroup ref="StorefrontOpenCartFromMinicartActionGroup" stepKey="openCart"/>
+        <actionGroup ref="CheckingGiftOptionsActionGroup" stepKey="checkGiftOptions"/>
+
+        <after>
+            <createData entity="DefaultConfigGiftMessageOptions" stepKey="restoreDefaultConfigGiftOptions"/>
+            <createData entity="DefaultConfigGiftWrappingOptions" stepKey="defaultGiftOptions"/>
+            <deleteData stepKey="deleteCategory" createDataKey="category"/>
+            <deleteData stepKey="deleteProduct1" createDataKey="product1"/>
+            <deleteData stepKey="deleteProduct2" createDataKey="product2"/>
+            <deleteData stepKey="deleteCustomer" createDataKey="customer"/>
+            <actionGroup ref="AdminLogoutActionGroup" stepKey="logout"/>
+        </after>
+    </test>
+</tests>

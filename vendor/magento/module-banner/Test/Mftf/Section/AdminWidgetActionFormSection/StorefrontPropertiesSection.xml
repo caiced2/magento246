@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+ /**
+  * Copyright © Magento, Inc. All rights reserved.
+  * See COPYING.txt for license details.
+  */
+-->
+<sections xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:noNamespaceSchemaLocation="urn:magento:mftf:Page/etc/SectionObject.xsd">
+    <section name="StorefrontPropertiesSection">
+        <element name="PageTitle" type="text" selector="//span[text()='Storefront Properties']"/>
+        <element name="AddLayoutUpdateBtn" type="button" selector="//button[@title='Add Layout Update']"/>
+        <element name="DisplayOnList" type="select" selector="#widget_instance[0][page_group]"/>
+        <element name="LayoutUpdateSelect" type="text" selector="//*[contains(@class, 'widget-layout-updates')]//select[{{arg1}}]" parameterized="true"/>
+        <element name="ContainerList" type="select" selector="[name='widget_instance[0][all_pages][block]']"/>
+        <element name="ContainerListOption" type="select" selector="//select[@name='widget_instance[0][all_pages][block]']/option[contains(text(),'{{arg1}}')]" parameterized="true"/>
+    </section>
+</sections>

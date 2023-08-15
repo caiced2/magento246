@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+ /**
+  * Copyright © Magento, Inc. All rights reserved.
+  * See COPYING.txt for license details.
+  */
+-->
+<actionGroups xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+              xsi:noNamespaceSchemaLocation="urn:magento:mftf:Test/etc/actionGroupSchema.xsd">
+    <actionGroup name="AdminCreateStoreActionGroup">
+        <arguments>
+            <argument name="store" defaultValue="newStoreData"/>
+        </arguments>
+        <amOnPage url="{{AdminSystemStorePage.url}}" stepKey="navigateToStorePag"/>
+        <waitForPageLoad stepKey="waitForStorePage"/>
+        <click stepKey="clickOnCreateStore" selector="{{AdminStoresGridControlsSection.createStore}}"/>
+        <waitForPageLoad stepKey="waitForStoreInfoPage"/>
+        <fillField selector="{{AdminNewStoreGroupSection.storeGrpNameTextField}}" userInput="{{store.storeName}}" stepKey="enterStoreName" />
+        <fillField selector="{{AdminNewStoreGroupSection.storeGrpCodeTextField}}" userInput="{{store.storeCode}}" stepKey="enterStoreCode" />
+        <selectOption selector="{{AdminNewStoreGroupSection.storeRootCategoryDropdown}}" userInput="Default Category"  stepKey="setRootCategory" />
+        <click selector="{{AdminNewStoreGroupActionsSection.saveButton}}" stepKey="clickSaveStoreGroup" />
+        <waitForPageLoad stepKey="waitForSaveTheStore"/>
+        <see userInput="You saved the store." stepKey="seeSavedMessage" />
+    </actionGroup>
+</actionGroups>

@@ -1,0 +1,13 @@
+<?php
+/**
+ * Copyright © Magento, Inc. All rights reserved.
+ * See COPYING.txt for license details.
+ */
+?>
+<?php /** @var $block \Magento\Rma\Block\Adminhtml\Rma\Create\Form */ ?>
+<form id="edit_form"
+      action="<?= $block->escapeUrl($block->getSaveUrl()) ?>"
+      method="post"
+      enctype="multipart/form-data">
+    <?= $block->getChildHtml('rma_create_order') ?>
+</form>

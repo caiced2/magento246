@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+ /**
+  * Copyright © Magento, Inc. All rights reserved.
+  * See COPYING.txt for license details.
+  */
+-->
+
+<sections xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+          xsi:noNamespaceSchemaLocation="urn:magento:mftf:Page/etc/SectionObject.xsd">
+    <section name="AdminManageShoppingCartSection">
+        <element name="lastOrderedItemsTab" type="button" selector="#products_search [data-ui-id='checkout-accordion-ordered']"/>
+        <element name="lastOrderedItemsGrid" type="text" selector="#products_search #source_ordered_table"/>
+        <element name="lastOrderedItemsCheckbox" type="checkbox" selector="//*[@id='source_ordered']//*[contains(., '{{productName}}')]//..//*[contains(@class,'col-in_products')]//label" parameterized="true"/>
+        <element name="addSelectionsToMyCartSecondButton" type="button" selector="//*[@id='products_search']//*[@class='actions'][2]//button[@data-ui-id='id-addto-cart-button']"/>
+        <element name="addToShoppingCartBySkuTab" type="button" selector="#products_search [data-ui-id='checkout-accordion-sku-accordion']"/>
+        <element name="addToShoppingCartBySkuForm" type="text" selector="#dd-sku.accordion" />
+        <element name="addAnotherItemBySkuButton" type="button" selector="//table[@id='sku_table']//button[@data-ui-id='sku-accordion-addbutton']" />
+        <element name="deleteItemBySkuButton" type="button" selector="(//table[@id='sku_table']//button[@data-ui-id='sku-accordion-deletebutton'])[{{index}}]" parameterized="true"/>
+        <element name="updateItemsButton" type="button" selector=".shopping-cart-items .action-update" timeout="30"/>
+        <element name="itemQtyBySku" type="input" selector="//*[@id='order-items_grid']//*[@class='product-sku-block'][contains(.,'{{sku}}')]/ancestor::tr//*[@class='col-qty']//input" parameterized="true"/>
+        <element name="itemErrorMessageBySku" type="text" selector="//*[@id='order-items_grid']//*[@class='product-sku-block'][contains(.,'{{sku}}')]/ancestor::tr/following-sibling::tr[@class='row-messages-error']//div[contains(@class, 'message-error')]" parameterized="true"/>
+    </section>
+</sections>

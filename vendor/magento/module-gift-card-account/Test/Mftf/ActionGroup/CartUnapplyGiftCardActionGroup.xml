@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+ /**
+  * Copyright © Magento, Inc. All rights reserved.
+  * See COPYING.txt for license details.
+  */
+-->
+
+<actionGroups xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+              xsi:noNamespaceSchemaLocation="urn:magento:mftf:Test/etc/actionGroupSchema.xsd">
+    <actionGroup name="CartUnapplyGiftCardActionGroup">
+        <arguments>
+            <argument name="code" type="string"/>
+        </arguments>
+        <waitForPageLoad stepKey="waitForLoadingMaskToDisappear"/>
+        <waitForElementVisible selector="{{CheckoutOrderSummarySection.giftCardLineItem}}" stepKey="waitForGiftCardCodeToBeVisible"/>
+        <see selector="{{CheckoutOrderSummarySection.giftCardLineItem}}" userInput="Gift Card ({{code}})" stepKey="seeGiftCardAppliedToCart"/>
+        <waitForPageLoad stepKey="waitForLoadingMaskToDisappear2"/>
+        <waitForElementVisible selector="{{CheckoutOrderSummarySection.giftCardLineItemRemove}}" stepKey="waitForRemoveLinkToBeVisible"/>
+        <click selector="{{CheckoutOrderSummarySection.giftCardLineItemRemove}}" stepKey="clickRemoveGiftCard"/>
+        <waitForPageLoad stepKey="waitForCardRemove"/>
+        <waitForElementVisible selector="{{StorefrontMessagesSection.success}}" stepKey="waitForAlertMessage"/>
+        <see selector="{{StorefrontMessagesSection.success}}" userInput='Gift Card "{{code}}" was removed.' stepKey="seeSuccessMessage"/>
+        <dontSeeElement selector="{{CheckoutOrderSummarySection.giftCardLineItem}}" stepKey="dontSeeCardApplied"/>
+    </actionGroup>
+</actionGroups>

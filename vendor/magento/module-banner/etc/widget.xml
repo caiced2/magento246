@@ -1,0 +1,69 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+/**
+ * Copyright © Magento, Inc. All rights reserved.
+ * See COPYING.txt for license details.
+ */
+-->
+<widgets xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:noNamespaceSchemaLocation="urn:magento:module:Magento_Widget:etc/widget.xsd">
+    <widget id="magento_banner" class="Magento\Banner\Block\Widget\Banner"
+            placeholder_image="Magento_Banner::widget_banner.png">
+        <label translate="true">Dynamic Blocks Rotator</label>
+        <description translate="true">Displays Specified or Promotion Dynamic Blocks</description>
+        <parameters>
+            <parameter xsi:type="select" name="display_mode" required="true" visible="true">
+                <label translate="true">Dynamic Blocks to Display</label>
+                <options>
+                    <option name="fixed" value="fixed" selected="true">
+                        <label translate="true">Specified Dynamic Blocks</label>
+                    </option>
+                    <option name="salesrule" value="salesrule">
+                        <label translate="true">Cart Price Rule Related</label>
+                    </option>
+                    <option name="catalogrule" value="catalogrule">
+                        <label translate="true">Catalog Price Rule Related</label>
+                    </option>
+                </options>
+            </parameter>
+            <parameter xsi:type="multiselect" name="types" visible="true" source_model="Magento\Banner\Model\Config">
+                <label translate="true">Restrict by Dynamic Block Types</label>
+            </parameter>
+            <parameter xsi:type="select" name="rotate" visible="true">
+                <label translate="true">Rotation Mode</label>
+                <options>
+                    <option name="none" value="" selected="true">
+                        <label translate="true">Display all instead of rotating</label>
+                    </option>
+                    <option name="random" value="random">
+                        <label translate="true">One at the time, Random</label>
+                    </option>
+                    <option name="series" value="series">
+                        <label translate="true">One at the time, Series</label>
+                    </option>
+                    <option name="shuffle" value="shuffle">
+                        <label translate="true">One at the time, Shuffle</label>
+                    </option>
+                </options>
+            </parameter>
+            <parameter xsi:type="block" name="banner_ids" visible="true">
+                <label translate="true">Specify Dynamic Blocks</label>
+                <depends>
+                    <parameter name="display_mode" value="fixed" />
+                </depends>
+                <block class="Magento\Banner\Block\Adminhtml\Widget\Chooser" />
+            </parameter>
+            <parameter xsi:type="select" name="template" required="true" visible="false">
+                <options>
+                    <option name="block" value="widget/block.phtml" selected="true">
+                        <label translate="true">Dynamic Block Template</label>
+                    </option>
+                    <option name="inline" value="widget/inline.phtml">
+                        <label translate="true">Dynamic Block Inline Template</label>
+                    </option>
+                </options>
+            </parameter>
+            <parameter xsi:type="text" name="unique_id" required="true" visible="false" />
+        </parameters>
+    </widget>
+</widgets>

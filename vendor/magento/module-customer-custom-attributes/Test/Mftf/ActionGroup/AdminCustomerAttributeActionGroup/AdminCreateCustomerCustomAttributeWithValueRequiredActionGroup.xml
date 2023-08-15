@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+ /**
+  * Copyright © Magento, Inc. All rights reserved.
+  * See COPYING.txt for license details.
+  */
+-->
+<actionGroups xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:noNamespaceSchemaLocation="urn:magento:mftf:Test/etc/actionGroupSchema.xsd">
+    <actionGroup name="AdminCreateCustomerCustomAttributeWithValueRequired" extends="AdminCreateCustomerCustomAttribute">
+        <remove keyForRemoval="selectForms"/>
+        <selectOption selector="{{CustomerAccountSection.valuesRequired}}" userInput="Yes" stepKey="setValuesRequired" after="selectInputType"/>
+        <fillField selector="{{CustomerAccountSection.defaultValue}}" userInput="Default Value" stepKey="fillDefaultValue" after="setValuesRequired"/>
+        <selectOption selector="{{CustomerAccountSection.selectFormToUse}}" userInput="{{customerAttribute.used_in_forms[0]}}" stepKey="selectCustomerRegistration" after="TypeSortOrder"/>
+        <see selector="{{CustomerAccountSection.successMessage}}" userInput="You saved the customer attribute." stepKey="seeSuccessMessage" after="WaitForAttributeSaved"/>
+    </actionGroup>
+</actionGroups>

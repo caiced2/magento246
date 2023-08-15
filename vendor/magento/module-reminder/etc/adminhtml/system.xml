@@ -1,0 +1,56 @@
+<?xml version="1.0"?>
+<!--
+/**
+ * Copyright © Magento, Inc. All rights reserved.
+ * See COPYING.txt for license details.
+ */
+-->
+<config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="urn:magento:module:Magento_Config:etc/system_file.xsd">
+    <system>
+        <section id="promo" showInDefault="1" showInWebsite="1" showInStore="1">
+            <group id="magento_reminder" translate="label" showInDefault="1" showInWebsite="1" showInStore="1" sortOrder="1">
+                <label>Automated Email Reminder Rules</label>
+                <field id="enabled" translate="label" type="select" sortOrder="1" showInDefault="1" showInWebsite="0" showInStore="0">
+                    <label>Enable Reminder Emails</label>
+                    <source_model>Magento\Config\Model\Config\Source\Yesno</source_model>
+                </field>
+                <field id="frequency" translate="label" type="select" sortOrder="2" showInDefault="1" showInWebsite="0" showInStore="0">
+                    <label>Frequency</label>
+                    <source_model>Magento\Reminder\Model\Config\Source\CronFrequencyTypes::getCronFrequencyTypes</source_model>
+                    <backend_model>Magento\Reminder\Model\System\Config\Backend\Cron</backend_model>
+                </field>
+                <field id="interval" translate="label comment" type="select" sortOrder="3" showInDefault="1" showInWebsite="0" showInStore="0">
+                    <label>Interval</label>
+                    <source_model>Magento\Reminder\Model\Config\Source\CronMinutes::getCronMinutes</source_model>
+                    <comment>Set this value equal or greater to your Magento cron job launch period.</comment>
+                    <depends>
+                        <field id="frequency">I</field>
+                    </depends>
+                </field>
+                <field id="minutes" translate="label comment" type="text" sortOrder="3" showInDefault="1" showInWebsite="0" showInStore="0">
+                    <label>Minute of the Hour</label>
+                    <comment>Valid range: 0-59 (default 0).</comment>
+                    <depends>
+                        <field id="frequency">H</field>
+                    </depends>
+                </field>
+                <field id="time" translate="label" type="time" sortOrder="4" showInDefault="1" showInWebsite="0" showInStore="0">
+                    <label>Start Time</label>
+                </field>
+                <field id="limit" translate="label" type="text" sortOrder="5" showInDefault="1" showInWebsite="0" showInStore="0">
+                    <label>Maximum Emails per One Run</label>
+                    <validate>validate-zero-or-greater validate-digits</validate>
+                </field>
+                <field id="threshold" translate="label comment" type="text" sortOrder="6" showInDefault="1" showInWebsite="0" showInStore="0">
+                    <label>Email Send Failure Threshold</label>
+                    <validate>validate-zero-or-greater validate-digits</validate>
+                    <comment>Make sure to enter a limit value, or reminder emails will be re-issued to customers in a loop.</comment>
+                </field>
+                <field id="identity" translate="label" type="select" sortOrder="7" showInDefault="1" showInWebsite="0" showInStore="1">
+                    <label>Reminder Email Sender</label>
+                    <source_model>Magento\Config\Model\Config\Source\Email\Identity</source_model>
+                </field>
+            </group>
+        </section>
+    </system>
+</config>

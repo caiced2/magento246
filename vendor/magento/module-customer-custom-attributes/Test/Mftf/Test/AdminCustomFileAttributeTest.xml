@@ -1,0 +1,73 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+ /**
+  * Copyright © Magento, Inc. All rights reserved.
+  * See COPYING.txt for license details.
+  */
+-->
+
+<tests xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xsi:noNamespaceSchemaLocation="urn:magento:mftf:Test/etc/testSchema.xsd">
+    <test name="AdminCustomFileAttributeTest">
+        <annotations>
+            <features value="CustomerCustomAttribute"/>
+            <stories value="Admin managing customer custom file attribute."/>
+            <title value="Managing Customer Custom Attribute Type File."/>
+            <description value="Verifying Customer Custom File Type Attribute work."/>
+            <severity value="MAJOR"/>
+            <testCaseId value="MC-41608"/>
+            <useCaseId value="MC-41351"/>
+            <group value="customer"/>
+            <group value="customerCustomAttributes"/>
+        </annotations>
+        <before>
+            <actionGroup ref="AdminLoginActionGroup" stepKey="LoginAsAdmin"/>
+            <amOnPage url="{{CustomerAttributesPage.url}}" stepKey="navigateToCustomerAddress"/>
+            <waitForPageLoad stepKey="waitForCustomerAttributePageLoaded"/>
+            <!-- Create customer custom file type attribute. -->
+            <actionGroup ref="AdminCreateCustomerNewAttribute" stepKey="createFileAttribute">
+                <argument name="defaultLabel" value="{{AttributeFile.frontend_label}}"/>
+                <argument name="attributeCode" value="{{AttributeFile.attribute_code}}"/>
+                <argument name="inputType" value="{{AttributeFile.frontend_input}}"/>
+                <argument name="sortOrder" value="{{AttributeFile.sort_order}}"/>
+                <argument name="formToUse" value="{{AttributeFile.used_in_forms}}"/>
+                <argument name="formToUse1" value="Customer Account Edit"/>
+                <argument name="message" value="You saved the customer attribute."/>
+            </actionGroup>
+        </before>
+        <after>
+            <!-- Delete customer custom file type attribute. -->
+            <amOnPage url="{{CustomerAttributesPage.url}}" stepKey="navigateToCustomerAttributePage"/>
+            <actionGroup ref="AdminDeleteCustomerCustomAttributeByCodeActionGroup" stepKey="deleteFileAttribute">
+                <argument name="attributeCode" value="{{AttributeFile.attribute_code}}"/>
+            </actionGroup>
+            <click selector="{{AdminCustomerAttributeSection.resetFilters}}" stepKey="resetCustomerCustomAttributesGridFilters"/>
+            <!-- Delete customer. -->
+            <actionGroup ref="DeleteCustomerByEmailActionGroup" stepKey="deleteCustomer">
+                <argument name="email" value="{{Simple_US_Customer.email}}"/>
+            </actionGroup>
+            <actionGroup ref="AdminResetFilterInCustomerGrid" stepKey="resetFilter"/>
+            <actionGroup ref="AdminLogoutActionGroup" stepKey="logOut"/>
+        </after>
+        <!-- Admin create customer with custom file type attribute. -->
+        <actionGroup ref="AdminNavigateNewCustomerActionGroup" stepKey="navigateToNewCustomerPage"/>
+        <actionGroup ref="AdminFillCustomerMainDataActionGroup" stepKey="fillCustomerMainData"/>
+        <actionGroup ref="AdminCustomerFormSelectFileTypeAttributeValueActionGroup" stepKey="addFileToCustomer"/>
+        <actionGroup ref="AdminCustomerSaveAndContinue" stepKey="saveCustomer"/>
+        <actionGroup ref="AdminOpenAccountInformationTabFromCustomerEditPageActionGroup" stepKey="openAccountInformation"/>
+        <!-- Admin assert file is present on customer edit page. -->
+        <actionGroup ref="AssertAdminCustomerImageFileAttributeActionGroup" stepKey="verifyImageIsPresentOnCustomerEditPage">
+            <argument name="attributeLabel" value="{{AttributeFile.frontend_label}}"/>
+        </actionGroup>
+        <!-- Admin delete file. -->
+        <actionGroup ref="AdminCustomerFormDeleteFileTypeAttributeValueActionGroup" stepKey="deleteFile">
+            <argument name="attributeCode" value="{{AttributeFile.attribute_code}}"/>
+        </actionGroup>
+        <actionGroup ref="AdminCustomerSaveAndContinue" stepKey="saveCustomerWithRemovedFile"/>
+        <!-- Admin assert file was removed. -->
+        <actionGroup ref="AdminOpenAccountInformationTabFromCustomerEditPageActionGroup" stepKey="openAccountInformationAfterFileRemoved"/>
+        <actionGroup ref="AssertAdminCustomerImageFileAttributeAbsenceActionGroup" stepKey="dontSeeFile">
+            <argument name="attributeCode" value="{{AttributeFile.attribute_code}}"/>
+        </actionGroup>
+    </test>
+</tests>

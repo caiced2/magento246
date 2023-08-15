@@ -1,0 +1,212 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+ /**
+  * Copyright © Magento, Inc. All rights reserved.
+  * See COPYING.txt for license details.
+  */
+-->
+
+<tests xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xsi:noNamespaceSchemaLocation="urn:magento:mftf:Test/etc/testSchema.xsd">
+    <test name="AdminUserWithPermissionOneWebsiteCannotViewAllStoreViewsScopeTest">
+        <annotations>
+            <stories value="Admin user"/>
+            <title value="[2.3] Admin user with permission for 1 website cannot view All Store Views scope on a product assigned to different websites"/>
+            <description value="As an Admin user, When I am an administrator of a single web-site and I edit a product which is assigned to several other web-sites,
+            then 'All Store Views' scope option is not available for me and product edit page is opened for the store view scope which I have access to."/>
+            <severity value="CRITICAL"/>
+            <testCaseId value="MC-6447"/>
+            <group value="AdminGWS"/>
+            <group value="userRole"/>
+        </annotations>
+        <before>
+            <actionGroup ref="AdminLoginActionGroup" stepKey="LoginAsAdmin"/>
+        </before>
+        <after>
+            <actionGroup ref="AdminLoginActionGroup" stepKey="LoginAdmin"/>
+
+            <!-- Delete products -->
+            <deleteData createDataKey="createSimpleProduct1" stepKey="deleteProduct1"/>
+            <deleteData createDataKey="createSimpleProduct2" stepKey="deleteProduct2"/>
+
+            <!-- Delete website -->
+            <actionGroup ref="AdminDeleteWebsiteActionGroup" stepKey="deleteWebsite">
+                <argument name="websiteName" value="{{secondCustomWebsite.name}}"/>
+            </actionGroup>
+
+            <!-- Delete Users -->
+            <actionGroup ref="AdminDeleteCreatedUserActionGroup" stepKey="deleteLimitedUser">
+                <argument name="user" value="NewAdminUser"/>
+            </actionGroup>
+            <actionGroup ref="AdminDeleteCreatedUserActionGroup" stepKey="deleteRestrictedUser">
+                <argument name="user" value="Admin3"/>
+            </actionGroup>
+
+            <!-- Delete users roles -->
+            <actionGroup ref="AdminDeleteUserRoleWithSpecifiedPermissionActionGroup" stepKey="deleteLimitedRole">
+                <argument name="role" value="limitedRole"/>
+            </actionGroup>
+            <actionGroup ref="AdminDeleteUserRoleWithSpecifiedPermissionActionGroup" stepKey="deleteRestrictedRole">
+                <argument name="role" value="restrictedRole"/>
+            </actionGroup>
+
+            <actionGroup ref="CliIndexerReindexActionGroup" stepKey="reindex">
+                <argument name="indices" value=""/>
+            </actionGroup>
+            <actionGroup ref="CliCacheFlushActionGroup" stepKey="flushCache">
+                <argument name="tags" value=""/>
+            </actionGroup>
+            <actionGroup ref="AdminLogoutActionGroup" stepKey="logout"/>
+        </after>
+
+        <!-- Preconditions -->
+        <!-- 1. Created 2 websites / 3 stores / 4 store views: Main Website + Main Website Store + Default Store View /
+             Website2 (Store 1 with Store view A, Store view B / Store 2 with Store view C) -->
+
+        <!-- Create Website2 -->
+        <actionGroup ref="AdminCreateWebsiteActionGroup" stepKey="createSecondWebsite">
+            <argument name="newWebsiteName" value="{{secondCustomWebsite.name}}"/>
+            <argument name="websiteCode" value="{{secondCustomWebsite.code}}"/>
+        </actionGroup>
+
+        <!-- Create Store1 -->
+        <actionGroup ref="AdminCreateNewStoreGroupActionGroup" stepKey="createStore1">
+            <argument name="website" value="{{secondCustomWebsite.name}}"/>
+            <argument name="storeGroupName" value="{{customStoreGroup.name}}"/>
+            <argument name="storeGroupCode" value="{{customStoreGroup.code}}"/>
+        </actionGroup>
+
+        <!-- Create Store View A -->
+        <actionGroup ref="AdminCreateStoreViewActionGroup" stepKey="createStoreViewA">
+            <argument name="StoreGroup" value="customStoreGroup"/>
+            <argument name="customStore" value="storeViewData"/>
+        </actionGroup>
+
+        <!-- Create Store View B -->
+        <actionGroup ref="AdminCreateStoreViewActionGroup" stepKey="createStoreViewB">
+            <argument name="StoreGroup" value="customStoreGroup"/>
+            <argument name="customStore" value="storeViewData1"/>
+        </actionGroup>
+
+        <!-- Create Store2 -->
+        <actionGroup ref="AdminCreateNewStoreGroupActionGroup" stepKey="createStore2">
+            <argument name="website" value="{{secondCustomWebsite.name}}"/>
+            <argument name="storeGroupName" value="{{SecondStoreGroupUnique.name}}"/>
+            <argument name="storeGroupCode" value="{{SecondStoreGroupUnique.code}}"/>
+        </actionGroup>
+
+        <!-- Create Store View C -->
+        <actionGroup ref="AdminCreateStoreViewActionGroup" stepKey="createStoreViewC">
+            <argument name="StoreGroup" value="SecondStoreGroupUnique"/>
+            <argument name="customStore" value="storeViewData2"/>
+        </actionGroup>
+        <magentoCron groups="index" stepKey="reindex"/>
+
+        <!-- 2. Create 3 user role: admin (access to all websites) / limited (access to Website2) / restricted (access to Store 1) -->
+        <actionGroup ref="AdminAddNewUserRoleWithCustomRoleScopesActionGroup" stepKey="createRestrictedRole">
+            <argument name="role" value="restrictedRole"/>
+            <argument name="customWebsiteName" value="{{customStoreGroup.name}}"/>
+        </actionGroup>
+
+        <actionGroup ref="AdminAddNewUserRoleWithCustomRoleScopesActionGroup" stepKey="createLimitedRole">
+            <argument name="role" value="limitedRole"/>
+            <argument name="customWebsiteName" value="{{secondCustomWebsite.name}}"/>
+        </actionGroup>
+
+        <!-- 3. Create admin users: admin, limited-admin, restricted-admin -->
+        <actionGroup ref="AdminCreateUserWithRoleActionGroup" stepKey="createLimitedAdmin">
+            <argument name="role" value="limitedRole"/>
+            <argument name="user" value="NewAdminUser"/>
+        </actionGroup>
+
+        <actionGroup ref="AdminCreateUserWithRoleActionGroup" stepKey="createRestrictedAdmin">
+            <argument name="role" value="restrictedRole"/>
+            <argument name="user" value="Admin3"/>
+        </actionGroup>
+
+        <!-- 4. Created products: Simple1 (assigned to all websites) / Simple2 (assigned to Website2) -->
+        <createData entity="SimpleProduct2" stepKey="createSimpleProduct1"/>
+        <createData entity="SimpleProduct2" stepKey="createSimpleProduct2"/>
+
+        <amOnPage url="{{AdminProductEditPage.url($$createSimpleProduct1.id$$)}}" stepKey="goToProduct1EditPage"/>
+        <waitForPageLoad stepKey="waitForProductEditPageLoad"/>
+        <actionGroup ref="SelectProductInWebsitesActionGroup" stepKey="selectWebsiteForProduct1">
+            <argument name="website" value="{{secondCustomWebsite.name}}"/>
+        </actionGroup>
+        <actionGroup ref="SaveProductFormActionGroup" stepKey="saveProduct1"/>
+
+        <amOnPage url="{{AdminProductEditPage.url($$createSimpleProduct2.id$$)}}" stepKey="goToProduct2EditPage"/>
+        <waitForPageLoad stepKey="waitForProduct2EditPageLoad"/>
+        <actionGroup ref="SelectProductInWebsitesActionGroup" stepKey="selectWebsiteForProduct2">
+            <argument name="website" value="{{secondCustomWebsite.name}}"/>
+        </actionGroup>
+        <uncheckOption selector="{{ProductInWebsitesSection.website(_defaultWebsite.name)}}" stepKey="uncheckMainWebsite"/>
+        <actionGroup ref="SaveProductFormActionGroup" stepKey="saveProduct2"/>
+        <actionGroup ref="AdminLogoutActionGroup" stepKey="logout"/>
+
+        <!-- 1. Login into admin panel with limited-admin -->
+        <actionGroup ref="AdminLoginActionGroup" stepKey="loginLimitedAdmin">
+            <argument name="username" value="{{NewAdminUser.username}}"/>
+            <argument name="password" value="{{NewAdminUser.password}}"/>
+        </actionGroup>
+
+        <!-- 2. Go to Catalog -> Products -->
+        <actionGroup ref="AdminOpenProductIndexPageActionGroup" stepKey="openProductIndexPage"/>
+
+        <!-- Simple2 is shown with option Website2 -->
+        <actionGroup ref="FilterProductGridBySkuActionGroup" stepKey="filterProduct2">
+            <argument name="product" value="$$createSimpleProduct2$$"/>
+        </actionGroup>
+        <see userInput="{{secondCustomWebsite.name}}" selector="{{AdminDataGridTableSection.gridCell('1', 'Websites')}}" stepKey="seeWebsite2"/>
+
+        <!-- 3. Click on Edit Simple2 product  -->
+        <click selector="{{AdminDataGridTableSection.rowViewAction('1')}}" stepKey="clickOnProduct2"/>
+        <waitForPageLoad stepKey="waitForEditPage"/>
+
+        <!-- Edit page is opened. All Store View is shown -->
+        <see userInput="$$createSimpleProduct2.name$$" selector="{{AdminHeaderSection.pageTitle}}" stepKey="seeTitlePage"/>
+        <see userInput="All Store View" selector="{{AdminMainActionsSection.storeViewDropdown}}" stepKey="seeAllStoreView"/>
+
+        <!-- 4. Click button Back and select Simple1 product Edit option -->
+        <click selector="{{AdminStoresMainActionsSection.backButton}}" stepKey="clickButtonBack"/>
+        <waitForPageLoad stepKey="waitForPageLoad"/>
+        <actionGroup ref="FilterProductGridBySkuActionGroup" stepKey="filterProduct1">
+            <argument name="product" value="$$createSimpleProduct1$$"/>
+        </actionGroup>
+        <click selector="{{AdminDataGridTableSection.rowViewAction('1')}}" stepKey="clickOnProduct1"/>
+        <waitForPageLoad stepKey="waitForEditProduct1Page"/>
+
+        <!-- Edit page for Simple1 product is opened and *Store view A* is shown the first -->
+        <see userInput="$$createSimpleProduct1.name$$" selector="{{AdminHeaderSection.pageTitle}}" stepKey="seeTitlePageProduct1"/>
+        <see userInput="{{storeViewData.name}}" selector="{{AdminMainActionsSection.storeViewDropdown}}" stepKey="seeStoreViewA"/>
+
+        <!-- Log out -->
+        <actionGroup ref="AdminLogoutActionGroup" stepKey="logoutLimitedAdmin"/>
+
+        <!-- Login into admin panel as restricted-admin -->
+        <actionGroup ref="AdminLoginActionGroup" stepKey="loginRestrictedAdmin">
+            <argument name="username" value="{{Admin3.username}}"/>
+            <argument name="password" value="{{Admin3.password}}"/>
+        </actionGroup>
+
+        <!-- Go to Catalog -> Products  -->
+        <actionGroup ref="AdminOpenProductIndexPageActionGroup" stepKey="goToProductPage"/>
+
+        <!-- Click Edit option for Simple2 -->
+        <actionGroup ref="FilterProductGridBySkuActionGroup" stepKey="filterSimopleProduct2">
+            <argument name="product" value="$$createSimpleProduct2$$"/>
+        </actionGroup>
+        <click selector="{{AdminDataGridTableSection.rowViewAction('1')}}" stepKey="clickProduct2"/>
+        <waitForPageLoad stepKey="waitForEditProductPage"/>
+
+        <!-- Edit page is opened. For current user *Store 1* and *Store view A*, *Store View B* are only shown and available  -->
+        <click selector="{{AdminMainActionsSection.storeViewDropdown}}" stepKey="clickDropdown"/>
+        <seeElement selector="{{AdminMainActionsSection.storeViewByName(storeViewData.name)}}" stepKey="availableStoreViewA"/>
+        <seeElement selector="{{AdminMainActionsSection.storeViewByName(storeViewData1.name)}}" stepKey="availableStoreViewB"/>
+        <dontSeeElement selector="{{AdminMainActionsSection.storeViewByName(_defaultStore.name)}}" stepKey="dontSeeDefaultStore"/>
+        <dontSeeElement selector="{{AdminMainActionsSection.storeViewByName(storeViewData2.name)}}" stepKey="dontSeeStoreViewC"/>
+
+        <!-- Log out -->
+        <actionGroup ref="AdminLogoutActionGroup" stepKey="logoutRestrictedAdmin"/>
+    </test>
+</tests>

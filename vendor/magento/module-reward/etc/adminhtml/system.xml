@@ -1,0 +1,138 @@
+<?xml version="1.0"?>
+<!--
+/**
+ * Copyright © Magento, Inc. All rights reserved.
+ * See COPYING.txt for license details.
+ */
+-->
+<config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="urn:magento:module:Magento_Config:etc/system_file.xsd">
+    <system>
+        <section id="magento_reward" translate="label" sortOrder="300" showInDefault="1" showInWebsite="1" showInStore="1">
+            <label>Reward Points</label>
+            <class>separator-top</class>
+            <tab>customer</tab>
+            <resource>Magento_Reward::magento_reward</resource>
+            <group id="general" translate="label" type="text" sortOrder="10" showInDefault="1" showInWebsite="1" showInStore="1">
+                <label>Reward Points</label>
+                <field id="is_enabled" translate="label" type="select" sortOrder="10" showInDefault="1" showInWebsite="0" showInStore="0">
+                    <label>Enable Reward Points Functionality</label>
+                    <source_model>Magento\Config\Model\Config\Source\Yesno</source_model>
+                </field>
+                <field id="is_enabled_on_front" translate="label" type="select" sortOrder="15" showInDefault="1" showInWebsite="1" showInStore="0">
+                    <label>Enable Reward Points Functionality on Storefront</label>
+                    <source_model>Magento\Config\Model\Config\Source\Yesno</source_model>
+                </field>
+                <field id="publish_history" translate="label" type="select" sortOrder="20" showInDefault="1" showInWebsite="1" showInStore="0">
+                    <label>Customers May See Reward Points History</label>
+                    <source_model>Magento\Config\Model\Config\Source\Yesno</source_model>
+                </field>
+                <field id="min_points_balance" translate="label comment" type="text" sortOrder="30" showInDefault="1" showInWebsite="1" showInStore="0">
+                    <label>Rewards Points Balance Redemption Threshold</label>
+                    <validate>validate-zero-or-greater validate-digits</validate>
+                    <backend_model>Magento\Reward\Model\System\Config\Backend\Balance</backend_model>
+                    <comment>An empty value disables this limitation.</comment>
+                </field>
+                <field id="max_points_balance" translate="label comment" type="text" sortOrder="40" showInDefault="1" showInWebsite="1" showInStore="0">
+                    <label>Cap Reward Points Balance At</label>
+                    <validate>validate-zero-or-greater validate-digits</validate>
+                    <backend_model>Magento\Reward\Model\System\Config\Backend\Balance</backend_model>
+                    <comment>An empty value disables this limitation.</comment>
+                </field>
+                <field id="expiration_days" translate="label comment" type="text" sortOrder="50" showInDefault="1" showInWebsite="1" showInStore="0">
+                    <label>Reward Points Expire in (days)</label>
+                    <validate>validate-zero-or-greater validate-digits</validate>
+                    <backend_model>Magento\Reward\Model\System\Config\Backend\Expiration</backend_model>
+                    <comment>An empty value disables this limitation.</comment>
+                </field>
+                <field id="expiry_calculation" translate="label comment" type="select" sortOrder="60" showInDefault="1" showInWebsite="1" showInStore="0">
+                    <label>Reward Points Expiry Calculation</label>
+                    <source_model>Magento\Reward\Model\Source\Points\ExpiryCalculation</source_model>
+                    <comment>"Static" defines the expiration date as precisely when the balance increases. "Dynamic" does not have an expiration date, but calculates one when the balance is checked for expiry.</comment>
+                </field>
+                <field id="refund_automatically" translate="label" type="select" sortOrder="65" showInDefault="1" showInWebsite="0" showInStore="0">
+                    <label>Refund Reward Points Automatically</label>
+                    <source_model>Magento\Config\Model\Config\Source\Yesno</source_model>
+                </field>
+                <field id="deduct_automatically" translate="label" type="select" sortOrder="67" showInDefault="1" showInWebsite="0" showInStore="0">
+                    <label>Deduct Reward Points from Refund Amount Automatically</label>
+                    <source_model>Magento\Config\Model\Config\Source\Yesno</source_model>
+                </field>
+                <field id="landing_page" translate="label comment" sortOrder="70" type="select" showInDefault="1" showInWebsite="1" showInStore="1">
+                    <label>Landing Page</label>
+                    <source_model>Magento\Cms\Model\Config\Source\Page</source_model>
+                </field>
+            </group>
+            <group id="points" translate="label" type="text" sortOrder="20" showInDefault="1" showInWebsite="1" showInStore="0">
+                <label>Actions for Acquiring Reward Points by Customers</label>
+                <field id="order" translate="label comment" type="select" sortOrder="5" showInDefault="1" showInWebsite="1" showInStore="0">
+                    <label>Purchase</label>
+                    <source_model>Magento\Config\Model\Config\Source\Yesno</source_model>
+                    <comment>Added for spent money according to reward exchange rates.</comment>
+                </field>
+                <field id="register" translate="label comment" type="text" sortOrder="10" showInDefault="1" showInWebsite="1" showInStore="0">
+                    <label>Registration</label>
+                </field>
+                <field id="newsletter" translate="label comment" type="text" sortOrder="20" showInDefault="1" showInWebsite="1" showInStore="0">
+                    <label>Newsletter Signup</label>
+                    <comment>Only for customers who subscribe for the first time.</comment>
+                </field>
+                <field id="invitation_customer" translate="label comment" type="text" sortOrder="30" showInDefault="1" showInWebsite="1" showInStore="0">
+                    <label>Converting Invitation to Customer</label>
+                    <if_module_enabled>Magento_Invitation</if_module_enabled>
+                </field>
+                <field id="invitation_customer_limit" translate="label comment" type="text" sortOrder="35" showInDefault="1" showInWebsite="1" showInStore="0">
+                    <label>Invitation to Customer Conversions Quantity Limit</label>
+                    <validate>validate-zero-or-greater validate-digits</validate>
+                    <if_module_enabled>Magento_Invitation</if_module_enabled>
+                </field>
+                <field id="invitation_order" translate="label comment" type="text" sortOrder="40" showInDefault="1" showInWebsite="1" showInStore="0">
+                    <label>Converting Invitation to Order</label>
+                    <validate>validate-zero-or-greater validate-digits</validate>
+                    <if_module_enabled>Magento_Invitation</if_module_enabled>
+                </field>
+                <field id="invitation_order_limit" translate="label comment" type="text" sortOrder="45" showInDefault="1" showInWebsite="1" showInStore="0">
+                    <label>Invitation to Order Conversions Quantity Limit</label>
+                    <validate>validate-zero-or-greater validate-digits</validate>
+                    <if_module_enabled>Magento_Invitation</if_module_enabled>
+                </field>
+                <field id="invitation_order_frequency" translate="label comment" type="select" sortOrder="50" showInDefault="1" showInWebsite="1" showInStore="0">
+                    <label>Invitation Conversion to Order Reward</label>
+                    <source_model>Magento\Reward\Model\Source\Points\InvitationOrder</source_model>
+                    <if_module_enabled>Magento_Invitation</if_module_enabled>
+                </field>
+                <field id="review" translate="label comment" type="text" sortOrder="60" showInDefault="1" showInWebsite="1" showInStore="0">
+                    <label>Review Submission</label>
+                    <comment>After approval by administrator.</comment>
+                </field>
+                <field id="review_limit" translate="label comment" type="text" sortOrder="65" showInDefault="1" showInWebsite="1" showInStore="0">
+                    <label>Rewarded Reviews Submission Quantity Limit</label>
+                    <validate>validate-zero-or-greater validate-digits</validate>
+                </field>
+            </group>
+            <group id="notification" translate="label" type="text" sortOrder="30" showInDefault="1" showInWebsite="1" showInStore="1">
+                <label>Email Notification Settings</label>
+                <field id="email_sender" translate="label" type="select" sortOrder="10" showInDefault="1" showInWebsite="1" showInStore="1">
+                    <label>Email Sender</label>
+                    <source_model>Magento\Config\Model\Config\Source\Email\Identity</source_model>
+                </field>
+                <field id="subscribe_by_default" translate="label" type="select" sortOrder="20" showInDefault="1" showInWebsite="0" showInStore="0">
+                    <label>Subscribe Customers by Default</label>
+                    <source_model>Magento\Config\Model\Config\Source\Yesno</source_model>
+                </field>
+                <field id="balance_update_template" translate="label" type="select" sortOrder="30" showInDefault="1" showInWebsite="1" showInStore="1">
+                    <label>Balance Update Email</label>
+                    <source_model>Magento\Config\Model\Config\Source\Email\Template</source_model>
+                </field>
+                <field id="expiry_warning_template" translate="label" type="select" sortOrder="40" showInDefault="1" showInWebsite="1" showInStore="1">
+                    <label>Reward Points Expiry Warning Email</label>
+                    <source_model>Magento\Config\Model\Config\Source\Email\Template</source_model>
+                </field>
+                <field id="expiry_day_before" translate="label comment" type="text" sortOrder="50" showInDefault="1" showInWebsite="0" showInStore="0">
+                    <label>Expiry Warning Before (days)</label>
+                    <validate>validate-zero-or-greater validate-digits</validate>
+                    <comment>Entering no value or a value greater than the expiration lifetime disables the warning notification.</comment>
+                </field>
+            </group>
+        </section>
+    </system>
+</config>

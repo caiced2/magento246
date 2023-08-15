@@ -1,0 +1,24 @@
+<?php
+/**
+ * Copyright © Magento, Inc. All rights reserved.
+ * See COPYING.txt for license details.
+ */
+/**
+ * @var \Magento\Reward\Block\Adminhtml\Reward\Rate\Edit\Form\Renderer\Rate $block
+ */
+// phpcs:disable Magento2.Files.LineLength
+?>
+
+<div class="field field-rate admin__field">
+    <label class="admin__field-label label" for="rate_value"><span><?= $block->escapeHtml($block->getElement()->getLabel()) ?></span></label>
+    <div class="admin__field-control control">
+        <div class="boundary boundary-lower">
+            <input type="text" class="admin__control-text" id="rate_value" name="rate[value]" value="<?= $block->escapeHtmlAttr($block->getValue()) ?>"/>
+        </div>
+
+        <div class="boundary boundary-upper">
+            <label class="admin__field-label label" for="rate_equal_value"><span><?= $block->escapeHtml(__('upper boundary')) ?></span></label>
+            <input type="text" class="admin__control-text" id="rate_equal_value" name="rate[equal_value]" value="<?= $block->escapeHtmlAttr($block->getEqualValue()) ?>"/>
+        </div>
+    </div>
+</div>

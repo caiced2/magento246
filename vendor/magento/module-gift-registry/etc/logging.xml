@@ -1,0 +1,48 @@
+<?xml version="1.0"?>
+<!--
+/**
+ * Copyright © Magento, Inc. All rights reserved.
+ * See COPYING.txt for license details.
+ */
+-->
+<logging xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:noNamespaceSchemaLocation="urn:magento:module:Magento_Logging:etc/logging.xsd">
+    <actions>
+        <action id="share">
+            <label translate="true">Share</label>
+        </action>
+    </actions>
+    <groups>
+        <group name="magento_giftregistry_type">
+            <label translate="true">Gift Registry Type</label>
+            <expected_models>
+                <expected_model class="Magento\GiftRegistry\Model\Type" />
+            </expected_models>
+            <events>
+                <event controller_action="adminhtml_giftregistry_edit" action_alias="edit" />
+                <event controller_action="adminhtml_giftregistry_save"
+                       action_alias="save"
+                       post_dispatch="Magento\GiftRegistry\Model\Logging::postDispatchTypeSave" />
+                <event controller_action="adminhtml_giftregistry_delete" action_alias="delete" />
+            </events>
+        </group>
+        <group name="magento_giftregistry_entity">
+            <label translate="true">Gift Registry Entity</label>
+            <expected_models>
+                <expected_model class="Magento\GiftRegistry\Model\Entity" />
+                <expected_model class="Magento\GiftRegistry\Model\Item" />
+            </expected_models>
+            <events>
+                <event controller_action="adminhtml_giftregistry_customer_add"
+                       action_alias="new" />
+                <event controller_action="adminhtml_giftregistry_customer_edit"
+                       action_alias="edit" />
+                <event controller_action="adminhtml_giftregistry_customer_share"
+                       action_alias="share"
+                       post_dispatch="Magento\GiftRegistry\Model\Logging::postDispatchShare" />
+                <event controller_action="adminhtml_giftregistry_customer_delete"
+                       action_alias="delete" />
+            </events>
+        </group>
+    </groups>
+</logging>

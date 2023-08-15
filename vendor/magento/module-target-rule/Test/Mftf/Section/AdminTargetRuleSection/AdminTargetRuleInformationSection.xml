@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+ /**
+  * Copyright © Magento, Inc. All rights reserved.
+  * See COPYING.txt for license details.
+  */
+-->
+<sections xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:noNamespaceSchemaLocation="urn:magento:mftf:Page/etc/SectionObject.xsd">
+    <section name="AdminTargetRuleInformationSection">
+        <element name="ruleName" type="input" selector="#rule_name"/>
+        <element name="priority" type="input" selector="#rule_sort_order"/>
+        <element name="status" type="select" selector="#rule_is_active"/>
+        <element name="applyTo" type="select" selector="#rule_apply_to"/>
+        <element name="from" type="input" selector="#rule_from_date"/>
+        <element name="to" type="input" selector="#rule_to_date"/>
+        <element name="resultLimit" type="input" selector="#rule_positions_limit"/>
+        <element name="customerSegments" type="select" selector="#rule_use_customer_segment"/>
+        <element name="customerSegmentIds" type="select" selector="#rule_customer_segment_ids"/>
+    </section>
+</sections>

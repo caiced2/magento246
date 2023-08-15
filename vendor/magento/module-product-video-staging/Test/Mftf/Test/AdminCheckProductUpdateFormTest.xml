@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+ /**
+  * Copyright © Magento, Inc. All rights reserved.
+  * See COPYING.txt for license details.
+  */
+-->
+
+<tests xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xsi:noNamespaceSchemaLocation="urn:magento:mftf:Test/etc/testSchema.xsd">
+    <test name="AdminCheckProductUpdateFormTest">
+        <see selector="{{AdminProductScheduledUpdateImagesSection.productImagesToggle}}"
+             userInput="Images And Videos"
+             stepKey="seeImagesAndVideosSection"/>
+        <conditionalClick selector="{{AdminProductScheduledUpdateImagesSection.productImagesToggle}}"
+                          dependentSelector="{{AdminProductScheduledUpdateImagesSection.imageUploadButton}}"
+                          visible="false"
+                          stepKey="expandImagesAndVideosSection"/>
+        <seeElement selector="{{AdminProductScheduledUpdateImagesSection.imageUploadButton}}"
+                    stepKey="seeImageUploadButton"/>
+        <seeElement selector="{{AdminProductScheduledUpdateImagesSection.addVideoButton}}"
+                    stepKey="seeAddVideoButton"/>
+    </test>
+</tests>

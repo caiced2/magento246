@@ -1,0 +1,130 @@
+<?php
+/**
+ * Copyright © Magento, Inc. All rights reserved.
+ * See COPYING.txt for license details.
+ */
+
+/** @var $block \Magento\Staging\Block\Adminhtml\Update\Preview */
+/** @var \Magento\Framework\View\Helper\SecureHtmlRenderer $secureRenderer */
+?>
+
+<div class="staging-preview-header" data-role="preview-header">
+    <a href="<?= $block->escapeUrl($block->getHomeUrl()) ?>" class="logo">
+        <img src="<?= $block->escapeUrl($block->getLogoSrc()) ?>"
+             alt="<?= $block->escapeHtmlAttr(__('Magento Admin Panel')) ?>"/>
+    </a>
+
+    <div class="staging-preview-options">
+        <div class="staging-preview-item-title staging-preview-item-calendar"
+             data-role="collapsible-title"
+             tabindex="3">
+            <div class="title">
+                <?= $block->escapeHtml(__('Calendar')) ?>
+            </div>
+            <div class="subtitle" title="<?= $block->escapeHtmlAttr($block->getCalendarTabCaption()) ?>">
+                <?= $block->escapeHtml($block->getCalendarTabCaption()) ?>
+            </div>
+        </div>
+        <div class="staging-preview-item-content-wrapper" data-role="collapsible-content">
+            <div class="actions-toolbar">
+                <button type="button" class="action-default action-primary" data-role="share-button">
+                    <span><?= $block->escapeHtml(__('Share')) ?></span>
+                </button>
+                <button type="button" class="action-default action-primary" data-role="update-button">
+                    <span><?= $block->escapeHtml(__('Preview')) ?></span>
+                </button>
+                <button
+                        type="button"
+                        class="action-close"
+                        title="<?= $block->escapeHtmlAttr(__('Close')) ?>"
+                        data-role="collapsible-content-close">
+                    <span><?= $block->escapeHtml(__('Close')) ?></span>
+                </button>
+            </div>
+            <div class="staging-preview-item-content">
+                <?= $block->getFormHtml() ?>
+                <?= $block->getChildHtml('staging_update_preview_grid') ?>
+            </div>
+        </div>
+
+        <div class="staging-preview-item-title staging-preview-item-customer"
+             data-role="collapsible-title"
+             tabindex="5">
+            <div class="title"><?= $block->escapeHtml(__('Scope')) ?></div>
+            <div class="subtitle" title=""></div>
+        </div>
+        <div class="staging-preview-item-content-wrapper" data-role="collapsible-content">
+            <div class="actions-toolbar">
+                <button type="button" class="action-default action-primary" data-role="update-button">
+                    <span><?= $block->escapeHtml(__('Preview')) ?></span>
+                </button>
+                <button
+                        type="button"
+                        class="action-close"
+                        title="<?= $block->escapeHtmlAttr(__('Close')) ?>"
+                        data-role="collapsible-content-close">
+                    <span><?= $block->escapeHtml(__('Close')) ?></span>
+                </button>
+            </div>
+            <div class="staging-preview-item-content">
+                <form action="" class="staging-preview-item-segment">
+                    <fieldset class="admin__fieldset" data-bind="scope: 'store-views'">
+                        <!-- ko template: getTemplate() --><!-- /ko -->
+                    </fieldset>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+<div data-role="share-modal" id="share-modal">
+    <p>Please press CTRL+C for copying URL into buffer to share this Preview.</p>
+    <input class="admin__legend" name="url" title="Preview Url" type="text" data-role="share-modal-input">
+</div>
+<?= /* @noEscape */
+$secureRenderer->renderTag(
+    'style',
+    [],
+    '#share-modal { display: none; }',
+    true
+); ?>
+<div class="staging-preview-content" data-role="iframe-container">
+    <div class="staging-preview-content-dynamic">
+        <iframe data-role="preview-iframe"
+                frameborder="0"
+                src="<?= $block->escapeUrl($block->getPreviewFrontendUrl()) ?>">
+        </iframe>
+    </div>
+</div>
+
+<script type="text/x-magento-init">
+    {
+        "*": {
+            "Magento_Ui/js/core/app": {
+                "components": {
+                    "preview": {
+                        "deps": ["store-views"],
+                        "component": "Magento_Staging/js/preview/preview",
+                        "sidParam": "sidParam",
+                        "storeParam": "<?= /* @noEscape */ $block->getStoreParamName() ?>",
+                        "versionParam": "<?= /* @noEscape */ $block->getVersionParamName() ?>",
+                        "timestampParam": "__timestamp",
+                        "signatureParam": "__signature",
+                        "previewUrlParam": "<?= /* @noEscape */ $block->getPreviewUrlParamName() ?>",
+                        "previewStoreParam": "<?= /* @noEscape */ $block->getPreviewStoreParamName() ?>",
+                        "previewVersionParam": "<?= /* @noEscape */ $block->getPreviewVersionParamName() ?>",
+                        "datetimeFormat": "<?= $block->escapeJs($block->getDateTimeFormat()) ?>",
+                        "timezoneOffset": "<?= $block->escapeJs($block->getTimezoneOffset()) ?>",
+                        "baseUrl": "<?= $block->escapeJs($block->escapeUrl($block->getPreviewBackendUrl())) ?>"
+                    },
+                    "store-views": {
+                        "component": "Magento_Ui/js/form/element/select",
+                        "label": "Select StoreView",
+                        "template": "ui/form/field",
+                        "value": "<?= $block->escapeJs($block->escapeHtml($block->getPreviewStoreCode())) ?>",
+                        "options": <?= /* @noEscape */ $block->getStoreSelectorOptions() ?>
+                    }
+                }
+            }
+        }
+    }
+</script>

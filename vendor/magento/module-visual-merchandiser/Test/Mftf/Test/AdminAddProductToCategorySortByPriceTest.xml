@@ -1,0 +1,288 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+ /**
+  * Copyright © Magento, Inc. All rights reserved.
+  * See COPYING.txt for license details.
+  */
+-->
+
+<tests xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xsi:noNamespaceSchemaLocation="urn:magento:mftf:Test/etc/testSchema.xsd">
+    <test name="AdminAddProductToCategorySortByPriceTest">
+        <annotations>
+            <features value="VisualMerchandiser"/>
+            <stories value="Products in category"/>
+            <title value="Products in category should remain in order after adding new products."/>
+            <description value="Using Visual Merchandiser; admin sorts products, adds new products and verifies that order remains correct."/>
+            <severity value="CRITICAL"/>
+            <testCaseId value="MC-25964"/>
+            <useCaseId value="MC-16237"/>
+            <group value="catalog"/>
+            <group value="visualMerchandiser"/>
+        </annotations>
+        <before>
+            <!--Create perquisite categories-->
+            <createData entity="ApiCategory" stepKey="createApiCategory"/>
+            <createData entity="_defaultCategory" stepKey="createOtherCategory"/>
+
+            <!--Create perquisite products-->
+            <createData entity="ApiSimpleProduct" stepKey="createProduct1">
+                <field key="price">10</field>
+                <requiredEntity createDataKey="createApiCategory"/>
+            </createData>
+            <createData entity="ApiSimpleProduct" stepKey="createProduct2">
+                <field key="price">100</field>
+                <requiredEntity createDataKey="createApiCategory"/>
+            </createData>
+            <createData entity="SimpleProduct2" stepKey="createProduct3">
+                <field key="price">20</field>
+            </createData>
+            <createData entity="SimpleProduct2" stepKey="createProduct4">
+                <field key="price">1</field>
+            </createData>
+            <createData entity="SimpleProduct2" stepKey="createProduct5">
+                <field key="price">50</field>
+            </createData>
+            <createData entity="SimpleProduct2" stepKey="createProduct6">
+                <field key="price">35</field>
+            </createData>
+            <createData entity="SimpleProduct2" stepKey="createProduct7">
+                <field key="price">15</field>
+            </createData>
+            <actionGroup ref="AdminLoginActionGroup" stepKey="loginAsAdmin"/>
+        </before>
+
+        <after>
+            <!--Clean up-->
+            <deleteData createDataKey="createProduct1" stepKey="deleteProduct1"/>
+            <deleteData createDataKey="createProduct2" stepKey="deleteProduct2"/>
+            <deleteData createDataKey="createProduct3" stepKey="deleteProduct3"/>
+            <deleteData createDataKey="createProduct4" stepKey="deleteProduct4"/>
+            <deleteData createDataKey="createProduct5" stepKey="deleteProduct5"/>
+            <deleteData createDataKey="createProduct6" stepKey="deleteProduct6"/>
+            <deleteData createDataKey="createProduct7" stepKey="deleteProduct7"/>
+            <deleteData createDataKey="createApiCategory" stepKey="deleteApiCategory"/>
+            <deleteData createDataKey="createOtherCategory" stepKey="deleteOtherCategory"/>
+            <actionGroup ref="AdminLogoutActionGroup" stepKey="logoutFromAdmin"/>
+        </after>
+
+        <!--Check initial state of category-->
+        <actionGroup ref="OpenCategoryFromCategoryTreeActionGroup" stepKey="openCategoryFromCategoryTree">
+            <argument name="category" value="$createApiCategory.name$"/>
+        </actionGroup>
+        <actionGroup ref="AdminCategoryPageOpenProductsInCategorySectionActionGroup" stepKey="openProductsInCategoryInitial"/>
+        <actionGroup ref="AdminCheckProductPositionInCategoryProductsGridActionGroup" stepKey="seeProduct2FirstInitial">
+            <argument name="position" value="1"/>
+            <argument name="productName" value="$createProduct2.name$"/>
+        </actionGroup>
+        <actionGroup ref="AdminCheckProductPositionInCategoryProductsGridActionGroup" stepKey="seeProduct1SecondInitial">
+            <argument name="position" value="2"/>
+            <argument name="productName" value="$createProduct1.name$"/>
+        </actionGroup>
+        <!--Move product 2 to first position-->
+        <actionGroup ref="AdminMoveProductUpInCategoryProductsGridActionGroup" stepKey="moveProduct1Upper">
+            <argument name="productPosition" value="2"/>
+        </actionGroup>
+        <actionGroup ref="AdminCheckProductPositionInCategoryProductsGridActionGroup" stepKey="seeProduct1FirstAfterManualSort">
+            <argument name="position" value="1"/>
+            <argument name="productName" value="$createProduct1.name$"/>
+        </actionGroup>
+        <actionGroup ref="AdminCheckProductPositionInCategoryProductsGridActionGroup" stepKey="seeProduct2SecondAfterManualSort">
+            <argument name="position" value="2"/>
+            <argument name="productName" value="$createProduct2.name$"/>
+        </actionGroup>
+        <!--Add product3 using search-->
+        <actionGroup ref="AdminProductsInCategoryStartAddingProductsActionGroup" stepKey="openAddProductsPopupForSearching"/>
+        <actionGroup ref="AdminProductsInCategoryAddProductBySearchActionGroup" stepKey="addProductToCurrentCategoryBySearchWithoutSaving">
+            <argument name="productSku" value="$createProduct3.sku$"/>
+        </actionGroup>
+        <conditionalClick selector="{{AdminCategoryAddProductsModalSection.clearAll}}" dependentSelector="{{AdminCategoryAddProductsModalSection.clearAll}}" visible="true" stepKey="clearAllFilters"/>
+        <actionGroup ref="AdminProductsInCategoryAddProductsModalSaveAndCloseActionGroup" stepKey="closeModalAfterSearch"/>
+        <!-- Check that product 3 is at the top and other order remains-->
+        <actionGroup ref="AdminCheckProductPositionInCategoryProductsGridActionGroup" stepKey="seeProduct3FirstAfterAdd">
+            <argument name="position" value="1"/>
+            <argument name="productName" value="$createProduct3.name$"/>
+        </actionGroup>
+        <actionGroup ref="AdminCheckProductPositionInCategoryProductsGridActionGroup" stepKey="seeProduct1Second">
+            <argument name="position" value="2"/>
+            <argument name="productName" value="$createProduct1.name$"/>
+        </actionGroup>
+        <actionGroup ref="AdminCheckProductPositionInCategoryProductsGridActionGroup" stepKey="seeProduct2Third">
+            <argument name="position" value="3"/>
+            <argument name="productName" value="$createProduct2.name$"/>
+        </actionGroup>
+        <actionGroup ref="AdminSaveCategoryFormActionGroup" stepKey="saveCategory"/>
+        <!-- Check on frontend-->
+        <actionGroup ref="StorefrontNavigateCategoryPageActionGroup" stepKey="goToCategoryStorefront">
+            <argument name="category" value="$createApiCategory$"/>
+        </actionGroup>
+        <actionGroup ref="StorefrontCheckProductPositionActionGroup" stepKey="seeProduct3FirstStorefront">
+            <argument name="position" value="1"/>
+            <argument name="productName" value="$createProduct3.name$"/>
+        </actionGroup>
+        <actionGroup ref="StorefrontCheckProductPositionActionGroup" stepKey="seeProduct1SecondStorefront">
+            <argument name="position" value="2"/>
+            <argument name="productName" value="$createProduct1.name$"/>
+        </actionGroup>
+        <actionGroup ref="StorefrontCheckProductPositionActionGroup" stepKey="seeProduct2ThirdStorefront">
+            <argument name="position" value="3"/>
+            <argument name="productName" value="$createProduct2.name$"/>
+        </actionGroup>
+        <!--Sort products by price-->
+        <actionGroup ref="OpenCategoryFromCategoryTreeActionGroup" stepKey="openCategoryToEditSort">
+            <argument name="category" value="$createApiCategory.name$"/>
+        </actionGroup>
+        <actionGroup ref="AdminCategoryPageOpenProductsInCategorySectionActionGroup" stepKey="openProductsInCategorySection"/>
+        <actionGroup ref="SortProductsByCriteriaInCategoryActionGroup" stepKey="selectSortByPriceDesc">
+            <argument name="criteria" value="Price: High to low"/>
+        </actionGroup>
+        <actionGroup ref="AdminSaveCategoryFormActionGroup" stepKey="saveCategoryAfterAutoSort"/>
+        <!--Check the order after sorting-->
+        <actionGroup ref="AdminCategoryPageOpenProductsInCategorySectionActionGroup" stepKey="openProductsInCategorySectionAgain"/>
+        <actionGroup ref="AdminCheckProductPositionInCategoryProductsGridActionGroup" stepKey="seeProduct2FirstByPrice">
+            <argument name="position" value="1"/>
+            <argument name="productName" value="$createProduct2.name$"/>
+        </actionGroup>
+        <actionGroup ref="AdminCheckProductPositionInCategoryProductsGridActionGroup" stepKey="seeProduct3SecondByPrice">
+            <argument name="position" value="2"/>
+            <argument name="productName" value="$createProduct3.name$"/>
+        </actionGroup>
+        <actionGroup ref="AdminCheckProductPositionInCategoryProductsGridActionGroup" stepKey="seeProduct1ThirdByPrice">
+            <argument name="position" value="3"/>
+            <argument name="productName" value="$createProduct1.name$"/>
+        </actionGroup>
+        <!--Assign product4 by sku -->
+        <actionGroup ref="AdminProductsInCategoryStartAddingProductsActionGroup" stepKey="openAddProductsPopup"/>
+        <actionGroup ref="AdminProductsInCategoryAddProductsOpenAddBySKUTabActionGroup" stepKey="openAddProductBySKUTab"/>
+        <!-- Enter product SKUs -->
+        <actionGroup ref="AdminProductsInCategoryAddProductBySKUAddSKUActionGroup" stepKey="addProduct4SKU">
+            <argument name="sku" value="$createProduct4.sku$"/>
+        </actionGroup>
+        <!-- Assign and assert messages-->
+        <actionGroup ref="AdminProductsInCategoryAddProductsBySKUAssignActionGroup" stepKey="clickAssignButton"/>
+        <actionGroup ref="AdminProductsInCategoryAddProductsModalSaveAndCloseActionGroup" stepKey="closeModalAddProducts"/>
+        <!--Check that product 4 is at top and other products stay same-->
+        <actionGroup ref="AdminCheckProductPositionInCategoryProductsGridActionGroup" stepKey="seeProduct4FirstAfterAdd">
+            <argument name="position" value="1"/>
+            <argument name="productName" value="$createProduct4.name$"/>
+        </actionGroup>
+        <actionGroup ref="AdminCheckProductPositionInCategoryProductsGridActionGroup" stepKey="seeProduct2SecondByPrice">
+            <argument name="position" value="2"/>
+            <argument name="productName" value="$createProduct2.name$"/>
+        </actionGroup>
+        <actionGroup ref="AdminCheckProductPositionInCategoryProductsGridActionGroup" stepKey="seeProduct3ThirdByPrice">
+            <argument name="position" value="3"/>
+            <argument name="productName" value="$createProduct3.name$"/>
+        </actionGroup>
+        <actionGroup ref="AdminCheckProductPositionInCategoryProductsGridActionGroup" stepKey="seeProduct1FourthByPrice">
+            <argument name="position" value="4"/>
+            <argument name="productName" value="$createProduct1.name$"/>
+        </actionGroup>
+        <actionGroup ref="AdminSaveCategoryFormActionGroup" stepKey="saveCategoryAfterProduct4IsAdded"/>
+        <!--Check on frontend-->
+        <actionGroup ref="StorefrontNavigateCategoryPageActionGroup" stepKey="goToCategoryStorefrontAfterAssignOfProduct">
+            <argument name="category" value="$createApiCategory$"/>
+        </actionGroup>
+        <waitForPageLoad stepKey="waitForCategoryStorefrontProduct4"/>
+        <actionGroup ref="StorefrontCheckProductPositionActionGroup" stepKey="seeProduct4FirstStorefront">
+            <argument name="position" value="1"/>
+            <argument name="productName" value="$createProduct4.name$"/>
+        </actionGroup>
+        <actionGroup ref="StorefrontCheckProductPositionActionGroup" stepKey="seeProduct2SecondByPriceStorefront">
+            <argument name="position" value="2"/>
+            <argument name="productName" value="$createProduct2.name$"/>
+        </actionGroup>
+        <actionGroup ref="StorefrontCheckProductPositionActionGroup" stepKey="seeProduct3ThirdByPriceStorefront">
+            <argument name="position" value="3"/>
+            <argument name="productName" value="$createProduct3.name$"/>
+        </actionGroup>
+        <actionGroup ref="StorefrontCheckProductPositionActionGroup" stepKey="seeProduct1FourthByPriceStorefront">
+            <argument name="position" value="4"/>
+            <argument name="productName" value="$createProduct1.name$"/>
+        </actionGroup>
+        <!--Add multiple products by sku-->
+        <actionGroup ref="OpenCategoryFromCategoryTreeActionGroup" stepKey="openCategoryFromCategoryTreeForProducts">
+            <argument name="category" value="$createApiCategory.name$"/>
+        </actionGroup>
+        <!-- Go to add products by Sku -->
+        <actionGroup ref="AdminCategoryPageOpenProductsInCategorySectionActionGroup" stepKey="openProductsInCategorySectionOneMore"/>
+        <actionGroup ref="AdminProductsInCategoryStartAddingProductsActionGroup" stepKey="openAddProductsPopupAgain"/>
+        <actionGroup ref="AdminProductsInCategoryAddProductsOpenAddBySKUTabActionGroup" stepKey="openAddProductBySKUTabAgain"/>
+        <!-- Enter product SKUs -->
+        <actionGroup ref="AdminProductsInCategoryAddProductBySKUAddSKUActionGroup" stepKey="addFirstProductSKU">
+            <argument name="sku" value="$createProduct6.sku$"/>
+        </actionGroup>
+        <actionGroup ref="AdminProductsInCategoryAddProductBySKUAddSKUActionGroup" stepKey="addSecondProductSKU">
+            <argument name="sku" value="$createProduct5.sku$"/>
+        </actionGroup>
+        <actionGroup ref="AdminProductsInCategoryAddProductBySKUAddSKUActionGroup" stepKey="addThirdProductSKU">
+            <argument name="sku" value="$createProduct7.sku$"/>
+        </actionGroup>
+        <!-- Assign and assert messages-->
+        <actionGroup ref="AdminProductsInCategoryAddProductsBySKUAssignActionGroup" stepKey="clickAssignButtonAgain"/>
+        <actionGroup ref="AdminProductsInCategoryAddProductsModalSaveAndCloseActionGroup" stepKey="closeModalProductMultiSku"/>
+        <!--Check that products are in correct order-->
+        <actionGroup ref="AdminCheckProductPositionInCategoryProductsGridActionGroup" stepKey="seeProduct6FirstAfterMultiSku">
+            <argument name="position" value="1"/>
+            <argument name="productName" value="$createProduct6.name$"/>
+        </actionGroup>
+        <actionGroup ref="AdminCheckProductPositionInCategoryProductsGridActionGroup" stepKey="seeProduct5SecondAfterMultiSku">
+            <argument name="position" value="2"/>
+            <argument name="productName" value="$createProduct5.name$"/>
+        </actionGroup>
+        <actionGroup ref="AdminCheckProductPositionInCategoryProductsGridActionGroup" stepKey="seeProduct7ThirdAfterMultiSku">
+            <argument name="position" value="3"/>
+            <argument name="productName" value="$createProduct7.name$"/>
+        </actionGroup>
+        <actionGroup ref="AdminCheckProductPositionInCategoryProductsGridActionGroup" stepKey="seeProduct4FourthAfterMultiSku">
+            <argument name="position" value="4"/>
+            <argument name="productName" value="$createProduct4.name$"/>
+        </actionGroup>
+        <actionGroup ref="AdminCheckProductPositionInCategoryProductsGridActionGroup" stepKey="seeProduct2FifthAfterMultiSku">
+            <argument name="position" value="5"/>
+            <argument name="productName" value="$createProduct2.name$"/>
+        </actionGroup>
+        <actionGroup ref="AdminCheckProductPositionInCategoryProductsGridActionGroup" stepKey="seeProduct3SixthAfterMultiSku">
+            <argument name="position" value="6"/>
+            <argument name="productName" value="$createProduct3.name$"/>
+        </actionGroup>
+        <actionGroup ref="AdminCheckProductPositionInCategoryProductsGridActionGroup" stepKey="seeProduct1SeventhAfterMultiSku">
+            <argument name="position" value="7"/>
+            <argument name="productName" value="$createProduct1.name$"/>
+        </actionGroup>
+        <actionGroup ref="AdminSaveCategoryFormActionGroup" stepKey="saveCategoryAfterMultiSku"/>
+        <!--Check on frontend-->
+        <actionGroup ref="StorefrontNavigateCategoryPageActionGroup" stepKey="goToCategoryStorefrontForCheckPositionOfProducts">
+            <argument name="category" value="$createApiCategory$"/>
+        </actionGroup>
+        <waitForPageLoad stepKey="waitForCategoryStorefrontMultiSku"/>
+        <actionGroup ref="StorefrontCheckProductPositionActionGroup" stepKey="seeProduct6FirstStorefront">
+            <argument name="position" value="1"/>
+            <argument name="productName" value="$createProduct6.name$"/>
+        </actionGroup>
+        <actionGroup ref="StorefrontCheckProductPositionActionGroup" stepKey="seeProduct5SecondStorefront">
+            <argument name="position" value="2"/>
+            <argument name="productName" value="$createProduct5.name$"/>
+        </actionGroup>
+        <actionGroup ref="StorefrontCheckProductPositionActionGroup" stepKey="seeProduct7ThirdStorefront">
+            <argument name="position" value="3"/>
+            <argument name="productName" value="$createProduct7.name$"/>
+        </actionGroup>
+        <actionGroup ref="StorefrontCheckProductPositionActionGroup" stepKey="seeProduct4FourthStorefront">
+            <argument name="position" value="4"/>
+            <argument name="productName" value="$createProduct4.name$"/>
+        </actionGroup>
+        <actionGroup ref="StorefrontCheckProductPositionActionGroup" stepKey="seeProduct2FifthStorefront">
+            <argument name="position" value="5"/>
+            <argument name="productName" value="$createProduct2.name$"/>
+        </actionGroup>
+        <actionGroup ref="StorefrontCheckProductPositionActionGroup" stepKey="seeProduct3SixthStorefront">
+            <argument name="position" value="6"/>
+            <argument name="productName" value="$createProduct3.name$"/>
+        </actionGroup>
+        <actionGroup ref="StorefrontCheckProductPositionActionGroup" stepKey="seeProduct1LastStorefront">
+            <argument name="position" value="7"/>
+            <argument name="productName" value="$createProduct1.name$"/>
+        </actionGroup>
+    </test>
+</tests>

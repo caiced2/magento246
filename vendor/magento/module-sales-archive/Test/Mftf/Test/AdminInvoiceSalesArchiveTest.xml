@@ -1,0 +1,97 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+ /**
+  * Copyright © Magento, Inc. All rights reserved.
+  * See COPYING.txt for license details.
+  */
+-->
+
+<tests xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xsi:noNamespaceSchemaLocation="urn:magento:mftf:Test/etc/testSchema.xsd">
+    <test name="AdminInvoiceSalesArchiveTest">
+        <annotations>
+            <features value="SalesArchive"/>
+            <stories value="Create Invoice"/>
+            <title value="Admin move created order to Archive and submit Invoice"/>
+            <description value="Admin creates a new order whereupon move it to Archive and submit Invoice"/>
+            <severity value="AVERAGE"/>
+            <testCaseId value="MC-37506"/>
+            <group value="salesArchive"/>
+            <group value="sales"/>
+        </annotations>
+        <before>
+            <magentoCLI command="config:set {{ArchivingEnable.path}} {{ArchivingEnable.value}}" stepKey="enableArchiving"/>
+            <magentoCLI command="config:set {{OrderStatusesArchived.path}} {{OrderStatusesArchived.allValue}}" stepKey="setAllStatusesArchived"/>
+            <createData entity="SimpleProduct2" stepKey="createSimpleProduct"/>
+            <createData entity="Simple_US_Customer" stepKey="createCustomer"/>
+
+            <!-- Create new order from admin panel with created customer -->
+            <actionGroup ref="AdminLoginActionGroup" stepKey="loginAsAdmin"/>
+            <actionGroup ref="NavigateToNewOrderPageExistingCustomerActionGroup" stepKey="navigateToNewOrderWithExistingCustomer">
+                <argument name="customer" value="$createCustomer$"/>
+            </actionGroup>
+            <!-- Add Simple product to order and fill quantity -->
+            <actionGroup ref="AddSimpleProductToOrderActionGroup" stepKey="addSimpleProductToTheOrder">
+                <argument name="product" value="$createSimpleProduct$"/>
+                <argument name="productQty" value="2"/>
+            </actionGroup>
+            <actionGroup ref="AdminSelectFlatRateShippingMethodActionGroup" stepKey="selectFlatRateShippingMethod"/>
+            <actionGroup ref="AdminOrderClickSubmitOrderActionGroup" stepKey="submitOrder"/>
+            <actionGroup ref="VerifyCreatedOrderInformationActionGroup" stepKey="verifyCreatedOrderInformation"/>
+        </before>
+        <after>
+            <magentoCLI command="config:set {{ArchivingDisabled.path}} {{ArchivingDisabled.value}}" stepKey="enableArchiving"/>
+            <magentoCLI command="config:set {{OrderStatusesArchived.path}} {{OrderStatusesArchived.defaultValue}}" stepKey="setDefaultStatusesArchived"/>
+            <deleteData createDataKey="createSimpleProduct" stepKey="deleteSimpleProduct"/>
+            <deleteData createDataKey="createCustomer" stepKey="deleteCustomer"/>
+
+            <actionGroup ref="AdminOrdersGridClearFiltersActionGroup" stepKey="resetOrderFilter"/>
+            <amOnPage url="{{AdminArchiveOrdersGridPage.url}}" stepKey="goToAdminArchiveOrdersGrid"/>
+            <actionGroup ref="AdminGridFilterResetActionGroup" stepKey="clearArchiveOrdersGridFilters"/>
+            <amOnPage url="{{AdminArchiveInvoicesGridPage.url}}" stepKey="goToAdminArchiveInvoicesGrid"/>
+            <actionGroup ref="AdminGridFilterResetActionGroup" stepKey="clearArchiveInvoicesGridFilters"/>
+            <actionGroup ref="AdminLogoutActionGroup" stepKey="logoutAsAdminUser"/>
+        </after>
+        <grabFromCurrentUrl regex="~/order_id/(\d+)/~" stepKey="grabOrderId"/>
+        <grabTextFrom selector="|Order # (\d+)|" stepKey="orderNumber"/>
+
+        <!-- Move the created order to the archive -->
+        <actionGroup ref="FilterOrderGridByIdActionGroup" stepKey="filterOrderGridById">
+            <argument name="orderId" value="{$orderNumber}"/>
+        </actionGroup>
+        <actionGroup ref="AdminOrderActionOnGridActionGroup" stepKey="actionMoveToArchive">
+            <argument name="action" value="Move to Archive"/>
+            <argument name="orderId" value="{$orderNumber}"/>
+        </actionGroup>
+        <!-- Assert Success Message -->
+        <actionGroup ref="AssertAdminMessageCreateIntegrationEntityActionGroup" stepKey="seeSuccessMessage">
+            <argument name="message" value="We archived 1 order(s)."/>
+        </actionGroup>
+
+        <!-- Create invoice from archived order-->
+        <actionGroup ref="AdminNavigateMenuActionGroup" stepKey="navigateToArchiveOrdersPage">
+            <argument name="menuUiId" value="{{AdminMenuSales.dataUiId}}"/>
+            <argument name="submenuUiId" value="{{AdminMenuSalesArchiveOrders.dataUiId}}"/>
+        </actionGroup>
+        <actionGroup ref="AdminGridFilterSearchResultsByInput" stepKey="filterArchiveOrderGridByIdAction">
+            <argument name="selector" value="AdminOrdersGridSection.idFilter"/>
+            <argument name="value" value="{$orderNumber}"/>
+        </actionGroup>
+        <actionGroup ref="AdminSelectFirstGridRowActionGroup" stepKey="openArchivedOrder"/>
+        <actionGroup ref="StartCreateInvoiceFromOrderPageActionGroup" stepKey="startInvoice"/>
+        <actionGroup ref="SubmitInvoiceActionGroup" stepKey="submitInvoiceIntoOrderArchive"/>
+
+        <!-- Assert created Archive Invoice -->
+        <actionGroup ref="AdminNavigateMenuActionGroup" stepKey="navigateToArchiveInvoicesOrderPage">
+            <argument name="menuUiId" value="{{AdminMenuSales.dataUiId}}"/>
+            <argument name="submenuUiId" value="{{AdminMenuSalesArchiveInvoices.dataUiId}}"/>
+        </actionGroup>
+        <actionGroup ref="AdminGridFilterSearchResultsByInput" stepKey="filterArchiveInvoiceGridByOrderId">
+            <argument name="selector" value="AdminInvoicesFiltersSection.orderNum"/>
+            <argument name="value" value="{$orderNumber}"/>
+        </actionGroup>
+        <see userInput="{$orderNumber}" selector="{{AdminGridRow.rowOne}}" stepKey="seeArchiveInvoice"/>
+        <actionGroup ref="AdminAssertNumberOfRecordsInUiGridActionGroup" stepKey="assertNumberOfRecordsInInvoiceGrid"/>
+        <actionGroup ref="AdminGridFilterResetActionGroup" stepKey="clearArchiveInvoicesGridFilters"/>
+    </test>
+</tests>

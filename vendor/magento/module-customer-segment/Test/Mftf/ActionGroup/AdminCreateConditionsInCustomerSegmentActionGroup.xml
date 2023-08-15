@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+ /**
+  * Copyright © Magento, Inc. All rights reserved.
+  * See COPYING.txt for license details.
+  */
+-->
+<actionGroups xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+              xsi:noNamespaceSchemaLocation="urn:magento:mftf:Test/etc/actionGroupSchema.xsd">
+    <actionGroup name="AdminCreateConditionsInCustomerSegmentActionGroup">
+        <annotations>
+            <description>Create customer segment condition specified by index of condition</description>
+        </annotations>
+        <arguments>
+            <argument name="conditionData" type="entity" defaultValue="CustomerSegmentGroupConditionsData"/>
+            <argument name="index" type="string" defaultValue="1"/>
+        </arguments>
+        <click selector="{{AdminCustomerSegmentEditSection.conditionsTab}}" stepKey="proceedToConditionsTab"/>
+        <waitForElementVisible selector="{{AdminCustomerSegmentConditionsEditSection.addCondition}}" stepKey="waitAddConditionElement"/>
+        <click selector="{{AdminCustomerSegmentConditionsEditSection.addCondition}}" stepKey="clickAddCondition" />
+        <waitForElementVisible selector="{{AdminCustomerSegmentConditionsEditSection.conditions}}" stepKey="waitConditionSelectElement"/>
+        <selectOption selector="{{AdminCustomerSegmentConditionsEditSection.conditions}}" userInput="{{conditionData.condition}}" stepKey="selectCondition"/>
+        <waitForElementVisible selector="{{AdminCustomerSegmentConditionsEditSection.conditionValueChooserParam('1',conditionData.defaultConditionType)}}" stepKey="waitConditionTypeElement"/>
+        <click selector="{{AdminCustomerSegmentConditionsEditSection.conditionValueChooserParam('1',conditionData.defaultConditionType)}}" stepKey="activateSelect"/>
+        <waitForElementVisible selector="{{AdminCustomerSegmentConditionsEditSection.conditionOperatorParam(index)}}" stepKey="waitSelectConditionTypeElement"/>
+        <selectOption selector="{{AdminCustomerSegmentConditionsEditSection.conditionOperatorParam(index)}}" userInput="{{conditionData.conditionType}}" stepKey="selectConditionType"/>
+        <waitForElementVisible selector="{{AdminCustomerSegmentConditionsEditSection.conditionValueChooser}}" stepKey="waitSelectValueChooserElement"/>
+        <click selector="{{AdminCustomerSegmentConditionsEditSection.conditionValueChooser}}" stepKey="clickToValueChooser"/>
+        <waitForElementVisible selector="{{AdminCustomerSegmentConditionsEditSection.conditionValueParam(index)}}" stepKey="waitInputFieldElement"/>
+        <fillField selector="{{AdminCustomerSegmentConditionsEditSection.conditionValueParam(index)}}" userInput="{{conditionData.value}}" stepKey="fillInputField"/>
+    </actionGroup>
+</actionGroups>

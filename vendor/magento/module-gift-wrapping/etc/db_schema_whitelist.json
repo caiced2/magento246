@@ -1,0 +1,211 @@
+{
+    "magento_giftwrapping": {
+        "column": {
+            "wrapping_id": true,
+            "status": true,
+            "base_price": true,
+            "image": true
+        },
+        "index": {
+            "MAGENTO_GIFTWRAPPING_STATUS": true
+        },
+        "constraint": {
+            "PRIMARY": true
+        }
+    },
+    "magento_giftwrapping_store_attributes": {
+        "column": {
+            "wrapping_id": true,
+            "store_id": true,
+            "design": true
+        },
+        "index": {
+            "MAGENTO_GIFTWRAPPING_STORE_ATTRIBUTES_STORE_ID": true
+        },
+        "constraint": {
+            "PRIMARY": true,
+            "FK_8048F7FF66F3AAB2D429C60D0E4F8A58": true,
+            "MAGENTO_GIFTWRAPPING_STORE_ATTRIBUTES_STORE_ID_STORE_STORE_ID": true
+        }
+    },
+    "magento_giftwrapping_website": {
+        "column": {
+            "wrapping_id": true,
+            "website_id": true
+        },
+        "index": {
+            "MAGENTO_GIFTWRAPPING_WEBSITE_WEBSITE_ID": true
+        },
+        "constraint": {
+            "PRIMARY": true,
+            "FK_9F4CF77669BFC319A247D8AB96B440B9": true,
+            "MAGENTO_GIFTWRAPPING_WEBSITE_WEBSITE_ID_STORE_WEBSITE_WEBSITE_ID": true
+        }
+    },
+    "quote": {
+        "column": {
+            "gw_id": true,
+            "gw_allow_gift_receipt": true,
+            "gw_add_card": true,
+            "gw_base_price": true,
+            "gw_price": true,
+            "gw_items_base_price": true,
+            "gw_items_price": true,
+            "gw_card_base_price": true,
+            "gw_card_price": true,
+            "gw_base_tax_amount": true,
+            "gw_tax_amount": true,
+            "gw_items_base_tax_amount": true,
+            "gw_items_tax_amount": true,
+            "gw_card_base_tax_amount": true,
+            "gw_card_tax_amount": true,
+            "gw_base_price_incl_tax": true,
+            "gw_price_incl_tax": true,
+            "gw_items_base_price_incl_tax": true,
+            "gw_items_price_incl_tax": true,
+            "gw_card_base_price_incl_tax": true,
+            "gw_card_price_incl_tax": true
+        }
+    },
+    "quote_address": {
+        "column": {
+            "gw_id": true,
+            "gw_allow_gift_receipt": true,
+            "gw_add_card": true,
+            "gw_base_price": true,
+            "gw_price": true,
+            "gw_items_base_price": true,
+            "gw_items_price": true,
+            "gw_card_base_price": true,
+            "gw_card_price": true,
+            "gw_base_tax_amount": true,
+            "gw_tax_amount": true,
+            "gw_items_base_tax_amount": true,
+            "gw_items_tax_amount": true,
+            "gw_card_base_tax_amount": true,
+            "gw_card_tax_amount": true,
+            "gw_base_price_incl_tax": true,
+            "gw_price_incl_tax": true,
+            "gw_items_base_price_incl_tax": true,
+            "gw_items_price_incl_tax": true,
+            "gw_card_base_price_incl_tax": true,
+            "gw_card_price_incl_tax": true
+        }
+    },
+    "sales_order": {
+        "column": {
+            "gw_id": true,
+            "gw_allow_gift_receipt": true,
+            "gw_add_card": true,
+            "gw_base_price": true,
+            "gw_price": true,
+            "gw_items_base_price": true,
+            "gw_items_price": true,
+            "gw_card_base_price": true,
+            "gw_card_price": true,
+            "gw_base_tax_amount": true,
+            "gw_tax_amount": true,
+            "gw_items_base_tax_amount": true,
+            "gw_items_tax_amount": true,
+            "gw_card_base_tax_amount": true,
+            "gw_card_tax_amount": true,
+            "gw_base_price_incl_tax": true,
+            "gw_price_incl_tax": true,
+            "gw_items_base_price_incl_tax": true,
+            "gw_items_price_incl_tax": true,
+            "gw_card_base_price_incl_tax": true,
+            "gw_card_price_incl_tax": true,
+            "gw_base_price_invoiced": true,
+            "gw_price_invoiced": true,
+            "gw_items_base_price_invoiced": true,
+            "gw_items_price_invoiced": true,
+            "gw_card_base_price_invoiced": true,
+            "gw_card_price_invoiced": true,
+            "gw_base_tax_amount_invoiced": true,
+            "gw_tax_amount_invoiced": true,
+            "gw_items_base_tax_invoiced": true,
+            "gw_items_tax_invoiced": true,
+            "gw_card_base_tax_invoiced": true,
+            "gw_card_tax_invoiced": true,
+            "gw_base_price_refunded": true,
+            "gw_price_refunded": true,
+            "gw_items_base_price_refunded": true,
+            "gw_items_price_refunded": true,
+            "gw_card_base_price_refunded": true,
+            "gw_card_price_refunded": true,
+            "gw_base_tax_amount_refunded": true,
+            "gw_tax_amount_refunded": true,
+            "gw_items_base_tax_refunded": true,
+            "gw_items_tax_refunded": true,
+            "gw_card_base_tax_refunded": true,
+            "gw_card_tax_refunded": true
+        }
+    },
+    "quote_item": {
+        "column": {
+            "gw_id": true,
+            "gw_base_price": true,
+            "gw_price": true,
+            "gw_base_tax_amount": true,
+            "gw_tax_amount": true
+        }
+    },
+    "quote_address_item": {
+        "column": {
+            "gw_id": true,
+            "gw_base_price": true,
+            "gw_price": true,
+            "gw_base_tax_amount": true,
+            "gw_tax_amount": true
+        }
+    },
+    "sales_order_item": {
+        "column": {
+            "gw_id": true,
+            "gw_base_price": true,
+            "gw_price": true,
+            "gw_base_tax_amount": true,
+            "gw_tax_amount": true,
+            "gw_base_price_invoiced": true,
+            "gw_price_invoiced": true,
+            "gw_base_tax_amount_invoiced": true,
+            "gw_tax_amount_invoiced": true,
+            "gw_base_price_refunded": true,
+            "gw_price_refunded": true,
+            "gw_base_tax_amount_refunded": true,
+            "gw_tax_amount_refunded": true
+        }
+    },
+    "sales_invoice": {
+        "column": {
+            "gw_base_price": true,
+            "gw_price": true,
+            "gw_items_base_price": true,
+            "gw_items_price": true,
+            "gw_card_base_price": true,
+            "gw_card_price": true,
+            "gw_base_tax_amount": true,
+            "gw_tax_amount": true,
+            "gw_items_base_tax_amount": true,
+            "gw_items_tax_amount": true,
+            "gw_card_base_tax_amount": true,
+            "gw_card_tax_amount": true
+        }
+    },
+    "sales_creditmemo": {
+        "column": {
+            "gw_base_price": true,
+            "gw_price": true,
+            "gw_items_base_price": true,
+            "gw_items_price": true,
+            "gw_card_base_price": true,
+            "gw_card_price": true,
+            "gw_base_tax_amount": true,
+            "gw_tax_amount": true,
+            "gw_items_base_tax_amount": true,
+            "gw_items_tax_amount": true,
+            "gw_card_base_tax_amount": true,
+            "gw_card_tax_amount": true
+        }
+    }
+}

@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+ /**
+  * Copyright © Magento, Inc. All rights reserved.
+  * See COPYING.txt for license details.
+  */
+-->
+<actionGroups xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:noNamespaceSchemaLocation="urn:magento:mftf:Test/etc/actionGroupSchema.xsd">
+    <actionGroup name="AdminDeleteAttribute">
+        <fillField selector="{{CustomerAccountSection.defaultLabel}}" userInput="{{Attribute.label}}" stepKey="TypeAttributeName"/>
+        <click selector="{{CustomerAccountSection.search}}" stepKey="clickToSearchButton"/>
+        <waitForPageLoad stepKey="waitForResult"/>
+        <click selector="{{CustomerAccountSection.attribute(Attribute.code)}}" stepKey="clickToSelectAttribute"/>
+        <waitForPageLoad stepKey="waitForAttributePageLoaded"/>
+        <click selector="{{CustomerAccountSection.delete}}" stepKey="ClickOnDeleteButton"/>
+        <waitForElementVisible selector="{{CustomerAccountSection.confirm}}" stepKey="waitForConfirm"/>
+        <click selector="{{CustomerAccountSection.confirm}}" stepKey="clickToConfirm"/>
+        <waitForPageLoad stepKey="waitAttributeDeleted"/>
+        <click selector="{{CustomerAccountSection.reset}}" stepKey="clickToResetFilters"/>
+        <waitForPageLoad stepKey="waitForFiltersReset"/>
+    </actionGroup>
+</actionGroups>

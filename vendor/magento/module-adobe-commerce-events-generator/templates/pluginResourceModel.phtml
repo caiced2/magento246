@@ -1,0 +1,110 @@
+<?php
+/** @var \Magento\AdobeCommerceEventsGenerator\Generator\ModuleBlock $block */
+/** @var string $namespace */
+/** @var string $name */
+/** @var string $interface */
+/** @var string $interfaceShort */
+/** @var array $methods */
+?>
+<?='<?php'; ?>
+
+# Generated code. DO NOT EDIT!
+
+/**
+ * Copyright © Magento, Inc. All rights reserved.
+ * See COPYING.txt for license details.
+ */
+namespace <?=$namespace ?>;
+
+use Magento\AdobeCommerceEventsClient\Event\Converter\EventDataConverter;
+use Magento\AdobeCommerceEventsClient\Event\EventList;
+use Magento\AdobeCommerceEventsClient\Event\EventStorageWriter;
+use Magento\AdobeCommerceEventsClient\Event\EventSubscriberInterface;
+use <?=$interface ?>;
+use Psr\Log\LoggerInterface;
+
+/**
+ * Auto generated plugin for <?=$interface ?>
+
+ */
+class <?=$name ?>
+{
+    /**
+     * @var EventList
+     */
+    private $eventList;
+
+    /**
+     * @var EventDataConverter
+     */
+    private $eventDataConverter;
+
+    /**
+     * @var LoggerInterface
+     */
+    private $logger;
+
+    /**
+     * @var EventStorageWriter
+     */
+    private $storageWriter;
+
+    /**
+     * @param EventList $eventList
+     * @param EventDataConverter $eventDataConverter
+     * @param LoggerInterface $logger
+     * @param EventStorageWriter $storageWriter
+     */
+    public function __construct(
+        EventList $eventList,
+        EventDataConverter $eventDataConverter,
+        LoggerInterface $logger,
+        EventStorageWriter $storageWriter
+    ) {
+        $this->eventList = $eventList;
+        $this->eventDataConverter = $eventDataConverter;
+        $this->logger = $logger;
+        $this->storageWriter = $storageWriter;
+    }
+
+<?php foreach ($methods as $method): ?>
+    /**
+     * Intercepts <?=$method['name'] ?> method and invokes after subscriptions if they are available
+     *
+     * @param <?=$interfaceShort ?> $subject
+     * @param mixed $result
+<?php foreach ($method['params'] as $param): ?>
+     * @param $<?=$param['name'] . PHP_EOL; ?>
+<?php endforeach; ?>
+     * @return mixed
+     */
+    public function after<?=$method['name'] ?>(<?=$interfaceShort ?> $subject, $result<?=$block->renderParametersForMethod($method); ?>)
+    {
+        try {
+            $eventCode = EventSubscriberInterface::EVENT_PREFIX_COMMERCE . EventSubscriberInterface::EVENT_TYPE_PLUGIN
+                . '.<?=$method['eventCode'] ?>';
+            $data = [
+<?php foreach ($method['params'] as $param): ?>
+                '<?=$param['name'] ?>' => $<?=$param['name'] ?>,
+<?php endforeach; ?>
+            ];
+
+            if (!empty($result)) {
+                $data['result'] = $result;
+            }
+
+            if ($this->eventList->isEventEnabled($eventCode)) {
+                $this->storageWriter->createEvent($eventCode, $this->eventDataConverter->convert($data));
+            }
+        } catch (\Throwable $e) {
+            $this->logger->error(sprintf(
+                'Failed to save event data. Event code: "%s", Error: "%s"',
+                $eventCode,
+                $e->getMessage()
+            ));
+        }
+
+        return $result;
+    }
+<?php endforeach; ?>
+}

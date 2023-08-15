@@ -1,0 +1,86 @@
+<?xml version="1.0"?>
+<!--
+/**
+ * Copyright © Magento, Inc. All rights reserved.
+ * See COPYING.txt for license details.
+ */
+-->
+<config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="urn:magento:framework:ObjectManager/etc/config.xsd">
+    <preference for="Magento\TargetRule\Model\ResourceModel\Index\IndexInterface" type="Magento\TargetRule\Model\ResourceModel\Index\Index" />
+    <virtualType name="Magento\TargetRule\Model\ResourceModel\RelatedIndex" type="Magento\TargetRule\Model\ResourceModel\Index\Index">
+        <arguments>
+            <argument name="type" xsi:type="string">1</argument>
+        </arguments>
+    </virtualType>
+    <virtualType name="Magento\TargetRule\Model\ResourceModel\UpsellIndex" type="Magento\TargetRule\Model\ResourceModel\Index\Index">
+        <arguments>
+            <argument name="type" xsi:type="string">2</argument>
+        </arguments>
+    </virtualType>
+    <virtualType name="Magento\TargetRule\Model\ResourceModel\CrosssellIndex" type="Magento\TargetRule\Model\ResourceModel\Index\Index">
+        <arguments>
+            <argument name="type" xsi:type="string">3</argument>
+        </arguments>
+    </virtualType>
+    <type name="Magento\TargetRule\Model\ResourceModel\IndexPool">
+        <arguments>
+            <argument name="types" xsi:type="array">
+                <item name="1" xsi:type="string">Magento\TargetRule\Model\ResourceModel\RelatedIndex</item>
+                <item name="2" xsi:type="string">Magento\TargetRule\Model\ResourceModel\UpsellIndex</item>
+                <item name="3" xsi:type="string">Magento\TargetRule\Model\ResourceModel\CrosssellIndex</item>
+            </argument>
+        </arguments>
+    </type>
+    <type name="Magento\TargetRule\Model\Index">
+        <arguments>
+            <argument name="session" xsi:type="object">Magento\Customer\Model\Session\Proxy</argument>
+        </arguments>
+    </type>
+    <type name="Magento\TargetRule\Model\ResourceModel\Index">
+        <arguments>
+            <argument name="session" xsi:type="object">Magento\Customer\Model\Session\Proxy</argument>
+        </arguments>
+    </type>
+    <type name="Magento\Framework\Module\Setup\Migration">
+        <arguments>
+            <argument name="compositeModules" xsi:type="array">
+                <item name="magento_targetrule" xsi:type="string">Magento_TargetRule</item>
+            </argument>
+        </arguments>
+    </type>
+    <type name="Magento\ImportExport\Model\Import">
+        <plugin name="targetRuleImportInvalidate" type="Magento\TargetRule\Model\Indexer\TargetRule\Plugin\Import" />
+    </type>
+    <type name="Magento\Catalog\Model\Category">
+        <plugin name="targetRuleCategoryInvalidate" type="Magento\TargetRule\Model\Indexer\TargetRule\Plugin\Category" />
+    </type>
+    <type name="Magento\CustomerSegment\Model\Segment">
+        <plugin name="targetRuleCustomerSegmentInvalidate" type="Magento\TargetRule\Model\Indexer\TargetRule\Plugin\CustomerSegment" />
+    </type>
+    <type name="Magento\Store\Model\ResourceModel\Store">
+        <plugin name="invalidateTargetRuleOnStoreViewChange" type="Magento\TargetRule\Model\Indexer\TargetRule\Plugin\Store"/>
+    </type>
+    <type name="Magento\Store\Model\ResourceModel\Group">
+        <plugin name="invalidateTargetRuleOnStoreGroupChange" type="Magento\TargetRule\Model\Indexer\TargetRule\Plugin\StoreGroup"/>
+    </type>
+    <type name="Magento\Eav\Model\Entity\Attribute\Set">
+        <plugin name="invalidateTargetRuleOnDeleteAttributeSet" type="Magento\TargetRule\Model\Indexer\TargetRule\Plugin\AttributeSet"/>
+    </type>
+    <type name="Magento\TargetRule\Model\Indexer\TargetRule\AbstractProcessor">
+        <arguments>
+            <argument name="statusContainer" xsi:type="object" shared="true">Magento\TargetRule\Model\Indexer\TargetRule\Status\Container</argument>
+        </arguments>
+    </type>
+    <type name="Magento\Eav\Model\Config">
+        <arguments>
+            <argument name="attributesForPreload" xsi:type="array">
+                <item name="catalog_product" xsi:type="array">
+                    <item name="related_tgtr_position_behavior" xsi:type="string">catalog_product</item>
+                    <item name="related_tgtr_position_limit" xsi:type="string">catalog_product</item>
+                    <item name="upsell_tgtr_position_behavior" xsi:type="string">catalog_product</item>
+                    <item name="upsell_tgtr_position_limit" xsi:type="string">catalog_product</item>
+                </item>
+            </argument>
+        </arguments>
+    </type>
+</config>

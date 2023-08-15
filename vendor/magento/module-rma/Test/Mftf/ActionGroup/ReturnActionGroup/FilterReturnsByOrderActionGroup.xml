@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+ /**
+  * Copyright © Magento, Inc. All rights reserved.
+  * See COPYING.txt for license details.
+  */
+-->
+<actionGroups xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:noNamespaceSchemaLocation="urn:magento:mftf:Test/etc/actionGroupSchema.xsd">
+    <actionGroup name="filterReturnsByOrder">
+        <arguments>
+            <argument name="orderId" type="string"/>
+        </arguments>
+        <seeInCurrentUrl url="{{AdminReturnIndexPage.url}}" stepKey="seeOnRmaIndexPage"/>
+        <click selector="{{AdminReturnGridFilterSection.resetFilter}}" stepKey="clearExistingRmaFilters"/>
+        <fillField selector="{{AdminReturnGridFilterSection.orderIdFilter}}" userInput="{{orderId}}" stepKey="fillOrderIdRmaFilter"/>
+        <click selector="{{AdminGridFilterControls.applyFilters}}" stepKey="clickSearchReturn"/>
+        <see selector="{{AdminReturnGridSection.rowOrderId('1')}}" userInput="{{orderId}}" stepKey="seeReturnInGrid"/>
+        <click selector="{{AdminReturnGridSection.rowViewAction('1')}}" stepKey="clickViewReturnFromGrid"/>
+        <seeInCurrentUrl url="{{AdminReturnEditPage.url}}" stepKey="seeOnRmaEditPage"/>
+    </actionGroup>
+</actionGroups>

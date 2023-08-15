@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+ /**
+  * Copyright © Magento, Inc. All rights reserved.
+  * See COPYING.txt for license details.
+  */
+-->
+<sections xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="urn:magento:mftf:Page/etc/SectionObject.xsd">
+    <section name="StorefrontCustomerReturnSection">
+        <element name="submit" type="button" selector="#submit.save"/>
+        <element name="addItemToReturn" type="button" selector="#add-item-to-return"/>
+        <element name="orderId" type="text" selector=".field.id > div > span"/>
+        <element name="email" type="text" selector=".field.email > div > span"/>
+        <element name="item" type="select" selector="select[name='items[{{index}}][order_item_id]']" parameterized="true"/>
+        <element name="quantityToReturn" type="input" selector="input[name='items[{{index}}][qty_requested]']" parameterized="true"/>
+        <element name="customAttributeSelect" type="select" selector="select[name='items[{{index}}][{{value2}}]']" parameterized="true"/>
+        <element name="resolution" type="select" selector="select[name='items[{{index}}][resolution]']" parameterized="true"/>
+        <element name="condition" type="select" selector="select[name='items[{{index}}][condition]']" parameterized="true"/>
+        <element name="reason" type="select" selector="select[name='items[{{index}}][reason]']" parameterized="true"/>
+        <element name="newAttribute" type="select" selector="select[name='items[{{index}}][{{attributeName}}]']" parameterized="true"/>
+        <element name="comments" type="text" selector="textarea[name='rma_comment']"/>
+        <element name="resolutionItem" type="select" selector="select[name='items[{{value}}][resolution]']" parameterized="true"/>
+        <element name="conditionItem" type="select" selector="select[name='items[{{value}}][condition]']" parameterized="true"/>
+        <element name="reasonItem" type="select" selector="select[name='items[{{value}}][reason]']" parameterized="true"/>
+        <element name="reasonOtherField" type="input" selector="//input[@id='items:reason_other{{var}}']" parameterized="true"/>
+        <element name="quantityToReturnError" type="text" selector="//*[@id='items:qty_requested{{index}}']/following-sibling::div" parameterized="true"/>
+    </section>
+</sections>

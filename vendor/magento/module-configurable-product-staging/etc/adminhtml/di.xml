@@ -1,0 +1,40 @@
+<?xml version="1.0"?>
+<!--
+/**
+ * Copyright © Magento, Inc. All rights reserved.
+ * See COPYING.txt for license details.
+ */
+-->
+<config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="urn:magento:framework:ObjectManager/etc/config.xsd">
+    <virtualType name="Magento\CatalogStaging\Ui\DataProvider\Product\Form\Modifier\Pool">
+        <arguments>
+            <argument name="modifiers" xsi:type="array">
+                <item name="configurable" xsi:type="array">
+                    <item name="class" xsi:type="string">Magento\ConfigurableProductStaging\Ui\DataProvider\Product\Form\Modifier\Composite</item>
+                    <item name="sortOrder" xsi:type="number">140</item>
+                </item>
+            </argument>
+        </arguments>
+    </virtualType>
+    <virtualType name="Magento\ConfigurableProductStaging\Ui\DataProvider\Product\Form\Modifier\ConfigurablePanel" type="Magento\ConfigurableProduct\Ui\DataProvider\Product\Form\Modifier\ConfigurablePanel">
+            <arguments>
+                <argument name="formName" xsi:type="string">catalogstaging_update_form</argument>
+                <argument name="dataScopeName" xsi:type="string">catalogstaging_update_form.catalogstaging_update_form</argument>
+                <argument name="dataSourceName" xsi:type="string">catalogstaging_update_form.catalogstaging_update_form_data_source</argument>
+                <argument name="associatedListingPrefix" xsi:type="string">staging_</argument>
+            </arguments>
+    </virtualType>
+    <virtualType name="Magento\ConfigurableProductStaging\Ui\DataProvider\Product\Form\Modifier\Composite" type="Magento\ConfigurableProduct\Ui\DataProvider\Product\Form\Modifier\Composite">
+        <arguments>
+            <argument name="modifiers" xsi:type="array">
+                <item name="configurablePanel" xsi:type="string">Magento\ConfigurableProductStaging\Ui\DataProvider\Product\Form\Modifier\ConfigurablePanel</item>
+                <item name="StockData" xsi:type="string">Magento\Ui\DataProvider\Modifier\Dummy</item>
+            </argument>
+        </arguments>
+    </virtualType>
+    <type name="Magento\Catalog\Controller\Adminhtml\Product\Initialization\Helper">
+        <plugin name="updateConfigurations" disabled="true" />
+        <plugin name="updateConfigurationsStaging" type="Magento\ConfigurableProductStaging\Plugin\Catalog\UpdateConfigurationsStaging" sortOrder="60" />
+    </type>
+</config>
+

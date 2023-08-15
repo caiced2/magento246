@@ -1,0 +1,17 @@
+<?xml version="1.0"?>
+<!--
+/**
+ * Copyright © Magento, Inc. All rights reserved.
+ * See COPYING.txt for license details.
+ */
+-->
+<config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="urn:magento:module:Magento_Cron:etc/crontab.xsd">
+    <group id="default">
+        <job name="magento_reward_balance_warning_notification" instance="Magento\Reward\Cron\ScheduledBalanceExpireNotification" method="execute">
+            <schedule>1 * * * *</schedule>
+        </job>
+        <job name="magento_reward_expire_points" instance="Magento\Reward\Cron\ScheduledPointsExpiration" method="execute">
+            <schedule>1 * * * *</schedule>
+        </job>
+    </group>
+</config>

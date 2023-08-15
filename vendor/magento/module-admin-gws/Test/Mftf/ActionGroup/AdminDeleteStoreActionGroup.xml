@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+ /**
+  * Copyright © Magento, Inc. All rights reserved.
+  * See COPYING.txt for license details.
+  */
+-->
+
+<actionGroups xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+              xsi:noNamespaceSchemaLocation="urn:magento:mftf:Test/etc/actionGroupSchema.xsd">
+    <actionGroup name="AdminDeleteStoreActionGroup">
+        <arguments>
+            <argument name="storeName" type="string"/>
+        </arguments>
+        <amOnPage url="{{AdminSystemStorePage.url}}" stepKey="navigateToStorePage"/>
+        <waitForPageLoad stepKey="waitForStorePage"/>
+        <click stepKey="openCreatedStore" selector="{{AdminStoreSection.createdStore(storeName)}}"/>
+        <waitForPageLoad stepKey="waitForStoreToLoad"/>
+        <click selector="{{AdminStoresMainActionsSection.deleteButton}}" stepKey="clickDeleteStoreGroupButtonOnEditStorePage"/>
+        <selectOption userInput="No" selector="{{AdminStoresDeleteStoreGroupSection.createDbBackup}}" stepKey="setCreateDbBackupToNo"/>
+        <click selector="{{AdminStoresDeleteStoreGroupSection.deleteStoreGroupButton}}" stepKey="clickDeleteStoreGroupButtonOnDeleteStorePage"/>
+        <waitForPageLoad stepKey="waitForDelete"/>
+        <see userInput="You deleted the store." stepKey="seeDeleteMessage"/>
+    </actionGroup>
+</actionGroups>

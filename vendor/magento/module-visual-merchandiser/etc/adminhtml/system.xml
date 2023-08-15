@@ -1,0 +1,36 @@
+<?xml version="1.0"?>
+<!--
+/**
+ * Copyright © Magento, Inc. All rights reserved.
+ * See COPYING.txt for license details.
+ */
+-->
+<config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="urn:magento:module:Magento_Config:etc/system_file.xsd">
+    <system>
+        <section id="visualmerchandiser" translate="label" type="text" sortOrder="50" showInDefault="1" showInWebsite="1" showInStore="1">
+            <label>Visual Merchandiser</label>
+            <tab>catalog</tab>
+            <resource>Magento_VisualMerchandiser::options</resource>
+            <group id="options" translate="label" type="text" sortOrder="1" showInDefault="1" showInWebsite="1" showInStore="1">
+                <label>General Options</label>
+                <field id="smart_attributes" translate="label comment" type="multiselect" sortOrder="3" showInDefault="1" showInWebsite="0" showInStore="0">
+                    <label>Visible Attributes for Category Rules</label>
+                    <comment>Additional attributes usable in category rules</comment>
+                    <source_model>Magento\VisualMerchandiser\Model\Config\Source\AllowedAttributes</source_model>
+                </field>
+                <field id="minimum_stock_threshold" translate="label comment" type="text" sortOrder="7" showInDefault="1" showInWebsite="0" showInStore="0">
+                    <label>Minimum Stock Threshold</label>
+                    <comment>Determines which products are 'low stock'</comment>
+                    <validate>validate-digits validate-digits-range digits-range-1-</validate>
+                </field>
+                <field id="color_attribute_code" translate="label" type="text" sortOrder="9" showInDefault="1" showInWebsite="0" showInStore="0">
+                    <label>Color Attribute Code</label>
+                </field>
+                <field id="color_order" translate="label comment" type="textarea" sortOrder="10" showInDefault="1" showInWebsite="0" showInStore="0">
+                    <label>Color Order</label>
+                    <comment>Each color being on a separate row.</comment>
+                </field>
+            </group>
+        </section>
+    </system>
+</config>

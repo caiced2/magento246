@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+ /**
+  * Copyright © Magento, Inc. All rights reserved.
+  * See COPYING.txt for license details.
+  */
+-->
+<actionGroups xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:noNamespaceSchemaLocation="urn:magento:mftf:Test/etc/actionGroupSchema.xsd">
+    <actionGroup name="AssertAdminCustomerImageFileAttributeActionGroup">
+        <annotations>
+            <description>Verify preview image presents on customer create/edit page.</description>
+        </annotations>
+        <arguments>
+            <argument name="imageFileName" type="string" defaultValue="{{CustomerBaseImage.name}}"/>
+            <argument name="attributeLabel" type="string" defaultValue="{{AttributeImageFileData.label}}"/>
+        </arguments>
+
+        <waitForElementVisible selector="{{AdminCustomerAccountAttributeSection.imagePreview(attributeLabel, imageFileName)}}" stepKey="waitForImagePreview"/>
+        <seeElement selector="{{AdminCustomerAccountAttributeSection.imagePreview(attributeLabel, imageFileName)}}" stepKey="seePreviewImage"/>
+    </actionGroup>
+</actionGroups>

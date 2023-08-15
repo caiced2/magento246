@@ -1,0 +1,13 @@
+<?xml version="1.0"?><!--
+/**
+ * Copyright © Magento, Inc. All rights reserved.
+ * See COPYING.txt for license details.
+ */
+-->
+<config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:noNamespaceSchemaLocation="urn:magento:framework:ObjectManager/etc/config.xsd">
+    <preference for="Magento\AdvancedRule\Model\Condition\FilterGroupInterface"
+                type="Magento\AdvancedRule\Model\Condition\FilterGroup" />
+    <preference for="Magento\AdvancedRule\Model\Condition\FilterInterface"
+                type="Magento\AdvancedRule\Model\Condition\Filter" />
+</config>

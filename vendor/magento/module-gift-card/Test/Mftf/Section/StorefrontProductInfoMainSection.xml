@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+ /**
+  * Copyright © Magento, Inc. All rights reserved.
+  * See COPYING.txt for license details.
+  */
+-->
+<sections xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+          xsi:noNamespaceSchemaLocation="urn:magento:mftf:Page/etc/SectionObject.xsd">
+    <section name="StorefrontProductInfoMainSection">
+        <element name="giftCardAmountSelect" type="select" selector="#giftcard-amount"/>
+        <element name="giftCardAmountOption" type="text" selector="#giftcard-amount option[value='{{var1}}']" parameterized="true"/>
+        <element name="giftCardAmountInput" type="input" selector="input#giftcard-amount-input"/>
+        <element name="giftCardAmountNote" type="text" selector="#giftcard-amount-box .note"/>
+        <element name="giftCardSenderEmail" type="input" selector="#giftcard_sender_email"/>
+        <element name="giftCardRecipientEmail" type="input" selector="#giftcard_recipient_email"/>
+        <element name="giftCardAmountInputError" type="text" selector="#giftcard-amount-input-error"/>
+        <element name="giftCardSenderNameError" type="text" selector="#giftcard_sender_name-error"/>
+        <element name="giftCardSenderEmailError" type="text" selector="#giftcard_sender_email-error"/>
+        <element name="giftCardRecipientNameError" type="text" selector="#giftcard_recipient_name-error"/>
+        <element name="giftCardRecipientEmailError" type="text" selector="#giftcard_recipient_email-error"/>
+        <element name="customGiftcardAmount" type="input" selector="#giftcard-amount-input"/>
+        <element name="giftCardSenderName" type="input" selector="#giftcard_sender_name"/>
+        <element name="giftCardRecipientName" type="input" selector="#giftcard_recipient_name"/>
+        <element name="giftCardMessage" type="input" selector="#giftcard-message"/>
+    </section>
+</sections>

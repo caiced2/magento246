@@ -1,0 +1,69 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+ /**
+  * Copyright © Magento, Inc. All rights reserved.
+  * See COPYING.txt for license details.
+  */
+-->
+
+<tests xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xsi:noNamespaceSchemaLocation="urn:magento:mftf:Test/etc/testSchema.xsd">
+    <test name="AdminRestrictedUserOnlyAccessCmsBlockTest">
+        <annotations>
+            <stories value="CMS block"/>
+            <features value="CmsStaging"/>
+            <stories value="CMS blocks"/>
+            <title value="Check: restricted admin with access only to CMS Block"/>
+            <description value="Check that the system shows information only in Blocks"/>
+            <severity value="MAJOR"/>
+            <testCaseId value="MAGETWO-94804"/>
+            <useCaseId value="MAGETWO-91688"/>
+            <group value="Cms"/>
+        </annotations>
+        <before>
+            <actionGroup ref="AdminLoginActionGroup" stepKey="logIn"/>
+        </before>
+
+        <!--Create restricted roles for this user. Access to Content->Blocks only-->
+        <actionGroup ref="AdminCreateRoleActionGroup" stepKey="adminCreateRole">
+            <argument name="restrictedRole" value="Blocks"/>
+            <argument name="User" value="adminRole"/>
+        </actionGroup>
+
+        <!--Create new admin user-->
+        <actionGroup ref="AdminCreateUserActionGroup" stepKey="adminCreateUser">
+            <argument name="role" value="adminRole"/>
+        </actionGroup>
+
+        <!--Log out-->
+        <actionGroup ref="SignOut" stepKey="SignOut"/>
+        <!--Log in as new user-->
+        <actionGroup ref="AdminLoginActionGroup" stepKey="LoginActionGroup">
+            <argument name="username" value="{{newAdmin.username}}"/>
+            <argument name="password" value="{{newAdmin.password}}"/>
+        </actionGroup>
+
+        <!--Verify that The system shows information included in "Blocks"-->
+        <see stepKey="seeBlocksPage" userInput="Blocks"/>
+        <seeInCurrentUrl url="{{CmsBlocksPage.url}}" stepKey="assertUrl"/>
+
+        <!--Log Out-->
+        <actionGroup ref="AdminLogoutActionGroup" stepKey="logOut1"/>
+
+        <after>
+            <!--Login as Admin-->
+            <actionGroup ref="AdminLoginActionGroup" stepKey="logInForDeletingCreatedData"/>
+            <!--Delete created user-->
+            <actionGroup ref="AdminDeleteUserActionGroup" stepKey="AdminDeleteUserActionGroup">
+                <argument name="user" value="newAdmin"/>
+            </actionGroup>
+            <!--Delete created role-->
+            <actionGroup ref="AdminDeleteUserRoleActionGroup" stepKey="AdminDeleteRoleActionGroup">
+                <argument name="roleName" value="{{adminRole.name}}"/>
+            </actionGroup>
+            <actionGroup ref="ClearFiltersAdminDataGridActionGroup" stepKey="resetRoleFilters"/>
+            <!--Log Out-->
+            <actionGroup ref="AdminLogoutActionGroup" stepKey="logOut2"/>
+        </after>
+    </test>
+</tests>

@@ -1,0 +1,43 @@
+{
+    "magento_logging_event": {
+        "column": {
+            "log_id": true,
+            "ip": true,
+            "x_forwarded_ip": true,
+            "event_code": true,
+            "time": true,
+            "action": true,
+            "info": true,
+            "status": true,
+            "user": true,
+            "user_id": true,
+            "fullaction": true,
+            "error_message": true
+        },
+        "index": {
+            "MAGENTO_LOGGING_EVENT_USER_ID": true,
+            "MAGENTO_LOGGING_EVENT_USER": true
+        },
+        "constraint": {
+            "PRIMARY": true,
+            "MAGENTO_LOGGING_EVENT_USER_ID_ADMIN_USER_USER_ID": true
+        }
+    },
+    "magento_logging_event_changes": {
+        "column": {
+            "id": true,
+            "source_name": true,
+            "event_id": true,
+            "source_id": true,
+            "original_data": true,
+            "result_data": true
+        },
+        "index": {
+            "MAGENTO_LOGGING_EVENT_CHANGES_EVENT_ID": true
+        },
+        "constraint": {
+            "PRIMARY": true,
+            "FK_D29B0056693455AC9AC172C00D82F9D9": true
+        }
+    }
+}

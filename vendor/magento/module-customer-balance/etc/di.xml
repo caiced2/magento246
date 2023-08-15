@@ -1,0 +1,58 @@
+<?xml version="1.0"?>
+<!--
+/**
+ * Copyright © Magento, Inc. All rights reserved.
+ * See COPYING.txt for license details.
+ */
+-->
+<config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="urn:magento:framework:ObjectManager/etc/config.xsd">
+    <preference for="Magento\Payment\Model\Cart\SalesModel\Order" type="Magento\CustomerBalance\Model\Cart\SalesModel\Order" />
+    <preference for="Magento\Payment\Model\Cart\SalesModel\Quote" type="Magento\CustomerBalance\Model\Cart\SalesModel\Quote" />
+    <preference for="Magento\CustomerBalance\Api\BalanceManagementInterface" type="Magento\CustomerBalance\Model\BalanceManagement" />
+    <type name="Magento\Framework\Module\Manager">
+        <arguments>
+            <argument name="outputConfigPaths" xsi:type="array">
+                <item name="Magento_CustomerBalance" xsi:type="const">Magento\CustomerBalance\Helper\Data::XML_PATH_ENABLED</item>
+            </argument>
+        </arguments>
+    </type>
+    <type name ="Magento\Quote\Model\Quote\TotalsCollector">
+        <plugin name="quoteCustomerSegmentUpdater" type="Magento\CustomerBalance\Model\Plugin\TotalsCollector" />
+    </type>
+    <type name="Magento\Framework\Module\Setup\Migration">
+        <arguments>
+            <argument name="compositeModules" xsi:type="array">
+                <item name="magento_customerbalance" xsi:type="string">Magento_CustomerBalance</item>
+            </argument>
+        </arguments>
+    </type>
+    <virtualType name="Magento\Sales\Model\ResourceModel\Order\Grid">
+        <arguments>
+            <argument name="columns" xsi:type="array">
+                <item name="refunded_to_store_credit" xsi:type="string">sales_order.customer_bal_total_refunded</item>
+            </argument>
+        </arguments>
+    </virtualType>
+    <virtualType name="Magento\SalesArchive\Model\ResourceModel\Order\Grid">
+        <arguments>
+            <argument name="columns" xsi:type="array">
+                <item name="refunded_to_store_credit" xsi:type="string">sales_order.customer_bal_total_refunded</item>
+            </argument>
+        </arguments>
+    </virtualType>
+    <type name="Magento\Sales\Api\OrderRepositoryInterface">
+        <plugin name="get_customer_balance" type="Magento\CustomerBalance\Model\Plugin\OrderRepository"/>
+    </type>
+    <type name="Magento\Sales\Api\InvoiceRepositoryInterface">
+        <plugin name="get_customer_balance" type="Magento\CustomerBalance\Model\Plugin\InvoiceRepository"/>
+    </type>
+    <type name="Magento\Sales\Api\CreditmemoRepositoryInterface">
+        <plugin name="get_customer_balance" type="Magento\CustomerBalance\Model\Plugin\CreditmemoRepository"/>
+    </type>
+    <type name="Magento\Sales\Model\Order">
+        <plugin name="can_creditmemo_with_store_credit" type="Magento\CustomerBalance\Plugin\CreditMemoResolver"/>
+    </type>
+    <type name="Magento\Quote\Model\Quote">
+        <plugin name="remove_store_credit_after_product_delete" type="Magento\CustomerBalance\Plugin\Model\Quote\ResetCustomerBalanceUsage"/>
+    </type>
+</config>

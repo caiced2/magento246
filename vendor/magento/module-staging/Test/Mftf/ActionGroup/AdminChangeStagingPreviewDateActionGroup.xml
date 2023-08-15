@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+ /**
+  * Copyright © Magento, Inc. All rights reserved.
+  * See COPYING.txt for license details.
+  */
+-->
+
+<actionGroups xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+              xsi:noNamespaceSchemaLocation="urn:magento:mftf:Test/etc/actionGroupSchema.xsd">
+    <actionGroup name="AdminChangeStagingPreviewDateActionGroup">
+        <annotations>
+            <description>Change date and time in staging preview.</description>
+        </annotations>
+        <arguments>
+            <argument name="previewDate" type="string"/>
+        </arguments>
+
+        <conditionalClick selector="{{AdminStagingPreviewSection.calendarBtn}}" dependentSelector="{{AdminStagingPreviewSection.calendarBtnActive}}" visible="false" stepKey="openCalendar"/>
+        <fillField userInput="{{previewDate}}" selector="{{AdminStagingPreviewSection.stagingDate}}" stepKey="fillDateAndtime"/>
+        <click selector="{{AdminStagingPreviewSection.previewCalendarBtn}}" stepKey="clickPreviewButton"/>
+        <waitForPageLoad stepKey="waitForPageLoad"/>
+    </actionGroup>
+</actionGroups>

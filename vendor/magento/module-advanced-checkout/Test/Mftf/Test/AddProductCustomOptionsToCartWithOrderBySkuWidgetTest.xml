@@ -1,0 +1,80 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+ /**
+  * Copyright © Magento, Inc. All rights reserved.
+  * See COPYING.txt for license details.
+  */
+-->
+
+<tests xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="urn:magento:mftf:Test/etc/testSchema.xsd">
+    <test name="AddProductCustomOptionsToCartWithOrderBySkuWidgetTest">
+        <annotations>
+            <title value="Check that Simple product with custom options by compound sku, added by SKU from Widget to an Order"/>
+            <description value="Check that Simple product with custom options by compound sku, added by SKU from Widget to an Order"/>
+            <severity value="CRITICAL"/>
+            <testCaseId value="MC-14054"/>
+            <group value="AdvancedCheckout"/>
+            <stories value="Add products to cart by sku from widget"/>
+            <group value="mtf_migrated"/>
+        </annotations>
+        <before>
+            <!--Register Customer.-->
+            <createData entity="Simple_US_Customer" stepKey="createCustomer"/>
+
+            <!--Create Simple Product with custom options -->
+            <actionGroup ref="AdminLoginActionGroup" stepKey="loginAsAdmin"/>
+            <createData entity="_defaultCategory" stepKey="createCategory"/>
+            <createData entity="simpleProductDefault" stepKey="createProduct">
+                <field key="price">300</field>
+                <requiredEntity createDataKey="createCategory"/>
+            </createData>
+            <updateData createDataKey="createProduct" entity="SimpleProductWithOption" stepKey="updateProductWithOption"/>
+
+            <!-- Flush cache -->
+            <actionGroup ref="CliCacheFlushActionGroup" stepKey="flushCache">
+                <argument name="tags" value=""/>
+            </actionGroup>
+
+            <!--Create widget "Order by Sku" -->
+            <actionGroup ref="AdminCreateAndSaveWidgetActionGroup" stepKey="createWidget">
+                <argument name="widget" value="DefaultOrderBySKUWidget" />
+            </actionGroup>
+        </before>
+        <after>
+            <deleteData createDataKey="createCustomer" stepKey="deleteCustomer"/>
+            <deleteData createDataKey="createProduct" stepKey="deleteProduct"/>
+            <deleteData createDataKey="createCategory" stepKey="deleteCategory"/>
+            <actionGroup ref="AdminDeleteWidgetActionGroup" stepKey="deleteWidget">
+                <argument name="widget" value="DefaultOrderBySKUWidget"/>
+            </actionGroup>
+
+            <actionGroup ref="AdminLogoutActionGroup" stepKey="adminLogout"/>
+        </after>
+
+        <!--Login to Frontend-->
+        <actionGroup ref="LoginToStorefrontActionGroup" stepKey="customerLogin">
+            <argument name="Customer" value="$$createCustomer$$" />
+        </actionGroup>
+
+        <!--Navigate to My Account-->
+        <amOnPage url="{{StorefrontCustomerDashboardPage.url}}" stepKey="openCustomersAccount"/>
+        <scrollTo selector="{{StorefrontWidgetOrderBySKUSection.sku('0')}}" stepKey="scrollToWidget"/>
+
+        <!--Fill data in widget according to dataset-->
+        <fillField selector="{{StorefrontWidgetOrderBySKUSection.sku('0')}}" userInput="$$createProduct.sku$$-{{ProductOptionPercentPriceValueDropdown.sku}}" stepKey="fillProductSKU" />
+        <fillField selector="{{StorefrontWidgetOrderBySKUSection.qty('0')}}" userInput="{{SimpleCartItem.qty}}" stepKey="fillNumber" />
+
+        <!--Click Add to Cart button-->
+        <actionGroup ref="StorefrontAddToCartOrderBySkuWidgetActionGroup" stepKey="addToCart"/>
+
+        <!--Perform all asserts-->
+        <waitForPageLoad time="20" stepKey="waitForPageLoad"/>
+        <see selector="{{CheckoutCartMessageSection.successMessage}}" userInput="You added 1 product to your shopping cart." stepKey="seeSuccessMessage"/>
+        <see selector="{{CheckoutCartProductSection.productName}}" userInput="$$createProduct.name$$" stepKey="seeProductName"/>
+        <grabValueFrom selector="{{CheckoutCartProductSection.ProductQuantityByName($$createProduct.name$$)}}" stepKey="grabProductQty"/>
+        <assertEquals stepKey="assertQtyShoppingCart">
+			<actualResult type="const">$grabProductQty</actualResult>
+			<expectedResult type="const">{{SimpleCartItem.qty}}</expectedResult>
+        </assertEquals>
+    </test>
+</tests>

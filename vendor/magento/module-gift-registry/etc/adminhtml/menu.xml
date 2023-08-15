@@ -1,0 +1,12 @@
+<?xml version="1.0"?>
+<!--
+/**
+ * Copyright © Magento, Inc. All rights reserved.
+ * See COPYING.txt for license details.
+ */
+-->
+<config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="urn:magento:module:Magento_Backend:etc/menu.xsd">
+    <menu>
+        <add id="Magento_GiftRegistry::customer_magento_giftregistry" title="Gift Registry" translate="title" module="Magento_GiftRegistry" sortOrder="40" parent="Magento_Backend::other_settings" action="adminhtml/giftregistry" dependsOnModule="Magento_GiftRegistry" dependsOnConfig="magento_giftregistry/general/enabled" resource="Magento_GiftRegistry::customer_magento_giftregistry"/>
+    </menu>
+</config>

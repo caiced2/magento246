@@ -1,0 +1,70 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+ /**
+  * Copyright © Magento, Inc. All rights reserved.
+  * See COPYING.txt for license details.
+  */
+-->
+
+<tests xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xsi:noNamespaceSchemaLocation="urn:magento:mftf:Test/etc/testSchema.xsd">
+    <test name="AdminScheduledExportProductsTest">
+
+        <!-- S3 scheduled import/export artifacts in a different path than the local file system.
+        This test is used to merge with the local file system test and allows the resulting merged test
+        to use the correct path when Magento is either installed with S3 enabled or with S3 disabled -->
+
+        <after>
+            <!-- Delete S3 Data -->
+            <helper class="Magento\AwsS3\Test\Mftf\Helper\FileAssertions" method="assertDirectoryEmpty" stepKey="assertExportHistoryFileDeleted">
+                <argument name="path">{"local":"var/import_export/history/{$currentYear}/{$currentMonth}/","s3":"import_export/import_export/history/{$currentYear}/{$currentMonth}/"}</argument>
+            </helper>
+            <helper class="Magento\AwsS3\Test\Mftf\Helper\FileAssertions" method="deleteDirectory" stepKey="deleteExportFileDirectory">
+                <argument name="path">{"local":"var/export/{{ScheduleExport1.name}}/","s3":"import_export/export/{{ScheduleExport1.name}}/"}</argument>
+            </helper>
+        </after>
+
+        <!-- Get file directory based on storage type and use it in fillScheduledExportForm -->
+        <helper class="Magento\AwsS3\Test\Mftf\Helper\FileAssertions" method="extractFilePath" stepKey="scheduledExportFilePath" before="fillScheduledExportForm">
+            <argument name="filePathJson">{"local":"var/export/{{ScheduleExport1.name}}","s3":"import_export/export/{{ScheduleExport1.name}}"}</argument>
+        </helper>
+
+        <!-- Create Scheduled Import for Simple Product -->
+        <actionGroup ref="AdminFillScheduledExportFormActionGroup" stepKey="fillScheduledExportForm">
+            <argument name="name" value="{{ScheduleExport1.name}}"/>
+            <argument name="entityType" value="Products"/>
+            <argument name="fileFormat" value="CSV"/>
+            <argument name="serverType" value=""/>
+            <argument name="fileDirectory" value="{$scheduledExportFilePath}"/>
+        </actionGroup>
+
+        <!-- Verify Export History File -->
+        <helper class="Magento\AwsS3\Test\Mftf\Helper\FileAssertions" method="assertFileExists" stepKey="assertExportHistoryFileExists">
+            <argument name="filePath">{"local":"var/import_export/history/{$currentYear}/{$currentMonth}/{$currentDay}/{$currentHour}-{$currentMinute}_export_catalog_product.csv","s3":"import_export/import_export/history/{$currentYear}/{$currentMonth}/{$currentDay}/{$currentHour}-{$currentMinute}_export_catalog_product.csv"}</argument>
+        </helper>
+        <helper class="Magento\AwsS3\Test\Mftf\Helper\FileAssertions" method="assertFileContainsString" stepKey="assertExportHistoryFileContainsSimpleProduct1">
+            <argument name="filePath">{"local":"var/import_export/history/{$currentYear}/{$currentMonth}/{$currentDay}/{$currentHour}-{$currentMinute}_export_catalog_product.csv","s3":"import_export/import_export/history/{$currentYear}/{$currentMonth}/{$currentDay}/{$currentHour}-{$currentMinute}_export_catalog_product.csv"}</argument>
+            <argument name="text">$$simpleProduct1.sku$$</argument>
+        </helper>
+        <helper class="Magento\AwsS3\Test\Mftf\Helper\FileAssertions" method="assertFileContainsString" stepKey="assertExportHistoryFileContainsSimpleProduct2">
+            <argument name="filePath">{"local":"var/import_export/history/{$currentYear}/{$currentMonth}/{$currentDay}/{$currentHour}-{$currentMinute}_export_catalog_product.csv","s3":"import_export/import_export/history/{$currentYear}/{$currentMonth}/{$currentDay}/{$currentHour}-{$currentMinute}_export_catalog_product.csv"}</argument>
+            <argument name="text">$$simpleProduct2.sku$$</argument>
+        </helper>
+
+        <!-- Verify Exported File -->
+        <helper class="Magento\AwsS3\Test\Mftf\Helper\FileAssertions" method="assertGlobbedFileExists" stepKey="assertExportFileExists">
+            <argument name="path">{$scheduledExportFilePath}</argument>
+            <argument name="pattern">{$currentYear}-{$currentMonth}-{$currentDay}_{$currentHour}-{$currentMinute}-??_export_catalog_product.csv</argument>
+        </helper>
+        <helper class="Magento\AwsS3\Test\Mftf\Helper\FileAssertions" method="assertGlobbedFileContainsString" stepKey="assertExportFileContainsSimpleProduct1">
+            <argument name="path">{$scheduledExportFilePath}</argument>
+            <argument name="pattern">{$currentYear}-{$currentMonth}-{$currentDay}_{$currentHour}-{$currentMinute}-??_export_catalog_product.csv</argument>
+            <argument name="text">$$simpleProduct1.sku$$</argument>
+        </helper>
+        <helper class="Magento\AwsS3\Test\Mftf\Helper\FileAssertions" method="assertGlobbedFileContainsString" stepKey="assertExportFileContainsSimpleProduct2">
+            <argument name="path">{$scheduledExportFilePath}</argument>
+            <argument name="pattern">{$currentYear}-{$currentMonth}-{$currentDay}_{$currentHour}-{$currentMinute}-??_export_catalog_product.csv</argument>
+            <argument name="text">$$simpleProduct2.sku$$</argument>
+        </helper>
+    </test>
+</tests>

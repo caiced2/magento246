@@ -1,0 +1,100 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+ /**
+  * Copyright © Magento, Inc. All rights reserved.
+  * See COPYING.txt for license details.
+  */
+-->
+
+<entities xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+          xsi:noNamespaceSchemaLocation="urn:magento:mftf:DataGenerator/etc/dataProfileSchema.xsd">
+    <entity name="customerSegmentForGuests" type="customerSegment">
+        <data key="name" unique="suffix">Customer Segment Name</data>
+        <data key="description">Customer Segment Description</data>
+        <data key="is_active">1</data>
+        <array key="website_ids">
+            <item>1</item>
+        </array>
+        <data key="apply_to">2</data>
+    </entity>
+    <entity name="CustomerSegmentForNoorders" type="customerSegment">
+        <data key="name" unique="suffix">noorders</data>
+        <data key="assigned_website">Main Website</data>
+        <data key="is_active">1</data>
+        <data key="apply_to">1</data>
+    </entity>
+    <entity name="CustomerSegmentRetailer" type="customerSegment">
+        <data key="name" unique="suffix">Segment Retailer</data>
+        <data key="description">Customer Segment test for retailer customers</data>
+        <data key="assigned_website">Main Website</data>
+        <data key="is_active">1</data>
+        <data key="apply_to">0</data>
+    </entity>
+    <entity name="CustomerSegmentDefault" type="customerSegment">
+        <data key="name" unique="suffix">Segment Name</data>
+        <data key="description">Customer Segment</data>
+        <data key="assigned_website">Main Website</data>
+        <data key="is_active">1</data>
+        <data key="apply_to">0</data>
+    </entity>
+    <entity name="CustomerSegmentForRetailer" type="customerSegment">
+        <data key="name" unique="suffix">Segment isnotoneof</data>
+        <data key="description">Customer Segment test for retailer customers</data>
+        <data key="assigned_website">Main Website</data>
+        <data key="is_active">1</data>
+        <data key="apply_to">0</data>
+    </entity>
+    <entity name="CustomerSegmentDefault" type="customerSegment">
+        <data key="name" unique="suffix">Segment Name</data>
+        <data key="description">Customer Segment</data>
+        <data key="assigned_website">Main Website</data>
+        <data key="is_active">1</data>
+        <data key="apply_to">0</data>
+    </entity>
+    <entity name="CustomerSegmentDateOfBirth" type="customerSegment">
+        <data key="name" unique="suffix">Segment Name</data>
+        <data key="description">Customer Segment by date of birth</data>
+        <data key="assigned_website">Main Website</data>
+        <data key="is_active">1</data>
+        <data key="apply_to">0</data>
+    </entity>
+    <entity name="CustomerSegmentFirstName" type="customerSegment">
+        <data key="name" unique="suffix">Segment Name</data>
+        <data key="description">Customer Segment by First Name</data>
+        <data key="assigned_website">Main Website</data>
+        <data key="is_active">1</data>
+        <data key="apply_to">0</data>
+    </entity>
+    <entity name="CustomerSegmentLastName" type="customerSegment">
+        <data key="name" unique="suffix">Segment Name</data>
+        <data key="description">Customer Segment by Last Name</data>
+        <data key="assigned_website">Main Website</data>
+        <data key="is_active">1</data>
+        <data key="apply_to">0</data>
+    </entity>
+    <entity name="CustomerSegmentSubscription" type="customerSegment">
+        <data key="name" unique="suffix">Segment Name</data>
+        <data key="description">Customer Segment by Subscription to newsletter</data>
+        <data key="assigned_website">Main Website</data>
+        <data key="is_active">1</data>
+        <data key="apply_to">0</data>
+    </entity>
+    <entity name="CustomerSegmentInactive" type="customerSegment">
+        <data key="name" unique="suffix">Segment Name</data>
+        <data key="description">Customer Segment</data>
+        <data key="assigned_website">Main Website</data>
+        <data key="is_active">0</data>
+        <data key="apply_to">0</data>
+    </entity>
+    <entity name="CustomerSegmentForRegistered" extends="CustomerSegmentDefault">
+        <data key="apply_to">1</data>
+    </entity>
+
+    <entity name="CustomerSegmentForFreeProduct" type="customerSegment">
+        <data key="name" unique="suffix">FreeProductSegment-</data>
+        <data key="description">Customer Segment For Free Products</data>
+        <data key="assigned_website">Main Website</data>
+        <data key="is_active">1</data>
+        <data key="apply_to">1</data>
+    </entity>
+</entities>

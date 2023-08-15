@@ -1,0 +1,213 @@
+# Copyright © Magento, Inc. All rights reserved.
+# See COPYING.txt for license details.
+
+type Mutation {
+    requestReturn(input: RequestReturnInput! @doc(description: "An input object that contains the fields needed to start a return request.")): RequestReturnOutput @doc(description: "Initiates a buyer's request to return items for replacement or refund.") @resolver(class: "Magento\\RmaGraphQl\\Model\\Resolver\\RequestReturn")
+    addReturnComment(input: AddReturnCommentInput! @doc(description: "An input object that defines a return comment.")): AddReturnCommentOutput @doc(description: "Add a comment to an existing return.") @resolver(class: "Magento\\RmaGraphQl\\Model\\Resolver\\AddReturnComment")
+    addReturnTracking(input: AddReturnTrackingInput! @doc(description: "An input object that defines tracking information.")): AddReturnTrackingOutput @doc(description: "Add tracking information to the return.") @resolver(class: "Magento\\RmaGraphQl\\Model\\Resolver\\AddReturnTracking")
+    removeReturnTracking(input: RemoveReturnTrackingInput! @doc(description: "An input object that removes tracking information.")): RemoveReturnTrackingOutput @doc(description: "Remove a tracked shipment from a return.") @resolver(class: "Magento\\RmaGraphQl\\Model\\Resolver\\RemoveReturnTracking")
+}
+
+input RequestReturnInput @doc(description: "Contains information needed to start a return request."){
+    order_uid: ID! @doc(description: "The unique ID for a `Order` object.")
+    contact_email: String @doc(description: "The email address the buyer enters to receive notifications about the status of the return.")
+    items: [RequestReturnItemInput!]! @doc(description: "An array of items to be returned.")
+    comment_text: String @doc(description: "Text the buyer entered that describes the reason for the refund request.")
+}
+
+input RequestReturnItemInput @doc(description: "Contains details about an item to be returned."){
+    order_item_uid: ID! @doc(description: "The unique ID for a `OrderItemInterface` object.")
+    quantity_to_return: Float! @doc(description: "The quantity of the item to be returned.")
+    selected_custom_attributes: [SelectedCustomAttributeInput!] @doc(description: "An array of selected custom option IDs associated with the item to be returned. For example, the IDs for the selected color and size of a configurable product.")
+    entered_custom_attributes: [EnteredCustomAttributeInput!] @doc(description: "Details about a custom attribute that was entered.")
+}
+
+input EnteredCustomAttributeInput @doc(description: "Contains details about a custom text attribute that the buyer entered."){
+    attribute_code: String! @doc(description: "A string that identifies the entered custom attribute.")
+    value: String! @doc(description: "The text or other entered value.")
+}
+
+input SelectedCustomAttributeInput @doc(description: "Contains details about an attribute the buyer selected."){
+    attribute_code: String! @doc(description: "A string that identifies the selected attribute.")
+    value: ID! @doc(description: "The unique ID for a `CustomAttribute` object of a selected custom attribute.")
+}
+
+type RequestReturnOutput @doc(description: "Contains the response to a return request."){
+    return: Return @doc(description: "Details about a single return request.")
+    returns(
+        pageSize: Int = 20 @doc(description: "Specifies the maximum number of results to return at once. The default is 20."),
+        currentPage: Int = 1 @doc(description: "Specifies which page of results to return. The default is 1."),
+    ): Returns @doc(description: "An array of return requests.")
+}
+
+input AddReturnCommentInput @doc(description: "Defines a return comment."){
+    return_uid: ID! @doc(description: "The unique ID for a `Return` object.")
+    comment_text: String! @doc(description: "The text added to the return request.")
+}
+
+type AddReturnCommentOutput @doc(description: "Contains details about the return request."){
+    return: Return @doc(description: "The modified return.")
+}
+
+input AddReturnTrackingInput @doc(description: "Defines tracking information to be added to the return."){
+    return_uid: ID! @doc(description: "The unique ID for a `Returns` object.")
+    carrier_uid: ID! @doc(description: "The unique ID for a `ReturnShippingCarrier` object.")
+    tracking_number: String! @doc(description: "The shipping tracking number for this return request.")
+}
+
+type AddReturnTrackingOutput @doc(description: "Contains the response after adding tracking information."){
+    return: Return @doc(description: "Details about the modified return.")
+    return_shipping_tracking: ReturnShippingTracking @doc(description: "Details about shipping for a return.")
+}
+
+input RemoveReturnTrackingInput @doc(description: "Defines the tracking information to delete."){
+    return_shipping_tracking_uid: ID! @doc(description: "The unique ID for a `ReturnShippingTracking` object.")
+}
+
+type RemoveReturnTrackingOutput @doc(description: "Contains the response after deleting tracking information."){
+    return: Return @doc(description: "Contains details about the modified return.")
+}
+
+type Customer {
+    returns(
+        pageSize: Int = 20 @doc(description: "The maximum number of results to return at once. The default is 20."),
+        currentPage: Int = 1 @doc(description: "The page of results to return. The default is 1."),
+    ): Returns @doc(description: "Information about the customer's return requests.") @resolver(class: "Magento\\RmaGraphQl\\Model\\Resolver\\Returns")
+    return(uid: ID!): Return @doc(description: "Details about the specified return request from the unique ID for a `Return` object.") @resolver(class: "Magento\\RmaGraphQl\\Model\\Resolver\\Rma")
+}
+
+type CustomerOrder {
+    returns(
+        pageSize: Int = 20 @doc(description: "The maximum number of results to return at once. The default is 20."),
+        currentPage: Int = 1 @doc(description: "The page of results to return. The default is 1."),
+    ): Returns @doc(description: "Return requests associated with this order.") @resolver(class: "Magento\\RmaGraphQl\\Model\\Resolver\\CustomerOrder\\Returns")
+    items_eligible_for_return: [OrderItemInterface] @doc(description: "A list of order items eligible to be in a return request.") @resolver(class: "Magento\\RmaGraphQl\\Model\\Resolver\\CustomerOrder\\EligibleItems")
+}
+
+interface OrderItemInterface {
+    eligible_for_return: Boolean @doc(description: "Indicates whether the order item is eligible to be in a return request.") @resolver(class: "Magento\\RmaGraphQl\\Model\\Resolver\\CustomerOrder\\Item\\IsEligible")
+}
+
+type Returns @doc(description: "Contains a list of customer return requests."){
+    items: [Return] @doc(description: "A list of return requests.")
+    page_info: SearchResultPageInfo @doc(description: "Pagination metadata.")
+    total_count: Int @doc(description: "The total number of return requests.")
+}
+
+type Return @doc(description: "Contains details about a return.") {
+    uid: ID! @doc(description: "The unique ID for a `Return` object.")
+    number: String! @doc(description: "A human-readable return number.")
+    order: CustomerOrder @doc(description: "The order associated with the return.") @resolver(class: "Magento\\RmaGraphQl\\Model\\Resolver\\Order")
+    created_at: String! @doc(description: "The date the return was requested.")
+    customer: ReturnCustomer! @doc(description: "Data from the customer who created the return request.")
+    status: ReturnStatus @doc(description: "The status of the return request.")
+    shipping: ReturnShipping @doc(description: "Shipping information for the return.")
+    comments: [ReturnComment] @doc(description: "A list of comments posted for the return request.")
+    items: [ReturnItem] @doc(description: "A list of items being returned.")
+    available_shipping_carriers: [ReturnShippingCarrier] @doc(description: "A list of shipping carriers available for returns.")
+}
+
+type ReturnCustomer @doc(description: "The customer information for the return.") {
+    email: String! @doc(description: "The email address of the customer.")
+    firstname: String @doc(description: "The first name of the customer.")
+    lastname: String @doc(description: "The last name of the customer.")
+}
+
+type ReturnItem @doc(description: "Contains details about a product being returned."){
+    uid: ID! @doc(description: "The unique ID for a `ReturnItem` object.")
+    order_item: OrderItemInterface! @doc(description: "Provides access to the product being returned, including information about selected and entered options.") @resolver(class: "Magento\\SalesGraphQl\\Model\\Resolver\\OrderItem")
+    custom_attributes: [ReturnCustomAttribute] @doc(description: "Return item custom attributes that are visible on the storefront.")
+    request_quantity: Float! @doc(description: "The quantity of the item requested to be returned.")
+    quantity: Float! @doc(description: "The quantity of the item the merchant authorized to be returned.")
+    status: ReturnItemStatus! @doc(description: "The return status of the item.")
+}
+
+type ReturnCustomAttribute @doc(description: "Contains details about a `ReturnCustomerAttribute` object."){
+    uid: ID! @doc(description: "The unique ID for a `ReturnCustomAttribute` object.")
+    label: String! @doc(description: "A description of the attribute.")
+    value: String! @doc(description: "A JSON-encoded value of the attribute.")
+}
+
+type ReturnComment @doc(description: "Contains details about a return comment."){
+    uid: ID! @doc(description: "The unique ID for a `ReturnComment` object.")
+    created_at: String! @doc(description: "The date and time the comment was posted.")
+    author_name: String! @doc(description: "The name or author who posted the comment.")
+    text: String! @doc(description: "The contents of the comment.")
+}
+
+type ReturnShipping @doc(description: "Contains details about the return shipping address."){
+    address: ReturnShippingAddress @doc(description: "The merchant-defined return shipping address.")
+    tracking(uid: ID): [ReturnShippingTracking] @doc(description: "The unique ID for a `ReturnShippingTracking` object. If a single UID is specified, the array contains a single tracking record. Otherwise, array contains all tracking information.") @resolver(class: "Magento\\RmaGraphQl\\Model\\Resolver\\Tracking")
+}
+
+type ReturnShippingCarrier @doc(description: "Contains details about the carrier on a return."){
+    uid: ID! @doc(description: "The unique ID for a `ReturnShippingCarrier` object assigned to the shipping carrier.")
+    label: String! @doc(description: "A description of the shipping carrier.")
+}
+
+type ReturnShippingTracking @doc(description: "Contains shipping and tracking details."){
+    uid: ID! @doc(description: "The unique ID for a `ReturnShippingTracking` object assigned to the tracking item.")
+    carrier: ReturnShippingCarrier! @doc(description: "Contains details of a shipping carrier.")
+    tracking_number: String! @doc(description: "A tracking number assigned by the carrier.")
+    status: ReturnShippingTrackingStatus @doc(description: "Details about the status of a shipment.")
+}
+
+type ReturnShippingTrackingStatus @doc(description: "Contains the status of a shipment."){
+    text: String! @doc(description: "Text that describes the status.")
+    type: ReturnShippingTrackingStatusType! @doc(description: "Indicates whether the status type is informational or an error.")
+}
+
+enum ReturnShippingTrackingStatusType {
+    INFORMATION
+    ERROR
+}
+
+type ReturnShippingAddress @doc(description: "Contains details about the shipping address used for receiving returned items."){
+    contact_name: String @doc(description: "The merchant's contact person.")
+    street: [String]! @doc(description: "The street address for product returns.")
+    city: String! @doc(description: "The city for product returns.")
+    region: Region! @doc(description: "An object that defines the state or province for product returns.")
+    postcode: String! @doc(description: "The postal code for product returns.")
+    country: Country! @doc(description: "An object that defines the country for product returns.")
+    telephone: String @doc(description: "The telephone number for product returns.")
+}
+
+enum ReturnStatus {
+    PENDING
+    AUTHORIZED
+    PARTIALLY_AUTHORIZED
+    RECEIVED
+    PARTIALLY_RECEIVED
+    APPROVED
+    PARTIALLY_APPROVED
+    REJECTED
+    PARTIALLY_REJECTED
+    DENIED
+    PROCESSED_AND_CLOSED
+    CLOSED
+}
+
+enum ReturnItemStatus {
+    PENDING
+    AUTHORIZED
+    RECEIVED
+    APPROVED
+    REJECTED
+    DENIED
+}
+
+type StoreConfig {
+    returns_enabled: String! @doc(description: "Indicates whether RMA is enabled on the storefront. Possible values: enabled/disabled.") @resolver(class: "Magento\\RmaGraphQl\\Model\\Resolver\\IsRmaEnabled")
+}
+
+interface ProductInterface {
+    is_returnable: String @doc(description: "Indicates whether the product can be returned.")
+}
+
+input ProductFilterInput {
+    is_returnable: FilterTypeInput @doc(description: "Indicates whether the product can be returned.")
+}
+
+input ProductSortInput {
+    is_returnable: SortEnum @doc(description: "Indicates whether the product can be returned.")
+}

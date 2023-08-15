@@ -1,0 +1,75 @@
+<?xml version="1.0"?>
+<!--
+/**
+ * Copyright © Magento, Inc. All rights reserved.
+ * See COPYING.txt for license details.
+ */
+-->
+<config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="urn:magento:framework:ObjectManager/etc/config.xsd">
+    <type name="Magento\Framework\Logger\Monolog">
+        <arguments>
+            <argument name="name" xsi:type="string">report</argument>
+            <argument name="handlers"  xsi:type="array">
+                <item name="report" xsi:type="object">Magento\Support\Model\Logger\Handler\Report</item>
+                <item name="system" xsi:type="object">Magento\Framework\Logger\Handler\System</item>
+                <item name="debug" xsi:type="object">Magento\Framework\Logger\Handler\Debug</item>
+            </argument>
+        </arguments>
+    </type>
+    <virtualType name="reader" type="Magento\Framework\Config\Reader\Filesystem">
+        <arguments>
+            <argument name="converter" xsi:type="object">Magento\Support\Model\Report\Config\Converter</argument>
+            <argument name="schemaLocator" xsi:type="object">Magento\Support\Model\Report\Config\SchemaLocator</argument>
+            <argument name="fileName" xsi:type="string">report.xml</argument>
+            <argument name="idAttributes" xsi:type="array">
+                <item name="/config/type" xsi:type="string">name</item>
+            </argument>
+        </arguments>
+    </virtualType>
+    <type name="Magento\Support\Model\Report\Config\Data">
+        <arguments>
+            <argument name="reader" xsi:type="object">reader</argument>
+            <argument name="cacheId" xsi:type="string">support_config_cache</argument>
+        </arguments>
+    </type>
+    <type name="Magento\Framework\View\Element\UiComponent\DataProvider\CollectionFactory">
+        <arguments>
+            <argument name="collections" xsi:type="array">
+                <item name="support_report_listing_data_source" xsi:type="string">ReportGridDataProvider</item>
+                <item name="support_backup_listing_data_source" xsi:type="string">BackupGridDataProvider</item>
+            </argument>
+        </arguments>
+    </type>
+    <virtualType name="ReportGridDataProvider" type="Magento\Framework\View\Element\UiComponent\DataProvider\SearchResult">
+        <arguments>
+            <argument name="mainTable" xsi:type="string">support_report</argument>
+            <argument name="resourceModel" xsi:type="string">Magento\Support\Model\ResourceModel\Report</argument>
+        </arguments>
+    </virtualType>
+    <virtualType name="BackupGridDataProvider" type="Magento\Framework\View\Element\UiComponent\DataProvider\SearchResult">
+        <arguments>
+            <argument name="mainTable" xsi:type="string">support_backup</argument>
+            <argument name="resourceModel" xsi:type="string">Magento\Support\Model\ResourceModel\Backup</argument>
+        </arguments>
+    </virtualType>
+    <type name="Magento\Framework\Console\CommandListInterface">
+        <arguments>
+            <argument name="commands" xsi:type="array">
+                <item name="check" xsi:type="object">Magento\Support\Console\Command\UtilityCheckCommand</item>
+                <item name="paths" xsi:type="object">Magento\Support\Console\Command\UtilityPathsCommand</item>
+                <item name="db" xsi:type="object">Magento\Support\Console\Command\BackupDbCommand</item>
+                <item name="code" xsi:type="object">Magento\Support\Console\Command\BackupCodeCommand</item>
+            </argument>
+        </arguments>
+    </type>
+    <virtualType name="shell" type="Magento\Framework\Shell">
+        <arguments>
+            <argument name="commandRenderer" xsi:type="object">Magento\Framework\Shell\CommandRenderer</argument>
+        </arguments>
+    </virtualType>
+    <type name="Magento\Support\Helper\Shell">
+        <arguments>
+            <argument name="shell" xsi:type="object">shell</argument>
+        </arguments>
+    </type>
+</config>

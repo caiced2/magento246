@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+ /**
+  * Copyright © Magento, Inc. All rights reserved.
+  * See COPYING.txt for license details.
+  */
+-->
+<actionGroups xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:noNamespaceSchemaLocation="urn:magento:mftf:Test/etc/actionGroupSchema.xsd">
+    <actionGroup name="AdminDeleteCustomerCustomAttributeActionGroup">
+        <arguments>
+            <argument name="attributeLabel" type="string"/>
+        </arguments>
+        <amOnPage url="{{CustomerAttributesPage.url}}" stepKey="navigateToCustomerAttributes"/>
+        <waitForPageLoad stepKey="waitForAttributePageLoad"/>
+        <fillField selector="{{AdminCustomerAttributeSection.searchDefaultLabel}}" userInput="{{attributeLabel}}" stepKey="TypeAttributeName"/>
+        <click selector="{{CustomerAccountSection.search}}" stepKey="clickToSearchButton"/>
+        <waitForPageLoad stepKey="waitForResult"/>
+        <click selector="{{CustomerAccountSection.attribute(attributeLabel)}}" stepKey="clickToSelectAttribute"/>
+        <waitForPageLoad stepKey="waitForAttributePageLoaded"/>
+        <click selector="{{CustomerAccountSection.delete}}" stepKey="ClickOnDeleteButton"/>
+        <waitForElementVisible selector="{{CustomerAccountSection.confirm}}" stepKey="waitForOKButton"/>
+        <click selector="{{CustomerAccountSection.confirm}}" stepKey="clickToConfirm"/>
+        <waitForPageLoad stepKey="waitAttributeDeleted"/>
+        <see selector="{{CustomerAccountSection.successMessage}}" userInput="You deleted the customer attribute." stepKey="seeSuccessDeleteMessage"/>
+        <click selector="{{CustomerAccountSection.reset}}" stepKey="clickToResetFilters"/>
+        <waitForPageLoad stepKey="waitForFiltersReset"/>
+    </actionGroup>
+</actionGroups>

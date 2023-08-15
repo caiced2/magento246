@@ -1,0 +1,1 @@
+The Magento_QuickCheckoutAdminPanel module.

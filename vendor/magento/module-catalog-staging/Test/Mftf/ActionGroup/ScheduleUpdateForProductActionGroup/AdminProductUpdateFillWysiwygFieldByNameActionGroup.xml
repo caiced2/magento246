@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+ /**
+  * Copyright © Magento, Inc. All rights reserved.
+  * See COPYING.txt for license details.
+  */
+-->
+<actionGroups xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:noNamespaceSchemaLocation="urn:magento:mftf:Test/etc/actionGroupSchema.xsd">
+    <actionGroup name="AdminProductUpdateFillWysiwygFieldByName">
+        <arguments>
+            <argument name="fieldName" type="string"/>
+            <argument name="content" type="string"/>
+        </arguments>
+        <executeJS function="document.querySelector('{{AdminCatalogStagingSlideOutSection.contentTab}}').scrollIntoView()" stepKey="scrollToContentTab"/>
+        <conditionalClick selector="{{AdminCatalogStagingSlideOutSection.contentTab}}" dependentSelector="{{AdminCatalogStagingSlideOutSection.wysiwygFieldByName(fieldName)}}" visible="false" stepKey="expandContentTab"/>
+        <fillField selector="{{AdminCatalogStagingSlideOutSection.wysiwygFieldByName(fieldName)}}" userInput="{{content}}" stepKey="fillFieldByName"/>
+    </actionGroup>
+</actionGroups>

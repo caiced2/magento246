@@ -1,0 +1,21 @@
+<?xml version="1.0"?>
+<!--
+/**
+ * Copyright © Magento, Inc. All rights reserved.
+ * See COPYING.txt for license details.
+ */
+-->
+<config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="urn:magento:framework:ObjectManager/etc/config.xsd">
+    <type name="Magento\Catalog\Controller\Adminhtml\Category\Edit">
+        <plugin name="adminhtmlCategoryEditPlugin" type="Magento\VisualMerchandiser\Plugin\Catalog\Controller\Adminhtml\Category\EditPlugin" />
+    </type>
+    <type name="Magento\Catalog\Controller\Adminhtml\Category\Add">
+        <plugin name="adminhtmlCategoryAddPlugin" type="Magento\VisualMerchandiser\Plugin\Catalog\Controller\Adminhtml\Category\AddPlugin" />
+    </type>
+    <type name="Magento\Catalog\Controller\Adminhtml\Category\Save">
+        <plugin name="adminhtmlCategorySavePlugin" type="Magento\VisualMerchandiser\Plugin\Catalog\Controller\Adminhtml\Category\SavePlugin" />
+    </type>
+    <type name="Magento\Catalog\Model\ResourceModel\Product\CategoryLink">
+        <plugin name="adminhtmlRankCategoryProductPositionsPlugin" type="Magento\VisualMerchandiser\Plugin\Catalog\Model\ResourceModel\Product\RankCategoryProductPositions" />
+    </type>
+</config>

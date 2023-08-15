@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+ /**
+  * Copyright © Magento, Inc. All rights reserved.
+  * See COPYING.txt for license details.
+  */
+-->
+<actionGroups xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:noNamespaceSchemaLocation="urn:magento:mftf:Test/etc/actionGroupSchema.xsd">
+    <actionGroup name="AdminStagingAdvancedPricingNewCustomerGroupPrice">
+        <arguments>
+            <argument name="qty" type="string" defaultValue="2"/>
+            <argument name="priceType" type="string" defaultValue="Discount"/>
+            <argument name="discount" type="string" defaultValue="25"/>
+            <argument name="customerGroup" type="string" defaultValue="0"/>
+        </arguments>
+        <fillField selector="{{AdminScheduleUpdateAdvancedPriceSection.productTierPriceQtyInput(customerGroup)}}" userInput="{{qty}}" stepKey="fillProductTierPriceQtyInput2"/>
+        <selectOption selector="{{AdminScheduleUpdateAdvancedPriceSection.productTierPriceValueTypeSelect(customerGroup)}}" userInput="{{priceType}}" stepKey="selectProductTierPriceValueType2"/>
+        <fillField selector="{{AdminScheduleUpdateAdvancedPriceSection.productTierPricePercentageValuePriceInput(customerGroup)}}" userInput="{{discount}}" stepKey="selectProductTierPricePriceInput2"/>
+        <click selector="{{AdminProductScheduleUpdateSection.doneButton}}" stepKey="clickDoneButton"/>
+    </actionGroup>
+</actionGroups>

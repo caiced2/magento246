@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+ /**
+  * Copyright © Magento, Inc. All rights reserved.
+  * See COPYING.txt for license details.
+  */
+-->
+<actionGroups xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:noNamespaceSchemaLocation="urn:magento:mftf:Test/etc/actionGroupSchema.xsd">
+    <actionGroup name="FillScheduleUpdateBasicActionGroup">
+        <arguments>
+            <argument name="schedule"/>
+        </arguments>
+        <fillField selector="{{AdminStagingSlideOutSection.updateName}}" userInput="{{schedule.updateName}}" stepKey="fillUpdateName"/>
+        <fillField selector="{{AdminStagingSlideOutSection.updateDescription}}" userInput="{{schedule.updateDescription}}" stepKey="fillDescription"/>
+        <click selector="{{AdminStagingSlideOutSection.datepickerStartDate}}" stepKey="clickDatePicker"/>
+        <click selector="{{AdminStagingSlideOutSection.datepickerGoToday}}" stepKey="clickGoToday"/>
+        <click selector="{{AdminStagingSlideOutSection.datepickerClose}}" stepKey="clickClose"/>
+        <executeJS function="var date = new Date(jQuery('[name=\'staging[start_time]\']').val()),         options = { year: 'numeric', month: '2-digit', day: '2-digit', hour: '2-digit', minute: '2-digit' };         date.setMinutes(date.getMinutes() + {{schedule.scheduleMinutesAhead}});         date.setDate(date.getDate() + 1);         jQuery('[name=\'staging[start_time]\']').val(date.toLocaleString('en-US', options).replace(',', ''))" stepKey="executeJS"/>
+        <executeJS function="jQuery('[name=\'staging[start_time]\']').trigger('change')" stepKey="executeJS2"/>
+        <click selector="{{AdminStagingSlideOutSection.save}}" stepKey="clickSave"/>
+        <see selector="{{AdminScheduledChangesSection.scheduleLabel(schedule.start)}}" userInput="{{schedule.start}}" stepKey="seeStart"/>
+        <see selector="{{AdminScheduledChangesSection.scheduleDetails(schedule.updateName)}}" userInput="{{schedule.updateName}}" stepKey="seeUpdateName"/>
+        <see selector="{{AdminScheduledChangesSection.scheduleDetails(schedule.updateDescription)}}" userInput="{{schedule.updateDescription}}" stepKey="seeDescription"/>
+    </actionGroup>
+</actionGroups>

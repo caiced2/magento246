@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+ /**
+  * Copyright © Magento, Inc. All rights reserved.
+  * See COPYING.txt for license details.
+  */
+-->
+
+<tests xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xsi:noNamespaceSchemaLocation="urn:magento:mftf:Test/etc/testSchema.xsd">
+    <test name="AdminCheckInputFieldsDisabledAfterAppConfigDumpTest">
+        <grabAttributeFrom selector="{{AdminShippingMethodsRMASection.carriersDHLActiveRMA}}" userInput="disabled" after="assertDHLActiveDisabled" stepKey="grabDHLActiveRMADisabled"/>
+        <assertEquals after="grabDHLActiveRMADisabled" stepKey="assertDHLActiveRMADisabled">
+			<actualResult type="const">$grabDHLActiveRMADisabled</actualResult>
+			<expectedResult type="string">true</expectedResult>
+        </assertEquals>
+        <grabAttributeFrom selector="{{AdminShippingMethodsRMASection.carriersFedExActiveRMA}}" userInput="disabled" stepKey="grabFedExActiveRMADisabled" after="assertFedExActiveDisabled"/>
+        <assertEquals stepKey="assertFedExActiveRMADisabled" after="grabFedExActiveRMADisabled">
+			<actualResult type="const">$grabFedExActiveRMADisabled</actualResult>
+			<expectedResult type="string">true</expectedResult>
+        </assertEquals>
+        <grabAttributeFrom selector="{{AdminShippingMethodsRMASection.carriersUPSActiveRMA}}" userInput="disabled" stepKey="grabUPSActiveRMADisabled" after="assertUPSActiveDisabled"/>
+        <assertEquals stepKey="assertUPSActiveRMADisabled" after="grabUPSActiveRMADisabled">
+			<actualResult type="const">$grabUPSActiveRMADisabled</actualResult>
+			<expectedResult type="string">true</expectedResult>
+        </assertEquals>
+        <grabAttributeFrom selector="{{AdminShippingMethodsRMASection.carriersUSPSActiveRMA}}" userInput="disabled" stepKey="grabUSPSActiveRMADisabled" after="assertUSPSActiveDisabled"/>
+        <assertEquals stepKey="assertUSPSActiveRMADisabled" after="grabUSPSActiveRMADisabled">
+			<actualResult type="const">$grabUSPSActiveRMADisabled</actualResult>
+			<expectedResult type="string">true</expectedResult>
+        </assertEquals>
+    </test>
+</tests>

@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+ /**
+  * Copyright © Magento, Inc. All rights reserved.
+  * See COPYING.txt for license details.
+  */
+-->
+
+<actionGroups xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+              xsi:noNamespaceSchemaLocation="urn:magento:mftf:Test/etc/actionGroupSchema.xsd">
+    <actionGroup name="StorefrontAssertMiniCartMessageAfterAddNonexistentProductActionGroup">
+        <annotations>
+            <description>Validates that correct message appears in Mini Cart after adding nonexistent Product(s) by SKU from Customer account.</description>
+        </annotations>
+        <arguments>
+            <argument name="invalidItems" type="string" defaultValue="{{CONST.one}}"/>
+        </arguments>
+
+        <waitForElementVisible selector="{{StorefrontMinicartSection.emptyCartMessageContent}}" stepKey="waitForEmptyCartMessageVisible"/>
+        <see selector="{{StorefrontMinicartSection.emptyCartMessageContent}}" userInput="{{invalidItems}} item(s) need your attention." stepKey="verifyEmptyCartMessage"/>
+    </actionGroup>
+</actionGroups>

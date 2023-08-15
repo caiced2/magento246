@@ -1,0 +1,204 @@
+<?xml version="1.0"?>
+<!--
+/**
+ * Copyright © Magento, Inc. All rights reserved.
+ * See COPYING.txt for license details.
+ */
+-->
+<config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="urn:magento:framework:ObjectManager/etc/config.xsd">
+    <preference for="Magento\GiftCard\Api\Data\GiftcardAmountInterface" type="Magento\GiftCard\Model\Giftcard\Amount" />
+    <preference for="Magento\GiftCard\Api\Data\GiftCardOptionInterface" type="Magento\GiftCard\Model\Giftcard\Option" />
+    <type name="Magento\Quote\Model\Quote\Item\ToOrderItem">
+        <plugin name="append_gift_card_data_to_order" type="Magento\GiftCard\Model\Plugin\QuoteItem"/>
+    </type>
+    <virtualType name="Magento\GiftCard\Model\ResourceModel\Helper" type="Magento\Eav\Model\ResourceModel\Helper">
+        <arguments>
+            <argument name="modulePrefix" xsi:type="string">Eav</argument>
+        </arguments>
+    </virtualType>
+    <type name="Magento\GiftCard\Model\Source\Open">
+        <arguments>
+            <argument name="resourceHelper" xsi:type="object">Magento\GiftCard\Model\ResourceModel\Helper</argument>
+        </arguments>
+    </type>
+    <type name="Magento\Catalog\Model\Product\CartConfiguration">
+        <plugin name="GiftCard" type="Magento\GiftCard\Model\Product\CartConfiguration\Plugin\GiftCard" />
+    </type>
+    <type name="Magento\Wishlist\Block\Catalog\Product\View\AddTo\Wishlist">
+        <plugin name="getWishlistOptions" type="Magento\GiftCard\Block\Product\View\Plugin" />
+    </type>
+    <type name="Magento\Wishlist\Block\Item\Configure">
+        <plugin name="getWishlistOptions" type="Magento\GiftCard\Block\Product\View\Plugin" />
+    </type>
+    <type name="Magento\GiftRegistry\Helper\Data">
+        <plugin name="getWishlistOptions" type="Magento\GiftCard\Helper\GiftRegistry\Plugin" />
+    </type>
+    <type name="Magento\Catalog\Model\Product\Attribute\Backend\Price">
+        <plugin name="giftCardOpenAmount" type="Magento\GiftCard\Plugin\Catalog\Model\Product\Attribute\Backend\Price"/>
+    </type>
+    <type name="Magento\Catalog\Model\Product\CatalogPrice">
+        <arguments>
+            <argument name="priceModelPool" xsi:type="array">
+                <item name="giftcard" xsi:type="string">Magento\GiftCard\Model\Product\CatalogPrice</item>
+            </argument>
+        </arguments>
+    </type>
+    <type name="Magento\GiftCard\Helper\Data">
+        <arguments>
+            <argument name="layout" xsi:type="object">Magento\Framework\View\LayoutInterface\Proxy</argument>
+        </arguments>
+    </type>
+    <type name="Magento\Framework\Module\Setup\Migration">
+        <arguments>
+            <argument name="compositeModules" xsi:type="array">
+                <item name="magento_giftcard" xsi:type="string">Magento_GiftCard</item>
+            </argument>
+        </arguments>
+    </type>
+    <virtualType name="Magento\GiftCard\Pricing\Price\Collection" type="Magento\Framework\Pricing\Price\Collection">
+        <arguments>
+            <argument name="pool" xsi:type="object">Magento\GiftCard\Pricing\Price\Pool</argument>
+        </arguments>
+    </virtualType>
+    <virtualType name="Magento\GiftCard\Pricing\Price\Pool" type="Magento\Framework\Pricing\Price\Pool">
+        <arguments>
+            <argument name="prices" xsi:type="array">
+                <item name="regular_price" xsi:type="string">Magento\Catalog\Pricing\Price\RegularPrice</item>
+                <item name="final_price" xsi:type="string">Magento\GiftCard\Pricing\Price\FinalPrice</item>
+                <item name="tier_price" xsi:type="string">Magento\Catalog\Pricing\Price\TierPrice</item>
+                <item name="special_price" xsi:type="string">Magento\Catalog\Pricing\Price\SpecialPrice</item>
+                <item name="msrp_price" xsi:type="string">Magento\Msrp\Pricing\Price\MsrpPrice</item>
+                <item name="custom_option_price" xsi:type="string">Magento\Catalog\Pricing\Price\CustomOptionPrice</item>
+                <item name="base_price" xsi:type="string">Magento\Catalog\Pricing\Price\BasePrice</item>
+                <item name="configured_price" xsi:type="string">Magento\GiftCard\Pricing\Price\ConfiguredPrice</item>
+                <item name="configured_regular_price" xsi:type="string">Magento\Bundle\Pricing\Price\ConfiguredRegularPrice</item>
+                <item name="bundle_option" xsi:type="string">Magento\Bundle\Pricing\Price\BundleOptionPrice</item>
+                <item name="bundle_option_regular_price" xsi:type="string">Magento\Bundle\Pricing\Price\BundleOptionRegularPrice</item>
+                <item name="wishlist_configured_price" xsi:type="string">Magento\GiftCard\Pricing\Price\ConfiguredPrice</item>
+            </argument>
+        </arguments>
+    </virtualType>
+    <type name="Magento\Framework\Pricing\PriceInfo\Factory">
+        <arguments>
+            <argument name="types" xsi:type="array">
+                <item name="giftcard" xsi:type="array">
+                    <item name="infoClass" xsi:type="string">Magento\Framework\Pricing\PriceInfo\Base</item>
+                    <item name="prices" xsi:type="string">Magento\GiftCard\Pricing\Price\Collection</item>
+                </item>
+            </argument>
+        </arguments>
+    </type>
+    <type name="Magento\SalesRule\Model\Validator\Pool">
+        <arguments>
+            <argument name="validators" xsi:type="array">
+                <item name="discount" xsi:type="array">
+                    <item name="giftcard_validator" xsi:type="object">Magento\GiftCard\Model\Validator\Discount</item>
+                </item>
+            </argument>
+        </arguments>
+    </type>
+    <type name="Magento\Eav\Model\TypeLocator\ComplexType">
+        <arguments>
+            <argument name="backendModelToAttributeTypeMap" xsi:type="array">
+                <item name="Magento\Catalog\Api\Data\ProductInterface" xsi:type="array">
+                    <item name="Magento\GiftCard\Model\Attribute\Backend\Giftcard\Amount" xsi:type="string">Magento\GiftCard\Api\Data\GiftcardAmountInterface[]</item>
+                </item>
+            </argument>
+        </arguments>
+    </type>
+    <type name="Magento\Quote\Model\Quote\Item\Repository">
+        <arguments>
+            <argument name="cartItemProcessors" xsi:type="array">
+                <item name="giftcard" xsi:type="object">Magento\GiftCard\Model\Quote\Item\CartItemProcessor\Proxy</item>
+            </argument>
+        </arguments>
+    </type>
+    <type name="Magento\Sales\Api\OrderItemRepositoryInterface">
+        <arguments>
+            <argument name="processorPool" xsi:type="array">
+                <item name="giftcard" xsi:type="object">Magento\GiftCard\Model\ProductOptionProcessor</item>
+            </argument>
+        </arguments>
+    </type>
+    <type name="Magento\Sales\Model\Order\ProductOption">
+        <arguments>
+            <argument name="processorPool" xsi:type="array">
+                <item name="giftcard" xsi:type="object">Magento\GiftCard\Model\ProductOptionProcessor</item>
+            </argument>
+        </arguments>
+    </type>
+    <type name="Magento\Framework\EntityManager\Operation\ExtensionPool">
+        <arguments>
+            <argument name="extensionActions" xsi:type="array">
+                <item name="Magento\Catalog\Api\Data\ProductInterface" xsi:type="array">
+                    <item name="create" xsi:type="array">
+                        <item name="giftcard_amount_creator" xsi:type="string">Magento\GiftCard\Model\Product\SaveHandler</item>
+                    </item>
+                    <item name="read" xsi:type="array">
+                        <item name="giftcard_amount_reader" xsi:type="string">Magento\GiftCard\Model\Product\ReadHandler</item>
+                    </item>
+                    <item name="update" xsi:type="array">
+                        <item name="giftcard_amount_updater" xsi:type="string">Magento\GiftCard\Model\Product\SaveHandler</item>
+                    </item>
+                    <item name="delete" xsi:type="array">
+                        <item name="giftcard_amount_deleter" xsi:type="string">Magento\GiftCard\Model\Product\DeleteHandler</item>
+                    </item>
+                </item>
+            </argument>
+        </arguments>
+    </type>
+    <type name="Magento\Framework\EntityManager\MetadataPool">
+        <arguments>
+            <argument name="metadata" xsi:type="array">
+                <item name="Magento\GiftCard\Api\Data\GiftcardAmountInterface" xsi:type="array">
+                    <item name="entityTableName" xsi:type="string">magento_giftcard_amount</item>
+                    <item name="identifierField" xsi:type="string">value_id</item>
+                </item>
+            </argument>
+        </arguments>
+    </type>
+    <type name="Magento\Framework\EntityManager\HydratorPool">
+        <arguments>
+            <argument name="hydrators" xsi:type="array">
+                <item name="Magento\GiftCard\Api\Data\GiftcardAmountInterface" xsi:type="string">Magento\Framework\EntityManager\AbstractModelHydrator</item>
+            </argument>
+        </arguments>
+    </type>
+    <type name="Magento\GiftCard\Model\ResourceModel\Indexer\Price">
+        <arguments>
+            <argument name="tableStrategy" xsi:type="object">Magento\Catalog\Model\ResourceModel\Product\Indexer\TemporaryTableStrategy</argument>
+            <argument name="connectionName" xsi:type="string">indexer</argument>
+        </arguments>
+    </type>
+    <type name="Magento\Catalog\Ui\DataProvider\Product\ProductRenderCollectorComposite">
+        <arguments>
+            <argument name="productProviders" xsi:type="array">
+                <item name="giftcard_price" xsi:type="object">\Magento\GiftCard\Ui\DataProvider\Product\Collector\Price</item>
+            </argument>
+        </arguments>
+    </type>
+    <type name="Magento\Eav\Model\Config">
+        <arguments>
+            <argument name="attributesForPreload" xsi:type="array">
+                <item name="catalog_product" xsi:type="array">
+                    <item name="allow_message" xsi:type="string">catalog_product</item>
+                    <item name="allow_open_amount" xsi:type="string">catalog_product</item>
+                    <item name="email_template" xsi:type="string">catalog_product</item>
+                    <item name="giftcard_amounts" xsi:type="string">catalog_product</item>
+                    <item name="giftcard_type" xsi:type="string">catalog_product</item>
+                    <item name="lifetime" xsi:type="string">catalog_product</item>
+                    <item name="open_amount_max" xsi:type="string">catalog_product</item>
+                    <item name="open_amount_min" xsi:type="string">catalog_product</item>
+                    <item name="use_config_allow_message" xsi:type="string">catalog_product</item>
+                    <item name="use_config_email_template" xsi:type="string">catalog_product</item>
+                    <item name="is_redeemable" xsi:type="string">catalog_product</item>
+                    <item name="use_config_is_redeemable" xsi:type="string">catalog_product</item>
+                    <item name="use_config_lifetime" xsi:type="string">catalog_product</item>
+                </item>
+            </argument>
+        </arguments>
+    </type>
+    <type name="Magento\Catalog\Model\ResourceModel\Product">
+        <plugin name="update_quote_items_after_giftcard_product_save" type="Magento\GiftCard\Plugin\Catalog\Model\ResourceModel\Product"/>
+    </type>
+</config>

@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+/**
+ * Copyright © Magento, Inc. All rights reserved.
+ * See COPYING.txt for license details.
+ */
+-->
+<form xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="urn:magento:module:Magento_Ui:etc/ui_configuration.xsd">
+    <fieldset name="category_permissions" sortOrder="50">
+        <settings>
+            <collapsible>true</collapsible>
+            <label translate="true">Category Permissions</label>
+        </settings>
+        <container name="category_permissions_container">
+            <htmlContent name="html_content">
+                <block name="permissionsContainer" class="Magento\CatalogPermissions\Block\Adminhtml\Catalog\Category\PermissionsContainer" />
+            </htmlContent>
+        </container>
+    </fieldset>
+</form>

@@ -1,0 +1,180 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+ /**
+  * Copyright © Magento, Inc. All rights reserved.
+  * See COPYING.txt for license details.
+  */
+-->
+
+<tests xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:noNamespaceSchemaLocation="urn:magento:mftf:Test/etc/testSchema.xsd">
+    <test name="AdminDeleteTheUpdateTest">
+        <annotations>
+            <stories value="Staging updates"/>
+            <title value="Delete The Update"/>
+            <description value="The purpose of this end-to-end scenario is testing of ability to create update from single update in the example of single product update"/>
+            <severity value="BLOCKER"/>
+            <testCaseId value="MAGETWO-55086"/>
+            <group value="staging"/>
+        </annotations>
+        <before>
+            <createData entity="_defaultCategory" stepKey="createCategory"/>
+            <createData entity="SimpleProduct" stepKey="createProduct">
+                <requiredEntity createDataKey="createCategory"/>
+                <field key="price">10</field>
+            </createData>
+            <createData entity="_defaultProduct" stepKey="createDefaultProduct">
+                <requiredEntity createDataKey="createCategory"/>
+                <field key="price">20</field>
+            </createData>
+        </before>
+        <after>
+            <deleteData createDataKey="createProduct" stepKey="deleteProduct"/>
+            <deleteData createDataKey="createDefaultProduct" stepKey="deleteDefaultProduct"/>
+            <deleteData createDataKey="createCategory" stepKey="deleteCategory"/>
+            <actionGroup ref="ClearProductsFilterActionGroup" stepKey="clearProductFilters"/>
+            <actionGroup ref="StagingDashboardClearFiltersActionGroup" stepKey="clearStagingFilters"/>
+            <actionGroup ref="AdminLogoutActionGroup" stepKey="logout"/>
+        </after>
+        <!-- 1. Login to Magento backend -->
+        <actionGroup ref="AdminLoginActionGroup" stepKey="loginAsAdmin"/>
+        <!-- 2. Navigate to menu Products->Catalog -->
+        <!-- 3. Click on "Edit" link for product with name   P2ProductName -->
+        <actionGroup ref="SearchForProductOnBackendActionGroup" stepKey="goToCreatedProduct">
+            <argument name="product" value="$$createProduct$$"/>
+        </actionGroup>
+        <click selector="{{AdminProductGridSection.productGridNameProduct('$$createProduct.name$$')}}" stepKey="openProductForEdit"/>
+        <seeElement selector="{{AdminStagingSlideOutSection.scheduledChanges}}" stepKey="seeBlockSheduledChanges"/>
+        <dontSeeElement selector="{{AdminStagingSlideOutSection.contentBlock}}" stepKey="dontSeeContentBlock"/>
+        <!-- 4. Click on "Schedule New Update" button -->
+        <!-- 5. Fill New update with data -->
+        <!-- 6. Click on "Save" button -->
+        <generateDate date="+10 minutes" format="m/j/Y g:i A" stepKey="generateStartDate"/>
+        <generateDate date="+10 minutes" format="M j, Y g:i A" stepKey="generateStartDateS5ForCheck"/>
+        <generateDate date="+11 minutes" format="M j, Y g:i A" stepKey="generateAnotherStartDateS5ForCheck"/>
+        <generateDate date="+13 minutes" format="m/j/Y g:i A" stepKey="generateEndDate"/>
+        <actionGroup ref="FillScheduleUpdateWithCheckEndActionGroup" stepKey="fillScheduleUpdate">
+            <argument name="staging" value="S5UpdateNameStaging"/>
+            <argument name="timeStart" value="{$generateStartDate}"/>
+            <argument name="timeEnd" value="{$generateEndDate}"/>
+            <argument name="productPrice" value="11"/>
+        </actionGroup>
+        <!-- 7. Click on "Schedule New Update" button -->
+        <!-- 8. In Slide panel fill new update with data -->
+        <!-- 9. Click on "Save" button -->
+        <generateDate date="+7 minutes" format="m/j/Y g:i A" stepKey="generateStartDateForS8"/>
+        <generateDate date="+7 minutes" format="M j, Y g:i A" stepKey="generateCheckStartDateForS8"/>
+        <actionGroup ref="FillScheduleUpdateWithCheckActionGroup" stepKey="fillScheduleUpdateWithoutEnd">
+            <argument name="staging" value="S8UpdateNameStaging"/>
+            <argument name="timeStart" value="{$generateStartDateForS8}"/>
+            <argument name="productPrice" value="12"/>
+        </actionGroup>
+        <!-- 10. Click on "Preview" button for S5UpdateName -->
+        <click selector="{{AdminScheduledChangesSection.scheduleActions(S5UpdateNameStaging.updateName, 'Preview')}}" stepKey="clickPreview"/>
+        <switchToNextTab stepKey="switchToNextTab"/>
+        <actionGroup ref="VerifyStagingUpdateDateAndPriceActionGroup" stepKey="verifyStagingUpdateS5DateAndPrice">
+            <argument name="category" value="$createCategory$"/>
+            <argument name="product" value="$createProduct$"/>
+            <argument name="previewDate" value="{$generateStartDateS5ForCheck}"/>
+            <argument name="expectedPrice" value="11"/>
+        </actionGroup>
+        <!-- 11. Navigate to menu Products->Catalog -->
+        <!-- 12. Click on "Edit" link for product with name P3ProductName. -->
+        <actionGroup ref="SearchForProductOnBackendActionGroup" stepKey="goToCreatedDefaultProduct">
+            <argument name="product" value="$$createDefaultProduct$$"/>
+        </actionGroup>
+        <click selector="{{AdminProductGridSection.productGridNameProduct('$$createDefaultProduct.name$$')}}" stepKey="openDefaultProductForEdit"/>
+        <seeElement selector="{{AdminStagingSlideOutSection.scheduledChanges}}" stepKey="seeBlockSheduledChangesDefault"/>
+        <dontSeeElement selector="{{AdminStagingSlideOutSection.contentBlock}}" stepKey="dontSeeContentBlockDefault"/>
+        <!-- 13. Click on "Schedule New Update" button -->
+        <!-- 14. Select "Assign to Existing Update" option -->
+        <!-- 15. Click on "Select" button for S8.1UpdateName -->
+        <!-- 16. On Slide panel change product price for update -->
+        <!-- 17. Click on "Save" button -->
+        <actionGroup ref="AssignToExistingUpdateCheckActionGroup" stepKey="assignScheduleUpdate">
+            <argument name="staging" value="S8UpdateNameStaging"/>
+            <argument name="productPrice" value="21"/>
+        </actionGroup>
+        <!-- 18. Navigate to menu Products->Catalog -->
+        <!-- 19. Click on "Edit" link for product with name P2ProductName -->
+        <actionGroup ref="SearchForProductOnBackendActionGroup" stepKey="goToCreatedProductAgain">
+            <argument name="product" value="$$createProduct$$"/>
+        </actionGroup>
+        <click selector="{{AdminProductGridSection.productGridNameProduct('$$createProduct.name$$')}}" stepKey="openProductAgain"/>
+        <!-- 20. Click on "View/Edit" link for S5UpdateName -->
+        <!-- 21. Click "Remove from update" button -->
+        <!-- 22. Select "Delete the Update" option -->
+        <!-- 23. Click "Done" button -->
+        <actionGroup ref="DeleteTheUpdateActionGroup" stepKey="deleteUpdate">
+            <argument name="fromStaging" value="S5UpdateNameStaging"/>
+        </actionGroup>
+        <!-- 24. Run cron twice or wait for the next cron run if you setup cron to run automatically -->
+        <magentoCLI command="cron:run" arguments="--group staging" stepKey="cronRun"/>
+        <magentoCLI command="cron:run" arguments="--group staging" stepKey="cronRunTwice"/>
+        <!-- 25. Navigate to Content->Staging Dashboard -->
+        <actionGroup ref="StagingDashboardDontSeeUpdateActionGroup" stepKey="searchAndDontSeeStagingUpdateS5">
+            <argument name="staging" value="S5UpdateNameStaging"/>
+        </actionGroup>
+        <!-- 26. Click on S8.1UpdateName -->
+        <actionGroup ref="StagingDashboardVerifyHoverContentActionGroup" stepKey="searchStagingUpdate8">
+            <argument name="staging" value="S8UpdateNameStaging"/>
+            <argument name="objectsQty" value="2"/>
+            <argument name="productsQty" value="2"/>
+        </actionGroup>
+        <!-- 27. Click on "View/Edit" button for S8.1UpdateName -->
+        <actionGroup ref="VerifyStagingUpdateAndIncludedProductActionGroup" stepKey="verifyStagingUpdateS8Products">
+            <argument name="includedProduct" value="$createProduct$"/>
+            <argument name="stagingUpdate" value="S8UpdateNameStaging"/>
+            <argument name="startDate" value="{$generateStartDateForS8}"/>
+        </actionGroup>
+        <see selector="{{AdminProductGridSection.productGridNameProduct('$$createDefaultProduct.name$$')}}" userInput="$$createDefaultProduct.name$$"  stepKey="seeUpdateDefaultProduct"/>
+        <see selector="{{AdminStagingEditSection.selectButton('2')}}" userInput="Select" stepKey="seeSelectForDefaultProduct"/>
+        <!-- 28. Click "Preview" link for S8.1UpdateName -->
+        <click selector="{{AdminGridMainControls.back}}" stepKey="clickBack"/>
+        <click selector="{{AdminContentStagingDashboardSection.timeLineEvent(S8UpdateNameStaging.updateName)}}" stepKey="clickTimelineEvent"/>
+        <click selector="{{AdminContentStagingDashboardSection.stagingEventsActions(S8UpdateNameStaging.updateName, 'Preview')}}" stepKey="clickPreviewS8"/>
+        <actionGroup ref="VerifyStagingUpdateDateAndPriceActionGroup" stepKey="verifyStagingUpdateS8DateAndPrice">
+            <argument name="category" value="$createCategory$"/>
+            <argument name="product" value="$createDefaultProduct$"/>
+            <argument name="previewDate" value="{$generateCheckStartDateForS8}"/>
+            <argument name="expectedPrice" value="21"/>
+        </actionGroup>
+        <!-- 29. Change Calendar date to S5StartDate+ 1 minute -->
+        <actionGroup ref="VerifyStagingUpdatePriceActionGroup" stepKey="stagingPreviewVerifyThree">
+            <argument name="category" value="$createCategory$"/>
+            <argument name="product" value="$createDefaultProduct$"/>
+            <argument name="previewDate" value="{$generateAnotherStartDateS5ForCheck}"/>
+            <argument name="expectedPrice" value="21"/>
+        </actionGroup>
+        <!-- 30. Navigate to menu Products->Catalog -->
+        <!-- 31. Click on "Edit" link for product with name   P2ProductName -->
+        <actionGroup ref="SearchForProductOnBackendActionGroup" stepKey="goToProductAgain">
+            <argument name="product" value="$$createProduct$$"/>
+        </actionGroup>
+        <click selector="{{AdminProductGridSection.productGridNameProduct('$$createProduct.name$$')}}" stepKey="openProductForEditAgain"/>
+        <!-- 32. Click on "View/Edit" link for S8.1UpdateName -->
+        <!-- 33. Click "Remove from update" button -->
+        <!-- 34. Select "Delete the Update" option -->
+        <!-- 35. Click "Done" button -->
+        <actionGroup ref="DeleteTheUpdateActionGroup" stepKey="deleteS8Update">
+            <argument name="fromStaging" value="S8UpdateNameStaging"/>
+        </actionGroup>
+        <!-- 36. Run cron twice or wait for the next cron run if you setup cron to run automatically -->
+        <magentoCLI command="cron:run" arguments="--group staging" stepKey="cronRunAgain"/>
+        <magentoCLI command="cron:run" arguments="--group staging" stepKey="cronRunTwiceAgain"/>
+        <!-- 37. Navigate to Content->Staging Dashboard -->
+        <actionGroup ref="StagingDashboardDontSeeUpdateActionGroup" stepKey="searchStagingUpdateS5Again">
+            <argument name="staging" value="S5UpdateNameStaging"/>
+        </actionGroup>
+        <!-- 38. Click on S8.1UpdateName bar -->
+        <actionGroup ref="StagingDashboardVerifyHoverContentActionGroup" stepKey="searchAndVerifyStagingUpdateS8">
+            <argument name="staging" value="S8UpdateNameStaging"/>
+        </actionGroup>
+        <!-- 39. Click on "View/Edit" button -->
+        <actionGroup ref="VerifyStagingUpdateAndIncludedProductActionGroup" stepKey="finalVerifyStagingUpdateS8Product">
+            <argument name="includedProduct" value="$createDefaultProduct$"/>
+            <argument name="stagingUpdate" value="S8UpdateNameStaging"/>
+            <argument name="startDate" value="{$generateStartDateForS8}"/>
+        </actionGroup>
+   </test>
+</tests>

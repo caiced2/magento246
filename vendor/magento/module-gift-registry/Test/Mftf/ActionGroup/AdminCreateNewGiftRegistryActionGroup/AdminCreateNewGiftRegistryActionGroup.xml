@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+ /**
+  * Copyright © Magento, Inc. All rights reserved.
+  * See COPYING.txt for license details.
+  */
+-->
+<actionGroups xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:noNamespaceSchemaLocation="urn:magento:mftf:Test/etc/actionGroupSchema.xsd">
+    <actionGroup name="AdminCreateNewGiftRegistryActionGroup">
+        <arguments>
+            <argument name="giftCode" defaultValue="GiftRegistry"/>
+        </arguments>
+        <amOnPage url="{{AdminGiftRegistryPage.url}}" stepKey="navigateToGiftRegistryPage"/>
+        <waitForPageLoad stepKey="waitForGiftRegisteryPage"/>
+        <!--Create Gift Registry -->
+        <click selector="{{AdminAllGiftRegistryPageSection.addGiftRegistryType}}" stepKey="addGiftRegistryType"/>
+        <waitForPageLoad stepKey="waitForFields"/>
+        <fillField selector="{{AdminGiftRegistrySection.code}}" stepKey="inputCode" userInput="{{giftCode.code}}"/>
+        <fillField selector="{{AdminGiftRegistrySection.label}}" stepKey="inputLabel" userInput="{{giftCode.label}}"/>
+        <click selector="{{AdminGiftRegistrySection.saveGiftRegistry}}" stepKey="saveGiftRegistry"/>
+        <waitForPageLoad stepKey="waitForSave"/>
+        <see userInput="You saved the gift registry type." stepKey="seeSaveMessage"/>
+    </actionGroup>
+</actionGroups>

@@ -1,0 +1,1 @@
+# Magento_LoginAsCustomerLogging module

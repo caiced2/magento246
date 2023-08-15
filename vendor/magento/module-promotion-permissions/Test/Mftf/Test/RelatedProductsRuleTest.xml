@@ -1,0 +1,57 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+ /**
+  * Copyright © Magento, Inc. All rights reserved.
+  * See COPYING.txt for license details.
+  */
+-->
+<tests xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="urn:magento:mftf:Test/etc/testSchema.xsd">
+    <test name="RelatedProductsRuleTest">
+        <annotations>
+            <title value="Products that are part of a related products rule that uses Price (percentage) condition"/>
+            <stories value="MAGETWO-91745: Product pages that are part of a related products rule that uses Price (percentage) condition load blank page"/>
+            <description value="Products that are part of a related products rule that uses Price (percentage) condition"/>
+            <features value="Checkout"/>
+            <severity value="AVERAGE"/>
+            <testCaseId value="MAGETWO-94898"/>
+            <group value="Checkout"/>
+        </annotations>
+
+        <before>
+            <createData entity="CatalogAttributeSet" stepKey="catalogAttributeSet"/>
+            <createData entity="_defaultCategory" stepKey="defaultCategory"/>
+            <createData entity="SimpleProductWithCustomAttributeSet" stepKey="simpleProduct">
+                <requiredEntity createDataKey="defaultCategory"/>
+                <requiredEntity createDataKey="catalogAttributeSet"/>
+            </createData>
+
+            <actionGroup ref="AdminLoginActionGroup" stepKey="loginAsAdmin"/>
+        </before>
+
+        <actionGroup ref="GoToTargetRulePage" stepKey="goToTargetRulePage"/>
+
+        <actionGroup ref="ClickAddNewTargetRule" stepKey="clickAddNewTargetRule"/>
+
+        <actionGroup ref="FillGeneralRuleInformation" stepKey="fillGeneralRuleInformation"/>
+
+        <actionGroup ref="FillProductsToMatchInformation" stepKey="fillProductsToMatchInformation">
+            <argument name="attributeSet" value="$$catalogAttributeSet.attribute_set_id$$"/>
+        </actionGroup>
+
+        <actionGroup ref="FillProductsToDisplayInformation" stepKey="fillProductsToDisplayInformation"/>
+
+        <actionGroup ref="SaveTargetRule" stepKey="save"/>
+
+        <actionGroup ref="AssertProductNameAndSkuInStorefrontProductPageByCustomAttributeUrlKeyActionGroup" stepKey="assertProductIsDisplayed">
+            <argument name="product" value="$$simpleProduct$$"/>
+        </actionGroup>
+
+        <after>
+            <actionGroup ref="AdminLogoutActionGroup" stepKey="logout"/>
+
+            <deleteData createDataKey="simpleProduct" stepKey="deleteProduct"/>
+            <deleteData createDataKey="defaultCategory" stepKey="deleteCategory"/>
+            <deleteData createDataKey="catalogAttributeSet" stepKey="deleteCatalogAttributeSet"/>
+        </after>
+    </test>
+</tests>

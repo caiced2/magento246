@@ -1,0 +1,118 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+ /**
+  * Copyright © Magento, Inc. All rights reserved.
+  * See COPYING.txt for license details.
+  */
+-->
+
+<tests xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="urn:magento:mftf:Test/etc/testSchema.xsd">
+    <test name="StorefrontCreateMultipleWishlistTest">
+        <annotations>
+            <features value="Wishlist"/>
+            <stories value="MAGETWO-91615: Cannot create new wishlists when multiple wish lists is enabled"/>
+            <group value="wishlist"/>
+            <title value="Creation new wishlists when multiple wish lists is enabled"/>
+            <description value="Wish List should be created. System should be displays all changes on first browser after refreshing category page."/>
+            <severity value="MAJOR"/>
+            <testCaseId value="MAGETWO-93987"/>
+        </annotations>
+
+        <before>
+            <createData stepKey="category" entity="SimpleSubCategory"/>
+            <createData stepKey="product" entity="SimpleProduct" >
+                <requiredEntity createDataKey="category"/>
+            </createData>
+            <createData stepKey="customer" entity="Simple_US_Customer"/>
+            <actionGroup ref="AdminLoginActionGroup" stepKey="loginAsAdmin"/>
+            <!--"Enable Multiple Wish Lists" = "Yes"-->
+            <createData entity="WishlistSetting" stepKey="wishlishSetting"/>
+        </before>
+
+        <!--Clear cache-->
+        <magentoCLI command="cron:run --group=index" stepKey="runCronReindex"/>
+
+        <!--Go to the front-end and login as customer-->
+        <actionGroup ref="LoginToStorefrontActionGroup" stepKey="customerLogin">
+            <argument name="Customer" value="$$customer$$" />
+        </actionGroup>
+
+        <!--Go to category page -->
+        <amOnPage url="/$$category.custom_attributes[url_key]$$.html" stepKey="goToCreatedProductCategoryPage"/>
+        <waitForPageLoad stepKey="waitForCreatedProductCategoryPageLoaded"/>
+
+        <waitForPageLoad time="30" stepKey="waitForDropDownLoadOnFirstWishListCreation"/>
+
+        <!--Create First Wish List - list1-->
+        <moveMouseOver selector="{{StorefrontCreateMultipleWishlistSection.productImage}}" stepKey="mouseHoverOnProductImage"/>
+        <click stepKey="clickAddToWishListItem" selector="{{StorefrontCreateMultipleWishlistSection.wishListItem}}"/>
+        <click stepKey="clickAddToWishListButton" selector="{{StorefrontCreateMultipleWishlistSection.addNewWishListItem}}"/>
+        <actionGroup ref="CreateNewWishListActionGroup" stepKey="createFirstWishListActionGroup">
+            <argument name="name" value="list1"/>
+        </actionGroup>
+
+        <!--Create Second Wish List - list2-->
+        <waitForPageLoad stepKey="waitForPageToFullyLoad" time="30"/>
+        <click stepKey="clickAddToWishListLink" selector="{{StorefrontCreateMultipleWishlistSection.addNewWishListLink}}"/>
+        <actionGroup ref="CreateNewWishListActionGroup" stepKey="createSecondWishListActionGroup">
+            <argument name="name" value="list2"/>
+        </actionGroup>
+
+        <!--Logging out-->
+        <amOnPage url="{{StorefrontCustomerLogoutPage.url}}" stepKey="storefrontSignOut"/>
+        <waitForPageLoad  time="30" stepKey="waitForLogOut"/>
+
+        <!--Clear cache-->
+        <actionGroup ref="CliIndexerReindexActionGroup" stepKey="reindex2">
+            <argument name="indices" value=""/>
+        </actionGroup>
+        <actionGroup ref="CliCacheFlushActionGroup" stepKey="flushCache">
+            <argument name="tags" value=""/>
+        </actionGroup>
+
+        <!-- Log in again in with same customer on the front-end-->
+        <actionGroup ref="LoginToStorefrontActionGroup" stepKey="customerLogin2">
+            <argument name="Customer" value="$$customer$$" />
+        </actionGroup>
+
+        <!--Go to category page -->
+        <amOnPage url="/$$category.custom_attributes[url_key]$$.html" stepKey="againGoToCreatedProductCategoryPage"/>
+        <waitForPageLoad stepKey="waitForCreatedProductCategoryPageLoad"/>
+
+        <!--Refresh page-->
+        <reloadPage stepKey="reloadPage"/>
+        <waitForPageLoad stepKey="waitForPageToFullyLoad2" time="10"/>
+
+        <waitForPageLoad time="30" stepKey="waitForDropDownLoadOnSecondWishListCreation"/>
+
+        <!--Create Third Wish List - list3-->
+        <moveMouseOver selector="{{StorefrontCreateMultipleWishlistSection.productImage}}" stepKey="mouseHoverProductImage"/>
+        <click stepKey="clickToAddThirdWishListItem" selector="{{StorefrontCreateMultipleWishlistSection.wishListItem}}"/>
+        <click stepKey="clickToAddThirdWishListButton" selector="{{StorefrontCreateMultipleWishlistSection.addNewWishListItem}}"/>
+        <actionGroup ref="CreateNewWishListActionGroup" stepKey="createThirdWishListActionGroup">
+            <argument name="name" value="list3"/>
+        </actionGroup>
+
+        <!--Create Fourth Wish List - list4-->
+        <click stepKey="clickToAddForthWishList" selector="{{StorefrontCreateMultipleWishlistSection.addNewWishListLink}}"/>
+        <actionGroup ref="CreateNewWishListActionGroup" stepKey="createForthWishListActionGroup">
+            <argument name="name" value="list4"/>
+        </actionGroup>
+
+        <!--Assert to make sure all list are created-->
+        <grabTextFrom selector="#wishlists-select" stepKey="allWishLists"/>
+        <assertEquals stepKey="assertToMakeSureThatAllListAreCreated">
+            <actualResult type="variable">$allWishLists</actualResult>
+            <expectedResult type="string">Wish List list1 list2 list3 list4</expectedResult>
+        </assertEquals>
+
+        <after>
+            <amOnPage url="/admin" stepKey="goToAdminPage"/>
+            <deleteData stepKey="deleteCategory" createDataKey="category"/>
+            <deleteData stepKey="deleteProduct" createDataKey="product"/>
+            <deleteData stepKey="deleteCustomer" createDataKey="customer"/>
+            <createData entity="DefaultWishlistSetting" stepKey="restoreWishlishSetting"/>
+            <actionGroup ref="AdminLogoutActionGroup" stepKey="adminLogout"/>
+        </after>
+    </test>
+</tests>

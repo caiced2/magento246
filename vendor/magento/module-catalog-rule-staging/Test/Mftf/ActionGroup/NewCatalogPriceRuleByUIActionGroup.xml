@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+ /**
+  * Copyright © Magento, Inc. All rights reserved.
+  * See COPYING.txt for license details.
+  */
+-->
+
+<actionGroups xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+              xsi:noNamespaceSchemaLocation="urn:magento:mftf:Test/etc/actionGroupSchema.xsd">
+    <!-- Don't fill out the to and from date on both ee and b2b -->
+    <actionGroup name="NewCatalogPriceRuleByUIActionGroup">
+        <remove keyForRemoval="clickFromCalender"/>
+        <remove keyForRemoval="clickFromToday"/>
+        <remove keyForRemoval="clickToCalender"/>
+        <remove keyForRemoval="clickToToday"/>
+        <remove keyForRemoval="selectActive"/>
+    </actionGroup>
+</actionGroups>

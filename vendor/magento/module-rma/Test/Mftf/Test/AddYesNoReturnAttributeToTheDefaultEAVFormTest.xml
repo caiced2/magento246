@@ -1,0 +1,124 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+ /**
+  * Copyright © Magento, Inc. All rights reserved.
+  * See COPYING.txt for license details.
+  */
+-->
+<tests xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:noNamespaceSchemaLocation="urn:magento:mftf:Test/etc/testSchema.xsd">
+    <test name="AddYesNoReturnAttributeToTheDefaultEAVFormTest">
+        <annotations>
+            <features value="Return Merchandise Authorization"/>
+            <stories value="Return Products Using Return Merchandise Authorization"/>
+            <title value="[RMA] Add Yes/No return attribute to the Default EAV Form"/>
+            <description value="[RMA] Add Yes/No return attribute to the Default EAV Form"/>
+            <severity value="CRITICAL"/>
+            <testCaseId value="MC-6464"/>
+            <group value="rma"/>
+        </annotations>
+        <before>
+            <!-- Create attribute -->
+            <createData entity="YesNoReturnAttribute" stepKey="createReturnAttribute"/>
+            <!-- Enable RMA on Storefront -->
+            <createData entity="EnableRMA" stepKey="enableRMA"/>
+            <!--Create Simple product-->
+            <createData entity="SimpleProduct2" stepKey="createSimpleProduct">
+                <field key="price">10.00</field>
+            </createData>
+            <!-- New Customer -->
+            <createData entity="Simple_US_Customer" stepKey="createCustomer"/>
+        </before>
+        <after>
+            <!--Logout from customer account-->
+            <actionGroup ref="StorefrontCustomerLogoutActionGroup" stepKey="logoutStorefront"/>
+            <!-- Delete Customer -->
+            <deleteData createDataKey="createCustomer" stepKey="deleteCustomer"/>
+            <!-- Delete Product -->
+            <deleteData createDataKey="createSimpleProduct" stepKey="deleteSimpleProduct"/>
+            <!-- Default RMA Setting -->
+            <createData entity="RestoreDefaultRmaSettingsConfig" stepKey="returnDefaultsConfiguration"/>
+            <!-- Open Order Page and clear filter -->
+            <amOnPage url="{{AdminOrdersPage.url}}" stepKey="onOrdersPage"/>
+            <actionGroup ref="ClearFiltersAdminDataGridActionGroup" stepKey="resetOrderFilter"/>
+            <!-- Open Return Page and clear filter  -->
+            <amOnPage url="{{AdminReturnsPage.url}}" stepKey="goToReturnPage" />
+            <actionGroup ref="ClearFiltersAdminDataGridActionGroup" stepKey="resetReturnFilter"/>
+            <!-- Delete Attribute -->
+            <actionGroup ref="DeleteReturnAttribute" stepKey="deleteAttribute">
+                <argument name="attributeCode" value="$$createReturnAttribute.attribute_code$$"/>
+            </actionGroup>
+            <comment userInput="BIC workaround" stepKey="logoutCustomer"/>
+            <!-- Logout -->
+            <actionGroup ref="AdminLogoutActionGroup" stepKey="logout"/>
+        </after>
+         <!--Login to storefront from customer -->
+        <actionGroup ref="LoginToStorefrontActionGroup" stepKey="logInFromCustomer">
+            <argument name="Customer" value="$$createCustomer$$"/>
+        </actionGroup>
+        <!-- Add simple product to shopping cart -->
+        <actionGroup ref="AddSimpleProductToCartActionGroup" stepKey="cartAddSimpleProductToCart">
+            <argument name="product" value="$$createSimpleProduct$$"/>
+        </actionGroup>
+        <!-- Go to Shopping cart and Place Order -->
+        <actionGroup ref="GoToCheckoutFromMinicartActionGroup" stepKey="goToCheckout"/>
+        <actionGroup ref="CheckoutSelectFlatRateShippingMethodActionGroup" stepKey="selectFlatRateShippingMethod"/>
+        <comment userInput="BIC workaround" stepKey="waitNextButtonAppears"/>
+        <actionGroup ref="StorefrontCheckoutClickNextButtonActionGroup" stepKey="clickNext"/>
+        <actionGroup ref="CheckoutSelectCheckMoneyOrderPaymentActionGroup" stepKey="clickCheckMoneyOrderPayment"/>
+        <actionGroup ref="ClickPlaceOrderActionGroup" stepKey="clickPlaceOrder"/>
+        <grabTextFrom selector="{{CheckoutSuccessMainSection.orderNumber22}}" stepKey="grabOrderNumber"/>
+        <!-- Login to Admin -->
+        <actionGroup ref="AdminLoginActionGroup" stepKey="loginAsAdmin"/>
+        <!-- Open create order -->
+        <actionGroup ref="OpenOrderByIdActionGroup" stepKey="openOrder">
+            <argument name="orderId" value="{$grabOrderNumber}"/>
+        </actionGroup>
+        <grabFromCurrentUrl regex="~/order_id/(\d+)/~" stepKey="grabOrderId"/>
+
+        <!--Create Invoice and Shipment for this Order.-->
+        <actionGroup ref="StartCreateInvoiceFromOrderPageActionGroup" stepKey="createInvoice"/>
+        <actionGroup ref="SubmitInvoiceActionGroup" stepKey="submitInvoice"/>
+        <actionGroup ref="GoToShipmentIntoOrderActionGroup" stepKey="goToShipment"/>
+        <actionGroup ref="SubmitShipmentIntoOrderActionGroup" stepKey="submitShipment"/>
+        <!-- Go to My Account -> My Orders -> View Order and click Return-->
+        <actionGroup ref="StorefrontGoToCustomerOrderDetailsPageActionGroup" stepKey="goToViewOrderOnFrontend">
+            <argument name="orderId" value="$grabOrderId"/>
+            <argument name="orderNumber" value="$grabOrderNumber"/>
+        </actionGroup>
+        <click selector="{{StorefrontCustomerOrderViewSection.return}}" stepKey="clickButtonReturn"/>
+        <!-- Fill field Return Items Information and click Submit -->
+        <actionGroup ref="StorefrontFillReturnItemActionGroup" stepKey="fillFieldReturnItems">
+            <argument name="attributeCode" value="$$createReturnAttribute.attribute_code$$"/>
+            <argument name="item" value="SampleProductReturnItem"/>
+        </actionGroup>
+        <!-- Go to My Account -> My Returns -->
+        <click selector="{{StorefrontCustomerReturnViewSection.viewReturn}}" stepKey="clickViewButton"/>
+        <actionGroup ref="StorefrontVerifyReturnItemInformationActionGroup" stepKey="verifyReturnItemsInformation">
+            <argument name="product" value="$$createSimpleProduct$$"/>
+            <argument name="attribute" value="$$createReturnAttribute$$"/>
+            <argument name="item" value="SampleProductReturnItem"/>
+        </actionGroup>
+        <!-- Go to Sales > Operations > Returns and open return request -->
+        <amOnPage url="{{AdminReturnsPage.url}}" stepKey="goToReturnPage" />
+        <actionGroup ref="filterReturnsByOrder" stepKey="openReturns">
+            <argument name="orderId" value="{$grabOrderNumber}"/>
+        </actionGroup>
+        <actionGroup ref="goToReturnItemsTab" stepKey="openReturnItemsTab"/>
+        <actionGroup ref="VerifyReturnItemActionGroup" stepKey="verifyReturnItem">
+            <argument name="qty_remaining" value=""/>
+            <argument name="qty" value="1"/>
+            <argument name="item" value="SampleProductReturnItem"/>
+            <argument name="product_entity" value="$$createSimpleProduct$$"/>
+        </actionGroup>
+        <!-- Click Item Details and see attribute -->
+        <click selector="{{AdminReturnItemsTabSection.itemDetails}}" stepKey="clickItemDetails"/>
+        <waitForElementVisible selector="{{AdminReturnPopUpDialogSection.customAttribute($$createReturnAttribute.attribute_code$$, 'select')}}" stepKey="waitForAttributeLabelVisible"/>
+        <see selector="{{AdminReturnPopUpDialogSection.customAttribute($$createReturnAttribute.attribute_code$$, 'select')}}" userInput="Yes" stepKey="seeAttributeYesValue"/>
+        <selectOption selector="{{AdminReturnPopUpDialogSection.customAttribute($$createReturnAttribute.attribute_code$$, 'select')}}" userInput="No" stepKey="selectAttribute"/>
+        <click selector="{{AdminReturnPopUpDialogSection.acceptButton}}" stepKey="clickButtonOk"/>
+        <click selector="{{AdminReturnItemsTabSection.itemDetails}}" stepKey="clickItemDetailsSecondTime"/>
+        <waitForElementVisible selector="{{AdminReturnPopUpDialogSection.customAttribute($$createReturnAttribute.attribute_code$$, 'select')}}" stepKey="waitForAttributeLabelVisible1"/>
+        <see selector="{{AdminReturnPopUpDialogSection.customAttribute($$createReturnAttribute.attribute_code$$, 'select')}}" userInput="No" stepKey="seeAttributeNoValue"/>
+    </test>
+</tests>

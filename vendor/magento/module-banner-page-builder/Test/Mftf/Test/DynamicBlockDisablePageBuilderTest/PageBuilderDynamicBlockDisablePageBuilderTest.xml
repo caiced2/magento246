@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+ /**
+  * Copyright © Magento, Inc. All rights reserved.
+  * See COPYING.txt for license details.
+  */
+-->
+<tests xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:noNamespaceSchemaLocation="urn:magento:mftf:Test/etc/testSchema.xsd">
+    <test name="PageBuilderDynamicBlockDisablePageBuilderTest">
+        <annotations>
+            <features value="PageBuilder"/>
+            <stories value="Dynamic Block"/>
+            <title value="Verify PageBuilder does not appear when disabled in Dynamic Block"/>
+            <description value="This test is intended to ensure that PageBuilder does not appear when disabled for Dynamic Block."/>
+            <severity value="AVERAGE"/>
+            <useCaseId value="MC-13782"/>
+            <testCaseId value="MC-15171"/>
+            <group value="pagebuilder"/>
+            <group value="pagebuilder-ee"/>
+            <group value="pagebuilder-dynamic-block"/>
+            <group value="pagebuilder-disable"/>
+        </annotations>
+        <before>
+            <createData entity="_defaultDynamicBlock" stepKey="createDynamicBlock"/>
+            <actionGroup ref="AdminLoginActionGroup" stepKey="loginAsAdmin"/>
+            <actionGroup ref="NavigateToCreatedDynamicBlockActionGroup" stepKey="navigateToAPageWithPageBuilder">
+                <argument name="Banner" value="$$createDynamicBlock$$"/>
+            </actionGroup>
+        </before>
+        <after>
+            <magentoCLI command="config:set cms/pagebuilder/enabled 1" stepKey="enablePageBuilder"/>
+            <magentoCLI command="cache:clean config" stepKey="flushCache"/>
+            <actionGroup ref="DeleteBannerActionGroup" stepKey="deleteCreatedProduct">
+                <argument name="bannerName" value="$$createDynamicBlock.name$$"/>
+            </actionGroup>
+            <actionGroup ref="AdminLogoutActionGroup" stepKey="logout"/>
+        </after>
+        <seeElement selector="{{PageBuilderStage.stageWrapper}}" stepKey="seeElementPageBuilderStage"/>
+        <dontSeeElementInDOM selector="{{BannerContentSection.content_textarea}}" stepKey="dontSeeContentAreaInDOM"/>
+        <magentoCLI command="config:set cms/pagebuilder/enabled 0" stepKey="disablePageBuilder"/>
+        <magentoCLI command="cache:clean config" stepKey="flushCache"/>
+        <actionGroup ref="NavigateToCreatedDynamicBlockActionGroup" stepKey="navigateToAPageWithPageBuilder">
+            <argument name="Banner" value="$$createDynamicBlock$$"/>
+        </actionGroup>
+        <seeElementInDOM selector="{{BannerContentSection.content_textarea}}" stepKey="seeContentAreaInDOM"/>
+        <dontSeeElementInDOM selector="{{PageBuilderStage.stageWrapper}}" stepKey="dontSeePageBuilderStage"/>
+    </test>
+</tests>

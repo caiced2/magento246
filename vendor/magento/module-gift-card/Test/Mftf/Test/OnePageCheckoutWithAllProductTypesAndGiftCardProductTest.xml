@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+ /**
+  * Copyright © Magento, Inc. All rights reserved.
+  * See COPYING.txt for license details.
+  */
+-->
+
+<tests xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xsi:noNamespaceSchemaLocation="urn:magento:mftf:Test/etc/testSchema.xsd">
+    <test name="OnePageCheckoutWithAllProductTypesAndGiftCardProductTest" extends="OnePageCheckoutWithAllProductTypesTest">
+        <annotations>
+            <features value="OnePageCheckout"/>
+            <stories value="OnePageCheckout within Offline Payment Methods with Gift Card"/>
+            <title value="OnePageCheckout with all product types test with Gift Card"/>
+            <description value="Checkout with all product types with Gift Card"/>
+            <severity value="CRITICAL"/>
+            <testCaseId value="MC-14733"/>
+            <group value="GiftCard"/>
+            <group value="mtf_migrated"/>
+        </annotations>
+        <before>
+            <!-- Create GiftCard Product -->
+            <createData entity="ApiGiftCard" stepKey="createProductApiGiftCard" after="createVirtualProduct"/>
+        </before>
+        <after>
+            <!-- Delete created product -->
+            <remove keyForRemoval="createProductApiGiftCard"/>
+        </after>
+        <remove keyForRemoval="checkOrderTotalInStorefront"/>
+
+        <!-- Add GiftCard to cart -->
+        <amOnPage url="{{StorefrontProductPage.url($$createProductApiGiftCard.custom_attributes[url_key]$$)}}" stepKey="navigateToGiftCardProductPage" after="addToCartVirtualProductFromStorefrontProductPage"/>
+        <waitForPageLoad stepKey="waitForGiftCardProductPageLoad"/>
+        <fillField selector="{{StorefrontAddSenderDataSection.amount}}" userInput="10" stepKey="fillFieldAmount" after="navigateToGiftCardProductPage"/>
+        <fillField selector="{{StorefrontAddSenderDataSection.sender}}" userInput="Test" stepKey="fillFieldSenderName" after="fillFieldAmount"/>
+        <fillField selector="{{StorefrontAddSenderDataSection.receiver}}" userInput="Test" stepKey="fillFieldRecipientName" after="fillFieldSenderName"/>
+        <actionGroup ref="AddToCartFromStorefrontProductPageActionGroup" stepKey="addToCartGiftCardFromStorefrontProductPage" after="fillFieldRecipientName">
+            <argument name="productName" value="$$createProductApiGiftCard.name$$"/>
+        </actionGroup>
+
+        <!-- Go to customer order history and assert order total -->
+        <see selector="{{StorefrontCustomerRecentOrdersSection.orderTotal}}" userInput="$628.23" stepKey="checkOrderInStorefront" after="navigateToCustomerDashboardPage"/>
+    </test>
+</tests>

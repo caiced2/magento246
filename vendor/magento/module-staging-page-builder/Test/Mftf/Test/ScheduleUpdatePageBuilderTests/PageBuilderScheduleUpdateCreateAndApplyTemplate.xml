@@ -1,0 +1,70 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+ /**
+  * Copyright © Magento, Inc. All rights reserved.
+  * See COPYING.txt for license details.
+  */
+-->
+<tests xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:noNamespaceSchemaLocation="urn:magento:mftf:Test/etc/testSchema.xsd">
+    <test name="PageBuilderScheduleUpdateCreateAndApplyTemplate" extends="PageBuilderCMSPageCreateAndApplyTemplate">
+        <annotations>
+            <features value="PageBuilder"/>
+            <stories value="Schedule Update - CMS Page"/>
+            <title value="Create and Apply Page Builder Template to Scheduled Update"/>
+            <description value="Verify that user can create and apply a Page Builder template to a scheduled update."/>
+            <severity value="CRITICAL"/>
+            <useCaseId value="PB-341"/>
+            <testCaseId value="MC-30613"/>
+            <group value="pagebuilder"/>
+            <group value="pagebuilder-ee"/>
+            <group value="pagebuilder-staging"/>
+            <group value="pagebuilder-cms-page"/>
+            <group value="pagebuilder-templates"/>
+        </annotations>
+        <before>
+            <actionGroup ref="navigateToStagingSlideout" stepKey="navigateToStagingSlideout" after="navigateToCreatedCMSPage"/>
+            <actionGroup ref="switchToPageBuilderStage" stepKey="switchToPageBuilderStage">
+                <argument name="sectionSelector" value="{{AdminStagingSlideOutSection.contentTab}}"/>
+                <argument name="sectionDependentSelector" value="{{AdminStagingSlideOutSection.stagingContentTab}}"/>
+                <argument name="editButtonSelector" value="//aside{{PageBuilderStage.editButtonSelector}}"/>
+            </actionGroup>
+            <actionGroup ref="dragContentTypeToContainer" stepKey="dragRowToRootContainer">
+                <argument name="contentType" value="PageBuilderRowContentType"/>
+                <argument name="containerTargetType" value="PageBuilderRootContainerContentType"/>
+                <argument name="pageBuilderArea" value="{{AdminStagingSlideOutSection.cmsStagingPageBase}}"/>
+                <argument name="containerTargetIndex" value="2"/>
+            </actionGroup>
+            <actionGroup ref="expandPageBuilderPanelMenuSection" stepKey="expandPageBuilderPanelMenuSection">
+                <argument name="contentType" value="PageBuilderButtonsContentType"/>
+                <argument name="pageBuilderArea" value="{{AdminStagingSlideOutSection.cmsStagingPageBase}}"/>
+            </actionGroup>
+            <actionGroup ref="dragContentTypeToContainer" stepKey="dragContentTypeToStage">
+                <argument name="contentType" value="PageBuilderButtonsContentType"/>
+                <argument name="pageBuilderArea" value="{{AdminStagingSlideOutSection.cmsStagingPageBase}}"/>
+                <argument name="containerTargetIndex" value="1"/>
+            </actionGroup>
+        </before>
+        <actionGroup ref="openPageBuilderSaveTemplateModal" stepKey="openPageBuilderSaveTemplateModal">
+            <argument name="pageBuilderArea" value="{{AdminStagingSlideOutSection.cmsStagingPageBase}}"/>
+        </actionGroup>
+        <actionGroup ref="savePageBuilderTemplate" stepKey="savePageBuilderTemplate">
+            <argument name="baseContent" value="{{AdminStagingSlideOutSection.title}}"/>
+        </actionGroup>
+        <actionGroup ref="navigateToStagingSlideout" stepKey="navigateToStagingSlideout" before="switchToPageBuilderStage"/>
+        <actionGroup ref="switchToPageBuilderStage" stepKey="switchToPageBuilderStage">
+            <argument name="sectionSelector" value="{{AdminStagingSlideOutSection.contentTab}}"/>
+            <argument name="sectionDependentSelector" value="{{AdminStagingSlideOutSection.stagingContentTab}}"/>
+            <argument name="editButtonSelector" value="//aside{{PageBuilderStage.editButtonSelector}}"/>
+        </actionGroup>
+        <actionGroup ref="AdminVerifyEmptyStageActionGroup" stepKey="verifyEmptyStage">
+            <argument name="pageBuilderArea" value="{{AdminStagingSlideOutSection.cmsStagingPageBase}}"/>
+        </actionGroup>
+        <actionGroup ref="openPageBuilderApplyTemplateSlideOut" stepKey="openPageBuilderApplyTemplateSlideOut">
+            <argument name="pageBuilderArea" value="{{AdminStagingSlideOutSection.cmsStagingPageBase}}"/>
+        </actionGroup>
+        <actionGroup ref="confirmApplyFromPageBuilderApplyTemplateSlideOut" stepKey="confirmApplyFromPageBuilderApplyTemplateSlideOut">
+            <argument name="baseContent" value="{{AdminStagingSlideOutSection.title}}"/>
+        </actionGroup>
+    </test>
+</tests>

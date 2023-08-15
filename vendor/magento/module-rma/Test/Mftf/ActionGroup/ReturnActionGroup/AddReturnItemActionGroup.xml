@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+ /**
+  * Copyright © Magento, Inc. All rights reserved.
+  * See COPYING.txt for license details.
+  */
+-->
+<actionGroups xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:noNamespaceSchemaLocation="urn:magento:mftf:Test/etc/actionGroupSchema.xsd">
+    <actionGroup name="addReturnItem">
+        <arguments>
+            <argument name="product"/>
+        </arguments>
+        <click selector="{{AdminReturnItemsSection.addProducts}}" stepKey="clickAddReturnProducts"/>
+        <fillField selector="{{AdminReturnItemsSection.productNameFilter}}" userInput="{{product.name}}" stepKey="filterReturnItemsGrid"/>
+        <click selector="{{AdminReturnItemsSection.search}}" stepKey="clickSearch"/>
+        <checkOption selector="{{AdminReturnItemsSection.selectRow('1')}}" stepKey="selectSimpleProductReturn"/>
+        <click selector="{{AdminReturnItemsSection.addSelectedProducts}}" stepKey="clickAddSelectedProductsToReturn"/>
+    </actionGroup>
+</actionGroups>

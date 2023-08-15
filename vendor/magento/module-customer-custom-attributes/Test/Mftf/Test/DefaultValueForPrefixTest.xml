@@ -1,0 +1,63 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+ /**
+  * Copyright © Magento, Inc. All rights reserved.
+  * See COPYING.txt for license details.
+  */
+-->
+
+<tests xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:noNamespaceSchemaLocation="urn:magento:mftf:Test/etc/testSchema.xsd">
+    <test name="DefaultValueForPrefixTest">
+        <annotations>
+            <features value="CustomerCustomAttributes"/>
+            <stories value="MAGETWO-91631 - [Magento Cloud]Prefix in checkout not starting with blank value"/>
+            <title value="Checking default value for Prefix in checkout"/>
+            <description value="Checking default value for Prefix in checkout"/>
+            <severity value="MAJOR"/>
+            <testCaseId value="MAGETWO-94386"/>
+            <group value="prefix"/>
+        </annotations>
+        <before>
+            <createData entity="CustomerNameAndAddress" stepKey="CustomerNameAndAddress"/>
+            <createData entity="_defaultCategory" stepKey="category"/>
+            <createData entity="SimpleProduct" stepKey="product">
+                <requiredEntity createDataKey="category"/>
+            </createData>
+            <actionGroup ref="AdminLoginActionGroup" stepKey="loginAsAdmin"/>
+            <amOnPage url="{{CustomerAttributePrefixPage.url(CustomerAddressPrefixAttribute.attribute_code)}}" stepKey="goToPrefix"/>
+            <waitForPageLoad stepKey="waitForPrefixPageOpened"/>
+            <selectOption selector="{{CustomerAddressPrefixSection.valuesRequired}}" userInput="No" stepKey="PrefixValueRequired"/>
+            <selectOption selector="{{CustomerAddressPrefixSection.showOnStorefront}}" userInput="Yes" stepKey="ShowOnStorefront"/>
+            <click selector="{{CustomerAddressPrefixSection.save}}" stepKey="ClickToSave"/>
+            <waitForPageLoad stepKey="waitForPrefixValueSaved"/>
+        </before>
+        <after>
+            <createData entity="RollBackCustomerNameAndAddress" stepKey="RollBackCustomerNameAndAddress"/>
+            <deleteData createDataKey="product" stepKey="deleteProduct"/>
+            <deleteData createDataKey="category" stepKey="deleteCategory"/>
+            <amOnPage url="{{CustomerAttributePrefixPage.url(CustomerAddressPrefixAttribute.attribute_code)}}" stepKey="goToPrefix1"/>
+            <waitForPageLoad stepKey="waitForPrefixPageOpened1"/>
+            <selectOption selector="{{CustomerAddressPrefixSection.showOnStorefront}}" userInput="No" stepKey="ShowOnStorefront1"/>
+            <click selector="{{CustomerAddressPrefixSection.save}}" stepKey="ClickToSave1"/>
+            <waitForPageLoad stepKey="waitForPrefixValueSaved1"/>
+            <actionGroup ref="AdminLogoutActionGroup" stepKey="logout"/>
+        </after>
+        <!--Go to storefront-->
+        <amOnPage url="$$product.custom_attributes[url_key]$$.html" stepKey="goToProductPage"/>
+        <waitForPageLoad stepKey="waitForPageLoad"/>
+        <!--Add product to cart-->
+        <waitForElementClickable selector="{{StorefrontProductActionSection.addToCart}}" stepKey="waitForAddToCartButton"/>
+        <click selector="{{StorefrontProductActionSection.addToCart}}" stepKey="addProductToCart"/>
+        <waitForPageLoad stepKey="waitForPageLoad1"/>
+        <waitForElementVisible selector="{{StorefrontMessagesSection.success}}" stepKey="waitForSuccessMessage"/>
+        <!--Proceed to checkout-->
+        <actionGroup ref="GoToCheckoutFromMinicartActionGroup" stepKey="GoToCheckoutFromMinicartActionGroup"/>
+        <!--Check name prefix is empty-->
+        <grabValueFrom selector="{{CustomerAddressPrefixSection.prefixFiled}}" stepKey="getPrefixValue"/>
+        <assertEquals stepKey="assertValuesAreEqual">
+			<actualResult type="const">$getPrefixValue</actualResult>
+			<expectedResult type="const">' '</expectedResult>
+        </assertEquals>
+    </test>
+</tests>

@@ -1,0 +1,509 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+ /**
+  * Copyright © Magento, Inc. All rights reserved.
+  * See COPYING.txt for license details.
+  */
+-->
+
+<tests xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xsi:noNamespaceSchemaLocation="urn:magento:mftf:Test/etc/testSchema.xsd">
+    <test name="AdminPermanentUpdateWithStartDateBeforeExistedRangeTest">
+        <annotations>
+            <features value="Staging"/>
+            <stories value="Staging updates"/>
+            <title value="Permanent Update with start date before existed range"/>
+            <description value="The purpose of this end-to-end scenario is testing of business use case 'Create Single Update for products' on backend, preview mode and front-end."/>
+            <severity value="BLOCKER"/>
+            <testCaseId value="MC-11396"/>
+            <group value="staging"/>
+            <skip>
+                <issueId value="MC-19680"/>
+            </skip>
+            <group value="pr_exclude"/>
+        </annotations>
+        <before>
+            <!-- Create subcategory for Default Category  and Create Simple Product -->
+            <createData entity="_defaultCategory" stepKey="createSubCategory"/>
+            <createData entity="ApiSimplePrice10Qty10" stepKey="createProduct">
+                <requiredEntity createDataKey="createSubCategory"/>
+            </createData>
+
+            <!-- Set in Stores > Configuration > Catalog > Catalog > Price - Catalog Price Scope = "Website" -->
+            <magentoCLI command="config:set {{WebsiteCatalogPriceScopeConfigData.path}} {{WebsiteCatalogPriceScopeConfigData.value}}" stepKey="setPriceScopeWebsite"/>
+            <magentoCLI command="config:set {{StorefrontEnableAddStoreCodeToUrls.path}} {{StorefrontEnableAddStoreCodeToUrls.value}}" stepKey="EnableAddStoreCodeToUrls"/>
+
+            <!-- 1. Login to Magento backend -->
+            <actionGroup ref="AdminLoginActionGroup" stepKey="loginAsAdmin"/>
+
+            <!-- Create website, Store and Store View -->
+            <actionGroup ref="AdminCreateWebsiteActionGroup" stepKey="createWebsite">
+                <argument name="newWebsiteName" value="{{NewWebSiteData.name}}"/>
+                <argument name="websiteCode" value="{{NewWebSiteData.code}}"/>
+            </actionGroup>
+            <actionGroup ref="AdminCreateNewStoreGroupActionGroup" stepKey="createNewStore">
+                <argument name="website" value="{{NewWebSiteData.name}}"/>
+                <argument name="storeGroupName" value="{{NewStoreData.name}}"/>
+                <argument name="storeGroupCode" value="{{NewStoreData.code}}"/>
+            </actionGroup>
+            <actionGroup ref="AdminCreateStoreViewActionGroup" stepKey="createCustomStoreView">
+                <argument name="StoreGroup" value="NewStoreData"/>
+                <argument name="customStore" value="NewStoreViewData"/>
+            </actionGroup>
+            <magentoCron groups="index" stepKey="reindex"/>
+        </before>
+        <after>
+            <magentoCLI command="config:set {{GlobalCatalogPriceScopeConfigData.path}} {{GlobalCatalogPriceScopeConfigData.value}}" stepKey="setPriceScopeGlobal"/>
+            <magentoCLI command="config:set {{StorefrontDisableAddStoreCodeToUrls.path}} {{StorefrontDisableAddStoreCodeToUrls.value}}" stepKey="DisableAddStoreCodeToUrls"/>
+
+            <!-- Delete data -->
+            <deleteData createDataKey="createSubCategory" stepKey="deleteCategory"/>
+            <deleteData createDataKey="createProduct" stepKey="deleteProduct"/>
+
+            <actionGroup ref="AdminDeleteWebsiteActionGroup" stepKey="deleteWebsite">
+                <argument name="websiteName" value="{{NewWebSiteData.name}}"/>
+            </actionGroup>
+            <magentoCron groups="index" stepKey="reindex"/>
+
+            <amOnPage url="{{AdminStagingDashboardPage.url}}" stepKey="amOnStagingUpdatePage"/>
+            <actionGroup ref="ClearFiltersAdminDataGridActionGroup" stepKey="clearStagingFiltersOnStagingDashboard"/>
+
+            <actionGroup ref="AdminOpenProductIndexPageActionGroup" stepKey="navigateToIndexPage"/>
+            <actionGroup ref="ClearFiltersAdminDataGridActionGroup" stepKey="clearProductsFiltersOnStagingDashboard"/>
+
+            <actionGroup ref="AdminLogoutActionGroup" stepKey="logout"/>
+        </after>
+
+        <!-- Checkboxes for Main Website and P0SecondWebsite  are selected -->
+        <amOnPage url="{{AdminProductEditPage.url($$createProduct.id$$)}}" stepKey="openEditProductPage"/>
+        <actionGroup ref="SelectProductInWebsitesActionGroup" stepKey="selectWebsites">
+            <argument name="website" value="{{NewWebSiteData.name}}"/>
+        </actionGroup>
+        <actionGroup ref="SaveProductFormActionGroup" stepKey="saveProductForm"/>
+
+        <!-- 2. Navigate to menu Catalog -> Products-->
+        <actionGroup ref="AdminOpenCatalogProductPageActionGroup" stepKey="onProductPage"/>
+
+        <!-- 3. Click on "Edit" link for product with name P2ProductName -->
+        <actionGroup ref="FilterAndSelectProductActionGroup" stepKey="openProduct">
+            <argument name="productSku" value="$$createProduct.sku$$"/>
+        </actionGroup>
+
+        <!-- Block "Scheduled Changes"  with no inside content is presented on product view page -->
+        <dontSeeElement selector="{{AdminStagingSlideOutSection.contentBlock}}" stepKey="dontSeeContentInScheduledChanges"/>
+
+        <!-- Create the staging update -->
+        <generateDate date="{{TemporaryUpdatePlus8min.startDate}}" format="m/d/Y g:i A"  stepKey="generateStartDateS5"/>
+        <generateDate date="now" format="s" stepKey="generateStartDateFirstStagingSeconds"/>
+        <generateDate date="{{TemporaryUpdatePlus8min.startDate}}" format="U" stepKey="generateStartDateFirstStagingTS"/>
+
+        <generateDate date="{{TemporaryUpdatePlus8min.endDate}}" format="m/d/Y g:i A" stepKey="generateEndDateS5"/>
+        <generateDate date="now" format="s" stepKey="generateEndDateFirstStagingSeconds"/>
+        <generateDate date="{{TemporaryUpdatePlus8min.endDate}}" format="U" stepKey="generateEndDateFirstStagingTS"/>
+
+        <generateDate date="{{TemporaryUpdatePlus7min.startDate}}" format="M d, Y g:i A"  stepKey="generateStartDateS5MinusOneMinute"/>
+        <generateDate date="{{TemporaryUpdatePlus7min.endDate}}" format="M d, Y g:i A" stepKey="generateEndDateS5PlusOneMinute"/>
+
+        <!-- 4. Click on "Schedule New Update" button and
+             5. On Slide panel change Store view to  P0StoreViewCode and fill New update with data
+             6. Click on "Save" button-->
+        <click selector="{{AdminStagingSlideOutSection.scheduleNewUpdateBtn}}" stepKey="clickScheduleNewUpdateButton"/>
+
+        <actionGroup ref="AdminSwitchStoreViewModalActionGroup" stepKey="switchStore">
+            <argument name="storeView" value="NewStoreViewData.name"/>
+        </actionGroup>
+
+        <actionGroup ref="AdminFillScopeScheduleUpdateWithoutSaving" stepKey="fillTemporaryUpdate">
+            <argument name="staging" value="TemporaryUpdatePlus8min"/>
+            <argument name="timeStart" value="{$generateStartDateS5}"/>
+            <argument name="timeEnd" value="{$generateEndDateS5}"/>
+            <argument name="productPrice" value="{{SimpleProductUpdatePrice14.price}}"/>
+        </actionGroup>
+
+        <!-- Open date picker and collect date and time in format that we need for assertions -->
+        <!-- Start date First Staging S5 -->
+        <click selector="{{AdminStagingSlideOutSection.datepickerStartDate}}" stepKey="clickDatePickerStartDay"/>
+        <grabTextFrom selector="{{AdminStagingSlideOutSection.datapickerTime}}" stepKey="grabStartTimeS5"/>
+        <grabTextFrom selector="{{AdminStagingSlideOutSection.datapickerCurrentDay}}" stepKey="grabStartCurrentDayS5"/>
+        <grabTextFrom selector="{{AdminStagingSlideOutSection.datapickerMonth}}" stepKey="grabStartMonthS5"/>
+        <grabValueFrom selector="{{AdminStagingSlideOutSection.datapickerYear}}" stepKey="grabStartYearS5"/>
+        <click selector="{{AdminStagingSlideOutSection.datepickerClose}}" stepKey="clickClose"/>
+
+        <!-- End date First Staging S5-->
+        <click selector="{{AdminStagingSlideOutSection.datepickerEndDate}}" stepKey="clickDatePickerEndDay"/>
+        <grabTextFrom selector="{{AdminStagingSlideOutSection.datapickerTime}}" stepKey="grabEndTimeS5"/>
+        <grabTextFrom selector="{{AdminStagingSlideOutSection.datapickerCurrentDay}}" stepKey="grabEndCurrentDayS5"/>
+        <grabTextFrom selector="{{AdminStagingSlideOutSection.datapickerMonth}}" stepKey="grabEndMonthS5"/>
+        <grabValueFrom selector="{{AdminStagingSlideOutSection.datapickerYear}}" stepKey="grabEndYearS5"/>
+        <click selector="{{AdminStagingSlideOutSection.datepickerClose}}" stepKey="clickCloseDatePicker"/>
+
+        <!-- Save First Staging Update -->
+        <actionGroup ref="SaveScheduleUpdateForProductActionGroup" stepKey="saveFirstScheduleUpdateForProduct">
+            <argument name="staging" value="TemporaryUpdatePlus8min"/>
+        </actionGroup>
+
+        <!-- Scheduled Changes block consists of data:
+                S5StartDate    Start   S5Update Name  S5EndDate   S5Description -->
+        <actionGroup ref="AssertAdminTemporaryStagingUpdateInScheduleTableActionGroup" stepKey="assertScheduledChangesS5">
+            <argument name="updateName" value="{{TemporaryUpdatePlus8min.updateName}}"/>
+            <argument name="startDate" value="{$grabStartMonthS5} {$grabStartCurrentDayS5}, {$grabStartYearS5}"/>
+            <argument name="startTime" value="{$grabStartTimeS5}"/>
+            <argument name="endDate" value="{$grabEndMonthS5} {$grabEndCurrentDayS5}, {$grabEndYearS5}"/>
+            <argument name="endTime" value="{$grabEndTimeS5}"/>
+        </actionGroup>
+
+        <!-- 7. Click on "Schedule New Update" button -->
+        <click selector="{{AdminStagingSlideOutSection.scheduleNewUpdateBtn}}" stepKey="newUpdateBtn"/>
+
+        <!-- 8. On Slide panel change Store view to All Store Views and fill New update with data
+             9. Click on "Save" button -->
+        <actionGroup ref="AdminSwitchStoreViewModalActionGroup" stepKey="switchToAllStoreView">
+            <argument name="storeView" value="DefaultAllStoreView.name"/>
+        </actionGroup>
+
+        <!-- Create the staging update -->
+        <generateDate date="{{PermanentUpdatePlus5min.startDate}}" format="m/d/Y g:i A"  stepKey="generateStartDateSecondStaging"/>
+        <generateDate date="now" format="s" stepKey="generateStartDateSecondStagingSeconds"/>
+        <generateDate date="{{PermanentUpdatePlus5min.startDate}}" format="U" stepKey="generateStartDateSecondStagingTS"/>
+
+        <actionGroup ref="AdminFillScheduleUpdateWithoutSaving" stepKey="fillPermanentUpdate">
+            <argument name="staging" value="PermanentUpdatePlus5min"/>
+            <argument name="timeStart" value="{$generateStartDateSecondStaging}"/>
+            <argument name="productPrice" value="{{SimpleProductUpdatePrice11.price}}"/>
+        </actionGroup>
+
+        <!-- Open date picker and collect date and time in format that we need for assertions -->
+        <!-- Start date Second Staging S8 -->
+        <click selector="{{AdminStagingSlideOutSection.datepickerStartDate}}" stepKey="openDatePickerStartDay"/>
+        <grabTextFrom selector="{{AdminStagingSlideOutSection.datapickerTime}}" stepKey="grabStartTimeS8"/>
+        <grabTextFrom selector="{{AdminStagingSlideOutSection.datapickerCurrentDay}}" stepKey="grabStartCurrentDayS8"/>
+        <grabTextFrom selector="{{AdminStagingSlideOutSection.datapickerMonth}}" stepKey="grabStartMontS8"/>
+        <grabValueFrom selector="{{AdminStagingSlideOutSection.datapickerYear}}" stepKey="grabStartYearS8"/>
+        <click selector="{{AdminStagingSlideOutSection.datepickerClose}}" stepKey="closeDatePicker"/>
+
+        <!-- Save Second Staging Update S8 -->
+        <actionGroup ref="SaveScheduleUpdateForProductActionGroup" stepKey="savePermanentScheduleUpdateForProduct">
+            <argument name="staging" value="PermanentUpdatePlus5min"/>
+        </actionGroup>
+
+        <actionGroup ref="AssertAdminPermanentStagingUpdateInScheduleTableActionGroup" stepKey="assertS8">
+            <argument name="updateName" value="{{PermanentUpdatePlus5min.updateName}}"/>
+            <argument name="startDate" value="{$grabStartMontS8} {$grabStartCurrentDayS8}, {$grabStartYearS8}"/>
+            <argument name="startTime" value="{$grabStartTimeS8}"/>
+        </actionGroup>
+
+        <!-- 10. Click on View/Edit link for S5UpdateName Update -->
+        <click selector="{{AdminStagingSlideOutSection.editLinkByName(TemporaryUpdatePlus8min.updateName)}}" stepKey="clickView"/>
+
+        <!-- 11. Change Scope to Default Store View -->
+        <actionGroup ref="AdminSwitchStoreViewModalActionGroup" stepKey="switchToDefaultStoreView">
+            <argument name="storeView" value="_defaultStore.name"/>
+        </actionGroup>
+
+        <!-- 12. On Slide panel change product price for update in  Default Store View scope
+                 ||Update Attribute  ||Value || Test Identifier
+                 |Price |    $16  | S12.1Price|
+             13. Click on "Save" button -->
+        <actionGroup ref="AdminChangeStagingUpdateProductPriceActionGroup" stepKey="changePrice">
+            <argument name="price" value="16"/>
+        </actionGroup>
+        <actionGroup ref="SaveScheduleUpdateForProductActionGroup" stepKey="saveTemporaryUpdate">
+            <argument name="staging" value="TemporaryUpdatePlus8min"/>
+        </actionGroup>
+        <actionGroup ref="SaveProductFormActionGroup" stepKey="saveProductFormAdterUpdatesAreAdded"/>
+
+        <!-- 14. Navigate to Content `-> Staging Dashboard -->
+        <comment userInput="BIC workaround" stepKey="amOnStagingUpdatePage"/>
+        <actionGroup ref="changeStagingView" stepKey="changeDashboardView">
+            <argument name="view" value="timeline"/>
+        </actionGroup>
+        <!-- Verify: S5UpdateName and S8.1UpdateName bars are presented on Staging Dashboard. -->
+        <actionGroup ref="ClearFiltersAdminDataGridActionGroup" stepKey="clearFiltersOnStagingDashboard"/>
+        <seeElement selector="{{AdminContentStagingDashboardSection.timeLineEventParameterized(TemporaryUpdatePlus8min.updateName)}}" stepKey="seeTitleS5"/>
+        <seeElement selector="{{AdminContentStagingDashboardSection.timeLineEventParameterized(PermanentUpdatePlus5min.updateName)}}" stepKey="seeTitleS8"/>
+        <!-- 15. Click on  S5UpdateName -->
+
+        <!-- Verify hover content : Update name is S5UpdateName
+        "View/Edit" and "Preview"  buttons
+        Status: Upcoming
+        Start:  S5StartDate
+        End: S5EndDate
+        This campaign includes  1 Objects
+        1 Products  -->
+        <actionGroup ref="StagingDashboardVerifyHoverContentActionGroup" stepKey="stagingDashboardVerifyHoverContent">
+            <argument name="staging" value="TemporaryUpdatePlus8min"/>
+        </actionGroup>
+        <see userInput="{$grabStartMonthS5} {$grabStartCurrentDayS5}, {$grabStartYearS5} {$grabStartTimeS5}" selector="{{AdminContentStagingDashboardSection.stagingDate(TemporaryUpdatePlus8min.updateName)}}" stepKey="assertTemporaryUpdateStartDate"/>
+        <see userInput="{$grabEndMonthS5} {$grabEndCurrentDayS5}, {$grabEndYearS5} {$grabEndTimeS5}" selector="{{AdminContentStagingDashboardSection.stagingDate(TemporaryUpdatePlus8min.updateName)}}" stepKey="assertTemporaryUpdateEndDate"/>
+
+        <!-- 16. Click on  "View/Edit" button. -->
+        <!-- Verify: in General tab:
+                    Name = S5UpdateName
+                    Description = S5UpdateDescription
+                    Start Time = S5StartTime
+                    End Time = S5EndTime
+                    in Products tab  P2ProductName is presented in grid with View/Edit link in Action column -->
+        <actionGroup ref="VerifyStagingUpdateAndIncludedProductActionGroup" stepKey="verifyStagingUpdateAndIncludedProduct">
+            <argument name="includedProduct" value="$createProduct$"/>
+            <argument name="stagingUpdate" value="TemporaryUpdatePlus8min"/>
+            <argument name="startDate" value="{$generateStartDateS5}"/>
+            <argument name="endDate" value="{$generateEndDateS5}"/>
+        </actionGroup>
+
+        <!-- 17, 18. Open P2ProductName to edit -->
+        <!-- 19. Click on link "Preview" for  Update with name  S5UpdateName -->
+        <actionGroup ref="GoToProductStagingPreview" stepKey="goToProductStagingPreview">
+            <argument name="productId" value="$createProduct.id$"/>
+            <argument name="updateName" value="{{TemporaryUpdatePlus8min.updateName}}"/>
+        </actionGroup>
+
+        <!-- Verify  preview  product  page  is opened with data:
+                Product name = P2ProductName
+                Product price = S12.1Price
+                Calendar date =  S5StartDate
+                Scope = Default Store View -->
+        <actionGroup ref="AdminVerifyStoreViewProductStagingPreviewNameAndPriceActionGroup" stepKey="verifyProductStoreViewDateInStagingPreviewAction">
+            <argument name="productName" value="$$createProduct.name$$"/>
+            <argument name="productPrice" value="{{SimpleProductUpdatePrice16.price}}"/>
+            <argument name="calendarDate" value="{$grabStartMonthS5} {$grabStartCurrentDayS5}, {$grabStartYearS5} {$grabStartTimeS5}"/>
+            <argument name="storeView" value="{{_defaultStore.name}}"/>
+        </actionGroup>
+
+        <!-- 20. Change Scope to P0StoreViewCode and click on "Preview" button  -->
+        <actionGroup ref="AdminChangeStagingPreviewScopeActionGroup" stepKey="setStoreView">
+            <argument name="storeViewCode" value="{{NewStoreViewData.code}}"/>
+        </actionGroup>
+
+        <!-- Verify  preview  product  page  is opened with data:
+                Product name = P2ProductName
+                Product price = S5Price
+                Calendar date =  S5StartDate
+                Scope = P0StoreView -->
+        <actionGroup ref="AdminVerifyStoreViewProductStagingPreviewNameAndPriceActionGroup" stepKey="verifyProduct">
+            <argument name="productName" value="$$createProduct.name$$"/>
+            <argument name="productPrice" value="{{SimpleProductUpdatePrice14.price}}"/>
+            <argument name="calendarDate" value="{$grabStartMonthS5} {$grabStartCurrentDayS5}, {$grabStartYearS5} {$grabStartTimeS5}"/>
+            <argument name="storeView" value="{{NewStoreViewData.name}}"/>
+        </actionGroup>
+
+        <!-- 21. Click on Calendar
+             22. Select Date&Time = S5StartDate- 1 minute and Click on "Preview" button -->
+        <actionGroup ref="AdminChangeStagingPreviewDateActionGroup" stepKey="changePreviewDate">
+            <argument name="previewDate" value="{$generateStartDateS5MinusOneMinute}"/>
+        </actionGroup>
+
+        <!-- Preview  product  page  is opened with data:
+                Product name = P2ProductName
+                Product price = S8.1Price
+                Calendar date =   S5StartDate- 1 minute
+                Scope = P0StoreView -->
+        <actionGroup ref="AdminVerifyStoreViewProductStagingPreviewNameAndPriceActionGroup" stepKey="verifyProductWIthStartDateMinusOneMinute">
+            <argument name="productName" value="$$createProduct.name$$"/>
+            <argument name="productPrice" value="{{SimpleProductUpdatePrice11.price}}"/>
+            <argument name="calendarDate" value="{$generateStartDateS5MinusOneMinute}"/>
+            <argument name="storeView" value="{{NewStoreViewData.name}}"/>
+        </actionGroup>
+
+        <!-- 23. Change Scope to Default Store View and click on "Preview" button -->
+        <actionGroup ref="AdminChangeStagingPreviewScopeActionGroup" stepKey="setDefaultView">
+            <argument name="storeViewCode" value="{{_defaultStore.code}}"/>
+        </actionGroup>
+
+        <!-- Verify  preview  product  page  is opened with data:
+                Product name = P2ProductName
+                Product price = S8.1Price
+                Calendar date =   S5StartDate- 1 minute
+                Scope = Default Store View -->
+        <actionGroup ref="AdminVerifyStoreViewProductStagingPreviewNameAndPriceActionGroup" stepKey="verifyProductWithDefaultStore">
+            <argument name="productName" value="$$createProduct.name$$"/>
+            <argument name="productPrice" value="{{SimpleProductUpdatePrice11.price}}"/>
+            <argument name="calendarDate" value="{$generateStartDateS5MinusOneMinute}"/>
+            <argument name="storeView" value="{{_defaultStore.name}}"/>
+        </actionGroup>
+
+        <!-- 24. Click on Calendar
+             25. Select Date&Time = S5EndDate + 1 minute  and Click on "Preview" button -->
+        <actionGroup ref="AdminChangeStagingPreviewDateActionGroup" stepKey="changeDateToEndDatePlusOneMinute">
+            <argument name="previewDate" value="{$generateEndDateS5PlusOneMinute}"/>
+        </actionGroup>
+
+        <!-- Preview  product  page  is opened with data:
+                Product name = P2ProductName
+                Product price = S8.1Price
+                Calendar date =  S5EndDate + 1minute
+                Scope = Default Store View -->
+        <actionGroup ref="AdminVerifyStoreViewProductStagingPreviewNameAndPriceActionGroup" stepKey="verifyProductWithDateToEndDatePlusOneMinute">
+            <argument name="productName" value="$$createProduct.name$$"/>
+            <argument name="productPrice" value="{{SimpleProductUpdatePrice11.price}}"/>
+            <argument name="calendarDate" value="{$generateEndDateS5PlusOneMinute}"/>
+            <argument name="storeView" value="{{_defaultStore.name}}"/>
+        </actionGroup>
+
+        <!-- 26. Change Scope to P0StoreView and click on "Preview" button -->
+        <actionGroup ref="AdminChangeStagingPreviewScopeActionGroup" stepKey="seeNewStoreView">
+            <argument name="storeViewCode" value="{{NewStoreViewData.code}}"/>
+        </actionGroup>
+
+        <!-- Verify  preview  product  page  is opened with data:
+                Product name = P2ProductName
+                Product price = S8.1Price
+                Calendar date =   S5EndDate+ 1 minute
+                Scope = P0StoreView -->
+        <actionGroup ref="AdminVerifyStoreViewProductStagingPreviewNameAndPriceActionGroup" stepKey="verifyProductWithScopeNewStore">
+            <argument name="productName" value="$$createProduct.name$$"/>
+            <argument name="productPrice" value="{{SimpleProductUpdatePrice11.price}}"/>
+            <argument name="calendarDate" value="{$generateEndDateS5PlusOneMinute}"/>
+            <argument name="storeView" value="{{NewStoreViewData.name}}"/>
+        </actionGroup>
+
+        <!-- 27. Click on Calendar -->
+        <!-- Assert Update with name S5UpdateName exists in grid with such values:
+                Update Name =   S5UpdateName
+                Description =   S5Description
+                Start Date =    S5StartDate
+                End Date =  S5EndDate -->
+        <actionGroup ref="AssertAdminStagingInGridOnPreviewPageActionGroup" stepKey="assertStagingInGridOnPreviewPage">
+            <argument name="update" value="TemporaryUpdatePlus8min"/>
+            <argument name="startDate" value="{$grabStartMonthS5} {$grabStartCurrentDayS5}, {$grabStartYearS5} {$grabStartTimeS5}"/>
+            <argument name="endDate" value="{$grabEndMonthS5} {$grabEndCurrentDayS5}, {$grabEndYearS5} {$grabEndTimeS5}"/>
+        </actionGroup>
+
+        <!-- 28. Click on "Select" in "Action" list for update S5UpdateName -->
+        <!-- 29. Click on "Preview" link  in "Action" option -->
+        <actionGroup ref="AdminClickPreviewStagingFromPreviewGridActionGroup" stepKey="assertHomePageIsOpenedFromPreviewGrid">
+            <argument name="updateName" value="{{TemporaryUpdatePlus8min.updateName}}"/>
+        </actionGroup>
+
+        <!-- Verify Home Page is opened and Calendar date is S5StartDate -->
+        <actionGroup ref="FocusOnStagingPreviewIframe" stepKey="switch"/>
+        <see userInput="Home Page" selector="{{StorefrontCMSPageSection.mainTitle}}" stepKey="seeHomePage"/>
+        <actionGroup ref="FocusOnHostPage" stepKey="rollBack"/>
+
+        <see userInput="{$grabStartMonthS5} {$grabStartCurrentDayS5}, {$grabStartYearS5} {$grabStartTimeS5}" selector="{{AdminStagingPreviewSection.previewDate}}" stepKey="seeStartDateInPreview"/>
+
+        <!-- 30. Change scope to  P0StoreView and click on "preview" button -->
+        <actionGroup ref="AdminChangeStagingPreviewScopeActionGroup" stepKey="changeScopeToNewStoreView">
+            <argument name="storeViewCode" value="{{NewStoreViewData.code}}"/>
+        </actionGroup>
+
+        <!-- 31. Click on P1CategoryName on Home Page -->
+        <actionGroup ref="FocusOnStagingPreviewIframe" stepKey="switchToIFrame"/>
+        <click selector="{{StorefrontNavigationSection.topCategory($$createSubCategory.name$$)}}" stepKey="clickOnCategoryInMenu"/>
+        <waitForPageLoad stepKey="waitCategoryIsLoaded"/>
+
+        <!-- 32. Find product P2ProductName on category page with name P1CategoryName -->
+        <see userInput="$$createSubCategory.name$$" selector="{{StorefrontCategoryMainSection.CategoryTitle}}" stepKey="seeCategoryNameInTitle"/>
+        <see userInput="$$createProduct.name$$" selector="{{StorefrontCategoryMainSection.productName}}" stepKey="seeProductNameOnPage"/>
+        <moveMouseOver selector="{{StorefrontCategoryProductSection.ProductTitleByName($$createProduct.name$$)}}" stepKey="moveMouseOverProduct"/>
+        <click selector="{{StorefrontCategoryProductSection.ProductTitleByName($$createProduct.name$$)}}" stepKey="openProductPage"/>
+        <waitForPageLoad time="30" stepKey="waitForBundleProductPageLoad"/>
+        <actionGroup ref="FocusOnHostPage" stepKey="rollBackFromIFrame"/>
+
+        <!-- Verify on  Preview  product  page such values :
+                Product name = P2ProductName
+                Product price = S5Price
+                Calendar date =  S5StartDate -->
+        <actionGroup ref="AdminVerifyProductStagingPreviewNameAndPriceActionGroup" stepKey="verifyProductAnd">
+            <argument name="productName" value="$$createProduct.name$$"/>
+            <argument name="productPrice" value="{{SimpleProductUpdatePrice14.price}}"/>
+            <argument name="calendarDate" value="{$grabStartMonthS5} {$grabStartCurrentDayS5}, {$grabStartYearS5} {$grabStartTimeS5}"/>
+        </actionGroup>
+
+        <!-- 33. Wait for system date equals to S8.1StartDate -->
+        <!-- Wait until permanent update starts-->
+        <generateDate date="now" format="U" stepKey="nowDateTSForPermanentUpdate"/>
+        <executeJS function="return ({$generateStartDateSecondStagingTS} - {$generateStartDateSecondStagingSeconds} - {$nowDateTSForPermanentUpdate} + 5) > 0 ? ({$generateStartDateSecondStagingTS} - {$generateStartDateSecondStagingSeconds} - {$nowDateTSForPermanentUpdate} + 5) : 0;" stepKey="calcWaitPeriodPermanentUpdate"/>
+        <wait time="$calcWaitPeriodPermanentUpdate" stepKey="waitPermanentUpdateStart"/>
+
+        <!-- 34. Run cron twice -->
+        <magentoCLI command="cron:run" stepKey="runCronBeforePermanentUpdateStartFirst"/>
+        <magentoCLI command="cron:run" stepKey="runCronBeforePermanentUpdateStartSecond"/>
+
+        <!-- 35. Open product view page with sku P2ProductSKU  on frontend on Main website -->
+        <actionGroup ref="StorefrontOpenProductPageActionGroup" stepKey="openProductOnDefaultStoreAfterPermanentUpdateStart">
+            <argument name="productUrl" value="$$createProduct.custom_attributes[url_key]$$"/>
+        </actionGroup>
+
+        <!-- Verify:
+                Product name = P2ProductName
+                Product price = S8.1Price -->
+        <see userInput="$$createProduct.name$$" selector="{{StorefrontProductInfoMainSection.productName}}" stepKey="seeProductNameOnStorefront"/>
+        <see userInput="{{SimpleProductUpdatePrice11.price}}" selector="{{StorefrontProductInfoMainSection.price}}" stepKey="seeProductPriceOnStorefront"/>
+
+        <!-- 36. Open product view page with sku P2ProductSKU  on frontend on P0SecondWebsite -->
+        <actionGroup ref="StorefrontOpenProductPageOnSecondStoreActionGroup" stepKey="openProductOnSecondStoreAfterPermanentUpdateStart">
+            <argument name="productUrl" value="$$createProduct.custom_attributes[url_key]$$"/>
+            <argument name="storeCode" value="{{NewStoreViewData.code}}"/>
+        </actionGroup>
+
+        <!-- Verify:
+                Product name = P2ProductName
+                Product price = S8.1Price -->
+        <see userInput="$$createProduct.name$$" selector="{{StorefrontProductInfoMainSection.productName}}" stepKey="seeProductNameSecondWebsite"/>
+        <see userInput="{{SimpleProductUpdatePrice11.price}}" selector="{{StorefrontProductInfoMainSection.price}}" stepKey="seeProductPriceSecondWebsite"/>
+
+        <!-- 37. Wait for system date equals to S5StartDate  -->
+        <generateDate date="now" format="U" stepKey="nowDateTSForStartTemporaryUpdate"/>
+        <executeJS function="return ({$generateStartDateFirstStagingTS} - {$generateStartDateFirstStagingSeconds} - {$nowDateTSForStartTemporaryUpdate} + 5) > 0 ? ({$generateStartDateFirstStagingTS} - {$generateStartDateFirstStagingSeconds} - {$nowDateTSForStartTemporaryUpdate} + 5) : 0;" stepKey="calcWaitPeriodForStartTemporaryUpdate"/>
+        <wait time="$calcWaitPeriodForStartTemporaryUpdate" stepKey="waitTemporaryUpdateStart"/>
+
+        <!-- 38. Run cron twice -->
+        <magentoCLI command="cron:run" stepKey="runCronBeforeTemporaryUpdateStartFirst"/>
+        <magentoCLI command="cron:run" stepKey="runCronBeforeTemporaryUpdateStartSecond"/>
+
+        <!--39. Open product view page with SKU P2ProductSKU  on frontend  -->
+        <actionGroup ref="StorefrontOpenProductPageActionGroup" stepKey="openProductOnDefaultStoreAfterTemporaryUpdateStart">
+            <argument name="productUrl" value="$$createProduct.custom_attributes[url_key]$$"/>
+        </actionGroup>
+
+        <!--Verify:
+                Product name = P2ProductName
+                Product price = S12.1Price -->
+        <see userInput="$$createProduct.name$$" selector="{{StorefrontProductInfoMainSection.productName}}" stepKey="seeProductDefaultWebsite"/>
+        <see userInput="{{SimpleProductUpdatePrice16.price}}" selector="{{StorefrontProductInfoMainSection.price}}" stepKey="seePrice16OnStorefront"/>
+
+        <!-- 40. Open product view page with sku P2ProductSKU  on frontend on P0SecondWebsite -->
+        <actionGroup ref="StorefrontOpenProductPageOnSecondStoreActionGroup" stepKey="openProductOnSecondStoreAfterTemporaryUpdateStart">
+            <argument name="productUrl" value="$$createProduct.custom_attributes[url_key]$$"/>
+            <argument name="storeCode" value="{{NewStoreViewData.code}}"/>
+        </actionGroup>
+
+        <!-- Verify:
+                Product name = P2ProductName
+                Product price = S5Price -->
+        <see userInput="$$createProduct.name$$" selector="{{StorefrontProductInfoMainSection.productName}}" stepKey="seeProductSecondWebsite"/>
+        <see userInput="{{SimpleProductUpdatePrice14.price}}" selector="{{StorefrontProductInfoMainSection.price}}" stepKey="seeProductPrice14SecondWebsite"/>
+
+        <!-- 41. Wait for system date equals to S5EndDate  -->
+        <generateDate date="now" format="U" stepKey="nowDateTSForEndTemporaryUpdate"/>
+        <executeJS function="return ({$generateEndDateFirstStagingTS} - {$generateEndDateFirstStagingSeconds} - {$nowDateTSForEndTemporaryUpdate} + 5) > 0 ? ({$generateEndDateFirstStagingTS} - {$generateEndDateFirstStagingSeconds} - {$nowDateTSForEndTemporaryUpdate} + 5) : 0;" stepKey="calcWaitPeriodForEndTemporaryUpdate"/>
+        <wait time="$calcWaitPeriodForEndTemporaryUpdate" stepKey="waitTemporaryUpdateEnd"/>
+
+        <!-- 42. Run cron twice -->
+        <magentoCLI command="cron:run" stepKey="runCronBeforeTemporaryUpdateEndFirst"/>
+        <magentoCLI command="cron:run" stepKey="runCronBeforeTemporaryUpdateEndSecond"/>
+
+        <!-- 43. Open product view page with SKU P2ProductSKU  on frontend -->
+        <actionGroup ref="StorefrontOpenProductPageActionGroup" stepKey="onDefaultWebsitePageAfterAllUpdates">
+            <argument name="productUrl" value="$$createProduct.custom_attributes[url_key]$$"/>
+        </actionGroup>
+
+        <!-- Verify:
+                Product name = P2ProductName
+                Product price = S8.1Price -->
+        <see userInput="$$createProduct.name$$" selector="{{StorefrontProductInfoMainSection.productName}}" stepKey="seeProductOnDefaultWebsite"/>
+        <see userInput="{{SimpleProductUpdatePrice11.price}}" selector="{{StorefrontProductInfoMainSection.price}}" stepKey="seePrice11OnStorefront"/>
+
+        <!-- 44. Open product view page with sku P2ProductSKU  on frontend on P0SecondWebsite -->
+        <actionGroup ref="StorefrontOpenProductPageOnSecondStoreActionGroup" stepKey="openProductOnSecondStoreAfterTemporaryUpdateEnd">
+            <argument name="productUrl" value="$$createProduct.custom_attributes[url_key]$$"/>
+            <argument name="storeCode" value="{{NewStoreViewData.code}}"/>
+        </actionGroup>
+
+        <!-- Verify:
+                Product name = P2ProductName
+                Product price = S8.1Price -->
+        <see userInput="$$createProduct.name$$" selector="{{StorefrontProductInfoMainSection.productName}}" stepKey="seeProductOnSecondWebsite"/>
+        <see userInput="{{SimpleProductUpdatePrice11.price}}" selector="{{StorefrontProductInfoMainSection.price}}" stepKey="seeProductPrice11SecondWebsite"/>
+    </test>
+</tests>

@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+ /**
+  * Copyright © Magento, Inc. All rights reserved.
+  * See COPYING.txt for license details.
+  */
+-->
+<actionGroups xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:noNamespaceSchemaLocation="urn:magento:mftf:Test/etc/actionGroupSchema.xsd">
+    <actionGroup name="AdminCreateCustomerNewAttributeDate" extends="AdminCreateCustomerNewAttribute">
+        <remove keyForRemoval="saveAttribute"/>
+        <remove keyForRemoval="WaitForAttributeSaved"/>
+        <remove keyForRemoval="waitForAttributeCreated"/>
+        <remove keyForRemoval="verifyAttributeCreated"/>
+        <generateDate stepKey="generateMinimalValueDate" date="-2 week" format="d/m/Y"/>
+        <generateDate stepKey="generateMaximalValueDate" date="+2 week" format="d/m/Y"/>
+        <selectOption stepKey="fillInputFilter" selector="{{CustomerAccountSection.inputFilter}}" userInput="{{AttributeDate.inputFilter}}"/>
+        <fillField stepKey="fillMinimalValueDate" selector="{{CustomerAccountSection.minimumValueDate}}" userInput="{$generateMinimalValueDate}"/>
+        <fillField stepKey="fillMaximalValueDate" selector="{{CustomerAccountSection.maximumValueDate}}" userInput="{$generateMaximalValueDate}"/>
+        <!-- Save the new product attribute -->
+        <click selector="{{AttributePropertiesSection.SaveAndEdit}}" stepKey="clickSaveAndEdit"/>
+        <waitForElementVisible selector="{{AdminProductMessagesSection.successMessage}}" stepKey="waitForSuccess"/>
+    </actionGroup>
+</actionGroups>

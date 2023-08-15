@@ -1,0 +1,114 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+ /**
+  * Copyright © Magento, Inc. All rights reserved.
+  * See COPYING.txt for license details.
+  */
+-->
+<tests xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:noNamespaceSchemaLocation="urn:magento:mftf:Test/etc/testSchema.xsd">
+    <test name="StorefrontCheckoutWithVirtualProductAndSalesRuleAsRegisterCustomerTest">
+        <annotations>
+            <features value="CustomerSegment"/>
+            <stories value="Success page elements are presented for placed order for Virtual Product as Registered Customer"/>
+            <title value="Customer Segment"/>
+            <description value="To be sure that Sales Price Rule For Virtual Product of registered Customer placed order successfully."/>
+            <severity value="MAJOR"/>
+            <testCaseId value="MC-42703"/>
+            <useCaseId value="MC-42543"/>
+        </annotations>
+
+        <before>
+            <!-- Create virtual product -->
+            <createData entity="VirtualProduct" stepKey="createVirtualProduct" />
+            <!-- Create simple US customer -->
+            <createData entity="Simple_US_Customer" stepKey="createSimpleUsCustomer"/>
+            <!--Login as Admin-->
+            <actionGroup ref="AdminLoginActionGroup" stepKey="LoginAsAdmin"/>
+        </before>
+
+        <after>
+            <!--Logout from customer account-->
+            <amOnPage url="{{StorefrontCustomerLogoutPage.url}}" stepKey="logoutCustomerOne"/>
+            <waitForPageLoad stepKey="waitLogoutCustomerOne"/>
+            <!-- Delete Virtual Product -->
+            <deleteData createDataKey="createVirtualProduct" stepKey="deleteProduct"/>
+            <!-- Delete Simple Customer -->
+            <deleteData createDataKey="createSimpleUsCustomer" stepKey="deleteCustomer"/>
+            <!--Logout From Admin-->
+            <actionGroup ref="AdminLogoutActionGroup" stepKey="adminLogout"/>
+            <magentoCron groups="index" stepKey="reindex"/>
+        </after>
+
+        <!-- Create new Customer Segment -->
+        <amOnPage url="{{AdminCustomerSegmentIndexPage.url}}" stepKey="goToCustomerSegments"/>
+        <click selector="{{AdminMainActionsSection.add}}" stepKey="addNewSegment"/>
+        <fillField selector="{{AdminCustomerSegmentEditSection.segmentName}}" userInput="{{CustomerSegmentForFreeProduct.name}}" stepKey="inputSegmentName"/>
+        <selectOption selector="{{AdminCustomerSegmentEditSection.assignToWebsite}}" userInput="{{CustomerSegmentForFreeProduct.assigned_website}}" stepKey="assignToWebsite"/>
+        <selectOption selector="{{AdminCustomerSegmentEditSection.status}}" userInput="{{CustomerSegmentForFreeProduct.is_active}}" stepKey="setStatusActive"/>
+        <selectOption selector="{{AdminCustomerSegmentEditSection.applyTo}}" userInput="{{CustomerSegmentForFreeProduct.apply_to}}" stepKey="setApplyTo"/>
+        <click selector="{{AdminMainActionsSection.save}}" stepKey="saveSegment"/>
+
+        <waitForPageLoad time="60" stepKey="waitForSaveSegment"/>
+
+        <!--Create cart price rule as per data-->
+        <actionGroup ref="AdminOpenCartPriceRulesPageActionGroup" stepKey="amOnCartPriceList"/>
+        <click selector="{{AdminCartPriceRulesSection.addNewRuleButton}}" stepKey="clickAddNewRule"/>
+
+        <!--Add cart price rule action and condition-->
+        <actionGroup ref="AdminCreateCartPriceRuleWithCustomerSegmentActionGroup" stepKey="createCartPriceRuleSection">
+            <argument name="rule" value="FreeProductGroupCartPriceRule"/>
+        </actionGroup>
+
+        <!--Add Cart Price Rule Discount Information-->
+        <actionGroup ref="AdminCreateCartPriceRuleActionsSectionDiscountFieldsActionGroup" stepKey="createActiveCartPriceRuleActionsSection">
+            <argument name="rule" value="FreeProductGroupCartPriceRule"/>
+        </actionGroup>
+        <!--Add Free Shipping Information-->
+        <actionGroup ref="AdminCreateCartPriceRuleActionsSectionFreeShippingActionGroup" stepKey="createActiveCartPriceRuleFreeShippingActionsSection">
+            <argument name="freeShippingOption" value="{{FreeProductGroupCartPriceRule.simple_free_shipping}}"/>
+        </actionGroup>
+        <scrollTo selector="{{AdminCartPriceRulesFormSection.labelsHeader}}" stepKey="scrollToLabelsHeader"/>
+
+        <!--Save Cart Price Rule-->
+        <actionGroup ref="AssertCartPriceRuleSuccessSaveMessageActionGroup" stepKey="seeAssertCartPriceRuleSuccessSaveMessage"/>
+
+        <!--Log in to Storefront as Customer-->
+        <actionGroup ref="LoginToStorefrontActionGroup" stepKey="signUpNewUser">
+            <argument name="Customer" value="$$createSimpleUsCustomer$$"/>
+        </actionGroup>
+
+        <!--Go to product page-->
+        <actionGroup ref="OpenStoreFrontProductPageActionGroup" stepKey="openProductFromCategory">
+            <argument name="productUrlKey" value="$createVirtualProduct.custom_attributes[url_key]$"/>
+        </actionGroup>
+
+        <!--Add Product to Shopping Cart-->
+        <actionGroup ref="AddToCartFromStorefrontProductPageActionGroup" stepKey="addToCartFromStorefrontProductPage">
+            <argument name="productName" value="$createVirtualProduct.name$"/>
+        </actionGroup>
+
+        <!--Go to Checkout-->
+        <actionGroup ref="GoToCheckoutFromMinicartActionGroup" stepKey="goToCheckoutFromMinicart"/>
+        <!-- Checkout select Check/Money Order payment -->
+        <actionGroup ref="CheckoutSelectCheckMoneyOrderPaymentActionGroup" stepKey="selectCheckMoneyPayment"/>
+        <!--Click Place Order button-->
+        <actionGroup ref="ClickPlaceOrderActionGroup" stepKey="clickPlaceOrder"/>
+
+        <!--Verify order placed successfully-->
+        <see selector="{{CheckoutSuccessMainSection.orderNumberText}}" userInput="Your order number is: " stepKey="seeOrderNumber"/>
+        <see selector="{{CheckoutSuccessMainSection.success}}" userInput="We'll email you an order confirmation with details and tracking info." stepKey="seeSuccessNotify"/>
+
+        <click selector="{{CheckoutSuccessMainSection.orderLink}}" stepKey="clickOrderLink"/>
+        <seeInCurrentUrl url="{{StorefrontCustomerOrderPage.url}}" stepKey="seeMyOrderPage"/>
+
+        <!--Delete Cart Price Rule-->
+        <actionGroup ref="AdminDeleteCartPriceRuleActionGroup" stepKey="deleteCartPriceRule">
+            <argument name="ruleName" value="FreeProductGroupCartPriceRule"/>
+        </actionGroup>
+        <!--Delete Customer Segment-->
+        <actionGroup ref="FindAndDeleteCustomerSegmentActionGroup" stepKey="deleteSegment">
+            <argument name="segmentName" value="{{CustomerSegmentForFreeProduct.name}}"/>
+        </actionGroup>
+    </test>
+</tests>

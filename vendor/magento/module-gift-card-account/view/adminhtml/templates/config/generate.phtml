@@ -1,0 +1,55 @@
+<?php
+/**
+ * Copyright © Magento, Inc. All rights reserved.
+ * See COPYING.txt for license details.
+ */
+
+/**
+ * @var \Magento\GiftCardAccount\Block\Adminhtml\System\Config\Generate $block
+ * @var \Magento\Framework\View\Helper\SecureHtmlRenderer $secureRenderer
+ */
+
+$htmlId = $block->getHtmlId() ? $block->getHtmlId() : '_' . uniqid();
+$usage = $block->getUsage();
+?>
+<button
+        data-post='{"action": "<?= $block->escapeUrl($block->getUrl('*/giftcardaccount/generate')) ?>",
+        "data": {"confirmation": true,
+        "confirmationMessage": "<?= $block->escapeHtml(
+            __('Are you sure you want to continue without saving your changes?')
+        ); ?>"}}'
+        class="scalable"
+        type="button"
+        id="generateBtn<?= /* @noEscape */ $htmlId ?>">
+    <span><span><span><?= $block->escapeHtml(__('Generate')) ?></span></span></span>
+</button>
+<br />
+<p class="nm"><small>
+    <?= $block->escapeHtml(__('Code Pool used: ')) ?>
+        <b><?= $block->escapeHtml($usage->getPercent()) ?></b>
+    <?= $block->escapeHtml(__(' (free ')) ?>
+        <b><?= $block->escapeHtml($usage->getFree()) ?></b>
+        <?= $block->escapeHtml(__(' of ')) ?>
+        <?= $block->escapeHtml($usage->getTotal()) ?>
+    <?= $block->escapeHtml(__(' total).')) ?>
+</small></p>
+<br />
+
+<?php $scriptString = <<<script
+require(['prototype'], function(){
+
+disableGenerateButton = function() {
+    var elem = $('generateBtn{$htmlId}');
+    elem.disabled = true;
+    elem.addClassName('disabled');
+};
+
+$('giftcard_giftcardaccount_general').select('input', 'select').each(function(elem) {
+    Event.observe($(elem.id), 'change', disableGenerateButton);
+});
+//]]>
+
+});
+script;
+?>
+<?= /* @noEscape */ $secureRenderer->renderTag('script', [], $scriptString, false); ?>

@@ -1,0 +1,1 @@
+# Magento_LoginAsCustomerWebsiteRestriction module

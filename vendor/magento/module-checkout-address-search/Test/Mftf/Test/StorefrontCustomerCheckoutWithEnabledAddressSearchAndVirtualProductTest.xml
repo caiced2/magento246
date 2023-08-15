@@ -1,0 +1,87 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+ /**
+  * Copyright © Magento, Inc. All rights reserved.
+  * See COPYING.txt for license details.
+  */
+-->
+
+<tests xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:noNamespaceSchemaLocation="urn:magento:mftf:Test/etc/testSchema.xsd">
+    <test name="StorefrontCustomerCheckoutWithEnabledAddressSearchAndVirtualProductTest">
+        <annotations>
+            <features value="Checkout with search address enabled"/>
+            <stories value="MC-5681: Implement handling of large number of addresses on Onepage Checkout"/>
+            <title value="One Page Checkout with virtual product and Customer Addresses Search - Specified limit is reached"/>
+            <description value="One Page Checkout with virtual product and Customer Addresses Search - Specified limit is reached"/>
+            <severity value="CRITICAL"/>
+            <testCaseId value="MC-15739"/>
+            <group value="checkout"/>
+        </annotations>
+        <before>
+            <createData entity="SimpleSubCategory" stepKey="simpleCategory"/>
+            <createData entity="VirtualProduct" stepKey="virtualProduct">
+                <requiredEntity createDataKey="simpleCategory"/>
+            </createData>
+            <createData entity="Simple_US_Customer_Two_Addresses" stepKey="simpleUsCustomer"/>
+            <magentoCLI command="config:set {{EnableCustomerAddressSearch.path}} {{EnableCustomerAddressSearch.value}}" stepKey="enableCustomerAddressSearch"/>
+            <magentoCLI command="config:set {{AddressSearchLimitTwo.path}} {{AddressSearchLimitTwo.value}}" stepKey="setAddressSearchLimitTwo"/>
+        </before>
+        <after>
+            <!--Clear filters-->
+            <amOnPage url="{{AdminCustomerPage.url}}" stepKey="navigateToCustomers"/>
+            <conditionalClick selector="{{AdminDataGridHeaderSection.clearFilters}}" dependentSelector="{{AdminDataGridHeaderSection.clearFilters}}" visible="true" stepKey="clearExistingCustomerFilters"/>
+            <deleteData createDataKey="virtualProduct" stepKey="deleteProduct"/>
+            <deleteData createDataKey="simpleCategory" stepKey="deleteCategory"/>
+            <deleteData createDataKey="simpleUsCustomer" stepKey="deleteCustomer"/>
+            <magentoCLI command="config:set {{DisableCustomerAddressSearch.path}} {{DisableCustomerAddressSearch.value}}" stepKey="disableCustomerAddressSearch"/>
+            <magentoCLI command="config:set {{DefaultAddressSearchLimit.path}} {{DefaultAddressSearchLimit.value}}" stepKey="setAddressSearchLimitTen"/>
+        </after>
+        <!--Login to storefront-->
+        <actionGroup ref="LoginToStorefrontActionGroup" stepKey="customerLogin">
+            <argument name="Customer" value="$$simpleUsCustomer$$" />
+        </actionGroup>
+        <!--Add Simple Product to Shopping Cart and Proceed to checkout-->
+        <amOnPage url="{{StorefrontProductPage.url($$virtualProduct.custom_attributes[url_key]$$)}}" stepKey="amOnSimpleProductPage"/>
+        <actionGroup ref="StorefrontAddProductToCartActionGroup" stepKey="addProductToCart">
+            <argument name="product" value="$$virtualProduct$$"/>
+            <argument name="productCount" value="1"/>
+        </actionGroup>
+        <actionGroup ref="GoToCheckoutFromMinicartActionGroup" stepKey="goToCheckoutFromMinicart" />
+        <!--Review & Payments step of checkout is opened-->
+        <!--Address B is displayed as billing address for selected payment method-->
+        <actionGroup ref="CheckoutSelectCheckMoneyOrderPaymentActionGroup" stepKey="selectCheckMoneyPayment"/>
+        <actionGroup ref="CheckBillingAddressInCheckoutActionGroup" stepKey="checkFirstBillingAddressOnBillingPage">
+            <argument name="customerVar" value="$$simpleUsCustomer$$" />
+            <argument name="customerAddressVar" value="US_Address_TX" />
+        </actionGroup>
+        <!--Click on "Change Address" link-->
+        <click stepKey="ClickChangeAddressButtonOnPaymentMethod" selector="{{CheckoutBillingAddressSection.changeAddressButtonOnPaymentMethod('checkmo')}}"/>
+        <!--Counter under *Search* field shows *2 addresses*-->
+        <see stepKey="VerifyFoundAddressesQty"  selector="{{CheckoutBillingAddressSearchSection.addressesFound}}" userInput="2 addresses"/>
+        <!--Addresses grid contains:-->
+        <!--Default address with labels *DEFAULT* and *Selected*-->
+        <seeElement stepKey="VerifyDefaultAddressSelected" selector="{{CheckoutBillingAddressSearchSection.defaultAddressButton(US_Address_TX.postcode)}}"/>
+        <seeElement stepKey="VerifyDefaultAddressSelectedLabel" selector="{{CheckoutBillingAddressSearchSection.selectedAddressButton(US_Address_TX.postcode)}}"/>
+        <!--Second address with button *Select*-->
+        <seeElement stepKey="VerifySelectButtonForSecondAddress" selector="{{CheckoutBillingAddressSearchSection.selectButton(US_Address_NY_Not_Default_Address.postcode)}}"/>
+        <!--Type second address ZIP in Search field and press Enter-->
+        <fillField stepKey="FillSearchFieldWithSecondAddressZip" selector="{{CheckoutBillingAddressSearchSection.searchAddressField}}" userInput="{{US_Address_NY_Not_Default_Address.postcode}}"/>
+        <click stepKey="ClickSearchAddressButton" selector="{{CheckoutBillingAddressSearchSection.searchAddressButton}}"/>
+        <!--Counter under *Search* field shows *1 addresses*-->
+        <see stepKey="VerifyFoundAddressesQtyAfterSearch"  selector="{{CheckoutBillingAddressSearchSection.addressesFound}}" userInput="1 addresses"/>
+        <!--The only second address is displayed in the grid-->
+        <dontSee stepKey="AssertOnlyOneAddressDisplayed" selector="{{CheckoutBillingAddressSearchSection.exactBillingAddressItem('2')}}"/>
+        <!--Click *Select* button-->
+        <click stepKey="ClickSelectForFoundAddress" selector="{{CheckoutBillingAddressSearchSection.selectButton(US_Address_NY_Not_Default_Address.postcode)}}"/>
+        <!--*Select Billing Address* popup is closed-->
+        <dontSee stepKey="VerifySelectBillingAddressClosed" selector="{{CheckoutBillingAddressSearchSection.searchAddressField}}"/>
+        <!--Billing Address block is updated to second address-->
+        <actionGroup ref="CheckBillingAddressInCheckoutActionGroup" stepKey="checkSecondBillingAddressOnBillingPage">
+            <argument name="customerVar" value="$$simpleUsCustomer$$" />
+            <argument name="customerAddressVar" value="US_Address_NY_Not_Default_Address" />
+        </actionGroup>
+        <!-- Place order -->
+        <actionGroup ref="ClickPlaceOrderActionGroup" stepKey="PlaceOrder" />
+    </test>
+</tests>

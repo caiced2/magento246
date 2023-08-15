@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+ /**
+  * Copyright © Magento, Inc. All rights reserved.
+  * See COPYING.txt for license details.
+  */
+-->
+
+<sections xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:noNamespaceSchemaLocation="urn:magento:mftf:Page/etc/SectionObject.xsd">
+    <section name="CustomerCheckoutRewardsSection">
+        <element name="checkoutRewardText" type="text" selector="div.payment-option-inner > span"/>
+        <element name="checkoutRewardBlock" type="text" selector="#reward_placer"/>
+        <element name="useRewardPoints" type="button" selector="#reward-points-buttons-container button[data-role='opc-use-reward']"/>
+        <element name="checkoutRewardOrderButton" type="button" selector="#checkout-payment-method-load button[type='submit']"/>
+    </section>
+</sections>

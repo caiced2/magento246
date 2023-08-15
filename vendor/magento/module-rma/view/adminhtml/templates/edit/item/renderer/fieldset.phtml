@@ -1,0 +1,48 @@
+<?php
+/**
+ * Copyright © Magento, Inc. All rights reserved.
+ * See COPYING.txt for license details.
+ */
+
+/** @var $block \Magento\Rma\Block\Adminhtml\Rma\Edit\Item\Renderer\Fieldset */
+?>
+<?php
+$_element = $block->getElement();
+?>
+<div class="popup-window">
+<?php if ($_element->getFieldsetContainerId()) : ?>
+<div id="<?= $block->escapeHtml($_element->getFieldsetContainerId()) ?>">
+<?php endif; ?>
+<?php if ($_element->getLegend()) : ?>
+<div class="popup-window-title">
+    <div class="actions"><?= /* @noEscape */ $_element->getHeaderBar() ?></div>
+    <div class="title"><?= $block->escapeHtml($_element->getLegend()) ?></div>
+</div>
+<?php endif; ?>
+<?php if (!$_element->getNoContainer()) : ?>
+    <div class="popup-window-content">
+        <div class="<?= $block->escapeHtmlAttr($_element->getClass()) ?>" id="<?= $_element->getHtmlId() ?>">
+<?php endif; ?>
+        <?php if ($_element->getComment()) : ?>
+            <p class="comment"><?= $block->escapeHtml($_element->getComment()) ?></p>
+        <?php endif; ?>
+        <?php if ($_element->hasHtmlContent()) : ?>
+            <?= $_element->getHtmlContent() ?>
+        <?php else : ?>
+            <?= $_element->getChildrenHtml() ?>
+        <?php endif; ?>
+    <?= $_element->getSubFieldsetHtml() ?>
+<?php if (!$_element->getNoContainer()) : ?>
+        </div>
+    </div>
+
+    <div class="popup-window-buttons-set">
+        <?= /* @noEscape */ $_element->getCancelButton() ?>
+        <?= /* @noEscape */ $_element->getOkButton() ?>
+    </div>
+
+<?php endif; ?>
+<?php if ($_element->getFieldsetContainerId()) : ?>
+</div>
+<?php endif; ?>
+</div>

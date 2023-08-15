@@ -1,0 +1,30 @@
+<?php
+/**
+ * Copyright © Magento, Inc. All rights reserved.
+ * See COPYING.txt for license details.
+ */
+
+/** @var \Magento\Framework\View\Helper\SecureHtmlRenderer $secureRenderer */
+?>
+<?php $scriptString = <<<script
+require(['prototype'], function(){
+
+//<![CDATA[
+    removeGiftCard = function(code) {
+        var data = {};
+        data['giftcard_remove'] = code;
+        order.loadArea(['totals', 'billing_method', 'items'], true, data);
+    }
+
+    applyGiftCard = function() {
+        var code = $('giftcardaccount_add_input').value;
+        var data = {};
+        data['giftcard_add'] = code;
+        order.loadArea(['totals', 'billing_method', 'items'], true, data);
+    }
+//]]>
+
+});
+script;
+?>
+<?= /* @noEscape */ $secureRenderer->renderTag('script', [], $scriptString, false); ?>

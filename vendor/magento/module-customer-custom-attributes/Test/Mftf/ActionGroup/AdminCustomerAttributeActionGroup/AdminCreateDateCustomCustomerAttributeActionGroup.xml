@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+ /**
+  * Copyright © Magento, Inc. All rights reserved.
+  * See COPYING.txt for license details.
+  */
+-->
+<actionGroups xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:noNamespaceSchemaLocation="urn:magento:mftf:Test/etc/actionGroupSchema.xsd">
+    <actionGroup name="AdminCreateDateCustomCustomerAttribute" extends="AdminCreateCustomerCustomAttribute">
+        <arguments>
+            <argument name="generateMinDate" type="string"/>
+            <argument name="generateMaxDate" type="string"/>
+        </arguments>
+        <remove keyForRemoval="selectAttributeVisibleInStorefront"/>
+        <remove keyForRemoval="selectForms"/>
+        <generateDate date="{{generateMinDate}}" format="m/d/Y" stepKey="generateMinimalValueDate" after="selectInputType"/>
+        <generateDate date="{{generateMaxDate}}" format="m/d/Y" stepKey="generateMaximalValueDate" after="generateMinimalValueDate"/>
+        <fillField stepKey="fillMinimalValueDate" selector="{{CustomerAccountSection.minimumValueDate}}" userInput="{$generateMinimalValueDate}" after="generateMaximalValueDate"/>
+        <fillField stepKey="fillMaximalValueDate" selector="{{CustomerAccountSection.maximumValueDate}}" userInput="{$generateMaximalValueDate}" after="fillMinimalValueDate"/>
+        <selectOption stepKey="fillInputFilter" selector="{{CustomerAccountSection.inputFilter}}" userInput="{{customerAttribute.inputFilter}}" after="fillMaximalValueDate"/>
+        <selectOption selector="{{CustomerAccountSection.inputValidation}}" userInput="{{customerAttribute.inputType}}" stepKey="SelectInputValidation" after="fillInputFilter"/>
+        <selectOption selector="{{CustomerAccountSection.showInSF}}" userInput="{{customerAttribute.is_visible}}" stepKey="showInSF" after="SelectInputValidation"/>
+        <selectOption selector="{{CustomerAccountSection.selectFormToUse}}" parameterArray="[{{customerAttribute.used_in_forms[2]}}]" stepKey="selectAdminCheckoutForm" after="TypeSortOrder"/>
+        <see selector="{{CustomerAccountSection.successMessage}}" userInput="You saved the customer attribute." stepKey="seeSuccessMessage" after="WaitForAttributeSaved"/>
+    </actionGroup>
+</actionGroups>

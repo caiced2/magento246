@@ -1,0 +1,27 @@
+<?xml version="1.0"?>
+<!--
+/**
+ * Copyright © Magento, Inc. All rights reserved.
+ * See COPYING.txt for license details.
+ */
+-->
+<config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="urn:magento:framework:Event/etc/events.xsd">
+    <event name="magento_banner_load_after">
+        <observer name="magento_bannercustomersegment" instance="Magento\BannerCustomerSegment\Observer\LoadCustomerSegmentRelations" />
+    </event>
+    <event name="magento_banner_save_after">
+        <observer name="magento_bannercustomersegment" instance="Magento\BannerCustomerSegment\Observer\SaveCustomerSegmentRelations" />
+    </event>
+    <event name="magento_banner_catalogrule_collection_load_before">
+        <observer name="magento_bannercustomersegment" instance="Magento\BannerCustomerSegment\Observer\AddCustomerSegmentFilterToCollection" />
+    </event>
+    <event name="magento_banner_salesrule_collection_load_before">
+        <observer name="magento_bannercustomersegment" instance="Magento\BannerCustomerSegment\Observer\AddCustomerSegmentFilterToCollection" />
+    </event>
+    <event name="magento_banner_resource_banner_content_select_init">
+        <observer name="magento_bannercustomersegment" instance="Magento\BannerCustomerSegment\Observer\AddCustomerSegmentFilterToSelect" />
+    </event>
+    <event name="magento_banner_collection_load_after">
+        <observer name="magento_bannercustomersegment" instance="Magento\BannerCustomerSegment\Observer\AddCustomerSegmentRelationsToCollection" />
+    </event>
+</config>

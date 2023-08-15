@@ -1,0 +1,43 @@
+<?php
+/**
+ * Copyright © Magento, Inc. All rights reserved.
+ * See COPYING.txt for license details.
+ */
+?>
+<?php
+/** @var \Magento\Framework\View\Helper\SecureHtmlRenderer $secureRenderer */
+
+/** @var \Magento\GoogleTagManager\Block\ListJson $block */
+$item = $block->getFpcBlock()->getItem();
+?>
+
+<?php if (is_object($item)) {
+    $blockName = $block->escapeJs($block->getBlockName());
+    $productSku = $block->escapeJs($item->getSku());
+    $itemTypeId = $block->escapeJs($item->getTypeId());
+    $itemName = $block->escapeJs($item->getName());
+    $categoryName = $block->escapeJs($block->getCurrentCategoryName());
+    $listName = $block->escapeJs($block->getCurrentListName());
+
+    $scriptString = <<<script
+        updatedImpressions = updatedImpressions || [];
+        updatedImpressions['{$blockName}'] = updatedImpressions[
+            '{$blockName}'
+            ] || [];
+        updatedImpressions['{$blockName}'] =
+            updatedImpressions['{$blockName}'].concat([
+                {
+                    "id": "{$productSku}",
+                    "type": "{$itemTypeId}",
+                    "name": "{$itemName}",
+                    "category": "{$categoryName}",
+                    "list": "{$listName}",
+                    "position": updatedImpressions['{$blockName}'].length + 1,
+                    "listPosition": updatedImpressions['{$blockName}'].length
+                }
+            ]);
+script;
+    ?>
+    <?= /* @noEscape */ $secureRenderer->renderTag('script', [], $scriptString, false); ?>
+    <?php
+}

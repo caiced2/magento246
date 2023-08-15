@@ -1,0 +1,166 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+ /**
+  * Copyright © Magento, Inc. All rights reserved.
+  * See COPYING.txt for license details.
+  */
+-->
+
+<tests xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xsi:noNamespaceSchemaLocation="urn:magento:mftf:Test/etc/testSchema.xsd">
+    <test name="OnePageCheckoutAsRegisteredUSCustomerUsingStoreCreditAndCouponForAllCustomerGroupsTest">
+        <annotations>
+            <features value="OnePageCheckout"/>
+            <stories value="OnePageCheckout within Offline Payment Methods"/>
+            <title value="OnePageCheckout as registered US customer using store credit and coupon for all customer groups test"/>
+            <description value="Checkout as registered US customer using store credit and coupon for all customer groups"/>
+            <severity value="CRITICAL"/>
+            <testCaseId value="MC-28320"/>
+            <group value="customerBalance"/>
+            <group value="mtf_migrated"/>
+        </annotations>
+        <before>
+            <magentoCLI command="config:set checkout/options/enable_guest_checkout_login 1" stepKey="EnablingGuestCheckoutLogin"/>
+            <!-- Create Simple Product -->
+            <createData entity="SimpleProduct2" stepKey="createSimpleProduct">
+                <field key="price">560</field>
+            </createData>
+
+            <!-- Create Virtual Product -->
+            <createData entity="VirtualProduct" stepKey="createVirtualProduct">
+                <field key="price">10</field>
+            </createData>
+
+            <!-- Create customer -->
+            <createData entity="Simple_Customer_Without_Address" stepKey="createCustomer"/>
+
+            <!-- Create sales rule -->
+            <createData entity="ActiveSalesRuleForAllGroups" stepKey="createCartPriceRule"/>
+            <createData entity="SimpleSalesRuleCoupon" stepKey="createCouponForCartPriceRule">
+                <requiredEntity createDataKey="createCartPriceRule"/>
+            </createData>
+            <magentoCron groups="index" stepKey="reindex"/>
+
+            <!-- Enable payment method -->
+            <magentoCLI command="config:set {{PurchaseOrderEnableConfigData.path}} {{PurchaseOrderEnableConfigData.value}}" stepKey="enablePurchaseOrder"/>
+
+            <!-- Login as admin -->
+            <actionGroup ref="AdminLoginActionGroup" stepKey="loginAsAdmin"/>
+        </before>
+        <after>
+            <!-- Disabled payment method -->
+            <magentoCLI command="config:set {{PurchaseOrderDisabledConfigData.path}} {{PurchaseOrderDisabledConfigData.value}}" stepKey="disabledPurchaseOrder"/>
+            <actionGroup ref="CliCacheCleanActionGroup" stepKey="cleanInvalidatedCaches">
+                <argument name="tags" value="config full_page"/>
+            </actionGroup>
+
+
+            <actionGroup ref="AdminOrdersGridClearFiltersActionGroup" stepKey="resetOrderFilter"/>
+            <actionGroup ref="AdminClearCustomersFiltersActionGroup" stepKey="resetCustomerFilters"/>
+
+            <!-- Customer and admin logout -->
+            <actionGroup ref="AdminLogoutActionGroup" stepKey="logout"/>
+            <actionGroup ref="StorefrontCustomerLogoutActionGroup" stepKey="customerLogout"/>
+
+            <!-- Delete created product -->
+            <deleteData createDataKey="createSimpleProduct" stepKey="deleteSimpleProduct"/>
+            <deleteData createDataKey="createVirtualProduct" stepKey="deleteVirtualProduct"/>
+
+            <!-- Delete sales rule -->
+            <deleteData createDataKey="createCartPriceRule" stepKey="deleteCartPriceRule"/>
+
+            <!-- Delete customer -->
+            <deleteData createDataKey="createCustomer" stepKey="deleteCustomer"/>
+            <magentoCLI command="config:set checkout/options/enable_guest_checkout_login 0" stepKey="DisablingGuestCheckoutLogin"/>
+        </after>
+
+        <!-- Clean Invalidated Caches -->
+        <comment userInput="BIC workaround" stepKey="reindex"/>
+        <actionGroup ref="CliCacheCleanActionGroup" stepKey="flushCache">
+            <argument name="tags" value="config full_page"/>
+        </actionGroup>
+
+        <!-- Add Store credit balance to customer -->
+        <actionGroup ref="OpenEditCustomerFromAdminActionGroup" stepKey="openCustomerEdit">
+            <argument name="customer" value="$$createCustomer$$" />
+        </actionGroup>
+        <actionGroup ref="UpdateCustomerStoreCreditBalanceAdminActionGroup" stepKey="updateStoreCreditFromAdmin">
+            <argument name="storeCredit" value="5" />
+        </actionGroup>
+
+        <!-- Add Simple Product to cart -->
+        <amOnPage url="{{StorefrontProductPage.url($$createSimpleProduct.custom_attributes[url_key]$$)}}" stepKey="navigateToSimpleProductPage"/>
+        <waitForPageLoad stepKey="waitForSimpleProductPageLoad"/>
+        <actionGroup ref="AddToCartFromStorefrontProductPageActionGroup" stepKey="addToCartSimpleProductFromStorefrontProductPage">
+            <argument name="productName" value="$$createSimpleProduct.name$$"/>
+        </actionGroup>
+
+        <!-- Add Virtual Product to cart -->
+        <amOnPage url="{{StorefrontProductPage.url($$createVirtualProduct.custom_attributes[url_key]$$)}}" stepKey="navigateToVirtualProductPage"/>
+        <waitForPageLoad stepKey="waitForVirtualProductPageLoad"/>
+        <actionGroup ref="AddToCartFromStorefrontProductPageActionGroup" stepKey="addToCartVirtualProductFromStorefrontProductPage">
+            <argument name="productName" value="$$createVirtualProduct.name$$"/>
+        </actionGroup>
+
+        <!--Go to shopping cart-->
+        <actionGroup ref="ClickViewAndEditCartFromMiniCartActionGroup" stepKey="goToShoppingCartFromMinicart"/>
+        <actionGroup ref="FillShippingZipForm" stepKey="fillShippingZipForm">
+            <argument name="address" value="US_Address_CA"/>
+        </actionGroup>
+        <click selector="{{CheckoutCartSummarySection.proceedToCheckout}}" stepKey="clickProceedToCheckout"/>
+        <waitForPageLoad stepKey="waitForProceedToCheckout"/>
+
+        <!-- Login as customer on checkout page -->
+        <actionGroup ref="LoginAsCustomerOnCheckoutPageActionGroup" stepKey="customerLogin">
+            <argument name="customer" value="$$createCustomer$$"/>
+        </actionGroup>
+
+        <!-- Fill customer new shipping address -->
+        <actionGroup ref="CustomerCheckoutFillNewShippingAddressActionGroup" stepKey="fillShippingAddress">
+            <argument name="address" value="US_Address_TX"/>
+        </actionGroup>
+
+        <!-- Click next button to open payment section -->
+        <actionGroup ref="StorefrontCheckoutClickNextButtonActionGroup" stepKey="clickNext"/>
+        <comment userInput="BIC workaround" stepKey="waitForShipmentPageLoad"/>
+
+        <!-- Apply coupon -->
+        <actionGroup ref="ApplyCouponOnPaymentPageActionGroup" stepKey="applyCoupon">
+            <argument name="couponCode" value="$$createCouponForCartPriceRule.code$$"/>
+        </actionGroup>
+
+        <!-- Use store credit -->
+        <actionGroup ref="UseStoreCreditPaymentSectionActionGroup" stepKey="useStoreCredit"/>
+
+        <!-- Select payment method -->
+        <waitForElement selector="{{CheckoutPaymentSection.paymentSectionTitle}}" stepKey="waitForPaymentSectionLoaded"/>
+        <click selector="{{StorefrontCheckoutPaymentMethodsSection.purchaseOrder}}" stepKey="selectPurchaseOrderMethod"/>
+        <fillField selector="{{StorefrontCheckoutPaymentMethodsSection.purchaseOrderNumber}}" userInput="{{CONST.purchaseOrderNumber}}" stepKey="fillPurchaseOrderNumber"/>
+
+        <!-- Check order summary in checkout -->
+        <actionGroup ref="ClickPlaceOrderActionGroup" stepKey="clickPlaceOrderButton"/>
+        <seeElement selector="{{CheckoutSuccessMainSection.success}}" stepKey="orderIsSuccessfullyPlaced"/>
+        <grabTextFrom selector="{{CheckoutSuccessMainSection.orderNumber22}}" stepKey="grabOrderNumber"/>
+
+        <!-- Check that the mini cart is empty -->
+        <actionGroup ref="AssertMiniCartEmptyActionGroup" stepKey="assertMiniCartEmpty"/>
+
+        <!-- Open created order in backend -->
+        <amOnPage url="{{AdminOrdersPage.url}}" stepKey="goToOrders"/>
+        <waitForPageLoad stepKey="waitForPageLoad"/>
+        <actionGroup ref="OpenOrderByIdActionGroup" stepKey="filterOrderGridById">
+            <argument name="orderId" value="$grabOrderNumber"/>
+        </actionGroup>
+
+        <!-- Assert order status is correct -->
+        <see selector="{{AdminOrderDetailsInformationSection.orderStatus}}" userInput="Pending" stepKey="seeOrderStatus"/>
+
+        <!-- Assert order buttons available -->
+        <actionGroup ref="AssertOrderButtonsAvailableActionGroup" stepKey="assertOrderButtonsAvailable"/>
+
+        <!-- Assert order grand total -->
+        <amOnPage url="{{StorefrontCustomerDashboardPage.url}}" stepKey="navigateToCustomerDashboardPage"/>
+        <waitForPageLoad stepKey="waitForCustomerDashboardPageLoad"/>
+        <see selector="{{StorefrontCustomerRecentOrdersSection.orderTotal}}" userInput="$285.00" stepKey="checkOrderTotalInStorefront"/>
+    </test>
+</tests>

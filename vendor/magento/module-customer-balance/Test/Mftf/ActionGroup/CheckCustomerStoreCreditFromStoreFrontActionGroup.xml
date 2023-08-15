@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+ /**
+  * Copyright © Magento, Inc. All rights reserved.
+  * See COPYING.txt for license details.
+  */
+-->
+<actionGroups xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+              xsi:noNamespaceSchemaLocation="urn:magento:mftf:Test/etc/actionGroupSchema.xsd">
+    <actionGroup name="CheckCustomerStoreCreditFromStoreFrontActionGroup">
+        <arguments>
+            <argument name="storeCreditUsed" type="string"/>
+            <argument name="storeCreditLeft" type="string"/>
+        </arguments>
+        <!--Check customer StoreCredit information from StoreFront-->
+        <amOnPage url="{{StorefrontCustomerStoreCreditPage.url}}" stepKey="goToStoreCreditInfoPage" />
+        <see userInput="Used" selector="{{StorefrontCustomerStoreCreditInfoSection.lastAction}}" stepKey="assertLastAction"/>
+        <see userInput="-${{storeCreditUsed}}.00" selector="{{StorefrontCustomerStoreCreditInfoSection.lastBalanceChange}}" stepKey="assertLastBalanceChange"/>
+        <see userInput="${{storeCreditLeft}}.00" selector="{{StorefrontCustomerStoreCreditInfoSection.lastBalance}}" stepKey="assertLastBalance"/>
+    </actionGroup>
+</actionGroups>

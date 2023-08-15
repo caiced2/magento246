@@ -1,0 +1,64 @@
+<!--
+/**
+ * Copyright © Magento, Inc. All rights reserved.
+ * See COPYING.txt for license details.
+ */
+-->
+<!--@subject {{trans "Gift Registry created at %store_name" store_name=$store.frontend_name}} @-->
+<!--@vars {
+"store url=\"customer\/account\/\"":"Customer Account URL",
+"template config_path=\"design\/email\/footer_template\"":"Email Footer Template",
+"template config_path=\"design\/email\/header_template\"":"Email Header Template",
+"var logo_alt":"Email Logo Image Alt",
+"var logo_url":"Email Logo Image URL",
+"var owner_data.name|escape":"Owner Name",
+"var entity.message|escape|nl2br":"Registry Message",
+"var entity.registrants":"Registry Recipients",
+"var entity.title|escape":"Registry Title",
+"var url":"Registry URL",
+"var entity.url_key":"Registry URL Key",
+"var store.frontend_name":"Store Name",
+"store url=\"\"":"Store URL",
+"var this.getUrl($store, '',[_nosid:1])":"Current Store URL"
+} @-->
+
+{{template config_path="design/email/header_template"}}
+
+<p class="greeting">{{trans "%name," name=$owner_data.name}}</p>
+
+<p>{{trans "You have successfully created the new gift registry \"%registry_name\"." registry_name=$entity.title}}</p>
+
+{{if entity.message}}
+<table class="message-info" cellspacing="0" cellpadding="0" border="0">
+    <tr>
+        <td>
+            <h3>{{trans "Your Gift Registry Message"}}</h3>
+            {{var entity.message|escape|nl2br}}
+        </td>
+    </tr>
+</table>
+<br />
+{{/if}}
+
+<p>
+    {{trans "Now you can add products to your gift registry."}}
+    {{trans
+        'Simply browse to <a href="%store_url">%store_name</a> and add the products you want to your shopping cart or wish list.'
+        store_url="$this.getUrl($store, '',[_nosid:1])"
+        store_name=$store.frontend_name
+    |raw}}
+    {{trans "You can then add the products to your registry from your shopping cart or wish list page."}}
+    {{trans "You can also share it with your friends and family by logging into your account and visiting the Gift Registry tab."}}
+</p>
+<p>
+    {{trans "Or you can email the following link and gift registry ID to them:"}}
+</p>
+<p>
+    <strong>{{trans "Registry Location:"}}</strong>
+    <a href="{{var url}}">{{var url}}</a><br/>
+
+    <strong>{{trans "Registry ID:"}}</strong>
+    {{var entity.url_key}}
+</p>
+
+{{template config_path="design/email/footer_template"}}

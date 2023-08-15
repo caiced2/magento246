@@ -1,0 +1,39 @@
+<?xml version="1.0"?>
+<!--
+/**
+ * Copyright © Magento, Inc. All rights reserved.
+ * See COPYING.txt for license details.
+ */
+-->
+<config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="urn:magento:module:Magento_Store:etc/config.xsd">
+    <default>
+        <system>
+            <media_storage_configuration>
+                <allowed_resources>
+                    <giftwrapping_folder>wrapping</giftwrapping_folder>
+                </allowed_resources>
+            </media_storage_configuration>
+        </system>
+        <sales>
+            <gift_options>
+                <wrapping_allow_order>1</wrapping_allow_order>
+                <wrapping_allow_items>1</wrapping_allow_items>
+                <allow_gift_receipt>1</allow_gift_receipt>
+                <allow_printed_card>1</allow_printed_card>
+            </gift_options>
+        </sales>
+        <tax>
+            <classes>
+                <wrapping_tax_class>0</wrapping_tax_class>
+            </classes>
+            <cart_display>
+                <gift_wrapping>1</gift_wrapping>
+                <printed_card>1</printed_card>
+            </cart_display>
+            <sales_display>
+                <gift_wrapping>1</gift_wrapping>
+                <printed_card>1</printed_card>
+            </sales_display>
+        </tax>
+    </default>
+</config>

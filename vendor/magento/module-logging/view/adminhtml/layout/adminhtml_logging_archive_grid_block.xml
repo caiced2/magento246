@@ -1,0 +1,43 @@
+<?xml version="1.0"?>
+<!--
+/**
+ * Copyright © Magento, Inc. All rights reserved.
+ * See COPYING.txt for license details.
+ */
+-->
+<page xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="urn:magento:framework:View/Layout/etc/page_configuration.xsd">
+    <body>
+        <referenceBlock name="adminhtml.logging.archive.grid.container">
+            <block class="Magento\Backend\Block\Widget\Grid" name="adminhtml.logging.archive.grid" as="grid">
+                <arguments>
+                    <argument name="id" xsi:type="string">loggingArchiveGrid</argument>
+                    <argument name="dataSource" xsi:type="object" shared="false">Magento\Logging\Model\Archive\Collection</argument>
+                    <argument name="default_sort" xsi:type="string">basename</argument>
+                    <argument name="default_dir" xsi:type="string">DESC</argument>
+                    <argument name="save_parameters_in_session" xsi:type="string">1</argument>
+                    <argument name="use_ajax" xsi:type="string">1</argument>
+                    <argument name="grid_url" xsi:type="url" path="*/*/archiveGrid">
+                        <param name="_current">1</param>
+                    </argument>
+                </arguments>
+                <block class="Magento\Backend\Block\Widget\Grid\ColumnSet" name="adminhtml.logging.archive.grid.columnSet" as="grid.columnSet">
+                    <block class="Magento\Backend\Block\Widget\Grid\Column" name="adminhtml.logging.archive.grid.columnSet.download" as="download">
+                        <arguments>
+                            <argument name="header" xsi:type="string" translate="true">Archive File</argument>
+                            <argument name="index" xsi:type="string">basename</argument>
+                            <argument name="renderer" xsi:type="string">Magento\Logging\Block\Adminhtml\Grid\Renderer\Download</argument>
+                        </arguments>
+                    </block>
+                    <block class="Magento\Backend\Block\Widget\Grid\Column" name="adminhtml.logging.archive.grid.columnSet.date" as="date">
+                        <arguments>
+                            <argument name="header" xsi:type="string" translate="true">Date</argument>
+                            <argument name="index" xsi:type="string">time</argument>
+                            <argument name="type" xsi:type="string">date</argument>
+                            <argument name="filter" xsi:type="string">Magento\Logging\Block\Adminhtml\Archive\Grid\Filter\Date</argument>
+                        </arguments>
+                    </block>
+                </block>
+            </block>
+        </referenceBlock>
+    </body>
+</page>

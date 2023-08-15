@@ -1,0 +1,302 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+ /**
+  * Copyright © Magento, Inc. All rights reserved.
+  * See COPYING.txt for license details.
+  */
+-->
+
+<tests xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xsi:noNamespaceSchemaLocation="urn:magento:mftf:Test/etc/testSchema.xsd">
+    <test name="AdminRestrictedUserToSeeSaleOrderReportsPerStoreTest">
+        <annotations>
+            <features value="AdminGws"/>
+            <stories value="Non-admin Role user for a website that has 2 stores cant see Sale Order Reports per store"/>
+            <title value="Admin non restricted user to see order sales reports per store."/>
+            <description value="Admin non restricted user to see order sales reports per store."/>
+            <severity value="AVERAGE"/>
+            <testCaseId value="AC-3144"/>
+            <useCaseId value="ACP2E-799"/>
+            <group value="userRole"/>
+        </annotations>
+        <before>
+            <!-- Login to Admin -->
+            <actionGroup ref="AdminLoginActionGroup" stepKey="login"/>
+
+            <!-- Create product1 -->
+            <createData entity="SimpleProduct_25" stepKey="simpleProduct1">
+                <field key="price">100</field>
+            </createData>
+
+            <!-- Create product2 -->
+            <createData entity="SimpleProduct_25" stepKey="simpleProduct2">
+                <field key="price">200</field>
+            </createData>
+
+            <!-- Create new website,store,store view1 and store view2 -->
+            <comment userInput="Create new website,store,store view1 and store view2" stepKey="createWebsite"/>
+            <actionGroup ref="AdminSystemStoreOpenPageActionGroup" stepKey="goToAdminSystemStorePage"/>
+            <actionGroup ref="AdminCreateWebsiteActionGroup" stepKey="adminCreateNewWebsite">
+                <argument name="newWebsiteName" value="{{NewWebSiteData.name}}"/>
+                <argument name="websiteCode" value="{{NewWebSiteData.code}}"/>
+            </actionGroup>
+            <actionGroup ref="AdminCreateNewStoreGroupActionGroup" stepKey="adminCreateNewStore">
+                <argument name="website" value="{{NewWebSiteData.name}}"/>
+                <argument name="storeGroupName" value="{{NewStoreData.name}}"/>
+                <argument name="storeGroupCode" value="{{NewStoreData.code}}"/>
+            </actionGroup>
+            <actionGroup ref="AdminCreateStoreViewActionGroup" stepKey="adminCreateNewStoreView1">
+                <argument name="StoreGroup" value="NewStoreData"/>
+                <argument name="customStore" value="customStore"/>
+            </actionGroup>
+            <actionGroup ref="AdminCreateStoreViewActionGroup" stepKey="adminCreateNewStoreView2">
+                <argument name="StoreGroup" value="NewStoreData"/>
+                <argument name="customStore" value="customStoreEN"/>
+            </actionGroup>
+
+            <!-- Search for created product1 from the product admin grid -->
+            <actionGroup ref="SearchForProductOnBackendActionGroup" stepKey="searchForProduct1OnAdmin">
+                <argument name="product" value="$$simpleProduct1$$"/>
+            </actionGroup>
+
+            <!-- Open product1 and assign it to the newly created website -->
+            <actionGroup ref="CreatedProductConnectToWebsiteActionGroup" stepKey="product1ConnectToWebsite">
+                <argument name="website" value="NewWebSiteData"/>
+                <argument name="product" value="$$simpleProduct1$$"/>
+            </actionGroup>
+
+            <!-- Search for created product2 from the product admin grid -->
+            <actionGroup ref="SearchForProductOnBackendActionGroup" stepKey="searchForProduct2OnAdmin">
+                <argument name="product" value="$$simpleProduct2$$"/>
+            </actionGroup>
+
+            <!-- Open product2 and assign it to the newly created website -->
+            <actionGroup ref="CreatedProductConnectToWebsiteActionGroup" stepKey="product2ConnectToWebsite">
+                <argument name="website" value="NewWebSiteData"/>
+                <argument name="product" value="$$simpleProduct2$$"/>
+            </actionGroup>
+
+            <!-- Create a new customer with address by website and store view  -->
+            <actionGroup ref="AdminCreateCustomerWithWebsiteAndStoreViewActionGroup" stepKey="createCustomerWithWebsiteAndStoreView">
+                <argument name="customerData" value="Simple_US_Customer"/>
+                <argument name="address" value="US_Address_NY"/>
+                <argument name="website" value="{{NewWebSiteData.name}}"/>
+                <argument name="storeView" value="{{customStore.name}}"/>
+            </actionGroup>
+
+            <!-- Create user role with restricted one website access -->
+            <actionGroup ref="AdminCreateUserRoleWithScopeActionGroup" stepKey="createRestrictedAdminRole">
+                <argument name="role" value="RestrictedAdminRole"/>
+                <argument name="scopeName" value="{{NewWebSiteData.name}}"/>
+            </actionGroup>
+            <waitForPageLoad time="60" stepKey="waitForPageLoad"/>
+
+            <!-- Create new user with restricted user role created in previous step -->
+            <actionGroup ref="AdminCreateUserWithRoleActionGroup" stepKey="createRestrictedAdmin">
+                <argument name="role" value="RestrictedAdminRole"/>
+                <argument name="user" value="NewAdminUser"/>
+            </actionGroup>
+
+            <!-- Logout and login with newly created restricted user -->
+            <actionGroup ref="AdminLogoutActionGroup" stepKey="logout"/>
+            <actionGroup ref="AdminLoginActionGroup" stepKey="loginLimitedAdmin">
+                <argument name="username" value="{{NewAdminUser.username}}"/>
+                <argument name="password" value="{{NewAdminUser.password}}"/>
+            </actionGroup>
+        </before>
+
+        <!-- Create order1 with created product1,customer and store view1 -->
+        <actionGroup ref="CreateOrderInStoreChoosingPaymentMethodActionGroup" stepKey="createOrder1">
+            <argument name="product" value="$$simpleProduct1$$"/>
+            <argument name="customer" value="Simple_US_Customer"/>
+            <argument name="storeView" value="customStore"/>
+        </actionGroup>
+
+        <!-- Create Invoice for the order1-->
+        <actionGroup ref="GoToInvoiceIntoOrderActionGroup" stepKey="goToInvoiceIntoOrder1Page"/>
+        <actionGroup ref="SubmitInvoiceActionGroup" stepKey="submitInvoiceIntoOrder1"/>
+
+        <!-- Create order2 with created product2,customer and store view2 -->
+        <actionGroup ref="CreateOrderInStoreChoosingPaymentMethodActionGroup" stepKey="createOrder2">
+            <argument name="product" value="$$simpleProduct2$$"/>
+            <argument name="customer" value="Simple_US_Customer"/>
+            <argument name="storeView" value="customStoreEN"/>
+        </actionGroup>
+
+        <!-- Create Invoice for the order2-->
+        <actionGroup ref="GoToInvoiceIntoOrderActionGroup" stepKey="goToInvoiceIntoOrder2Page"/>
+        <actionGroup ref="SubmitInvoiceActionGroup" stepKey="submitInvoiceIntoOrder2"/>
+
+        <!-- Go to sales order report page for restricted admin user -->
+        <actionGroup ref="AdminGoToOrdersReportPageActionGroup" stepKey="goToOrdersReportPageForRestrictedAdmin"/>
+
+        <!-- Generate start and end date for restricted admin user  -->
+        <generateDate stepKey="generateEndDateForRestrictedAdmin" date="+0 day" format="m/d/Y"/>
+        <generateDate stepKey="generateStartDateForRestrictedAdmin" date="-1 day" format="m/d/Y"/>
+
+        <!-- Switch to newly created website for restricted admin user -->
+        <actionGroup ref="SwitchToTheNewStoreViewActionGroup" stepKey="switchToRestrictedAdminWebsite">
+            <argument name="storeViewName" value="{{NewWebSiteData.name}}"/>
+        </actionGroup>
+
+        <!-- Generate order reports for restricted admin user -->
+        <actionGroup ref="GenerateOrderReportActionGroup" stepKey="generateReportForRestrictedAdmin">
+            <argument name="orderFromDate" value="$generateStartDateForRestrictedAdmin"/>
+            <argument name="orderToDate" value="$generateEndDateForRestrictedAdmin"/>
+        </actionGroup>
+
+        <!-- Wait for loading the grid column sales total for restricted admin user website -->
+        <waitForElement selector=".totals .col-sales-total" stepKey="waitForOrdersSalesTotalForRestrictedAdminWebsite"/>
+
+        <!-- Grab the text sales total from the report grid for restricted admin user website -->
+        <grabTextFrom selector=".totals .col-sales-total" stepKey="grabOrdersSalesTotalForRestrictedAdminWebsite"/>
+
+        <!-- Switch to newly created store group for restricted admin user -->
+        <actionGroup ref="SwitchToTheNewStoreViewActionGroup" stepKey="switchToRestrictedAdminStoreGroup">
+            <argument name="storeViewName" value="{{NewStoreData.name}}"/>
+        </actionGroup>
+
+        <!-- Wait for loading the grid column sales total for restricted admin user store group -->
+        <waitForElement selector=".totals .col-sales-total" stepKey="waitForOrdersSalesTotalForRestrictedAdminStoreGroup"/>
+
+        <!-- Grab the text sales total from the report grid for restricted admin user store group -->
+        <grabTextFrom selector=".totals .col-sales-total" stepKey="grabOrdersSalesTotalForRestrictedAdminStoreGroup"/>
+
+        <!-- Switch to newly created store view1 for restricted admin user -->
+        <actionGroup ref="SwitchToTheNewStoreViewActionGroup" stepKey="switchToRestrictedAdminStoreView1">
+            <argument name="storeViewName" value="{{customStore.name}}"/>
+        </actionGroup>
+
+        <!-- Wait for loading the grid column sales total for restricted admin user store view1 -->
+        <waitForElement selector=".totals .col-sales-total" stepKey="waitForOrdersSalesTotalForRestrictedAdminStoreView1"/>
+
+        <!-- Grab the text sales total from the report grid for restricted admin user store view1 -->
+        <grabTextFrom selector=".totals .col-sales-total" stepKey="grabOrdersSalesTotalForRestrictedAdminStoreView1"/>
+
+        <!-- Switch to newly created store view2 for restricted admin user -->
+        <actionGroup ref="SwitchToTheNewStoreViewActionGroup" stepKey="switchToRestrictedAdminStoreView2">
+            <argument name="storeViewName" value="{{customStoreEN.name}}"/>
+        </actionGroup>
+
+        <!-- Wait for loading the grid column sales total for restricted admin user store view2 -->
+        <waitForElement selector=".totals .col-sales-total" stepKey="waitForOrdersSalesTotalForRestrictedAdminStoreView2"/>
+
+        <!-- Grab the text sales total from the report grid for restricted admin user store view2 -->
+        <grabTextFrom selector=".totals .col-sales-total" stepKey="grabOrdersSalesTotalForRestrictedAdminStoreView2"/>
+
+        <!-- Logout for restricted admin user -->
+        <actionGroup ref="AdminLogoutActionGroup" stepKey="logout"/>
+
+        <!-- Admin Login -->
+        <actionGroup ref="AdminLoginActionGroup" stepKey="login"/>
+
+        <!-- Go to sales order report page -->
+        <actionGroup ref="AdminGoToOrdersReportPageActionGroup" stepKey="goToOrdersReportPage"/>
+
+        <!-- Generate start and end date -->
+        <generateDate stepKey="generateEndDate" date="+0 day" format="m/d/Y"/>
+        <generateDate stepKey="generateStartDate" date="-1 day" format="m/d/Y"/>
+
+        <!-- Switch to newly created website -->
+        <actionGroup ref="SwitchToTheNewStoreViewActionGroup" stepKey="switchToWebsite">
+            <argument name="storeViewName" value="{{NewWebSiteData.name}}"/>
+        </actionGroup>
+
+        <!-- Generate order reports -->
+        <actionGroup ref="GenerateOrderReportActionGroup" stepKey="generateReport">
+            <argument name="orderFromDate" value="$generateStartDate"/>
+            <argument name="orderToDate" value="$generateEndDate"/>
+        </actionGroup>
+
+        <!-- Wait for loading the grid column sales total website -->
+        <waitForElement selector=".totals .col-sales-total" stepKey="waitForOrdersSalesTotalWebsite"/>
+
+        <!-- Grab the text sales total from the report grid website -->
+        <grabTextFrom selector=".totals .col-sales-total" stepKey="grabOrdersSalesTotalWebsite"/>
+
+        <!-- Switch to newly created store group -->
+        <actionGroup ref="SwitchToTheNewStoreViewActionGroup" stepKey="switchToStoreGroup">
+            <argument name="storeViewName" value="{{NewStoreData.name}}"/>
+        </actionGroup>
+
+        <!-- Wait for loading the grid column sales total store group -->
+        <waitForElement selector=".totals .col-sales-total" stepKey="waitForOrdersSalesTotalStoreGroup"/>
+
+        <!-- Grab the text sales total from the report grid store group -->
+        <grabTextFrom selector=".totals .col-sales-total" stepKey="grabOrdersSalesTotalStoreGroup"/>
+
+        <!-- Switch to newly created store view1 -->
+        <actionGroup ref="SwitchToTheNewStoreViewActionGroup" stepKey="switchToStoreView1">
+            <argument name="storeViewName" value="{{customStore.name}}"/>
+        </actionGroup>
+
+        <!-- Wait for loading the grid column sales total store view1 -->
+        <waitForElement selector=".totals .col-sales-total" stepKey="waitForOrdersSalesTotalStoreView1"/>
+
+        <!-- Grab the text sales total from the report grid store view1 -->
+        <grabTextFrom selector=".totals .col-sales-total" stepKey="grabOrdersSalesTotalStoreView1"/>
+
+        <!-- Switch to newly created store view2 -->
+        <actionGroup ref="SwitchToTheNewStoreViewActionGroup" stepKey="switchToStoreView2">
+            <argument name="storeViewName" value="{{customStoreEN.name}}"/>
+        </actionGroup>
+
+        <!-- Wait for loading the grid column sales total store view2 -->
+        <waitForElement selector=".totals .col-sales-total" stepKey="waitForOrdersSalesTotalStoreView2"/>
+
+        <!-- Grab the text sales total from the report grid store view2 -->
+        <grabTextFrom selector=".totals .col-sales-total" stepKey="grabOrdersSalesTotalForStoreView2"/>
+
+        <!-- Assert sales order total value for both restricted and non-restricted admin user website -->
+        <assertEquals stepKey="assertEqualsOrdersSalesTotalBothRestrictedAndNormalUserByWebsite">
+            <actualResult type="string">{$grabOrdersSalesTotalWebsite}</actualResult>
+            <expectedResult type="string">{$grabOrdersSalesTotalForRestrictedAdminWebsite}</expectedResult>
+        </assertEquals>
+
+        <!-- Assert sales order total value for both restricted and non-restricted admin user Store group -->
+        <assertEquals stepKey="assertEqualsOrdersSalesTotalBothRestrictedAndNormalUserByStoreGroup">
+            <actualResult type="string">{$grabOrdersSalesTotalStoreGroup}</actualResult>
+            <expectedResult type="string">{$grabOrdersSalesTotalForRestrictedAdminStoreGroup}</expectedResult>
+        </assertEquals>
+
+        <!-- Assert sales order total value for both restricted and non-restricted admin user Store view1 -->
+        <assertEquals stepKey="assertEqualsOrdersSalesTotalBothRestrictedAndNormalUserByStoreView1">
+            <actualResult type="string">{$grabOrdersSalesTotalStoreView1}</actualResult>
+            <expectedResult type="string">{$grabOrdersSalesTotalForRestrictedAdminStoreView1}</expectedResult>
+        </assertEquals>
+
+        <!-- Assert sales order total value for both restricted and non-restricted admin user Store view2 -->
+        <assertEquals stepKey="assertEqualsOrdersSalesTotalBothRestrictedAndNormalUserByStoreView2">
+            <actualResult type="string">{$grabOrdersSalesTotalForStoreView2}</actualResult>
+            <expectedResult type="string">{$grabOrdersSalesTotalForRestrictedAdminStoreView2}</expectedResult>
+        </assertEquals>
+
+        <after>
+            <!-- Delete product1 -->
+            <deleteData createDataKey="simpleProduct1" stepKey="deleteSimpleProduct1"/>
+
+            <!-- Delete product2 -->
+            <deleteData createDataKey="simpleProduct2" stepKey="deleteSimpleProduct2"/>
+
+            <!-- Delete customer -->
+            <actionGroup ref="AdminDeleteCustomerActionGroup" stepKey="deleteCustomer">
+                <argument name="customerEmail" value="Simple_US_Customer.email"/>
+            </actionGroup>
+
+            <!-- Delete Admin user and role -->
+            <actionGroup ref="AdminDeleteCreatedUserActionGroup" stepKey="deleteAdminUser">
+                <argument name="user" value="NewAdminUser"/>
+            </actionGroup>
+            <actionGroup ref="AdminDeleteUserRoleWithSpecifiedPermissionActionGroup" stepKey="deleteRole">
+                <argument name="role" value="RestrictedAdminRole"/>
+            </actionGroup>
+
+            <!-- Delete test website -->
+            <actionGroup ref="AdminDeleteWebsiteActionGroup" stepKey="deleteTestWebsite">
+                <argument name="websiteName" value="{{NewWebSiteData.name}}"/>
+            </actionGroup>
+
+            <actionGroup ref="AdminLogoutActionGroup" stepKey="logout1"/>
+        </after>
+    </test>
+</tests>

@@ -1,0 +1,56 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+ /**
+  * Copyright © Magento, Inc. All rights reserved.
+  * See COPYING.txt for license details.
+  */
+-->
+
+<tests xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xsi:noNamespaceSchemaLocation="urn:magento:mftf:Test/etc/testSchema.xsd">
+    <test name="AdminCheckThatProductIsAvailableOnPreviewTest">
+        <annotations>
+            <features value="CatalogStaging"/>
+            <stories value="Staging updates"/>
+            <title value="Check that product will be available on staging update preview"/>
+            <description value="Check that disabled product which will be enabled in staging update will be in stock in staging preview"/>
+            <severity value="MAJOR" />
+            <testCaseId value="MC-42200"/>
+            <useCaseId value="MC-23994"/>
+            <group value="catalogStaging"/>
+        </annotations>
+        <before>
+            <actionGroup ref="CliIndexerSetScheduleModeActionGroup" stepKey="setScheduleIndexerMode"/>
+            <magentoCLI command="config:set {{CatalogInventoryOptionsShowOutOfStockEnable.path}} {{CatalogInventoryOptionsShowOutOfStockEnable.value}}" stepKey="setConfigShowOutOfStockTrue"/>
+            <createData entity="SimpleProduct2" stepKey="createProduct"/>
+            <actionGroup ref="AdminLoginActionGroup" stepKey="loginAsAdmin"/>
+        </before>
+        <after>
+            <actionGroup ref="CliIndexerSetRealtimeModeActionGroup" stepKey="setRealtimeIndexerMode"/>
+            <magentoCLI command="config:set {{CatalogInventoryOptionsShowOutOfStockDisable.path}} {{CatalogInventoryOptionsShowOutOfStockDisable.value}}" stepKey="setConfigShowOutOfStockFalse"/>
+            <deleteData createDataKey="createProduct" stepKey="deleteProduct"/>
+            <actionGroup ref="AdminLogoutActionGroup" stepKey="logoutFromAdmin"/>
+        </after>
+        <actionGroup ref="AdminProductPageOpenByIdActionGroup" stepKey="openProductEditPage">
+            <argument name="productId" value="$createProduct.id$"/>
+        </actionGroup>
+        <actionGroup ref="AdminSetProductDisabledActionGroup" stepKey="disableProduct"/>
+        <actionGroup ref="SaveProductFormActionGroup" stepKey="clickSaveProduct"/>
+        <generateDate date="+1 day" format="m/d/Y" stepKey="generateStartDate"/>
+        <generateDate date="+1 week" format="m/d/Y" stepKey="generateEndDate"/>
+        <actionGroup ref="AdminEnableProductInScheduleUpdateActionGroup" stepKey="createNewStagingUpdate">
+            <argument name="staging" value="S5UpdateNameStaging"/>
+            <argument name="timeStart" value="{$generateStartDate}"/>
+            <argument name="timeEnd" value="{$generateEndDate}"/>
+            <argument name="productPrice" value="50"/>
+        </actionGroup>
+        <waitForAjaxLoad stepKey="waitForAjaxLoad"/>
+        <click selector="{{AdminUpdateBlockSection.preview}}" stepKey="previewUpdate"/>
+        <switchToNextTab stepKey="switchToNewOpenedTab"/>
+        <waitForPageLoad stepKey="waitForSchedulePageLoad"/>
+        <executeJS function="jQuery('[data-role=\'preview-iframe\']').attr('id', 'preview-iframe')" stepKey="setPreviewFrameId"/>
+        <switchToIFrame selector="preview-iframe" stepKey="switchToIFrame"/>
+        <see userInput="IN STOCK" selector="{{StorefrontProductInfoMainSection.productStockStatus}}" stepKey="assertInStock"/>
+        <switchToIFrame stepKey="switchToDefault"/>
+    </test>
+</tests>

@@ -1,0 +1,26 @@
+<?xml version="1.0"?>
+<!--
+/**
+ * Copyright © Magento, Inc. All rights reserved.
+ * See COPYING.txt for license details.
+ */
+-->
+<page xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="urn:magento:framework:View/Layout/etc/page_configuration.xsd">
+    <update handle="customer_account"/>
+    <update handle="sales_order_info_rma_links"/>
+    <body>
+    <referenceContainer name="page.main.title">
+        <block class="Magento\Sales\Block\Order\Info" name="order.status" template="Magento_Sales::order/order_status.phtml" />
+        <block class="Magento\Sales\Block\Order\Info" name="order.date" template="Magento_Sales::order/order_date.phtml" />
+        <container name="order.actions.container" htmlTag="div" htmlClass="actions-toolbar order-actions-toolbar">
+            <block class="Magento\Sales\Block\Order\Info\Buttons" as="buttons" name="sales.order.info.buttons" cacheable="false">
+                <block class="Magento\Rma\Block\Order\Button" name="magento.rma.info.button" template="Magento_Rma::order/button.phtml"/>
+            </block>
+        </container>
+    </referenceContainer>
+    <referenceContainer name="content">
+        <block class="Magento\Rma\Block\Returns\Returns" name="rma.returns.returns" cacheable="false"/>
+        <block class="Magento\Sales\Block\Order\Info" as="info" name="sales.order.info" />
+    </referenceContainer>
+    </body>
+</page>

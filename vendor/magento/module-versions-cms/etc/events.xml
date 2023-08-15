@@ -1,0 +1,15 @@
+<?xml version="1.0"?>
+<!--
+/**
+ * Copyright © Magento, Inc. All rights reserved.
+ * See COPYING.txt for license details.
+ */
+-->
+<config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="urn:magento:framework:Event/etc/events.xsd">
+    <event name="cms_controller_router_match_before">
+        <observer name="magento_versionscms" instance="Magento\VersionsCms\Observer\CmsControllerRouterMatchBefore" />
+    </event>
+    <event name="page_block_html_topmenu_gethtml_before">
+        <observer name="magento_versionscms_add_topmenu_items" instance="Magento\VersionsCms\Observer\AddCmsToTopmenuItems" />
+    </event>
+</config>

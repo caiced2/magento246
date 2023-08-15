@@ -1,0 +1,82 @@
+<?xml version="1.0"?>
+<!--
+/**
+ * Copyright © Magento, Inc. All rights reserved.
+ * See COPYING.txt for license details.
+ */
+-->
+<page xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="urn:magento:framework:View/Layout/etc/page_configuration.xsd">
+    <body>
+        <referenceBlock name="customersegment.container">
+            <block class="Magento\Backend\Block\Widget\Grid" name="customer.segment.grid" as="grid">
+                <arguments>
+                    <argument name="id" xsi:type="string">customersegmentGrid</argument>
+                    <argument name="dataSource" xsi:type="object" shared="false">Magento\CustomerSegment\Model\ResourceModel\Grid\Collection</argument>
+                    <argument name="use_ajax" xsi:type="string">1</argument>
+                    <argument name="default_sort" xsi:type="string">name</argument>
+                    <argument name="default_dir" xsi:type="string">ASC</argument>
+                    <argument name="save_parameters_in_session" xsi:type="string">1</argument>
+                    <argument name="grid_url" xsi:type="url" path="customersegment/index/grid">
+                        <param name="_current">1</param>
+                    </argument>
+                </arguments>
+                <block class="Magento\Backend\Block\Widget\Grid\ColumnSet" as="grid.columnSet" name="customer.segment.grid.columnSet">
+                    <arguments>
+                        <argument name="id" xsi:type="string">customersegmentGrid</argument>
+                        <argument name="rowUrl" xsi:type="array">
+                            <item name="path" xsi:type="string">*/*/edit</item>
+                            <item name="extraParamsTemplate" xsi:type="array">
+                                <item name="id" xsi:type="string">getSegmentId</item>
+                            </item>
+                        </argument>
+                    </arguments>
+                    <block class="Magento\Backend\Block\Widget\Grid\Column" as="grid_segment_id" name="customer.segment.grid.columnSet.grid_segment_id">
+                        <arguments>
+                            <argument name="header" xsi:type="string" translate="true">ID</argument>
+                            <argument name="align" xsi:type="string">right</argument>
+                            <argument name="width" xsi:type="string">50</argument>
+                            <argument name="index" xsi:type="string">segment_id</argument>
+                        </arguments>
+                    </block>
+                    <block class="Magento\Backend\Block\Widget\Grid\Column" as="grid_segment_name" name="customer.segment.grid.columnSet.grid_segment_name">
+                        <arguments>
+                            <argument name="header" xsi:type="string" translate="true">Segment</argument>
+                            <argument name="align" xsi:type="string">left</argument>
+                            <argument name="index" xsi:type="string">name</argument>
+                        </arguments>
+                    </block>
+                    <block class="Magento\Backend\Block\Widget\Grid\Column" as="grid_segment_is_active" name="customer.segment.grid.columnSet.grid_segment_is_active">
+                        <arguments>
+                            <argument name="header" xsi:type="string" translate="true">Status</argument>
+                            <argument name="align" xsi:type="string">left</argument>
+                            <argument name="width" xsi:type="string">80</argument>
+                            <argument name="index" xsi:type="string">is_active</argument>
+                            <argument name="type" xsi:type="string">options</argument>
+                            <argument name="options" xsi:type="array">
+                                <item name="active" xsi:type="array">
+                                    <item name="value" xsi:type="string">1</item>
+                                    <item name="label" xsi:type="string" translate="true">Active</item>
+                                </item>
+                                <item name="inactive" xsi:type="array">
+                                    <item name="value" xsi:type="string">0</item>
+                                    <item name="label" xsi:type="string" translate="true">Inactive</item>
+                                </item>
+                            </argument>
+                        </arguments>
+                    </block>
+                    <block class="Magento\Backend\Block\Widget\Grid\Column\Multistore" as="grid_segment_website" name="customer.segment.grid.columnSet.grid_segment_website">
+                        <arguments>
+                            <argument name="header" xsi:type="string" translate="true">Website</argument>
+                            <argument name="align" xsi:type="string">left</argument>
+                            <argument name="index" xsi:type="string">website_ids</argument>
+                            <argument name="type" xsi:type="string">options</argument>
+                            <argument name="options" xsi:type="options" model="Magento\Config\Model\Config\Source\Website\OptionHash"/>
+                            <argument name="sortable" xsi:type="string">0</argument>
+                            <argument name="width" xsi:type="string">200</argument>
+                        </arguments>
+                    </block>
+                </block>
+            </block>
+        </referenceBlock>
+    </body>
+</page>

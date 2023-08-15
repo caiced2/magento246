@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+ /**
+  * Copyright © Magento, Inc. All rights reserved.
+  * See COPYING.txt for license details.
+  */
+-->
+<sections xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:noNamespaceSchemaLocation="urn:magento:mftf:Page/etc/SectionObject.xsd">
+    <section name="AdminGiftCardAccountInformationSection">
+        <!--Go to Market/Gift Cart Accounts-->
+        <element name="market" type="button" selector="#menu-magento-backend-marketing"/>
+        <element name="giftCard" type="button" selector="//span[contains(text(), 'Gift Card Accounts')]"/>
+        <!--Click to add Gift Cart Account-->
+        <element name="add" type="button" selector="#add"/>
+        <!--Fill required fields-->
+        <element name="giftCardCode" type="text" selector="div.field-code .control-value"/>
+        <element name="status" type="text" selector="div.field-state_text .control-value"/>
+        <element name="active" type="select" selector="select[name=status]"/>
+        <element name="website" type="select" selector="#_infowebsite_id"/>
+        <element name="balance" type="input" selector="#_infobalance"/>
+        <!--Save created gift cart -->
+        <element name="saveGiftCardAccount" type="button" selector="#save"/>
+        <!--Make sure that the card is created-->
+        <element name="savedGiftCardAccountMessage" type="text" selector="//div[@data-ui-id='messages-message-success' and normalize-space(.)='You saved the gift card account.']"/>
+        <element name="giftCardCodeFilterField" type="text" selector="#giftcardaccountGrid_filter_code"/>
+        <element name="resetFilter" type="button" selector=".action-default.scalable.action-reset.action-tertiary"/>
+        <element name="search" type="button" selector=".admin__filter-actions button[data-action='grid-filter-apply']"/>
+        <element name="row" type="text" selector="//*[@id='giftcardaccountGrid_table']/tbody/tr"/>
+        <element name="delete" type="button" selector="#delete"/>
+        <element name="deletedGiftCardAccountMessage" type="text" selector="//div[@data-ui-id='messages-message-success' and normalize-space(.)='This gift card account has been deleted.']"/>
+
+    </section>
+</sections>

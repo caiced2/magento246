@@ -1,0 +1,20 @@
+<?xml version="1.0"?>
+<!--
+/**
+ * Copyright © Magento, Inc. All rights reserved.
+ * See COPYING.txt for license details.
+ */
+-->
+<page xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="urn:magento:framework:View/Layout/etc/page_configuration.xsd">
+    <update handle="formkey"/>
+    <update handle="adminhtml_logging_archive_grid_block"/>
+    <body>
+        <referenceContainer name="content">
+            <block class="Magento\Logging\Block\Adminhtml\Container" name="adminhtml.logging.archive.grid.container">
+                <arguments>
+                    <argument name="header_text" xsi:type="string">Admin Actions Log Archive</argument>
+                </arguments>
+            </block>
+        </referenceContainer>
+    </body>
+</page>

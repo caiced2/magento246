@@ -1,0 +1,72 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+ /**
+  * Copyright © Magento, Inc. All rights reserved.
+  * See COPYING.txt for license details.
+  */
+-->
+
+<tests xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xsi:noNamespaceSchemaLocation="urn:magento:mftf:Test/etc/testSchema.xsd">
+    <test name="StorefrontGiftWrappingCanBeDisabledForSpecificProductTest">
+        <annotations>
+            <features value="GiftWrapping"/>
+            <stories value="No gift wrapping"/>
+            <title value="Verify that Gift Wrapping can be disabled for specific product"/>
+            <description value="Verify that Gift Wrapping can be disabled for specific product"/>
+            <severity value="CRITICAL"/>
+            <testCaseId value="MC-28610"/>
+            <group value="giftWrapping"/>
+        </annotations>
+
+        <before>
+            <createData entity="_defaultCategory" stepKey="createCategory"/>
+            <createData entity="_defaultProduct" stepKey="createProduct1">
+                <requiredEntity createDataKey="createCategory"/>
+            </createData>
+            <createData entity="_defaultProduct" stepKey="createProduct2">
+                <requiredEntity createDataKey="createCategory"/>
+            </createData>
+            <createData entity="ApiGiftWrapping" stepKey="createGiftWrapping"/>
+            <createData entity="EnableGiftWrappingForOrderItemsOnly" stepKey="setOptionGiftWrappingEnabledForOrderItemsOnly"/>
+
+            <actionGroup ref="AdminLoginActionGroup" stepKey="loginAsAdmin"/>
+
+            <actionGroup ref="AdminProductPageOpenByIdActionGroup" stepKey="openProduct1EditPage">
+                <argument name="productId" value="$createProduct1.id$"/>
+            </actionGroup>
+            <conditionalClick selector="{{AdminProductGiftOptionsSection.giftOptions}}" dependentSelector="{{AdminProductGiftOptionsSection.isGiftOptionsTabClosed}}" visible="true" stepKey="openProduct1GiftOptionsSection"/>
+            <checkOption selector="{{AdminProductGiftOptionsSection.useConfigSettingsMessage}}" stepKey="checkUseDefaultOptionTitle1"/>
+            <checkOption selector="{{AdminProductGiftOptionsSection.useConfigSettingsAvaible}}" stepKey="checkUseDefaultOptionTitle3"/>
+            <actionGroup ref="SaveProductFormActionGroup" stepKey="saveProduct1"/>
+
+            <actionGroup ref="AdminProductPageOpenByIdActionGroup" stepKey="openProduct2EditPage">
+                <argument name="productId" value="$createProduct2.id$"/>
+            </actionGroup>
+            <conditionalClick selector="{{AdminProductGiftOptionsSection.giftOptions}}" dependentSelector="{{AdminProductGiftOptionsSection.isGiftOptionsTabClosed}}" visible="true" stepKey="openProduct2GiftOptionsSection"/>
+            <checkOption selector="{{AdminProductGiftOptionsSection.useConfigSettingsMessage}}" stepKey="checkUseDefaultOptionTitle2"/>
+            <actionGroup ref="SaveProductFormActionGroup" stepKey="saveProduct2"/>
+        </before>
+
+        <after>
+            <deleteData createDataKey="createProduct1" stepKey="deleteProduct1"/>
+            <deleteData createDataKey="createProduct2" stepKey="deleteProduct2"/>
+            <deleteData createDataKey="createCategory" stepKey="deleteCategory"/>
+            <deleteData createDataKey="createGiftWrapping" stepKey="deleteGiftWrapping"/>
+            <createData entity="DefaultConfigGiftWrappingOptions" stepKey="setGiftWrappingOptionsToDefault"/>
+            <actionGroup ref="AdminLogoutActionGroup" stepKey="logoutFromAdmin"/>
+        </after>
+
+        <actionGroup ref="AddSimpleProductToCartActionGroup" stepKey="addProduct1ToCart">
+            <argument name="product" value="$createProduct1$"/>
+        </actionGroup>
+
+        <actionGroup ref="AddSimpleProductToCartActionGroup" stepKey="addProduct2ToCart">
+            <argument name="product" value="$createProduct2$"/>
+        </actionGroup>
+
+        <actionGroup ref="StorefrontOpenCartFromMinicartActionGroup" stepKey="openCart"/>
+        <waitForText selector="{{CheckoutCartGiftWrappingSection.cartItemGiftOption('$createProduct1.name$','Gift options')}}" userInput="Gift options" time="30" stepKey="seeGiftOptionPresent"/>
+        <dontSee selector="{{CheckoutCartGiftWrappingSection.cartItemGiftOption('$createProduct2.name$','Gift options')}}" userInput="Gift options" stepKey="seeGiftOptionNotPresent"/>
+    </test>
+</tests>

@@ -1,0 +1,224 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+ /**
+  * Copyright © Magento, Inc. All rights reserved.
+  * See COPYING.txt for license details.
+  */
+-->
+
+<tests xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:noNamespaceSchemaLocation="urn:magento:mftf:Test/etc/testSchema.xsd">
+    <test name="AdminMoveUpdateToAnotherExistingUpdateTest">
+        <annotations>
+            <features value="Staging"/>
+            <stories value="Staging update move to another existing update"/>
+            <title value="Move Update to Another existing Update"/>
+            <description value="Move Update to Another existing Update"/>
+            <severity value="CRITICAL"/>
+            <testCaseId value="MAGETWO-55914"/>
+            <group value="staging"/>
+        </annotations>
+        <before>
+            <createData entity="_defaultCategory" stepKey="createCategory"/>
+            <createData entity="SimpleProduct" stepKey="createProduct">
+                <field key="price">10</field>
+                <requiredEntity createDataKey="createCategory"/>
+            </createData>
+            <createData entity="SimpleProduct" stepKey="createProduct2">
+                <field key="price">20</field>
+                <requiredEntity createDataKey="createCategory"/>
+            </createData>
+            <createData entity="SimpleProduct" stepKey="createProduct3">
+                <field key="price">30</field>
+                <requiredEntity createDataKey="createCategory"/>
+            </createData>
+        </before>
+        <after>
+            <deleteData createDataKey="createProduct" stepKey="deleteProduct"/>
+            <deleteData createDataKey="createProduct2" stepKey="deleteProduct2"/>
+            <deleteData createDataKey="createProduct3" stepKey="deleteProduct3"/>
+            <deleteData createDataKey="createCategory" stepKey="deleteCategory"/>
+            <actionGroup ref="StagingDashboardClearFiltersActionGroup" stepKey="clearStagingFilters"/>
+            <actionGroup ref="AdminClearFiltersActionGroup" stepKey="clearProductFilters"/>
+            <actionGroup ref="AdminLogoutActionGroup" stepKey="logout"/>
+        </after>
+        <!-- 1. Login to Magento backend-->
+        <actionGroup ref="AdminLoginActionGroup" stepKey="loginAsAdmin"/>
+        <!-- 2. Navigate to menu Catalog->Products -->
+        <!-- 3. Click on "Edit" link for product with name P1ProductName -->
+        <actionGroup ref="SearchForProductOnBackendActionGroup" stepKey="filterProduct1">
+            <argument name="product" value="$$createProduct$$"/>
+        </actionGroup>
+        <click selector="{{AdminProductGridSection.productGridNameProduct('$$createProduct.name$$')}}" stepKey="openProductForEdit"/>
+        <seeElement selector="{{AdminStagingSlideOutSection.scheduledChanges}}" stepKey="seeBlockSheduledChanges"/>
+        <dontSeeElement selector="{{AdminStagingSlideOutSection.contentBlock}}" stepKey="dontSeeContentBlock"/>
+        <!-- 4. Click on "Schedule New Update" button-->
+        <!-- 5. Click on "Save" button-->
+        <generateDate date="+10 minutes" format="m/j/Y g:i A" stepKey="generateStartDate"/>
+        <generateDate date="+10 minutes" format="M j, Y g:i A" stepKey="generateStartDateForCheck"/>
+        <actionGroup ref="FillScheduleUpdateWithCheckActionGroup" stepKey="createScheduleUpdate">
+            <argument name="staging" value="S5UpdateNameStaging"/>
+            <argument name="timeStart" value="{$generateStartDate}"/>
+            <argument name="productPrice" value="12"/>
+        </actionGroup>
+        <!-- 6. Click on "Schedule New Update" button -->
+        <!-- 7. On Slide panel fill new update with data -->
+        <!-- 8. Click on "Save" button-->
+        <generateDate date="+13 minutes" format="m/j/Y g:i A" stepKey="generateStartDateTwo"/>
+        <generateDate date="+14 minutes" format="M j, Y g:i A" stepKey="generateStartDateTwoForPreview"/>
+        <generateDate date="+15 minutes" format="m/j/Y g:i A" stepKey="generateEndDateTwo"/>
+        <actionGroup ref="FillScheduleUpdateWithCheckEndActionGroup" stepKey="createScheduleUpdate2">
+            <argument name="staging" value="S8UpdateNameStaging"/>
+            <argument name="timeStart" value="{$generateStartDateTwo}"/>
+            <argument name="timeEnd" value="{$generateEndDateTwo}"/>
+            <argument name="productPrice" value="11"/>
+        </actionGroup>
+        <!-- 9. Navigate to menu Catalog->Products -->
+        <!-- 10. Click on "Edit" link for product with name P2ProductName -->
+        <actionGroup ref="SearchForProductOnBackendActionGroup" stepKey="filterProduct2">
+            <argument name="product" value="$$createProduct2$$"/>
+        </actionGroup>
+        <click selector="{{AdminProductGridSection.productGridNameProduct('$$createProduct2.name$$')}}" stepKey="openProduct2ForEdit"/>
+        <!-- 11. Click on "Schedule New Update" button -->
+        <!-- 12. Click on "Save" button -->
+        <generateDate date="+18 minutes" format="m/j/Y g:i A" stepKey="generateStartDateThird"/>
+        <generateDate date="+19 minutes" format="M j, Y g:i A" stepKey="generateStartDateThirdForPreview"/>
+        <generateDate date="+20 minutes" format="m/j/Y g:i A" stepKey="generateEndDateThird"/>
+        <generateDate date="+21 minutes" format="M j, Y g:i A" stepKey="generateEndDateThirdForPreview"/>
+        <actionGroup ref="FillScheduleUpdateWithCheckEndActionGroup" stepKey="createScheduleUpdate3">
+            <argument name="staging" value="S18UpdateNameStaging"/>
+            <argument name="timeStart" value="{$generateStartDateThird}"/>
+            <argument name="timeEnd" value="{$generateEndDateThird}"/>
+            <argument name="productPrice" value="23"/>
+        </actionGroup>
+        <!-- 13. Click on "Schedule New Update" button -->
+        <!-- 14. Select "Assign to Existing Update" option -->
+        <!-- 15. Click on "Select" button for UpdateName1 -->
+        <!-- 16. On Slide panel change product price for update -->
+        <!-- 17. Click on "Save" button-->
+        <actionGroup ref="AssignToExistingUpdateActionGroup" stepKey="assignScheduleUpdate">
+            <argument name="staging" value="S5UpdateNameStaging"/>
+            <argument name="productPrice" value="22"/>
+        </actionGroup>
+        <!-- 18. Navigate to menu Catalog->Products -->
+        <!-- 19. Click on "Edit" link for product with name P3ProductName -->
+        <actionGroup ref="SearchForProductOnBackendActionGroup" stepKey="searchProduct3">
+            <argument name="product" value="$$createProduct3$$"/>
+        </actionGroup>
+        <click selector="{{AdminProductGridSection.productGridNameProduct('$$createProduct3.name$$')}}" stepKey="openProduct3ForEdit"/>
+        <!-- 20. Click on "Schedule New Update" button -->
+        <!-- 21. Select "Assign to Existing Update" option -->
+        <!-- 22. Click on "Select" button for UpdateName2 -->
+        <!-- 23. On Slide panel change product price for update -->
+        <!-- 24. Click on "Save" button -->
+        <actionGroup ref="AssignToExistingUpdateActionGroup" stepKey="assignScheduleUpdate2">
+            <argument name="staging" value="S8UpdateNameStaging"/>
+            <argument name="productPrice" value="31"/>
+        </actionGroup>
+        <!-- 25. Click on "Schedule New Update" button -->
+        <!-- 26. Select "Assign to Existing Update" option -->
+        <!-- 27. Click on "Select" button for UpdateName3 -->
+        <!-- 28. On Slide panel change product price for update -->
+        <!-- 29. Click on "Save" button -->
+        <actionGroup ref="AssignToExistingUpdateActionGroup" stepKey="assignScheduleUpdate3">
+            <argument name="staging" value="S18UpdateNameStaging"/>
+            <argument name="productPrice" value="33"/>
+        </actionGroup>
+        <!-- 30. Navigate to menu Catalog->Products -->
+        <!-- 31. Click on "Edit" link for product with name P1ProductName -->
+        <actionGroup ref="SearchForProductOnBackendActionGroup" stepKey="searchProduct1">
+            <argument name="product" value="$$createProduct$$"/>
+        </actionGroup>
+        <click selector="{{AdminProductGridSection.productGridNameProduct('$$createProduct.name$$')}}" stepKey="openFirstProductForEdit"/>
+        <!-- 32. Click on "View/Edit" link for UpdateName2 -->
+        <!-- 33. Click "Remove from Update" button -->
+        <!-- 34. Select "Move to Another Campaign" option -->
+        <!-- 35. Click "Select" button for UpdateName3 -->
+        <!-- 36. Click "Done" button -->
+        <actionGroup ref="MoveToAnotherUpdateActionGroup" stepKey="moveToAnotherUpdate">
+            <argument name="fromStaging" value="S8UpdateNameStaging"/>
+            <argument name="toStaging" value="S18UpdateNameStaging"/>
+        </actionGroup>
+        <!-- 37. Navigate to Content->Staging Dashboard -->
+        <actionGroup ref="StagingDashboardSearchUpdateActionGroup" stepKey="stagingDashboardSeeUpdateS5">
+            <argument name="staging" value="S5UpdateNameStaging"/>
+        </actionGroup>
+        <!-- 38. Click on UpdateName3. Verify hover content -->
+        <actionGroup ref="StagingDashboardVerifyHoverContentActionGroup" stepKey="stagingDashboardVerifyHoverContent">
+            <argument name="staging" value="S18UpdateNameStaging"/>
+            <argument name="objectsQty" value="3"/>
+            <argument name="productsQty" value="3"/>
+        </actionGroup>
+        <!-- 39. Click on UpdateName2. Verify hover content -->
+        <actionGroup ref="StagingDashboardVerifyHoverContentActionGroup" stepKey="stagingDashboardVerifyHoverContentS8">
+            <argument name="staging" value="S8UpdateNameStaging"/>
+        </actionGroup>
+        <!-- 40. Navigate to menu Products->Catalog -->
+        <!-- 41. Click on "Edit" link for product with name P3ProductName -->
+        <actionGroup ref="SearchForProductOnBackendActionGroup" stepKey="filterProduct3">
+            <argument name="product" value="$$createProduct3$$"/>
+        </actionGroup>
+        <click selector="{{AdminProductGridSection.productGridNameProduct('$$createProduct3.name$$')}}" stepKey="openProduct3ForEditAgain"/>
+        <!-- 42. Click on "View/Edit" link for UpdateName2 -->
+        <!-- 43. Click "Remove from Update" button -->
+        <!-- 44. Select "Move to Another Campaign" option -->
+        <!-- 45. Click "Select" button for UpdateName1 -->
+        <!-- 46. Click "Done" button -->
+        <actionGroup ref="MoveToAnotherUpdateActionGroup" stepKey="moveToAnotherUpdateAgain">
+            <argument name="fromStaging" value="S8UpdateNameStaging"/>
+            <argument name="toStaging" value="S5UpdateNameStaging"/>
+        </actionGroup>
+        <!-- 47. Run cron twice -->
+        <magentoCLI command="cron:run" arguments="--group staging" stepKey="cronRun"/>
+        <magentoCLI command="cron:run" arguments="--group staging" stepKey="cronRunTwice"/>
+        <!-- 48. Navigate to Content->Staging Dashboard -->
+        <actionGroup ref="StagingDashboardSearchUpdateActionGroup" stepKey="stagingDashboardSeeUpdateS18AfterCron">
+            <argument name="staging" value="S18UpdateNameStaging"/>
+        </actionGroup>
+        <actionGroup ref="StagingDashboardSearchUpdateActionGroup" stepKey="stagingDashboardSeeUpdateS5AfterCron">
+            <argument name="staging" value="S5UpdateNameStaging"/>
+        </actionGroup>
+        <click selector="{{AdminContentStagingDashboardSection.timeLineEvent(S5UpdateNameStaging.updateName)}}" stepKey="clickTimelineEvent"/>
+        <!-- 49.  Click on "Preview" button -->
+        <click selector="{{AdminContentStagingDashboardSection.stagingEventsActions(S5UpdateNameStaging.updateName, 'Preview')}}" stepKey="clickPreviewS5"/>
+        <actionGroup ref="VerifyStagingUpdateDateAndPriceActionGroup" stepKey="verifyStagingUpdate1DateAndPrice">
+            <argument name="category" value="$createCategory$"/>
+            <argument name="product" value="$createProduct$"/>
+            <argument name="previewDate" value="{$generateStartDateForCheck}"/>
+            <argument name="expectedPrice" value="12"/>
+        </actionGroup>
+        <!-- 50. Open P1Category Page -->
+        <see selector="{{StorefrontCategoryProductSection.ProductPriceByName('$$createProduct2.name$$')}}" userInput="22" stepKey="seeProduct2Price"/>
+        <see selector="{{StorefrontCategoryProductSection.ProductPriceByName('$$createProduct3.name$$')}}" userInput="31" stepKey="seeProduct3Price"/>
+        <!-- 51. Click on Calendar -->
+        <!-- 52. Click on "Preview" button -->
+        <actionGroup ref="VerifyStagingUpdatePriceActionGroup" stepKey="stagingPreviewVerify">
+            <argument name="category" value="$createCategory$"/>
+            <argument name="product" value="$createProduct$"/>
+            <argument name="previewDate" value="{$generateStartDateTwoForPreview}"/>
+            <argument name="expectedPrice" value="12"/>
+        </actionGroup>
+        <see selector="{{StorefrontCategoryProductSection.ProductPriceByName('$$createProduct2.name$$')}}" userInput="22" stepKey="verifyProduct2Price"/>
+        <see selector="{{StorefrontCategoryProductSection.ProductPriceByName('$$createProduct3.name$$')}}" userInput="31" stepKey="verifyProduct3Price"/>
+        <!-- 53. Click on Calendar -->
+        <!-- 54. Click on "Preview" button -->
+        <actionGroup ref="VerifyStagingUpdatePriceActionGroup" stepKey="stagingPreviewVerifyTwo">
+            <argument name="category" value="$createCategory$"/>
+            <argument name="product" value="$createProduct$"/>
+            <argument name="previewDate" value="{$generateStartDateThirdForPreview}"/>
+            <argument name="expectedPrice" value="11"/>
+        </actionGroup>
+        <see selector="{{StorefrontCategoryProductSection.ProductPriceByName('$$createProduct2.name$$')}}" userInput="23" stepKey="verifyProduct2PriceTwo"/>
+        <see selector="{{StorefrontCategoryProductSection.ProductPriceByName('$$createProduct3.name$$')}}" userInput="33" stepKey="verifyProduct3PriceTwo"/>
+        <!-- 55. Click on Calendar -->
+        <!-- 56. Click on "Preview" button -->
+        <actionGroup ref="VerifyStagingUpdatePriceActionGroup" stepKey="stagingPreviewVerifyThree">
+            <argument name="category" value="$createCategory$"/>
+            <argument name="product" value="$createProduct$"/>
+            <argument name="previewDate" value="{$generateEndDateThirdForPreview}"/>
+            <argument name="expectedPrice" value="12"/>
+        </actionGroup>
+        <see selector="{{StorefrontCategoryProductSection.ProductPriceByName('$$createProduct2.name$$')}}" userInput="22" stepKey="verifyProduct2PriceThree"/>
+        <see selector="{{StorefrontCategoryProductSection.ProductPriceByName('$$createProduct3.name$$')}}" userInput="31" stepKey="verifyProduct3PriceThree"/>
+    </test>
+</tests>

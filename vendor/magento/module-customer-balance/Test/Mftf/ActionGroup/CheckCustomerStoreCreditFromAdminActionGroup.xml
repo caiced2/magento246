@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+ /**
+  * Copyright © Magento, Inc. All rights reserved.
+  * See COPYING.txt for license details.
+  */
+-->
+<actionGroups xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+              xsi:noNamespaceSchemaLocation="urn:magento:mftf:Test/etc/actionGroupSchema.xsd">
+    <actionGroup name="CheckCustomerStoreCreditFromAdminActionGroup">
+        <arguments>
+            <argument name="storeCreditUsed" type="string"/>
+            <argument name="storeCreditLeft" type="string"/>
+            <argument name="orderNumber" type="string"/>
+        </arguments>
+        <!--Check customer StoreCredit information from Admin-->
+        <click selector="{{AdminEditCustomerStoreCreditSection.storeCreditTab}}" stepKey="clickCreditTab"/>
+        <fillField userInput="{{orderNumber}}" selector="{{AdminEditCustomerStoreCreditSection.historyGridAdditionalInfoFilter}}" stepKey="fillFilterCreditHistory"/>
+        <click selector="{{AdminEditCustomerStoreCreditSection.applyHistoryFilter}}" stepKey="applyFilterCreditHistory"/>
+        <waitForLoadingMaskToDisappear stepKey="waitForLoadingMaskDisappear" />
+        <see userInput="${{storeCreditLeft}}.00" selector="{{AdminEditCustomerStoreCreditSection.customerLastBalance}}" stepKey="assertLastBalanceAdmin"/>
+        <see userInput="-${{storeCreditUsed}}.00" selector="{{AdminEditCustomerStoreCreditSection.customerLastBalanceChange}}" stepKey="assertLastBalanceChangeAdmin"/>
+    </actionGroup>
+</actionGroups>

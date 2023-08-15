@@ -1,0 +1,114 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+ /**
+  * Copyright © Magento, Inc. All rights reserved.
+  * See COPYING.txt for license details.
+  */
+-->
+
+<tests xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:noNamespaceSchemaLocation="urn:magento:mftf:Test/etc/testSchema.xsd">
+    <test name="CMSpageIsNotRemovedFromHierarchyAfterSaveTest">
+        <annotations>
+            <features value="Cms"/>
+            <stories value="[CMS Hierarchy] CMS page is not removed from hierarchy after save"/>
+            <title value="[CMS Hierarchy] CMS page is not removed from hierarchy after save"/>
+            <description value="[CMS Hierarchy] CMS page is not removed from hierarchy after save"/>
+            <severity value="MAJOR"/>
+            <testCaseId value="AC-4065"/>
+            <group value="Cms"/>
+        </annotations>
+        <before>
+            <!-- Step1 Login as Admin-->
+            <actionGroup ref="AdminLoginActionGroup" stepKey="loginGetFromGeneralFile"/>
+
+            <!-- Step2 Navigate to Content > Heirarchy-->
+            <actionGroup ref="AdminNavigateMenuActionGroup" stepKey="navigateToContentHierarchyPagePreCleanUp">
+                <argument name="menuUiId" value="{{AdminMenuContent.dataUiId}}"/>
+                <argument name="submenuUiId" value="{{AdminMenuContentElementsHierarchy.dataUiId}}"/>
+            </actionGroup>
+            <click selector="{{HierarchyPageSection.nodeDelete}}" stepKey="DeleteChildNodePreCleanUp"/>
+            <click selector="{{HierarchyPageSection.nodeDeleteConfirm}}" stepKey="DeleteChildNodeConfirmPreCleanUp"/>
+            <seeElement selector="{{HierarchyPageSection.nodeDeleteMsg}}" stepKey="assertDeleteHeirarchySuccessMessagePreCleanUp"/>
+        </before>
+        <after>
+            <scrollToTopOfPage stepKey="scrollToTopOfPages"/>
+            <click selector="{{HierarchyPageSection.childNode('1','Test Page')}}" stepKey="SelectTheFirstChildNodeToDelete"/>
+            <click selector="{{HierarchyPageSection.nodeDelete}}" stepKey="DeleteChildNode"/>
+            <click selector="{{HierarchyPageSection.nodeDeleteConfirm}}" stepKey="DeleteChildNodeConfirm"/>
+            <seeElement selector="{{HierarchyPageSection.nodeDeleteMsg}}" stepKey="assertDeleteHeirarchySuccessMessage"/>
+            <actionGroup ref="AdminNavigateMenuActionGroup" stepKey="navigateToContentPagesPageForLayoutChange">
+                <argument name="menuUiId" value="{{AdminMenuContent.dataUiId}}"/>
+                <argument name="submenuUiId" value="{{AdminMenuContentElementsPages.dataUiId}}"/>
+            </actionGroup>
+            <click selector="{{CmsPagesPageActionsSection.pagesGridRowByTitle('Home page')}}" stepKey="clickHomePageRowForLayoutChange"/>
+            <selectOption userInput="1 column" selector="{{CmsPagesPageActionsSection.selectLayout}}" stepKey="changeLayout"/>
+            <click selector="{{CmsPagesPageActionsSection.saveFormRow}}" stepKey="clickSaveFromRowForLayoutChange"/>
+
+            <actionGroup ref="AdminLogoutActionGroup" stepKey="adminLogout"/>
+        </after>
+            <!-- Step3 Click Add Node -->
+            <click selector="{{HierarchyPageSection.addNode}}" stepKey="clickAddNode"/>
+
+            <!-- Step4 Fill Title and URL key -->
+            <fillField selector="{{HierarchyPageSection.nodeTitle}}" userInput="Test Page" stepKey="fillTitle"/>
+            <fillField selector="{{HierarchyPageSection.nodeUrlKey}}" userInput="test-page" stepKey="fillURLkey"/>
+
+            <!-- Step5 Click on save button and verify the success message and heirarchy -->
+            <click selector="{{HierarchyPageSection.nodeSave}}" stepKey="clickSaveButton"/>
+            <waitForPageLoad stepKey="waitForPageLoadCreatingTestPageHeirarchy"/>
+            <see userInput="You have saved the hierarchy." selector="{{AdminMessagesSection.success}}" stepKey="assertSaveHeirarchySuccessMessage"/>
+            <seeElement selector="{{HierarchyPageSection.rootNode}}" stepKey="CheckTheRootNode"/>
+            <seeElement selector="{{HierarchyPageSection.childNode('1','Test Page')}}" stepKey="CheckTheFirstChildNode"/>
+
+            <!-- Step6 Add Home Page as child to Test Page -->
+            <click selector="{{HierarchyPageSection.childNode('1','Test Page')}}" stepKey="SelectTheFirstChildNode"/>
+            <checkOption selector="{{HierarchyPageSection.pageCheckbox('Home page')}}" stepKey="selectHomePageCheckbox"/>
+            <click selector="{{HierarchyPageSection.addSelectedPagesToTree}}" stepKey="clickAddSelectedPagesToTree"/>
+            <seeElement selector="{{HierarchyPageSection.childNodelevel2('1','Test Page','Home page')}}" stepKey="CheckTheLevel2ChildNodeHierarchy"/>
+            <click selector="{{HierarchyPageSection.nodeSave}}" stepKey="clickSaveButtonPostAddingHomePageToTestPage"/>
+            <conditionalClick selector="{{HierarchyPageSection.expandNodes}}" dependentSelector="{{HierarchyPageSection.expandNodes}}" visible="true" stepKey="expandRootNodePostAddHomePage"/>
+            <conditionalClick selector="{{HierarchyPageSection.expandNodes}}" dependentSelector="{{HierarchyPageSection.expandNodes}}" visible="true" stepKey="expandChildNodePostAddHomePage"/>
+            <seeElement selector="{{HierarchyPageSection.rootNode}}" stepKey="CheckTheRootNodePostAddHomePageSave"/>
+            <seeElement selector="{{HierarchyPageSection.childNode('1','Test Page')}}" stepKey="CheckTheFirstChildNodePostAddHomePageSave"/>
+            <seeElement selector="{{HierarchyPageSection.childNodelevel2('1','Test Page','Home page')}}" stepKey="CheckTheLevel2ChildNodeHierarchyPostAddHomePageSave"/>
+
+            <!-- Step7 Save Content > Pages and verify the heirarchy  -->
+            <actionGroup ref="AdminNavigateMenuActionGroup" stepKey="navigateToContentPagesPage">
+                <argument name="menuUiId" value="{{AdminMenuContent.dataUiId}}"/>
+                <argument name="submenuUiId" value="{{AdminMenuContentElementsPages.dataUiId}}"/>
+            </actionGroup>
+            <click selector="{{CmsPagesPageActionsSection.pagesGridRowByTitle('Home page')}}" stepKey="clickHomePageRow"/>
+            <click selector="{{CmsPagesPageActionsSection.saveFormRow}}" stepKey="clickSaveFromRow"/>
+
+            <actionGroup ref="AdminNavigateMenuActionGroup" stepKey="navigateToContentHierarchyPagePostSavingPages">
+                <argument name="menuUiId" value="{{AdminMenuContent.dataUiId}}"/>
+                <argument name="submenuUiId" value="{{AdminMenuContentElementsHierarchy.dataUiId}}"/>
+            </actionGroup>
+            <conditionalClick selector="{{HierarchyPageSection.expandNodes}}" dependentSelector="{{HierarchyPageSection.expandNodes}}" visible="true" stepKey="expandRootNode"/>
+            <conditionalClick selector="{{HierarchyPageSection.expandNodes}}" dependentSelector="{{HierarchyPageSection.expandNodes}}" visible="true" stepKey="expandChildNode"/>
+            <seeElement selector="{{HierarchyPageSection.rootNode}}" stepKey="CheckTheRootNodePostNoChangePageSave"/>
+            <seeElement selector="{{HierarchyPageSection.childNode('1','Test Page')}}" stepKey="CheckTheFirstChildNodePostNoChangePageSave"/>
+            <seeElement selector="{{HierarchyPageSection.childNodelevel2('1','Test Page','Home page')}}" stepKey="CheckTheLevel2ChildNodeHierarchyPostNoChangePageSave"/>
+
+            <!-- Step8 Save Content > Pages LayoutChange and verify the heirarchy  -->
+            <actionGroup ref="AdminNavigateMenuActionGroup" stepKey="navigateToContentPagesPageForLayoutChange">
+                <argument name="menuUiId" value="{{AdminMenuContent.dataUiId}}"/>
+                <argument name="submenuUiId" value="{{AdminMenuContentElementsPages.dataUiId}}"/>
+            </actionGroup>
+            <click selector="{{CmsPagesPageActionsSection.pagesGridRowByTitle('Home page')}}" stepKey="clickHomePageRowForLayoutChange"/>
+            <selectOption userInput="3 columns" selector="{{CmsPagesPageActionsSection.selectLayout}}" stepKey="changeLayout"/>
+            <click selector="{{CmsPagesPageActionsSection.saveFormRow}}" stepKey="clickSaveFromRowForLayoutChange"/>
+
+            <actionGroup ref="AdminNavigateMenuActionGroup" stepKey="navigateToContentHierarchyPageForLayoutChange">
+                <argument name="menuUiId" value="{{AdminMenuContent.dataUiId}}"/>
+                <argument name="submenuUiId" value="{{AdminMenuContentElementsHierarchy.dataUiId}}"/>
+            </actionGroup>
+            <conditionalClick selector="{{HierarchyPageSection.expandNodes}}" dependentSelector="{{HierarchyPageSection.expandNodes}}" visible="true" stepKey="expandRootNodeForLayoutChange"/>
+            <conditionalClick selector="{{HierarchyPageSection.expandNodes}}" dependentSelector="{{HierarchyPageSection.expandNodes}}" visible="true" stepKey="expandChildNodeForLayoutChange"/>
+            <seeElement selector="{{HierarchyPageSection.rootNode}}" stepKey="CheckTheRootNodePostLayutChangePageSave"/>
+            <seeElement selector="{{HierarchyPageSection.childNode('1','Test Page')}}" stepKey="CheckTheFirstChildNodePostLayoutChangePageSave"/>
+            <seeElement selector="{{HierarchyPageSection.childNodelevel2('1','Test Page','Home page')}}" stepKey="CheckTheLevel2ChildNodeHierarchyPostLayoutChangePageSave"/>
+
+    </test>
+</tests>

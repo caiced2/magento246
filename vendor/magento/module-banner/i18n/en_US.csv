@@ -1,0 +1,73 @@
+Dynamic Blocks,Dynamic Blocks
+"Add Dynamic Block","Add Dynamic Block"
+"Save Dynamic Block","Save Dynamic Block"
+"Delete Dynamic Block","Delete Dynamic Block"
+"Save and Continue Edit","Save and Continue Edit"
+"New Dynamic Block","New Dynamic Block"
+Content,Content
+"Default Content","Default Content"
+"No Default Content","No Default Content"
+"Dynamic Block Default Content for All Store Views","Dynamic Block Default Content for All Store Views"
+"Store View Specific Content","Store View Specific Content"
+"Use Default","Use Default"
+"Related Promotions","Related Promotions"
+ID,ID
+Rule,Rule
+"Start Date","Start Date"
+"End Date","End Date"
+Status,Status
+"Dynamic Block Properties","Dynamic Block Properties"
+"Dynamic Block Name","Dynamic Block Name"
+Active,Active
+Inactive,Inactive
+"Applies To","Applies To"
+"Any Dynamic Block Type","Any Dynamic Block Type"
+"Specified Dynamic Block Types","Specified Dynamic Block Types"
+"Specify Types","Specify Types"
+"Dynamic Block Information","Dynamic Block Information"
+Dynamic Block,Dynamic Block
+"Dynamic Block Type","Dynamic Block Type"
+Visibility,Visibility
+Delete,Delete
+"Are you sure you want to delete these dynamic blocks?","Are you sure you want to delete these dynamic blocks?"
+"Related Dynamic Blocks","Related Dynamic Blocks"
+Position,Position
+"This rule no longer exists.","This rule no longer exists."
+"This dynamic block does not exist.","This dynamic block does not exist."
+"You deleted the dynamic block.","You deleted the dynamic block."
+"Something went wrong while deleting dynamic block data. Please review the action log and try again.","Something went wrong while deleting dynamic block data. Please review the action log and try again."
+"We cannot find a dynamic block to delete.","We cannot find a dynamic block to delete."
+"This dynamic block no longer exists.","This dynamic block no longer exists."
+"Edit Dynamic Block","Edit Dynamic Block"
+"Please select a dynamic block(s).","Please select a dynamic block(s)."
+"You deleted %1 record(s).","You deleted %1 record(s)."
+"Something went wrong while mass-deleting dynamic blocks. Please review the action log and try again.","Something went wrong while mass-deleting dynamic blocks. Please review the action log and try again."
+"You saved the dynamic block.","You saved the dynamic block."
+"We cannot save the dynamic block.","We cannot save the dynamic block."
+"Please enter a name.","Please enter a name."
+"Please specify default content for at least one store view.","Please specify default content for at least one store view."
+"-- None --","-- None --"
+Error,Error
+"Related Cart Price Rules","Related Cart Price Rules"
+"Related Catalog Price Rules","Related Catalog Price Rules"
+"Content Area","Content Area"
+Footer,Footer
+Header,Header
+"Left Column","Left Column"
+"Right Column","Right Column"
+"Manage Dynamic Blocks","Manage Dynamic Blocks"
+"Dynamic Blocks Rotator","Dynamic Blocks Rotator"
+"Displays Specified or Promotion Dynamic Blocks","Displays Specified or Promotion Dynamic Blocks"
+"Dynamic Blocks to Display","Dynamic Blocks to Display"
+"Specified Dynamic Blocks","Specified Dynamic Blocks"
+"Cart Price Rule Related","Cart Price Rule Related"
+"Catalog Price Rule Related","Catalog Price Rule Related"
+"Restrict by Dynamic Block Types","Restrict by Dynamic Block Types"
+"Rotation Mode","Rotation Mode"
+"Display all instead of rotating","Display all instead of rotating"
+"One at the time, Random","One at the time, Random"
+"One at the time, Series","One at the time, Series"
+"One at the time, Shuffle","One at the time, Shuffle"
+"Specify Dynamic Blocks","Specify Dynamic Blocks"
+"Dynamic Block Block Template","Dynamic Block Block Template"
+"Dynamic Block Inline Template","Dynamic Block Inline Template"

@@ -1,0 +1,42 @@
+<!--
+/**
+ * Copyright © Magento, Inc. All rights reserved.
+ * See COPYING.txt for license details.
+ */
+-->
+<!--@subject {{if inviter_name}}{{trans "%inviter_name invites you to join Private Sales Site" inviter_name=$inviter_name}}{{else}}{{trans "Invite to join Private Sales Site"}}{{/if}} @-->
+<!--@vars {
+"var store.frontend_name":"Store Name",
+"template config_path=\"design\/email\/footer_template\"":"Email Footer Template",
+"template config_path=\"design\/email\/header_template\"":"Email Header Template",
+"var logo_alt":"Email Logo Image Alt",
+"var logo_url":"Email Logo Image URL",
+"var message|escape|nl2br":"Invitation Message",
+"var url":"Invitation URL",
+"var inviter_name":"Inviter Name",
+"var store.frontend_name|escape":"Store Name",
+"store url=\"\"":"Store URL",
+"var message|escape|nl2br":"Message"
+} @-->
+
+{{template config_path="design/email/header_template"}}
+
+<p class="greeting">{{trans "Please accept this invitation to join %store_name." store_name=$store.frontend_name}}</p>
+
+<p>{{trans "%store_name offers limited time sales of products only to members." store_name=$store.frontend_name}}</p>
+
+{{depend message}}
+<table class="message-info" cellspacing="0" cellpadding="0" border="0">
+    <tr>
+        <td>
+            {{var message|escape|nl2br}}
+        </td>
+    </tr>
+</table>
+<br />
+{{/depend}}
+
+<p>{{trans "Please use the following link to create an account and view the deals:"}}</p>
+<p><a href="{{var url}}">{{var url}}</a></p>
+
+{{template config_path="design/email/footer_template"}}

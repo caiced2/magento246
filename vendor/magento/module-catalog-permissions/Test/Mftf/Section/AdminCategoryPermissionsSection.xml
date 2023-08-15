@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+ /**
+  * Copyright © Magento, Inc. All rights reserved.
+  * See COPYING.txt for license details.
+  */
+-->
+
+<sections xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+          xsi:noNamespaceSchemaLocation="urn:magento:mftf:Page/etc/SectionObject.xsd">
+    <section name="AdminCategoryPermissionsSection">
+        <element name="sectionHeader" type="button" selector="div[data-index='category_permissions']" timeout="30"/>
+        <element name="newPermissionButton" type="button" selector="[data-ui-id='category-permissions-row-add-button']" timeout="30"/>
+        <element name="selectWebsite" type="select" selector="select[name='permissions[{{row}}][website_id]']" parameterized="true"/>
+        <element name="selectCustomerGroup" type="select" selector="select[name='permissions[{{row}}][customer_group_id]']" parameterized="true"/>
+        <element name="grantCatalogCategoryView" type="radio" selector="#category_permissions_{{row}}_grant_catalog_category_view_{{permission}}" parameterized="true"/>
+        <element name="grantCatalogProductPrice" type="radio" selector="#category_permissions_{{row}}_grant_catalog_product_price_{{permission}}" parameterized="true"/>
+        <element name="grantCheckoutItems" type="radio" selector="#category_permissions_{{row}}_grant_checkout_items_{{permission}}" parameterized="true"/>
+    </section>
+</sections>

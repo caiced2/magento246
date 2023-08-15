@@ -1,0 +1,56 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+ /**
+  * Copyright © Magento, Inc. All rights reserved.
+  * See COPYING.txt for license details.
+  */
+-->
+<tests xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:noNamespaceSchemaLocation="urn:magento:mftf:Test/etc/testSchema.xsd">
+    <test name="DynamicBlockButtonGroupsRenderOnDifferentLinesWhenInFullWidthRowTest" extends="ButtonGroupInBlockOnDifferentLineWhenInFullWidthRowTest">
+        <annotations>
+            <features value="PageBuilder"/>
+            <stories value="Dynamic Block"/>
+            <title value="Buttons In Dynamic Block From Different Button Groups On Different Line When in Full-Width Row"/>
+            <description value="Button groups in dynamic block should be on different lines when in full-width row"/>
+            <severity value="BLOCKER"/>
+            <useCaseId value="MC-15093"/>
+            <testCaseId value="MC-15106"/>
+            <group value="pagebuilder"/>
+            <group value="pagebuilder-ee"/>
+            <group value="pagebuilder-dynamic-block"/>
+            <group value="pagebuilder-dynamic-block-content"/>
+            <group value="pagebuilder-buttons"/>
+            <group value="pagebuilder-buttonGroup"/>
+            <group value="pagebuilder-row"/>
+        </annotations>
+        <before>
+            <createData entity="_defaultDynamicBlock" stepKey="createPreReqBlock"/>
+            <actionGroup ref="NavigateToCreatedDynamicBlockActionGroup" stepKey="navigateToCreatedCMSBlock">
+                <argument name="Banner" value="$$createPreReqBlock$$"/>
+            </actionGroup>
+        </before>
+        <after>
+            <deleteData createDataKey="createCMSPage" stepKey="deletePreReqBlock"/>
+            <actionGroup ref="DeleteBannerActionGroup" stepKey="deleteCreatedCategory">
+                <argument name="bannerName" value="$$createPreReqBlock.name$$"/>
+            </actionGroup>
+        </after>
+        <actionGroup ref="saveEditPanelSettingsFullScreen" stepKey="saveEditPanelSettingsRowBlock"/>
+        <actionGroup ref="SaveAndContinueDynamicBlockActionGroup" stepKey="saveCMSBlock"/>
+        <!-- Go to CMS Page and choose Dynamic Block -->
+        <comment userInput="Go to CMS Page and choose Dynamic Block" stepKey="commentGoToCMSPage"/>
+        <actionGroup ref="expandPageBuilderPanelMenuSection" stepKey="expandMenuSectionAddContentPage">
+            <argument name="contentType" value="PageBuilderDynamicBlockContentType"/>
+        </actionGroup>
+        <actionGroup ref="dragContentTypeToStage" stepKey="dragBlockIntoStagePage">
+            <argument name="contentType" value="PageBuilderDynamicBlockContentType"/>
+        </actionGroup>
+        <actionGroup ref="openPageBuilderEditPanel" stepKey="openEditAfterDropPage">
+            <argument name="contentType" value="PageBuilderDynamicBlockContentType"/>
+        </actionGroup>
+        <actionGroup ref="searchAndSelectDynamicBlockInGrid" stepKey="searchBlockInGridPage">
+            <argument name="block" value="$$createPreReqBlock$$"/>
+        </actionGroup>
+    </test>
+</tests>

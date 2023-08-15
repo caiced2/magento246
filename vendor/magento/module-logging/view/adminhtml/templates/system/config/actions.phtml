@@ -1,0 +1,58 @@
+<?php
+/**
+ * Copyright © Magento, Inc. All rights reserved.
+ * See COPYING.txt for license details.
+ */
+?>
+<?php
+/**
+ * @var \Magento\Logging\Block\Adminhtml\System\Config\Actions $block
+ * @var \Magento\Framework\View\Helper\SecureHtmlRenderer $secureRenderer
+ */
+?>
+
+<input type="hidden"
+       name="<?= $block->escapeHtmlAttr($block->getNamePrefix()) ?>[__empty]"
+       value="1"
+       id="<?= $block->getHtmlId() ?>" />
+<ul class="checkboxes">
+<?php foreach ($block->getLabels() as $name => $label): ?>
+    <li>
+        <input type="checkbox"
+               value="1"
+               name="<?= $block->escapeHtmlAttr($block->getNamePrefix()) ?>[<?= $block->escapeHtmlAttr($name) ?>]"
+               id="<?= $block->escapeHtmlAttr($block->getHtmlId() . '_' . $name) ?>"
+            <?= /* @noEscape */ ($block->getIsChecked($name) ? ' checked="checked"' : '') ?>/>
+        <label for="<?= $block->escapeHtmlAttr($block->getHtmlId() . '_' . $name) ?>">
+            <?= $block->escapeHtml($label) ?>
+        </label>
+    </li>
+<?php endforeach;?>
+</ul>
+
+<?php
+$blockHtmlId = $block->escapeJs($block->getHtmlId());
+$scriptString = <<<script
+require(['prototype'], function(){
+
+//<![CDATA[
+    enterpriseLoggingActionsLabel = $('{$blockHtmlId}').up('table').select('td.label label');
+    if (enterpriseLoggingActionsLabel) {
+        enterpriseLoggingActions = $('{$blockHtmlId}').parentNode.select('ul.checkboxes input');
+        if (enterpriseLoggingActions) {
+            enterpriseLoggingShouldBeChecked = true;
+            Event.observe(enterpriseLoggingActionsLabel[0], 'click', function () {
+                for (var i = 0; i < enterpriseLoggingActions.length; i++) {
+                    enterpriseLoggingActions[i].checked = enterpriseLoggingShouldBeChecked;
+                }
+                enterpriseLoggingShouldBeChecked = !enterpriseLoggingShouldBeChecked;
+            });
+        }
+    }
+//]]>
+
+});
+script;
+?>
+<?= /* @noEscape */ $secureRenderer->renderTag('script', [], $scriptString, false); ?>
+

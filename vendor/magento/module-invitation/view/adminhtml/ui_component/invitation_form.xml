@@ -1,0 +1,108 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+/**
+ * Copyright © Magento, Inc. All rights reserved.
+ * See COPYING.txt for license details.
+ */
+-->
+<form xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="urn:magento:module:Magento_Ui:etc/ui_configuration.xsd">
+    <argument name="data" xsi:type="array">
+        <item name="js_config" xsi:type="array">
+            <item name="provider" xsi:type="string">invitation_form.invitation_data_source</item>
+        </item>
+        <item name="label" xsi:type="string" translate="true">Invitation</item>
+        <item name="template" xsi:type="string">templates/form/collapsible</item>
+    </argument>
+    <settings>
+        <buttons>
+            <button name="reset" class="Magento\Invitation\Block\Adminhtml\Invitation\Add\ResetButton"/>
+            <button name="save" class="Magento\Invitation\Block\Adminhtml\Invitation\Add\SaveButton"/>
+            <button name="back">
+                <url path="*/*/"/>
+                <class>back</class>
+                <label translate="true">Back</label>
+            </button>
+        </buttons>
+        <namespace>invitation_form</namespace>
+        <dataScope>data</dataScope>
+        <deps>
+            <dep>invitation_form.invitation_data_source</dep>
+        </deps>
+    </settings>
+    <dataSource name="invitation_data_source">
+        <argument name="data" xsi:type="array">
+            <item name="js_config" xsi:type="array">
+                <item name="component" xsi:type="string">Magento_Ui/js/form/provider</item>
+            </item>
+        </argument>
+        <settings>
+            <submitUrl path="invitations/index/save"/>
+        </settings>
+        <dataProvider class="Magento\Invitation\Ui\DataProvider\Invitation" name="invitation_data_source">
+            <settings>
+                <requestFieldName>invitation_id</requestFieldName>
+                <primaryFieldName>invitation_id</primaryFieldName>
+            </settings>
+        </dataProvider>
+    </dataSource>
+    <fieldset name="general" sortOrder="10">
+        <settings>
+            <collapsible>false</collapsible>
+            <label translate="true">Invitations Information</label>
+        </settings>
+        <field name="email" formElement="textarea">
+            <settings>
+                <validation>
+                    <rule name="required-entry" xsi:type="boolean">true</rule>
+                </validation>
+                <dataType>text</dataType>
+                <label translate="true">Enter Each Email on New Line</label>
+                <visible>true</visible>
+            </settings>
+        </field>
+        <field name="message" formElement="textarea">
+            <settings>
+                <validation>
+                    <rule name="required-entry" xsi:type="boolean">false</rule>
+                </validation>
+                <dataType>text</dataType>
+                <label translate="true">Message</label>
+                <visible>true</visible>
+            </settings>
+        </field>
+        <field name="store_id" sortOrder="10" formElement="select">
+            <settings>
+                <validation>
+                    <rule name="required-entry" xsi:type="boolean">true</rule>
+                </validation>
+                <dataType>text</dataType>
+                <label translate="true">Send From</label>
+                <dataScope>store_id</dataScope>
+            </settings>
+            <formElements>
+                <select>
+                    <settings>
+                        <options class="Magento\Store\Model\System\Store"/>
+                    </settings>
+                </select>
+            </formElements>
+        </field>
+        <field name="group_id" formElement="select">
+            <settings>
+                <validation>
+                    <rule name="required-entry" xsi:type="boolean">true</rule>
+                </validation>
+                <dataType>text</dataType>
+                <label translate="true">Invitee Group</label>
+                <dataScope>group_id</dataScope>
+            </settings>
+            <formElements>
+                <select>
+                    <settings>
+                        <options class="Magento\Customer\Model\Customer\Attribute\Source\Group"/>
+                    </settings>
+                </select>
+            </formElements>
+        </field>
+    </fieldset>
+</form>

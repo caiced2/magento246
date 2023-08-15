@@ -1,0 +1,19 @@
+<?xml version="1.0"?>
+<!--
+/**
+ * Copyright © Magento, Inc. All rights reserved.
+ * See COPYING.txt for license details.
+ */
+-->
+<page_types xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="urn:magento:framework:View/Layout/etc/page_types.xsd">
+    <type id="magento_rma_guest_create" label="RMA Guest Order Create Return"/>
+    <type id="magento_rma_guest_returns" label="RMA Guest Order Returns View"/>
+    <type id="magento_rma_guest_view" label="RMA Guest Order View Return"/>
+    <type id="magento_rma_returns_create" label="RMA Customer My Return Create"/>
+    <type id="magento_rma_returns_history" label="RMA Customer My Returns History"/>
+    <type id="magento_rma_returns_returns" label="RMA Customer My Account Order Returns View"/>
+    <type id="magento_rma_returns_view" label="RMA Customer My Account Return View"/>
+    <type id="magento_rma_tracking_package" label="RMA Shipment Package Popup"/>
+    <type id="magento_rma_tracking_packageprint" label="RMA Shipment Print Package Popup"/>
+    <type id="magento_rma_tracking_popup" label="RMA Shipment Tracking Popup"/>
+</page_types>

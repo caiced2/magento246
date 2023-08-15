@@ -1,0 +1,346 @@
+<?php
+/**
+ * Copyright © Magento, Inc. All rights reserved.
+ * See COPYING.txt for license details.
+ */
+// phpcs:disable Magento2.Templates.ThisInTemplate.FoundThis
+?>
+<?php /* @var \Magento\Framework\View\Helper\SecureHtmlRenderer $secureRenderer */ ?>
+<?php /* @var $block \Magento\GiftCard\Block\Adminhtml\Catalog\Product\Composite\Fieldset\Giftcard */?>
+<?php
+$_product = $block->getProduct();
+$_id = $_product->getId();
+$_storeId = $_product->getStoreId();
+/** @var \Magento\Catalog\Helper\Product $productHelper */
+$productHelper = $block->getData('productHelper');
+$_skipSaleableCheck = $productHelper->getSkipSaleableCheck();
+/** @var \Magento\Framework\Pricing\Helper\Data $pricingHelper */
+$pricingHelper = $block->getData('pricingHelper');
+?>
+<?php $scriptString = <<<script
+require([
+    "Magento_Catalog/catalog/product/composite/configure"
+], function(){
+    productConfigure.giftcardConfig = {};
+});
+script;
+?>
+<?= /* @noEscape */ $secureRenderer->renderTag('script', [], $scriptString, false); ?>
+
+<div id="catalog_product_composite_configure_fields_downloadable"
+     class="giftcard <?= $block->getIsLastFieldset() ? 'last-fieldset' : '' ?>">
+
+<?php if (!$_product->isAvailable() && !$_skipSaleableCheck): ?>
+    <p class="stock unavailable">
+        <?= $block->escapeHtml(__('Availability:')) ?> <span><?= $block->escapeHtml(__('Out of stock')) ?></span>
+    </p>
+<?php endif; ?>
+
+    <div class="product options">
+    <fieldset class="admin__fieldset">
+<?php if (($_product->isSaleable() || $_skipSaleableCheck) && $block->isConfigured($_product)): ?>
+    <?php if (!$block->isOpenAmountAvailable($_product) && (count($block->getAmounts($_product)) == 1)): ?>
+        <?php $_amount = $block->getAmounts($_product);
+        $_amount = array_shift($_amount); ?>
+        <div class="field fixed amount admin__field"> <?php /* ToDo UI: try to remove one word classes */?>
+            <label class="label admin__field-label"><span><?= $block->escapeHtml(__('Amount')) ?></span></label>
+            <div class="control admin__field-control">
+                <div class="admin__field-value">
+                    <?php $priceId = $block->escapeHtmlAttr($_id) . $block->escapeHtmlAttr($block->getIdSuffix()); ?>
+                    <span class="control-value price"
+                          id="product-price-<?= /* @noEscape */ $priceId ?>">
+                    <input type="hidden"
+                           value="<?= $block->escapeHtmlAttr($_amount) ?>"
+                           price="<?= $block->escapeHtmlAttr($_amount) ?>"
+                           name="giftcard_amount" />
+                    <?= $block->escapeHtml($pricingHelper->currencyByStore($_amount, $_storeId, true, false)) ?>
+                </span>
+                </div>
+            </div>
+        </div>
+
+    <?php else: ?>
+        <div class="giftcard-amount admin__fieldset">
+            <div class="field amount _required admin__field">
+                <?php if ($block->isAmountAvailable($_product)): ?>
+                    <label for="giftcard_amount" id="amount_label_select" class="label admin__field-label">
+                        <span><?= $block->escapeHtml(__('Amount')) ?></span>
+                    </label>
+                    <?php
+                    $configValue = $block->getDefaultValue('giftcard_amount');
+                    ?>
+                <div class="control admin__field-control">
+                    <select name="giftcard_amount"
+                            id="giftcard_amount"
+                            class="required-entry select admin__control-select">
+                        <option value=""><?= $block->escapeHtml(__('Choose an Amount...')) ?></option>
+                        <?php foreach ($block->getAmounts($_product) as $value): ?>
+                            <?php
+                                $optionPrice = $pricingHelper->currencyByStore($value, $_storeId, false);
+                                $formattedOptionPrice = $pricingHelper->currencyByStore($value, $_storeId, true, false);
+                            ?>
+                            <option value="<?= $block->escapeHtmlAttr($value) ?>"
+                                    price="<?= $block->escapeHtmlAttr($optionPrice) ?>"
+                                    <?= (($configValue == $value) ? 'selected' : '')?>>
+                                <?= $block->escapeHtml($formattedOptionPrice) ?>
+                            </option>
+                        <?php endforeach; ?>
+
+                        <?php if ($block->isOpenAmountAvailable($_product)): ?>
+                            <option value="custom" <?= (($configValue == 'custom') ? 'selected' : '')?>>
+                                <?= $block->escapeHtml(__('Other Amount...')) ?>
+                            </option>
+                        <?php endif; ?>
+                    </select>
+                    <?= /* @noEscape */
+                    $secureRenderer->renderEventListenerAsTag(
+                        'onchange',
+                        'productConfigure.giftcardConfig.switchGiftCardInputs.call(
+                            this,
+                            event||window.event
+                        )',
+                        '#giftcard_amount'
+                    );
+                    ?>
+                </div>
+                <?php endif; ?>
+            </div>
+
+            <?php if ($block->isOpenAmountAvailable($_product)): ?>
+                <?php if (count($block->getAmounts($_product)) === 0): ?>
+                    <input  type="hidden" name="giftcard_amount" value="custom">
+                <?php endif; ?>
+            <div class="field amount _required admin__field" id="giftcard_amount_input_fields">
+                <label for="giftcard_amount_input" id="amount_label_input" class="label admin__field-label">
+                    <span>
+                        <?= $block->escapeHtml(__('Amount in %1', $block->getCurrentCurrencyCode($_storeId))) ?>
+                    </span>
+                </label>
+                <div id="giftcard_amount_box" class="control admin__field-control">
+                    <?php $giftcardAmountInputClass = 'validate-number required-entry input-text'
+                        . ' admin__control-text giftcard-min-amount giftcard-max-amount';
+                    ?>
+                    <input type="text" id="giftcard_amount_input" name="custom_giftcard_amount"
+                           class="<?= /* @noEscape */ $giftcardAmountInputClass; ?>"
+                           value="<?= $block->escapeHtml($block->getDefaultValue('custom_giftcard_amount')) ?>"
+                           price="<?= $block->escapeHtml($block->getDefaultValue('custom_giftcard_amount')) ?>"/>
+                    <?= /* @noEscape */
+                    $secureRenderer->renderEventListenerAsTag(
+                        'onblur',
+                        'this.setAttribute("price", this.value);',
+                        '#giftcard_amount_input'
+                    );
+                    ?>
+                    <?php if ($_product->getOpenAmountMin() || $_product->getOpenAmountMax()): ?>
+                        <?php
+                            $_min = $pricingHelper->currencyByStore(
+                                $_product->getOpenAmountMin(),
+                                $_storeId,
+                                true,
+                                false
+                            );
+                            $_max = $pricingHelper->currencyByStore(
+                                $_product->getOpenAmountMax(),
+                                $_storeId,
+                                true,
+                                false
+                            );
+                        ?>
+                        <div class="admin__field-note">
+                            <?php if ($_product->getOpenAmountMax() && $_product->getOpenAmountMin()): ?>
+                                <span>
+                                    <?= $block->escapeHtml(__('Minimum')) ?>
+                                    <span class="price"><?= $block->escapeHtml(__($_min)) ?></span>
+                                </span>
+                                <span>
+                                    <?= $block->escapeHtml(__('Maximum')) ?>
+                                    <span class="price"><?= $block->escapeHtml(__($_max)) ?></span>
+                                </span>
+                            <?php elseif ($_product->getOpenAmountMin()): ?>
+                                <span>
+                                    <?= $block->escapeHtml(__('Minimum')) ?>
+                                    <span class="price"><?= $block->escapeHtml(__($_min)) ?></span>
+                                </span>
+                            <?php elseif ($_product->getOpenAmountMax()): ?>
+                                <span>
+                                    <?= $block->escapeHtml(__('Maximum')) ?>
+                                    <span class="price"><?= $block->escapeHtml(__($_max)) ?></span>
+                                </span>
+                            <?php endif; ?>
+                        </div>
+                        <?php
+                            $minOpenAmount = (int)$pricingHelper->currencyByStore(
+                                $_product->getOpenAmountMin(),
+                                $_storeId,
+                                false,
+                                false
+                            );
+                            $maxOpenAmount = (int)$pricingHelper->currencyByStore(
+                                $_product->getOpenAmountMax(),
+                                $_storeId,
+                                false,
+                                false
+                            );
+                        ?>
+                        <?php $scriptString = <<<script
+require([
+    "Magento_GiftCard/catalog/product/composite/fieldset/validation-rules",
+    "Magento_Catalog/catalog/product/composite/configure"
+], function(){
+
+//<![CDATA[
+    productConfigure.giftcardConfig.minAllowedAmount = {$minOpenAmount};
+    productConfigure.giftcardConfig.maxAllowedAmount = {$maxOpenAmount};
+
+    productConfigure.giftcardConfig.parsePrice = function (value) {
+        value = value.replace('\'', '').replace(' ', '');
+        separatorComa = value.indexOf(',');
+        separatorDot  = value.indexOf('.');
+
+        if (separatorComa != -1 && separatorDot != -1) {
+            if (separatorComa > separatorDot) {
+                value = value.replace('.', '').replace(',', '.');
+            } else {
+                value = value.replace(',', '');
+            }
+        } else if (separatorComa != -1) {
+            value = value.replace(',', '.');
+        }
+
+        return parseFloat(value);
+    };
+//]]>
+
+});
+script;
+                        ?>
+                        <?= /* @noEscape */ $secureRenderer->renderTag('script', [], $scriptString, false); ?>
+                    <?php endif; ?>
+                </div>
+            </div>
+            <?php endif; ?>
+        </div>
+        <?php $scriptString = <<<script
+require([
+    "prototype",
+    "Magento_Catalog/catalog/product/composite/configure"
+], function(){
+
+        productConfigure.giftcardConfig.switchGiftCardInputs = function ()
+        {
+            if (!$('giftcard_amount') || !$('giftcard_amount_input_fields')) {
+                return;
+            }
+
+            var customAmount = $('giftcard_amount_input');
+            var value = $('giftcard_amount').options[$('giftcard_amount').selectedIndex].value;
+            if (value == 'custom') {
+                $('giftcard_amount_input_fields').show();
+                if (customAmount) {
+                    customAmount.disabled = false;
+                }
+            } else {
+                $('giftcard_amount_input_fields').hide();
+                if (customAmount) {
+                    customAmount.disabled = true;
+                }
+            }
+        }
+
+        if ($('giftcard_amount') && $('giftcard_amount_input_fields')) {
+            $('giftcard_amount_input_fields').hide();
+        }
+
+        productConfigure.giftcardConfig.switchGiftCardInputs();
+
+});
+script;
+        ?>
+        <?= /* @noEscape */ $secureRenderer->renderTag('script', [], $scriptString, false); ?>
+    <?php endif; ?>
+        <?= $block->getChildHtml('product.composite.giftcard.qty') ?>
+            <div class="field admin__field sender name _required">
+                <label for="giftcard_sender_name" class="label admin__field-label">
+                    <span><?= $block->escapeHtml(__('Sender Name')) ?></span>
+                </label>
+                <div class="control admin__field-control">
+                    <input type="text" id="giftcard_sender_name" name="giftcard_sender_name"
+                           class="required-entry input-text admin__control-text"
+                           value="<?= $block->escapeHtml($block->getDefaultValue('giftcard_sender_name')) ?>"/>
+                </div>
+            </div>
+            <?php if ($block->isEmailAvailable($_product)): ?>
+            <div class="field admin__field sender email _required">
+                <label for="giftcard_sender_email" class="label admin__field-label">
+                    <span><?= $block->escapeHtml(__('Sender Email')) ?></span>
+                </label>
+                <div class="control admin__field-control">
+                    <input type="text" id="giftcard_sender_email" name="giftcard_sender_email"
+                           class="validate-email required-entry input-text admin__control-text"
+                           value="<?= $block->escapeHtml($block->getDefaultValue('giftcard_sender_email')) ?>"/>
+                </div>
+            </div>
+            <?php endif; ?>
+            <div class="field admin__field recipient name _required">
+                <label for="giftcard_recipient_name" class="label admin__field-label">
+                    <span><?= $block->escapeHtml(__('Recipient Name')) ?></span>
+                </label>
+                <div class="control admin__field-control">
+                    <input type="text" id="giftcard_recipient_name" name="giftcard_recipient_name"
+                           class="required-entry input-text admin__control-text"
+                           value="<?= $block->escapeHtml($block->getDefaultValue('giftcard_recipient_name')) ?>"/>
+                </div>
+            </div>
+            <?php if ($block->isEmailAvailable($_product)): ?>
+            <div class="field admin__field recipient email _required">
+                <label for="giftcard_recipient_email" class="label admin__field-label">
+                    <span><?= $block->escapeHtml(__('Recipient Email')) ?></span>
+                </label>
+                <div class="control admin__field-control">
+                    <input type="text" id="giftcard_recipient_email" name="giftcard_recipient_email"
+                           class="validate-email required-entry input-text admin__control-text"
+                           value="<?= $block->escapeHtml($block->getDefaultValue('giftcard_recipient_email')) ?>"/>
+                </div>
+            </div>
+            <?php endif; ?>
+        <?php if ($block->isMessageAvailable($_product)): ?>
+            <div class="field admin__field text">
+                <label for="giftcard_message" class="label admin__field-label">
+                    <span><?= $block->escapeHtml(__('Message')) ?></span>
+                </label>
+                <div class="control admin__field-control">
+                    <textarea name="giftcard_message" id="giftcard_message"
+                              class="input-text giftcard-message-max-length admin__control-textarea" cols="5"
+                              rows="3"><?= $block->escapeHtml($block->getDefaultValue('giftcard_message')) ?></textarea>
+                    <?php if ($block->getMessageMaxLength()): ?>
+                        <?php
+                            $maxMessageLength = (int)$block->getMessageMaxLength();
+                            $errorMessage = $block->escapeJs(
+                                __(
+                                    'Maximum length of the message is %1 characters.',
+                                    (int)$block->getMessageMaxLength()
+                                )
+                            )
+                        ?>
+                        <?php $scriptString = <<<script
+                            require([
+                                "jquery",
+                                "mage/validation"
+                            ], function(jQuery){
+
+                                jQuery.validator.addMethod('giftcard-message-max-length', function(v) {
+                                    return v.length <= {$maxMessageLength};
+                                }, '{$errorMessage}');
+
+                            });
+script;
+                        ?>
+                        <?= /* @noEscape */ $secureRenderer->renderTag('script', [], $scriptString, false); ?>
+                    <?php endif; ?>
+                </div>
+            </div>
+        <?php endif; ?>
+    <?php endif; ?>
+    </fieldset>
+    </div>
+</div>

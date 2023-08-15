@@ -1,0 +1,37 @@
+<!--
+/**
+ * Copyright © Magento, Inc. All rights reserved.
+ * See COPYING.txt for license details.
+ */
+-->
+<!--@subject {{trans "Reward Points Balance Updated at %store_name" store_name=$store.frontend_name}} @-->
+<!--@vars {
+"var points_balance":"Current Points Amount",
+"var reward_amount_now":"Current Reward Amount",
+"var customer_name|escape":"Customer Name",
+"template config_path=\"design\/email\/footer_template\"":"Email Footer Template",
+"template config_path=\"design\/email\/header_template\"":"Email Header Template",
+"var logo_alt":"Email Logo Image Alt",
+"var logo_url":"Email Logo Image URL",
+"var reward_pts_change":"Points Change",
+"var reward_pts_was":"Previous Points Amount",
+"var reward_amount_was":"Previous Reward Amount",
+"config path='trans_email\/ident_sales\/email'":"Sales Contact Email",
+"config path='general\/store_information\/phone'":"Sales Contact Phone",
+"var store.frontend_name":"Store Name",
+"store url=\"\"":"Store URL",
+"var unsubscription_url":"Unsubscription URL",
+"var update_comment":"Update Comment",
+"var update_message":"Update Message"
+} @-->
+
+{{template config_path="design/email/header_template"}}
+
+<p class="greeting">{{trans "%name," name=$customer_name}}</p>
+<p>
+    {{trans "You have %points_balance points that may be used in our store:" points_balance=$points_balance}}
+    <a href="{{store url=""}}">{{var store.frontend_name}}</a>.
+</p>
+<p>{{trans '<a href="%unsubscription_url">Unsubscribe</a> from these notifications.' unsubscription_url=$unsubscription_url |raw}}</p>
+
+{{template config_path="design/email/footer_template"}}

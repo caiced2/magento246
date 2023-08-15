@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+ /**
+  * Copyright © Magento, Inc. All rights reserved.
+  * See COPYING.txt for license details.
+  */
+-->
+
+<actionGroups xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:noNamespaceSchemaLocation="urn:magento:mftf:Test/etc/actionGroupSchema.xsd">
+    <actionGroup name="DeleteBannerActionGroup">
+        <arguments>
+            <argument name="bannerName" type="string"/>
+        </arguments>
+        <amOnPage url="{{AdminDynamicBlockGridPage.url}}" stepKey="navigateToDynamicBlocksGrid" />
+        <click selector="{{AdminDynamicBlockGridTableSection.title(bannerName)}}" stepKey="navigateToBanner" />
+        <waitForPageLoad stepKey="waitForDynamicBlockEditPageToLoad" />
+        <click selector="{{AdminMainActionsSection.delete}}" stepKey="clickDeleteDynamicBlockButton" />
+        <waitForElementVisible selector="{{AdminConfirmationModalSection.ok}}" stepKey="waitForAdminConfirmationModalToBeVisible" />
+        <click selector="{{AdminConfirmationModalSection.ok}}" stepKey="confirmDeleteDynamicBlock" />
+        <see userInput="You deleted the dynamic block." stepKey="seeSuccessMessage"/>
+    </actionGroup>
+</actionGroups>

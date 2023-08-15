@@ -1,0 +1,71 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+ /**
+  * Copyright © Magento, Inc. All rights reserved.
+  * See COPYING.txt for license details.
+  */
+-->
+<tests xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:noNamespaceSchemaLocation="urn:magento:mftf:Test/etc/testSchema.xsd">
+    <test name="PageBuilderStagingDashboardDisablePageBuilderInCMSBlockTest">
+        <annotations>
+            <features value="PageBuilder"/>
+            <stories value="Staging Dashboard - CMS Block"/>
+            <title value="Verify PageBuilder does not appear when disabled in Staging Dashboard in CMS Block"/>
+            <description value="This test is intended to ensure that PageBuilder does not appear when disabled for Staging Dashboard in CMS Block."/>
+            <severity value="AVERAGE"/>
+            <useCaseId value="MC-14992"/>
+            <testCaseId value="MC-15282"/>
+            <group value="pagebuilder"/>
+            <group value="pagebuilder-ee"/>
+            <group value="pagebuilder-staging"/>
+            <group value="pagebuilder-stagingDashboard"/>
+            <group value="pagebuilder-cms-block"/>
+            <group value="pagebuilder-disable"/>
+        </annotations>
+        <before>
+            <createData entity="_emptyCmsBlock" stepKey="createPreReqBlock"/>
+            <actionGroup ref="AdminLoginActionGroup" stepKey="loginAsAdmin"/>
+            <actionGroup ref="NavigateToCreatedCMSBlockPageActionGroup" stepKey="navigateToCreatedCMSBlockPage">
+                <argument name="CMSBlockPage" value="$$createPreReqBlock$$"/>
+            </actionGroup>
+            <actionGroup ref="navigateToStagingSlideout" stepKey="navigateToStagingSlideout"/>
+            <actionGroup ref="AdminOpenPageBuilderFromContentPreviewOverlayActionGroup" stepKey="openPageBuilder" after="navigateToStagingSlideout">
+                <argument name="pageBuilderArea" value="{{AdminStagingSlideOutSection.cmsStagingPageBase}}"/>
+            </actionGroup>
+            <actionGroup ref="dragContentTypeToContainer" stepKey="dragRowToRootContainer" after="openPageBuilder">
+                <argument name="contentType" value="PageBuilderRowContentType"/>
+                <argument name="containerTargetIndex" value="2"/>
+                <argument name="containerTargetType" value="PageBuilderRootContainerContentType"/>
+                <argument name="pageBuilderArea" value="{{AdminStagingSlideOutSection.cmsStagingPageBase}}"/>
+            </actionGroup>
+            <actionGroup ref="exitPageBuilderFullScreen" stepKey="exitPageBuilderFullScreen" after="dragRowToRootContainer"/>
+            <actionGroup ref="FillScheduleUpdateBasicActionGroup" stepKey="saveScheduleUpdate">
+                <argument name="schedule" value="UpdateWithoutEnd_1HourAhead"/>
+            </actionGroup>
+            <!-- Open Content Staging Dashboard -->
+            <comment userInput="Open Content Staging Dashboard" stepKey="commentOpenContentStagingDashboard"/>
+            <actionGroup ref="navigateToViewStagingUpdateFromStagingDashboard" stepKey="navigateToViewStagingUpdateFromStagingDashboard">
+                <argument name="update" value="UpdateWithoutEnd_1HourAhead"/>
+            </actionGroup>
+            <actionGroup ref="openEditSlideOutForCMSBlockStagingUpdateFromViewStagingUpdate" stepKey="openEditSlideOutForCMSBlockStagingUpdateFromViewStagingUpdate"/>
+        </before>
+        <after>
+            <magentoCLI command="config:set cms/pagebuilder/enabled 1" stepKey="enablePageBuilder"/>
+            <magentoCLI command="cache:clean config" stepKey="flushCache"/>
+            <deleteData createDataKey="createPreReqBlock" stepKey="deleteCMSBlock"/>
+            <actionGroup ref="StagingDashboardClearFiltersActionGroup" stepKey="stagingDashboardClearFilters"/>
+            <actionGroup ref="AdminLogoutActionGroup" stepKey="logout"/>
+        </after>
+        <seeElement selector="{{PageBuilderStage.stageWrapper}}" stepKey="seeElementPageBuilderStage"/>
+        <dontSeeElementInDOM selector="{{AdminCMSBlockStagingSlideOutSection.contentArea}}" stepKey="dontSeeContentAreaInDOM"/>
+        <magentoCLI command="config:set cms/pagebuilder/enabled 0" stepKey="disablePageBuilder"/>
+        <magentoCLI command="cache:clean config" stepKey="flushCache"/>
+        <actionGroup ref="navigateToViewStagingUpdateFromStagingDashboard" stepKey="navigateToViewStagingUpdateFromStagingDashboard">
+            <argument name="update" value="UpdateWithoutEnd_1HourAhead"/>
+        </actionGroup>
+        <actionGroup ref="openEditSlideOutForCMSBlockStagingUpdateFromViewStagingUpdate" stepKey="openEditSlideOutForCMSBlockStagingUpdateFromViewStagingUpdate"/>
+        <seeElementInDOM selector="{{AdminCMSBlockStagingSlideOutSection.contentArea}}" stepKey="seeContentAreaInDOM"/>
+        <dontSeeElementInDOM selector="{{PageBuilderStage.stageWrapper}}" stepKey="dontSeePageBuilderStage"/>
+    </test>
+</tests>

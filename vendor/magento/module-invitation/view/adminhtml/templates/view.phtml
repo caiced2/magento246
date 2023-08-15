@@ -1,0 +1,28 @@
+<?php
+/**
+ * Copyright © Magento, Inc. All rights reserved.
+ * See COPYING.txt for license details.
+ */
+?>
+<?php
+/**
+ * Invitaion view block template
+ *
+ * @see \Magento\Invitation\Block\Adminhtml\Invitation\View
+ *
+ * @var \Magento\Framework\View\Helper\SecureHtmlRenderer $secureRenderer
+ */
+?>
+<form id="invitation-elements" action="<?= $block->escapeHtmlAttr($block->getSaveMessageUrl()) ?>" method="POST">
+<?= $block->getBlockHtml('formkey') ?>
+</form>
+
+<?php $scriptString = <<<script
+require(['jquery', 'mage/mage'], function(jQuery){
+
+    jQuery('#invitation-elements').mage('form').mage('validation');
+
+});
+script;
+?>
+<?= /* @noEscape */ $secureRenderer->renderTag('script', [], $scriptString, false); ?>

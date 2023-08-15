@@ -1,0 +1,69 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+ /**
+  * Copyright © Magento, Inc. All rights reserved.
+  * See COPYING.txt for license details.
+  */
+-->
+
+<tests xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="urn:magento:mftf:Test/etc/testSchema.xsd">
+    <test name="StorefrontUnapplyGiftCardFromCartTest">
+        <annotations>
+            <features value="GiftCardAccount"/>
+            <stories value="Unapply gift card"/>
+            <title value="Unapply gift card from cart"/>
+            <description value="Apply gift card to cart and unapply"/>
+            <severity value="MAJOR"/>
+            <testCaseId value="MC-15351"/>
+            <group value="GiftCardAccount"/>
+        </annotations>
+        <before>
+            <actionGroup ref="AdminLoginActionGroup" stepKey="loginAsAdmin"/>
+            <createData entity="VirtualProduct" stepKey="createVirtualProduct">
+                <field key="price">40.00</field>
+            </createData>
+        </before>
+        <after>
+            <deleteData createDataKey="createVirtualProduct" stepKey="deleteVirtualProduct"/>
+            <actionGroup ref="AdminLogoutActionGroup" stepKey="logout"/>
+        </after>
+        <!-- Navigate to Stores > Configuration>Sales > Gift Cards -->
+        <amOnPage url="{{AdminStoresConfigurationGiftCardAccountGeneralSettingsPage.url}}" stepKey="amOnGiftCardAccountGeneralSettingsPage"/>
+        <waitForPageLoad stepKey="waitForGiftCardAccountGeneralSettingsPage"/>
+        <!-- Generate a new pool of gift card accounts -->
+        <waitForElementVisible selector="{{AdminGiftCardAccountGeneralSettingsSection.generate}}" stepKey="waitForGenerateNewCodePoolButton"/>
+        <click selector="{{AdminGiftCardAccountGeneralSettingsSection.generate}}" stepKey="clickGenerateNewCodePoolButton"/>
+        <waitForPageLoad stepKey="waitForPopUp"/>
+        <waitForElementVisible selector="{{AdminGiftCardAccountGeneralSettingsSection.popupAccept}}" stepKey="waitForkPopupOk"/>
+        <click selector="{{AdminGiftCardAccountGeneralSettingsSection.popupAccept}}" stepKey="clickPopupOk"/>
+        <waitForPageLoad stepKey="waitForGenerateNewPoolCode"/>
+        <!-- Marketing > Gift Card accounts > Gift Account grid, click Add gift card account -->
+        <actionGroup ref="AddGiftCardAccountActionGroup" stepKey="addGiftCardAccount">
+            <argument name="website" value="Main Website" />
+            <argument name="balanceAmount" value="20" />
+        </actionGroup>
+        <grabTextFrom selector="{{AdminGiftCardAccountGridSection.giftCardCode}}" stepKey="grabGiftCardCode"/>
+        <!-- Go to Storefront as Guest -->
+        <amOnPage url="{{StorefrontHomePage.url}}" stepKey="amOnStorefrontPage"/>
+        <!-- Add virtual product to shopping cart -->
+        <amOnPage url="/$$createVirtualProduct.custom_attributes[url_key]$$.html" stepKey="amOnStorefrontVirtualProductPage"/>
+        <waitForPageLoad stepKey="waitForStorefrontVirtualProductPage"/>
+        <actionGroup ref="StorefrontAddProductToCartActionGroup" stepKey="cartAddVirtualProductToCart">
+            <argument name="product" value="$$createVirtualProduct$$"/>
+            <argument name="productCount" value="1"/>
+        </actionGroup>
+        <!-- Go to Cart and Apply Gift Card -->
+        <actionGroup ref="StorefrontOpenCartFromMinicartActionGroup" stepKey="GoToCheckoutFromMinicartActionGroup"/>
+        <actionGroup ref="AddGiftCardToOrderFromCartActionGroup" stepKey="applyGiftCard">
+            <argument name="code" value="$grabGiftCardCode"/>
+        </actionGroup>
+        <!-- Remove Gift Card -->
+        <actionGroup ref="CartUnapplyGiftCardActionGroup" stepKey="removeGiftCard">
+            <argument name="code" value="$grabGiftCardCode"/>
+        </actionGroup>
+        <!-- Remove gift card account -->
+        <actionGroup ref="DeleteGiftCardAccountActionGroup" stepKey="deleteGiftCardAccount">
+            <argument name="giftCardAccountCode" value="{$grabGiftCardCode}"/>
+        </actionGroup>
+    </test>
+</tests>

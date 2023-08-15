@@ -1,0 +1,15 @@
+<?php
+/**
+ * Copyright © Magento, Inc. All rights reserved.
+ * See COPYING.txt for license details.
+ */
+/**
+ * @var \Magento\Reward\Block\Adminhtml\Customer\Edit\Tab\Reward\Management\Balance $block
+ */
+?>
+<div class="fieldset-wrapper">
+    <div class="fieldset-wrapper-title">
+        <span class="title"><?= $block->escapeHtml(__('Reward Points Balance')) ?></span>
+    </div>
+    <?= $block->getChildHtml('grid') ?>
+</div>

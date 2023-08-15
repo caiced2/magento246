@@ -1,0 +1,47 @@
+<?xml version="1.0"?>
+<!--
+/**
+ * Copyright © Magento, Inc. All rights reserved.
+ * See COPYING.txt for license details.
+ */
+-->
+<config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="urn:magento:module:Magento_Config:etc/system_file.xsd">
+    <system>
+        <section id="system">
+            <group id="magento_scheduled_import_export_log" translate="label" showInDefault="1" showInWebsite="1" showInStore="1" sortOrder="900">
+                <label>Scheduled Import/Export File History Cleaning</label>
+                <field id="save_days" translate="label" type="text" sortOrder="10" showInDefault="1" showInWebsite="0" showInStore="0">
+                    <label>Save Files, Days</label>
+                    <validate>validate-zero-or-greater validate-digits</validate>
+                </field>
+                <field id="enabled" translate="label" type="select" sortOrder="20" showInDefault="1" showInWebsite="0" showInStore="0">
+                    <label>Enable Scheduled File History Cleaning</label>
+                    <source_model>Magento\Config\Model\Config\Source\Yesno</source_model>
+                </field>
+                <field id="clean_now" translate="label" type="button" sortOrder="30" showInDefault="1" showInWebsite="0" showInStore="0">
+                    <frontend_model>Magento\ScheduledImportExport\Block\Adminhtml\System\Config\Clean</frontend_model>
+                </field>
+                <field id="time" translate="label" type="time" sortOrder="40" showInDefault="1" showInWebsite="0" showInStore="0">
+                    <label>Start Time</label>
+                    <backend_model>Magento\ScheduledImportExport\Model\System\Config\Backend\Logclean\Cron</backend_model>
+                </field>
+                <field id="frequency" translate="label" type="select" sortOrder="50" showInDefault="1" showInWebsite="0" showInStore="0">
+                    <label>Frequency</label>
+                    <source_model>Magento\Cron\Model\Config\Source\Frequency</source_model>
+                </field>
+                <field id="error_email" translate="label" type="text" sortOrder="60" showInDefault="1" showInWebsite="0" showInStore="0">
+                    <label>Error Email Recipient</label>
+                    <validate>validate-email</validate>
+                </field>
+                <field id="error_email_identity" translate="label" type="select" sortOrder="70" showInDefault="1" showInWebsite="0" showInStore="0">
+                    <label>Error Email Sender</label>
+                    <source_model>Magento\Config\Model\Config\Source\Email\Identity</source_model>
+                </field>
+                <field id="error_email_template" translate="label" type="select" sortOrder="80" showInDefault="1" showInWebsite="0" showInStore="0">
+                    <label>Error Email Template</label>
+                    <source_model>Magento\Config\Model\Config\Source\Email\Template</source_model>
+                </field>
+            </group>
+        </section>
+    </system>
+</config>

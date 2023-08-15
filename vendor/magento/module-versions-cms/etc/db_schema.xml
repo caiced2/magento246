@@ -1,0 +1,131 @@
+<?xml version="1.0"?>
+<!--
+/**
+ * Copyright © Magento, Inc. All rights reserved.
+ * See COPYING.txt for license details.
+ */
+-->
+<schema xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:noNamespaceSchemaLocation="urn:magento:framework:Setup/Declaration/Schema/etc/schema.xsd">
+    <table name="magento_versionscms_increment" resource="default" engine="innodb" comment="Enterprise Cms Increment">
+        <column xsi:type="int" name="increment_id" unsigned="true" nullable="false" identity="true"
+                comment="Increment Id"/>
+        <column xsi:type="int" name="increment_type" unsigned="false" nullable="false" identity="false"
+                comment="Increment Type"/>
+        <column xsi:type="int" name="increment_node" unsigned="true" nullable="false" identity="false"
+                comment="Increment Node"/>
+        <column xsi:type="int" name="increment_level" unsigned="true" nullable="false" identity="false"
+                comment="Increment Level"/>
+        <column xsi:type="int" name="last_id" unsigned="true" nullable="false" identity="false"
+                comment="Last Id"/>
+        <constraint xsi:type="primary" referenceId="PRIMARY">
+            <column name="increment_id"/>
+        </constraint>
+        <constraint xsi:type="unique" referenceId="UNQ_BE1CCB76CE284DD3ED440DB79C46FF2F">
+            <column name="increment_type"/>
+            <column name="increment_node"/>
+            <column name="increment_level"/>
+        </constraint>
+    </table>
+    <table name="magento_versionscms_hierarchy_node" resource="default" engine="innodb"
+           comment="Enterprise Cms Hierarchy Node">
+        <column xsi:type="int" name="node_id" unsigned="true" nullable="false" identity="true"
+                comment="Node Id"/>
+        <column xsi:type="int" name="parent_node_id" unsigned="true" nullable="true" identity="false"
+                comment="Parent Node Id"/>
+        <column xsi:type="smallint" name="page_id" unsigned="false" nullable="true" identity="false"
+                comment="Page Id"/>
+        <column xsi:type="varchar" name="identifier" nullable="true" length="100" comment="Identifier"/>
+        <column xsi:type="varchar" name="label" nullable="true" length="255" comment="Label"/>
+        <column xsi:type="smallint" name="level" unsigned="true" nullable="false" identity="false"
+                default="0" comment="Level"/>
+        <column xsi:type="int" name="sort_order" unsigned="false" nullable="false" identity="false"
+                comment="Sort Order"/>
+        <column xsi:type="varchar" name="request_url" nullable="true" length="255" comment="Request Url"/>
+        <column xsi:type="varchar" name="xpath" nullable="true" length="255" comment="Xpath"/>
+        <column xsi:type="varchar" name="scope" nullable="false" length="8" comment="Scope: default|website|store"/>
+        <column xsi:type="int" name="scope_id" unsigned="true" nullable="false" identity="false"
+                comment="Scope Id"/>
+        <constraint xsi:type="primary" referenceId="PRIMARY">
+            <column name="node_id"/>
+        </constraint>
+        <constraint xsi:type="foreign" referenceId="FK_A3B35A9AC57609C4C249DF3969C40F6F"
+                    table="magento_versionscms_hierarchy_node" column="parent_node_id"
+                    referenceTable="magento_versionscms_hierarchy_node" referenceColumn="node_id" onDelete="CASCADE"/>
+        <constraint xsi:type="foreign" referenceId="MAGENTO_VERSIONSCMS_HIERARCHY_NODE_PAGE_ID_CMS_PAGE_PAGE_ID"
+                    table="magento_versionscms_hierarchy_node" column="page_id" referenceTable="cms_page"
+                    referenceColumn="page_id" onDelete="CASCADE"/>
+        <constraint xsi:type="unique" referenceId="MAGENTO_VERSIONSCMS_HIERARCHY_NODE_REQUEST_URL_SCOPE_SCOPE_ID">
+            <column name="request_url"/>
+            <column name="scope"/>
+            <column name="scope_id"/>
+        </constraint>
+        <index referenceId="MAGENTO_VERSIONSCMS_HIERARCHY_NODE_PARENT_NODE_ID" indexType="btree">
+            <column name="parent_node_id"/>
+        </index>
+        <index referenceId="MAGENTO_VERSIONSCMS_HIERARCHY_NODE_PAGE_ID" indexType="btree">
+            <column name="page_id"/>
+        </index>
+    </table>
+    <table name="magento_versionscms_hierarchy_metadata" resource="default" engine="innodb"
+           comment="Enterprise Cms Hierarchy Metadata">
+        <column xsi:type="int" name="node_id" unsigned="true" nullable="false" identity="false"
+                comment="Node Id"/>
+        <column xsi:type="smallint" name="meta_first_last" unsigned="false" nullable="false"
+                identity="false" default="0" comment="Meta First Last"/>
+        <column xsi:type="smallint" name="meta_next_previous" unsigned="false" nullable="false"
+                identity="false" default="0" comment="Meta Next Previous"/>
+        <column xsi:type="smallint" name="meta_chapter" unsigned="false" nullable="false" identity="false"
+                default="0" comment="Meta Chapter"/>
+        <column xsi:type="smallint" name="meta_section" unsigned="false" nullable="false" identity="false"
+                default="0" comment="Meta Section"/>
+        <column xsi:type="smallint" name="meta_cs_enabled" unsigned="true" nullable="false" identity="false"
+                default="0" comment="Meta Cs Enabled"/>
+        <column xsi:type="smallint" name="pager_visibility" unsigned="true" nullable="true" identity="false"
+                comment="Pager Visibility"/>
+        <column xsi:type="smallint" name="pager_frame" unsigned="true" nullable="true" identity="false"
+                comment="Pager Frame"/>
+        <column xsi:type="smallint" name="pager_jump" unsigned="true" nullable="true" identity="false"
+                comment="Pager Jump"/>
+        <column xsi:type="smallint" name="menu_visibility" unsigned="true" nullable="true" identity="false"
+                comment="Menu Visibility"/>
+        <column xsi:type="smallint" name="menu_excluded" unsigned="true" nullable="false" identity="false"
+                default="0" comment="Menu Excluded"/>
+        <column xsi:type="varchar" name="menu_layout" nullable="true" length="50" comment="Menu Layout"/>
+        <column xsi:type="smallint" name="menu_brief" unsigned="true" nullable="false" identity="false"
+                default="0" comment="Menu Brief"/>
+        <column xsi:type="smallint" name="menu_levels_down" unsigned="true" nullable="true" identity="false"
+                comment="Menu Levels Down"/>
+        <column xsi:type="smallint" name="menu_ordered" unsigned="true" nullable="true" identity="false"
+                comment="Menu Ordered"/>
+        <column xsi:type="varchar" name="menu_list_type" nullable="true" length="50" comment="Menu List Type"/>
+        <column xsi:type="smallint" name="top_menu_visibility" unsigned="true" nullable="true"
+                identity="false" comment="Top Menu Visibility"/>
+        <column xsi:type="smallint" name="top_menu_excluded" unsigned="true" nullable="true"
+                identity="false" comment="Top Menu Excluded"/>
+        <constraint xsi:type="primary" referenceId="PRIMARY">
+            <column name="node_id"/>
+        </constraint>
+        <constraint xsi:type="foreign" referenceId="FK_84B971B6459D9D0BADDD779EBDDFD6A3"
+                    table="magento_versionscms_hierarchy_metadata" column="node_id"
+                    referenceTable="magento_versionscms_hierarchy_node" referenceColumn="node_id" onDelete="CASCADE"/>
+    </table>
+    <table name="magento_versionscms_hierarchy_lock" resource="default" engine="innodb"
+           comment="Enterprise Cms Hierarchy Lock">
+        <column xsi:type="int" name="lock_id" unsigned="true" nullable="false" identity="true"
+                comment="Lock Id"/>
+        <column xsi:type="int" name="user_id" unsigned="true" nullable="false" identity="false"
+                comment="User Id"/>
+        <column xsi:type="varchar" name="user_name" nullable="true" length="50" comment="User Name"/>
+        <column xsi:type="varchar" name="session_id" nullable="true" length="50" comment="Session Id"/>
+        <column xsi:type="int" name="started_at" unsigned="true" nullable="false" identity="false"
+                comment="Started At"/>
+        <constraint xsi:type="primary" referenceId="PRIMARY">
+            <column name="lock_id"/>
+        </constraint>
+    </table>
+    <table name="cms_page" resource="default" comment="CMS Page Table">
+        <column xsi:type="smallint" name="website_root" unsigned="true" nullable="false" identity="false"
+                default="1" comment="Website Root"/>
+    </table>
+</schema>

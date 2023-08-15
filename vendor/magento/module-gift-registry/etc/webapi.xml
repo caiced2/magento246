@@ -1,0 +1,29 @@
+<?xml version="1.0"?>
+<!--
+/**
+ * Copyright © Magento, Inc. All rights reserved.
+ * See COPYING.txt for license details.
+ */
+-->
+<routes xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:noNamespaceSchemaLocation="urn:magento:module:Magento_Webapi:etc/webapi.xsd">
+
+    <!-- Managing My Cart Shipment Method -->
+    <route url="/V1/giftregistry/mine/estimate-shipping-methods" method="POST">
+        <service class="Magento\GiftRegistry\Api\ShippingMethodManagementInterface" method="estimateByRegistryId"/>
+        <resources>
+            <resource ref="self" />
+        </resources>
+        <data>
+            <parameter name="cartId" force="true">%cart_id%</parameter>
+        </data>
+    </route>
+
+    <!-- Managing Guest Cart Shipment Method -->
+    <route url="/V1/guest-giftregistry/:cartId/estimate-shipping-methods" method="POST">
+        <service class="Magento\GiftRegistry\Api\GuestCart\ShippingMethodManagementInterface" method="estimateByRegistryId"/>
+        <resources>
+            <resource ref="anonymous" />
+        </resources>
+    </route>
+</routes>

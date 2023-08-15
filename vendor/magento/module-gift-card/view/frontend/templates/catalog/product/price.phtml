@@ -1,0 +1,23 @@
+<?php
+/**
+ * Copyright © Magento, Inc. All rights reserved.
+ * See COPYING.txt for license details.
+ */
+// phpcs:disable Magento2.Templates.ThisInTemplate.FoundThis
+$_product = $block->getProduct();
+    $_id = $_product->getId();
+?>
+<?php if ($_product->getCanShowPrice() !== false) :?>
+    <div class="price-box">
+    <?php if (($_min = $block->getMinAmount()) && ($_max = $block->getMaxAmount()) && ($_min == $_max)) : ?>
+        <span class="price" id="product-price-<?= $block->escapeHtmlAttr($_id) ?><?= $block->escapeHtmlAttr($block->getIdSuffix()) ?>">
+            <?= $block->escapeHtml($this->helper(Magento\Framework\Pricing\Helper\Data::class)->currency($_min, true, false)) ?>
+        </span>
+    <?php elseif (($_min = $block->getMinAmount()) && $_min != 0) : ?>
+        <span class="price-label"><?= $block->escapeHtml(__('From')) ?></span>
+        <span class="price" id="min-product-price-<?= $block->escapeHtmlAttr($_id) ?><?= $block->escapeHtmlAttr($block->getIdSuffix()) ?>">
+            <?= $block->escapeHtml($this->helper(Magento\Framework\Pricing\Helper\Data::class)->currency($_min, true, false)) ?>
+        </span>
+    <?php endif; ?>
+    </div>
+<?php endif; ?>

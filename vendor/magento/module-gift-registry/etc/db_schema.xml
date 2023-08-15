@@ -1,0 +1,214 @@
+<?xml version="1.0"?>
+<!--
+/**
+ * Copyright © Magento, Inc. All rights reserved.
+ * See COPYING.txt for license details.
+ */
+-->
+<schema xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:noNamespaceSchemaLocation="urn:magento:framework:Setup/Declaration/Schema/etc/schema.xsd">
+    <table name="magento_giftregistry_type" resource="default" engine="innodb"
+           comment="Enterprise Gift Registry Type Table">
+        <column xsi:type="int" name="type_id" unsigned="true" nullable="false" identity="true"
+                comment="Type Id"/>
+        <column xsi:type="varchar" name="code" nullable="true" length="15" comment="Code"/>
+        <column xsi:type="blob" name="meta_xml" nullable="true" comment="Meta Xml"/>
+        <constraint xsi:type="primary" referenceId="PRIMARY">
+            <column name="type_id"/>
+        </constraint>
+    </table>
+    <table name="magento_giftregistry_type_info" resource="default" engine="innodb"
+           comment="Enterprise Gift Registry Info Table">
+        <column xsi:type="int" name="type_id" unsigned="true" nullable="false" identity="false" default="0"
+                comment="Type Id"/>
+        <column xsi:type="smallint" name="store_id" unsigned="true" nullable="false" identity="false"
+                default="0" comment="Store Id"/>
+        <column xsi:type="varchar" name="label" nullable="true" length="255" comment="Label"/>
+        <column xsi:type="smallint" name="is_listed" unsigned="true" nullable="true" identity="false"
+                comment="Is Listed"/>
+        <column xsi:type="smallint" name="sort_order" unsigned="true" nullable="true" identity="false"
+                comment="Sort Order"/>
+        <constraint xsi:type="primary" referenceId="PRIMARY">
+            <column name="type_id"/>
+            <column name="store_id"/>
+        </constraint>
+        <constraint xsi:type="foreign" referenceId="FK_1A0B820718598BAC128535E2B6348C48" table="magento_giftregistry_type_info"
+                    column="type_id" referenceTable="magento_giftregistry_type" referenceColumn="type_id"
+                    onDelete="CASCADE"/>
+        <constraint xsi:type="foreign" referenceId="MAGENTO_GIFTREGISTRY_TYPE_INFO_STORE_ID_STORE_STORE_ID"
+                    table="magento_giftregistry_type_info" column="store_id" referenceTable="store"
+                    referenceColumn="store_id" onDelete="CASCADE"/>
+        <index referenceId="MAGENTO_GIFTREGISTRY_TYPE_INFO_STORE_ID" indexType="btree">
+            <column name="store_id"/>
+        </index>
+    </table>
+    <table name="magento_giftregistry_label" resource="default" engine="innodb"
+           comment="Enterprise Gift Registry Label Table">
+        <column xsi:type="int" name="type_id" unsigned="true" nullable="false" identity="false" default="0"
+                comment="Type Id"/>
+        <column xsi:type="varchar" name="attribute_code" nullable="false" length="32" comment="Attribute Code"/>
+        <column xsi:type="smallint" name="store_id" unsigned="true" nullable="false" identity="false"
+                default="0" comment="Store Id"/>
+        <column xsi:type="varchar" name="option_code" nullable="false" length="32" comment="Option Code"/>
+        <column xsi:type="varchar" name="label" nullable="true" length="255" comment="Label"/>
+        <constraint xsi:type="primary" referenceId="PRIMARY">
+            <column name="type_id"/>
+            <column name="attribute_code"/>
+            <column name="store_id"/>
+            <column name="option_code"/>
+        </constraint>
+        <constraint xsi:type="foreign" referenceId="FK_CAC7838B0DC6D41132DD885A80780A1E" table="magento_giftregistry_label"
+                    column="type_id" referenceTable="magento_giftregistry_type" referenceColumn="type_id"
+                    onDelete="CASCADE"/>
+        <constraint xsi:type="foreign" referenceId="MAGENTO_GIFTREGISTRY_LABEL_STORE_ID_STORE_STORE_ID"
+                    table="magento_giftregistry_label" column="store_id" referenceTable="store"
+                    referenceColumn="store_id" onDelete="CASCADE"/>
+        <index referenceId="MAGENTO_GIFTREGISTRY_LABEL_STORE_ID" indexType="btree">
+            <column name="store_id"/>
+        </index>
+    </table>
+    <table name="magento_giftregistry_entity" resource="default" engine="innodb"
+           comment="Enterprise Gift Registry Entity Table">
+        <column xsi:type="int" name="entity_id" unsigned="true" nullable="false" identity="true"
+                comment="Entity Id"/>
+        <column xsi:type="int" name="type_id" unsigned="true" nullable="false" identity="false" default="0"
+                comment="Type Id"/>
+        <column xsi:type="int" name="customer_id" unsigned="true" nullable="false" identity="false"
+                default="0" comment="Customer Id"/>
+        <column xsi:type="smallint" name="website_id" unsigned="true" nullable="false" identity="false"
+                default="0" comment="Website Id"/>
+        <column xsi:type="smallint" name="is_public" unsigned="true" nullable="false" identity="false"
+                default="1" comment="Is Public"/>
+        <column xsi:type="varchar" name="url_key" nullable="true" length="100" comment="Url Key"/>
+        <column xsi:type="varchar" name="title" nullable="true" length="255" comment="Title"/>
+        <column xsi:type="text" name="message" nullable="false" comment="Message"/>
+        <column xsi:type="blob" name="shipping_address" nullable="true" comment="Shipping Address"/>
+        <column xsi:type="text" name="custom_values" nullable="true" comment="Custom Values"/>
+        <column xsi:type="smallint" name="is_active" unsigned="false" nullable="false" identity="false"
+                default="0" comment="Is Active"/>
+        <column xsi:type="timestamp" name="created_at" on_update="false" nullable="true" comment="Created At"/>
+        <constraint xsi:type="primary" referenceId="PRIMARY">
+            <column name="entity_id"/>
+        </constraint>
+        <constraint xsi:type="foreign" referenceId="FK_AC6F6DB40013C09CA44DFBC3453C4954" table="magento_giftregistry_entity"
+                    column="type_id" referenceTable="magento_giftregistry_type" referenceColumn="type_id"
+                    onDelete="CASCADE"/>
+        <constraint xsi:type="foreign" referenceId="MAGENTO_GIFTREGISTRY_ENTT_CSTR_ID_CSTR_ENTT_ENTT_ID"
+                    table="magento_giftregistry_entity" column="customer_id" referenceTable="customer_entity"
+                    referenceColumn="entity_id" onDelete="CASCADE"/>
+        <constraint xsi:type="foreign" referenceId="MAGENTO_GIFTREGISTRY_ENTITY_WEBSITE_ID_STORE_WEBSITE_WEBSITE_ID"
+                    table="magento_giftregistry_entity" column="website_id" referenceTable="store_website"
+                    referenceColumn="website_id" onDelete="CASCADE"/>
+        <index referenceId="MAGENTO_GIFTREGISTRY_ENTITY_CUSTOMER_ID" indexType="btree">
+            <column name="customer_id"/>
+        </index>
+        <index referenceId="MAGENTO_GIFTREGISTRY_ENTITY_WEBSITE_ID" indexType="btree">
+            <column name="website_id"/>
+        </index>
+        <index referenceId="MAGENTO_GIFTREGISTRY_ENTITY_TYPE_ID" indexType="btree">
+            <column name="type_id"/>
+        </index>
+    </table>
+    <table name="magento_giftregistry_item" resource="default" engine="innodb"
+           comment="Enterprise Gift Registry Item Table">
+        <column xsi:type="int" name="item_id" unsigned="true" nullable="false" identity="true"
+                comment="Item Id"/>
+        <column xsi:type="int" name="entity_id" unsigned="true" nullable="false" identity="false"
+                default="0" comment="Entity Id"/>
+        <column xsi:type="int" name="product_id" unsigned="true" nullable="false" identity="false"
+                default="0" comment="Product Id"/>
+        <column xsi:type="decimal" name="qty" scale="4" precision="12" unsigned="false" nullable="true" comment="Qty"/>
+        <column xsi:type="decimal" name="qty_fulfilled" scale="4" precision="12" unsigned="false" nullable="true"
+                comment="Qty Fulfilled"/>
+        <column xsi:type="text" name="note" nullable="true" comment="Note"/>
+        <column xsi:type="timestamp" name="added_at" on_update="false" nullable="true" comment="Added At"/>
+        <column xsi:type="text" name="custom_options" nullable="true" comment="Custom Options"/>
+        <constraint xsi:type="primary" referenceId="PRIMARY">
+            <column name="item_id"/>
+        </constraint>
+        <constraint xsi:type="foreign" referenceId="FK_BAC522E38736441C84A365FDA8A89F3D" table="magento_giftregistry_item"
+                    column="entity_id" referenceTable="magento_giftregistry_entity" referenceColumn="entity_id"
+                    onDelete="CASCADE"/>
+        <constraint xsi:type="foreign" referenceId="MAGENTO_GIFTREGISTRY_ITEM_PRD_ID_CAT_PRD_ENTT_ENTT_ID"
+                    table="magento_giftregistry_item" column="product_id" referenceTable="catalog_product_entity"
+                    referenceColumn="entity_id" onDelete="CASCADE"/>
+        <index referenceId="MAGENTO_GIFTREGISTRY_ITEM_ENTITY_ID" indexType="btree">
+            <column name="entity_id"/>
+        </index>
+        <index referenceId="MAGENTO_GIFTREGISTRY_ITEM_PRODUCT_ID" indexType="btree">
+            <column name="product_id"/>
+        </index>
+    </table>
+    <table name="magento_giftregistry_person" resource="default" engine="innodb"
+           comment="Enterprise Gift Registry Person Table">
+        <column xsi:type="int" name="person_id" unsigned="true" nullable="false" identity="true"
+                comment="Person Id"/>
+        <column xsi:type="int" name="entity_id" unsigned="true" nullable="false" identity="false"
+                default="0" comment="Entity Id"/>
+        <column xsi:type="varchar" name="firstname" nullable="true" length="100" comment="Firstname"/>
+        <column xsi:type="varchar" name="lastname" nullable="true" length="100" comment="Lastname"/>
+        <column xsi:type="varchar" name="email" nullable="true" length="150" comment="Email"/>
+        <column xsi:type="varchar" name="role" nullable="true" length="32" comment="Role"/>
+        <column xsi:type="text" name="custom_values" nullable="false" comment="Custom Values"/>
+        <constraint xsi:type="primary" referenceId="PRIMARY">
+            <column name="person_id"/>
+        </constraint>
+        <constraint xsi:type="foreign" referenceId="FK_3BD5033D7C543D4739AB16D2DDAF3417" table="magento_giftregistry_person"
+                    column="entity_id" referenceTable="magento_giftregistry_entity" referenceColumn="entity_id"
+                    onDelete="CASCADE"/>
+        <index referenceId="MAGENTO_GIFTREGISTRY_PERSON_ENTITY_ID" indexType="btree">
+            <column name="entity_id"/>
+        </index>
+    </table>
+    <table name="magento_giftregistry_data" resource="default" engine="innodb"
+           comment="Enterprise Gift Registry Data Table">
+        <column xsi:type="int" name="entity_id" unsigned="true" nullable="false" identity="false"
+                default="0" comment="Entity Id"/>
+        <column xsi:type="date" name="event_date" comment="Event Date"/>
+        <column xsi:type="varchar" name="event_country" nullable="true" length="3" comment="Event Country"/>
+        <column xsi:type="int" name="event_country_region" unsigned="false" nullable="true"
+                identity="false" comment="Event Country Region"/>
+        <column xsi:type="varchar" name="event_country_region_text" nullable="true" length="30"
+                comment="Event Country Region Text"/>
+        <column xsi:type="varchar" name="event_location" nullable="true" length="255" comment="Event Location"/>
+        <constraint xsi:type="primary" referenceId="PRIMARY">
+            <column name="entity_id"/>
+        </constraint>
+        <constraint xsi:type="foreign" referenceId="FK_16C9215492169187823D7D59D417E563" table="magento_giftregistry_data"
+                    column="entity_id" referenceTable="magento_giftregistry_entity" referenceColumn="entity_id"
+                    onDelete="CASCADE"/>
+    </table>
+    <table name="magento_giftregistry_item_option" resource="default" engine="innodb"
+           comment="Enterprise Gift Registry Item Option Table">
+        <column xsi:type="int" name="option_id" unsigned="true" nullable="false" identity="true"
+                comment="Option Id"/>
+        <column xsi:type="int" name="item_id" unsigned="true" nullable="false" identity="false"
+                comment="Item Id"/>
+        <column xsi:type="int" name="product_id" unsigned="true" nullable="false" identity="false"
+                comment="Product Id"/>
+        <column xsi:type="varchar" name="code" nullable="false" length="255" comment="Code"/>
+        <column xsi:type="text" name="value" nullable="false" comment="Value"/>
+        <constraint xsi:type="primary" referenceId="PRIMARY">
+            <column name="option_id"/>
+        </constraint>
+        <constraint xsi:type="foreign" referenceId="FK_3D1D15BFE3A8590F21C1F66D980C9728"
+                    table="magento_giftregistry_item_option" column="item_id" referenceTable="magento_giftregistry_item"
+                    referenceColumn="item_id" onDelete="CASCADE"/>
+    </table>
+    <table name="quote_item" resource="checkout" comment="Sales Flat Quote Item">
+        <column xsi:type="int" name="giftregistry_item_id" unsigned="false" nullable="true"
+                identity="false" comment="Giftregistry Item Id"/>
+    </table>
+    <table name="quote_address" resource="checkout" comment="Sales Flat Quote Address">
+        <column xsi:type="int" name="giftregistry_item_id" unsigned="false" nullable="true"
+                identity="false" comment="Giftregistry Item Id"/>
+    </table>
+    <table name="sales_order_item" resource="sales" comment="Sales Flat Order Item">
+        <column xsi:type="int" name="giftregistry_item_id" unsigned="false" nullable="true"
+                identity="false" comment="Giftregistry Item Id"/>
+    </table>
+    <table name="sales_order_address" resource="sales" comment="Sales Flat Order Address">
+        <column xsi:type="int" name="giftregistry_item_id" unsigned="false" nullable="true"
+                identity="false" comment="Giftregistry Item Id"/>
+    </table>
+</schema>

@@ -1,0 +1,19 @@
+<?php
+/**
+ * Copyright © Magento, Inc. All rights reserved.
+ * See COPYING.txt for license details.
+ */
+
+?>
+<?php
+    $_order  = $block->getOrder();
+    $_source = $block->getSource();
+?>
+<?php if ($_source->getCustomerBalanceAmount()) : ?>
+<tr>
+    <td <?= /* @noEscape */ $block->getLabelProperties() ?> class="col name">
+        <?= $block->escapeHtml(__('Store Credit')) ?>
+    </td>
+    <td <?= /* @noEscape */ $block->getValueProperties() ?> class="col price"><span class="balance discount">-<?= /* @noEscape */ $_order->formatPrice($_source->getCustomerBalanceAmount()) ?></span></td>
+</tr>
+<?php endif; ?>

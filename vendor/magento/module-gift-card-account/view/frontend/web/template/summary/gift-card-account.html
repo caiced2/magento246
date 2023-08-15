@@ -1,0 +1,22 @@
+<!--
+/**
+ * Copyright © Magento, Inc. All rights reserved.
+ * See COPYING.txt for license details.
+ */
+-->
+<!-- ko if: isAvailable() -->
+    <!-- ko foreach: getAppliedGiftCards() -->
+    <tr class="totals giftcard">
+        <th class="mark" scope="row">
+            <a href="#" class="action" data-bind="text: $t('Remove'), click: function(data, event) { $parent.removeGiftCard(c, event); }"></a>
+            <!-- ko text: $parent.title + ' (' + c + ')' --><!-- /ko -->
+        </th>
+        <td class="amount">
+            <span class="discount">
+                <span class="price" data-bind="text: '-' + $parent.getAmount(a), attr: {'data-th':  $parent.title + ' (' + c + ')'}">
+                </span>
+            </span>
+        </td>
+    </tr>
+    <!-- /ko -->
+<!-- /ko -->

@@ -1,0 +1,21 @@
+<?xml version="1.0"?>
+<!--
+/**
+ * Copyright © Magento, Inc. All rights reserved.
+ * See COPYING.txt for license details.
+ */
+-->
+<page xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="urn:magento:framework:View/Layout/etc/page_configuration.xsd">
+    <body>
+        <referenceBlock name="creditmemo_totals">
+            <block class="Magento\Sales\Block\Adminhtml\Order\Totals\Item" name="reward.points.refunded" template="Magento_Reward::sales/order/refunded.phtml">
+                <action method="setDisplayArea">
+                    <argument name="area" xsi:type="string">footer</argument>
+                </action>
+                <action method="setBeforeCondition">
+                    <argument name="condition" xsi:type="string">customerbalance_refunded</argument>
+                </action>
+            </block>
+        </referenceBlock>
+    </body>
+</page>

@@ -1,0 +1,31 @@
+<?xml version="1.0"?>
+<!--
+/**
+ * Copyright © Magento, Inc. All rights reserved.
+ * See COPYING.txt for license details.
+ */
+-->
+<config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="urn:magento:module:Magento_Config:etc/system_file.xsd">
+    <system>
+        <section id="sales">
+            <group id="magento_salesarchive" translate="label" sortOrder="200" showInDefault="1" showInWebsite="0" showInStore="0">
+                <label>Orders, Invoices, Shipments, Credit Memos Archiving</label>
+                <field id="active" translate="label" sortOrder="5" type="select" showInDefault="1" showInWebsite="0" showInStore="0">
+                    <label>Enable Archiving</label>
+                    <source_model>Magento\Config\Model\Config\Source\Yesno</source_model>
+                    <backend_model>Magento\SalesArchive\Model\System\Config\Backend\Active</backend_model>
+                </field>
+                <field id="age" translate="label" sortOrder="10" showInDefault="1" showInWebsite="0" showInStore="0">
+                    <label>Archive Orders Purchased</label>
+                    <validate>validate-zero-or-greater validate-digits</validate>
+                    <comment>Days ago.</comment>
+                </field>
+                <field id="order_statuses" translate="label" sortOrder="15" type="multiselect" showInDefault="1" showInWebsite="0" showInStore="0">
+                    <label>Order Statuses to be Archived</label>
+                    <source_model>Magento\SalesArchive\Model\Order\Status\Source</source_model>
+                    <can_be_empty>1</can_be_empty>
+                </field>
+            </group>
+        </section>
+    </system>
+</config>

@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+ /**
+  * Copyright © Magento, Inc. All rights reserved.
+  * See COPYING.txt for license details.
+  */
+-->
+<actionGroups xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:noNamespaceSchemaLocation="urn:magento:mftf:Test/etc/actionGroupSchema.xsd">
+    <actionGroup name="RestrictedAdminCreateCMSActionGroup">
+        <arguments>
+            <argument name="title" type="string" defaultValue=""/>
+            <argument name="storeView" type="string" defaultValue=""/>
+        </arguments>
+        <click selector="{{CmsNewPageSection.create}}" stepKey="clockToCreateBlock"/>
+        <waitForPageLoad stepKey="waitForBlockFormLoaded"/>
+        <fillField selector="{{CmsNewPageSection.block}}" userInput="{{title}}" stepKey="setBlockTitle"/>
+        <fillField selector="{{CmsNewPageSection.id}}" userInput="{{title}}" stepKey="setIdentifier"/>
+        <click selector="{{CmsNewPageSection.storeView(storeView)}}" stepKey="selectStoreView"/>
+        <fillField selector="{{CmsNewBlockBlockBasicFieldsSection.content_textarea}}" userInput="description" stepKey="addDescription"/>
+        <click selector="{{CmsNewPageSection.save}}" stepKey="saveBlock"/>
+        <waitForPageLoad stepKey="waitForPageLoad"/>
+        <see userInput="You saved the block." stepKey="seeSuccessMessage"/>
+    </actionGroup>
+</actionGroups>

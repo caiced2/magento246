@@ -1,0 +1,61 @@
+<?php
+/**
+ * Copyright © Magento, Inc. All rights reserved.
+ * See COPYING.txt for license details.
+ */
+// phpcs:disable Magento2.Files.LineLength
+?>
+<?php
+/* @var $block \Magento\AdvancedCheckout\Block\Adminhtml\Sku\Errors\Grid\Description
+ * @var \Magento\Framework\View\Helper\SecureHtmlRenderer $secureRenderer
+ */
+?>
+<?php $_item = $block->getItem() ?>
+<?php $_product = $block->getItem()->getProduct() ?>
+<?php $_skuAttrEscaped = $block->escapeHtmlAttr($_item->getSku()) ?>
+<div id="<?= /* @noEscape - escaped in var declaration */ 'sku_' . $_skuAttrEscaped ?>"
+     class="sku-failed-item"
+     data-item-product-id="<?= /* @noEscape */ (int)$_product->getId() ?>"
+>
+    <?php if ($_product->getName()): ?>
+        <p><strong><?= $block->escapeHtml($_product->getName()) ?></strong></p>
+    <?php endif ?>
+
+    <p><strong><?= $block->escapeHtml(__('SKU: ')) ?></strong> <?= $block->escapeHtml($_item->getSku()) ?></p>
+
+    <div class="messages">
+        <div class="message message-notice" data-role="message-notice">
+            <?= $block->escapeHtml($block->getErrorMessage($_item)) ?>
+        </div>
+    </div>
+
+    <div class="sku-configure-button">
+        <?= $block->getConfigureButtonHtml() ?>
+    </div>
+
+    <?php if ($_item->getQtyMaxAllowed()): ?>
+        <?= $block->escapeHtml(
+            __(
+                'Only <span id="%1_max_allowed">%2</span> in stock',
+                $_skuAttrEscaped,
+                (float)$_item->getQtyMaxAllowed()
+            ),
+            ['span']
+        ) ?>
+    <?php endif ?>
+    <input type="hidden" name="sku" value="<?= /* @noEscape - escaped in var declaration */ $_skuAttrEscaped ?>"/>
+    <input type="checkbox"
+           name="<?= $block->escapeHtmlAttr($block->getSourceId()) ?>"
+           value="<?= /* @noEscape - escaped in var declaration */ $_skuAttrEscaped ?>"
+           checked="checked"/>
+    <?php
+        $element = 'div[data-item-product-id="'. (int)$_product->getId() . '"] [name="'
+            . $block->escapeJs($block->getSourceId()) . '"]';
+    ?>
+<?= /* @noEscape */
+    $secureRenderer->renderStyleAsTag(
+        'display:none',
+        $element
+    );
+?>
+</div>

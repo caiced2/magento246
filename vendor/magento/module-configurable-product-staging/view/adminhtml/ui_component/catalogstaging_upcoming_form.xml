@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+/**
+ * Copyright © Magento, Inc. All rights reserved.
+ * See COPYING.txt for license details.
+ */
+-->
+<form xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="urn:magento:module:Magento_Ui:etc/ui_configuration.xsd">
+    <modal name="catalogstaging_update_form_modal">
+        <insertForm name="update_form_loader">
+            <argument name="data" xsi:type="array">
+                <item name="config" xsi:type="array">
+                    <item name="toRemove" xsi:type="array">
+                        <item name="0" xsi:type="string">staging-variation-steps-wizard</item>
+                        <item name="1" xsi:type="string">catalogstaging_update_form.catalogstaging_update_form.configurableModal</item>
+                        <item name="2" xsi:type="string">catalogstaging_update_form.catalogstaging_update_form.configurableVariations</item>
+                        <item name="3" xsi:type="string">staging_product_attributes_listing.staging_product_attributes_listing</item>
+                        <item name="4" xsi:type="string">staging_product_attributes_listing.staging_product_attributes_listing_data_source</item>
+                    </item>
+                </item>
+            </argument>
+        </insertForm>
+    </modal>
+</form>

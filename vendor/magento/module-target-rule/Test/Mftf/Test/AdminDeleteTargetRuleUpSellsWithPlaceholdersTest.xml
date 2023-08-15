@@ -1,0 +1,107 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+ /**
+  * Copyright © Magento, Inc. All rights reserved.
+  * See COPYING.txt for license details.
+  */
+-->
+<tests xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xsi:noNamespaceSchemaLocation="urn:magento:mftf:Test/etc/testSchema.xsd">
+    <test name="AdminDeleteTargetRuleUpSellsWithPlaceholdersTest">
+        <annotations>
+            <stories value="Delete Target Rule"/>
+            <title value="Admin Delete Target Rule UpSells With Placeholders Test"/>
+            <description value="Test log in to Related Product Rules and Delete Target Rule Up-Sells With Placeholders Test"/>
+            <testCaseId value="MC-14281"/>
+            <severity value="CRITICAL"/>
+            <group value="targetRule"/>
+            <group value="mtf_migrated"/>
+        </annotations>
+        <before>
+            <createData entity="_defaultCategory" stepKey="createCategory1"/>
+            <createData entity="SimpleSubCategory" stepKey="createCategory2"/>
+
+            <!--Create product1 with category1-->
+            <createData entity="SimpleProduct" stepKey="createSimpleProduct1">
+                <requiredEntity createDataKey="createCategory1"/>
+            </createData>
+
+            <!--Create product2 with category2-->
+            <createData entity="_defaultProduct" stepKey="createSimpleProduct2">
+                <requiredEntity createDataKey="createCategory2"/>
+            </createData>
+
+            <actionGroup ref="AdminLoginActionGroup" stepKey="LoginAsAdmin"/>
+        </before>
+        <after>
+            <deleteData createDataKey="createCategory1" stepKey="deleteCategory1"/>
+            <deleteData createDataKey="createCategory2" stepKey="deleteCategory2"/>
+            <deleteData createDataKey="createSimpleProduct1" stepKey="deleteCreatedProduct1"/>
+            <deleteData createDataKey="createSimpleProduct2" stepKey="deleteCreatedProduct2"/>
+            <actionGroup ref="AdminLogoutActionGroup" stepKey="logout"/>
+        </after>
+
+        <!--Add special price to product1-->
+        <actionGroup ref="AssertProductOnAdminGridActionGroup" stepKey="seeSimpleProductInGrid">
+            <argument name="product" value="SimpleProduct"/>
+        </actionGroup>
+        <click selector="{{AdminProductGridFilterSection.nthRow('1')}}" stepKey="clickFirstRow"/>
+        <waitForPageLoad stepKey="waitUntilProductIsOpened"/>
+        <click selector="{{AdminProductFormSection.advancedPricingLink}}" stepKey="clickAdvancedPricingLink"/>
+        <fillField selector="{{AdminProductFormAdvancedPricingSection.specialPrice}}" userInput="{{updateVirtualProductSpecialPrice.special_price}}" stepKey="fillSpecialPrice"/>
+        <click selector="{{AdminProductFormAdvancedPricingSection.doneButton}}" stepKey="clickDoneButton"/>
+        <click selector="{{AdminProductFormSection.save}}" stepKey="clickSaveButton"/>
+        <waitForPageLoad stepKey="waitTillProductIsSaved"/>
+
+        <!--Create target rule Up-sells products as per data-->
+        <actionGroup ref="GoToTargetRulePage" stepKey="openTargetRulePage"/>
+        <actionGroup ref="ClickAddNewTargetRule" stepKey="clickAddRule"/>
+        <actionGroup ref="FillGeneralRuleInformation" stepKey="fillRuleFields">
+            <argument name="information" value="TargetRuleUpSellsWithPlaceholders"/>
+        </actionGroup>
+        <selectOption selector="{{AdminTargetRuleInformationSection.customerSegments}}" userInput="{{TargetRuleUpSellsWithPlaceholders.use_customer_segment}}" stepKey="selectAllFromCustomerSegment"/>
+
+        <!--Fill values in Product To Match tab-->
+        <click selector="{{AdminTargetRuleSection.productToMatchTab}}" stepKey="clickProductToMatchTab"/>
+        <click selector="{{AdminTargetRuleProductsToMatchSection.selectCondition('1','1')}}" stepKey="clickOnSelectCondition"/>
+        <selectOption selector="{{AdminTargetRuleProductsToMatchSection.conditionSelect('1')}}" userInput="Category" stepKey="selectNewCondition"/>
+        <waitForPageLoad stepKey="waitForCategoryConditionLoad1"/>
+        <click selector="{{AdminTargetRuleProductsToMatchSection.targetEllipsis}}" stepKey="clickTheEllipsis"/>
+        <fillField selector="{{AdminTargetRuleProductsToMatchSection.ruleFieldByIndex('1--1')}}" userInput="$$createCategory1.id$$" stepKey="fillCategoryId"/>
+
+        <!--Fill values in Product To Display tab-->
+        <click selector="{{AdminTargetRuleSection.productToDisplayTab}}" stepKey="clickProductToDisplayTab"/>
+        <click selector="{{AdminTargetRuleProductsToDisplaySection.selectCondition('1','1')}}" stepKey="clickToSelectCondition"/>
+        <selectOption selector="{{AdminTargetRuleProductsToDisplaySection.newAction}}" userInput="Category" stepKey="selectCategoryInNewCondition"/>
+        <waitForPageLoad stepKey="waitForCategoryConditionLoad2"/>
+        <click selector="{{AdminTargetRuleProductsToDisplaySection.selectCondition('1','2')}}" stepKey="clickSelect"/>
+        <selectOption selector="{{AdminTargetRuleProductsToDisplaySection.selectCategoryToggle('1--1')}}" userInput="Constant Value" stepKey="selectConstantValue"/>
+        <click selector="{{AdminTargetRuleProductsToDisplaySection.targetEllipsis}}" stepKey="clickEllipsis"/>
+        <click selector="{{AdminTargetRuleProductsToDisplaySection.openChooser}}" stepKey="clickOpenChooserIcon"/>
+        <waitForPageLoad stepKey="waitForOpenChooser"/>
+        <click selector="{{AdminTargetRuleProductsToDisplaySection.openChooserCategorySelect($$createCategory2.name$$)}}" stepKey="clickCategory"/>
+        <click selector="{{AdminTargetRuleProductsToDisplaySection.selectCondition('2','1')}}" stepKey="clickOnPlusIcon"/>
+        <selectOption selector="{{AdminTargetRuleProductsToDisplaySection.newAction}}" userInput="Category" stepKey="selectCategoryAsNewCondition"/>
+        <waitForPageLoad stepKey="waitForCategoryConditionLoad3"/>
+        <click selector="{{AdminTargetRuleProductsToDisplaySection.selectCondition('2','2')}}" stepKey="clickSelectCondition"/>
+        <selectOption selector="{{AdminTargetRuleProductsToDisplaySection.selectCategoryToggle('1--2')}}" userInput="the Same as Matched Product Categories" stepKey="selectReqOptionFromCategoryDropdown"/>
+        <actionGroup ref="SaveTargetRule" stepKey="AssertTargetRuleSuccessSaveMessage"/>
+
+        <!--Delete created target rule and verify success message-->
+        <actionGroup ref="DeleteTargetRuleByNameActionGroup" stepKey="deleteCreatedTargetRule">
+            <argument name="ruleName" value="TargetRuleUpSellsWithPlaceholders.ruleName"/>
+        </actionGroup>
+        <see selector="{{AdminTargetRuleSection.successMessage}}" userInput="You deleted the rule." stepKey="AssertTargetRuleSuccessDeleteMessage"/>
+
+        <!--Search deleted target rule in grid and verify rule is not present in grid-->
+        <actionGroup ref="AssertTargetRuleIsNotPresentedInGridActionGroup" stepKey="verifyDeletedTargetRuleNotInGrid">
+            <argument name="ruleName" value="TargetRuleUpSellsWithPlaceholders"/>
+        </actionGroup>
+
+        <!--Go to storefront page and verify product is not in related products-->
+        <actionGroup ref="AssertProductNameAndSkuInStorefrontProductPageByCustomAttributeUrlKeyActionGroup" stepKey="openProductPageAndVerifyProduct">
+            <argument name="product" value="$$createSimpleProduct1$$"/>
+        </actionGroup>
+        <dontSee userInput="$$createSimpleProduct2.name$$" stepKey="AssertProductAbsentUpSells"/>
+    </test>
+</tests>

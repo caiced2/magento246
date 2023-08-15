@@ -1,0 +1,23 @@
+<?xml version="1.0"?>
+<!--
+/**
+ * Copyright © Magento, Inc. All rights reserved.
+ * See COPYING.txt for license details.
+ */
+-->
+<config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="urn:magento:framework:ObjectManager/etc/config.xsd">
+    <type name="Magento\Banner\Block\Widget\Banner">
+        <plugin name="gtmBannerBlockWidgetBanner" type="Magento\GoogleTagManager\Block\Plugin\Banner\Widget\Banner" />
+    </type>
+    <type name="Magento\Quote\Model\Quote">
+        <plugin name="gtmQuote" type="Magento\GoogleTagManager\Model\Plugin\Quote" />
+        <plugin name="set_google_analytics_on_cart_add" type="Magento\GoogleTagManager\Model\Plugin\Quote\SetGoogleAnalyticsOnCartAdd" />
+        <plugin name="set_google_analytics_on_cart_remove" type="Magento\GoogleTagManager\Model\Plugin\Quote\SetGoogleAnalyticsOnCartRemove" />
+    </type>
+    <type name="Magento\Framework\View\Layout">
+        <plugin name="gtmLayout" type="Magento\GoogleTagManager\Model\Plugin\Layout" />
+    </type>
+    <type name="Magento\Framework\Stdlib\Cookie\PhpCookieManager">
+        <plugin name="gtmAddToCartAdvanced" type="Magento\GoogleTagManager\Plugin\Framework\Stdlib\Cookie\PhpCookieManagerPlugin" />
+    </type>
+</config>

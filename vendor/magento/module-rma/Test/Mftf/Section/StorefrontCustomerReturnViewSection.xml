@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+ /**
+  * Copyright © Magento, Inc. All rights reserved.
+  * See COPYING.txt for license details.
+  */
+-->
+<sections xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="urn:magento:mftf:Page/etc/SectionObject.xsd">
+    <section name="StorefrontCustomerReturnViewSection">
+        <element name="viewReturn" type="button" selector="#my-returns-table a.action.view"/>
+        <element name="showDetails" type="button" selector="#my-returns-items-table button.action.details" timeout="30"/>
+        <element name="questions" type="text" selector=".returns-details td.col.questions"/>
+        <element name="answers" type="text" selector=".returns-details td.col.answers"/>
+        <element name="returnItemCell" type="text" selector="#my-returns-items-table tbody  td[data-th='{{columnName}}']" parameterized="true"/>
+        <element name="returnComments" type="text" selector="//div[@class='block block-returns-comments']"/>
+    </section>
+</sections>

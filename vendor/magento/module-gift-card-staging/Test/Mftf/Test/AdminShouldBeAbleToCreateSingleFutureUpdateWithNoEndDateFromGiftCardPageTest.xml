@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+ /**
+  * Copyright © Magento, Inc. All rights reserved.
+  * See COPYING.txt for license details.
+  */
+-->
+
+<tests xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xsi:noNamespaceSchemaLocation="urn:magento:mftf:Test/etc/testSchema.xsd">
+    <test name="AdminShouldBeAbleToCreateSingleFutureUpdateWithNoEndDateFromGiftCardPageTest">
+        <annotations>
+            <features value="GiftCardStaging"/>
+            <stories value="Staging update management"/>
+            <title value="Admin should be able to create Single Future Update with no end date from Gift Card Page"/>
+            <description value="Check to ensure the future update appears on the staging dashboard"/>
+            <severity value="CRITICAL"/>
+            <testCaseId value="MC-3266"/>
+            <group value="giftCardStaging"/>
+        </annotations>
+        <before>
+            <!-- Create  gift card product -->
+            <createData entity="ApiGiftCard" stepKey="createProduct"/>
+        </before>
+        <after>
+            <!-- Delete Gift Card product -->
+            <deleteData createDataKey="createProduct" stepKey="deleteProduct"/>
+            <!-- Clear filters on Staging Dashboard Page -->
+            <actionGroup ref="StagingDashboardClearFiltersActionGroup" stepKey="clearFilters"/>
+            <!-- Log out -->
+            <actionGroup ref="AdminLogoutActionGroup" stepKey="logout"/>
+        </after>
+        <!-- Step 1. Login to Admin -->
+        <actionGroup ref="AdminLoginActionGroup" stepKey="LoginAsAdmin"/>
+        <!-- 2. Navigate to menu Products->Catalog, 3. Open gift card product  -->
+        <actionGroup ref="AdminProductPageOpenByIdActionGroup" stepKey="goToProductPage">
+            <argument name="productId" value="$$createProduct.id$$"/>
+        </actionGroup>
+        <!-- Step 4. Click "Schedule New Update" button, 5. Fill all required fields, 6. Click "Save" button -->
+        <generateDate date="+1 day" format="m/j/Y g:i A" stepKey="generateStartDate"/>
+        <actionGroup ref="FillScheduleUpdateRemovePriceActionGroup" stepKey="createNewScheduleUpdate">
+            <argument name="staging" value="S18UpdateNameStaging"/>
+            <argument name="timeStart" value="{$generateStartDate}"/>
+        </actionGroup>
+        <!-- Step 7. Navigate to Content > Dashboard. Validate that the update exists in the dashboard -->
+        <actionGroup ref="StagingDashboardSearchUpdateActionGroup" stepKey="assertUpdatePresentInStagingDashboard">
+            <argument name="staging" value="S18UpdateNameStaging"/>
+        </actionGroup>
+    </test>
+</tests>

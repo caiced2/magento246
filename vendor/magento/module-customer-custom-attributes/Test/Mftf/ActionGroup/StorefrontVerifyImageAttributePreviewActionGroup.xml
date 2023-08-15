@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+ /**
+  * Copyright © Magento, Inc. All rights reserved.
+  * See COPYING.txt for license details.
+  */
+-->
+<actionGroups xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+              xsi:noNamespaceSchemaLocation="urn:magento:mftf:Test/etc/actionGroupSchema.xsd">
+    <actionGroup name="StorefrontVerifyImageAttributePreviewActionGroup">
+        <annotations>
+            <description>Assert that image is visible on storefront</description>
+        </annotations>
+        <arguments>
+            <argument name="attributeCode" type="string" defaultValue="{{AttributeFile.attribute_code}}"/>
+        </arguments>
+        <waitForElement selector="{{StoreFrontCustomerAdvancedAttributesSection.fileUploaderPreviewImage(attributeCode)}}" stepKey="waitForImagePreview"/>
+        <executeJS function="return document.evaluate(&quot;{{StoreFrontCustomerAdvancedAttributesSection.fileUploaderPreviewImage(attributeCode)}}&quot;,
+          document, null, XPathResult.FIRST_ORDERED_NODE_TYPE, null).singleNodeValue.naturalHeight" stepKey="getNaturalHeight"/>
+        <assertGreaterThan stepKey="VerifyThatImageIsVisible">
+          <actualResult type="variable">getNaturalHeight</actualResult>
+          <expectedResult type="int">0</expectedResult>
+        </assertGreaterThan>
+    </actionGroup>
+</actionGroups>

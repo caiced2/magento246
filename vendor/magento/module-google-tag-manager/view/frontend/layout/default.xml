@@ -1,0 +1,71 @@
+<?xml version="1.0"?>
+<!--
+/**
+ * Copyright © Magento, Inc. All rights reserved.
+ * See COPYING.txt for license details.
+ */
+-->
+<page xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="urn:magento:framework:View/Layout/etc/page_configuration.xsd">
+    <body>
+        <!-- Remove Magento_GoogleAnalytics -->
+        <referenceBlock name="google_analytics" remove="true" />
+        <referenceBlock name="google_gtag_analytics" remove="true" />
+        <referenceContainer name="head.additional">
+            <block class="Magento\GoogleTagManager\Block\Ga" name="google_analyticsuniversal" as="google_analyticsuniversal"
+                   template="Magento_GoogleTagManager::ga.phtml" />
+            <block class="Magento\GoogleTagManager\Block\GtagGa"
+                   name="google_gtag_analyticsgtm"
+                   as="google_gtag_analyticsgtm"
+                   ifconfig="google/gtag/analytics4/active"
+                   template="Magento_GoogleTagManager::gtag_ga.phtml">
+                <arguments>
+                    <argument name="view_model" xsi:type="object">Magento\GoogleTagManager\ViewModel\TagManagerConfig</argument>
+                </arguments>
+            </block>
+        </referenceContainer>
+
+        <referenceContainer name="before.body.end">
+            <block class="Magento\GoogleTagManager\Block\ListJson" name="banner_impression"
+                   template="Magento_GoogleTagManager::promotion.phtml">
+                <arguments>
+                    <argument name="variable_name" xsi:type="string">staticPromotions</argument>
+                </arguments>
+            </block>
+        </referenceContainer>
+
+        <referenceContainer name="after.body.start">
+            <block ifconfig="google/analytics/active" class="Magento\GoogleTagManager\Block\Ga"
+                   template="Magento_GoogleTagManager::gtm.phtml" name="google_tag_manager"/>
+            <block ifconfig="google/gtag/analytics4/active"
+                   template="Magento_GoogleTagManager::gtag_gtm.phtml" name="google_gtag_tag_manager">
+                <arguments>
+                    <argument name="view_model" xsi:type="object">Magento\GoogleTagManager\ViewModel\TagManagerConfig</argument>
+                </arguments>
+            </block>
+            <block ifconfig="google/analytics/active" class="Magento\Framework\View\Element\Template"
+                   template="Magento_GoogleTagManager::js.phtml" name="google.tagmanager.js">
+                <arguments>
+                    <argument name="impression_block_list" xsi:type="array">
+                        <item name="list" xsi:type="string">category.products.list</item>
+                        <item name="upsell" xsi:type="string">product.info.upsell</item>
+                        <item name="related" xsi:type="string">catalog.product.related</item>
+                        <item name="crosssell" xsi:type="string">checkout.cart.crosssell</item>
+                        <item name="search" xsi:type="string">search_result_list</item>
+                    </argument>
+                </arguments>
+            </block>
+            <block ifconfig="google/gtag/analytics4/active" class="Magento\Framework\View\Element\Template"
+                   template="Magento_GoogleTagManager::js.phtml" name="google.tagmanager.gtag.js">
+                <arguments>
+                    <argument name="impression_block_list" xsi:type="array">
+                        <item name="list" xsi:type="string">category.products.list</item>
+                        <item name="upsell" xsi:type="string">product.info.upsell</item>
+                        <item name="related" xsi:type="string">catalog.product.related</item>
+                        <item name="crosssell" xsi:type="string">checkout.cart.crosssell</item>
+                        <item name="search" xsi:type="string">search_result_list</item>
+                    </argument>
+                </arguments>
+            </block>
+        </referenceContainer>
+    </body>
+</page>

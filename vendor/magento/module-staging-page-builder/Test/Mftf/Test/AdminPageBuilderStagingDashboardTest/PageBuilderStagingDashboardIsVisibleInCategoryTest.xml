@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+ /**
+  * Copyright © Magento, Inc. All rights reserved.
+  * See COPYING.txt for license details.
+  */
+-->
+<tests xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:noNamespaceSchemaLocation="urn:magento:mftf:Test/etc/testSchema.xsd">
+    <test name="PageBuilderStagingDashboardIsVisibleInCategoryTest" extends="PageBuilderStagingDashboardIsVisibleInCMSPageTest">
+        <annotations>
+            <features value="PageBuilder"/>
+            <stories value="Staging Dashboard - Catalog Category"/>
+            <title value="PageBuilder is visible from Staging Dashboard in Catalog Category"/>
+            <description value="This test is to ensure that the user can see and add a content type in PageBuilder stage for Staging Dashboard in Catalog Category."/>
+            <severity value="BLOCKER"/>
+            <useCaseId value="MC-14992"/>
+            <testCaseId value="MC-15280"/>
+            <group value="pagebuilder"/>
+            <group value="pagebuilder-ee"/>
+            <group value="pagebuilder-staging"/>
+            <group value="pagebuilder-stagingDashboard"/>
+            <group value="pagebuilder-catalog-category"/>
+            <group value="pagebuilder-tab"/>
+        </annotations>
+        <before>
+            <createData entity="_defaultCategory" stepKey="createCMSPage"/>
+            <actionGroup ref="NavigateToCreatedCategoryActionGroup" stepKey="navigateToCMSPage">
+                <argument name="Category" value="$$createCMSPage$$"/>
+            </actionGroup>
+            <actionGroup ref="openEditSlideOutForCategoriesStagingUpdateFromViewStagingUpdate" stepKey="openEditSlideOutForCMSPagesStagingUpdateFromViewStagingUpdate"/>
+            <actionGroup ref="openPageBuilderForAttribute" stepKey="openPageBuilderForDescription" after="clickContentSectionHeader"/>
+        </before>
+        <seeElement selector="{{PageBuilderStage.stageWrapperFullScreen}}" stepKey="seeElementPageBuilderStage"/>
+        <comment userInput="---merging to remove step---" stepKey="switchToPageBuilderStage"/>
+    </test>
+</tests>

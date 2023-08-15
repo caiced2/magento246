@@ -1,0 +1,66 @@
+<!--
+/**
+ * Copyright © Magento, Inc. All rights reserved.
+ * See COPYING.txt for license details.
+ */
+-->
+
+<div class="admin__field">
+    <label class="admin__field-label">
+        <span translate="'Dynamic Block'"></span>
+    </label>
+    <div class="admin__field-control">
+        <div class="pagebuilder-block-chooser">
+            <div if="$data.errorMessage" text="$data.errorMessage"></div>
+            <div if="$data.meta().name" text="$data.meta().name" class="block-title"></div>
+            <div ifnot="$data.meta().name || $data.errorMessage()" class="name" translate="'Not Selected'"></div>
+
+            <div ko-scope="getButton()" class="chooser-button">
+                <render></render>
+            </div>
+
+            <table class="block-info" data-role="grid" if="$data.displayMetadata() && $data.meta().name && !$data.errorMessage()">
+                <tbody>
+                    <tr css="getNextMetaRowClasses()">
+                        <td>
+                            <div class="data-grid-cell-content"><strong translate="'Status'"></strong></div>
+                        </td>
+                        <td>
+                            <div class="data-grid-cell-content" text="getStatusLabel()"></div>
+                        </td>
+                    </tr>
+                    <tr css="getNextMetaRowClasses()" if="getCustomerSegments().length > 0">
+                        <td>
+                            <div class="data-grid-cell-content"><strong translate="'Customer Segments'"></strong></div>
+                        </td>
+                        <td>
+                            <div class="data-grid-cell-content" each="getCustomerSegments()">
+                                <p text="$data"></p>
+                            </div>
+                        </td>
+                    </tr>
+                    <tr css="getNextMetaRowClasses()" if="getRelatedCatalogRules().length > 0">
+                        <td>
+                            <div class="data-grid-cell-content"><strong translate="'Related Catalog Price Rules'"></strong></div>
+                        </td>
+                        <td>
+                            <div class="data-grid-cell-content" each="getRelatedCatalogRules()">
+                                <p text="$data"></p>
+                            </div>
+                        </td>
+                    </tr>
+                    <tr css="getNextMetaRowClasses()" if="getRelatedCartRules().length > 0">
+                        <td>
+                            <div class="data-grid-cell-content"><strong translate="'Related Cart Price Rules'"></strong></div>
+                        </td>
+                        <td>
+                            <div class="data-grid-cell-content" each="getRelatedCartRules()">
+                                <p text="$data"></p>
+                            </div>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>

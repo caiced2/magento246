@@ -1,0 +1,16 @@
+<?php
+/**
+ * Copyright © Magento, Inc. All rights reserved.
+ * See COPYING.txt for license details.
+ */
+
+?>
+<?php
+/**
+ * Create account form template
+ */
+/* @var $block \Magento\Rma\Block\Form\Renderer\Image */
+?>
+<a href="<?= $block->escapeUrl($block->getImageUrl()) ?>" target="_blank" class="product photo">
+    <img class="product photo preview" src="<?= $block->escapeUrl($block->getImageUrl()) ?>" title="<?= $block->escapeHtmlAttr(__('View Full Size')) ?>" alt="<?= $block->escapeHtmlAttr(__('View Full Size')) ?>">
+</a>

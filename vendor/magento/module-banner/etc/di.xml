@@ -1,0 +1,36 @@
+<?xml version="1.0"?>
+<!--
+/**
+ * Copyright © Magento, Inc. All rights reserved.
+ * See COPYING.txt for license details.
+ */
+-->
+<config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="urn:magento:framework:ObjectManager/etc/config.xsd">
+    <type name="Magento\Banner\Model\Config">
+        <arguments>
+            <argument name="bannerTypes" xsi:type="array">
+                <item name="content" xsi:type="string" translatable="true">Content Area</item>
+                <item name="footer" xsi:type="string" translatable="true">Footer</item>
+                <item name="header" xsi:type="string" translatable="true">Header</item>
+                <item name="leftcol" xsi:type="string" translatable="true">Left Column</item>
+                <item name="rightcol" xsi:type="string" translatable="true">Right Column</item>
+            </argument>
+        </arguments>
+    </type>
+    <type name="Magento\Framework\EntityManager\Operation\AttributePool">
+        <arguments>
+            <argument name="extensionActions" xsi:type="array">
+                <item name="bannerCatalogRule" xsi:type="array">
+                    <item name="Magento\CatalogRule\Api\Data\RuleInterface" xsi:type="array">
+                        <item name="read" xsi:type="string">Magento\Banner\Model\ResourceModel\Catalogrule\ReadHandler</item>
+                    </item>
+                </item>
+            </argument>
+        </arguments>
+    </type>
+    <virtualType name="storeColumn" type="Magento\Store\Ui\Component\Listing\Column\Store">
+        <arguments>
+            <argument name="storeKey" xsi:type="string">stores</argument>
+        </arguments>
+    </virtualType>
+</config>

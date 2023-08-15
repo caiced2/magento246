@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+ /**
+  * Copyright © Magento, Inc. All rights reserved.
+  * See COPYING.txt for license details.
+  */
+-->
+<actionGroups xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:noNamespaceSchemaLocation="urn:magento:mftf:Test/etc/actionGroupSchema.xsd">
+    <actionGroup name="FillScheduleUpdateWithCheckEndActionGroup" extends="FillScheduleUpdateActionGroup">
+        <see selector="{{AdminScheduledChangesSection.scheduleDetails(staging.updateName)}}" userInput="{{staging.updateName}}" stepKey="seeUpdateName"/>
+        <see selector="{{AdminScheduledChangesSection.scheduleDetails(staging.updateDescription)}}" userInput="{{staging.updateDescription}}" stepKey="seeUpdateDescription"/>
+        <see selector="{{AdminScheduledChangesSection.scheduleViewEdit(staging.updateName)}}" userInput="View/Edit" stepKey="seeUpdateViewAndEdit"/>
+        <see selector="{{AdminScheduledChangesSection.scheduleActions(staging.updateName, 'Preview')}}" userInput="Preview" stepKey="seeUpdatePreview"/>
+        <see selector="{{AdminScheduledChangesSection.scheduleLabel('Start')}}" userInput="Start" stepKey="seeStart"/>
+        <see selector="{{AdminScheduledChangesSection.scheduleLabel('End')}}" userInput="End" stepKey="seeEnd"/>
+    </actionGroup>
+</actionGroups>

@@ -1,0 +1,17 @@
+<?xml version="1.0"?>
+<!--
+/**
+ * Copyright © Magento, Inc. All rights reserved.
+ * See COPYING.txt for license details.
+ */
+-->
+<schema xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:noNamespaceSchemaLocation="urn:magento:framework:Setup/Declaration/Schema/etc/schema.xsd">
+    <table name="authorization_role" resource="default" comment="Admin Role Table">
+        <column xsi:type="int" name="gws_is_all" unsigned="false" nullable="false" default="1" comment="Yes/No Flag"/>
+        <column xsi:type="text" name="gws_websites" nullable="true"
+                comment="Comma-separated Website Ids"/>
+        <column xsi:type="text" name="gws_store_groups" nullable="true"
+                comment="Comma-separated Store Groups Ids"/>
+    </table>
+</schema>

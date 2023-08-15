@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+ /**
+  * Copyright © Magento, Inc. All rights reserved.
+  * See COPYING.txt for license details.
+  */
+-->
+
+<sections xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+          xsi:noNamespaceSchemaLocation="urn:magento:mftf:Page/etc/SectionObject.xsd">
+    <section name="AdminGiftWrappingGridSection">
+        <element name="addGiftWrapping" type="button" selector="#add" timeout="30"/>
+        <element name="giftWrappingFilterDesign" type="text" selector="#giftwrappingGrid_filter_design"/>
+        <element name="clickEditRow" type="input" selector=".data-grid tbody tr:nth-child({{row}})" parameterized="true" timeout="30"/>
+        <element name="applyFilterButton" type="button" selector="#giftwrappingGrid [data-action='grid-filter-apply']" timeout="30"/>
+        <element name="giftWrappingDesignColumn" type="text" selector="#giftwrappingGrid_table tbody tr:nth-child({{row}}) td.col-design" parameterized="true"/>
+        <element name="giftWrappingWebsiteColumn" type="text" selector="#giftwrappingGrid_table tbody tr:nth-child({{row}}) td.col-websites" parameterized="true"/>
+        <element name="giftWrappingPriceColumn" type="text" selector="#giftwrappingGrid_table tbody tr:nth-child({{row}}) td.col-price" parameterized="true"/>
+        <element name="allowGiftWrappingOnOrderLevel" type="select" selector="#sales_gift_options_wrapping_allow_order"/>
+        <element name="allowGiftWrappingForOrderItems" type="select" selector="#sales_gift_options_wrapping_allow_items"/>
+    </section>
+</sections>

@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+ /**
+  * Copyright © Magento, Inc. All rights reserved.
+  * See COPYING.txt for license details.
+  */
+-->
+<actionGroups xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+              xsi:noNamespaceSchemaLocation="urn:magento:mftf:Test/etc/actionGroupSchema.xsd">
+    <actionGroup name="AssignBannerToWidgetActionGroup">
+        <arguments>
+            <argument name="Banner"/>
+            <argument name="Widget"/>
+        </arguments>
+        <amOnPage url="{{AdminWidgetGridPage.url}}" stepKey="amOnWidgetGrid" />
+        <waitForPageLoad stepKey="waitForPageLoad1"/>
+        <click selector="{{AdminWidgetGridSection.title(Widget.title)}}" stepKey="navigateToWidget" />
+        <waitForPageLoad stepKey="waitForLoading2"/>
+        <seeInField userInput="{{WidgetWithBlock.design_theme}}" selector="{{AdminNewWidgetSection.widgetDesignTheme}}" stepKey="seeTheme"/>
+        <scrollTo selector="{{StorefrontPropertiesSection.PageTitle}}" stepKey="scrollToPageTitle1"/>
+        <waitForPageLoad stepKey="wait"/>
+        <click selector="{{StorefrontPropertiesSection.AddLayoutUpdateBtn}}" stepKey="clickOnAddLayoutBtn" />
+        <selectOption selector="{{StorefrontPropertiesSection.LayoutUpdateSelect('1')}}" userInput="All Pages" stepKey="selectAllPageOptions" />
+        <waitForElement selector="{{StorefrontPropertiesSection.ContainerListOption('Page Header')}}" stepKey="waitForSelectLoad"/>
+        <selectOption selector="{{StorefrontPropertiesSection.ContainerList}}" userInput="Page Header" stepKey="selectContainer" />
+        <waitForPageLoad stepKey="waitForLoading5"/>
+        <scrollTo selector="{{StorefrontPropertiesSection.PageTitle}}" stepKey="scrollToPageTitle2"/>
+        <click selector="{{WidgetOptions.WidgetOptionsTab}}" stepKey="navigateToWidgetOptionsTab"/>
+        <scrollTo selector="{{WidgetOptions.WidgetOptionsTab}}" stepKey="scrollToWidgetOptionsTab"/>
+        <selectOption selector="{{WidgetOptions.BannerGrid}}" userInput="Any" stepKey="filterAny"/>
+        <click selector="{{WidgetOptions.Search}}" stepKey="clickSearchBtn" />
+        <waitForPageLoad stepKey="waitForLoading6"/>
+        <click selector="{{WidgetOptions.BannerName(Banner.Name)}}" stepKey="selectCreatedBanner" />
+        <click selector="{{WidgetBasicActionSection.Save}}" stepKey="saveWidget" />
+        <waitForPageLoad stepKey="waitForPageLoad2"/>
+    </actionGroup>
+</actionGroups>

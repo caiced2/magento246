@@ -1,0 +1,123 @@
+<?xml version="1.0"?>
+<!--
+/**
+ * Copyright © Magento, Inc. All rights reserved.
+ * See COPYING.txt for license details.
+ */
+-->
+<config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="urn:magento:module:Magento_Config:etc/system_file.xsd">
+    <system>
+        <section id="checkout">
+            <group id="quick_checkout" translate="label" sortOrder="-1" showInDefault="1" showInWebsite="1" showInStore="1">
+                <label>Quick Checkout</label>
+                <frontend_model>Magento\QuickCheckout\Block\Adminhtml\System\Config\Fieldset\Head</frontend_model>
+                <fieldset_css>quickcheckout-custom-group-head</fieldset_css>
+                <group id="general" translate="label" sortOrder="10" showInDefault="1" showInWebsite="1" showInStore="1">
+                    <frontend_model>Magento\QuickCheckout\Block\Adminhtml\System\Config\Fieldset\Custom</frontend_model>
+                    <fieldset_css>quickcheckout-custom-group</fieldset_css>
+                    <field id="active" translate="label" sortOrder="1" type="select" showInDefault="1" showInWebsite="1" showInStore="0">
+                        <label>Enable</label>
+                        <source_model>Magento\Config\Model\Config\Source\Yesno</source_model>
+                        <config_path>payment/quick_checkout/active</config_path>
+                    </field>
+                    <field id="method" translate="label" sortOrder="1" type="select" showInDefault="1" showInWebsite="1" showInStore="0">
+                        <label>Method</label>
+                        <source_model>Magento\QuickCheckout\Model\Adminhtml\Source\Method</source_model>
+                        <config_path>payment/quick_checkout/method</config_path>
+                        <depends>
+                            <field id="checkout/quick_checkout/general/active">1</field>
+                        </depends>
+                    </field>
+                </group>
+                <group id="credentials" translate="label" sortOrder="20" showInDefault="1" showInWebsite="1" showInStore="0">
+                    <depends>
+                        <field id="checkout/quick_checkout/general/active">1</field>
+                    </depends>
+                    <label>Account Credentials</label>
+                    <frontend_model>Magento\QuickCheckout\Block\Adminhtml\System\Config\Fieldset\Custom</frontend_model>
+                    <fieldset_css>quickcheckout-custom-group</fieldset_css>
+                    <field id="api_key" translate="label" sortOrder="40" type="obscure" showInDefault="1" showInWebsite="1" showInStore="0">
+                        <label>API Key</label>
+                        <config_path>payment/quick_checkout/api_key</config_path>
+                        <backend_model>Magento\Config\Model\Config\Backend\Encrypted</backend_model>
+                        <comment>Used to call Bolt server side APIs.</comment>
+                        <validate>required-entry</validate>
+                    </field>
+                    <field id="publishable_key" translate="label" sortOrder="50" type="obscure" showInDefault="1" showInWebsite="1" showInStore="0">
+                        <label>Publishable Key</label>
+                        <config_path>payment/quick_checkout/publishable_key</config_path>
+                        <backend_model>Magento\Config\Model\Config\Backend\Encrypted</backend_model>
+                        <comment>Used by Bolt to identify your website.</comment>
+                        <validate>required-entry</validate>
+                    </field>
+                    <field id="validate_credentials" translate="button_label" sortOrder="60" showInDefault="1" showInWebsite="1" showInStore="0">
+                        <label/>
+                        <button_label>Validate Credentials</button_label>
+                        <frontend_model>Magento\QuickCheckout\Block\Adminhtml\System\Config\ValidateCredentials</frontend_model>
+                    </field>
+                    <field id="signing_secret" translate="label" sortOrder="75" type="obscure" showInDefault="1" showInWebsite="1" showInStore="0">
+                        <label>Signing Secret</label>
+                        <config_path>payment/quick_checkout/signing_secret</config_path>
+                        <backend_model>Magento\Config\Model\Config\Backend\Encrypted</backend_model>
+                        <comment>Used by merchant API to decode requests sent by Bolt.</comment>
+                        <validate>required-entry</validate>
+                    </field>
+                    <field id="configure_callback_url" translate="button_label" sortOrder="80" showInDefault="1" showInWebsite="1" showInStore="0">
+                        <label/>
+                        <button_label>Configure Callback URL</button_label>
+                        <frontend_model>Magento\QuickCheckout\Block\Adminhtml\System\Config\ConfigureCallbackUrl</frontend_model>
+                    </field>
+                </group>
+                <group id="settings" translate="label" sortOrder="30" showInDefault="1" showInWebsite="1" showInStore="1">
+                    <depends>
+                        <field id="checkout/quick_checkout/general/active">1</field>
+                    </depends>
+                    <label>Service Settings</label>
+                    <frontend_model>Magento\QuickCheckout\Block\Adminhtml\System\Config\Fieldset\Custom</frontend_model>
+                    <fieldset_css>quickcheckout-custom-group</fieldset_css>
+                    <field id="title" translate="label" sortOrder="20" type="text" showInDefault="1" showInWebsite="1" showInStore="1">
+                        <label>Title</label>
+                        <config_path>payment/quick_checkout/title</config_path>
+                        <comment>Title of the Quick Checkout payment option on the storefront.</comment>
+                    </field>
+                    <field id="payment_action" translate="label" sortOrder="30" type="select" showInDefault="1" showInWebsite="1" showInStore="0">
+                        <label>Payment Action</label>
+                        <source_model>Magento\QuickCheckout\Model\Adminhtml\Source\PaymentAction</source_model>
+                        <config_path>payment/quick_checkout/payment_action</config_path>
+                        <comment>Capture transaction automatically upon authorization (Authorize and Capture) or not (Authorize).</comment>
+                    </field>
+                    <field id="debug" translate="label" sortOrder="60" type="select" showInDefault="1" showInWebsite="1" showInStore="0">
+                        <label>Debug Mode</label>
+                        <source_model>Magento\Config\Model\Config\Source\Yesno</source_model>
+                        <config_path>payment/quick_checkout/debug</config_path>
+                        <comment>Log requests and responses to the var/payment.log.</comment>
+                    </field>
+                    <field id="checkout_tracking" translate="label" sortOrder="90" type="select" showInDefault="1" showInWebsite="1" showInStore="0">
+                        <label>Enable Checkout Tracking</label>
+                        <source_model>Magento\Config\Model\Config\Source\Yesno</source_model>
+                        <config_path>payment/quick_checkout/checkout_tracking</config_path>
+                        <comment>Disabling this option will affect reporting because Adobe Commerce is not allowed to share checkout tracking information with Bolt.</comment>
+                    </field>
+                    <field id="next_stage_after_login" translate="label" sortOrder="100" type="select" showInDefault="1" showInWebsite="1" showInStore="0">
+                        <label>Next Stage After Login</label>
+                        <source_model>Magento\QuickCheckout\Model\Adminhtml\Source\NextStageAfterLogin</source_model>
+                        <config_path>payment/quick_checkout/next_stage_after_login</config_path>
+                        <comment>Option to change the navigation flow after the customer has logged in: the system loads Payment page by default or another one configured from the list (i.e: Shipping).</comment>
+                    </field>
+                    <field id="enable_auto_login" translate="label" sortOrder="110" type="select" showInDefault="1" showInWebsite="1" showInStore="0">
+                        <label>Automatic Login Enabled</label>
+                        <source_model>Magento\Config\Model\Config\Source\Yesno</source_model>
+                        <config_path>payment/quick_checkout/auto_login_enabled</config_path>
+                        <comment>Option to enable the automatic login in the checkout.</comment>
+                    </field>
+                    <field id="auto_login_network" translate="label" sortOrder="120" type="select" showInDefault="1" showInWebsite="1" showInStore="0">
+                        <label>Automatic Login Network</label>
+                        <source_model>Magento\QuickCheckout\Model\Adminhtml\Source\Network</source_model>
+                        <config_path>payment/quick_checkout/auto_login_network</config_path>
+                        <comment>Option to change the network where the customer is going to be automatically logged in if possible.</comment>
+                    </field>
+                </group>
+            </group>
+        </section>
+    </system>
+</config>

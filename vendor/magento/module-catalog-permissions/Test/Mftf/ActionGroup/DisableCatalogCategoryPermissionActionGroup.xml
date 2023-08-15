@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+ /**
+  * Copyright © Magento, Inc. All rights reserved.
+  * See COPYING.txt for license details.
+  */
+-->
+
+<actionGroups xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:noNamespaceSchemaLocation="urn:magento:mftf:Test/etc/actionGroupSchema.xsd">
+    <actionGroup name="DisableCatalogCategoryPermissionActionGroup">
+        <amOnPage url="{{AdminCatalogCategoryPermissionsConfigPage.url}}" stepKey="navigateToCategoryPermissionConfigPage"/>
+        <scrollTo selector="{{AdminConfigCatalogCategoryPermissionsSection.catalogPermissionsTab}}" stepKey="scrollToCatalogPermissionsTab"/>
+        <conditionalClick selector="{{AdminConfigCatalogCategoryPermissionsSection.catalogPermissionsTab}}" dependentSelector="{{AdminConfigCatalogCategoryPermissionsSection.checkIfTabExpand}}" visible="true" stepKey="expandCategoryPermissionsTab"/>
+        <selectOption selector="{{AdminConfigCatalogCategoryPermissionsSection.enableSystemValue}}" userInput="No" stepKey="setDefaultSystemValue"/>
+        <selectOption selector="{{AdminConfigCatalogCategoryPermissionsSection.allowBrowsingCategory}}" userInput="No, Redirect to Landing Page" stepKey="setDefaultValueToAllowBrowsingCategory"/>
+        <selectOption selector="{{AdminConfigCatalogCategoryPermissionsSection.displayProductPrices}}" userInput="No" stepKey="setDefaultValueDisplayProductPrices"/>
+        <selectOption selector="{{AdminConfigCatalogCategoryPermissionsSection.allowAddingToCart}}" userInput="No" stepKey="setDefaultValueAllowAddingToCart"/>
+        <click selector="{{ContentManagementSection.Save}}" stepKey="saveConfiguration"/>
+        <see selector="{{AdminMessagesSection.success}}" userInput="You saved the configuration." stepKey="seeConfigurationSuccessMessage"/>
+    </actionGroup>
+</actionGroups>

@@ -1,0 +1,25 @@
+<?xml version="1.0"?>
+<!--
+/**
+ * Copyright © Magento, Inc. All rights reserved.
+ * See COPYING.txt for license details.
+ */
+-->
+<config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="urn:magento:framework:ObjectManager/etc/config.xsd">
+    <type name="Magento\Checkout\Block\Onepage">
+        <arguments>
+            <argument name="layoutProcessors" xsi:type="array">
+                <item name="addressFormCustomAttributes" xsi:type="object" sortOrder="50">Magento\CustomerCustomAttributes\Block\Checkout\LayoutProcessor</item>
+            </argument>
+        </arguments>
+    </type>
+    <type name="Magento\Ui\Component\Form\AttributeMapper">
+        <plugin name="processCustomerCustomBooleanAttributeOptions" type="Magento\CustomerCustomAttributes\Plugin\ProcessCustomerCustomBooleanAttributeOptions"/>
+    </type>
+    <type name="Magento\Customer\Model\FileProcessor">
+        <arguments>
+            <argument name="customerFileUrlPath" xsi:type="string">customer_custom_attributes/index/viewfile</argument>
+            <argument name="customerAddressFileUrlPath" xsi:type="string">customer_custom_attributes/address_file/viewfile</argument>
+        </arguments>
+    </type>
+</config>

@@ -1,0 +1,417 @@
+<?xml version="1.0"?>
+<!--
+/**
+ * Copyright © Magento, Inc. All rights reserved.
+ * See COPYING.txt for license details.
+ */
+-->
+<config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="urn:magento:framework:ObjectManager/etc/config.xsd">
+    <preference for="Magento\CatalogSearch\Model\ResourceModel\Fulltext\Collection" type="Magento\CatalogStaging\Model\ResourceModel\Fulltext\Collection" />
+    <preference for="Magento\CatalogStaging\Api\CategoryStagingInterface" type="Magento\CatalogStaging\Model\CategoryStaging" />
+    <preference for="Magento\CatalogStaging\Api\ProductStagingInterface" type="Magento\CatalogStaging\Model\ProductStaging" />
+    <preference for="Magento\Staging\Model\Update\Grid\ActionDataProviderInterface" type="Magento\Staging\Model\Update\Grid\ActionsDataProvider" />
+    <preference for="Magento\Catalog\Api\SpecialPriceInterface" type="Magento\CatalogStaging\Model\ResourceModel\Product\Price\SpecialPrice" />
+    <virtualType name="catalogCategorySequence" type="Magento\Staging\Model\ResourceModel\Sequence">
+        <arguments>
+            <argument name="sequenceTableName" xsi:type="string">sequence_catalog_category</argument>
+        </arguments>
+    </virtualType>
+    <virtualType name="stagingCatalogCategoryDashboardGridActions" type="Magento\Staging\Ui\Component\Listing\Column\Entity\UpdateActions">
+        <arguments>
+            <argument name="actionsList" xsi:type="object">catalogCategoryStagingUpdateGridActionProvider</argument>
+        </arguments>
+    </virtualType>
+    <virtualType name="catalogCategoryStagingUpdateGridActionProvider" type="Magento\Staging\Model\Update\Grid\ActionsDataProvider">
+        <arguments>
+            <argument name="actionsList" xsi:type="array">
+                <item name="editAction" xsi:type="object">catalogCategoryUpdateGridEditAction</item>
+                <item name="deleteAction" xsi:type="object">catalogCategoryUpdateGridDeleteAction</item>
+            </argument>
+        </arguments>
+    </virtualType>
+    <virtualType name="catalogCategoryUpdateGridEditAction" type="Magento\Staging\Model\Update\Grid\UpdateEditGridActions\EditAction">
+        <arguments>
+            <argument name="entityIdentifier" xsi:type="string">id</argument>
+            <argument name="entityColumn" xsi:type="string">entity_id</argument>
+            <argument name="jsModalProvider" xsi:type="string">staging_update_edit.staging_update_edit.catalog_category.update_form_modal</argument>
+            <argument name="jsLoaderProvider" xsi:type="string">staging_update_edit.staging_update_edit.catalog_category.update_form_modal.update_form_loader</argument>
+        </arguments>
+    </virtualType>
+    <virtualType name="catalogCategoryUpdateGridDeleteAction" type="Magento\Staging\Model\Update\Grid\UpdateEditGridActions\DeleteAction">
+        <arguments>
+            <argument name="entityIdentifier" xsi:type="string">id</argument>
+            <argument name="entityColumn" xsi:type="string">entity_id</argument>
+            <argument name="jsModalProvider" xsi:type="string">staging_update_edit.staging_update_edit.catalog_category.update_remove_form_modal</argument>
+            <argument name="jsLoaderProvider" xsi:type="string">staging_update_edit.staging_update_edit.catalog_category.update_remove_form_modal.update_remove_form_loader</argument>
+        </arguments>
+    </virtualType>
+    <virtualType name="stagingCatalogProductDashboardGridActions" type="Magento\Staging\Ui\Component\Listing\Column\Entity\UpdateActions">
+        <arguments>
+            <argument name="actionsList" xsi:type="object">catalogProductStagingUpdateGridActionProvider</argument>
+        </arguments>
+    </virtualType>
+    <virtualType name="catalogProductStagingUpdateGridActionProvider" type="Magento\Staging\Model\Update\Grid\ActionsDataProvider">
+        <arguments>
+            <argument name="actionsList" xsi:type="array">
+                <item name="editAction" xsi:type="object">catalogProductUpdateGridEditAction</item>
+                <item name="deleteAction" xsi:type="object">catalogProductUpdateGridDeleteAction</item>
+            </argument>
+        </arguments>
+    </virtualType>
+    <virtualType name="catalogProductUpdateGridEditAction" type="Magento\Staging\Model\Update\Grid\UpdateEditGridActions\EditAction">
+        <arguments>
+            <argument name="entityIdentifier" xsi:type="string">id</argument>
+            <argument name="entityColumn" xsi:type="string">entity_id</argument>
+            <argument name="jsModalProvider" xsi:type="string">staging_update_edit.staging_update_edit.products.update_form_modal</argument>
+            <argument name="jsLoaderProvider" xsi:type="string">staging_update_edit.staging_update_edit.products.update_form_modal.update_form_loader</argument>
+        </arguments>
+    </virtualType>
+    <virtualType name="catalogProductUpdateGridDeleteAction" type="Magento\Staging\Model\Update\Grid\UpdateEditGridActions\DeleteAction">
+        <arguments>
+            <argument name="entityIdentifier" xsi:type="string">id</argument>
+            <argument name="entityColumn" xsi:type="string">entity_id</argument>
+            <argument name="jsModalProvider" xsi:type="string">staging_update_edit.staging_update_edit.products.catalogstaging_update_remove_form_modal</argument>
+            <argument name="jsLoaderProvider" xsi:type="string">staging_update_edit.staging_update_edit.products.catalogstaging_update_remove_form_modal.update_remove_form_loader</argument>
+        </arguments>
+    </virtualType>
+    <type name="Magento\Framework\EntityManager\OperationPool">
+        <arguments>
+            <argument name="operations" xsi:type="array">
+                <item name="Magento\Catalog\Api\Data\ProductInterface" xsi:type="array">
+                    <item name="read" xsi:type="string">Magento\Framework\EntityManager\Operation\Read</item>
+                    <item name="create" xsi:type="string">Magento\Staging\Model\Operation\Create</item>
+                    <item name="update" xsi:type="string">Magento\Staging\Model\Operation\Update</item>
+                    <item name="delete" xsi:type="string">Magento\Staging\Model\Operation\Delete</item>
+                </item>
+                <item name="Magento\Catalog\Api\Data\CategoryInterface" xsi:type="array">
+                    <item name="create" xsi:type="string">Magento\Staging\Model\Operation\Create</item>
+                    <item name="update" xsi:type="string">Magento\Staging\Model\Operation\Update</item>
+                    <item name="delete" xsi:type="string">Magento\Staging\Model\Operation\Delete</item>
+                </item>
+            </argument>
+        </arguments>
+    </type>
+    <type name="Magento\Catalog\Api\ProductCustomOptionRepositoryInterface">
+        <plugin name="isOptionExists" type="Magento\CatalogStaging\Api\Plugin\ProductCustomOptionRepository" />
+    </type>
+    <virtualType name="stagedCategoryAttributeSubscription" type="Magento\CatalogStaging\Model\Mview\View\Attribute\Subscription">
+        <arguments>
+            <argument name="entityInterface" xsi:type="string">Magento\Catalog\Api\Data\CategoryInterface</argument>
+        </arguments>
+    </virtualType>
+    <virtualType name="stagedProductAttributeSubscription" type="Magento\CatalogStaging\Model\Mview\View\Attribute\Subscription">
+        <arguments>
+            <argument name="entityInterface" xsi:type="string">Magento\Catalog\Api\Data\ProductInterface</argument>
+        </arguments>
+    </virtualType>
+    <type name="Magento\CatalogStaging\Model\Mview\View\SubscriptionFactory">
+        <arguments>
+            <argument name="subscriptionModels" xsi:type="array">
+                <item name="catalog_category_entity_decimal" xsi:type="string">stagedCategoryAttributeSubscription</item>
+                <item name="catalog_category_entity_int" xsi:type="string">stagedCategoryAttributeSubscription</item>
+                <item name="catalog_category_entity_text" xsi:type="string">stagedCategoryAttributeSubscription</item>
+                <item name="catalog_category_entity_varchar" xsi:type="string">stagedCategoryAttributeSubscription</item>
+                <item name="catalog_category_entity_datetime" xsi:type="string">stagedCategoryAttributeSubscription</item>
+                <item name="catalog_product_entity_datetime" xsi:type="string">stagedProductAttributeSubscription</item>
+                <item name="catalog_product_entity_decimal" xsi:type="string">stagedProductAttributeSubscription</item>
+                <item name="catalog_product_entity_int" xsi:type="string">stagedProductAttributeSubscription</item>
+                <item name="catalog_product_entity_gallery" xsi:type="string">stagedProductAttributeSubscription</item>
+                <item name="catalog_product_entity_media_gallery_value" xsi:type="string">stagedProductAttributeSubscription</item>
+                <item name="catalog_product_entity_text" xsi:type="string">stagedProductAttributeSubscription</item>
+                <item name="catalog_product_entity_tier_price" xsi:type="string">stagedProductAttributeSubscription</item>
+                <item name="catalog_product_entity_varchar" xsi:type="string">stagedProductAttributeSubscription</item>
+            </argument>
+        </arguments>
+    </type>
+    <type name="Magento\CatalogStaging\Helper\ReindexPool">
+        <arguments>
+            <argument name="reindexPool" xsi:type="array">
+                <item name="FlatIndexProcessor" xsi:type="object">Magento\Catalog\Model\Indexer\Product\Flat\Processor</item>
+                <item name="CatalogInventoryIndexProcessor" xsi:type="object">Magento\CatalogInventory\Model\Indexer\Stock\Processor</item>
+                <item name="PriceIndexProcessor" xsi:type="object">Magento\Catalog\Model\Indexer\Product\Price\Processor</item>
+                <item name="EavIndexProcessor" xsi:type="object">Magento\Catalog\Model\Indexer\Product\Eav\Processor</item>
+                <item name="ProductCategoryIndexProcessor" xsi:type="object">Magento\Catalog\Model\Indexer\Product\Category\Processor</item>
+                <item name="FulltextIndexProcessor" xsi:type="object">Magento\CatalogSearch\Model\Indexer\Fulltext\Processor</item>
+            </argument>
+        </arguments>
+    </type>
+    <type name="Magento\Framework\View\Element\UiComponent\DataProvider\CollectionFactory">
+        <arguments>
+            <argument name="collections" xsi:type="array">
+                <item name="catalogstaging_category_upcoming_grid_data_source" xsi:type="string">stagingCatalogCategoryUpcomingResult</item>
+                <item name="catalogstaging_category_update_select_grid_data_source" xsi:type="string">stagingCatalogCategoryUpdateSelectResult</item>
+                <item name="catalogstaging_category_update_remove_select_grid_data_source" xsi:type="string">stagingCatalogCategoryUpdateSelectResult</item>
+                <item name="product_staging_update_grid_data_source" xsi:type="string">Magento\CatalogStaging\Model\Update\Grid\SearchResult</item>
+                <item name="staging_update_edit_category_grid_data_source" xsi:type="string">Magento\CatalogStaging\Model\ResourceModel\Category\Grid\Collection</item>
+                <item name="catalogstaging_upcoming_grid_data_source" xsi:type="string">stagingCatalogUpcomingResult</item>
+                <item name="catalogstaging_update_select_grid_data_source" xsi:type="string">stagingCatalogUpdateSelectResult</item>
+                <item name="catalogstaging_update_remove_select_grid_data_source" xsi:type="string">stagingCatalogUpdateSelectResult</item>
+            </argument>
+        </arguments>
+    </type>
+    <type name="Magento\CatalogStaging\Model\Update\Grid\SearchResult">
+        <arguments>
+            <argument name="mainTable" xsi:type="string">staging_update</argument>
+            <argument name="resourceModel" xsi:type="string">Magento\Staging\Model\ResourceModel\Update</argument>
+        </arguments>
+    </type>
+    <type name="Magento\Framework\EntityManager\MetadataPool">
+        <arguments>
+            <argument name="metadata" xsi:type="array">
+                <item name="Magento\Catalog\Api\Data\ProductInterface" xsi:type="array">
+                    <item name="sequenceTable" xsi:type="string">sequence_product</item>
+                </item>
+                <item name="Magento\Catalog\Api\Data\CategoryInterface" xsi:type="array">
+                    <item name="sequenceTable" xsi:type="string">sequence_catalog_category</item>
+                </item>
+            </argument>
+            <argument name="eavMapping" xsi:type="array">
+                <item name="Magento\Catalog\Api\Data\ProductInterface" xsi:type="string">catalog_product</item>
+            </argument>
+        </arguments>
+    </type>
+    <type name="Magento\Staging\Model\Update\Grid\SearchResult">
+        <arguments>
+            <argument name="mainTable" xsi:type="string">staging_update</argument>
+            <argument name="resourceModel" xsi:type="string">Magento\Staging\Model\ResourceModel\Update</argument>
+        </arguments>
+    </type>
+    <type name="Magento\Staging\Model\StagingList">
+        <arguments>
+            <argument name="entities" xsi:type="array">
+                <item name="product" xsi:type="string">Magento\Catalog\Api\Data\ProductInterface</item>
+                <item name="catalog_category" xsi:type="string">Magento\Catalog\Api\Data\CategoryInterface</item>
+            </argument>
+        </arguments>
+    </type>
+    <type name="Magento\Staging\Model\EntityStaging">
+        <arguments>
+            <argument name="stagingServices" xsi:type="array">
+                <item name="Magento\Catalog\Api\Data\ProductInterface" xsi:type="string">Magento\CatalogStaging\Api\ProductStagingInterface</item>
+                <item name="Magento\Catalog\Api\Data\CategoryInterface" xsi:type="string">Magento\CatalogStaging\Api\CategoryStagingInterface</item>
+            </argument>
+        </arguments>
+    </type>
+    <type name="Magento\Catalog\Model\ResourceModel\Product\Collection">
+        <plugin name="joinProductsWhenFlatEnabled" type="Magento\CatalogStaging\Model\Plugin\ResourceModel\Product\JoinProductsWhenFlatEnabled" />
+        <plugin name="joinAttribute" type="Magento\CatalogStaging\Model\Plugin\ResourceModel\Product\Collection" />
+    </type>
+    <type name="Magento\Catalog\Helper\Product\Flat\Indexer">
+        <plugin name="addRowIdToFlatDefinition" type="Magento\CatalogStaging\Plugin\Helper\Product\Flat\FlatColumnsDefinition"/>
+        <plugin name="addRowIdToIndex" type="Magento\CatalogStaging\Plugin\Helper\Product\Flat\FlatIndexes"/>
+    </type>
+    <type name="Magento\Catalog\Model\Indexer\Product\Flat\Table\BuilderInterface">
+        <plugin name="addRowIdToFlat" type="Magento\CatalogStaging\Plugin\Model\Indexer\Product\Flat\Table\Builder"/>
+    </type>
+    <type name="Magento\Catalog\Model\ResourceModel\Product\Collection\ProductLimitation">
+        <plugin name="isUsingPriceIndex" type="Magento\CatalogStaging\Model\Plugin\ResourceModel\Product\Collection\ProductLimitation"/>
+    </type>
+    <type name="Magento\Indexer\Model\Indexer">
+        <plugin name="reindexRow" type="Magento\CatalogStaging\Helper\Indexer"/>
+    </type>
+    <type name="Magento\Staging\Model\StagingApplier">
+        <arguments>
+            <argument name="appliers" xsi:type="array">
+                <item name="Magento\Catalog\Api\Data\ProductInterface" xsi:type="object">Magento\CatalogStaging\Model\ProductApplier</item>
+                <item name="Magento\Catalog\Api\Data\CategoryInterface" xsi:type="object">Magento\CatalogStaging\Model\CategoryApplier</item>
+            </argument>
+        </arguments>
+    </type>
+    <type name="Magento\Framework\Mview\View">
+        <arguments>
+            <argument name="subscriptionFactory" xsi:type="object">Magento\CatalogStaging\Model\Mview\View\SubscriptionFactory</argument>
+        </arguments>
+    </type>
+    <type name="Magento\CatalogStaging\Model\VersionTables">
+        <arguments>
+            <argument name="data" xsi:type="array">
+                <item name="version_tables" xsi:type="array">
+                    <item name="catalog_product_entity_int" xsi:type="string">catalog_product_entity_int</item>
+                    <item name="catalog_product_entity_decimal" xsi:type="string">catalog_product_entity_decimal</item>
+                    <item name="catalog_product_entity_text" xsi:type="string">catalog_product_entity_text</item>
+                    <item name="catalog_product_entity_varchar" xsi:type="string">catalog_product_entity_varchar</item>
+                    <item name="catalog_product_entity_datetime" xsi:type="string">catalog_product_entity_datetime</item>
+                    <item name="catalog_product_entity_gallery" xsi:type="string">catalog_product_entity_gallery</item>
+                    <item name="catalog_product_entity_media_gallery_value_to_entity" xsi:type="string">catalog_product_entity_media_gallery_value_to_entity</item>
+                    <item name="catalog_product_entity_media_gallery_value" xsi:type="string">catalog_product_entity_media_gallery_value</item>
+                    <item name="catalog_product_entity_tier_price" xsi:type="string">catalog_product_entity_tier_price</item>
+                    <item name="magento_giftcard_amount" xsi:type="string">magento_giftcard_amount</item>
+                    <item name="catalog_category_entity_datetime" xsi:type="string">catalog_category_entity_datetime</item>
+                    <item name="catalog_category_entity_decimal" xsi:type="string">catalog_category_entity_decimal</item>
+                    <item name="catalog_category_entity_int" xsi:type="string">catalog_category_entity_int</item>
+                    <item name="catalog_category_entity_text" xsi:type="string">catalog_category_entity_text</item>
+                    <item name="catalog_category_entity_varchar" xsi:type="string">catalog_category_entity_varchar</item>
+                </item>
+            </argument>
+        </arguments>
+    </type>
+    <type name="Magento\Catalog\Model\Indexer\Category\Flat\SkipStaticColumnsProvider">
+        <arguments>
+            <argument name="skipStaticColumns" xsi:type="array">
+                <item name="row_id" xsi:type="string">row_id</item>
+                <item name="created_in" xsi:type="string">created_in</item>
+                <item name="updated_in" xsi:type="string">updated_in</item>
+            </argument>
+        </arguments>
+    </type>
+    <type name="Magento\Catalog\Model\Indexer\AbstractFlatState">
+        <plugin name="staging_flat_bypass" type="Magento\CatalogStaging\Plugin\Catalog\Model\Indexer\AbstractFlatState" />
+    </type>
+    <type name="Magento\CatalogUrlRewrite\Observer\ProductProcessUrlRewriteRemovingObserver">
+        <arguments>
+            <argument name="urlPersist" xsi:type="object">Magento\CatalogStaging\Model\Url\Storage</argument>
+        </arguments>
+    </type>
+    <type name="Magento\CatalogUrlRewrite\Observer\ProductProcessUrlRewriteSavingObserver">
+        <arguments>
+            <argument name="urlPersist" xsi:type="object">Magento\CatalogStaging\Model\Url\Storage</argument>
+        </arguments>
+    </type>
+    <type name="Magento\Catalog\Controller\Category\View">
+        <plugin name="replaceIndex" type="Magento\CatalogStaging\Model\Plugin\Controller\View"/>
+    </type>
+    <type name="Magento\CatalogSearch\Model\ResourceModel\Fulltext\Collection">
+        <plugin name="loadPreview" type="Magento\CatalogStaging\Model\Plugin\ResourceModel\Product\Fulltext\Collection" />
+    </type>
+    <virtualType name="stagingCatalogUpcomingResult" type="Magento\Staging\Model\Entity\Upcoming\SearchResult">
+        <arguments>
+            <argument name="entityRequestName" xsi:type="string">id</argument>
+            <argument name="entityTable" xsi:type="string">catalog_product_entity</argument>
+            <argument name="entityColumn" xsi:type="string">entity_id</argument>
+        </arguments>
+    </virtualType>
+    <virtualType name="stagingCatalogUpdateSelectResult" type="Magento\Staging\Model\Entity\Update\Select\SearchResult">
+        <arguments>
+            <argument name="entityRequestName" xsi:type="string">id</argument>
+            <argument name="entityTable" xsi:type="string">catalog_product_entity</argument>
+            <argument name="entityColumn" xsi:type="string">entity_id</argument>
+        </arguments>
+    </virtualType>
+    <type name="Magento\Framework\EntityManager\Operation\AttributePool">
+        <arguments>
+            <argument name="extensionActions" xsi:type="array">
+                <item name="eav" xsi:type="array">
+                    <item name="Magento\Catalog\Api\Data\CategoryInterface" xsi:type="array">
+                        <item name="create" xsi:type="string">Magento\CatalogStaging\Model\ResourceModel\CatalogCreateHandler</item>
+                    </item>
+                    <item name="Magento\Catalog\Api\Data\ProductInterface" xsi:type="array">
+                        <item name="create" xsi:type="string">Magento\CatalogStaging\Model\ResourceModel\CatalogCreateHandler</item>
+                    </item>
+                </item>
+            </argument>
+        </arguments>
+    </type>
+    <type name="Magento\Catalog\Api\CategoryRepositoryInterface">
+        <plugin name="DateRangeDesignUpdateCategorySavePlugin" type="Magento\CatalogStaging\Plugin\Api\DateRangeDesignUpdateCategorySavePlugin"/>
+    </type>
+    <type name="Magento\Quote\Model\ResourceModel\Quote">
+        <plugin name="substract_product_from_quotes" type="Magento\CatalogStaging\Plugin\Quote\SubstractProductFromQuotes" sortOrder="800"/>
+    </type>
+    <type name="Magento\Staging\Model\Update\IncludesList">
+        <arguments>
+            <argument name="includes" xsi:type="array">
+                <item name="product" xsi:type="object">Magento\Staging\Model\Update\Includes</item>
+                <item name="catalog_category" xsi:type="object">Magento\Staging\Model\Update\Includes</item>
+            </argument>
+        </arguments>
+    </type>
+    <type name="Magento\CatalogStaging\Model\ResourceModel\CatalogCreateHandler">
+        <arguments>
+            <argument name="createHandler" xsi:type="object">Magento\Catalog\Model\ResourceModel\CreateHandler</argument>
+            <argument name="updateHandler" xsi:type="object">Magento\Catalog\Model\ResourceModel\UpdateHandler</argument>
+        </arguments>
+    </type>
+    <type name="Magento\Staging\Model\VersionManager">
+        <plugin name="catalogStagingVersionManager" type="Magento\CatalogStaging\Plugin\Staging\Model\VersionManager" />
+    </type>
+    <type name="Magento\Staging\Model\Operation\Update\TemporaryUpdateProcessorPool">
+        <arguments>
+            <argument name="processors" xsi:type="array">
+                <item name="Magento\Catalog\Api\Data\ProductInterface" xsi:type="string">Magento\CatalogStaging\Model\Product\Operation\Update\TemporaryUpdateProcessor</item>
+            </argument>
+        </arguments>
+    </type>
+    <type name="Magento\Framework\Pricing\Render\PriceBox">
+        <plugin name="price_box_staging_plugin" type="Magento\CatalogStaging\Plugin\Catalog\Pricing\Render\PriceBox" />
+    </type>
+    <type name="Magento\Catalog\Model\Category\DataProvider">
+        <plugin name="catalogCategoryDataProviderTrimData" type="Magento\CatalogStaging\Plugin\Catalog\Model\Category\DataProvider\TrimData" />
+    </type>
+    <type name="Magento\Staging\Model\Entity\Builder">
+        <arguments>
+            <argument name="strategies" xsi:type="array">
+                <item name="Magento\Catalog\Api\Data\ProductInterface" xsi:type="string">Magento\CatalogStaging\Model\Product\Builder</item>
+                <item name="Magento\Catalog\Api\Data\CategoryInterface" xsi:type="string">Magento\CatalogStaging\Model\Category\Builder</item>
+            </argument>
+        </arguments>
+    </type>
+    <type name="Magento\Staging\Model\Entity\RetrieverPool">
+        <arguments>
+            <argument name="retrievers" xsi:type="array">
+                <item name="Magento\Catalog\Api\Data\ProductInterface" xsi:type="object">Magento\CatalogStaging\Model\Product\Retriever</item>
+                <item name="Magento\Catalog\Api\Data\CategoryInterface" xsi:type="object">Magento\CatalogStaging\Model\Category\Retriever</item>
+            </argument>
+        </arguments>
+    </type>
+    <type name="Magento\Catalog\Model\ResourceModel\Product">
+        <arguments>
+            <argument name="uniqueValidator" xsi:type="object">Magento\CatalogStaging\Model\Product\Attribute\UniqueValidator</argument>
+        </arguments>
+    </type>
+    <type name="Magento\CatalogStaging\Model\Product\Scheduler">
+        <arguments>
+            <argument name="versionManager" xsi:type="object">Magento\Staging\Model\VersionManager\Proxy</argument>
+        </arguments>
+    </type>
+    <type name="Magento\CatalogStaging\Model\ResourceModel\Fulltext\Collection">
+        <arguments>
+            <!-- @deprecated parameter catalogSearchData has been deprecated and not in use now -->
+            <argument name="catalogSearchData" xsi:type="null" />
+            <!-- @deprecated parameter requestBuilder has been deprecated and not in use now -->
+            <argument name="requestBuilder" xsi:type="null" />
+            <!-- @deprecated parameter searchEngine has been deprecated and not in use now -->
+            <argument name="searchEngine" xsi:type="null" />
+            <!-- @deprecated parameter temporaryStorageFactory has been deprecated and not in use now -->
+            <argument name="temporaryStorageFactory" xsi:type="null" />
+        </arguments>
+    </type>
+    <type name="Magento\Catalog\Model\Category">
+        <plugin name="catalogStagingCategoryPlugin" type="Magento\CatalogStaging\Plugin\Model\Category"/>
+    </type>
+    <type name="Magento\CatalogSearch\Model\ResourceModel\Search\Collection">
+        <arguments>
+            <argument name="indexUsageEnforcements" xsi:type="array">
+                <item name="catalog_product_entity_text" xsi:type="string">CATALOG_PRODUCT_ENTITY_TEXT_ROW_ID_ATTRIBUTE_ID_STORE_ID</item>
+            </argument>
+        </arguments>
+    </type>
+    <type name="Magento\Catalog\Model\Product">
+        <plugin name="availabilityStaging" type="Magento\CatalogStaging\Plugin\Model\Product" sortOrder="100"/>
+    </type>
+    <type name="Magento\Framework\EntityManager\Operation\ExtensionPool">
+        <arguments>
+            <argument name="extensionActions" xsi:type="array">
+                <item name="Magento\Catalog\Api\Data\ProductInterface" xsi:type="array">
+                    <item name="create" xsi:type="array">
+                        <item name="mediaGalleryCreate" xsi:type="string">Magento\CatalogStaging\Model\Product\Gallery\CreateHandler</item>
+                    </item>
+                    <item name="update" xsi:type="array">
+                        <item name="mediaGalleryUpdate" xsi:type="string">Magento\CatalogStaging\Model\Product\Gallery\UpdateHandler</item>
+                    </item>
+                </item>
+            </argument>
+        </arguments>
+    </type>
+    <type name="Magento\CatalogStaging\Model\Plugin\Model\Product\ActionPlugin">
+        <arguments>
+            <argument name="attrCodes" xsi:type="array">
+                <item name="news_from_date" xsi:type="string">news_to_date</item>
+            </argument>
+        </arguments>
+    </type>
+    <type name="Magento\Catalog\Model\Product\Action">
+        <plugin name="stagingMassAttributesUpdate"
+                type="Magento\CatalogStaging\Model\Plugin\Model\Product\ActionPlugin"
+                sortOrder="1"/>
+    </type>
+</config>

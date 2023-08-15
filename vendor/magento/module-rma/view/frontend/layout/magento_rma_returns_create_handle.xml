@@ -1,0 +1,29 @@
+<?xml version="1.0"?>
+<!--
+/**
+ * Copyright © Magento, Inc. All rights reserved.
+ * See COPYING.txt for license details.
+ */
+-->
+<page xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="urn:magento:framework:View/Layout/etc/page_configuration.xsd" label="RMA Return Create" design_abstraction="custom">
+    <body>
+        <referenceContainer name="content">
+            <block class="Magento\Framework\View\Element\Template" name="magento_rma_item_form_template">
+                <block class="Magento\CustomAttributeManagement\Block\Form\Renderer\Text" name="magento_rma_item_form_template_text" as="text" template="Magento_Rma::form/renderer/text.phtml"/>
+                <block class="Magento\CustomAttributeManagement\Block\Form\Renderer\Boolean" name="magento_rma_item_form_template_boolean" as="boolean" template="Magento_Rma::form/renderer/boolean.phtml"/>
+                <block class="Magento\CustomAttributeManagement\Block\Form\Renderer\Textarea" name="magento_rma_item_form_template_textarea" as="textarea" template="Magento_Rma::form/renderer/textarea.phtml"/>
+                <block class="Magento\CustomAttributeManagement\Block\Form\Renderer\File" name="magento_rma_item_form_template_file" as="file" template="Magento_Rma::form/renderer/file.phtml"/>
+                <block class="Magento\Rma\Block\Form\Renderer\Select"
+                       name="magento_rma_item_form_template_select"
+                       as="select"
+                       template="Magento_Rma::form/renderer/select.phtml"
+                       cacheable="false">
+                    <arguments>
+                        <argument name="value_data" xsi:type="object">Magento\Rma\Block\Form\Renderer\DataProviders\Value</argument>
+                    </arguments>
+                </block>
+                <block class="Magento\Rma\Block\Form\Renderer\Image" name="magento_rma_item_form_template_image" as="image" template="Magento_Rma::form/renderer/image.phtml"/>
+            </block>
+        </referenceContainer>
+    </body>
+</page>

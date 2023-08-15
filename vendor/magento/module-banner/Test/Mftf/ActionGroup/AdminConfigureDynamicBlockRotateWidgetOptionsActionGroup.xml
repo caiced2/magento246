@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+ /**
+  * Copyright © Magento, Inc. All rights reserved.
+  * See COPYING.txt for license details.
+  */
+-->
+<actionGroups xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+              xsi:noNamespaceSchemaLocation="urn:magento:mftf:Test/etc/actionGroupSchema.xsd">
+    <actionGroup name="AdminConfigureDynamicBlockRotateWidgetOptionsActionGroup">
+        <annotations>
+            <description>Configure values on 'Widget Options' tab in create widget page</description>
+        </annotations>
+        <arguments>
+            <argument name="dynamicBlockOptions" type="entity" defaultValue="DynamicBlockRotateWidgetOptions"/>
+        </arguments>
+        <scrollToTopOfPage stepKey="scrollToTop"/>
+        <click selector="{{WidgetOptions.WidgetOptionsTab}}" stepKey="goWidgetOptionsTab"/>
+        <waitForElementVisible selector="{{WidgetOptions.displayMode}}" stepKey="waitForSelectElement"/>
+        <selectOption selector="{{WidgetOptions.displayMode}}" userInput="{{dynamicBlockOptions.blocks_to_display}}" stepKey="selectDisplayMode"/>
+        <selectOption selector="{{WidgetOptions.restrictByTypes}}" userInput="{{dynamicBlockOptions.restrict_types}}" stepKey="selectRestrictedByTypes"/>
+        <selectOption selector="{{WidgetOptions.rotateMode}}" userInput="{{dynamicBlockOptions.rotation_mode}}" stepKey="selectRotateMode"/>
+    </actionGroup>
+</actionGroups>

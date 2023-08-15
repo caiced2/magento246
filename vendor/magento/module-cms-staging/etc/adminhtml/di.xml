@@ -1,0 +1,326 @@
+<?xml version="1.0"?>
+<!--
+/**
+ * Copyright © Magento, Inc. All rights reserved.
+ * See COPYING.txt for license details.
+ */
+-->
+<config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="urn:magento:framework:ObjectManager/etc/config.xsd">
+    <preference for="Magento\Staging\Model\Update\Grid\ActionDataProviderInterface" type="Magento\Staging\Model\Update\Grid\ActionsDataProvider" />
+    <virtualType name="stagingCmsPageUpdateMetadataProvider" type="Magento\Staging\Model\Entity\DataProvider\MetadataProvider">
+        <arguments>
+            <argument name="requestFieldName" xsi:type="string">page_id</argument>
+        </arguments>
+    </virtualType>
+    <virtualType name="stagingCmsBlockUpdateMetadataProvider" type="Magento\Staging\Model\Entity\DataProvider\MetadataProvider">
+        <arguments>
+            <argument name="requestFieldName" xsi:type="string">block_id</argument>
+        </arguments>
+    </virtualType>
+    <type name="Magento\CmsStaging\Model\Page\DataProvider">
+        <plugin name="cmsStagingPageDataProvider" type="Magento\Staging\Model\Entity\DataProvider\DataProviderPlugin"/>
+        <arguments>
+            <argument name="metadataProvider" xsi:type="object">stagingCmsPageUpdateMetadataProvider</argument>
+        </arguments>
+    </type>
+    <type name="Magento\CmsStaging\Model\Block\DataProvider">
+        <plugin name="cmsStagingBlockDataProvider" type="Magento\Staging\Model\Entity\DataProvider\DataProviderPlugin"/>
+        <arguments>
+            <argument name="metadataProvider" xsi:type="object">stagingCmsBlockUpdateMetadataProvider</argument>
+        </arguments>
+    </type>
+    <type name="Magento\CmsStaging\Model\Page\Identifier\DataProvider">
+        <plugin name="cmsStagingPageDataProvider" type="Magento\Staging\Model\Entity\DataProvider\Identifier\DataProviderPlugin"/>
+    </type>
+    <type name="Magento\CmsStaging\Model\Block\Identifier\DataProvider">
+        <plugin name="cmsStagingBlockDataProvider" type="Magento\Staging\Model\Entity\DataProvider\Identifier\DataProviderPlugin"/>
+    </type>
+    <virtualType name="stagingCmsPageUpcomingGridActions" type="Magento\Staging\Ui\Component\Listing\Column\Entity\Actions">
+        <arguments>
+            <argument name="entityIdentifier" xsi:type="string">page_id</argument>
+            <argument name="entityColumn" xsi:type="string">page_id</argument>
+            <argument name="jsModalProvider" xsi:type="string">cmsstaging_page_upcoming_form.cmsstaging_page_upcoming_form.update_cms_page_form_modal</argument>
+            <argument name="jsLoaderProvider" xsi:type="string">cmsstaging_page_upcoming_form.cmsstaging_page_upcoming_form.update_cms_page_form_modal.update_cms_page_form_loader</argument>
+            <argument name="urlProviderInterface" xsi:type="object">Magento\CmsStaging\Ui\Component\Listing\Column\Page\PreviewProvider</argument>
+        </arguments>
+    </virtualType>
+    <virtualType name="stagingCmsBlockUpcomingGridActions" type="Magento\Staging\Ui\Component\Listing\Column\Entity\Actions">
+        <arguments>
+            <argument name="entityIdentifier" xsi:type="string">block_id</argument>
+            <argument name="entityColumn" xsi:type="string">block_id</argument>
+            <argument name="jsModalProvider" xsi:type="string">cmsstaging_block_upcoming_form.cmsstaging_block_upcoming_form.update_cms_block_form_modal</argument>
+            <argument name="jsLoaderProvider" xsi:type="string">cmsstaging_block_upcoming_form.cmsstaging_block_upcoming_form.update_cms_block_form_modal.update_cms_block_form_loader</argument>
+        </arguments>
+    </virtualType>
+    <virtualType name="stagingCmsPageDashboardGridActions" type="Magento\Staging\Ui\Component\Listing\Column\Entity\UpdateActions">
+        <arguments>
+            <argument name="actionsList" xsi:type="object">cmsPageStagingUpdateGridActionProvider</argument>
+        </arguments>
+    </virtualType>
+    <virtualType name="cmsPageStagingUpdateGridActionProvider" type="Magento\Staging\Model\Update\Grid\ActionsDataProvider">
+        <arguments>
+            <argument name="actionsList" xsi:type="array">
+                <item name="editAction" xsi:type="object">cmsPageUpdateGridEditAction</item>
+                <item name="deleteAction" xsi:type="object">cmsPageUpdateGridDeleteAction</item>
+            </argument>
+        </arguments>
+    </virtualType>
+    <virtualType name="cmsPageUpdateGridEditAction" type="Magento\Staging\Model\Update\Grid\UpdateEditGridActions\EditAction">
+        <arguments>
+            <argument name="entityIdentifier" xsi:type="string">page_id</argument>
+            <argument name="entityColumn" xsi:type="string">page_id</argument>
+            <argument name="jsModalProvider" xsi:type="string">staging_update_edit.staging_update_edit.cms_page.update_cms_page_form_modal</argument>
+            <argument name="jsLoaderProvider" xsi:type="string">staging_update_edit.staging_update_edit.cms_page.update_cms_page_form_modal.update_cms_page_form_loader</argument>
+        </arguments>
+    </virtualType>
+    <virtualType name="cmsPageUpdateGridDeleteAction" type="Magento\Staging\Model\Update\Grid\UpdateEditGridActions\DeleteAction">
+        <arguments>
+            <argument name="entityIdentifier" xsi:type="string">page_id</argument>
+            <argument name="entityColumn" xsi:type="string">page_id</argument>
+            <argument name="jsModalProvider" xsi:type="string">staging_update_edit.staging_update_edit.cms_page.update_remove_cms_page_form_modal</argument>
+            <argument name="jsLoaderProvider" xsi:type="string">staging_update_edit.staging_update_edit.cms_page.update_remove_cms_page_form_modal.update_remove_form_loader</argument>
+        </arguments>
+    </virtualType>
+    <virtualType name="stagingCmsBlockDashboardGridActions" type="Magento\Staging\Ui\Component\Listing\Column\Entity\UpdateActions">
+        <arguments>
+            <argument name="actionsList" xsi:type="object">cmsBlockStagingUpdateGridActionProvider</argument>
+        </arguments>
+    </virtualType>
+    <virtualType name="cmsBlockStagingUpdateGridActionProvider" type="Magento\Staging\Model\Update\Grid\ActionsDataProvider">
+        <arguments>
+            <argument name="actionsList" xsi:type="array">
+                <item name="editAction" xsi:type="object">cmsBlockEditUpdateGridAction</item>
+                <item name="deleteAction" xsi:type="object">cmsBlockUpdateGridDeleteAction</item>
+            </argument>
+        </arguments>
+    </virtualType>
+    <virtualType name="cmsBlockEditUpdateGridAction" type="Magento\Staging\Model\Update\Grid\UpdateEditGridActions\EditAction">
+        <arguments>
+            <argument name="entityIdentifier" xsi:type="string">block_id</argument>
+            <argument name="entityColumn" xsi:type="string">block_id</argument>
+            <argument name="jsModalProvider" xsi:type="string">staging_update_edit.staging_update_edit.cms_block.update_cms_block_form_modal</argument>
+            <argument name="jsLoaderProvider" xsi:type="string">staging_update_edit.staging_update_edit.cms_block.update_cms_block_form_modal.update_cms_block_form_loader</argument>
+        </arguments>
+    </virtualType>
+    <virtualType name="cmsBlockUpdateGridDeleteAction" type="Magento\Staging\Model\Update\Grid\UpdateEditGridActions\DeleteAction">
+        <arguments>
+            <argument name="entityIdentifier" xsi:type="string">block_id</argument>
+            <argument name="entityColumn" xsi:type="string">block_id</argument>
+            <argument name="jsModalProvider" xsi:type="string">staging_update_edit.staging_update_edit.cms_block.update_remove_cms_block_form_modal</argument>
+            <argument name="jsLoaderProvider" xsi:type="string">staging_update_edit.staging_update_edit.cms_block.update_remove_cms_block_form_modal.update_remove_form_loader</argument>
+        </arguments>
+    </virtualType>
+    <virtualType name="stagingCmsPageUpdateCancelButton" type="Magento\Staging\Block\Adminhtml\Update\Entity\CancelButton">
+        <arguments>
+            <argument name="jsUpdateModal" xsi:type="string">index=update_cms_page_form_modal</argument>
+        </arguments>
+    </virtualType>
+    <virtualType name="stagingCmsPageRemoveUpdateCancelButton" type="Magento\Staging\Block\Adminhtml\Update\Entity\CancelButton">
+        <arguments>
+            <argument name="jsUpdateModal" xsi:type="string">index=update_remove_cms_page_form_modal</argument>
+        </arguments>
+    </virtualType>
+    <virtualType name="stagingCmsPageUpdatePreviewButton" type="Magento\Staging\Block\Adminhtml\Update\Entity\PreviewButton">
+        <arguments>
+            <argument name="entityProvider" xsi:type="object">Magento\CmsStaging\Block\Adminhtml\Page\Update\Provider</argument>
+            <argument name="entityStoreIdProvider" xsi:type="object">Magento\CmsStaging\Block\Adminhtml\Page\Update\StoreIdProvider</argument>
+        </arguments>
+    </virtualType>
+    <virtualType name="stagingCmsPageUpdateRemoveButton" type="Magento\Staging\Block\Adminhtml\Update\Entity\RemoveButton">
+        <arguments>
+            <argument name="entityProvider" xsi:type="object">Magento\CmsStaging\Block\Adminhtml\Page\Update\Provider</argument>
+            <argument name="entityIdentifier" xsi:type="string">page_id</argument>
+            <argument name="jsRemoveModal" xsi:type="string">cmsstaging_page_update_form.cmsstaging_page_update_form.update_remove_cms_page_form_modal</argument>
+            <argument name="jsRemoveLoader" xsi:type="string">cmsstaging_page_update_form.cmsstaging_page_update_form.update_remove_cms_page_form_modal.update_remove_cms_page_form_loader</argument>
+        </arguments>
+    </virtualType>
+    <virtualType name="stagingCmsBlockUpdateCancelButton" type="Magento\Staging\Block\Adminhtml\Update\Entity\CancelButton">
+        <arguments>
+            <argument name="jsUpdateModal" xsi:type="string">index=update_cms_block_form_modal</argument>
+        </arguments>
+    </virtualType>
+    <virtualType name="stagingCmsBlockRemoveUpdateCancelButton" type="Magento\Staging\Block\Adminhtml\Update\Entity\CancelButton">
+        <arguments>
+            <argument name="jsUpdateModal" xsi:type="string">index=update_remove_cms_block_form_modal</argument>
+        </arguments>
+    </virtualType>
+    <virtualType name="stagingCmsBlockUpdatePreviewButton" type="Magento\Staging\Block\Adminhtml\Update\Entity\PreviewButton">
+        <arguments>
+            <argument name="entityProvider" xsi:type="object">Magento\CmsStaging\Block\Adminhtml\Block\Update\Provider</argument>
+        </arguments>
+    </virtualType>
+    <virtualType name="stagingCmsBlockUpdateRemoveButton" type="Magento\Staging\Block\Adminhtml\Update\Entity\RemoveButton">
+        <arguments>
+            <argument name="entityProvider" xsi:type="object">Magento\CmsStaging\Block\Adminhtml\Block\Update\Provider</argument>
+            <argument name="entityIdentifier" xsi:type="string">block_id</argument>
+            <argument name="jsRemoveModal" xsi:type="string">cmsstaging_block_update_form.cmsstaging_block_update_form.update_remove_cms_block_form_modal</argument>
+            <argument name="jsRemoveLoader" xsi:type="string">cmsstaging_block_update_form.cmsstaging_block_update_form.update_remove_cms_block_form_modal.update_remove_cms_block_form_loader</argument>
+        </arguments>
+    </virtualType>
+    <virtualType name="Magento\CmsStaging\Block\Adminhtml\Page\Update\Upcoming" type="Magento\Staging\Block\Adminhtml\Update\Upcoming">
+        <arguments>
+            <argument name="entityProvider" xsi:type="object">Magento\CmsStaging\Block\Adminhtml\Page\Update\Provider</argument>
+        </arguments>
+    </virtualType>
+    <virtualType name="Magento\CmsStaging\Block\Adminhtml\Block\Update\Upcoming" type="Magento\Staging\Block\Adminhtml\Update\Upcoming">
+        <arguments>
+            <argument name="entityProvider" xsi:type="object">Magento\CmsStaging\Block\Adminhtml\Block\Update\Provider</argument>
+        </arguments>
+    </virtualType>
+    <type name="Magento\CmsStaging\Ui\Component\Listing\Column\Page\PreviewProvider">
+        <arguments>
+            <argument name="frontendUrlBuilder" xsi:type="object">Magento\Framework\Url</argument>
+        </arguments>
+    </type>
+    <type name="Magento\CmsStaging\Block\Adminhtml\Page\Update\Provider">
+        <arguments>
+            <argument name="previewProvider" xsi:type="object">Magento\CmsStaging\Ui\Component\Listing\Column\Page\PreviewProvider</argument>
+        </arguments>
+    </type>
+    <type name="Magento\Cms\Controller\Adminhtml\Page\Save">
+        <plugin name="cmsstaging_page_save" type="Magento\CmsStaging\Controller\Adminhtml\Page\Save\Plugin" />
+    </type>
+
+    <type name="Magento\Staging\Model\Entity\Update\Action\Pool">
+        <arguments>
+            <argument name="actions" xsi:type="array">
+                <item name="Magento\Cms\Api\Data\PageInterface" xsi:type="array">
+                    <item name="save" xsi:type="array">
+                        <item name="save" xsi:type="string">cmsPageUpdateSaveSaveAction</item>
+                        <item name="assign" xsi:type="string">cmsPageUpdateSaveAssignAction</item>
+                    </item>
+                    <item name="delete" xsi:type="array">
+                        <item name="save" xsi:type="string">cmsPageUpdateDeleteSaveAction</item>
+                        <item name="assign" xsi:type="string">cmsPageUpdateDeleteAssignAction</item>
+                        <item name="remove" xsi:type="string">cmsPageUpdateDeleteRemoveAction</item>
+                    </item>
+                </item>
+                <item name="Magento\Cms\Api\Data\BlockInterface" xsi:type="array">
+                    <item name="save" xsi:type="array">
+                        <item name="save" xsi:type="string">cmsBlockUpdateSaveSaveAction</item>
+                        <item name="assign" xsi:type="string">cmsBlockUpdateSaveAssignAction</item>
+                    </item>
+                    <item name="delete" xsi:type="array">
+                        <item name="save" xsi:type="string">cmsBlockUpdateDeleteSaveAction</item>
+                        <item name="assign" xsi:type="string">cmsBlockUpdateDeleteAssignAction</item>
+                        <item name="remove" xsi:type="string">cmsBlockUpdateDeleteRemoveAction</item>
+                    </item>
+                </item>
+            </argument>
+        </arguments>
+    </type>
+    <!-- Page save controller -->
+    <virtualType name="cmsPageHydrator" type="Magento\CmsStaging\Model\Page\Hydrator">
+        <arguments>
+            <argument name="entityRetriever" xsi:type="object">Magento\CmsStaging\Model\Page\Retriever</argument>
+        </arguments>
+    </virtualType>
+    <virtualType name="cmsPageUpdateSaveSaveAction" type="Magento\Staging\Model\Entity\Update\Action\Save\SaveAction">
+        <arguments>
+            <argument name="entityHydrator" xsi:type="object">cmsPageHydrator</argument>
+        </arguments>
+    </virtualType>
+    <virtualType name="cmsPageUpdateSaveAssignAction" type="Magento\Staging\Model\Entity\Update\Action\Save\AssignAction">
+        <arguments>
+            <argument name="entityHydrator" xsi:type="object">cmsPageHydrator</argument>
+        </arguments>
+    </virtualType>
+    <virtualType name="cmsPageUpdateDeleteSaveAction" type="Magento\Staging\Model\Entity\Update\Action\Delete\SaveAction">
+        <arguments>
+            <argument name="entityRetriever" xsi:type="object">Magento\CmsStaging\Model\Page\Retriever</argument>
+            <argument name="entityName" xsi:type="string">Magento\Cms\Api\Data\PageInterface</argument>
+        </arguments>
+    </virtualType>
+    <virtualType name="cmsPageUpdateDeleteAssignAction" type="Magento\Staging\Model\Entity\Update\Action\Delete\AssignAction">
+        <arguments>
+            <argument name="entityRetriever" xsi:type="object">Magento\CmsStaging\Model\Page\Retriever</argument>
+            <argument name="entityName" xsi:type="string">MMagento\Cms\Api\Data\PageInterface</argument>
+        </arguments>
+    </virtualType>
+    <virtualType name="cmsPageUpdateDeleteRemoveAction" type="Magento\Staging\Model\Entity\Update\Action\Delete\RemoveAction">
+        <arguments>
+            <argument name="entityRetriever" xsi:type="object">Magento\CmsStaging\Model\Page\Retriever</argument>
+            <argument name="entityName" xsi:type="string">Magento\Cms\Api\Data\PageInterface</argument>
+        </arguments>
+    </virtualType>
+    <virtualType name="cmsPageUpdateSave" type="Magento\Staging\Model\Entity\Update\Save">
+        <arguments>
+            <argument name="entityName" xsi:type="string">Magento\Cms\Api\Data\PageInterface</argument>
+        </arguments>
+    </virtualType>
+    <type name="Magento\CmsStaging\Controller\Adminhtml\Page\Update\Save">
+        <plugin name="cmsstaging_page_update_save" type="Magento\CmsStaging\Controller\Adminhtml\Page\Update\Save\Plugin" />
+        <arguments>
+            <argument name="stagingUpdateSave" xsi:type="object">cmsPageUpdateSave</argument>
+        </arguments>
+    </type>
+
+    <!-- Page delete controller -->
+    <type name="Magento\CmsStaging\Controller\Adminhtml\Page\Update\Delete">
+        <arguments>
+            <argument name="stagingUpdateDelete" xsi:type="object">cmsPageUpdateDelete</argument>
+        </arguments>
+    </type>
+    <virtualType name="cmsPageUpdateDelete" type="Magento\Staging\Model\Entity\Update\Delete">
+        <arguments>
+            <argument name="entityName" xsi:type="string">Magento\Cms\Api\Data\PageInterface</argument>
+        </arguments>
+    </virtualType>
+
+    <!-- Block save controller -->
+    <virtualType name="cmsBlockHydrator" type="Magento\CmsStaging\Model\Block\Hydrator">
+        <arguments>
+            <argument name="entityRetriever" xsi:type="object">Magento\CmsStaging\Model\Block\Retriever</argument>
+        </arguments>
+    </virtualType>
+    <virtualType name="cmsBlockUpdateSaveSaveAction" type="Magento\Staging\Model\Entity\Update\Action\Save\SaveAction">
+        <arguments>
+            <argument name="entityHydrator" xsi:type="object">cmsBlockHydrator</argument>
+        </arguments>
+    </virtualType>
+    <virtualType name="cmsBlockUpdateSaveAssignAction" type="Magento\Staging\Model\Entity\Update\Action\Save\AssignAction">
+        <arguments>
+            <argument name="entityHydrator" xsi:type="object">cmsBlockHydrator</argument>
+        </arguments>
+    </virtualType>
+    <virtualType name="cmsBlockUpdateDeleteSaveAction" type="Magento\Staging\Model\Entity\Update\Action\Delete\SaveAction">
+        <arguments>
+            <argument name="entityRetriever" xsi:type="object">Magento\CmsStaging\Model\Block\Retriever</argument>
+            <argument name="entityName" xsi:type="string">Magento\Cms\Api\Data\BlockInterface</argument>
+        </arguments>
+    </virtualType>
+    <virtualType name="cmsBlockUpdateDeleteAssignAction" type="Magento\Staging\Model\Entity\Update\Action\Delete\AssignAction">
+        <arguments>
+            <argument name="entityRetriever" xsi:type="object">Magento\CmsStaging\Model\Block\Retriever</argument>
+            <argument name="entityName" xsi:type="string">Magento\Cms\Api\Data\BlockInterface</argument>
+        </arguments>
+    </virtualType>
+    <virtualType name="cmsBlockUpdateDeleteRemoveAction" type="Magento\Staging\Model\Entity\Update\Action\Delete\RemoveAction">
+        <arguments>
+            <argument name="entityRetriever" xsi:type="object">Magento\CmsStaging\Model\Block\Retriever</argument>
+            <argument name="entityName" xsi:type="string">Magento\Cms\Api\Data\BlockInterface</argument>
+        </arguments>
+    </virtualType>
+    <virtualType name="cmsBlockUpdateSave" type="Magento\Staging\Model\Entity\Update\Save">
+        <arguments>
+            <argument name="entityName" xsi:type="string">Magento\Cms\Api\Data\BlockInterface</argument>
+        </arguments>
+    </virtualType>
+    <type name="Magento\CmsStaging\Controller\Adminhtml\Block\Update\Save">
+        <arguments>
+            <argument name="stagingUpdateSave" xsi:type="object">cmsBlockUpdateSave</argument>
+        </arguments>
+    </type>
+
+    <!-- Block delete controller -->
+    <type name="Magento\CmsStaging\Controller\Adminhtml\Block\Update\Delete">
+        <arguments>
+            <argument name="stagingUpdateDelete" xsi:type="object">cmsBlockUpdateDelete</argument>
+        </arguments>
+    </type>
+    <virtualType name="cmsBlockUpdateDelete" type="Magento\Staging\Model\Entity\Update\Delete">
+        <arguments>
+            <argument name="entityName" xsi:type="string">Magento\Cms\Api\Data\BlockInterface</argument>
+        </arguments>
+    </virtualType>
+</config>

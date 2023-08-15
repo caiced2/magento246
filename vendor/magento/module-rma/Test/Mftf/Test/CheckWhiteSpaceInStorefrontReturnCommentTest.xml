@@ -1,0 +1,86 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+ /**
+  * Copyright © Magento, Inc. All rights reserved.
+  * See COPYING.txt for license details.
+  */
+-->
+<tests xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="urn:magento:mftf:Test/etc/testSchema.xsd">
+    <test name="CheckWhiteSpaceInStorefrontReturnCommentTest">
+        <annotations>
+            <features value="Rma"/>
+            <stories value="Returns"/>
+            <title value="Check whitespace in Storefront return comment"/>
+            <description value="Check whitespace in return comment field after rendering the return form in Storefront"/>
+            <severity value="AVERAGE"/>
+            <testCaseId value="AC-6862"/>
+            <useCaseId value="ACP2E-1285"/>
+            <group value="rma"/>
+        </annotations>
+
+        <before>
+            <magentoCLI command="config:set {{EnableFlatRateConfigData.path}} {{EnableFlatRateConfigData.value}}" stepKey="enableFlatRate"/>
+            <createData entity="EnableRmaOnStorefront" stepKey="enableRmaOnStorefront"/>
+            <createData entity="_defaultCategory" stepKey="defaultCategory"/>
+            <createData entity="SimpleProduct" stepKey="simpleProductOne">
+                <requiredEntity createDataKey="defaultCategory"/>
+            </createData>
+
+            <magentoCLI command="cron:run --group=index" stepKey="runCronIndexer"/>
+
+            <createData entity="Simple_US_Customer" stepKey="customer"/>
+            <actionGroup ref="AdminLoginActionGroup" stepKey="loginAsAdmin"/>
+        </before>
+
+        <after>
+            <deleteData createDataKey="simpleProductOne" stepKey="deleteProduct"/>
+            <deleteData createDataKey="defaultCategory" stepKey="deleteCategory"/>
+            <deleteData createDataKey="customer" stepKey="deleteCustomer"/>
+            <createData entity="DisableRmaOnStorefront" stepKey="disableRmaOnStorefront"/>
+            <actionGroup ref="AdminLogoutActionGroup" stepKey="logout"/>
+        </after>
+
+        <actionGroup ref="LoginToStorefrontActionGroup" stepKey="signThirdSimpleUsCustomer">
+            <argument name="Customer" value="$$customer$$"/>
+        </actionGroup>
+
+        <actionGroup ref="AddSimpleProductToCartActionGroup" stepKey="addProductToCart">
+            <argument name="product" value="$$simpleProductOne$$"/>
+        </actionGroup>
+
+        <actionGroup ref="GoToCheckoutFromMinicartActionGroup" stepKey="checkoutProductFromCart"/>
+
+        <actionGroup ref="StorefrontCheckoutClickNextButtonActionGroup" stepKey="clickNext"/>
+        <actionGroup ref="ClickPlaceOrderActionGroup" stepKey="clickPlaceOrder"/>
+        <comment userInput="BIC workaround" stepKey="waitForPlaceOrder"/>
+        <see stepKey="seeSuccessMessage" userInput="Thank you for your purchase!"/>
+        <grabTextFrom selector="{{CheckoutSuccessMainSection.orderNumber22}}" stepKey="grabOrderIncrementNumber"/>
+
+        <!-- Open Order -->
+        <actionGroup ref="OpenOrderByIdActionGroup" stepKey="openOrder">
+            <argument name="orderId" value="{$grabOrderIncrementNumber}"/>
+        </actionGroup>
+
+        <grabFromCurrentUrl regex="~/order_id/(\d+)/~" stepKey="grabOrderEntityId"/>
+
+        <!--   Create Invoice and Shipment      -->
+        <actionGroup ref="AdminCreateInvoiceAndShipmentActionGroup" stepKey="createShipmentForTheOrderId"/>
+
+        <!--Goes to Orders and Returns -->
+        <actionGroup ref="StorefrontGoToCustomerOrderDetailsPageActionGroup" stepKey="goToOrder">
+            <argument name="orderId" value="$grabOrderEntityId"/>
+            <argument name="orderNumber" value="$grabOrderIncrementNumber"/>
+        </actionGroup>
+        <click selector="{{StorefrontCustomerOrderViewSection.return}}" stepKey="clickOnReturn"/>
+        <waitForPageLoad stepKey="waitForReturnsPageLoad"/>
+        <click selector="{{StorefrontCustomerReturnSection.comments}}" stepKey="focusOnComment"/>
+        <executeJS function="
+        var rmaComment = document.querySelector(&quot;{{StorefrontCustomerReturnSection.comments}}&quot;);
+        var startPos = rmaComment.selectionStart;
+        var endPos = rmaComment.selectionEnd;
+        return (startPos == 0 &amp;&amp; endPos == 0);" stepKey="emptyCommentWithoutWhiteSpace"/>
+        <assertTrue stepKey="assertEmptyCommentWithoutWhiteSpace" message="Return empty comments without whitespaces">
+            <actualResult type="bool">$emptyCommentWithoutWhiteSpace</actualResult>
+        </assertTrue>
+    </test>
+</tests>

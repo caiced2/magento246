@@ -1,0 +1,109 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+/**
+ * Copyright © Magento, Inc. All rights reserved.
+ * See COPYING.txt for license details.
+ */
+-->
+<!--
+@deprecated split database solution is deprecated and will be removed
+-->
+<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema">
+    <xs:element name="config">
+        <xs:complexType>
+            <xs:sequence>
+                <xs:element name="entity" type="entityDeclaration" minOccurs="1" maxOccurs="unbounded">
+                    <xs:unique name="uniqueConstraintName">
+                        <xs:annotation>
+                            <xs:documentation>
+                                Constraint name must be unique.
+                            </xs:documentation>
+                        </xs:annotation>
+                    <xs:selector xpath="constraint"/>
+                    <xs:field xpath="@name"/>
+                </xs:unique>
+                </xs:element>
+            </xs:sequence>
+        </xs:complexType>
+        <xs:unique name="uniqueEntityName">
+            <xs:annotation>
+                <xs:documentation>
+                    Entity name must be unique.
+                </xs:documentation>
+            </xs:annotation>
+            <xs:selector xpath="entity" />
+            <xs:field xpath="@name" />
+        </xs:unique>
+    </xs:element>
+    <xs:complexType name="entityDeclaration">
+        <xs:annotation>
+            <xs:documentation>
+                Entity declaration.
+            </xs:documentation>
+        </xs:annotation>
+        <xs:sequence>
+            <xs:element name="constraint" type="constraintDeclaration" minOccurs="0" maxOccurs="unbounded">
+                <xs:unique name="uniqueFieldName">
+                    <xs:annotation>
+                        <xs:documentation>
+                            Field name must be unique.
+                        </xs:documentation>
+                    </xs:annotation>
+                    <xs:selector xpath="field"/>
+                    <xs:field xpath="@name"/>
+                </xs:unique>
+            </xs:element>
+        </xs:sequence>
+        <xs:attribute name="name" type="identifier" use="required" />
+        <xs:attribute name="resource" type="identifier" use="required" />
+    </xs:complexType>
+    <xs:complexType name="constraintDeclaration">
+        <xs:annotation>
+            <xs:documentation>
+                Constraint declaration.
+            </xs:documentation>
+        </xs:annotation>
+        <xs:sequence>
+            <xs:element name="field" type="fieldDeclaration" minOccurs="1" maxOccurs="1" />
+        </xs:sequence>
+        <xs:attribute name="name" type="identifier" use="required" />
+        <xs:attribute name="referenceEntity" type="identifier" use="required" />
+        <xs:attribute name="onDelete" type="strategyType" use="optional" />
+        <xs:attribute name="active" type="xs:boolean" use="optional" />
+    </xs:complexType>
+
+    <xs:complexType name="fieldDeclaration">
+        <xs:annotation>
+            <xs:documentation>
+                Field declaration.
+            </xs:documentation>
+        </xs:annotation>
+        <xs:attribute name="name" type="identifier" use="required" />
+        <xs:attribute name="reference" type="xs:string" use="required" />
+    </xs:complexType>
+
+    <xs:simpleType name="identifier">
+        <xs:annotation>
+            <xs:documentation>
+                Identifier can contain only [a-zA-Z_0-9].
+            </xs:documentation>
+        </xs:annotation>
+        <xs:restriction base="xs:string">
+            <xs:pattern value="[a-zA-Z_0-9]+" />
+        </xs:restriction>
+    </xs:simpleType>
+
+    <xs:simpleType name="strategyType">
+        <xs:annotation>
+            <xs:documentation>
+                Strategy declaration.
+            </xs:documentation>
+        </xs:annotation>
+        <xs:restriction base="xs:string">
+            <xs:enumeration value="RESTRICT"/>
+            <xs:enumeration value="CASCADE"/>
+            <xs:enumeration value="SET NULL"/>
+            <xs:enumeration value="NO ACTION"/>
+        </xs:restriction>
+    </xs:simpleType>
+</xs:schema>

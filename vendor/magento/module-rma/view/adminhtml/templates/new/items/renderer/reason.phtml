@@ -1,0 +1,36 @@
+<?php
+/**
+ * Copyright © Magento, Inc. All rights reserved.
+ * See COPYING.txt for license details.
+ */
+?>
+<?php
+/**
+ * @see \Magento\Rma\Block\Adminhtml\Rma\NewRma\Tab\Items\Renderer\Reason
+ */
+?>
+<tr>
+    <td class="label"></td>
+    <td class="value">
+        <select
+            id="rma_properties_reason"
+            name="reason"
+            class="admin__control-select">
+            <?php
+            if ($values = $block->getElement()->getValues()) {
+                foreach ($values as $key => $option) {
+                    if (!isset($option['title'])) {
+                        $option['title'] = $option['label'];
+                    }
+                    ?>
+                    <option value="<?= $block->escapeHtml($option['value']) ?>"
+                            title="<?= $block->escapeHtml($option['title']) ?>">
+                        <?= $block->escapeHtml($option['label']) ?>
+                    </option>
+                    <?php
+                }
+            }
+            ?>
+        </select>
+    </td>
+</tr>

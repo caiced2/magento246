@@ -1,0 +1,122 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+/**
+ * Copyright © Magento, Inc. All rights reserved.
+ * See COPYING.txt for license details.
+ */
+-->
+<listing xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="urn:magento:module:Magento_Ui:etc/ui_configuration.xsd">
+    <argument name="data" xsi:type="array">
+        <item name="js_config" xsi:type="array">
+            <item name="provider" xsi:type="string">staging_update_grid.staging_update_grid_data_source</item>
+        </item>
+    </argument>
+    <settings>
+        <spinner>staging_update_columns</spinner>
+        <deps>
+            <dep>staging_update_grid.staging_update_grid_data_source</dep>
+        </deps>
+    </settings>
+    <dataSource name="staging_update_grid_data_source" component="Magento_Ui/js/grid/provider">
+        <settings>
+            <storageConfig>
+                <param name="indexField" xsi:type="string">id</param>
+            </storageConfig>
+            <updateUrl path="mui/index/render"/>
+        </settings>
+        <aclResource>Magento_Staging::staging</aclResource>
+        <dataProvider class="Magento\Framework\View\Element\UiComponent\DataProvider\DataProvider" name="staging_update_grid_data_source">
+            <settings>
+                <requestFieldName>id</requestFieldName>
+                <primaryFieldName>id</primaryFieldName>
+            </settings>
+        </dataProvider>
+    </dataSource>
+    <listingToolbar name="listing_top" template="Magento_Staging/timeline/toolbar-dashboard">
+        <argument name="data" xsi:type="array">
+            <item name="config" xsi:type="array">
+                <item name="updateTypes" xsi:type="string">ns = ${ $.ns }, index = status</item>
+            </item>
+        </argument>
+        <bookmark name="bookmarks"/>
+        <columnsControls name="columns_controls"/>
+        <filterSearch name="fulltext"/>
+        <filters name="listing_filters"/>
+        <paging name="listing_paging">
+            <settings>
+                <totalTmpl>ui/grid/paging/paging-detailed-total</totalTmpl>
+            </settings>
+        </paging>
+    </listingToolbar>
+    <columns name="staging_update_columns" component="Magento_Ui/js/timeline/timeline">
+        <argument name="data" xsi:type="array">
+            <item name="config" xsi:type="array">
+                <item name="recordTmpl" xsi:type="string">Magento_Staging/timeline/record</item>
+                <item name="detailsTmpl" xsi:type="string">Magento_Staging/timeline/details</item>
+                <item name="detailsFormat" xsi:type="string">MMM D, YYYY h:mm A</item>
+            </item>
+        </argument>
+        <column name="status" component="Magento_Staging/js/grid/columns/status">
+            <argument name="data" xsi:type="array">
+                <item name="config" xsi:type="array">
+                    <item name="updateTypesMap" xsi:type="array">
+                        <item name="0" xsi:type="array">
+                            <item name="className" xsi:type="string">_update-status-active</item>
+                            <item name="value" xsi:type="string">1</item>
+                        </item>
+                        <item name="1" xsi:type="array">
+                            <item name="className" xsi:type="string">_update-status-upcoming</item>
+                            <item name="value" xsi:type="string">2</item>
+                        </item>
+                    </item>
+                </item>
+            </argument>
+            <settings>
+                <options class="Magento\Staging\Model\Update\Source\Status"/>
+                <dataType>select</dataType>
+                <label translate="true">Status</label>
+            </settings>
+        </column>
+        <column name="name">
+            <settings>
+                <filter>text</filter>
+                <bodyTmpl>ui/grid/cells/text</bodyTmpl>
+                <label translate="true">Update Name</label>
+            </settings>
+        </column>
+        <column name="includes" component="Magento_Staging/js/grid/columns/includes">
+            <settings>
+                <dataType>text</dataType>
+                <label translate="true">Includes</label>
+                <sortable>false</sortable>
+            </settings>
+        </column>
+        <column name="start_time" class="Magento\Ui\Component\Listing\Columns\Date" component="Magento_Ui/js/grid/columns/date">
+            <settings>
+                <filter>dateRange</filter>
+                <dateFormat>MMM d, y h:mm a</dateFormat>
+                <label translate="true">Start Time</label>
+                <sorting>asc</sorting>
+            </settings>
+        </column>
+        <column name="end_time" class="Magento\Ui\Component\Listing\Columns\Date" component="Magento_Ui/js/grid/columns/date">
+            <settings>
+                <filter>dateRange</filter>
+                <dateFormat>MMM d, y h:mm a</dateFormat>
+                <label translate="true">End Time</label>
+            </settings>
+        </column>
+        <column name="description">
+            <settings>
+                <filter>text</filter>
+                <label translate="true">Description</label>
+            </settings>
+        </column>
+        <actionsColumn name="actions" class="Magento\Staging\Ui\Component\Listing\Column\UpdateActions">
+            <settings>
+                <label>Action</label>
+                <indexField>id</indexField>
+            </settings>
+        </actionsColumn>
+    </columns>
+</listing>

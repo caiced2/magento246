@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+ /**
+  * Copyright © Magento, Inc. All rights reserved.
+  * See COPYING.txt for license details.
+  */
+-->
+<actionGroups xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:noNamespaceSchemaLocation="urn:magento:mftf:Test/etc/actionGroupSchema.xsd">
+    <actionGroup name="AdminCustomerSegmentAddProductHistoryConditionActionGroup" extends="AdminCustomerSegmentAddConditionActionGroup">
+        <arguments>
+            <argument name="conditionName" defaultValue="{{CustomerSegmentProductHistoryCondition.name}}" type="string"/>
+            <argument name="defaultConditionOperator" defaultValue="{{CustomerSegmentProductHistoryCondition.operator}}" type="string"/>
+            <argument name="conditionOperator" defaultValue="{{CustomerSegmentProductHistoryCondition.operator}}" type="string"/>
+            <argument name="defaultConditionOperand" defaultValue="{{CustomerSegmentProductHistoryCondition.operand}}" type="string"/>
+            <argument name="conditionOperand" defaultValue="{{CustomerSegmentProductHistoryCondition.operand}}" type="string"/>
+            <argument name="conditionAggregator" defaultValue="{{CustomerSegmentProductHistoryCondition.aggregator}}" type="string"/>
+        </arguments>
+        <selectOption selector="{{AdminCustomerSegmentConditionsEditSection.conditionValueParam(level)}}" userInput="{{conditionOperand}}" stepKey="setConditionOperandValue"/>
+        <click selector="{{AdminCustomerSegmentConditionsEditSection.conditionRuleParam(level,CustomerSegmentProductHistoryCondition.aggregator)}}" stepKey="clickConditionAggregator"/>
+        <conditionalClick selector="{{AdminCustomerSegmentConditionsEditSection.conditionRuleParam(level,CustomerSegmentProductHistoryCondition.aggregator)}}"
+                          dependentSelector="{{AdminCustomerSegmentConditionsEditSection.conditionRuleParam(level,CustomerSegmentProductHistoryCondition.aggregator)}}"
+                          visible="true"
+                          stepKey="conditionalClickConditionAggregator"/>
+        <waitForElementVisible selector="{{AdminCustomerSegmentConditionsEditSection.conditionAggregatorParam(level)}}" stepKey="waitForConditionAggregator"/>
+        <selectOption selector="{{AdminCustomerSegmentConditionsEditSection.conditionAggregatorParam(level)}}" userInput="{{conditionAggregator}}" stepKey="setConditionAggregator"/>
+    </actionGroup>
+</actionGroups>

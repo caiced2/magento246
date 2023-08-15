@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+ /**
+  * Copyright © Magento, Inc. All rights reserved.
+  * See COPYING.txt for license details.
+  */
+-->
+<sections xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:noNamespaceSchemaLocation="urn:magento:mftf:Page/etc/SectionObject.xsd">
+    <section name="CheckoutPaymentSection">
+        <element name="MagentoPaymentsHostedFieldsRadio" type="radio" selector="input#quick_checkout" timeout="30"/>
+        <element name="MagentoPaymentsHostedFieldsForm" type="block" selector="#bolt-credit-card-form"/>
+        <element name="MagentoPaymentsHostedFieldsCardNumberIframe" type="iframe" selector="#bolt-credit-card-form iframe"/>
+        <element name="MagentoPaymentsHostedFieldsCardNumber" type="input" selector="input#ccn"/>
+        <element name="MagentoPaymentsHostedFieldsExpiration" type="input" selector="input#exp"/>
+        <element name="MagentoPaymentsHostedFieldsCVV" type="input" selector="input#cvv"/>
+        <element name="MagentoPaymentsHostedFieldsPlaceOrderButton" type="button" selector="div._active div.payment-method-content button.checkout"/>
+        <element name="MagentoPaymentsHostedFieldsPlaceOrderButtonDisabled" type="button" selector="div._active div.payment-method-content button.checkout:disabled"/>
+        <element name="useExistingCardRadio" type="text" selector="input[name='use_existing_card'][value='yes']" timeout="30"/>
+        <element name="addNewCardRadio" type="text" selector="input[name='use_existing_card'][value='no']" timeout="30"/>
+        <element name="saveCreditCardCheckbox" type="text" selector="#save-card-to-bolt" timeout="30"/>
+        <element name="existingCardSelect" type="select" selector="div.payment-method._active select[name=card_list]"/>
+        <element name="billingAddressSelect" type="select" selector="div.payment-method._active select[name='billing_address_id']" timeout="30"/>
+        <element name="updateAddressAction" type="button" selector="div.payment-method._active div.checkout-billing-address button.action-update"/>
+        <element name="logoutInfoMessage" type="block" selector="div.bolt-logout-info"/>
+        <element name="logoutInfoEmail" type="block" selector="div.bolt-logout-info .account-email"/>
+        <element name="loginInfoAction" type="block" selector="div.bolt-logout-info .login-bolt"/>
+        <element name="logoutInfoAction" type="block" selector="div.bolt-logout-info .logout-bolt"/>
+        <element name="boltConsentCheckbox" type="block" selector="div#register-with-bolt"/>
+    </section>
+</sections>

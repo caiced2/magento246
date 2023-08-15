@@ -1,0 +1,21 @@
+<?php
+/**
+ * Copyright © Magento, Inc. All rights reserved.
+ * See COPYING.txt for license details.
+ */
+?>
+<?php
+/**
+ * @see \Magento\Rma\Block\Adminhtml\Rma\Edit\Tab\General\Shippingaddress
+ */
+?>
+<?php if ($block->getOrderShippingAddress()) : ?>
+    <div class="admin__page-section-item order-shipping-address">
+        <div class="admin__page-section-item-title">
+            <span class="title"><?= $block->escapeHtml(__('Order Shipping Address')) ?></span>
+        </div>
+        <div class="admin__page-section-item-content">
+            <address><?= /* @noEscape */ $block->getOrderShippingAddress() ?></address>
+        </div>
+    </div>
+<?php endif ?>

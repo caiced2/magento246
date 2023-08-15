@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+ /**
+  * Copyright © Magento, Inc. All rights reserved.
+  * See COPYING.txt for license details.
+  */
+-->
+<tests xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="urn:magento:mftf:Test/etc/testSchema.xsd">
+    <test name="AdminNotAvailableProductQtyInShoppingCartValidationTest">
+        <annotations>
+            <features value="AdvancedCheckout"/>
+            <stories value="Manage Shopping Cart"/>
+            <title value="Admin should see not available error message if wrong quantity specified for product in manage shopping cart"/>
+            <description value="Admin should see not available error message if wrong quantity specified for product in manage shopping cart"/>
+            <severity value="AVERAGE"/>
+            <testCaseId value="MC-40636"/>
+            <useCaseId value="MC-39517"/>
+            <group value="advancedCheckout"/>
+        </annotations>
+        <before>
+            <createData entity="SimpleProduct_25" stepKey="simpleProduct"/>
+            <createData entity="Simple_US_Customer" stepKey="createCustomer"/>
+            <magentoCron groups="index" stepKey="reindex"/>
+            <actionGroup ref="AdminLoginActionGroup" stepKey="loginAsAdmin"/>
+        </before>
+        <after>
+            <deleteData createDataKey="simpleProduct" stepKey="deleteSimpleProduct"/>
+            <actionGroup ref="AdminLogoutActionGroup" stepKey="logoutFromAdmin"/>
+            <deleteData createDataKey="createCustomer" stepKey="deleteCustomer"/>
+        </after>
+        <actionGroup ref="LoginToStorefrontActionGroup" stepKey="customerLogin">
+            <argument name="Customer" value="$createCustomer$" />
+        </actionGroup>
+        <actionGroup ref="AddSimpleProductToCartActionGroup" stepKey="addToCartFromStorefrontProductPage">
+            <argument name="product" value="$simpleProduct$"/>
+        </actionGroup>
+        <actionGroup ref="OpenEditCustomerFromAdminActionGroup" stepKey="openCustomerEditPage">
+            <argument name="customer" value="$createCustomer$" />
+        </actionGroup>
+        <!--Click on Manage Shopping Cart-->
+        <click selector="{{AdminCustomerMainActionsSection.manageShoppingCart}}" stepKey="clickManageShoppingCartButton"/>
+        <waitForPageLoad stepKey="waitForPageLoaded"/>
+        <!--Update shopping cart item qty-->
+        <actionGroup ref="AdminUpdateProductQtyCustomerManageShoppingCartActionGroup" stepKey="updateQty"/>
+        <seeInField userInput="30" selector="{{AdminManageShoppingCartSection.itemQtyBySku($simpleProduct.sku$)}}" stepKey="seeCorrectQty"/>
+        <waitForElementVisible selector="{{AdminManageShoppingCartSection.itemErrorMessageBySku($simpleProduct.sku$)}}" stepKey="seeErrorMessage"/>
+        <see userInput="The requested qty is not available" selector="{{AdminManageShoppingCartSection.itemErrorMessageBySku($simpleProduct.sku$)}}" stepKey="assertExceptionMessage"/>
+    </test>
+</tests>

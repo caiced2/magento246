@@ -1,0 +1,97 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+ /**
+  * Copyright © Magento, Inc. All rights reserved.
+  * See COPYING.txt for license details.
+  */
+-->
+
+<tests xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xsi:noNamespaceSchemaLocation="urn:magento:mftf:Test/etc/testSchema.xsd">
+    <test name="AssociateCustomerSegmentToBannerTest" deprecated="Use StorefrontAssociateCustomerSegmentToBannerTest instead.">
+        <annotations>
+            <title value="Dynamic Block display only for customer segment it is created for"/>
+            <description value="Dynamic Block display only for customer segment it is created for"/>
+            <severity value="CRITICAL"/>
+            <testCaseId value="MAGETWO-86823"/>
+            <features value="MAGETWO-36659-[CMS] WYSIWYG update"/>
+            <stories value="MAGETWO-42047-Apply new WYSIWYG to Banner add/edit"/>
+            <group value="Banner"/>
+            <skip>
+                <issueId value="DEPRECATED">Use StorefrontAssociateCustomerSegmentToBannerTest instead.</issueId>
+            </skip>
+            <group value="pr_exclude"/>
+        </annotations>
+        <before>
+            <createData stepKey="createSalesRule" entity="SimpleSalesRule" />
+            <createData stepKey="createSalesRuleCoupon" entity="SimpleSalesRuleCoupon">
+                <requiredEntity createDataKey="createSalesRule"/>
+            </createData>
+            <createData entity="customerSegmentForGuests" stepKey="createPreReqCustomerSegment"/>
+            <actionGroup ref="AdminLoginActionGroup" stepKey="loginGetFromGeneralFile"/>
+            <actionGroup ref="EnabledWYSIWYGActionGroup" stepKey="enableWYSIWYG"/>
+            <createData entity="sampleBannerWidget" stepKey="createPreReqWidget" />
+            <createData entity="_defaultCategory" stepKey="createPreReqCategory"/>
+            <createData entity="_defaultProduct" stepKey="createPreReqProduct">
+                <requiredEntity createDataKey="createPreReqCategory"/>
+            </createData>
+            <createData entity="Simple_US_Customer" stepKey="createPreReqCustomer" />
+        </before>
+        <after>
+            <deleteData createDataKey="createSalesRuleCoupon" stepKey="deleteSalesRuleCoupon"/>
+            <deleteData createDataKey="createSalesRule" stepKey="deleteSalesRule"/>
+            <actionGroup ref="DisabledWYSIWYGActionGroup" stepKey="disableWYSIWYG"/>
+            <actionGroup ref="AdminLogoutActionGroup" stepKey="logout"/>
+        </after>
+
+        <!--Create a banner-->
+        <actionGroup ref="CreateBannerActionGroup" stepKey="createPreReqBanner">
+            <argument name="Banner" value="sampleBanner" />
+        </actionGroup>
+
+        <!--Assign banner to widget-->
+        <actionGroup ref="AssignBannerToWidgetActionGroup" stepKey="createPreReqWidget">
+            <argument name="Banner" value="sampleBanner"/>
+            <argument name="Widget" value="$$createPreReqWidget$$"/>
+        </actionGroup>
+
+        <!--Go to edit pagge of Banner-->
+        <amOnPage url="{{AdminDynamicBlockGridPage.url}}" stepKey="goToBannerGrid"/>
+        <waitForPageLoad stepKey="waitForPageLoad1"/>
+        <click selector="{{AdminWidgetGridSection.title(sampleBanner.Name)}}" stepKey="navigateToPreReqBanner" />
+        <waitForPageLoad stepKey="waitForPageLoad3"/>
+        <click selector="{{SelectCustomerSegmentSection.CustomerSegmentDropdown}}" stepKey="openCustomerSegmentList"/>
+        <click selector="{{SelectCustomerSegmentSection.CustomerSegmentOption($$createPreReqCustomerSegment.name$$)}}" stepKey="selectCustomerSegmentOption" />
+        <click selector="{{SelectCustomerSegmentSection.DoneBtn}}" stepKey="clickDoneBtn" />
+
+        <!-- Go to Assign Cart Rule To Banner -->
+        <actionGroup ref="AssignRelatedCartPriceRuleToBannerActionGroup" stepKey="assignCartPriceRuleToBanner">
+            <argument name="Banner" value="sampleBanner"/>
+            <argument name="CartPriceRule" value="$$createSalesRule$$"/>
+        </actionGroup>
+        <waitForPageLoad stepKey="waitForPageLoad4" />
+        <see userInput="You saved the dynamic block." stepKey="seeSuccessMessage"/>
+        <actionGroup ref="ClearCacheActionGroup" stepKey="clearMagentoCache"/>
+
+        <!-- Go to storefront and apply cart rule -->
+        <amOnPage url="{{StorefrontProductPage.url($$createPreReqProduct.custom_attributes[url_key]$$)}}" stepKey="openProductPage"/>
+        <waitForPageLoad stepKey="waitForPageLoad6"/>
+        <actionGroup ref="ApplyCartRuleOnStorefrontActionGroup" stepKey="applyCartRule">
+            <argument name="product" value="$$createPreReqProduct$$"/>
+            <argument name="couponCode" value="$$createSalesRuleCoupon.code$$"/>
+        </actionGroup>
+        <waitForText userInput='You used coupon code "$$createSalesRuleCoupon.code$$"' stepKey="waitForText"/>
+        <see selector="{{StorefrontMessagesSection.success}}" userInput='You used coupon code "$$createSalesRuleCoupon.code$$"'
+             stepKey="seeSuccessMessage1"/>
+
+        <!-- Go to storefront banner page, assert banner content -->
+        <waitForText time="20" userInput="Hello World from banner!" stepKey="assertBannerDescription"/>
+
+        <!--Login to Storefront and assert banner-->
+        <actionGroup ref="LoginToStorefrontActionGroup" stepKey="loginToStoreFront">
+            <argument name="Customer" value="$$createPreReqCustomer$$"/>
+        </actionGroup>
+        <waitForPageLoad time="20" stepKey="waitForPageLoad5" />
+        <dontSee userInput="Hello World from banner!" stepKey="dontSeeCreatedBanner"/>
+    </test>
+</tests>

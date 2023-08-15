@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+ /**
+  * Copyright © Magento, Inc. All rights reserved.
+  * See COPYING.txt for license details.
+  */
+-->
+<actionGroups xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:noNamespaceSchemaLocation="urn:magento:mftf:Test/etc/actionGroupSchema.xsd">
+    <actionGroup name="DeleteCategoryUpdateActionGroup" extends="RemoveFromUpdateActionGroup">
+        <annotations>
+            <description>EXTENDS: RemoveFromUpdateActionGroup. Deletes the update for category.</description>
+        </annotations>
+
+        <see selector="{{AdminRemoveFromUpdateSection.title}}" userInput="Remove Category from Update" stepKey="seeTitleRemoveSection"/>
+        <click selector="{{AdminRemoveFromUpdateSection.deleteTheUpdate}}" stepKey="clickOnDeleteUpdate"/>
+        <waitForElementVisible selector="{{AdminRemoveFromUpdateSection.warningMessage}}" stepKey="waitForWarningMessage"/>
+        <see selector="{{AdminRemoveFromUpdateSection.warningMessage}}" userInput="The category will be removed from the update and all scheduled changes will be lost." stepKey="seeWarningMessage"/>
+        <click selector="{{AdminRemoveFromUpdateSection.done}}" stepKey="clickOnDone"/>
+        <dontSeeElement selector="{{AdminRemoveFromUpdateSection.title}}" stepKey="panelIsClosed"/>
+        <dontSeeElement selector="{{AdminScheduledChangesSection.scheduleDetails(fromStaging.updateName)}}" stepKey="dontSeeDeletedUpdate"/>
+    </actionGroup>
+</actionGroups>

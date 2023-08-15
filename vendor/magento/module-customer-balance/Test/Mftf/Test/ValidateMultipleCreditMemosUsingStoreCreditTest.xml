@@ -1,0 +1,132 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+ /**
+  * Copyright © Magento, Inc. All rights reserved.
+  * See COPYING.txt for license details.
+  */
+-->
+
+<tests xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xsi:noNamespaceSchemaLocation="urn:magento:mftf:Test/etc/testSchema.xsd">
+    <test name="ValidateMultipleCreditMemosUsingStoreCreditTest">
+        <annotations>
+            <features value="CustomerBalance"/>
+            <stories value="Wrong Grand total amount during Credit Memo for orders with Store Credit and multiple invoices"/>
+            <title value="Validate partial credit memos grand total multiple times using store credit."/>
+            <description value="Validate partial credit memos grand total multiple times using store credit."/>
+            <severity value="AVERAGE"/>
+            <testCaseId value="AC-6550"/>
+            <useCaseId value="ACP2E-1107"/>
+            <group value="customerBalance"/>
+            <group value="create"/>
+        </annotations>
+
+        <before>
+            <createData entity="_defaultCategory" stepKey="createCategory"/>
+            <!-- Create product1 -->
+            <createData entity="SimpleProduct" stepKey="simpleProduct1">
+                <field key="price">45</field>
+                <requiredEntity createDataKey="createCategory"/>
+            </createData>
+            <!-- Create product2 -->
+            <createData entity="SimpleProduct" stepKey="simpleProduct2">
+                <field key="price">59</field>
+                <requiredEntity createDataKey="createCategory"/>
+            </createData>
+            <!-- Create product3 -->
+            <createData entity="SimpleProduct" stepKey="simpleProduct3">
+                <field key="price">32</field>
+                <requiredEntity createDataKey="createCategory"/>
+            </createData>
+            <!-- Create product4 -->
+            <createData entity="SimpleProduct" stepKey="simpleProduct4">
+                <field key="price">45</field>
+                <requiredEntity createDataKey="createCategory"/>
+            </createData>
+            <createData entity="Simple_US_Customer" stepKey="createSimpleUsCustomer"/>
+            <actionGroup ref="AdminLoginActionGroup" stepKey="loginAsAdmin"/>
+            <actionGroup ref="OpenEditCustomerFromAdminActionGroup" stepKey="openCustomerEdit">
+                <argument name="customer" value="$createSimpleUsCustomer$" />
+            </actionGroup>
+            <actionGroup ref="UpdateCustomerStoreCreditBalanceAdminActionGroup" stepKey="updateStoreCreditFromAdmin">
+                <argument name="storeCredit" value="100" />
+            </actionGroup>
+        </before>
+        <after>
+            <actionGroup ref="StorefrontCustomerLogoutActionGroup" stepKey="customerLogoutStorefront"/>
+            <deleteData stepKey="deleteProduct1" createDataKey="simpleProduct1"/>
+            <deleteData stepKey="deleteProduct2" createDataKey="simpleProduct2"/>
+            <deleteData stepKey="deleteProduct3" createDataKey="simpleProduct3"/>
+            <deleteData stepKey="deleteProduct4" createDataKey="simpleProduct4"/>
+            <deleteData stepKey="deleteCategory" createDataKey="createCategory"/>
+            <deleteData createDataKey="createSimpleUsCustomer" stepKey="deleteCustomer"/>
+            <actionGroup ref="AdminLogoutActionGroup" stepKey="logout"/>
+        </after>
+        <!--Log in to Storefront as Customer-->
+        <actionGroup ref="LoginToStorefrontActionGroup" stepKey="signUpNewUser">
+            <argument name="Customer" value="$createSimpleUsCustomer$"/>
+        </actionGroup>
+        <!--Verify Category In Store Front-->
+        <actionGroup ref="StorefrontNavigateCategoryPageActionGroup" stepKey="openCategoryPage1">
+            <argument name="category" value="$createCategory$"/>
+        </actionGroup>
+        <actionGroup ref="StorefrontAddProductToCartFromCategoryActionGroup" stepKey="addProduct1ToCart">
+            <argument name="productName" value="$simpleProduct1.name$"/>
+        </actionGroup>
+        <actionGroup ref="StorefrontAddProductToCartFromCategoryActionGroup" stepKey="addProduct2ToCart">
+            <argument name="productName" value="$simpleProduct2.name$"/>
+        </actionGroup>
+        <actionGroup ref="StorefrontAddProductToCartFromCategoryActionGroup" stepKey="addProduct3ToCart">
+            <argument name="productName" value="$simpleProduct3.name$"/>
+        </actionGroup>
+        <actionGroup ref="StorefrontAddProductToCartFromCategoryActionGroup" stepKey="addProduct4ToCart">
+            <argument name="productName" value="$simpleProduct4.name$"/>
+        </actionGroup>
+
+        <!--Go to Checkout-->
+        <actionGroup ref="GoToCheckoutFromMinicartActionGroup" stepKey="goToCheckoutFromMinicart"/>
+        <actionGroup ref="StorefrontSetShippingMethodActionGroup" stepKey="setShippingMethod"/>
+        <actionGroup ref="StorefrontCheckoutForwardFromShippingStepActionGroup" stepKey="clickNextButton"/>
+        <!-- Checkout select Check/Money Order payment -->
+        <actionGroup ref="CheckoutSelectCheckMoneyOrderPaymentActionGroup" stepKey="selectCheckMoneyPayment"/>
+
+        <actionGroup ref="StorefrontCheckoutUseStoreCreditActionGroup" stepKey="useStoreCredit">
+            <argument name="storeCredit" value="100" />
+        </actionGroup>
+
+        <!--Click Place Order button-->
+        <actionGroup ref="ClickPlaceOrderActionGroup" stepKey="placeOrder"/>
+        <grabTextFrom selector="{{CheckoutSuccessMainSection.orderLink}}" stepKey="grabOrderNumber"/>
+
+        <actionGroup ref="AdminOpenOrderByEntityIdActionGroup" stepKey="openOrderById">
+            <argument name="entityId" value="$grabOrderNumber"/>
+        </actionGroup>
+        <see userInput="-$100.00" selector="{{AdminOrderFormTotalSection.storeCredit}}" stepKey="seeStoreCreditInOrder"/>
+        <!--Create Partial Invoice1 for the Order-->
+        <actionGroup ref="StartCreateInvoiceFromOrderPageActionGroup" stepKey="startCreatePartialInvoice1"/>
+        <fillField selector="{{AdminInvoiceItemsSection.itemQtyToInvoice('3')}}" userInput="0" stepKey="updateThirdRowProductQuantity"/>
+        <fillField selector="{{AdminInvoiceItemsSection.itemQtyToInvoice('4')}}" userInput="0" stepKey="updateFourthRowProductQuantity"/>
+        <click selector="{{AdminInvoiceItemsSection.updateQty}}" stepKey="updatePartialInvoice1Quantity"/>
+        <waitForPageLoad stepKey="waitPageToBeLoaded1"/>
+        <actionGroup ref="SubmitInvoiceActionGroup" stepKey="submitInvoice1"/>
+        <!--Create credit memo-->
+        <actionGroup ref="AdminStartCreateCreditMemoFromOrderPageActionGroup" stepKey="startToCreateCreditMemo1"/>
+        <!--Submit credit memo with full refund to store credit-->
+        <waitForElementVisible selector="{{AdminCreditMemoTotalSection.refundStoreCredit}}" stepKey="waitForRefundStoreCreditElement1"/>
+        <checkOption selector="{{AdminCreditMemoTotalSection.refundStoreCredit}}" stepKey="selectRefundToCredit1"/>
+        <actionGroup ref="SubmitCreditMemoActionGroup" stepKey="submitCreditMemo1"/>
+        <!--Create Partial Invoice2 for the Order-->
+        <actionGroup ref="StartCreateInvoiceFromOrderPageActionGroup" stepKey="startCreatePartialInvoice2"/>
+        <fillField selector="{{AdminInvoiceItemsSection.itemQtyToInvoice('2')}}" userInput="0" stepKey="updateSecondRowProductQuantity"/>
+        <click selector="{{AdminInvoiceItemsSection.updateQty}}" stepKey="updatePartialInvoice2Quantity"/>
+        <waitForPageLoad stepKey="waitPageToBeLoaded2"/>
+        <actionGroup ref="SubmitInvoiceActionGroup" stepKey="submitInvoice2"/>
+        <!--Create credit memo-->
+        <actionGroup ref="AdminStartCreateCreditMemoFromOrderPageActionGroup" stepKey="startToCreateCreditMemo2"/>
+        <!--Submit credit memo with full refund to store credit-->
+        <waitForElementVisible selector="{{AdminCreditMemoTotalSection.refundStoreCredit}}" stepKey="waitForRefundStoreCreditElement2"/>
+        <checkOption selector="{{AdminCreditMemoTotalSection.refundStoreCredit}}" stepKey="selectRefundToCredit2"/>
+        <actionGroup ref="SubmitCreditMemoActionGroup" stepKey="submitCreditMemo2"/>
+        <dontSee selector="{{AdminMessagesSection.error}}" stepKey="noErrorWhileCreatingCreditMemo"/>
+    </test>
+</tests>

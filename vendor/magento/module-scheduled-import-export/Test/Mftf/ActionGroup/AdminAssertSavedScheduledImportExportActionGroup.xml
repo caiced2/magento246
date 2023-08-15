@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+ /**
+  * Copyright © Magento, Inc. All rights reserved.
+  * See COPYING.txt for license details.
+  */
+-->
+
+<actionGroups xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+              xsi:noNamespaceSchemaLocation="urn:magento:mftf:Test/etc/actionGroupSchema.xsd">
+    <actionGroup name="AdminAssertSavedScheduledImportExportActionGroup">
+        <annotations>
+            <description>Verifies the specified data is in the specified row on the the admin Scheduled Imports/Exports page.</description>
+        </annotations>
+        <arguments>
+            <argument name="name" defaultValue="" type="string"/>
+            <argument name="operation" defaultValue="Import" type="string"/>
+            <argument name="entityType" defaultValue="Products" type="string"/>
+            <argument name="lastRun" defaultValue="" type="string"/>
+            <argument name="frequency" defaultValue="Daily" type="string"/>
+            <argument name="status" defaultValue="Enabled" type="string"/>
+            <argument name="lastOutcome" defaultValue="Pending" type="string"/>
+            <argument name="rowIndex" defaultValue="1" type="string"/>
+        </arguments>
+        <waitForElementVisible selector="{{AdminScheduledImportsExportsSection.nthRow(rowIndex)}}" stepKey="waitForRow"/>
+        <see userInput="{{name}}" selector="{{AdminScheduledImportsExportsSection.nameByRow(rowIndex)}}" stepKey="seeName"/>
+        <see userInput="{{operation}}" selector="{{AdminScheduledImportsExportsSection.operationByRow(rowIndex)}}" stepKey="seeOperation"/>
+        <see userInput="{{entityType}}" selector="{{AdminScheduledImportsExportsSection.entityTypeByRow(rowIndex)}}" stepKey="seeEntityType"/>
+        <see userInput="{{lastRun}}" selector="{{AdminScheduledImportsExportsSection.lastRunByRow(rowIndex)}}" stepKey="seeLastRun"/>
+        <see userInput="{{frequency}}" selector="{{AdminScheduledImportsExportsSection.frequencyByRow(rowIndex)}}" stepKey="seeFrequency"/>
+        <see userInput="{{status}}" selector="{{AdminScheduledImportsExportsSection.statusByRow(rowIndex)}}" stepKey="seeStatus"/>
+        <see userInput="{{lastOutcome}}" selector="{{AdminScheduledImportsExportsSection.lastOutcomeByRow(rowIndex)}}" stepKey="seeLastOutcome"/>
+    </actionGroup>
+</actionGroups>

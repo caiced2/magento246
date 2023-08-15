@@ -1,0 +1,86 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+ /**
+  * Copyright © Magento, Inc. All rights reserved.
+  * See COPYING.txt for license details.
+  */
+-->
+
+<tests xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xsi:noNamespaceSchemaLocation="urn:magento:mftf:Test/etc/testSchema.xsd">
+    <test name="ValidateRequireCustomerAddressAttributeTest">
+        <annotations>
+            <features value="CustomerCustomAttributes"/>
+            <stories value="Validation Require Customer Address Attribute"/>
+            <title value="Validate require customer address attribute test"/>
+            <description value="Validate require customer address attribute"/>
+            <severity value="MAJOR"/>
+            <testCaseId value="MC-14556"/>
+            <group value="CustomerCustomAttributes"/>
+            <group value="mtf_migrated"/>
+        </annotations>
+        <before>
+            <!-- Login as admin -->
+            <actionGroup ref="AdminLoginActionGroup" stepKey="loginAsAdmin"/>
+
+            <!-- Create customer -->
+            <createData entity="Simple_US_Customer" stepKey="createCustomer"/>
+
+            <!-- Create product -->
+            <createData entity="SimpleProduct2" stepKey="createProduct"/>
+        </before>
+        <after>
+            <!-- Delete created attribute -->
+            <actionGroup ref="AdminDeleteCustomerAttribute" stepKey="deleteCustomerAttribute">
+                <argument name="defaultLabel" value="{{AttributeTextField.attribute_code}}"/>
+            </actionGroup>
+
+            <!-- Logout customer -->
+            <actionGroup ref="StorefrontCustomerLogoutActionGroup" stepKey="customerLogoutStorefront"/>
+
+            <!-- Delete customer -->
+            <deleteData createDataKey="createCustomer" stepKey="deleteCustomer"/>
+
+            <!-- Delete product -->
+            <deleteData createDataKey="createProduct" stepKey="deleteProduct"/>
+
+            <!-- Admin logout -->
+            <actionGroup ref="AdminLogoutActionGroup" stepKey="logout"/>
+        </after>
+
+        <!-- Create new customer address attribute -->
+        <amOnPage url="{{CustomerAddressAttributesPage.url}}" stepKey="navigateToCustomerAddressAttributesPage"/>
+        <waitForPageLoad stepKey="waitForCustomerAddressAttributePageLoad"/>
+        <actionGroup ref="AdminCreateCustomerNewAttributeWithRequiredValues" stepKey="createTextFieldAttribute">
+            <argument name="defaultLabel" value="{{AttributeTextField.frontend_label}}"/>
+            <argument name="attributeCode" value="{{AttributeTextField.attribute_code}}"/>
+            <argument name="inputType" value="{{AttributeTextField.frontend_input}}"/>
+            <argument name="sortOrder" value="10"/>
+        </actionGroup>
+
+        <!-- Login as customer -->
+        <actionGroup ref="LoginToStorefrontActionGroup" stepKey="loginToStorefrontAccount">
+            <argument name="Customer" value="$$createCustomer$$"/>
+        </actionGroup>
+
+        <!-- Add created product to shopping cart -->
+        <actionGroup ref="AddSimpleProductToCartActionGroup" stepKey="addProductToCart">
+            <argument name="product" value="$$createProduct$$"/>
+        </actionGroup>
+
+        <!-- Open checkout page -->
+        <amOnPage url="{{CheckoutCartPage.url}}" stepKey="goToCartPage"/>
+        <waitForPageLoad stepKey="waitForCartPageLoad"/>
+        <click selector="{{CheckoutCartSummarySection.proceedToCheckout}}" stepKey="clickProceedToCheckout"/>
+        <waitForPageLoad stepKey="waitForShippingPageLoad"/>
+
+        <!-- Add new shipping address -->
+        <click selector="{{CheckoutShippingSection.newAddressButton}}" stepKey="addNewAddress"/>
+
+        <!-- Save address -->
+        <click selector="{{CheckoutShippingSection.saveAddress}}" stepKey="saveNewAddress"/>
+
+        <!-- Assert customer address attribute error require message -->
+        <see selector="{{CheckoutShippingSection.textFieldAttrRequireMessage(AttributeTextField.frontend_label)}}" userInput="This is a required field." stepKey="seeErrorRequireMessage"/>
+    </test>
+</tests>

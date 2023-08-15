@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+ /**
+  * Copyright © Magento, Inc. All rights reserved.
+  * See COPYING.txt for license details.
+  */
+-->
+<actionGroups xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:noNamespaceSchemaLocation="urn:magento:mftf:Test/etc/actionGroupSchema.xsd">
+    <actionGroup name="openPreviewForScheduledUpdateFromSlideOut" extends="openPreviewForScheduledUpdate">
+        <arguments>
+            <argument name="index" defaultValue="1" type="string"/>
+        </arguments>
+        <waitForElementVisible selector="{{AdminStagingSlideOutSection.previewModal}}" before="clickPreviewScheduleUpdate" stepKey="waitForPreviewScheduleUpdate"/>
+        <click selector="{{AdminStagingSlideOutSection.previewModal}}" stepKey="clickPreviewScheduleUpdate"/>
+    </actionGroup>
+</actionGroups>

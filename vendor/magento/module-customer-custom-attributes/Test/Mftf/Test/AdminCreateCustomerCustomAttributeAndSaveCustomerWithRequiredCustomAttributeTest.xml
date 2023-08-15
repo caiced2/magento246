@@ -1,0 +1,65 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+ /**
+  * Copyright © Magento, Inc. All rights reserved.
+  * See COPYING.txt for license details.
+  */
+-->
+
+<tests xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xsi:noNamespaceSchemaLocation="urn:magento:mftf:Test/etc/testSchema.xsd">
+    <test name="AdminCreateCustomerCustomAttributeAndSaveCustomerWithRequiredCustomAttributeTest">
+        <annotations>
+            <group value="Customer Custom Attribute"/>
+            <stories value="Create Customer Custom Attribute"/>
+            <title value="Create custom customer attribute and save customer with required custom attribute with digit at the end"/>
+            <description value="Create custom customer attribute and save customer with required custom attribute with digit at the end"/>
+            <severity value="MAJOR"/>
+            <testCaseId value="MC-14583"/>
+            <group value="mtf_migrated"/>
+        </annotations>
+
+        <before>
+            <!--Login as admin-->
+            <actionGroup ref="AdminLoginActionGroup" stepKey="LoginAsAdmin"/>
+            <!-- Create Customer -->
+            <createData entity="Simple_US_Customer_CA" stepKey="simpleCustomer"/>
+            <!-- Create Date Customer Custom Attribute -->
+            <actionGroup ref="AdminCreateCustomerCustomAttributeWithCustomerAccountEditForm" stepKey="createTextAreaCustomAttribute">
+                <argument name="customerAttribute" value="AttributeTextFieldData"/>
+            </actionGroup>
+            <magentoCron groups="index" stepKey="reindex"/>
+        </before>
+        <after>
+            <deleteData createDataKey="simpleCustomer" stepKey="deleteCustomer"/>
+             <!--Delete customer attributes -->
+            <amOnPage url="{{CustomerAttributesPage.url}}" stepKey="navigateToCustomerAttributePage"/>
+            <actionGroup ref="DeleteCustomerAttribute" stepKey="adminDeleteFileAttribute">
+                <argument name="defaultLabel" value="{{AttributeTextFieldData.label}}"/>
+            </actionGroup>
+            <magentoCron groups="index" stepKey="reindex"/>
+            <actionGroup ref="CliCacheFlushActionGroup" stepKey="cliCacheFlushActionGroup">
+                <argument name="tags" value="" />
+            </actionGroup>
+            <!--Log out-->
+            <actionGroup ref="AdminLogoutActionGroup" stepKey="logOut"/>
+        </after>
+
+        <!-- Navigate to Customers -> select created customer  -->
+        <actionGroup ref="AdminFilterCustomerByEmail" stepKey="filterCreatedCustomer">
+            <argument name="email" value="$$simpleCustomer.email$$"/>
+        </actionGroup>
+        <click selector="{{AdminCustomerGridSection.firstRowEditLink}}" stepKey="clickOnEditButton"/>
+        <waitForPageLoad stepKey="waitForCustomerEditPageToLoad"/>
+        <click selector="{{AdminCustomerAccountInformationSection.accountInformationTab}}" stepKey="clickOnAccountInformation"/>
+        <waitForPageLoad stepKey="waitForAccountDetailsToLoad"/>
+
+        <!--Assert Attribute present in Customer Edit page-->
+        <seeElement selector="{{AdminCustomerAccountInformationSection.customerAttribute(AttributeTextFieldData.code)}}"  stepKey="seeTextField"/>
+
+        <!-- Save customer with required custom attribute -->
+        <fillField selector="{{AdminCustomerAccountInformationSection.customerAttribute(AttributeTextFieldData.code)}}" userInput="test99" stepKey="fillCustomerAttribute"/>
+        <click selector="{{AdminCustomerMainActionsSection.saveButton}}" stepKey="clickOnSaveButton"/>
+        <see selector="{{AdminCustomerMessagesSection.successMessage}}" userInput="You saved the customer." stepKey="seeSuccessMessage"/>
+    </test>
+</tests>

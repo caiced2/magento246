@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+ /**
+  * Copyright © Magento, Inc. All rights reserved.
+  * See COPYING.txt for license details.
+  */
+-->
+<sections xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:noNamespaceSchemaLocation="urn:magento:mftf:Page/etc/SectionObject.xsd">
+    <section name="AdminTargetRuleSection">
+        <element name="successMessage" type="text" selector=".message.message-success.success"/>
+        <element name="addRule" type="button" selector="#add" timeout="30"/>
+        <element name="header" type="text" selector="h1.page-title"/>
+        <element name="back" type="button" selector="#back" timeout="30"/>
+        <element name="reset" type="button" selector="#reset" timeout="30"/>
+        <element name="save" type="button" selector="#save" timeout="30"/>
+        <element name="saveAndEdit" type="button" selector="#save_and_continue_edit" timeout="30"/>
+        <element name="ruleInformationTab" type="button" selector="#targetrule_tabs_magento_targetrule_edit_tab_main" timeout="30"/>
+        <element name="productToMatchTab" type="button" selector="#targetrule_tabs_magento_targetrule_edit_tab_conditions" timeout="30"/>
+        <element name="productToDisplayTab" type="button" selector="#targetrule_tabs_magento_targetrule_edit_tab_actions" timeout="30"/>
+        <element name="delete" type="button" selector="#delete" timeout="30"/>
+        <element name="modalAcceptButton" type="button" selector="//button[@class='action-primary action-accept']/span" timeout="30"/>
+        <element name="enableCartCrosssell" type="select" selector="#checkout_cart_crosssell_enabled"/>
+        <element name="shoppingCartTab" type="button" selector="#checkout_cart-head"/>
+        <element name="crossSellUseSystemValue" type="checkbox" selector="#checkout_cart_crosssell_enabled_inherit"/>
+    </section>
+</sections>

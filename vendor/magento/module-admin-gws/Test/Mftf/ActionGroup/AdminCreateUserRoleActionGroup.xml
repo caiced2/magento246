@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+ /**
+  * Copyright © Magento, Inc. All rights reserved.
+  * See COPYING.txt for license details.
+  */
+-->
+<actionGroups xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+              xsi:noNamespaceSchemaLocation="urn:magento:mftf:Test/etc/actionGroupSchema.xsd">
+    <actionGroup name="AdminCreateUserRoleActionGroup" extends="AdminCreateUserRoleDefaultActionGroup">
+        <arguments>
+            <argument name="StoreGroup" defaultValue="_defaultStoreGroup"/>
+        </arguments>
+        <selectOption selector="{{AdminEditRoleResourcesSection.roleScopes}}" userInput="Custom" after="selectScope1" stepKey="selectScope2" />
+        <click selector="{{AdminEditRoleResourcesSection.storeName(StoreGroup.name)}}" after="selectScope2" stepKey="selectCreatedStoreGroup" />
+    </actionGroup>
+</actionGroups>

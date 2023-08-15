@@ -1,0 +1,115 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+ /**
+  * Copyright © Magento, Inc. All rights reserved.
+  * See COPYING.txt for license details.
+  */
+-->
+
+<tests xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xsi:noNamespaceSchemaLocation="urn:magento:mftf:Test/etc/testSchema.xsd">
+    <test name="AdminLoginAsCustomerUpdateAddressesOperationsWriteInLogTest">
+        <annotations>
+            <features value="Login as Customer"/>
+            <stories value="Update billing and shipping addresses operations is written in log"/>
+            <title value="Verify that 'Update billing and shipping addresses' operation is written in log"/>
+            <description value="'Update billing and shipping addresses' for customer is written in log"/>
+            <severity value="CRITICAL"/>
+            <group value="login_as_customer"/>
+        </annotations>
+        <before>
+            <magentoCLI command="config:set {{LoginAsCustomerConfigDataEnabled.path}} 1" stepKey="enableLoginAsCustomer"/>
+            <actionGroup ref="CliCacheFlushActionGroup" stepKey="flushConfigCache">
+                <argument name="tags" value="config"/>
+            </actionGroup>
+            <createData entity="Simple_US_Customer_Assistance_Allowed" stepKey="createCustomer"/>
+
+            <actionGroup ref="AdminLoginActionGroup" stepKey="login"/>
+        </before>
+        <after>
+            <actionGroup ref="AdminLogoutActionGroup" stepKey="logout"/>
+
+            <deleteData createDataKey="createCustomer" stepKey="deleteCustomer"/>
+            <magentoCLI command="config:set {{LoginAsCustomerConfigDataEnabled.path}} 0" stepKey="disableLoginAsCustomer"/>
+            <actionGroup ref="CliCacheFlushActionGroup" stepKey="flushConfigCache">
+                <argument name="tags" value="config"/>
+            </actionGroup>
+        </after>
+
+        <!-- Admin Login as Customer and go to addressPage -->
+        <actionGroup ref="AdminLoginAsCustomerLoginFromCustomerPageActionGroup" stepKey="loginAsCustomerFromCustomerPage">
+            <argument name="customerId" value="$$createCustomer.id$$"/>
+        </actionGroup>
+        <amOnPage url="{{StorefrontCustomerAddressesPage.url}}" stepKey="goToAddressPage"/>
+
+        <!-- Change shipping address -->
+        <actionGroup ref="StoreFrontClickEditDefaultShippingAddressActionGroup" stepKey="clickEditShippingAddress"/>
+        <grabTextFrom selector="{{StorefrontCustomerAddressFormSection.streetAddress}}" stepKey="grabStreet"/>
+        <fillField selector="{{StorefrontCustomerAddressFormSection.streetAddress}}" userInput="New street for Shipping" stepKey="fillShippingStreetAddress"/>
+        <actionGroup ref="AdminSaveCustomerAddressActionGroup" stepKey="saveShippingAddress"/>
+        <closeTab stepKey="closeTab"/>
+
+        <!-- Go to Reports log and sort by asc -->
+        <actionGroup ref="AdminOpenActionLogsReportPageActionGroup" stepKey="openActionLogsReportPage"/>
+        <actionGroup ref="AdminLogsReportSelectSortByAscActionGroup" stepKey="sortByAsc"/>
+        <actionGroup ref="AdminGridFilterResetActionGroup" stepKey="clearGridFilters"/>
+
+        <!-- Assert report log row after changing shipping address -->
+        <actionGroup ref="AdminAssertReportLogInGridActionGroup" stepKey="assertRow">
+            <argument name="actionGroup" value="Login as Customer"/>
+            <argument name="action" value="Save Customer Address"/>
+            <argument name="fullActionName" value="customer_address_formPost"/>
+            <argument name="details" value="Save address for customer id = $$createCustomer.id$$, email = $$createCustomer.email$$"/>
+        </actionGroup>
+
+        <!-- Click view details link-->
+        <click selector="{{AdminActionLogReportGridSection.viewLink}}" stepKey="clickViewDetailsLink"/>
+
+        <!-- Assert related Changes after Shipping changes -->
+        <actionGroup ref="AdminAssertReportLogEntryRelatedChangesActionGroup" stepKey="verifyRelatedChangesColumns">
+            <argument name="paramName" value="street"/>
+            <argument name="valueBefore" value="{$grabStreet}"/>
+            <argument name="valueAfter" value="New street for Shipping"/>
+        </actionGroup>
+
+        <!-- Verify admin user link -->
+        <actionGroup ref="AdminAssertReportLogEntryAdminLinkActionGroup" stepKey="verifyAdminUserLink"/>
+
+        <!-- Admin Login as Customer and go to addressPage -->
+        <actionGroup ref="AdminLoginAsCustomerLoginFromCustomerPageActionGroup" stepKey="loginAsCustomerFromCustomerPageBeforeChangeBillingAddress">
+            <argument name="customerId" value="$$createCustomer.id$$"/>
+        </actionGroup>
+        <amOnPage url="{{StorefrontCustomerAddressesPage.url}}" stepKey="goToAddressPageBeforeChangeBillingAddress"/>
+
+        <!-- Change billing address -->
+        <click selector="{{StorefrontCustomerAddressesSection.editDefaultBillingAddress}}" stepKey="clickEditDefaultBillingAddress" />
+        <waitForPageLoad stepKey="waitForPageLoad"/>
+        <fillField selector="{{StorefrontCustomerAddressFormSection.streetAddress}}" userInput="New street for Billing" stepKey="fillBillingStreetAddress"/>
+        <actionGroup ref="AdminSaveCustomerAddressActionGroup" stepKey="saveBillingAddress"/>
+        <closeTab stepKey="closeTabAfterBillingChanged"/>
+
+        <!-- Go to Reports log -->
+        <actionGroup ref="AdminOpenActionLogsReportPageActionGroup" stepKey="openActionLogsReportPageAfterBillingChanged"/>
+
+        <!-- Assert report log row after changing billing address -->
+        <actionGroup ref="AdminAssertReportLogInGridActionGroup" stepKey="assertRowAfterBillingChanged">
+            <argument name="actionGroup" value="Login as Customer"/>
+            <argument name="action" value="Save Customer Address"/>
+            <argument name="fullActionName" value="customer_address_formPost"/>
+            <argument name="details" value="Save address for customer id = $$createCustomer.id$$, email = $$createCustomer.email$$"/>
+        </actionGroup>
+
+        <!-- Click view details link-->
+        <click selector="{{AdminActionLogReportGridSection.viewLink}}" stepKey="clickViewDetailsLinkAfterBillingChanged"/>
+
+        <!-- Assert related Changes after Shipping changes -->
+        <actionGroup ref="AdminAssertReportLogEntryRelatedChangesActionGroup" stepKey="verifyRelatedChangesColumnsAfterBillingChanged">
+            <argument name="paramName" value="street"/>
+            <argument name="valueBefore" value="New street for Shipping"/>
+            <argument name="valueAfter" value="New street for Billing"/>
+        </actionGroup>
+
+        <!-- Verify admin user link -->
+        <actionGroup ref="AdminAssertReportLogEntryAdminLinkActionGroup" stepKey="verifyAdminUserLinkAfterBillingChanged"/>
+    </test>
+</tests>

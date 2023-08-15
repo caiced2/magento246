@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+/**
+ * Copyright © Magento, Inc. All rights reserved.
+ * See COPYING.txt for license details.
+ */
+-->
+<widgets xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:noNamespaceSchemaLocation="urn:magento:module:Magento_Widget:etc/widget.xsd">
+    <widget id="magento_banner" class="Magento\Banner\Block\Widget\Banner"
+            placeholder_image="Magento_Banner::widget_banner.png">
+        <label translate="true">Dynamic Blocks Rotator</label>
+        <description translate="true">Displays Specified or Promotion Dynamic Blocks</description>
+        <parameters>
+            <parameter xsi:type="text" name="banner_uids" visible="false" />
+        </parameters>
+    </widget>
+</widgets>
+

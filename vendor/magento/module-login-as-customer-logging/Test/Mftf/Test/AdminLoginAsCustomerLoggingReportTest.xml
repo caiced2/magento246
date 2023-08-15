@@ -1,0 +1,62 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+ /**
+  * Copyright © Magento, Inc. All rights reserved.
+  * See COPYING.txt for license details.
+  */
+-->
+
+<tests xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xsi:noNamespaceSchemaLocation="urn:magento:mftf:Test/etc/testSchema.xsd">
+    <test name="AdminLoginAsCustomerLoggingReportTest">
+        <annotations>
+            <features value="Login as Customer"/>
+            <stories value="Login as Customer operation logged in report grid"/>
+            <title value="Using 'Login as Customer' is logged properly in report grid"/>
+            <description
+                value="Verify that 'Login as Customer Log' record information about using 'Login as Customer' functionality properly"/>
+            <severity value="MAJOR"/>
+            <group value="login_as_customer"/>
+        </annotations>
+        <before>
+            <magentoCLI command="config:set {{LoginAsCustomerConfigDataEnabled.path}} 1"
+                        stepKey="enableLoginAsCustomer"/>
+            <actionGroup ref="CliCacheFlushActionGroup" stepKey="flushConfigCache">
+                <argument name="tags" value="config"/>
+            </actionGroup>
+            <createData entity="Simple_US_Customer_Assistance_Allowed" stepKey="createCustomer"/>
+            <remove keyForRemoval="addCustomerGroupPrice"/>
+
+            <actionGroup ref="AdminLoginActionGroup" stepKey="loginAsDefaultUser"/>
+        </before>
+        <after>
+            <actionGroup ref="AdminLogoutActionGroup" stepKey="logout"/>
+
+            <deleteData createDataKey="createCustomer" stepKey="deleteCustomer"/>
+            <magentoCLI command="config:set {{LoginAsCustomerConfigDataEnabled.path}} 0"
+                        stepKey="disableLoginAsCustomer"/>
+            <actionGroup ref="CliCacheFlushActionGroup" stepKey="flushConfigCache">
+                <argument name="tags" value="config"/>
+            </actionGroup>
+        </after>
+
+        <!-- Admin Login as Customer from Customer page -->
+        <actionGroup ref="AdminLoginAsCustomerLoginFromCustomerPageActionGroup" stepKey="loginAsCustomerFromCustomerPage">
+            <argument name="customerId" value="$$createCustomer.id$$"/>
+        </actionGroup>
+        <closeTab stepKey="closeTab"/>
+
+        <!-- Go to Reports log and sort by asc -->
+        <actionGroup ref="AdminOpenActionLogsReportPageActionGroup" stepKey="openActionLogsReportPage"/>
+        <actionGroup ref="AdminLogsReportSelectSortByAscActionGroup" stepKey="sortByAsc"/>
+        <actionGroup ref="AdminGridFilterResetActionGroup" stepKey="clearGridFilters"/>
+
+        <!-- Assert report row log -->
+        <actionGroup ref="AdminAssertReportLogInGridActionGroup" stepKey="assertRow">
+            <argument name="actionGroup" value="Login as Customer"/>
+            <argument name="action" value="Login"/>
+            <argument name="fullActionName" value="loginascustomer_login_index"/>
+            <argument name="details" value="Logged in as customer: id = $$createCustomer.id$$, email = $$createCustomer.email$$"/>
+        </actionGroup>
+    </test>
+</tests>

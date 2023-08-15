@@ -1,0 +1,16 @@
+{
+    "wishlist": {
+        "column": {
+            "name": true,
+            "visibility": true
+        },
+        "index": {
+            "MULTIPLE_WISHLIST_CUSTOMER_ID": true,
+            "WISHLIST_CUSTOMER_ID": true
+        },
+        "constraint": {
+            "WISHLIST_CUSTOMER_ID_CUSTOMER_ENTITY_ENTITY_ID": true,
+            "WISHLIST_CUSTOMER_ID": true
+        }
+    }
+}

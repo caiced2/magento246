@@ -1,0 +1,17 @@
+<?php
+/**
+ * Copyright © Magento, Inc. All rights reserved.
+ * See COPYING.txt for license details.
+ */
+
+?>
+
+<input type="hidden" name="creditmemo[refund_giftcardaccount]" value="0">
+<?php if ($block->canRefundToCustomerBalance()) : ?>
+    <p>
+        <label for="creditmemo_refund_giftcardaccount">
+            <?= $block->escapeHtml(__('Refund Gift Cards to Store Credit')) ?>
+        </label>
+        <input type="checkbox" name="creditmemo[refund_giftcardaccount]" value="1" id="creditmemo_refund_giftcardaccount">
+    </p>
+<?php endif; ?>

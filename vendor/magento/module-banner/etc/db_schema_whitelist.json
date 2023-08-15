@@ -1,0 +1,59 @@
+{
+    "magento_banner": {
+        "column": {
+            "banner_id": true,
+            "name": true,
+            "is_enabled": true,
+            "types": true
+        },
+        "index": {
+            "MAGENTO_BANNER_NAME": true
+        },
+        "constraint": {
+            "PRIMARY": true
+        }
+    },
+    "magento_banner_content": {
+        "column": {
+            "banner_id": true,
+            "store_id": true,
+            "banner_content": true
+        },
+        "index": {
+            "MAGENTO_BANNER_CONTENT_STORE_ID": true
+        },
+        "constraint": {
+            "PRIMARY": true,
+            "MAGENTO_BANNER_CONTENT_BANNER_ID_MAGENTO_BANNER_BANNER_ID": true,
+            "MAGENTO_BANNER_CONTENT_STORE_ID_STORE_STORE_ID": true
+        }
+    },
+    "magento_banner_catalogrule": {
+        "column": {
+            "banner_id": true,
+            "rule_id": true
+        },
+        "index": {
+            "MAGENTO_BANNER_CATALOGRULE_RULE_ID": true
+        },
+        "constraint": {
+            "PRIMARY": true,
+            "MAGENTO_BANNER_CATALOGRULE_BANNER_ID_MAGENTO_BANNER_BANNER_ID": true,
+            "MAGENTO_BANNER_CATALOGRULE_RULE_ID_CATALOGRULE_RULE_ID": true
+        }
+    },
+    "magento_banner_salesrule": {
+        "column": {
+            "banner_id": true,
+            "rule_id": true
+        },
+        "index": {
+            "MAGENTO_BANNER_SALESRULE_RULE_ID": true
+        },
+        "constraint": {
+            "PRIMARY": true,
+            "MAGENTO_BANNER_SALESRULE_BANNER_ID_MAGENTO_BANNER_BANNER_ID": true,
+            "MAGENTO_BANNER_SALESRULE_RULE_ID_SALESRULE_RULE_ID": true
+        }
+    }
+}

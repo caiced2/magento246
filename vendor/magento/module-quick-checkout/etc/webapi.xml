@@ -1,0 +1,32 @@
+<?xml version="1.0"?>
+<!--
+/**
+ * Copyright © Magento, Inc. All rights reserved.
+ * See COPYING.txt for license details.
+ */
+-->
+<routes xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="urn:magento:module:Magento_Webapi:etc/webapi.xsd">
+    <!-- Check if bolt account exists -->
+    <route url="/V1/quick-checkout/has-account" method="POST">
+        <service class="Magento\QuickCheckout\Api\AccountRepositoryInterface" method="hasAccount"/>
+        <resources>
+            <resource ref="anonymous"/>
+        </resources>
+    </route>
+
+    <!-- Get bolt account details / data -->
+    <route url="/V1/quick-checkout/account-details" method="POST">
+        <service class="Magento\QuickCheckout\Api\AccountRepositoryInterface" method="getAccountDetails"/>
+        <resources>
+            <resource ref="anonymous"/>
+        </resources>
+    </route>
+
+    <!-- Get bolt account details / data -->
+    <route url="/V1/quick-checkout/storefront/has-account" method="POST">
+        <service class="Magento\QuickCheckout\Api\StorefrontAccountRepositoryInterface" method="hasAccount"/>
+        <resources>
+            <resource ref="anonymous"/>
+        </resources>
+    </route>
+</routes>

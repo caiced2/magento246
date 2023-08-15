@@ -1,0 +1,174 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+ /**
+  * Copyright © Magento, Inc. All rights reserved.
+  * See COPYING.txt for license details.
+  */
+-->
+
+<tests xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xsi:noNamespaceSchemaLocation="urn:magento:mftf:Test/etc/testSchema.xsd">
+    <test name="CustomerAttributesInvalidCustomerAccountTest">
+        <annotations>
+            <features value="CustomerCustomAttribute"/>
+            <stories value="Custom Customer Attributes get cleared in case of invalid Customer Account creation on Storefront"/>
+            <title value="Customer attributes save values in case of invalid Customer Account creation"/>
+            <description value="Customer attributes save values in case of invalid Customer Account creation"/>
+            <severity value="MAJOR"/>
+            <testCaseId value="MAGETWO-96163"/>
+            <useCaseId value="MAGETWO-96124"/>
+            <group value="customer"/>
+        </annotations>
+        <before>
+            <!--Login as admin-->
+            <actionGroup ref="AdminLoginActionGroup" stepKey="LoginAsAdmin"/>
+            <createData entity="Simple_US_Customer" stepKey="createSimpleUsCustomer"/>
+        </before>
+        <after>
+            <deleteData createDataKey="createSimpleUsCustomer" stepKey="deleteCustomer"/>
+            <!-- Delete customer attributes -->
+            <amOnPage url="{{CustomerAttributesPage.url}}" stepKey="navigateToCustomerAttributePage"/>
+            <actionGroup ref="DeleteCustomerAttribute" stepKey="adminDeleteTextFieldAttribute">
+                <argument name="defaultLabel" value="{{AttributeTextField.frontend_label}}"/>
+            </actionGroup>
+            <actionGroup ref="DeleteCustomerAttribute" stepKey="adminDeleteTextAreaAttribute">
+                <argument name="defaultLabel" value="{{AttributeTextArea.frontend_label}}"/>
+            </actionGroup>
+            <actionGroup ref="DeleteCustomerAttribute" stepKey="adminDeleteMultiLineAttribute">
+                <argument name="defaultLabel" value="{{AttributeMultiLine.frontend_label}}"/>
+            </actionGroup>
+            <actionGroup ref="DeleteCustomerAttribute" stepKey="adminDeleteDateAttribute">
+                <argument name="defaultLabel" value="{{AttributeDate.frontend_label}}"/>
+            </actionGroup>
+            <actionGroup ref="DeleteCustomerAttribute" stepKey="adminDeleteDropDownAttribute">
+                <argument name="defaultLabel" value="{{AttributeDropDown.frontend_label}}"/>
+            </actionGroup>
+            <actionGroup ref="DeleteCustomerAttribute" stepKey="adminDeleteMultiSelectAttribute">
+                <argument name="defaultLabel" value="{{AttributeMultiSelect.frontend_label}}"/>
+            </actionGroup>
+            <actionGroup ref="DeleteCustomerAttribute" stepKey="adminDeleteYesNoAttribute">
+                <argument name="defaultLabel" value="{{AttributeYesNo.frontend_label}}"/>
+            </actionGroup>
+            <!--Log out-->
+            <actionGroup ref="AdminLogoutActionGroup" stepKey="logOut"/>
+        </after>
+
+        <!-- Create new Customer attributes. Create Text Field attribute -->
+        <amOnPage url="{{CustomerAttributesPage.url}}" stepKey="navigateToCustomerAddress"/>
+        <waitForPageLoad stepKey="waitForCustomerAttributePageLoaded"/>
+        <actionGroup ref="AdminCreateCustomerAttribute" stepKey="createTextFieldAttribute">
+            <argument name="defaultLabel" value="{{AttributeTextField.frontend_label}}"/>
+            <argument name="attributeCode" value="{{AttributeTextField.attribute_code}}"/>
+            <argument name="inputType" value="{{AttributeTextField.frontend_input}}"/>
+            <argument name="sortOrder" value="{{AttributeTextField.sort_order}}"/>
+            <argument name="formToUse" value="Customer Registration"/>
+            <argument name="message" value="You saved the customer attribute."/>
+        </actionGroup>
+        <actionGroup ref="AdminCreateCustomerAttribute" stepKey="createTextAreaAttribute">
+            <argument name="defaultLabel" value="{{AttributeTextArea.frontend_label}}"/>
+            <argument name="attributeCode" value="{{AttributeTextArea.attribute_code}}"/>
+            <argument name="inputType" value="{{AttributeTextArea.frontend_input}}"/>
+            <argument name="sortOrder" value="{{AttributeTextArea.sort_order}}"/>
+            <argument name="formToUse" value="Customer Registration"/>
+            <argument name="message" value="You saved the customer attribute."/>
+        </actionGroup>
+        <actionGroup ref="AdminCreateCustomerNewMultipleLineAttribute" stepKey="createMultiLineAttribute">
+            <argument name="customerAttribute" value="AttributeMultiLine"/>
+            <argument name="defaultLabel" value="{{AttributeMultiLine.frontend_label}}"/>
+            <argument name="attributeCode" value="{{AttributeMultiLine.attribute_code}}"/>
+            <argument name="inputType" value="{{AttributeMultiLine.frontend_input}}"/>
+            <argument name="sortOrder" value="{{AttributeMultiLine.sort_order}}"/>
+            <argument name="multilineCount" value="{{AttributeMultiLine.multiline_count}}"/>
+            <argument name="formToUse" value="Customer Registration"/>
+            <argument name="message" value="You saved the customer attribute."/>
+        </actionGroup>
+        <actionGroup ref="AdminCreateCustomerAttribute" stepKey="createDateAttribute">
+            <argument name="defaultLabel" value="{{AttributeDate.frontend_label}}"/>
+            <argument name="attributeCode" value="{{AttributeDate.attribute_code}}"/>
+            <argument name="inputType" value="{{AttributeDate.frontend_input}}"/>
+            <argument name="sortOrder" value="{{AttributeDate.sort_order}}"/>
+            <argument name="formToUse" value="Customer Registration"/>
+            <argument name="message" value="You saved the customer attribute."/>
+        </actionGroup>
+        <actionGroup ref="AdminCreateCustomerAttributeWithOptions" stepKey="createDropDownAttribute">
+            <argument name="customerAttribute" value="AttributeDropDown"/>
+            <argument name="defaultLabel" value="{{AttributeDropDown.frontend_label}}"/>
+            <argument name="attributeCode" value="{{AttributeDropDown.attribute_code}}"/>
+            <argument name="inputType" value="{{AttributeDropDown.frontend_input}}"/>
+            <argument name="sortOrder" value="{{AttributeDropDown.sort_order}}"/>
+            <argument name="option1" value="{{AttributeDropDown.option1}}"/>
+            <argument name="option2" value="{{AttributeDropDown.option2}}"/>
+            <argument name="formToUse" value="Customer Registration"/>
+            <argument name="message" value="You saved the customer attribute."/>
+        </actionGroup>
+        <actionGroup ref="AdminCreateCustomerAttributeWithOptions" stepKey="createMultiSelectAttribute">
+            <argument name="customerAttribute" value="AttributeMultiSelect"/>
+            <argument name="defaultLabel" value="{{AttributeMultiSelect.frontend_label}}"/>
+            <argument name="attributeCode" value="{{AttributeMultiSelect.attribute_code}}"/>
+            <argument name="inputType" value="{{AttributeMultiSelect.frontend_input}}"/>
+            <argument name="sortOrder" value="{{AttributeMultiSelect.sort_order}}"/>
+            <argument name="option1" value="{{AttributeMultiSelect.option1}}"/>
+            <argument name="option2" value="{{AttributeMultiSelect.option2}}"/>
+            <argument name="formToUse" value="Customer Registration"/>
+            <argument name="message" value="You saved the customer attribute."/>
+        </actionGroup>
+        <actionGroup ref="AdminCreateCustomerAttribute" stepKey="createYesNoAttribute">
+            <argument name="defaultLabel" value="{{AttributeYesNo.frontend_label}}"/>
+            <argument name="attributeCode" value="{{AttributeYesNo.attribute_code}}"/>
+            <argument name="inputType" value="{{AttributeYesNo.frontend_input}}"/>
+            <argument name="sortOrder" value="{{AttributeYesNo.sort_order}}"/>
+            <argument name="formToUse" value="Customer Registration"/>
+            <argument name="message" value="You saved the customer attribute."/>
+        </actionGroup>
+
+        <!-- Create account with existing email -->
+        <generateDate stepKey="generateDate" date="+1 week" format="m/d/Y"/>
+        <actionGroup ref="CreateCustomerWithNewAttributesActionGroup" stepKey="createAccountWithCustomAttributes">
+            <argument name="textFieldAttribute" value="AttributeTextField"/>
+            <argument name="textAreaAttribute" value="AttributeTextArea"/>
+            <argument name="multiLineAttribute" value="AttributeMultiLine"/>
+            <argument name="datedAttribute" value="AttributeDate"/>
+            <argument name="dropDownAttribute" value="AttributeDropDown"/>
+            <argument name="multiSelectAttribute" value="AttributeMultiSelect"/>
+            <argument name="yesNoAttribute" value="AttributeYesNo"/>
+            <argument name="email" value="$$createSimpleUsCustomer.email$$"/>
+            <argument name="dateValue" value="$generateDate"/>
+        </actionGroup>
+        <see userInput="There is already an account with this email address. If you are sure that it is your email address, click here to get your password and access your account." stepKey="seeErrorMessage"/>
+
+        <!-- Check custom attribute fields are not empty -->
+        <grabValueFrom selector="{{StoreFrontCustomerAdvancedAttributesSection.textFieldAttribute(AttributeTextField.frontend_label)}}" stepKey="grabTextFieldValue"/>
+        <grabValueFrom selector="{{StoreFrontCustomerAdvancedAttributesSection.textAreaAttribute(AttributeTextArea.frontend_label)}}" stepKey="grabTextAreaValue"/>
+        <grabValueFrom selector="{{StoreFrontCustomerAdvancedAttributesSection.multiLineFirstAttribute(AttributeMultiLine.frontend_label)}}" stepKey="grabMultiLineFirstValue"/>
+        <grabValueFrom selector="{{StoreFrontCustomerAdvancedAttributesSection.multiLineSecondAttribute(AttributeMultiLine.frontend_label)}}" stepKey="grabMultiLineSecondValue"/>
+        <grabValueFrom selector="{{StoreFrontCustomerAdvancedAttributesSection.datedAttribute(AttributeDate.frontend_label)}}" stepKey="grabDateValue"/>
+        <grabTextFrom selector="{{StoreFrontCustomerAdvancedAttributesSection.selectedOption(AttributeDropDown.frontend_label)}}" stepKey="grabDropDownValue"/>
+        <grabTextFrom selector="{{StoreFrontCustomerAdvancedAttributesSection.selectedOption(AttributeMultiSelect.frontend_label)}}" stepKey="grabMultiSelectValue"/>
+        <grabTextFrom selector="{{StoreFrontCustomerAdvancedAttributesSection.selectedOption(AttributeYesNo.frontend_label)}}" stepKey="grabYesNoValue"/>
+
+        <assertNotEmpty stepKey="assertTextFieldIsNotEmpty" after="grabTextFieldValue">
+			<actualResult type="const">$grabTextFieldValue</actualResult>
+        </assertNotEmpty>
+        <assertNotEmpty stepKey="assertTextAreaIsNotEmpty" after="grabTextAreaValue">
+			<actualResult type="const">$grabTextAreaValue</actualResult>
+        </assertNotEmpty>
+        <assertNotEmpty stepKey="assertMultiLineFirstIsNotEmpty" after="grabMultiLineFirstValue">
+			<actualResult type="const">$grabMultiLineFirstValue</actualResult>
+        </assertNotEmpty>
+        <assertNotEmpty stepKey="assertMultiLineSecondIsNotEmpty" after="grabMultiLineSecondValue">
+			<actualResult type="const">$grabMultiLineSecondValue</actualResult>
+        </assertNotEmpty>
+        <assertNotEmpty stepKey="assertDateIsNotEmpty" after="grabDateValue">
+			<actualResult type="const">$grabDateValue</actualResult>
+        </assertNotEmpty>
+        <assertNotEmpty stepKey="assertDropDownIsNotEmpty" after="grabDropDownValue">
+			<actualResult type="const">$grabDropDownValue</actualResult>
+        </assertNotEmpty>
+        <assertNotEmpty stepKey="assertMultiSelectIsNotEmpty" after="grabMultiSelectValue">
+			<actualResult type="const">$grabMultiSelectValue</actualResult>
+        </assertNotEmpty>
+        <assertNotEmpty stepKey="assertYesNoIsNotEmpty" after="grabYesNoValue">
+			<actualResult type="const">$grabYesNoValue</actualResult>
+        </assertNotEmpty>
+    </test>
+</tests>

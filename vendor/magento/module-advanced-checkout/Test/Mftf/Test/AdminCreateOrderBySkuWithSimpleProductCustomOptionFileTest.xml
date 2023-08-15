@@ -1,0 +1,59 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+ /**
+  * Copyright © Magento, Inc. All rights reserved.
+  * See COPYING.txt for license details.
+  */
+-->
+
+<tests xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="urn:magento:mftf:Test/etc/testSchema.xsd">
+    <test name="AdminCreateOrderBySkuWithSimpleProductCustomOptionFileTest">
+        <annotations>
+            <features value="AdvancedCheckout"/>
+            <stories value="Create Order by Sku with simple product with custom File option"/>
+            <title value="Create Order by Sku with simple product with custom File option."/>
+            <description value="Verify, admin able to add Product to Order by Sku with custom File option."/>
+            <severity value="AVERAGE"/>
+            <testCaseId value="MC-39358"/>
+            <useCaseId value="MC-35717"/>
+            <group value="AdvancedCheckout"/>
+        </annotations>
+        <before>
+            <!-- Create test data -->
+            <magentoCLI command="config:set {{EnableFlatRateConfigData.path}} {{EnableFlatRateConfigData.value}}" stepKey="enableFlatRate"/>
+            <createData entity="_defaultCategory" stepKey="createCategory"/>
+            <createData entity="_defaultProduct" stepKey="createProduct">
+                <requiredEntity createDataKey="createCategory"/>
+            </createData>
+            <updateData createDataKey="createProduct" entity="productWithFileOption" stepKey="updateProductWithCustomFileOption"/>
+            <createData entity="Simple_US_Customer_CA" stepKey="customer"/>
+            <actionGroup ref="AdminLoginActionGroup" stepKey="loginAsAdmin"/>
+        </before>
+        <after>
+            <!-- Clean up created test data -->
+            <deleteData createDataKey="createProduct" stepKey="deleteSimpleProduct"/>
+            <deleteData createDataKey="createCategory" stepKey="deleteCategory"/>
+            <deleteData createDataKey="customer" stepKey="deleteCustomer" />
+            <actionGroup ref="AdminLogoutActionGroup" stepKey="logoutFromAdmin"/>
+        </after>
+
+        <!-- Open Create New Order page -->
+        <actionGroup ref="NavigateToNewOrderPageExistingCustomerActionGroup" stepKey="navigateToNewOrderPageWithExistingCustomer">
+            <argument name="customer" value="$customer$"/>
+        </actionGroup>
+
+        <!-- Add Product to Order by Sku, choose File and verify message -->
+        <actionGroup ref="AdminAddToOrderBySkuProductWithRequiredCustomOptionFileActionGroup" stepKey="addProductToOrderBySku">
+            <argument name="productSKU" value="$createProduct.sku$"/>
+            <argument name="productQty" value="1"/>
+            <argument name="productNumber" value="0"/>
+        </actionGroup>
+        <click selector="{{AdminOrderFormItemsOrderedSection.addProductToOrder}}" stepKey="clickAddProductToOrderButton"/>
+        <dontSee selector="{{AdminMessagesSection.noticeMessage}}" userInput="You need to choose options for your item." stepKey="dontSeeNoticeMessage"/>
+
+        <!-- Select Shipping method, submit Order and verify custom File option -->
+        <actionGroup ref="AdminSelectFlatRateShippingMethodActionGroup" stepKey="chooseFlatRateMethod"/>
+        <actionGroup ref="AdminSubmitOrderActionGroup" stepKey="clickSubmitOrder"/>
+        <seeElement selector="{{AdminOrderItemsOrderedSection.productNameOptionsLink(TestImageNew.file)}}" stepKey="seeOrderProductOptionFileLink"/>
+    </test>
+</tests>

@@ -1,0 +1,68 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+ /**
+  * Copyright © Magento, Inc. All rights reserved.
+  * See COPYING.txt for license details.
+  */
+-->
+
+<tests xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:noNamespaceSchemaLocation="urn:magento:mftf:Test/etc/testSchema.xsd">
+
+    <test name="StorefrontVerifyThatDisabledGiftWrappingIsNOTAvailableForOrderAndItemLevelTest">
+        <annotations>
+            <stories value="Cart and Checkout"/>
+            <title value="Verify that disabled Gift Wrapping is NOT available for order and item level"/>
+            <description value="Verify that disabled Gift Wrapping is NOT available for order and item level"/>
+            <severity value="MAJOR"/>
+            <testCaseId value="AC-4185"/>
+            <group value="giftWrapping"/>
+        </annotations>
+        <before>
+            <createData entity="SimpleProduct" stepKey="createSimpleProduct"/>
+            <!--Login as admin-->
+            <actionGroup ref="AdminLoginActionGroup" stepKey="loginAsAdmin"/>
+            <createData entity="ApiDisableGiftWrapping" stepKey="createGiftWrapping"/>
+        </before>
+
+        <after>
+            <actionGroup ref="AdminLogoutActionGroup" stepKey="logout"/>
+            <deleteData createDataKey="createSimpleProduct" stepKey="deleteProduct"/>
+            <deleteData createDataKey="createGiftWrapping" stepKey="deleteGiftWrapping"/>
+            <createData entity="DefaultConfigGiftWrappingOptions" stepKey="DefaultGiftWrappingOptions"/>
+            <createData entity="DefaultConfigGiftMessageOptions" stepKey="restoreDefaultConfigGiftOptions"/>
+        </after>
+
+        <!-- Gift Options are configured -->
+
+        <amOnPage url="{{AdminSystemConfigSalesGiftOptionsPage.url}}" stepKey="amOnAdminSystemConfigGiftOptionsSection"/>
+        <waitForPageLoad time="30" stepKey="waitForPageLoad7"/>
+
+        <uncheckOption selector="{{AdminSystemConfigGiftOptionSection.allowGiftMessagesOnOrderLevelCheckbox}}" stepKey="uncheckGiftMessagesOnOrderLevel"/>
+        <uncheckOption selector="{{AdminSystemConfigGiftOptionSection.allowGiftMessagesForOrderItemsCheckbox}}" stepKey="uncheckGiftMessagesForOrderItemsCheckbox"/>
+        <selectOption selector="{{AdminSystemConfigGiftOptionSection.allowGiftMessagesOnOrderLevel}}" userInput="No" stepKey="selectGiftMessagesOnOrderLevel"/>
+        <selectOption selector="{{AdminSystemConfigGiftOptionSection.allowGiftMessagesForOrderItems}}" userInput="No" stepKey="selectGiftMessagesForOrderItems"/>
+        <selectOption selector="{{AdminGiftWrappingGridSection.allowGiftWrappingOnOrderLevel}}" userInput="Yes" stepKey="selectGiftWrappingOnOrderLevel"/>
+        <selectOption selector="{{AdminGiftWrappingGridSection.allowGiftWrappingForOrderItems}}" userInput="Yes" stepKey="selectGiftWrappingForOrderItems"/>
+        <selectOption selector="{{AdminSystemConfigGiftOptionSection.allowPrintedCard}}" userInput="No" stepKey="selectPrintedCard"/>
+        <selectOption selector="{{AdminSystemConfigGiftOptionSection.allowGiftReceipt}}" userInput="No" stepKey="selectGiftReceipt"/>
+        <clearField selector="{{AdminSystemConfigGiftOptionSection.defaultPriceForPrintedCard}}" stepKey="resetToDefaultPricePrintedCard"/>
+        <click selector="{{StoreConfigSection.Save}}" stepKey="saveConfigButton"/>
+
+        <magentoCLI command="indexer:reindex" stepKey="performReindex"/>
+        <magentoCLI command="cache:flush" stepKey="cleanCache"/>
+
+        <!--Open product in storefront-->
+        <amOnPage url="{{StorefrontProductPage.url($$createSimpleProduct.custom_attributes[url_key]$$)}}" stepKey="goToProductPageOnStorefront"/>
+        <waitForPageLoad stepKey="waitForStoreFrontProductPageLoad"/>
+
+        <actionGroup ref="AddSimpleProductToCartActionGroup" stepKey="addSimpleProductToCart">
+            <argument name="product" value="$$createSimpleProduct$$"/>
+        </actionGroup>
+
+        <actionGroup ref="StorefrontCartPageOpenActionGroup" stepKey="gotoCart"/>
+        <dontSee selector="{{CheckoutCartGiftWrappingSection.cartItemGiftOption('$createSimpleProduct.name$','Gift options')}}" userInput="Gift options" stepKey="seeGiftOptionNotPresent"/>
+
+    </test>
+
+</tests>

@@ -1,0 +1,36 @@
+<?xml version="1.0"?>
+<!--
+/**
+ * Copyright © Magento, Inc. All rights reserved.
+ * See COPYING.txt for license details.
+ */
+-->
+<schema xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:noNamespaceSchemaLocation="urn:magento:framework:Setup/Declaration/Schema/etc/schema.xsd">
+    <table name="staging_update" resource="default" engine="innodb" comment="Staging Updates table">
+        <column xsi:type="bigint" name="id" unsigned="true" nullable="false" identity="true"
+                comment="Update ID"/>
+        <column xsi:type="datetime" name="start_time" on_update="false" nullable="true" comment="Update start time"/>
+        <column xsi:type="varchar" name="name" nullable="true" length="255" comment="Update name"/>
+        <column xsi:type="varchar" name="description" nullable="true" length="255" comment="Update description"/>
+        <column xsi:type="bigint" name="rollback_id" unsigned="true" nullable="true" identity="false"
+                comment="Rollback ID"/>
+        <column xsi:type="boolean" name="is_campaign" nullable="true" comment="Is update a campaign"/>
+        <column xsi:type="boolean" name="is_rollback" nullable="true" comment="Is update a rollback"/>
+        <column xsi:type="bigint" name="moved_to" unsigned="true" nullable="true" identity="false"
+                comment="Update Id it was moved to"/>
+        <constraint xsi:type="primary" referenceId="PRIMARY">
+            <column name="id"/>
+        </constraint>
+        <index referenceId="STAGING_UPDATE_IS_CAMPAIGN" indexType="btree">
+            <column name="is_campaign"/>
+        </index>
+        <index referenceId="STAGING_UPDATE_NAME_DESCRIPTION" indexType="fulltext">
+            <column name="name"/>
+            <column name="description"/>
+        </index>
+        <index referenceId="STAGING_UPDATE_START_TIME" indexType="btree">
+            <column name="start_time"/>
+        </index>
+    </table>
+</schema>

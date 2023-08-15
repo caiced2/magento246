@@ -1,0 +1,67 @@
+<?php
+/**
+ * Copyright © Magento, Inc. All rights reserved.
+ * See COPYING.txt for license details.
+ */
+
+/**
+ * @var \Magento\CustomerBalance\Block\Adminhtml\Sales\Order\Creditmemo\Controls $block
+ * @var \Magento\Framework\View\Helper\SecureHtmlRenderer $secureRenderer
+ */
+$customerBalanceData = $block->getCustomerBalanceData();
+/** @var \Magento\CustomerBalance\Helper\Data $customerBalanceHelper */
+$customerBalanceHelper = $block->getData('customerBalanceHelper');
+?>
+
+<?php if ($block->canRefundToCustomerBalance()): ?>
+    <?php $refundBalance = $block->getReturnValue(); ?>
+    <div class="admin__field admin__field-option field-refund-store-credit">
+        <input type="hidden" name="creditmemo[refund_customerbalance_return_enable]" value="0">
+        <input type="checkbox"
+               class="admin__control-checkbox"
+               name="creditmemo[refund_customerbalance_return_enable]"
+               value="1" id="creditmemo_customerbalance_return_enable"
+               <?php if ($customerBalanceHelper->isAutoRefundEnabled()
+                   || $customerBalanceData->isRefundToStoreCreditChecked()): ?>
+                   checked="checked"
+                <?php endif; ?> />
+        <label for="creditmemo_customerbalance_return_enable" class="admin__field-label">
+            <span><?= $block->escapeHtml(__('Refund to Store Credit')); ?></span>
+        </label>
+        <input type="text"
+               name="creditmemo[refund_customerbalance_return]"
+               value="<?= /* @noEscape */ $refundBalance; ?>"
+               id="creditmemo_customerbalance_return"
+               class="input-text admin__control-text not-negative-amount" />
+    <?php $creditmemoGrandTotal = $customerBalanceData->getCreditmemoGrandTotal(); ?>
+    <?php $scriptString = <<<script
+        require(['jquery', 'domReady!', 'prototype'], function($) {
+            $(function ($) {
+                var creditMemoTotal = {$creditmemoGrandTotal};
+                var totalBalance = {$refundBalance};
+                var toggleCustomerBalanceRefundAmount = function (e) {
+                    if (creditMemoTotal > 0 && creditMemoTotal === totalBalance) {
+                        enableElements('update-totals-button');
+                    }
+                    var refundReturn = $('#creditmemo_customerbalance_return');
+                    if ($(e.target).prop('checked')) {
+                        refundReturn.prop('disabled', false);
+                        disableElements('refund');
+                    } else {
+                        refundReturn.prop('disabled', true);
+                        enableElements('refund');
+                        if (creditMemoTotal === 0) {
+                            enableElements('update-totals-button');
+                        }
+                    }
+                };
+                var refundCustomerBalanceEnable = $('#creditmemo_customerbalance_return_enable');
+                refundCustomerBalanceEnable.change(toggleCustomerBalanceRefundAmount);
+                toggleCustomerBalanceRefundAmount({target:refundCustomerBalanceEnable});
+            });
+        });
+script;
+    ?>
+        <?= /* @noEscape */ $secureRenderer->renderTag('script', [], $scriptString, false); ?>
+    </div>
+<?php endif; ?>

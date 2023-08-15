@@ -1,0 +1,34 @@
+<?xml version="1.0"?>
+<!--
+/**
+ * Copyright © Magento, Inc. All rights reserved.
+ * See COPYING.txt for license details.
+ */
+-->
+
+<config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="urn:magento:module:Magento_Store:etc/config.xsd">
+    <default>
+        <google>
+            <analytics>
+                <type>universal</type>
+                <catalog_page_list_value>Catalog Page</catalog_page_list_value>
+                <crosssell_block_list_value>Cross-sell</crosssell_block_list_value>
+                <upsell_block_list_value>Up-sell</upsell_block_list_value>
+                <related_block_list_value>Related Products</related_block_list_value>
+                <search_page_list_value>Search Results</search_page_list_value>
+                <promotions_list_value>Label</promotions_list_value>
+            </analytics>
+            <gtag>
+                <analytics4>
+                    <type>analytics4</type>
+                    <catalog_page_list_value>Catalog Page</catalog_page_list_value>
+                    <crosssell_block_list_value>Cross-sell</crosssell_block_list_value>
+                    <upsell_block_list_value>Up-sell</upsell_block_list_value>
+                    <related_block_list_value>Related Products</related_block_list_value>
+                    <search_page_list_value>Search Results</search_page_list_value>
+                    <promotions_list_value>Label</promotions_list_value>
+                </analytics4>
+            </gtag>
+        </google>
+    </default>
+</config>

@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+ /**
+  * Copyright © Magento, Inc. All rights reserved.
+  * See COPYING.txt for license details.
+  */
+-->
+
+<actionGroups xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+              xsi:noNamespaceSchemaLocation="urn:magento:mftf:Test/etc/actionGroupSchema.xsd">
+    <actionGroup name="LoginWithEmailAddressAndOtpActionGroup">
+        <annotations>
+            <description>Login with email address and OTP.</description>
+        </annotations>
+
+        <arguments>
+            <argument name="customer" type="entity"/>
+        </arguments>
+
+        <waitForPageLoad stepKey="waitForCheckoutShippingSectionToLoad"/>
+        <fillField selector="{{CheckoutShippingSection.email}}" userInput="{{customer.email}}" stepKey="fillEmail"/>
+        <waitForLoadingMaskToDisappear stepKey="waitForLoadingMaskToDisappear"/>
+        <wait time="5" stepKey="wait5Seconds"/>
+        <executeJS function="jQuery('{{CheckoutCartSection.loadingMask}}').remove();" stepKey="removeLoadingMask"/>
+        <waitForElement selector="{{CheckoutShippingSection.otpIframe}}" stepKey="waitForOtpIframe"/>
+        <executeJS function="jQuery('{{CheckoutShippingSection.otpIframe}}').attr('name', 'myFrame');" stepKey="addNameToIframe"/>
+        <switchToIFrame userInput="myFrame" stepKey="switchToIframe"/>
+        <waitForElement selector="{{CheckoutShippingSection.otpInputField}}" stepKey="waitForOtpInput"/>
+        <fillField userInput="{{customer.otp}}" selector="{{CheckoutShippingSection.otpInputField}}" stepKey="enterOtpCode"/>
+        <waitForElementVisible selector="{{CheckoutPaymentSection.logoutInfoMessage}}" stepKey="waitForLogoutLinkVisible"/>
+        <switchToPreviousTab userInput="0" stepKey="switchToPreviousTab"/>
+    </actionGroup>
+</actionGroups>

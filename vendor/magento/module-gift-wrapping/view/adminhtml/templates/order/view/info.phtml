@@ -1,0 +1,100 @@
+<?php
+/**
+ * Copyright © Magento, Inc. All rights reserved.
+ * See COPYING.txt for license details.
+ */
+
+/** @var $block \Magento\GiftWrapping\Block\Adminhtml\Order\View\Info */
+?>
+<?php if ($block->canDisplayGiftWrapping()) : ?>
+<div id="wrapping-order-container" class="order-gift-wrapping">
+    <legend class="admin__legend">
+        <span><?= $block->escapeHtml(__('Gift Wrapping for the Entire Order')) ?></span>
+    </legend><br />
+
+    <?php if ($block->getOrderInfo()->getDesign()) : ?>
+    <div class="gift-wrapping-form">
+        <div class="gift-wrapping-design">
+            <?php if ($block->getOrderInfo()->getPath()) : ?>
+                <img id="image-box"
+                     class="image-box"
+                     alt="<?= $block->escapeHtmlAttr($block->getOrderInfo()->getDesign()) ?>"
+                     src="<?= $block->escapeUrl($block->getOrderInfo()->getPath()) ?>"/>
+            <?php endif; ?>
+            <?= $block->escapeHtml(__('Gift Wrapping Design')) ?>: <span><?= $block->escapeHtml($block->getOrderInfo()->getDesign()) ?></span>
+            <div id="price-box" class="price-box item-price-box">
+                <?php if ($block->getDisplayWrappingBothPrices()) : ?>
+                <div>
+                    <span class="label"><?= $block->escapeHtml(__('Price Excl. Tax')) ?>:</span>
+                    <span class="price">
+                        <?= $block->escapeHtml($block->getOrderInfo()->getPriceExclTax(), ['span','strong','br']) ?>
+                    </span>
+                </div>
+                <div>
+                    <span class="label"><?= $block->escapeHtml(__('Price Incl. Tax')) ?>:</span>
+                    <span class="price">
+                        <?= $block->escapeHtml($block->getOrderInfo()->getPriceInclTax(), ['span','strong','br']) ?>
+                    </span>
+                </div>
+                <?php else : ?>
+                <div>
+                    <span class="label"><?= $block->escapeHtml(__('Price')) ?>:</span>
+                    <span class="price">
+                        <?= $block->escapeHtml($block->getOrderInfo()->getPrice(), ['span','strong','br']) ?>
+                    </span>
+                </div>
+                <?php endif; ?>
+            </div>
+        </div>
+    </div>
+    <?php endif; ?>
+
+    <?php if ($block->getGiftReceipt()) : ?>
+    <div class="gift-options-receipt admin__field admin__field-option">
+        <input type="checkbox"
+               id="allow-gift-receipt"
+               class="admin__control-checkbox"
+               disabled="disabled"
+               <?= ($block->getGiftReceipt()) ? ' checked="checked"' : '' ?>/>
+        <label for="allow-gift-receipt" class="admin__field-label">
+            <?= $block->escapeHtml(__('Send Gift Receipt')) ?>
+        </label>
+    </div>
+    <?php endif; ?>
+    <?php if ($block->getPrintedCard()) : ?>
+    <div class="admin__field admin__field-option">
+        <input type="checkbox"
+               id="add-printed-card"
+               class="admin__control-checkbox"
+               disabled="disabled"
+            <?= ($block->getPrintedCard()) ? ' checked="checked"' : '' ?>/>
+        <label for="add-printed-card" class="admin__field-label">
+            <?= $block->escapeHtml(__('Add Printed Card')) ?>
+        </label>
+    </div>
+    <div id="price-card-box" class="price-box">
+        <?php if ($block->getDisplayCardBothPrices()) : ?>
+        <div>
+            <span class="label"><?= $block->escapeHtml(__('Price Excl. Tax')) ?>:</span>
+            <span class="price">
+                <?= $block->escapeHtml($block->getCardInfo()->getPriceExclTax(), ['span','strong','br']) ?>
+            </span>
+        </div>
+        <div>
+            <span class="label"><?= $block->escapeHtml(__('Price Incl. Tax')) ?>:</span>
+            <span class="price">
+                <?= $block->escapeHtml($block->getCardInfo()->getPriceInclTax(), ['span','strong','br']) ?>
+            </span>
+        </div>
+        <?php else : ?>
+        <div>
+            <span class="label"><?= $block->escapeHtml(__('Price')) ?>:</span>
+            <span class="price">
+                <?= $block->escapeHtml($block->getCardInfo()->getPrice(), ['span','strong','br']) ?>
+            </span>
+        </div>
+        <?php endif; ?>
+    </div>
+    <?php endif; ?>
+</div>
+<?php endif; ?>

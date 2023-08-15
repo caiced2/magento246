@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+ /**
+  * Copyright © Magento, Inc. All rights reserved.
+  * See COPYING.txt for license details.
+  */
+-->
+<actionGroups xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+              xsi:noNamespaceSchemaLocation="urn:magento:mftf:Test/etc/actionGroupSchema.xsd">
+    <actionGroup name="StorefrontCheckoutUsingRewardPointsActionGroup">
+        <arguments>
+            <argument name="rewards" type="string"/>
+            <argument name="rewardsUsing" type="string"/>
+        </arguments>
+        <see selector="{{CustomerCheckoutRewardsSection.checkoutRewardText}}" userInput="{{rewards}} store reward points available (${{rewards}}.00)" stepKey="seeRewardsMessage"/>
+        <seeElement selector="{{CustomerCheckoutRewardsSection.useRewardPoints}}" stepKey="seeRewardsButton"/>
+        <click selector="{{CustomerCheckoutRewardsSection.useRewardPoints}}" stepKey="clickUseRewardsButton"/>
+        <waitForElement selector="#checkout div[data-ui-id='checkout-cart-validationmessages-message-success']" time="30" stepKey="waitForUpdateStoreCredit"/>
+        <see userInput="Your reward point was successfully applied" selector="#checkout div[data-ui-id='checkout-cart-validationmessages-message-success']" stepKey="seeStoreCreditLabel"/>
+        <waitForElementNotVisible selector="{{CustomerCheckoutRewardsSection.checkoutRewardBlock}}" stepKey="waitBlockDisappeared"/>
+        <waitForElement selector="{{CheckoutCartSummarySection.checkoutRewardBill}}" stepKey="waitRewardsInCheckout"/>
+        <see selector="{{CheckoutCartSummarySection.checkoutRewardBill}}" userInput="{{rewardsUsing}} Reward points -${{rewardsUsing}}.00" stepKey="seeRewardsInCheckout"/>
+        <waitForPageLoad stepKey="waitForLoaderToDisappear"/>
+    </actionGroup>
+</actionGroups>

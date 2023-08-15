@@ -1,0 +1,48 @@
+<?xml version="1.0"?>
+<!--
+/**
+ * Copyright © Magento, Inc. All rights reserved.
+ * See COPYING.txt for license details.
+ */
+-->
+<logging xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:noNamespaceSchemaLocation="urn:magento:module:Magento_Logging:etc/logging.xsd">
+    <actions>
+        <action id="massAdd">
+            <label translate="true">Mass Add</label>
+        </action>
+        <action id="add">
+            <label translate="true">Add</label>
+        </action>
+    </actions>
+    <groups>
+        <group name="magento_salesarchive">
+            <label translate="true">Sales Archive</label>
+            <expected_models>
+                <expected_model class="Magento\SalesArchive\Model\Archive" />
+            </expected_models>
+            <events>
+                <event controller_action="sales_archive_add"
+                       action_alias="add"
+                       post_dispatch="postDispatchSalesArchiveManagement">
+                    <skip_on_back>
+                        <controller_action name="adminhtml_sales_order_view" />
+                    </skip_on_back>
+                </event>
+                <event controller_action="sales_archive_remove"
+                       action_alias="delete"
+                       post_dispatch="postDispatchSalesArchiveManagement">
+                    <skip_on_back>
+                        <controller_action name="adminhtml_sales_order_view" />
+                    </skip_on_back>
+                </event>
+                <event controller_action="sales_archive_massAdd"
+                       action_alias="massAdd"
+                       post_dispatch="postDispatchSalesArchiveManagement" />
+                <event controller_action="sales_archive_massRemove"
+                       action_alias="massDelete"
+                       post_dispatch="postDispatchSalesArchiveManagement" />
+            </events>
+        </group>
+    </groups>
+</logging>

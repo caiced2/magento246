@@ -1,0 +1,12 @@
+<!--
+/**
+ * Copyright © Magento, Inc. All rights reserved.
+ * See COPYING.txt for license details.
+ */
+-->
+<!-- ko if: hasGiftRegistryInCart -->
+<div class="field choice">
+    <input type="radio" name="billing[use_for_shipping]" id="billing:use_gift_registry_address" class="radio" data-bind="checked: $parents[1].useForShipping, checkedValue: $data" />
+    <label class="label" for="billing:use_gift_registry_address"><span><!-- ko i18n: 'Ship to registrant\'s address'--><!-- /ko --></span></label>
+</div>
+<!-- /ko -->

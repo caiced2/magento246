@@ -1,0 +1,57 @@
+<?php
+/**
+ * Copyright © Magento, Inc. All rights reserved.
+ * See COPYING.txt for license details.
+ */
+
+/**
+ * @var \Magento\Framework\View\Helper\SecureHtmlRenderer $secureRenderer
+ */
+?>
+<?php
+    $_prefix = $block->escapeJs($block->getPrefix());
+    $customerWebsite = (int)$block->getCustomerWebsite();
+    $websitesJson = $block->getWebsitesJson();
+?>
+<?php $scriptString = <<<script
+require(['prototype'], function(){
+window.updateEmailWebsites = function () {
+    var emailWebsites = $('{$_prefix}store_id');
+    var balanceWebsites = $('{$_prefix}website_id');
+    var selectedWebsite = $('{$_prefix}website_id') ? $('{$_prefix}website_id').value : '{$customerWebsite}';
+    var allowedWebsites = eval({$websitesJson});
+
+    emailWebsites.innerHTML = '';
+    for(var websiteKey in allowedWebsites) {
+        var website = allowedWebsites[websiteKey];
+        if( website.website_id && website.website_id == selectedWebsite ) {
+            var groups = website["groups"];
+            for (var groupKey in groups) {
+                var group = groups[groupKey];
+                if (undefined !== group["stores"]) {
+                    var optionGroup = document.createElement("OPTGROUP");
+                    optionGroup.label = group["name"];
+                    emailWebsites.appendChild(optionGroup);
+                    var stores = group["stores"];
+                    for (var i=0; i < stores.length; i++) {
+                        var option = document.createElement("option");
+                        option.appendChild(document.createTextNode(stores[i]["name"]));
+                        option.setAttribute("value", stores[i]["store_id"]);
+                        optionGroup.appendChild(option);
+                    }
+                }
+            }
+        }
+    }
+
+    var container = $$('#note_amount_delta small');
+    if (container[0]) {
+        container[0].innerHTML = '<strong>[' + allowedWebsites[selectedWebsite].currency_code + ']</strong>';
+    }
+};
+
+updateEmailWebsites();
+});
+script;
+?>
+<?= /* @noEscape */ $secureRenderer->renderTag('script', [], $scriptString, false); ?>

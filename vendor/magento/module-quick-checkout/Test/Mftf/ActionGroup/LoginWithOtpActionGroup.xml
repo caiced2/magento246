@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+ /**
+  * Copyright © Magento, Inc. All rights reserved.
+  * See COPYING.txt for license details.
+  */
+-->
+
+<actionGroups xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+              xsi:noNamespaceSchemaLocation="urn:magento:mftf:Test/etc/actionGroupSchema.xsd">
+    <actionGroup name="LoginWithOtpActionGroup">
+        <annotations>
+            <description>Login with OTP.</description>
+        </annotations>
+
+        <arguments>
+            <argument name="customer" type="entity"/>
+        </arguments>
+
+        <waitForLoadingMaskToDisappear stepKey="waitForLoadingMaskToDisappear"/>
+        <wait time="5" stepKey="wait5Seconds"/>
+        <executeJS function="jQuery('{{CheckoutCartSection.loadingMask}}').remove();" stepKey="removeLoadingMask"/>
+        <waitForElement selector="{{CheckoutShippingSection.logoutInfoOtpIframe}}" stepKey="waitForOtpIframe"/>
+        <executeJS function="jQuery('{{CheckoutShippingSection.logoutInfoOtpIframe}}').attr('name', 'myFrame');" stepKey="addNameToIframe"/>
+        <switchToIFrame userInput="myFrame" stepKey="switchToIframe"/>
+        <waitForElement selector="{{CheckoutShippingSection.otpInputField}}" stepKey="waitForOtpInput"/>
+        <fillField userInput="{{customer.otp}}" selector="{{CheckoutShippingSection.otpInputField}}" stepKey="enterOtpCode"/>
+        <wait time="5" stepKey="waitForOtpValidation"/>
+        <switchToPreviousTab userInput="0" stepKey="switchToPreviousTab"/>
+    </actionGroup>
+</actionGroups>

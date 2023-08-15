@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+ /**
+  * Copyright © Magento, Inc. All rights reserved.
+  * See COPYING.txt for license details.
+  */
+-->
+
+<tests xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="urn:magento:mftf:Test/etc/testSchema.xsd">
+    <test name="StorefrontInstantPurchaseFunctionalityTest">
+        <before>
+            <!-- Create Gift Card Product -->
+            <createData entity="ApiGiftCard" after="createGroupedProduct" stepKey="createGiftCardProduct"/>
+        </before>
+        <after>
+            <deleteData createDataKey="createGiftCardProduct" after="deleteGroupedProduct" stepKey="deleteGiftCardProduct"/>
+        </after>
+        <!-- Check that GiftCard product has "Instant Purchase" button-->
+        <amOnPage url="{{StorefrontProductPage.url($createGiftCardProduct.custom_attributes[url_key]$)}}" after="waitForButtonOnGroupedProductPage" stepKey="openGiftCardProductPage"/>
+        <waitForElementVisible selector="{{StorefrontInstantPurchaseSection.instantPurchaseButton}}" after="openGiftCardProductPage" stepKey="waitForButtonOnGiftCardProductPage"/>
+    </test>
+</tests>

@@ -1,0 +1,70 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+/**
+ * Copyright © Magento, Inc. All rights reserved.
+ * See COPYING.txt for license details.
+ */
+-->
+<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema">
+    <xs:element name="config">
+        <xs:complexType>
+            <xs:sequence>
+                <xs:element name="menuLayout" type="menuLayoutDeclaration" minOccurs="1" maxOccurs="unbounded">
+                    <xs:unique name="uniquePageLayoutHandle">
+                        <xs:annotation>
+                            <xs:documentation>
+                                Page layout handle must be unique.
+                            </xs:documentation>
+                        </xs:annotation>
+                        <xs:selector xpath="pageLayout"/>
+                        <xs:field xpath="@handle"/>
+                    </xs:unique>
+                </xs:element>
+            </xs:sequence>
+        </xs:complexType>
+        <xs:unique name="uniqueMenuLayoutName">
+            <xs:annotation>
+                <xs:documentation>
+                    Menu layout name must be unique.
+                </xs:documentation>
+            </xs:annotation>
+            <xs:selector xpath="menuLayout"/>
+            <xs:field xpath="@name"/>
+        </xs:unique>
+    </xs:element>
+
+    <xs:complexType name="menuLayoutDeclaration">
+        <xs:annotation>
+            <xs:documentation>
+                Menu layout declaration.
+            </xs:documentation>
+        </xs:annotation>
+        <xs:sequence>
+            <xs:element minOccurs="0" maxOccurs="unbounded" name="pageLayout" type="pageLayoutDeclaration" />
+        </xs:sequence>
+        <xs:attribute name="name" type="xs:string" use="required" />
+        <xs:attribute name="label" type="xs:string" use="optional" />
+        <xs:attribute name="handle" type="handleName" use="optional" />
+        <xs:attribute name="isDefault" type="xs:boolean" use="optional" />
+    </xs:complexType>
+
+    <xs:complexType name="pageLayoutDeclaration">
+        <xs:annotation>
+            <xs:documentation>
+                Page layout declaration.
+            </xs:documentation>
+        </xs:annotation>
+        <xs:attribute name="handle" type="handleName" use="required" />
+    </xs:complexType>
+
+    <xs:simpleType name="handleName">
+        <xs:annotation>
+            <xs:documentation>
+                Handle name attribute can contain only [1-9A-Za-z_-].
+            </xs:documentation>
+        </xs:annotation>
+        <xs:restriction base="xs:string">
+            <xs:pattern value="[1-9A-Za-z_\-]+" />
+        </xs:restriction>
+    </xs:simpleType>
+</xs:schema>

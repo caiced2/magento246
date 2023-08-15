@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+ /**
+  * Copyright © Magento, Inc. All rights reserved.
+  * See COPYING.txt for license details.
+  */
+-->
+
+<actionGroups xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+              xsi:noNamespaceSchemaLocation="urn:magento:mftf:Test/etc/actionGroupSchema.xsd">
+
+    <actionGroup name="AdminGoToStagingDashboardGridActionGroup">
+        <arguments>
+            <argument name="updateName" type="string"/>
+        </arguments>
+        <!-- Go to DashboardPage and search Update -->
+        <amOnPage url="{{AdminStagingDashboardPage.url}}" stepKey="goToStagingDashboard"/>
+        <waitForPageLoad stepKey="waitForStagingDashboard"/>
+        <conditionalClick selector="{{AdminDataGridHeaderSection.clearFilters}}" dependentSelector="{{AdminDataGridHeaderSection.clearFilters}}" visible="true" stepKey="clearExistingCustomerFilters"/>
+        <waitForPageLoad stepKey="waitForClearFilters"/>
+        <selectOption userInput="Grid" selector="{{AdminContentStagingDashboardSection.stagingViewTypeSelect}}" stepKey="selectGrid"/>
+        <fillField selector="{{AdminBlockGridSection.search}}" userInput="{{updateName}}" stepKey="searchUpdateByName"/>
+        <click selector="{{AdminBlockGridSection.searchButton}}" stepKey="clickSearch"/>
+        <waitForPageLoad stepKey="waitPage"/>
+    </actionGroup>
+</actionGroups>

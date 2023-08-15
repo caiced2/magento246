@@ -1,0 +1,262 @@
+<?xml version="1.0"?>
+<!--
+/**
+ * Copyright © Magento, Inc. All rights reserved.
+ * See COPYING.txt for license details.
+ */
+-->
+<config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="urn:magento:module:Magento_AdminGws:etc/admingws.xsd">
+    <group name="collection_load_before" processor="Magento\AdminGws\Model\Collections">
+        <callback class="Magento\Reports\Model\ResourceModel\Product\Collection" method="limitProductReports" />
+        <callback class="Magento\Catalog\Model\ResourceModel\Product\Collection" method="limitProducts" />
+        <callback class="Magento\Customer\Model\ResourceModel\Customer\Collection" method="limitCustomers" />
+        <callback class="Magento\Customer\Model\ResourceModel\Online\Grid\Collection" method="addStoreFieldToFilter" />
+        <callback class="Magento\CatalogEvent\Model\ResourceModel\Event\Collection" method="limitCatalogEvents" />
+        <callback class="Magento\Catalog\Model\ResourceModel\Category\Collection" method="limitCatalogCategories" />
+        <callback class="Magento\Review\Model\ResourceModel\Rating\Collection" method="limitRatings" />
+        <callback class="Magento\CheckoutAgreements\Model\ResourceModel\Agreement\Collection" method="limitCheckoutAgreements" />
+        <callback class="Magento\Authorization\Model\ResourceModel\Role\Collection" method="limitAdminPermissionRoles" />
+        <callback class="Magento\User\Model\ResourceModel\User\Collection" method="limitAdminPermissionUsers" />
+        <callback class="Magento\User\Model\ResourceModel\Role\User\Collection" method="limitAdminPermissionUsers" />
+        <callback class="Magento\CustomerBalance\Model\ResourceModel\Balance\History\Collection" method="limitStoreCreditsHistory" />
+        <callback class="Magento\Review\Model\ResourceModel\Review\Product\Collection" method="limitProductReviews" />
+        <callback class="Magento\CatalogRule\Model\ResourceModel\Rule\Collection" method="limitRuleEntityCollection" />
+        <callback class="Magento\SalesRule\Model\ResourceModel\Rule\Collection" method="limitRuleEntityCollection" />
+        <callback class="Magento\Reminder\Model\ResourceModel\Rule\Collection" method="limitRuleEntityCollection" />
+        <callback class="Magento\CustomerSegment\Model\ResourceModel\Segment\Collection" method="limitRuleEntityCollection" />
+        <callback class="Magento\Store\Model\ResourceModel\Group\Collection" method="limitStoreGroups" />
+        <callback class="Magento\Store\Model\ResourceModel\Store\Collection" method="limitStores" />
+        <callback class="Magento\Store\Model\ResourceModel\Website\Collection" method="limitWebsites" />
+    </group>
+    <group name="model_save_before" processor="Magento\AdminGws\Model\Models">
+        <callback class="Magento\Cms\Model\Page" method="cmsPageSaveBefore" />
+        <callback class="Magento\Cms\Model\Block" method="cmsBlockSaveBefore" />
+        <callback class="Magento\Rule\Model\AbstractModel" method="ruleSaveBefore" />
+        <callback class="Magento\Sales\Model\Order" method="salesOrderSaveBefore" />
+        <callback class="Magento\Sales\Model\Order\Invoice" method="salesOrderEntitySaveBefore" />
+        <callback class="Magento\Sales\Model\Order\Shipment" method="salesOrderEntitySaveBefore" />
+        <callback class="Magento\Sales\Model\Order\Creditmemo" method="salesOrderEntitySaveBefore" />
+        <callback class="Magento\Sales\Model\Order\Payment\Transaction" method="salesOrderTransactionSaveBefore" />
+        <callback class="Magento\Newsletter\Model\Queue" method="newsletterQueueSaveBefore" />
+        <callback class="Magento\Catalog\Model\Product" method="catalogProductSaveBefore" />
+        <callback class="Magento\Catalog\Model\Category" method="catalogCategorySaveBefore" />
+        <callback class="Magento\Customer\Model\Customer" method="customerSaveBefore" />
+        <callback class="Magento\Customer\Model\Attribute" method="customerAttributeSaveBefore" />
+        <callback class="Magento\CatalogEvent\Model\Event" method="catalogEventSaveBefore" />
+        <callback class="Magento\Store\Model\Website" method="coreWebsiteSaveBefore" />
+        <callback class="Magento\Store\Model\Group" method="coreStoreGroupSaveBefore" />
+        <callback class="Magento\Store\Model\Store" method="coreStoreGroupSaveBefore" />
+        <callback class="Magento\Catalog\Model\Entity\Attribute" method="catalogEntityAttributeSaveBefore" />
+        <callback class="Magento\Eav\Model\Entity\Attribute\Set" method="eavEntityAttributeSetSaveBefore" />
+        <callback class="Magento\Eav\Model\Entity\Attribute\Group" method="eavEntityAttributeGroupSaveBefore" />
+        <callback class="Magento\Eav\Model\Entity\Attribute\Option" method="eavEntityAttributeOptionSaveBefore" />
+        <callback class="Magento\Widget\Model\Widget\Instance" method="widgetInstanceSaveBefore" />
+        <callback class="Magento\Banner\Model\Banner" method="bannerSaveBefore" />
+        <callback class="Magento\GiftCardAccount\Model\Giftcardaccount" method="giftCardAccountSaveBefore" />
+        <callback class="Magento\GiftRegistry\Model\Type" method="giftRegistryTypeSaveBefore" />
+        <callback class="Magento\GiftWrapping\Model\Wrapping" method="giftWrappingSaveBefore" />
+        <callback class="Magento\Reward\Model\Reward\Rate" method="rewardRateSaveBefore" />
+        <callback class="Magento\Review\Model\Review" method="catalogProductReviewSaveBefore" />
+        <callback class="Magento\Review\Model\Rating" method="ratingSaveBefore" />
+        <callback class="Magento\CatalogInventory\Model\Stock\Item" method="catalogInventorySaveBefore" />
+    </group>
+    <group name="model_delete_before" processor="Magento\AdminGws\Model\Models">
+        <callback class="Magento\Cms\Model\Page" method="cmsPageDeleteBefore" />
+        <callback class="Magento\Cms\Model\Block" method="cmsBlockDeleteBefore" />
+        <callback class="Magento\Rule\Model\AbstractModel" method="ruleDeleteBefore" />
+        <callback class="Magento\Catalog\Model\Product" method="catalogProductDeleteBefore" />
+        <callback class="Magento\Catalog\Model\Category" method="catalogCategoryDeleteBefore" />
+        <callback class="Magento\Customer\Model\Customer" method="customerDeleteBefore" />
+        <callback class="Magento\Customer\Model\Attribute" method="customerAttributeDeleteBefore" />
+        <callback class="Magento\CatalogEvent\Model\Event" method="catalogEventDeleteBefore" />
+        <callback class="Magento\Store\Model\Website" method="coreWebsiteDeleteBefore" />
+        <callback class="Magento\Store\Model\Group" method="coreStoreGroupDeleteBefore" />
+        <callback class="Magento\Store\Model\Store" method="coreStoreGroupDeleteBefore" />
+        <callback class="Magento\Catalog\Model\Entity\Attribute" method="catalogEntityAttributeDeleteBefore" />
+        <callback class="Magento\Eav\Model\Entity\Attribute\Set" method="eavEntityAttributeSetDeleteBefore" />
+        <callback class="Magento\Eav\Model\Entity\Attribute\Group" method="eavEntityAttributeGroupDeleteBefore" />
+        <callback class="Magento\Eav\Model\Entity\Attribute\Option" method="eavEntityAttributeOptionDeleteBefore" />
+        <callback class="Magento\Widget\Model\Widget\Instance" method="widgetInstanceDeleteBefore" />
+        <callback class="Magento\Banner\Model\Banner" method="bannerDeleteBefore" />
+        <callback class="Magento\GiftCardAccount\Model\Giftcardaccount" method="giftCardAccountDeleteBefore" />
+        <callback class="Magento\GiftRegistry\Model\Type" method="giftRegistryTypeDeleteBefore" />
+        <callback class="Magento\Review\Model\Review" method="catalogProductReviewDeleteBefore" />
+        <callback class="Magento\Reward\Model\Reward\Rate" method="rewardRateDeleteBefore" />
+    </group>
+    <group name="model_load_after" processor="Magento\AdminGws\Model\Models">
+        <callback class="Magento\Catalog\Model\Product" method="catalogProductLoadAfter" />
+        <callback class="Magento\CatalogEvent\Model\Event" method="catalogEventLoadAfter" />
+        <callback class="Magento\Catalog\Model\Category" method="catalogCategoryLoadAfter" />
+        <callback class="Magento\Customer\Model\Customer" method="customerLoadAfter" />
+        <callback class="Magento\Sales\Model\Order" method="salesOrderLoadAfter" />
+        <callback class="Magento\Sales\Model\Order\Payment\Transaction" method="salesOrderTransactionLoadAfter" />
+        <callback class="Magento\Rule\Model\AbstractModel" method="ruleLoadAfter" />
+        <callback class="Magento\Store\Model\Website" method="coreWebsiteLoadAfter" />
+        <callback class="Magento\Store\Model\Group" method="coreStoreGroupLoadAfter" />
+        <callback class="Magento\Store\Model\Store" method="coreStoreGroupLoadAfter" />
+        <callback class="Magento\UrlRewrite\Model\UrlRewrite" method="urlRewriteLoadAfter" />
+        <callback class="Magento\Newsletter\Model\Queue" method="newsletterQueueLoadAfter" />
+        <callback class="Magento\Banner\Model\Banner" method="bannerLoadAfter" />
+        <callback class="Magento\Widget\Model\Widget\Instance" method="widgetInstanceLoadAfter" />
+        <callback class="Magento\GiftCardAccount\Model\Giftcardaccount" method="giftCardAccountLoadAfter" />
+    </group>
+    <group name="controller_predispatch" processor="Magento\AdminGws\Model\Controllers">
+        <callback class="adminhtml__system_config__" method="validateSystemConfig" />
+        <callback class="catalog__product__" method="validateCatalogProduct" />
+        <callback class="catalog__product__edit" method="validateCatalogProductEdit" />
+        <callback class="catalog__product__massStatus" method="validateCatalogProductMassActions" />
+        <callback class="adminhtml__promo_catalog__" method="validateRuleEntityAction" />
+        <callback class="adminhtml__promo_catalog__index" method="promoCatalogIndexAction" />
+        <callback class="adminhtml__promo_catalog__applyRules" method="validatePromoCatalogApplyRules" />
+        <callback class="adminhtml__promo_quote__" method="validateRuleEntityAction" />
+        <callback class="adminhtml__customersegment__" method="validateRuleEntityAction" />
+        <callback class="adminhtml__reminder__" method="validateRuleEntityAction" />
+        <callback class="adminhtml__customer__" method="validateNoWebsiteGeneric" />
+        <callback class="adminhtml__customer__edit" method="validateCustomerEdit" />
+        <callback class="adminhtml__customerbalance__" method="validateCustomerbalance" />
+        <callback class="adminhtml__giftcardaccount__index" method="validateGiftCardAccount" />
+        <callback class="catalog__category__" method="validateCatalogCategories" />
+        <callback class="adminhtml__catalog_event__" method="validateCatalogEvents" />
+        <callback class="adminhtml__catalog_event__edit" method="validateCatalogEventEdit" />
+        <callback class="adminhtml__sales_order_create__" method="validateSalesOrderCreation" />
+        <callback class="adminhtml__system_store__" method="validateSystemStore" />
+        <callback class="adminhtml__url_rewrite__edit" method="validateUrlRewriteEditAction" />
+        <callback class="adminhtml__system_currency__" method="validateManageCurrencyRates" />
+        <callback class="adminhtml__system_email_template__" method="validateTransactionalEmails" />
+        <callback class="sales__order__view" method="validateSalesOrderViewAction" />
+        <callback class="adminhtml__sales_order__addComment" method="validateSalesOrderViewAction" />
+        <callback class="adminhtml__sales_order__cancel" method="validateSalesOrderViewAction" />
+        <callback class="adminhtml__sales_order__hold" method="validateSalesOrderViewAction" />
+        <callback class="adminhtml__sales_order__unhold" method="validateSalesOrderViewAction" />
+        <callback class="adminhtml__sales_order__invoices" method="validateSalesOrderViewAction" />
+        <callback class="adminhtml__sales_order__shipments" method="validateSalesOrderViewAction" />
+        <callback class="adminhtml__sales_order__creditmemos" method="validateSalesOrderViewAction" />
+        <callback class="adminhtml__sales_order__commentsHistory" method="validateSalesOrderViewAction" />
+        <callback class="adminhtml__sales_order__massCancel" method="validateSalesOrderMassAction" />
+        <callback class="adminhtml__sales_order__massHold" method="validateSalesOrderMassAction" />
+        <callback class="adminhtml__sales_order__massUnhold" method="validateSalesOrderMassAction" />
+        <callback class="adminhtml__sales_order__pdfinvoices" method="validateSalesOrderMassAction" />
+        <callback class="adminhtml__sales_order__pdfshipments" method="validateSalesOrderMassAction" />
+        <callback class="adminhtml__sales_order__pdfcreditmemos" method="validateSalesOrderMassAction" />
+        <callback class="adminhtml__sales_order__pdfdocs" method="validateSalesOrderMassAction" />
+        <callback class="adminhtml__sales_order_edit__start" method="validateSalesOrderEditStartAction" />
+        <callback class="sales__creditmemo__view" method="validateSalesOrderCreditmemoViewAction" />
+        <callback class="adminhtml__sales_order_creditmemo__addComment" method="validateSalesOrderCreditmemoViewAction" />
+        <callback class="adminhtml__sales_order_creditmemo__print" method="validateSalesOrderCreditmemoViewAction" />
+        <callback class="adminhtml__sales_order_creditmemo__" method="validateSalesOrderCreditmemoCreateAction" />
+        <callback class="sales__invoice__view" method="validateSalesOrderInvoiceViewAction" />
+        <callback class="adminhtml__sales_order_invoice__addComment" method="validateSalesOrderInvoiceViewAction" />
+        <callback class="adminhtml__sales_order_invoice__print" method="validateSalesOrderInvoiceViewAction" />
+        <callback class="adminhtml__sales_order_invoice__" method="validateSalesOrderInvoiceCreateAction" />
+        <callback class="sales__shipment__view" method="validateSalesOrderShipmentViewAction" />
+        <callback class="adminhtml__order_shipment__addComment" method="validateSalesOrderShipmentViewAction" />
+        <callback class="adminhtml__order_shipment__print" method="validateSalesOrderShipmentViewAction" />
+        <callback class="adminhtml__order_shipment__" method="validateSalesOrderShipmentCreateAction" />
+        <callback class="adminhtml__order_shipment__removeTrack" method="validateSalesOrderShipmentTrackAction" />
+        <callback class="adminhtml__checkout_agreement__edit" method="validateCheckoutAgreementEditAction" />
+        <callback class="adminhtml__permissions_user__edit" method="validateAdminUserAction" />
+        <callback class="adminhtml__permissions_user__save" method="validateAdminUserAction" />
+        <callback class="adminhtml__permissions_user__delete" method="validateAdminUserAction" />
+        <callback class="adminhtml__permissions_role__editrole" method="validateAdminRoleAction" />
+        <callback class="adminhtml__permissions_role__editrolegrid" method="validateAdminRoleAction" />
+        <callback class="adminhtml__permissions_role__saverole" method="validateAdminRoleAction" />
+        <callback class="adminhtml__permissions_role__delete" method="validateAdminRoleAction" />
+        <callback class="catalog__product_attribute__delete" method="validateCatalogProductAttributeActions" />
+        <callback class="catalog__product_attribute__save" method="validateCatalogProductAttributeActions" />
+        <callback class="catalog__product_attribute__edit" method="validateCatalogProductAttributeCreateAction" />
+        <callback class="catalog__product__massDelete" method="catalogProductMassDeleteAction" />
+        <callback class="catalog__product_set__add" method="validateAttributeSetActions" />
+        <callback class="catalog__product_set__save" method="validateAttributeSetActions" />
+        <callback class="catalog__product_set__delete" method="validateAttributeSetActions" />
+        <callback class="catalog__product_review__edit" method="validateCatalogProductReview" />
+        <callback class="catalog__product_review__save" method="validateCatalogProductReview" />
+        <callback class="catalog__product_review__delete" method="validateCatalogProductReview" />
+        <callback class="adminhtml__process__save" method="blockIndexAction" />
+        <callback class="adminhtml__process__massChangeMode" method="blockIndexAction" />
+        <callback class="adminhtml__process__massReindex" method="blockIndexAction" />
+        <callback class="adminhtml__process__reindexProcess" method="blockIndexAction" />
+        <callback class="adminhtml__process__reindexAllAction" method="blockIndexAction" />
+        <callback class="adminhtml__cms_hierarchy__save" method="validateCmsHierarchyAction" />
+        <callback class="adminhtml__cms_hierarchy__delete" method="validateCmsHierarchyAction" />
+        <callback class="adminhtml__cms_hierarchy__copy" method="validateCmsHierarchyAction" />
+        <callback class="adminhtml__customer_group__save" method="blockCustomerGroupSave" />
+        <callback class="adminhtml__tax_rule__save" method="blockTaxChange" />
+        <callback class="adminhtml__tax_rule__delete" method="blockTaxChange" />
+        <callback class="adminhtml__tax_rate__save" method="blockTaxChange" />
+        <callback class="adminhtml__tax_rate__delete" method="blockTaxChange" />
+        <callback class="adminhtml__tax_rate__ajaxSave" method="blockTaxChange" />
+        <callback class="adminhtml__tax_rate__ajaxDelete" method="blockTaxChange" />
+        <callback class="adminhtml__tax_class_customer__ajaxDelete" method="blockTaxChange" />
+        <callback class="adminhtml__tax_class_product__ajaxDelete" method="blockTaxChange" />
+        <callback class="adminhtml__tax_class__ajaxSave" method="blockTaxChange" />
+        <callback class="adminhtml__giftregistry_customer__add" method="validateGiftregistryEntityAction" />
+        <callback class="adminhtml__giftregistry_customer__edit" method="validateGiftregistryEntityAction" />
+        <callback class="adminhtml__giftregistry_customer__delete" method="validateGiftregistryEntityAction" />
+        <callback class="adminhtml__giftregistry_customer__share" method="validateGiftregistryEntityAction" />
+        <callback class="adminhtml__customer_attribute__" method="validateCustomerAttributeActions" />
+        <callback class="adminhtml__customer_address_attribute__" method="validateCustomerAttributeActions" />
+        <callback class="adminhtml__rma__new" method="validateSalesOrderViewAction" />
+        <callback class="adminhtml__rma_item_attribute__save" method="validateRmaAttributeSaveAction" />
+        <callback class="adminhtml__rma_item_attribute__edit" method="validateRmaAttributeEditAction" />
+        <callback class="adminhtml__rma_item_attribute__delete" method="validateRmaAttributeDeleteAction" />
+        <callback class="review__product__index" method="validateReviewCustomer" />
+        <callback class="review__product__edit" method="validateReviewCustomer" />
+        <callback class="customer__index__edit" method="validateCustomerEdit" />
+    </group>
+    <group name="block_html_before" processor="Magento\AdminGws\Model\Blocks">
+        <callback class="Magento\CatalogEvent\Block\Adminhtml\Event\Edit\Form" method="restrictCatalogEventEditForm" />
+        <callback class="Magento\CatalogPermissions\Block\Adminhtml\Catalog\Category\Tab\Permissions" method="validateCatalogPermissions" />
+        <callback class="Magento\Catalog\Block\Adminhtml\Product\Attribute\Edit\Tab\Main" method="disableCatalogProductAttributeEditTabMainFields" />
+        <callback class="Magento\Catalog\Block\Adminhtml\Product\Attribute\Edit\Tab\Options" method="disableCatalogProductAttributeEditTabOptionsFields" />
+        <callback class="Magento\Catalog\Block\Adminhtml\Product\Edit\Action\Attribute\Tab\Websites" method="catalogProductMassUpdateWebsites" />
+        <callback class="Magento\Catalog\Block\Adminhtml\Product\Grid" method="catalogProductPrepareMassaction" />
+        <callback class="Magento\CurrencySymbol\Block\Adminhtml\System\Currency" method="removeManageCurrencyRatesButtons" />
+        <callback class="Magento\Newsletter\Block\Adminhtml\Queue\Edit\Form" method="setIsRequiredSubscribersFromFieldForNewsletterQueueForm" />
+        <callback class="Magento\Rma\Block\Adminhtml\Rma\Item\Attribute\Edit\Tab\Options" method="disableRmaAttributeDeleteOptionButton" />
+        <callback class="Magento\TargetRule\Block\Adminhtml\Product" method="readonlyTargetRuleProductAttribute" />
+        <callback class="Magento\TaxImportExport\Block\Adminhtml\Rate\ImportExport" method="removeTaxRateImport" />
+        <callback class="Magento\Tax\Block\Adminhtml\Rule\Edit\Form" method="disableTaxRelatedMultiselects" />
+        <callback class="Magento\VersionsCms\Block\Adminhtml\Cms\Page\Edit\Tab\Hierarchy" method="prepareCmsHierarchyNodes" />
+    </group>
+    <group name="widget_container_buttons_rendering" processor="Magento\AdminGws\Model\Containers">
+        <callback class="Magento\Backend\Block\System\Store\Store" method="widgetManageStores" />
+        <callback class="Magento\Banner\Block\Adminhtml\Banner\Edit" method="validateBannerPermissions" />
+        <callback class="Magento\CatalogEvent\Block\Adminhtml\Event" method="widgetCatalogEventGridContainer" />
+        <callback class="Magento\Catalog\Block\Adminhtml\Product" method="widgetProductGridContainer" />
+        <callback class="Magento\Catalog\Block\Adminhtml\Product\Attribute" method="removeCatalogProductAttributeAddButton" />
+        <callback class="Magento\Catalog\Block\Adminhtml\Product\Attribute\Edit" method="removeCatalogProductAttributeButtons" />
+        <callback class="Magento\CustomerCustomAttributes\Block\Adminhtml\Customer\Address\Attribute" method="removeAddNewCustomerAttributeButton" />
+        <callback class="Magento\CustomerCustomAttributes\Block\Adminhtml\Customer\Address\Attribute\Edit" method="removeDeleteCustomerAttributeButton" />
+        <callback class="Magento\CustomerCustomAttributes\Block\Adminhtml\Customer\Attribute" method="removeAddNewCustomerAttributeButton" />
+        <callback class="Magento\CustomerCustomAttributes\Block\Adminhtml\Customer\Attribute\Edit" method="removeDeleteCustomerAttributeButton" />
+        <callback class="Magento\CustomerSegment\Block\Adminhtml\Customersegment" method="removeRuleEntityGridButtons" />
+        <callback class="Magento\CustomerSegment\Block\Adminhtml\Customersegment\Edit" method="removeSegmentRuleEntityEditButtons" />
+        <callback class="Magento\Customer\Block\Adminhtml\Group" method="removeCustomerGroupAddButton" />
+        <callback class="Magento\Customer\Block\Adminhtml\Group\Edit" method="removeCustomerGroupControlButtons" />
+        <callback class="Magento\Email\Block\Adminhtml\Template" method="removeEmailTemplateGridButtons" />
+        <callback class="Magento\Email\Block\Adminhtml\Template\Edit" method="removeTransactionalEmailsEditButtons" />
+        <callback class="Magento\GiftCardAccount\Block\Adminhtml\Giftcardaccount" method="removeGiftCardAccountAddButton" />
+        <callback class="Magento\GiftCardAccount\Block\Adminhtml\Giftcardaccount\Edit" method="removeGiftCardAccountControlButtons" />
+        <callback class="Magento\GiftWrapping\Block\Adminhtml\Giftwrapping\Edit" method="removeGiftWrappingEditButtons" />
+        <callback class="Magento\Reminder\Block\Adminhtml\Reminder\Edit" method="removeRuleEntityEditButtons" />
+        <callback class="Magento\Review\Block\Adminhtml\Rating\Edit" method="removeRatingEditButtons" />
+        <callback class="Magento\Reward\Block\Adminhtml\Reward\Rate\Edit" method="removeRewardRateButtons" />
+        <callback class="Magento\Rma\Block\Adminhtml\Rma\Item\Attribute" method="removeRmaAddAttributeButton" />
+        <callback class="Magento\Rma\Block\Adminhtml\Rma\Item\Attribute\Edit" method="removeRmaDeleteAttributeButton" />
+        <callback class="Magento\Sales\Block\Adminhtml\Transactions\Detail" method="removeSalesTransactionControlButtons" />
+        <callback class="Magento\TargetRule\Block\Adminhtml\Targetrule" method="removeTargetRuleGridButtons" />
+        <callback class="Magento\TargetRule\Block\Adminhtml\Targetrule\Edit" method="removeTargetRuleEditButtons" />
+        <callback class="Magento\Tax\Block\Adminhtml\Rate\Toolbar\Add" method="removeTaxRateAddButton" />
+        <callback class="Magento\Tax\Block\Adminhtml\Rate\Toolbar\Save" method="removeTaxRateControlButtons" />
+        <callback class="Magento\Tax\Block\Adminhtml\Rule" method="removeTaxRuleAddButton" />
+        <callback class="Magento\Tax\Block\Adminhtml\Rule\Edit" method="removeTaxRuleControlButtons" />
+        <callback class="Magento\VersionsCms\Block\Adminhtml\Cms\Hierarchy\Edit" method="removeCmsHierarchyFormButtons" />
+        <callback class="Magento\Widget\Block\Adminhtml\Widget\Instance\Edit" method="removeWidgetInstanceButtons" />
+    </group>
+    <aclDeny>
+        <level name="store">
+            <rule name="sales_order_create" resource="Magento_Sales::create" />
+            <rule name="customer_attributes" resource="Magento_CustomerCustomAttributes::attributes" />
+        </level>
+    </aclDeny>
+</config>

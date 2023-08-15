@@ -1,0 +1,65 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+ /**
+  * Copyright © Magento, Inc. All rights reserved.
+  * See COPYING.txt for license details.
+  */
+-->
+
+<tests xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xsi:noNamespaceSchemaLocation="urn:magento:mftf:Test/etc/testSchema.xsd">
+    <test name="AdminCreateCustomerSegmentBySpecificGroupTest">
+        <annotations>
+            <stories value="Create Customer Segment Entity With Customer Conditions"/>
+            <title value="Create customer segment with condition based on 'Specific Group'"/>
+            <description value="Admin should be able to create customer segment with condition based on 'Specific Group'"/>
+            <severity value="CRITICAL"/>
+            <testCaseId value="MC-14529"/>
+            <group value="CustomerSegment"/>
+            <group value="mtf_migrated"/>
+        </annotations>
+        <before>
+            <actionGroup ref="AdminLoginActionGroup" stepKey="LoginAsAdmin"/>
+            <!--Test customer is created-->
+            <createData entity="Simple_US_Customer" stepKey="createCustomer">
+                <field key="group_id">3</field>
+            </createData>
+            <!--Test simple product is created-->
+            <createData entity="_defaultCategory" stepKey="createCategory"/>
+            <createData entity="_defaultProduct" stepKey="createProduct">
+                <field key="price">10</field>
+                <field key="quantity">1000</field>
+                <requiredEntity createDataKey="createCategory"/>
+            </createData>
+        </before>
+        <after>
+            <deleteData createDataKey="createCategory" stepKey="deleteCategory"/>
+            <deleteData createDataKey="createProduct" stepKey="deleteProduct"/>
+            <deleteData createDataKey="createCustomer" stepKey="deleteCustomer"/>
+            <actionGroup ref="FindAndDeleteCustomerSegmentActionGroup" stepKey="deleteSegment">
+                <argument name="segmentName" value="{{CustomerSegmentDefault.name}}"/>
+            </actionGroup>
+            <magentoCron groups="index" stepKey="reindex"/>
+            <actionGroup ref="AdminLogoutActionGroup" stepKey="logout"/>
+        </after>
+
+        <!--Navigate to CUSTOMERS->Segment > Click 'Add Segment' button > Fill all fields according to dataset and click 'Save and Continue Edit' button-->
+        <actionGroup ref="CreateCustomerSegmentWithContinueEditActionGroup" stepKey="createCustomerSegment">
+            <argument name="customerSegment" value="CustomerSegmentDefault"/>
+        </actionGroup>
+
+        <!--Navigate to Conditions tab and Add specific test condition according to dataset-->
+        <actionGroup ref="SetCustomerGroupConditionActionGroup" stepKey="setSegmentConditions">
+            <argument name="groupName" value="Retailer"/>
+        </actionGroup>
+        <actionGroup ref="CliConsumerStartActionGroup" stepKey="startMessageQueue">
+            <argument name="consumerName" value="{{AdminCustomerSegmentConsumerData.consumerName}}"/>
+            <argument name="maxMessages" value="{{AdminCustomerSegmentConsumerData.messageLimit}}"/>
+        </actionGroup>
+        <reloadPage stepKey="refreshPage"/>
+        <waitForPageLoad stepKey="waitForPageLoaded"/>
+        <actionGroup ref="AdminCheckCustomerInSegmentActionGroup" stepKey="checkCustomerInSegment">
+            <argument name="customer" value="$createCustomer$"/>
+        </actionGroup>
+    </test>
+</tests>

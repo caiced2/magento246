@@ -1,0 +1,71 @@
+// /**
+//  * Copyright © Magento, Inc. All rights reserved.
+//  * See COPYING.txt for license details.
+//  */
+
+//
+//  Common
+//  _____________________________________________
+
+@bolt-logout-color: #848484;
+
+& when (@media-common = true) {
+    .bolt-logout-info {
+        background-color: @color-white-smoke;
+        border: solid @color-gray_light 1px;
+        line-height: 1.6rem;
+        margin-bottom: 25px;
+        padding: 10px 15px;
+        text-align: center;
+
+        .info {
+            float: left;
+            margin-right: 5px;
+
+            &:before {
+                background: url('@{baseDir}Magento_QuickCheckout/images/logo-bolt.png') no-repeat;
+                background-size: 60px 18px;
+                content: '';
+                float: left;
+                height: 18px;
+                margin-right: 5px;
+                width: 18px;
+            }
+        }
+
+        .account-email {
+            float: left;
+            font-size: 1.4rem;
+            font-weight: @font-weight__semibold;
+        }
+
+        a {
+            cursor: pointer;
+            float: right;
+        }
+    }
+}
+
+//
+//  Mobile
+//  _____________________________________________
+
+.media-width(@extremum, @break) when (@extremum = 'max') and (@break = @screen__m) {
+    .bolt-logout-info {
+        text-align: inherit;
+
+        .info {
+            display: block;
+            float: none;
+            margin-bottom: 1px;
+        }
+
+        .account-email {
+            float: none;
+        }
+
+        a {
+            margin-top: -10px;
+        }
+    }
+}

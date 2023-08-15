@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+ /**
+  * Copyright © Magento, Inc. All rights reserved.
+  * See COPYING.txt for license details.
+  */
+-->
+
+<tests xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xsi:noNamespaceSchemaLocation="urn:magento:mftf:Test/etc/testSchema.xsd">
+    <test name="DeleteGiftCardProductFromShoppingCartTest">
+        <annotations>
+            <features value="GiftCard"/>
+            <stories value="Delete Products from Shopping Cart"/>
+            <title value="Delete gift card product from shopping cart test"/>
+            <description value="Delete gift card product from shopping cart"/>
+            <severity value="CRITICAL"/>
+            <testCaseId value="MC-14688"/>
+            <group value="GiftCard"/>
+            <group value="mtf_migrated"/>
+        </annotations>
+        <before>
+            <!-- Create gift card product -->
+            <createData entity="ApiGiftCard" stepKey="createProduct"/>
+        </before>
+        <after>
+            <!-- Delete gift card product -->
+            <deleteData createDataKey="createProduct" stepKey="deleteProduct"/>
+        </after>
+
+        <!-- Add gift card product to the cart -->
+        <amOnPage url="{{StorefrontProductPage.url($$createProduct.custom_attributes[url_key]$$)}}" stepKey="navigateToGiftCardProductPage"/>
+        <waitForPageLoad stepKey="waitForGiftCardProductPageLoad"/>
+        <fillField selector="{{StorefrontAddSenderDataSection.amount}}" userInput="10" stepKey="fillFieldAmount" after="navigateToGiftCardProductPage"/>
+        <fillField selector="{{StorefrontAddSenderDataSection.sender}}" userInput="Test" stepKey="fillFieldSenderName" after="fillFieldAmount"/>
+        <fillField selector="{{StorefrontAddSenderDataSection.receiver}}" userInput="Test" stepKey="fillFieldRecipientName" after="fillFieldSenderName"/>
+        <actionGroup ref="AddToCartFromStorefrontProductPageActionGroup" stepKey="addToCartGiftCardFromStorefrontProductPage" after="fillFieldRecipientName">
+            <argument name="productName" value="$$createProduct.name$$"/>
+        </actionGroup>
+
+        <!-- Remove product from cart -->
+        <amOnPage url="{{CheckoutCartPage.url}}" stepKey="goToCart"/>
+        <waitForPageLoad stepKey="waitForCartPageLoad"/>
+        <actionGroup ref="DeleteProductFromShoppingCartActionGroup" stepKey="deleteProduct">
+            <argument name="productName" value="$$createProduct.name$$"/>
+        </actionGroup>
+    </test>
+</tests>

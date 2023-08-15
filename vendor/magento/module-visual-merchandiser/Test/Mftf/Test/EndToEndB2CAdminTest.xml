@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+ /**
+  * Copyright © Magento, Inc. All rights reserved.
+  * See COPYING.txt for license details.
+  */
+-->
+<tests xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:noNamespaceSchemaLocation="urn:magento:mftf:Test/etc/testSchema.xsd">
+    <test name="EndToEndB2CAdminTest">
+        <!--Admin adds products to category-->
+        <amOnPage url="{{AdminCategoryPage.url}}" stepKey="onCategoryIndexPage" after="createSubCategory"/>
+        <waitForPageLoad stepKey="waitForCategoryPageLoadAddProducts" after="onCategoryIndexPage"/>
+        <click selector="{{AdminCategorySidebarTreeSection.expandAll}}" stepKey="clickExpandAll" after="waitForCategoryPageLoadAddProducts"/>
+        <!--Add simple product by sku-->
+        <actionGroup ref="AddProductToCategoryBySkuActionGroup" stepKey="addProductToCategoryBySku" after="clickExpandAll">
+            <argument name="product" value="SimpleProduct"/>
+            <argument name="categoryEntity" value="SimpleSubCategory"/>
+        </actionGroup>
+        <actionGroup ref="SeeProductInProductCategoryGridActionGroup" stepKey="seeSimpleProductInCategoryGrid" after="addProductToCategoryBySku">
+            <argument name="product" value="SimpleProduct"/>
+            <argument name="categoryEntity" value="SimpleSubCategory"/>
+        </actionGroup>
+        <!--Add configurable product by search-->
+        <actionGroup ref="AddProductToCategoryBySearchActionGroup" stepKey="addProductToCategoryBySearch" after="seeSimpleProductInCategoryGrid">
+            <argument name="product" value="BaseConfigurableProduct"/>
+            <argument name="categoryEntity" value="SimpleSubCategory"/>
+        </actionGroup>
+        <actionGroup ref="SeeProductInProductCategoryGridActionGroup" stepKey="seeConfigurableProductInCategoryGrid" after="addProductToCategoryBySearch">
+            <argument name="product" value="BaseConfigurableProduct"/>
+            <argument name="categoryEntity" value="SimpleSubCategory"/>
+        </actionGroup>
+        <!--Add downloadable by rule-->
+        <actionGroup ref="AddProductToCategoryByRuleSkuActionGroup" stepKey="addProductToCategoryByRule" after="seeConfigurableProductInCategoryGrid">
+            <argument name="product" value="DownloadableProduct"/>
+            <argument name="categoryEntity" value="SimpleSubCategory"/>
+        </actionGroup>
+        <actionGroup ref="SeeProductInProductCategoryGridActionGroup" stepKey="seeDownloadableProductInCategoryGrid" after="addProductToCategoryByRule">
+            <argument name="product" value="DownloadableProduct"/>
+            <argument name="categoryEntity" value="SimpleSubCategory"/>
+        </actionGroup>
+    </test>
+</tests>

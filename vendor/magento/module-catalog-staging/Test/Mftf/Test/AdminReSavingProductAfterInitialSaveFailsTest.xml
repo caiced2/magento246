@@ -1,0 +1,71 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+ /**
+  * Copyright © Magento, Inc. All rights reserved.
+  * See COPYING.txt for license details.
+  */
+-->
+
+<tests xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xsi:noNamespaceSchemaLocation="urn:magento:mftf:Test/etc/testSchema.xsd">
+    <test name="AdminReSavingProductAfterInitialSaveFailsTest">
+        <annotations>
+            <stories value="Create staging updates"/>
+            <title value="Save product update after failed attempt"/>
+            <description value="Verify if product is saved successfully after initial save fails"/>
+            <severity value="CRITICAL"/>
+            <testCaseId value="MC-14749"/>
+            <group value="CatalogStaging"/>
+            <group value="mtf_migrated"/>
+        </annotations>
+        <before>
+            <actionGroup ref="AdminLoginActionGroup" stepKey="loginAsAdmin"/>
+            <createData entity="_defaultCategory" stepKey="createCategory"/>
+            <createData entity="SimpleProduct" stepKey="createProduct">
+                <requiredEntity createDataKey="createCategory"/>
+            </createData>
+            <actionGroup ref="AdminClearFiltersStagingDashboardActionGroup" stepKey="clearFilter"/>
+        </before>
+        <after>
+            <deleteData createDataKey="createProduct" stepKey="deleteProduct"/>
+            <deleteData createDataKey="createCategory" stepKey="deleteCategory"/>
+            <amOnPage url="{{AdminLogoutPage.url}}" stepKey="amOnLogoutPage"/>
+        </after>
+
+        <!-- Create temporary product updates with invalid dates and get error message -->
+        <amOnPage url="{{AdminProductEditPage.url($createProduct.id$)}}" stepKey="visitProductPage"/>
+        <waitForPageLoad stepKey="waitForProductPageLoad"/>
+        <actionGroup ref="AdminFillTemporaryUpdateActionGroup" stepKey="fillStagingUpdate">
+            <argument name="stage" value="UpdateWithInvalidDates"/>
+        </actionGroup>
+        <scrollToTopOfPage stepKey="scrollToTop"/>
+        <click selector="{{AdminStagingSlideOutSection.save}}" stepKey="clickSave"/>
+        <see userInput="error: : The Future Update End Time is invalid. It can't be the same time or earlier than the current time." stepKey="errorMessage"/>
+
+        <!-- Create new product update -->
+        <amOnPage url="{{AdminProductEditPage.url($createProduct.id$)}}" stepKey="visitAdminProductPage"/>
+        <waitForPageLoad stepKey="waitForPageLoad"/>
+
+        <actionGroup ref="AdminFillTemporaryUpdateActionGroup" stepKey="fillNewStagingUpdate">
+            <argument name="stage" value="UpdateWithDatePlusTwoDays"/>
+        </actionGroup>
+        <scrollToTopOfPage stepKey="scrollToTopPage"/>
+        <click selector="{{AdminStagingSlideOutSection.save}}" stepKey="clickSaveButton"/>
+        <click selector="{{AdminProductFormActionSection.saveButton}}" stepKey="saveUpdateProduct"/>
+        <seeElement selector="{{AdminProductMessagesSection.successMessage}}" stepKey="assertSuccess"/>
+
+        <!-- Perform assertions -->
+        <actionGroup ref="AdminGoToStagingDashboardGridActionGroup" stepKey="goToGridDashboard">
+            <argument name="updateName" value="{{UpdateWithDatePlusTwoDays.updateName}}"/>
+        </actionGroup>
+
+        <actionGroup ref="AdminCheckStagingDashboardGridTemporaryActionGroup" stepKey="checkGridDashboard">
+            <argument name="stage" value="UpdateWithDatePlusTwoYears"/>
+            <argument name="updateName" value="{{UpdateWithDatePlusTwoDays.updateName}}"/>
+        </actionGroup>
+
+        <actionGroup ref="AdminCheckLinksStagingDashboardActionGroup" stepKey="checkLinks">
+            <argument name="updateName" value="{{UpdateWithDatePlusTwoDays.updateName}}"/>
+        </actionGroup>
+    </test>
+</tests>

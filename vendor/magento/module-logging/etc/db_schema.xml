@@ -1,0 +1,61 @@
+<?xml version="1.0"?>
+<!--
+/**
+ * Copyright © Magento, Inc. All rights reserved.
+ * See COPYING.txt for license details.
+ */
+-->
+<schema xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:noNamespaceSchemaLocation="urn:magento:framework:Setup/Declaration/Schema/etc/schema.xsd">
+    <table name="magento_logging_event" resource="default" engine="innodb" comment="Enterprise Logging Event">
+        <column xsi:type="int" name="log_id" unsigned="false" nullable="false" identity="true"
+                comment="Log Id"/>
+        <column xsi:type="bigint" name="ip" unsigned="false" nullable="false" identity="false" default="0"
+                comment="Ip address"/>
+        <column xsi:type="bigint" name="x_forwarded_ip" unsigned="false" nullable="false" identity="false"
+                default="0" comment="Real ip address if visitor used proxy"/>
+        <column xsi:type="varchar" name="event_code" nullable="true" length="100" comment="Event Code"/>
+        <column xsi:type="timestamp" name="time" on_update="false" nullable="true" comment="Even date"/>
+        <column xsi:type="varchar" name="action" nullable="true" length="20" comment="Event action"/>
+        <column xsi:type="text" name="info" nullable="true"/>
+        <column xsi:type="varchar" name="status" nullable="true" length="15" comment="Status"/>
+        <column xsi:type="varchar" name="user" nullable="true" length="40" comment="User name"/>
+        <column xsi:type="int" name="user_id" unsigned="true" nullable="true" identity="false"
+                comment="User Id"/>
+        <column xsi:type="varchar" name="fullaction" nullable="true" length="200" comment="Full action description"/>
+        <column xsi:type="text" name="error_message" nullable="true" comment="Error Message"/>
+        <constraint xsi:type="primary" referenceId="PRIMARY">
+            <column name="log_id"/>
+        </constraint>
+        <constraint xsi:type="foreign" referenceId="MAGENTO_LOGGING_EVENT_USER_ID_ADMIN_USER_USER_ID"
+                    table="magento_logging_event" column="user_id" referenceTable="admin_user" referenceColumn="user_id"
+                    onDelete="SET NULL"/>
+        <index referenceId="MAGENTO_LOGGING_EVENT_USER_ID" indexType="btree">
+            <column name="user_id"/>
+        </index>
+        <index referenceId="MAGENTO_LOGGING_EVENT_USER" indexType="btree">
+            <column name="user"/>
+        </index>
+    </table>
+    <table name="magento_logging_event_changes" resource="default" engine="innodb"
+           comment="Enterprise Logging Event Changes">
+        <column xsi:type="int" name="id" unsigned="false" nullable="false" identity="true"
+                comment="Enterprise logging id"/>
+        <column xsi:type="varchar" name="source_name" nullable="true" length="150" comment="Logged Source Name"/>
+        <column xsi:type="int" name="event_id" unsigned="false" nullable="true" identity="false"
+                comment="Logged event id"/>
+        <column xsi:type="int" name="source_id" unsigned="false" nullable="true" identity="false"
+                comment="Logged Source Id"/>
+        <column xsi:type="text" name="original_data" nullable="true" comment="Logged Original Data"/>
+        <column xsi:type="text" name="result_data" nullable="true" comment="Logged Result Data"/>
+        <constraint xsi:type="primary" referenceId="PRIMARY">
+            <column name="id"/>
+        </constraint>
+        <constraint xsi:type="foreign" referenceId="FK_D29B0056693455AC9AC172C00D82F9D9" table="magento_logging_event_changes"
+                    column="event_id" referenceTable="magento_logging_event" referenceColumn="log_id"
+                    onDelete="CASCADE"/>
+        <index referenceId="MAGENTO_LOGGING_EVENT_CHANGES_EVENT_ID" indexType="btree">
+            <column name="event_id"/>
+        </index>
+    </table>
+</schema>

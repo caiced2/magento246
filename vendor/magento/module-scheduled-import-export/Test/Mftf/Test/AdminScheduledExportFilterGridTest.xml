@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+ /**
+  * Copyright © Magento, Inc. All rights reserved.
+  * See COPYING.txt for license details.
+  */
+-->
+
+<tests xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xsi:noNamespaceSchemaLocation="urn:magento:mftf:Test/etc/testSchema.xsd">
+    <test name="AdminScheduledExportFilterGridTest">
+        <annotations>
+            <features value="ScheduledImportExport"/>
+            <stories value="Filter Grid"/>
+            <title value="Admin scheduled import/export filter grid test"/>
+            <description value="Admin scheduled import/export filter grid all head cells are shown"/>
+            <severity value="AVERAGE"/>
+            <testCaseId value="MC-38461"/>
+            <useCaseId value="MC-33497"/>
+            <group value="scheduledImportExport"/>
+            <group value="pr_exclude"/>
+        </annotations>
+        <before>
+            <actionGroup ref="AdminLoginActionGroup" stepKey="LoginAsAdmin"/>
+        </before>
+        <after>
+            <actionGroup ref="AdminLogoutActionGroup" stepKey="logout"/>
+        </after>
+        <actionGroup ref="AdminOpenScheduledExportCreatePageActionGroup" stepKey="openExportCreatePage"/>
+        <actionGroup ref="AdminFillExportSettingsFormActionGroup" stepKey="fillEntityType">
+            <argument name="entityType" value="Customer Finances"/>
+        </actionGroup>
+        <actionGroup ref="AssertAdminGridFilterFirstHeadCellVisibleActionGroup" stepKey="assertFirstHeadCellVisible"/>
+    </test>
+</tests>

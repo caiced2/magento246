@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+ /**
+  * Copyright © Magento, Inc. All rights reserved.
+  * See COPYING.txt for license details.
+  */
+-->
+<sections xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:noNamespaceSchemaLocation="urn:magento:mftf:Page/etc/SectionObject.xsd">
+    <section name="MarketingSection">
+        <element name="marketing" type="button" selector="#menu-magento-backend-marketing"/>
+        <element name="catalogPriceRule" type="button" selector="//span[text()='Catalog Price Rule']"/>
+        <element name="gridSearchPriceRule" type="input" selector="#promo_catalog_grid_filter_name"/>
+        <element name="addNewRule" type="button" selector="#add"/>
+        <element name="ruleName" type="input" selector="//input[@name='name']"/>
+        <element name="selectWebsite" type="multiselect" selector="//select[@class='admin__control-multiselect']/option[text()='{{arg1}}']" parameterized="true"/>
+        <element name="customerGroup" type="multiselect" selector="//select[@name='customer_group_ids']/option[text()='{{arg2}}']" parameterized="true"/>
+        <element name="action" type="button" selector="div[data-index='actions']"/>
+        <element name="discount" type="input" selector="//input[@name='discount_amount']"/>
+        <element name="saveAndContinue" type="button" selector="#save_and_continue"/>
+        <element name="save" type="button" selector="//header[@class='modal-header']//button[@id='save']"/>
+        <element name="cancel" type="button" selector="//header[@class='modal-header']//button[@id='cancel']"/>
+        <element name="saveRule" type="button" selector="#save"/>
+    </section>
+</sections>

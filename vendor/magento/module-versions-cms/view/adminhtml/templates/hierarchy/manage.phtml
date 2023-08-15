@@ -1,0 +1,195 @@
+<?php
+/**
+ * Copyright © Magento, Inc. All rights reserved.
+ * See COPYING.txt for license details.
+ */
+
+/** @var \Magento\VersionsCms\Block\Adminhtml\Cms\Hierarchy\Manage $block */
+/** @var \Magento\Framework\View\Helper\SecureHtmlRenderer $secureRenderer */
+?>
+<div id="cms-hierarchy-manage-container" class="cms-popup">
+    <?= /* @noEscape */
+    $secureRenderer->renderStyleAsTag(
+        'display: none;',
+        '#cms-hierarchy-manage-container'
+    ); ?>
+    <div class="entry-edit">
+        <div class="entry-edit-head">
+            <h4 class="icon-head head-edit-form fieldset-legend"></h4>
+        </div>
+        <div class="content">
+            <div class="cms-popup-description"></div>
+            <div class="fieldset">
+                <div class="cms-hierarchy manage-form">
+                    <?= $block->getFormHtml() ?>
+                </div>
+            </div>
+        </div>
+
+        <div class="buttons-set">
+            <div class="f-right">
+                <button class="scalable cancel_button" type="button" id="cms_popup_cancel">
+                    <span><?= $block->escapeHtml(__('Cancel')) ?></span>
+                </button>
+                <?= /* @noEscape */
+                $secureRenderer->renderEventListenerAsTag(
+                    'onclick',
+                    'hideHierarchyDialog()',
+                    '#cms_popup_cancel'
+                ); ?>
+                <button type="button" id="cms_popup_ok"><span></span></button>
+            </div>
+        </div>
+    </div>
+</div>
+<div id="popup-window-mask"></div>
+<?= /* @noEscape */
+$secureRenderer->renderStyleAsTag(
+    'display: none;',
+    '#popup-window-mask'
+);
+?>
+
+<?php
+$selectMessage = $block->escapeJs(__("Please select a website or store view."));
+$copyMessage = $block->escapeJs(
+    __("Are you sure you want to copy the current hierarchy to the selected destinations?")
+);
+$copyHierarchyUrl = $block->escapeJs($block->getCopyHierarchyUrl());
+$deleteMessage = $block->escapeJs(__("Are you sure you want to delete the selected hierarchies?"));
+$deleteHierarchiesUrl = $block->escapeJs($block->getDeleteHierarchiesUrl());
+$deleteMultipleHierarchiesText = $block->escapeJs(
+    $block->getData('versionsCmsHelper')
+        ->getDeleteMultipleHierarchiesText()
+);
+$deleteButtonText = $block->escapeJs(__('Delete'));
+$selectToDeleteMessage = $block->escapeJs(__('Please select one or more hierarchies to delete.'));
+$copyText = $block->escapeJs(__('Copy'));
+$assignHierarchyMessage = $block->escapeJs(__('Please assign the current hierarchy to one or more destinations.'));
+$scriptString = <<<script
+    require([
+        "Magento_Ui/js/modal/confirm",
+        "Magento_Ui/js/modal/alert",
+        'prototype'
+    ], function(confirm, alert){
+
+//<![CDATA[
+        function countSelectedScopes()
+        {
+            var selectedScopes = 0;
+
+            for (var i = 0, len = $('scopes').length; i < len; i++) {
+                if ($('scopes').options[i].selected) {
+                    selectedScopes++;
+                }
+            }
+
+            return selectedScopes;
+        }
+
+        function submitCopy(containerObj)
+        {
+            if (!countSelectedScopes()) {
+                alert({
+                    content: '{$selectMessage}'
+                });
+
+                return;
+            }
+
+            confirm({
+                content: '{$copyMessage}',
+                actions: {
+                    confirm: function () {
+                        var form = $$('#cms-hierarchy-manage-container form')[0];
+                        form.action = '{$copyHierarchyUrl}';
+                        form.submit();
+                        containerObj.hide();
+                    }
+                }
+            });
+        }
+
+        function submitDelete(containerObj)
+        {
+            if (!countSelectedScopes()) {
+                alert({
+                    content: '{$selectMessage}'
+                });
+
+                return;
+            }
+
+            confirm({
+                content: '{$deleteMessage}',
+                actions: {
+                    confirm: function () {
+                        var form = $$('#cms-hierarchy-manage-container form')[0];
+                        form.action = '{$deleteHierarchiesUrl}';
+                        form.submit();
+                        containerObj.hide();
+                    }
+                }
+            });
+        }
+
+        function openHierarchyDialog(action)
+        {
+            var title = '';
+            var buttonText = '';
+            var buttonClass = '';
+            var buttonAction = null;
+            var descriptionText = '';
+            if (action == 'delete') {
+                title = '{$deleteMultipleHierarchiesText}';
+                buttonText = '{$deleteButtonText}';
+                buttonClass = 'scalable ok_button delete';
+                buttonAction = submitDelete;
+                descriptionText = '{$selectToDeleteMessage}';
+            } else if (action == 'copy') {
+                title = '{$copyText}';
+                buttonText = '{$copyText}';
+                buttonClass = 'scalable ok_button add';
+                buttonAction = submitCopy;
+                descriptionText = '{$assignHierarchyMessage}';
+            } else {
+                return;
+            }
+
+            var popupContainer = $('cms-hierarchy-manage-container');
+            popupContainer.select('.entry-edit-head h4')[0].innerHTML = title;
+            popupContainer.select('.content .cms-popup-description')[0].innerHTML = descriptionText;
+            var popupOkButton = $('cms_popup_ok');
+            popupOkButton.select('span')[0].innerHTML = buttonText;
+            popupOkButton.setAttribute('class', buttonClass);
+            popupOkButton.onclick = function () {
+                buttonAction(popupContainer);
+            };
+
+            popupContainer.show().setStyle({
+                'marginTop': -popupContainer.getDimensions().height / 2 + 'px'
+            });
+            $('popup-window-mask').setStyle({
+                height: $('html-body').getHeight() + 'px'
+            }).show();
+        }
+
+        function hideHierarchyDialog() {
+            for (var i = 0, len = $('scopes').length; i < len; i++) {
+                $('scopes').options[i].selected = false;
+            }
+            $$('.cms-popup').each(Element.hide);
+            $('popup-window-mask').hide();
+        }
+
+        window.hideHierarchyDialog = hideHierarchyDialog;
+        window.openHierarchyDialog = openHierarchyDialog;
+        window.submitDelete = submitDelete;
+        window.submitCopy = submitCopy;
+        window.countSelectedScopes = countSelectedScopes;
+//]]>
+
+    });
+script;
+?>
+<?= /* @noEscape */ $secureRenderer->renderTag('script', [], $scriptString, false); ?>

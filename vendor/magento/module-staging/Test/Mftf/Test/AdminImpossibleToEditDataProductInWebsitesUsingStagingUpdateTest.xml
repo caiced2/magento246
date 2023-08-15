@@ -1,0 +1,63 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+ /**
+  * Copyright © Magento, Inc. All rights reserved.
+  * See COPYING.txt for license details.
+  */
+-->
+
+<tests xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xsi:noNamespaceSchemaLocation="urn:magento:mftf:Test/etc/testSchema.xsd">
+    <test name="AdminImpossibleToEditDataProductInWebsitesUsingStagingUpdateTest">
+        <annotations>
+            <features value="Staging"/>
+            <stories value="Staging updates"/>
+            <title value="Impossible to edit data Product in Websites using Staging Update"/>
+            <description value="Impossible to edit data Product in Websites using Staging Update"/>
+            <severity value="MAJOR"/>
+            <testCaseId value="AC-4611"/>
+            <group value="staging"/>
+        </annotations>
+        <before>
+            <!-- Login to Admin page -->
+            <actionGroup ref="AdminLoginActionGroup" stepKey="loginAsAdmin"/>
+            <!-- create category and virtual product -->
+            <createData entity="SimpleSubCategory" stepKey="createCategory"/>
+            <createData entity="VirtualProduct" stepKey="product">
+                <requiredEntity createDataKey="createCategory"/>
+            </createData>
+            <!-- Create website -->
+            <actionGroup ref="AdminCreateWebsiteActionGroup" stepKey="createWebsite">
+                <argument name="newWebsiteName" value="{{NewWebSiteData.name}}"/>
+                <argument name="websiteCode" value="{{NewWebSiteData.code}}"/>
+            </actionGroup>
+        </before>
+        <after>
+            <!-- delete created data -->
+            <deleteData createDataKey="createCategory" stepKey="deleteCategory"/>
+            <deleteData createDataKey="product" stepKey="deleteProduct"/>
+            <actionGroup ref="AdminDeleteWebsiteActionGroup" stepKey="deleteWebsite">
+                <argument name="websiteName" value="{{NewWebSiteData.name}}"/>
+            </actionGroup>
+            <magentoCron groups="index" stepKey="reindex"/>
+            <actionGroup ref="StagingDashboardClearFiltersActionGroup" stepKey="clearStagingFilters"/>
+            <actionGroup ref="AdminClearFiltersActionGroup" stepKey="clearProductFilters"/>
+            <actionGroup ref="AdminLogoutActionGroup" stepKey="logout"/>
+        </after>
+        <!-- Open Product Grid, Filter product and open -->
+        <actionGroup ref="SearchForProductOnBackendActionGroup" stepKey="searchProduct">
+            <argument name="product" value="$$product$$"/>
+        </actionGroup>
+        <click selector="{{AdminProductGridSection.productGridNameProduct('$$product.name$$')}}" stepKey="openProductForEdit"/>
+        <!-- Click Schedule New Update -->
+        <conditionalClick selector="{{AdminStagingSlideOutSection.scheduleNewUpdateBtn}}" dependentSelector="{{AdminStagingSlideOutSection.updateName}}" visible="false" stepKey="clickNewUpdate"/>
+        <waitForPageLoad stepKey="waitForLoading"/>
+        <!-- fill required fields -->
+        <generateDate date="+1 day" format="m/d/Y g:i A" stepKey="generateStartDate"/>
+        <fillField selector="{{AdminStagingSlideOutSection.updateName}}" userInput="s5UpdateName" stepKey="fillUpdateName"/>
+        <fillField selector="{{AdminStagingSlideOutSection.startDate}}" userInput="{$generateStartDate}}" stepKey="fillStartDate"/>
+        <!-- expand product in websites tab -->
+        <click selector="{{AdminStagingSlideOutSection.productInWebsitesTab}}" stepKey="expandProductInWebsitesTab"/>
+        <seeElement selector="{{AdminStagingSlideOutSection.websitesSection}}" stepKey="seeWebsitesSectionDisabled"/>
+    </test>
+</tests>

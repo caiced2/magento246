@@ -1,0 +1,61 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+ /**
+  * Copyright © Magento, Inc. All rights reserved.
+  * See COPYING.txt for license details.
+  */
+-->
+
+<tests xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xsi:noNamespaceSchemaLocation="urn:magento:mftf:Test/etc/testSchema.xsd">
+    <test name="AdminScheduledUpdateMoveToAnotherCampaignTest">
+        <annotations>
+            <features value="Staging"/>
+            <stories value="Staging updates"/>
+            <title value="Scheduled Update: Move to Another Campaign"/>
+            <description value="Purpose of this test is to check functionality of moving the new update to another campaign."/>
+            <severity value="BLOCKER"/>
+            <testCaseId value="MAGETWO-68739"/>
+            <group value="staging"/>
+        </annotations>
+        <before>
+            <!--Create Simple Products-->
+            <createData entity="SimpleTwo" stepKey="createSimpleProduct"/>
+            <createData entity="SimpleTwo" stepKey="createSimpleProduct2"/>
+            <actionGroup ref="AdminLoginActionGroup" stepKey="loginAsAdmin"/>
+            <!-- Open Product Edit -->
+            <amOnPage url="{{AdminProductEditPage.url($$createSimpleProduct.id$$)}}" stepKey="goToEditPage"/>
+            <waitForPageLoad time="30" stepKey="waitForProductPageLoad"/>
+            <!-- Create Schedule New Update -->
+            <generateDate date="+5 day" format="m/j/Y g:i A" stepKey="generateStartDateForShedule"/>
+            <actionGroup ref="FillScheduleUpdateWithCheckActionGroup" stepKey="fillScheduleUpdateWithoutEnd">
+                <argument name="staging" value="S5UpdateNameStaging"/>
+                <argument name="timeStart" value="{$generateStartDateForShedule}"/>
+                <argument name="productPrice" value="15"/>
+            </actionGroup>
+            <actionGroup ref="SaveProductFormActionGroup" stepKey="saveProductForm"/>
+            <!-- Open Product2 Edit -->
+            <amOnPage url="{{AdminProductEditPage.url($$createSimpleProduct2.id$$)}}" stepKey="goToEditPage2"/>
+            <!-- Create Schedule New Update -->
+            <generateDate date="+1 day" format="m/j/Y g:i A" stepKey="generateStartDateForSecondUpdate"/>
+            <generateDate date="+3 day" format="m/j/Y g:i A" stepKey="generateEndDateForSecondUpdate"/>
+            <actionGroup ref="FillScheduleUpdateWithCheckEndActionGroup" stepKey="createScheduleUpdate2">
+                <argument name="staging" value="S8UpdateNameStaging"/>
+                <argument name="timeStart" value="{$generateStartDateForSecondUpdate}"/>
+                <argument name="timeEnd" value="{$generateEndDateForSecondUpdate}"/>
+                <argument name="productPrice" value="14"/>
+            </actionGroup>
+            <actionGroup ref="SaveProductFormActionGroup" stepKey="saveProductForm2"/>
+        </before>
+        <after>
+            <deleteData createDataKey="createSimpleProduct" stepKey="deleteProduct"/>
+            <deleteData createDataKey="createSimpleProduct2" stepKey="deleteProduct2"/>
+            <actionGroup ref="AdminLogoutActionGroup" stepKey="logout"/>
+        </after>
+        <!--Remove Product from Update and move to another-->
+        <actionGroup ref="MoveToAnotherUpdateActionGroup" stepKey="moveToAnotherUpdate">
+            <argument name="fromStaging" value="S8UpdateNameStaging"/>
+            <argument name="toStaging" value="S5UpdateNameStaging"/>
+        </actionGroup>
+    </test>
+</tests>

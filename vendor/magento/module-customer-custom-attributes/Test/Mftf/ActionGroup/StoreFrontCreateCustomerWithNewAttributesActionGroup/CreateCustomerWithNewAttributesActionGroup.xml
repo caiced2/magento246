@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+ /**
+  * Copyright © Magento, Inc. All rights reserved.
+  * See COPYING.txt for license details.
+  */
+-->
+<actionGroups xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:noNamespaceSchemaLocation="urn:magento:mftf:Test/etc/actionGroupSchema.xsd">
+    <actionGroup name="CreateCustomerWithNewAttributesActionGroup">
+        <arguments>
+            <argument name="textFieldAttribute"/>
+            <argument name="textAreaAttribute"/>
+            <argument name="multiLineAttribute"/>
+            <argument name="datedAttribute"/>
+            <argument name="dropDownAttribute"/>
+            <argument name="multiSelectAttribute"/>
+            <argument name="yesNoAttribute"/>
+            <argument name="firstName" type="string" defaultValue="Alex"/>
+            <argument name="lastName" type="string" defaultValue="Gyver"/>
+            <argument name="email" type="string" defaultValue="test@test.com"/>
+            <argument name="pass" type="string" defaultValue="123456asdASD"/>
+            <argument name="dateValue" type="string"/>
+        </arguments>
+
+        <amOnPage url="{{StorefrontCustomerCreatePage.url}}" stepKey="gotToCreateCustomerPage"/>
+        <waitForPageLoad stepKey="waitForLoad"/>
+        <fillField selector="{{StorefrontCustomerCreateFormSection.firstnameField}}" userInput="{{firstName}}" stepKey="fillFirstName"/>
+        <fillField selector="{{StorefrontCustomerCreateFormSection.lastnameField}}" userInput="{{lastName}}" stepKey="fillLastName"/>
+        <fillField selector="{{StoreFrontCustomerAdvancedAttributesSection.textFieldAttribute(textFieldAttribute.frontend_label)}}" userInput="{{textFieldAttribute.defaultValue}}" stepKey="fillTextField"/>
+        <fillField selector="{{StoreFrontCustomerAdvancedAttributesSection.textAreaAttribute(textAreaAttribute.frontend_label)}}" userInput="{{textAreaAttribute.defaultValue}}" stepKey="fillTextArea"/>
+        <fillField selector="{{StoreFrontCustomerAdvancedAttributesSection.multiLineFirstAttribute(multiLineAttribute.frontend_label)}}" userInput="{{multiLineAttribute.defaultValue}}" stepKey="fillFirsLine"/>
+        <fillField selector="{{StoreFrontCustomerAdvancedAttributesSection.multiLineSecondAttribute(multiLineAttribute.frontend_label)}}" userInput="{{multiLineAttribute.defaultValue}}" stepKey="fillSecondLine"/>
+        <fillField selector="{{StoreFrontCustomerAdvancedAttributesSection.datedAttribute(datedAttribute.frontend_label)}}" userInput="{{dateValue}}" stepKey="fillDateValue"/>
+        <click selector="{{StoreFrontCustomerAdvancedAttributesSection.dropDownAttribute(dropDownAttribute.frontend_label)}}" stepKey="openDropDown"/>
+        <click selector="{{StoreFrontCustomerAdvancedAttributesSection.dropDownOptionAttribute(dropDownAttribute.frontend_label)}}" stepKey="selectDropDownOption"/>
+        <click selector="{{StoreFrontCustomerAdvancedAttributesSection.multiSelectFirstOptionAttribute(multiSelectAttribute.frontend_label)}}" stepKey="selectMultiSelectOption"/>
+        <click selector="{{StoreFrontCustomerAdvancedAttributesSection.yesNoAttribute(yesNoAttribute.frontend_label)}}" stepKey="openYesNo"/>
+        <click selector="{{StoreFrontCustomerAdvancedAttributesSection.yesNoOptionAttribute(yesNoAttribute.frontend_label)}}" stepKey="selectYesNoOption"/>
+        <fillField selector="{{StorefrontCustomerCreateFormSection.emailField}}" userInput="{{email}}" stepKey="fillEmail"/>
+        <fillField selector="{{StorefrontCustomerCreateFormSection.passwordField}}" userInput="{{pass}}" stepKey="fillPassword"/>
+        <fillField selector="{{StorefrontCustomerCreateFormSection.confirmPasswordField}}" userInput="{{pass}}" stepKey="fillConfirmPassword"/>
+        <click selector="{{StorefrontCustomerCreateFormSection.createAccountButton}}" stepKey="clickCreateAccount"/>
+        <waitForPageLoad stepKey="waitForLoadPage"/>
+    </actionGroup>
+</actionGroups>

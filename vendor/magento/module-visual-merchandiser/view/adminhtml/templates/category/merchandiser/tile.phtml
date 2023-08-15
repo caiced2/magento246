@@ -1,0 +1,134 @@
+<?php
+/**
+ * Copyright © Magento, Inc. All rights reserved.
+ * See COPYING.txt for license details.
+ */
+
+// phpcs:disable Generic.Files.LineLength
+?>
+<?php /** @var \Magento\VisualMerchandiser\Block\Adminhtml\Category\Merchandiser\Tile $block */ ?>
+<?php
+/** @var \Magento\Catalog\Helper\Image $imageBlock */
+$imageHelper =  $block->getImageHelper();
+
+/** @var \Magento\VisualMerchandiser\ViewModel\MerchandiserViewModel $merchandiserViewModel */
+$merchandiserViewModel = $block->getMerchandiserViewModel();
+?>
+<div data-role="catalog_category_merchandiser">
+    <div class="admin__data-grid-header admin__data-grid-toolbar">
+        <div class="admin__data-grid-header-row"> </div>
+        <div class="admin__data-grid-header-row">
+            <div class="admin__control-support-text">
+                <?php $countRecords = $block->getCollection()->getSize(); ?>
+                <span id="<?= /* @noEscape */ $block->getHtmlId() ?>-total-count" <?= /* @noEscape */ $block->getUiId('total-count') ?>>
+                    <?= $block->escapeHtml($countRecords) ?>
+                </span>
+                <?= $block->escapeHtml(__('records found')) ?>
+            </div>
+            <?php if ($block->getPagerVisibility()): ?>
+                <div class="admin__data-grid-pager-wrap">
+                    <select name="<?= $block->escapeHtmlAttr($block->getVarNameLimit()) ?>"
+                            id="<?= /* @noEscape */ $block->getHtmlId() ?>_page-limit"
+                            data-role="page_limiter"
+                            class="admin__control-select">
+                        <?php foreach ([20, 30, 50, 100, 200] as $perPageSize): ?>
+                            <option value="<?= /* @noEscape */ $perPageSize ?>"<?= ($block->getCollection()->getPageSize() == $perPageSize) ? ' selected="selected"' : ''?>>
+                                <?= /* @noEscape */ $perPageSize ?>
+                            </option>
+                        <?php endforeach; ?>
+                    </select>
+                    <label for="<?= /* @noEscape */ $block->getHtmlId() ?><?= /* @noEscape */ $block->getHtmlId() ?>_page-limit"
+                           class="admin__control-support-text"><?= $block->escapeHtml(__('per page')) ?></label>
+
+                    <div class="admin__data-grid-pager">
+                        <?php $_curPage = $block->getCollection()->getCurPage() ?>
+                        <?php $_lastPage = $block->getCollection()->getLastPageNumber() ?>
+                        <?php if ($_curPage > 1): ?>
+                            <button class="action-previous"
+                                    type="button"
+                                    data-role="button_previous"
+                                    data-value="<?= /* @noEscape */ $_curPage - 1 ?>">
+                                <span><?= $block->escapeHtml(__('Previous page')) ?></span>
+                            </button>
+                        <?php else: ?>
+                            <button type="button" class="action-previous disabled"><span><?= $block->escapeHtml(__('Previous page')) ?></span></button>
+                        <?php endif; ?>
+                        <input type="text"
+                               id="<?= /* @noEscape */ $block->getHtmlId() ?>_page-current"
+                               name="<?= $block->escapeHtmlAttr($block->getVarNamePage()) ?>"
+                               value="<?= $block->escapeHtmlAttr($_curPage) ?>"
+                               class="admin__control-text"
+                               data-role="input_page"
+                               <?= /* @noEscape */ $block->getUiId('current-page') ?> />
+                        <label class="admin__control-support-text" for="<?= /* @noEscape */ $block->getHtmlId() ?>_page-current">
+                            <?= $block->escapeHtml(__('of %1', '<span>' . $block->getCollection()->getLastPageNumber() . '</span>'), ['span']) ?>
+                        </label>
+                        <?php if ($_curPage < $_lastPage): ?>
+                            <button type="button"
+                                    title="<?= $block->escapeHtmlAttr(__('Next page')) ?>"
+                                    class="action-next"
+                                    data-role="button_next"
+                                    data-value="<?= /* @noEscape */ $_curPage  + 1 ?>">
+                                <span><?= $block->escapeHtml(__('Next page')) ?></span>
+                            </button>
+                        <?php else: ?>
+                            <button type="button" class="action-next disabled"><span><?= $block->escapeHtml(__('Next page')) ?></span></button>
+                        <?php endif; ?>
+                    </div>
+                </div>
+            <?php endif ?>
+        </div>
+    </div>
+
+    <?php if ($block->getCollection()): ?>
+        <div class="admin__data-grid-wrap admin__data-grid-wrap-static">
+            <div class="hor-scroll">
+                <ul id="catalog_category_merchandiser_list" class="catalog-category-merchandiser-list">
+                    <?php foreach ($block->getCollection() as $_index => $_product): ?>
+                        <?php /** @var \Magento\Catalog\Model\Product $_item */ ?>
+                        <li class="product_tile">
+                            <div class="controlbar-top">
+                                <a href="#" class="icon-gripper"><span><?= $block->escapeHtml(__('Draggable')) ?></span></a>
+                                <a href="#" class="remove-product icon-close-mage"><span><?= $block->escapeHtml(__('Close')) ?></span></a>
+                            </div>
+                            <div class="image-holder">
+                                <img src="<?= $block->escapeUrl($block->getImageUrl($_product)) ?>" alt="<?= $block->escapeHtmlAttr(__('Product image')) ?>" />
+                            </div>
+                            <div class="info-block">
+                                <?php foreach ($block->getAttributesToDisplay($_product) as $attribute): ?>
+                                    <?= /* @noEscape */ $attribute->render() ?>
+                                <?php endforeach; ?>
+                            </div>
+                            <div class="controlbar-bottom">
+                                <div class="position">
+                                    <?php if ($merchandiserViewModel->getSortable() === \Magento\VisualMerchandiser\ViewModel\MerchandiserViewModel::SORTABLE_ENABLED): ?>
+                                    <label for="id_position_<?= $block->escapeHtmlAttr($_index) ?>"><?= $block->escapeHtml(__('Position')) ?></label>
+                                    <div>
+                                        <a href="#" class="move-top icon-backward"><span><?= $block->escapeHtml(__('Top')) ?></span></a>
+                                        <input type="text" name="position" id="id_position_<?= $block->escapeHtmlAttr($_index) ?>" value="<?= $block->escapeHtmlAttr($_product->getPosition()) ?>" />
+                                        <a href="#" class="move-bottom icon-forward"><span><?= $block->escapeHtml(__('Bottom')) ?></span></a>
+                                    </div>
+                                    <?php else: ?>
+                                    <input type="text" name="position" id="id_position_<?= $block->escapeHtmlAttr($_index) ?>" value="<?= $block->escapeHtmlAttr($_product->getPosition()) ?>" readonly />
+                                    <?php endif; ?>
+                                </div>
+                                <input type="hidden" name="entity_id" value="<?= $block->escapeHtmlAttr($_product->getId()) ?>" />
+                            </div>
+                        </li>
+                    <?php endforeach; ?>
+                </ul>
+            </div>
+        </div>
+    <?php endif; ?>
+</div>
+
+<script type="text/x-magento-init">
+{
+    "[data-role=catalog_category_merchandiser]": {
+        "Magento_VisualMerchandiser/js/pager": {
+            "gridUrl": "<?= $block->escapeJs($block->getGridUrl()) ?>",
+            "varNamePage": "<?= $block->escapeJs($block->getVarNamePage()) ?>"
+        }
+    }
+}
+</script>

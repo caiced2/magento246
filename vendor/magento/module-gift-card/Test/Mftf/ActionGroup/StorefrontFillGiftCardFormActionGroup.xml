@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+ /**
+  * Copyright © Magento, Inc. All rights reserved.
+  * See COPYING.txt for license details.
+  */
+-->
+
+<actionGroups xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+              xsi:noNamespaceSchemaLocation="urn:magento:mftf:Test/etc/actionGroupSchema.xsd">
+    <actionGroup name="StorefrontFillGiftCardFormActionGroup">
+        <arguments>
+            <argument name="sender" type="entity" defaultValue="Simple_US_Customer"/>
+            <argument name="recipient" type="entity" defaultValue="John_Smith_Customer"/>
+            <argument name="message" type="string" defaultValue=""/>
+        </arguments>
+        <fillField selector="{{StorefrontProductInfoMainSection.giftCardSenderName}}" userInput="{{sender.fullname}}" stepKey="fillSenderNameField"/>
+        <fillField selector="{{StorefrontProductInfoMainSection.giftCardSenderEmail}}" userInput="{{sender.email}}" stepKey="fillSenderEmailField"/>
+        <fillField selector="{{StorefrontProductInfoMainSection.giftCardRecipientName}}" userInput="{{recipient.fullname}}" stepKey="fillRecipientNameField"/>
+        <fillField selector="{{StorefrontProductInfoMainSection.giftCardRecipientEmail}}" userInput="{{recipient.email}}" stepKey="fillRecipientEmailField"/>
+        <fillField selector="{{StorefrontProductInfoMainSection.giftCardMessage}}" userInput="{{message}}" stepKey="fillMessageField"/>
+    </actionGroup>
+</actionGroups>

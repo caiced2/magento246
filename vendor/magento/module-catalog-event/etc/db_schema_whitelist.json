@@ -1,0 +1,46 @@
+{
+    "magento_catalogevent_event": {
+        "column": {
+            "event_id": true,
+            "category_id": true,
+            "date_start": true,
+            "date_end": true,
+            "display_state": true,
+            "sort_order": true,
+            "status": true
+        },
+        "index": {
+            "MAGENTO_CATALOGEVENT_EVENT_DATE_START_DATE_END": true
+        },
+        "constraint": {
+            "PRIMARY": true,
+            "MAGENTO_CATALOGEVENT_EVENT_CATEGORY_ID": true,
+            "MAGENTO_CATEVENT_EVENT_CTGR_ID_CAT_CTGR_ENTT_ENTT_ID": true
+        }
+    },
+    "magento_catalogevent_event_image": {
+        "column": {
+            "event_id": true,
+            "store_id": true,
+            "image": true
+        },
+        "index": {
+            "MAGENTO_CATALOGEVENT_EVENT_IMAGE_STORE_ID": true
+        },
+        "constraint": {
+            "PRIMARY": true,
+            "FK_62C3B6744DA50C7866378C9D30D06574": true,
+            "MAGENTO_CATALOGEVENT_EVENT_IMAGE_STORE_ID_STORE_STORE_ID": true
+        }
+    },
+    "quote_item": {
+        "column": {
+            "event_id": true
+        }
+    },
+    "sales_order_item": {
+        "column": {
+            "event_id": true
+        }
+    }
+}

@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+ /**
+  * Copyright © Magento, Inc. All rights reserved.
+  * See COPYING.txt for license details.
+  */
+-->
+
+<actionGroups xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+              xsi:noNamespaceSchemaLocation="urn:magento:mftf:Test/etc/actionGroupSchema.xsd">
+    <actionGroup name="AdminAddToOrderGiftCardCodeActionGroup">
+        <arguments>
+            <argument name="giftCard" type="string"/>
+        </arguments>
+        <fillField userInput="{{giftCard}}" selector="{{AdminOrderFormDiscountSection.fieldGiftCards}}" stepKey="fillCouponCode"/>
+        <click selector="{{AdminOrderFormDiscountSection.applyGiftCard}}" stepKey="clickApply"/>
+        <waitForPageLoad stepKey="waitForPageLoad"/>
+    </actionGroup>
+</actionGroups>

@@ -1,0 +1,110 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+ /**
+  * Copyright © Magento, Inc. All rights reserved.
+  * See COPYING.txt for license details.
+  */
+-->
+
+<tests xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="urn:magento:mftf:Test/etc/testSchema.xsd">
+    <test name="AdminScheduleUpdateForCatalogPriceRuleWithDateAttributeTest">
+        <annotations>
+            <stories value="Catalog price rule"/>
+            <title value="Schedule update for catalog price rule for date attribute"/>
+            <description value="Schedule update for catalog price rule for date attribute"/>
+            <features value="CatalogRulesStaging"/>
+            <severity value="MAJOR"/>
+            <testCaseId value="MC-17841"/>
+            <useCaseId value="MC-17653"/>
+            <group value="CatalogRulesStaging"/>
+        </annotations>
+        <before>
+            <!--Create new attribute and attribute set-->
+            <comment userInput="Create new attribute and attribute set" stepKey="comment1"/>
+            <createData entity="dateProductAttribute" stepKey="createDateProductAttribute"/>
+            <createData entity="CatalogAttributeSet" stepKey="createAttributeSet"/>
+            <actionGroup ref="AdminLoginActionGroup" stepKey="loginAsAdmin"/>
+            <!-- Filter product attribute set by attribute set name -->
+            <comment userInput="Filter product attribute set by attribute set name " stepKey="filterAttrSet"/>
+            <amOnPage url="{{AdminProductAttributeSetGridPage.url}}" stepKey="amOnAttributeSetPage"/>
+            <waitForPageLoad stepKey="waitForAttributeSetPageLoad"/>
+            <actionGroup ref="FilterProductAttributeSetGridByAttributeSetNameActionGroup" stepKey="filterProductAttrSetGridByAttrSetName">
+                <argument name="name" value="$$createAttributeSet.attribute_set_name$$"/>
+            </actionGroup>
+            <!-- Assign attribute to the group -->
+            <comment userInput="Assign attribute to the group" stepKey="assignAttrToGroup"/>
+            <actionGroup ref="AssignAttributeToGroupActionGroup" stepKey="assignAttributeToGroup">
+                <argument name="group" value="Product Details"/>
+                <argument name="attribute" value="$$createDateProductAttribute.attribute_code$$"/>
+            </actionGroup>
+            <see userInput="$$createDateProductAttribute.attribute_code$$" selector="{{AdminProductAttributeSetEditSection.groupTree}}" stepKey="seeAttributeInGroup"/>
+            <actionGroup ref="SaveAttributeSetActionGroup" stepKey="saveAttributeSet"/>
+            <!--Create product and assign attribute set to it-->
+            <comment userInput="Create product and assign attribute set to it" stepKey="createProdAndAssignAttrSetToIt"/>
+            <createData entity="SimpleProduct2" stepKey="createProduct"/>
+            <amOnPage url="{{AdminProductEditPage.url($$createProduct.id$$)}}" stepKey="goToAdminProductEditPage"/>
+            <waitForPageLoad stepKey="waitForProductPageLoad"/>
+            <actionGroup ref="AdminProductPageSelectAttributeSetActionGroup" stepKey="selectAttributeSet">
+                <argument name="attributeSetName" value="$$createAttributeSet.attribute_set_name$$"/>
+            </actionGroup>
+            <actionGroup ref="SaveProductFormActionGroup" stepKey="saveProductForm1"/>
+            <actionGroup ref="CliIndexerReindexActionGroup" stepKey="reindex">
+                <argument name="indices" value=""/>
+            </actionGroup>
+            <!--Open product page and set date to the attribute-->
+            <comment userInput="Open product page and set date to the attribute" stepKey="openProdPageAndSetDate"/>
+            <amOnPage url="{{AdminProductEditPage.url($$createProduct.id$$)}}" stepKey="goToAdminProductEditPage2"/>
+            <waitForPageLoad stepKey="waitForProductPageLoad2"/>
+            <generateDate date="now" format="m/j/Y" timezone="America/Los_Angeles" stepKey="today"/>
+            <fillField selector="{{AdminProductFormSection.datepickerNewAttribute($$createDateProductAttribute.attribute_code$$)}}" userInput="$today" stepKey="fillAttributeDate"/>
+            <actionGroup ref="SaveProductFormActionGroup" stepKey="saveProductForm2"/>
+        </before>
+        <after>
+            <deleteData createDataKey="createDateProductAttribute" stepKey="deleteDateProductAttribute"/>
+            <deleteData createDataKey="createAttributeSet" stepKey="deleteAttributeSet"/>
+            <deleteData createDataKey="createProduct" stepKey="deleteProduct"/>
+            <!-- Delete Catalog Price Rule -->
+            <comment userInput="Delete Catalog Price Rule " stepKey="removeCatalogPriceRule"/>
+            <actionGroup ref="RemoveCatalogPriceRuleActionGroup" stepKey="deleteCatalogPriceRule">
+                <argument name="ruleName" value="{{CatalogRuleToPercent.name}}"/>
+            </actionGroup>
+
+            <!-- Reindex invalidated indices after product attribute has been created/deleted -->
+            <actionGroup ref="CliIndexerReindexActionGroup" stepKey="reindexInvalidatedIndices">
+                <argument name="indices" value=""/>
+            </actionGroup>
+        </after>
+        <!--Create catalog price rule with condition-->
+        <comment userInput="Create catalog price rule with condition" stepKey="createCatalogRuleWithCondition"/>
+        <amOnPage url="{{CatalogRulePage.url}}" stepKey="goToPriceRulePage"/>
+        <waitForPageLoad stepKey="waitForPriceRulePage"/>
+        <actionGroup ref="AdminCreateCatalogPriceRuleWithConditionActionGroup" stepKey="createCatalogPriceRule">
+            <argument name="catalogRule" value="CatalogRuleToPercent"/>
+        </actionGroup>
+        <actionGroup ref="SelectNotLoggedInCustomerGroupActionGroup" stepKey="selectCustomerGroup"/>
+        <scrollToTopOfPage stepKey="scrollToTop"/>
+        <click selector="{{AdminNewCatalogPriceRule.save}}" stepKey="saveEditedName2"/>
+        <!--Reindex and flush cache-->
+        <comment userInput="Reindex and flush cache" stepKey="reindexAndFlushCache"/>
+        <magentoCLI command="cron:run --group=index" stepKey="runCronReindex"/>
+        <!--Open created rule page-->
+        <comment userInput="Open created rule page" stepKey="openRulePage"/>
+        <actionGroup ref="OpenCatalogPriceRuleActionGroup" stepKey="openCreatedRule2">
+            <argument name="ruleName" value="{{CatalogRuleToPercent.name}}"/>
+        </actionGroup>
+        <!--Edit rule name to check if it can be edited-->
+        <comment userInput="Edit rule name to check if it can be edited" stepKey="editRuleName"/>
+        <fillField selector="{{AdminNewCatalogPriceRule.ruleName}}" userInput="{{CatalogRuleToPercent.name}}Edited" stepKey="fillRuleName"/>
+        <click selector="{{AdminNewCatalogPriceRule.save}}" stepKey="saveEditedName"/>
+        <waitForPageLoad stepKey="waitForEditedNameApply"/>
+        <!--Check Catalog Price Rule for third product-->
+        <comment userInput="Check Catalog Price Rule for third product" stepKey="checkRuleOnStoreFront"/>
+        <amOnPage url="{{StorefrontProductPage.url($$createProduct.custom_attributes[url_key]$$)}}" stepKey="navigateToProductPage"/>
+        <waitForPageLoad stepKey="waitForPageLoad"/>
+        <grabTextFrom selector="{{StorefrontProductInfoMainSection.updatedPrice}}" stepKey="grabProductUpdatedPrice"/>
+        <assertEquals stepKey="assertProductUpdatedPrice">
+			<actualResult type="const">($grabProductUpdatedPrice)</actualResult>
+			<expectedResult type="string">$123.00</expectedResult>
+        </assertEquals>
+    </test>
+</tests>

@@ -1,0 +1,175 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+ /**
+  * Copyright © Magento, Inc. All rights reserved.
+  * See COPYING.txt for license details.
+  */
+-->
+
+<entities xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+          xsi:noNamespaceSchemaLocation="urn:magento:mftf:DataGenerator/etc/dataProfileSchema.xsd">
+    <entity name="GiftCard" type="product">
+        <data key="name" unique="suffix">GiftCard</data>
+        <data key="sku" unique="suffix">GiftCard</data>
+        <data key="type_id">giftcard</data>
+        <data key="attribute_set_id">4</data>
+        <data key="quantity">1000</data>
+        <data key="card_type">Physical</data>
+        <array key="amounts">
+            <item>10.00</item>
+            <item>50.00</item>
+        </array>
+        <array key="amountsInteger">
+            <item>10</item>
+            <item>50</item>
+        </array>
+        <data key="status">1</data>
+        <data key="urlKey" unique="suffix">giftcard</data>
+    </entity>
+    <entity name="VirtualGiftCard" type="product">
+        <data key="name" unique="suffix">VirtualGiftCard</data>
+        <data key="sku" unique="suffix">VirtualGiftCard</data>
+        <data key="type_id">giftcard</data>
+        <data key="attribute_set_id">4</data>
+        <data key="quantity">1000</data>
+        <data key="card_type">Virtual</data>
+        <array key="amounts">
+            <item>20.00</item>
+            <item>40.00</item>
+        </array>
+        <data key="status">1</data>
+        <data key="urlKey" unique="suffix">virtualgiftcard</data>
+    </entity>
+    <entity name="VirtualGiftCardOutOfStock" type="product">
+        <data key="name" unique="suffix">VirtualGiftCardOutOfStock</data>
+        <data key="sku" unique="suffix">VirtualGiftCardOutOfStock</data>
+        <data key="type_id">giftcard</data>
+        <data key="attribute_set_id">4</data>
+        <data key="quantity">0</data>
+        <data key="card_type">Virtual</data>
+        <array key="amounts">
+            <item>20.00</item>
+            <item>40.00</item>
+        </array>
+        <data key="status">0</data>
+        <data key="urlKey" unique="suffix">virtualgiftcardoutofstock</data>
+    </entity>
+    <entity name="CombinedGiftCard" type="product">
+        <data key="name" unique="suffix">CombinedGiftCard</data>
+        <data key="sku" unique="suffix">CombinedGiftCard</data>
+        <data key="type_id">giftcard</data>
+        <data key="attribute_set_id">4</data>
+        <data key="quantity">1000</data>
+        <data key="card_type">Combined</data>
+        <array key="amounts">
+            <item>50.00</item>
+            <item>100.00</item>
+        </array>
+        <data key="status">1</data>
+        <data key="urlKey" unique="suffix">combinedgiftcard</data>
+    </entity>
+    <entity name="ApiGiftCard" type="product2">
+        <data key="name" unique="suffix">Api Gift Card</data>
+        <data key="sku" unique="suffix">api-gift-card</data>
+        <data key="type_id">giftcard</data>
+        <data key="attribute_set_id">4</data>
+        <data key="visibility">4</data>
+        <data key="status">1</data>
+        <data key="urlKey" unique="suffix">api-gift-card</data>
+        <requiredEntity type="product_extension_attribute">EavStockItem</requiredEntity>
+        <requiredEntity type="custom_attribute">ApiProductDescription</requiredEntity>
+        <requiredEntity type="custom_attribute">ApiProductShortDescription</requiredEntity>
+        <requiredEntity type="custom_attribute">CustomAttributeFixPrice</requiredEntity>
+        <requiredEntity type="custom_attribute">CustomAttributePriceView</requiredEntity>
+        <requiredEntity type="custom_attribute">CustomAttributeGiftCardType</requiredEntity>
+        <requiredEntity type="custom_attribute">CustomAttributeAllowOpenAmount</requiredEntity>
+        <requiredEntity type="custom_attribute">CustomAttributeOpenAmountMin1</requiredEntity>
+        <requiredEntity type="custom_attribute">CustomAttributeOpenAmountMax100</requiredEntity>
+    </entity>
+    <entity name="ApiGiftCardUnderscoredSku" type="product2">
+        <data key="name" unique="suffix">Api Gift Card</data>
+        <data key="sku" unique="suffix">api_gift_card</data>
+        <data key="type_id">giftcard</data>
+        <data key="attribute_set_id">4</data>
+        <data key="visibility">4</data>
+        <data key="status">1</data>
+        <data key="urlKey" unique="suffix">api-gift-card</data>
+        <requiredEntity type="product_extension_attribute">EavStockItem</requiredEntity>
+        <requiredEntity type="custom_attribute">ApiProductDescription</requiredEntity>
+        <requiredEntity type="custom_attribute">ApiProductShortDescription</requiredEntity>
+        <requiredEntity type="custom_attribute">CustomAttributeFixPrice</requiredEntity>
+        <requiredEntity type="custom_attribute">CustomAttributePriceView</requiredEntity>
+        <requiredEntity type="custom_attribute">CustomAttributeGiftCardType</requiredEntity>
+        <requiredEntity type="custom_attribute">CustomAttributeAllowOpenAmount</requiredEntity>
+        <requiredEntity type="custom_attribute">CustomAttributeOpenAmountMin1</requiredEntity>
+        <requiredEntity type="custom_attribute">CustomAttributeOpenAmountMax100</requiredEntity>
+    </entity>
+
+    <entity name="OpenVirtualGiftCard" type="product">
+        <data key="name" unique="suffix">OpenVirtualGiftCard</data>
+        <data key="sku" unique="suffix">OpenVirtualGiftCard</data>
+        <data key="type_id">giftcard</data>
+        <data key="attribute_set_id">4</data>
+        <requiredEntity type="product_extension_attribute">EavStockItem</requiredEntity>
+        <requiredEntity type="custom_attribute_array">VirtualGiftCardType</requiredEntity>
+        <requiredEntity type="custom_attribute_array">AllowOpenAmount</requiredEntity>
+        <requiredEntity type="custom_attribute_array">OpenAmountMin</requiredEntity>
+        <requiredEntity type="custom_attribute_array">OpenAmountMax</requiredEntity>
+    </entity>
+
+    <entity name="VirtualGiftCardOpenAmount10_20" type="product">
+        <data key="name" unique="suffix">OpenVirtualGiftCard</data>
+        <data key="sku" unique="suffix">OpenVirtualGiftCard</data>
+        <data key="type_id">giftcard</data>
+        <data key="attribute_set_id">4</data>
+        <requiredEntity type="product_extension_attribute">EavStockItem</requiredEntity>
+        <requiredEntity type="custom_attribute_array">VirtualGiftCardType</requiredEntity>
+        <requiredEntity type="custom_attribute_array">AllowOpenAmount</requiredEntity>
+        <requiredEntity type="custom_attribute_array">OpenAmount10</requiredEntity>
+        <requiredEntity type="custom_attribute_array">OpenAmount20</requiredEntity>
+        <requiredEntity type="custom_attribute_array">CustomAttributeCategoryIds</requiredEntity>
+    </entity>
+    <entity name="VirtualGiftCardOpenAmount10_150" type="product">
+        <data key="name" unique="suffix">VirtualGiftCard</data>
+        <data key="sku" unique="suffix">VirtualGiftCard</data>
+        <data key="type_id">giftcard</data>
+        <data key="attribute_set_id">4</data>
+        <requiredEntity type="product_extension_attribute">EavStockItem</requiredEntity>
+        <requiredEntity type="custom_attribute_array">VirtualGiftCardType</requiredEntity>
+        <requiredEntity type="custom_attribute_array">AllowOpenAmount</requiredEntity>
+        <requiredEntity type="custom_attribute_array">OpenAmount10</requiredEntity>
+        <requiredEntity type="custom_attribute_array">OpenAmount150</requiredEntity>
+    </entity>
+    <entity name="VirtualGiftCard120_150" type="product">
+        <data key="name" unique="suffix">VirtualGiftCard</data>
+        <data key="sku" unique="suffix">VirtualGiftCard</data>
+        <data key="type_id">giftcard</data>
+        <data key="attribute_set_id">4</data>
+        <data key="quantity">123</data>
+        <data key="card_type">Virtual</data>
+        <array key="amounts">
+            <item>120</item>
+            <item>150</item>
+        </array>
+        <data key="status">1</data>
+        <data key="urlKey" unique="suffix">virtualgiftcard</data>
+    </entity>
+    <entity name="OpenMultipleVirtualGiftCard" type="product">
+        <data key="name" unique="suffix">OpenMultipleVirtualGiftCard</data>
+        <data key="sku" unique="suffix">OpenMultipleVirtualGiftCard</data>
+        <data key="type_id">giftcard</data>
+        <data key="attribute_set_id">4</data>
+        <data key="quantity">1000</data>
+        <data key="card_type">Virtual</data>
+        <array key="amounts">
+            <item>100.00</item>
+            <item>200.00</item>
+        </array>
+        <array key="amountsInteger">
+            <item>100</item>
+            <item>200</item>
+        </array>
+        <data key="status">1</data>
+        <data key="urlKey" unique="suffix">openmultiplevirtualgiftcard</data>
+    </entity>
+</entities>

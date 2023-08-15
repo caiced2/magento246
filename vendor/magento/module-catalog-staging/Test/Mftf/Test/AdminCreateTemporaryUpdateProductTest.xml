@@ -1,0 +1,83 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+ /**
+  * Copyright © Magento, Inc. All rights reserved.
+  * See COPYING.txt for license details.
+  */
+-->
+
+<tests xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xsi:noNamespaceSchemaLocation="urn:magento:mftf:Test/etc/testSchema.xsd">
+    <test name="AdminCreateTemporaryUpdateProductTest">
+        <annotations>
+            <stories value="Create scheduled product updates"/>
+            <title value="Admin should be able to create temporary product update and verify it in grid after activation"/>
+            <description value="Admin should be able to create temporary product update and verify it in grid after activation"/>
+            <severity value="CRITICAL"/>
+            <testCaseId value="MC-14761"/>
+            <group value="CatalogStaging"/>
+            <group value="mtf_migrated"/>
+        </annotations>
+        <before>
+            <actionGroup ref="AdminLoginActionGroup" stepKey="loginAsAdmin"/>
+            <createData entity="_defaultCategory" stepKey="createCategory"/>
+            <createData entity="SimpleProduct" stepKey="createProduct">
+                <requiredEntity createDataKey="createCategory"/>
+            </createData>
+            <actionGroup ref="AdminClearFiltersStagingDashboardActionGroup" stepKey="clearFilter"/>
+        </before>
+        <after>
+            <deleteData createDataKey="createProduct" stepKey="deleteProduct"/>
+            <deleteData createDataKey="createCategory" stepKey="deleteCategory"/>
+            <amOnPage url="{{AdminLogoutPage.url}}" stepKey="amOnLogoutPage"/>
+        </after>
+
+        <!-- Go to the edit page of the product that we just created -->
+        <amOnPage url="{{AdminProductEditPage.url($$createProduct.id$$)}}" stepKey="visitAdminProductPage"/>
+        <waitForPageLoad stepKey="waitForProductPageLoad"/>
+
+        <!--Create the staging update-->
+        <actionGroup ref="AdminFillTemporaryUpdateActionGroup" stepKey="fillStagingUpdate">
+            <argument name="stage" value="TemporaryUpdate"/>
+        </actionGroup>
+
+        <!-- Save the update details -->
+        <scrollToTopOfPage stepKey="scrollToTop"/>
+        <click selector="{{AdminStagingSlideOutSection.save}}" stepKey="clickSave"/>
+        <click selector="{{AdminProductFormActionSection.saveButton}}" stepKey="saveProduct"/>
+        <seeElement selector="{{AdminProductMessagesSection.successMessage}}" stepKey="assertSuccess"/>
+
+        <!-- Wait 2 minutes for activating staging update and run cron twice-->
+        <wait time="120" stepKey="waitForActivation"/>
+        <magentoCLI command="cron:run --group=staging" stepKey="runCron"/>
+        <magentoCLI command="cron:run --group=staging" stepKey="runCronAgain"/>
+
+        <actionGroup ref="AdminGoToStagingDashboardGridActionGroup" stepKey="goToGridDashboard">
+            <argument name="updateName" value="{{TemporaryUpdate.updateName}}"/>
+        </actionGroup>
+
+        <actionGroup ref="AdminCheckStagingDashboardGridTemporaryActionGroup" stepKey="checkGridDashboard">
+            <argument name="stage" value="TemporaryUpdate"/>
+            <argument name="updateName" value="{{TemporaryUpdate.updateName}}"/>
+        </actionGroup>
+
+        <actionGroup ref="AdminCheckLinksStagingDashboardActionGroup" stepKey="checkLinks">
+            <argument name="updateName" value="{{TemporaryUpdate.updateName}}"/>
+        </actionGroup>
+
+        <!-- Wait 2 minutes for deactivating staging update and run cron twice-->
+        <wait time="120" stepKey="waitForDeactivation"/>
+        <magentoCLI command="cron:run --group=staging" stepKey="runCronSecondTime"/>
+        <magentoCLI command="cron:run --group=staging" stepKey="runCronTwice"/>
+
+        <!--Go to dashboard -->
+        <amOnPage url="{{AdminStagingDashboardPage.url}}" stepKey="goToStagingDashboard"/>
+        <waitForPageLoad time="15" stepKey="waitEditPage1"/>
+
+        <!-- See that scheduled update is end and does not exist in grid -->
+        <fillField selector="{{AdminBlockGridSection.search}}" userInput="{{TemporaryUpdate.updateName}}" stepKey="searchUpdateByName"/>
+        <click selector="{{AdminBlockGridSection.searchButton}}" stepKey="clickSearch"/>
+        <waitForPageLoad stepKey="waitForSearch"/>
+        <seeElement selector="{{AdminDataGridTableSection.dataGridEmpty}}" stepKey="assertEndUpdate"/>
+    </test>
+</tests>

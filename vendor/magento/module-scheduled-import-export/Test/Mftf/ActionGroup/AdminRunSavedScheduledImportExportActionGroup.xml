@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+ /**
+  * Copyright © Magento, Inc. All rights reserved.
+  * See COPYING.txt for license details.
+  */
+-->
+
+<actionGroups xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+              xsi:noNamespaceSchemaLocation="urn:magento:mftf:Test/etc/actionGroupSchema.xsd">
+    <actionGroup name="AdminRunSavedScheduledImportExportActionGroup">
+        <annotations>
+            <description>Selects the 'Run' option for the specified row on the admin Scheduled Imports/Exports page.</description>
+        </annotations>
+        <arguments>
+            <argument name="rowIndex" defaultValue="1" type="string"/>
+            <argument name="resultMessageType" defaultValue="success" type="string"/>
+            <argument name="resultMessage" defaultValue="The operation ran." type="string"/>
+        </arguments>
+        <waitForElementVisible selector="{{AdminScheduledImportsExportsSection.actionDropDownByRow(rowIndex)}}" stepKey="waitForActionDropDown"/>
+        <!-- Check to see if it is close to the new minute. If so, wait a few seconds -->
+        <executeJS function="
+                var today = new Date();
+                var sec = today.getSeconds();
+                return sec > 40 ? (61-sec) : 0;"
+                   stepKey="needWait"/>
+        <wait time="$needWait" stepKey="conditionalWait"/>
+        <selectOption userInput="Run" selector="{{AdminScheduledImportsExportsSection.actionDropDownByRow(rowIndex)}}" stepKey="selectRunAction"/>
+        <waitForPageLoad stepKey="waitForPageLoad"/>
+        <waitForText userInput="{{resultMessage}}" selector="{{AdminMessagesSection.messageByType(resultMessageType)}}" stepKey="waitForMessage"/>
+    </actionGroup>
+</actionGroups>

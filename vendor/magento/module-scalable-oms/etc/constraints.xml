@@ -1,0 +1,85 @@
+<?xml version="1.0"?>
+<!--
+/**
+ * Copyright © Magento, Inc. All rights reserved.
+ * See COPYING.txt for license details.
+ */
+-->
+<!--
+@deprecated split database solution is deprecated and will be removed
+-->
+<config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="urn:magento:framework-foreign-key:etc/constraints.xsd">
+    <entity name="sales_order" resource="sales">
+        <constraint name="sales_order_to_store" onDelete="CASCADE" referenceEntity="store">
+            <field name="store_id" reference="store_id"/>
+        </constraint>
+        <constraint name="sales_order_to_customer" onDelete="SET NULL" referenceEntity="customer_entity">
+            <field name="customer_id" reference="entity_id"/>
+        </constraint>
+    </entity>
+    <entity name="sales_order_item" resource="sales">
+        <constraint name="sales_order_item_to_store" onDelete="CASCADE" referenceEntity="store">
+            <field name="store_id" reference="store_id" />
+        </constraint>
+    </entity>
+    <entity name="sales_order_status_label" resource="sales">
+        <constraint name="sales_order_status_label_to_store" onDelete="CASCADE" referenceEntity="store">
+            <field name="store_id" reference="store_id" />
+        </constraint>
+    </entity>
+    <entity name="sales_order_aggregated_created" resource="sales">
+        <constraint name="sales_order_aggregated_created_to_store" onDelete="CASCADE" referenceEntity="store">
+            <field name="store_id" reference="store_id" />
+        </constraint>
+    </entity>
+    <entity name="sales_order_aggregated_updated" resource="sales">
+        <constraint name="sales_order_aggregated_updated_to_store" onDelete="CASCADE" referenceEntity="store">
+            <field name="store_id" reference="store_id" />
+        </constraint>
+    </entity>
+    <entity name="sales_creditmemo" resource="sales">
+        <constraint name="sales_creditmemo_to_store" onDelete="CASCADE" referenceEntity="store">
+            <field name="store_id" reference="store_id" />
+        </constraint>
+    </entity>
+    <entity name="sales_shipment" resource="sales">
+        <constraint name="sales_shipment_to_store" onDelete="CASCADE" referenceEntity="store">
+            <field name="store_id" reference="store_id" />
+        </constraint>
+    </entity>
+    <entity name="sales_shipping_aggregated_order" resource="sales">
+        <constraint name="sales_shipping_aggregated_order_to_store" onDelete="CASCADE" referenceEntity="store">
+            <field name="store_id" reference="store_id" />
+        </constraint>
+    </entity>
+    <entity name="sales_shipping_aggregated" resource="sales">
+        <constraint name="sales_shipping_aggregated_to_store" onDelete="CASCADE" referenceEntity="store">
+            <field name="store_id" reference="store_id" />
+        </constraint>
+    </entity>
+    <entity name="sales_invoice" resource="sales">
+        <constraint name="sales_invoice_to_store" onDelete="CASCADE" referenceEntity="store">
+            <field name="store_id" reference="store_id" />
+        </constraint>
+    </entity>
+    <entity name="sales_invoiced_aggregated" resource="sales">
+        <constraint name="sales_invoiced_aggregated_to_store" onDelete="CASCADE" referenceEntity="store">
+            <field name="store_id" reference="store_id" />
+        </constraint>
+    </entity>
+    <entity name="sales_invoiced_aggregated_order" resource="sales">
+        <constraint name="sales_invoiced_aggregated_order_to_store" onDelete="CASCADE" referenceEntity="store">
+            <field name="store_id" reference="store_id" />
+        </constraint>
+    </entity>
+    <entity name="sales_refunded_aggregated_order" resource="sales">
+        <constraint name="sales_refunded_aggregated_order_to_store" onDelete="CASCADE" referenceEntity="store">
+            <field name="store_id" reference="store_id" />
+        </constraint>
+    </entity>
+    <entity name="sales_refunded_aggregated" resource="sales">
+        <constraint name="sales_refunded_aggregated_to_store" onDelete="CASCADE" referenceEntity="store">
+            <field name="store_id" reference="store_id" />
+        </constraint>
+    </entity>
+</config>

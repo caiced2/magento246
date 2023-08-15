@@ -1,0 +1,94 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+ /**
+  * Copyright © Magento, Inc. All rights reserved.
+  * See COPYING.txt for license details.
+  */
+-->
+<tests xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xsi:noNamespaceSchemaLocation="urn:magento:mftf:Test/etc/testSchema.xsd">
+    <test name="VerifyCMSPageGetsSavedWithSameURLKeyForMultiStoreTest">
+        <annotations>
+            <features value="VersionsCms"/>
+            <stories value="MultiStore"/>
+            <title value="Verify CMS page gets saved with same url key with hierarchy for multi store"/>
+            <description value="Verify CMS page gets saved with same url key with hierarchy for multi store"/>
+            <severity value="CRITICAL"/>
+            <testCaseId value="MC-25792"/>
+            <group value="cms"/>
+            <group value="versionsCms"/>
+        </annotations>
+
+        <before>
+            <actionGroup ref="AdminLoginActionGroup" stepKey="login"/>
+
+            <actionGroup ref="AddNewNodeActionGroup" stepKey="createNode">
+                <argument name="NodeTitle" value="{{DefaultHierarchyNode.name}}"/>
+                <argument name="NodeUrlKey" value="{{DefaultHierarchyNode.urlKey}}"/>
+            </actionGroup>
+
+            <actionGroup ref="AdminCreateWebsiteActionGroup" stepKey="createWebsite">
+                <argument name="newWebsiteName" value="{{customWebsite.name}}"/>
+                <argument name="websiteCode" value="{{customWebsite.code}}"/>
+            </actionGroup>
+            <actionGroup ref="AdminCreateNewStoreGroupActionGroup" stepKey="createNewStore">
+                <argument name="website" value="{{customWebsite.name}}"/>
+                <argument name="storeGroupName" value="{{customStoreGroup.name}}"/>
+                <argument name="storeGroupCode" value="{{customStoreGroup.code}}"/>
+            </actionGroup>
+            <actionGroup ref="AdminCreateStoreViewActionGroup" stepKey="createCustomStoreView">
+                <argument name="StoreGroup" value="customStoreGroup"/>
+                <argument name="customStore" value="customStore"/>
+            </actionGroup>
+            <magentoCron groups="index" stepKey="reindex"/>
+
+            <actionGroup ref="CreateNewPageWithAllValuesActionGroup" stepKey="createNewPage">
+                <argument name="PageTitle" value="{{_newDefaultCmsPage.title}}"/>
+                <argument name="ContentHeading" value="{{_newDefaultCmsPage.content_heading}}"/>
+                <argument name="URLKey" value="{{_newDefaultCmsPage.identifier}}"/>
+                <argument name="selectStoreViewOpt" value="Default Store View"/>
+                <argument name="selectHierarchyOpt" value="Website Root"/>
+            </actionGroup>
+
+            <click selector="{{CmsNewPageHierarchySection.selectHierarchy(DefaultHierarchyNode.name)}}" stepKey="clickPageCheckBoxes"/>
+            <click selector="{{CmsNewPagePageActionsSection.saveAndContinueEdit}}" stepKey="clickSavePage"/>
+            <waitForElementVisible selector="{{AdminMessagesSection.success}}" stepKey="waitForPagetoSave"/>
+            <see selector="{{AdminMessagesSection.success}}" userInput="You saved the page." stepKey="seeSuccessMessage"/>
+        </before>
+
+        <after>
+            <actionGroup ref="AdminDeleteCMSPageByUrlKeyActionGroup" stepKey="deletePage">
+                <argument name="pageUrlKey" value="{{_newDefaultCmsPage.identifier}}"/>
+            </actionGroup>
+            <actionGroup ref="AdminDeleteCMSPageByUrlKeyActionGroup" stepKey="deletePage1">
+                <argument name="pageUrlKey" value="{{_newDefaultCmsPage.identifier}}"/>
+            </actionGroup>
+            <conditionalClick selector="{{CmsPagesPageActionsSection.clearAllButton}}" dependentSelector="{{CmsPagesPageActionsSection.activeFilters}}" visible="true" stepKey="clickToResetFilter"/>
+            <waitForPageLoad stepKey="waitForPageLoadAfterClearFilters"/>
+
+            <actionGroup ref="DeleteCurrentHierarchyActionGroup" stepKey="deleteNode"/>
+
+            <actionGroup ref="AdminDeleteWebsiteActionGroup" stepKey="deleteWebsite">
+                <argument name="websiteName" value="{{customWebsite.name}}"/>
+            </actionGroup>
+            <magentoCron groups="index" stepKey="reindex"/>
+            <actionGroup ref="AdminClearFiltersActionGroup" stepKey="clearFilters"/>
+
+            <actionGroup ref="AdminLogoutActionGroup" stepKey="adminLogout"/>
+        </after>
+
+        <actionGroup ref="CreateNewPageWithAllValuesActionGroup" stepKey="createNewPage">
+            <argument name="PageTitle" value="{{_newDefaultCmsPage.title}}"/>
+            <argument name="ContentHeading" value="{{_newDefaultCmsPage.content_heading}}"/>
+            <argument name="URLKey" value="{{_newDefaultCmsPage.identifier}}"/>
+            <argument name="selectStoreViewOpt" value="{{customStore.name}}"/>
+            <argument name="selectHierarchyOpt" value="Website Root"/>
+        </actionGroup>
+        <click selector="{{CmsNewPageHierarchySection.expandHierarchy(DefaultHierarchyNode.name)}}" stepKey="clickExpandButton"/>
+        <click selector="{{CmsNewPageHierarchySection.selectHierarchy(_newDefaultCmsPage.title)}}" stepKey="clickPageCheckBoxes"/>
+        <click selector="{{CmsNewPagePageActionsSection.saveAndContinueEdit}}" stepKey="clickSavePage"/>
+        <waitForPageLoad stepKey="waitForPagetoSave"/>
+        <waitForElementVisible selector="{{AdminMessagesSection.success}}" stepKey="waitSuccessMessageAppeared"/>
+        <see selector="{{AdminMessagesSection.success}}" userInput="You saved the page." stepKey="seeSuccessMessage"/>
+    </test>
+</tests>

@@ -1,0 +1,99 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+ /**
+  * Copyright © Magento, Inc. All rights reserved.
+  * See COPYING.txt for license details.
+  */
+-->
+
+<tests xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xsi:noNamespaceSchemaLocation="urn:magento:mftf:Test/etc/testSchema.xsd">
+    <test name="AdminCreateGiftCardProductOfPhysicalTypeTest">
+        <annotations>
+            <features value="GiftCard"/>
+            <stories value="Create gift card product"/>
+            <title value="Admin create gift card product cart of physical type test"/>
+            <description value="Admin should be able to create gift cart of physical type"/>
+            <severity value="CRITICAL"/>
+            <testCaseId value="MC-14498"/>
+            <group value="mtf_migrated"/>
+            <group value="GiftCard"/>
+        </annotations>
+        <before>
+            <!-- Create category -->
+            <createData entity="SimpleSubCategory" stepKey="createCategory"/>
+
+            <!-- Login as admin -->
+            <actionGroup ref="AdminLoginActionGroup" stepKey="loginAsAdmin"/>
+        </before>
+        <after>
+            <!-- Delete category -->
+            <deleteData createDataKey="createCategory" stepKey="deleteCategory"/>
+
+            <!-- Delete product -->
+            <actionGroup ref="DeleteProductBySkuActionGroup" stepKey="deleteProduct">
+                <argument name="sku" value="{{GiftCard.sku}}"/>
+            </actionGroup>
+            <actionGroup ref="ResetAdminDataGridToDefaultViewActionGroup" stepKey="clearFilters"/>
+
+            <!-- Log out -->
+            <actionGroup ref="AdminLogoutActionGroup" stepKey="logout"/>
+        </after>
+
+        <!-- Create gift card product -->
+        <amOnPage url="{{AdminProductIndexPage.url}}" stepKey="navigateToCatalogProductGrid"/>
+        <waitForPageLoad stepKey="waitForCatalogProductGrid"/>
+        <actionGroup ref="GoToSpecifiedCreateProductPageActionGroup" stepKey="openProductFillForm">
+            <argument name="productType" value="giftcard"/>
+        </actionGroup>
+
+        <!-- Disable the product -->
+        <click selector="{{AdminProductFormSection.enableProductLabel}}" stepKey="disableProduct"/>
+
+        <!-- Fill gift card product values -->
+        <actionGroup ref="AdminFillGiftCardProductFieldsActionGroup" stepKey="fillGiftCardProductFields">
+            <argument name="product" value="GiftCard"/>
+        </actionGroup>
+
+        <!-- Add amount to gift card product -->
+        <actionGroup ref="addGiftCardAmount" stepKey="addAmountToGiftCard">
+            <argument name="giftCardAmount" value="GiftCard.amounts[0]"/>
+        </actionGroup>
+
+        <!-- Add gift card product to category -->
+        <searchAndMultiSelectOption selector="{{AdminProductFormSection.categoriesDropdown}}" parameterArray="[$$createCategory.name$$]" stepKey="fillCategory" after="addAmountToGiftCard"/>
+
+        <!-- Save gift card product -->
+        <actionGroup ref="SaveProductFormActionGroup" stepKey="saveProduct"/>
+
+        <!-- Assert gift card product in grid -->
+        <actionGroup ref="viewGiftCardInAdminGrid" stepKey="seeGiftCardInGrid">
+            <argument name="product" value="GiftCard"/>
+        </actionGroup>
+
+        <!-- Assert  gift card product searchable by sku -->
+        <actionGroup ref="FilterProductGridBySku2ActionGroup" stepKey="filterProductGridBySku">
+            <argument name="sku" value="{{GiftCard.sku}}"/>
+        </actionGroup>
+        <click selector="{{AdminProductGridSection.firstRow}}" stepKey="clickOnGiftCardPage"/>
+        <waitForPageLoad stepKey="waitForGiftCardPageLoad"/>
+
+        <!-- Assert gift card product amount -->
+        <seeInField selector="{{AdminProductFormSection.cardAmount('1')}}" userInput="{{GiftCard.amounts[0]}}" stepKey="checkGiftCardAmountFilled"/>
+
+        <!-- Assert  gift card product in stock -->
+        <seeOptionIsSelected selector="{{AdminProductFormSection.productStockStatus}}" userInput="In Stock" stepKey="seeStockStatusInput"/>
+
+        <!-- Go to storefront page -->
+        <amOnPage url="{{StorefrontHomePage.url}}" stepKey="goToStorefrontPage"/>
+        <waitForPageLoad stepKey="waitForStorefrontPageLoad"/>
+
+        <!-- Quick search gift card product -->
+        <actionGroup ref="StorefrontCheckQuickSearchActionGroup" stepKey="quickSearchForGiftCardProduct">
+            <argument name="phrase" value="GiftCard.sku"/>
+        </actionGroup>
+
+        <!-- Assert product is not displaying on frontend -->
+        <actionGroup ref="StorefrontCheckSearchIsEmptyActionGroup" stepKey="checkEmpty"/>
+    </test>
+</tests>

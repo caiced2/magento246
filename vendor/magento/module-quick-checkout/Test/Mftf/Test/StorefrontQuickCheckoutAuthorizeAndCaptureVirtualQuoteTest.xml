@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+ /**
+  * Copyright © Magento, Inc. All rights reserved.
+  * See COPYING.txt for license details.
+  */
+-->
+
+<tests xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:noNamespaceSchemaLocation="urn:magento:mftf:Test/etc/testSchema.xsd">
+    <test name="StorefrontQuickCheckoutAuthorizeAndCaptureVirtualQuoteTest" extends="StorefrontQuickCheckoutAuthorizeAndCaptureTest">
+        <annotations>
+            <features value="MagentoQuickCheckout"/>
+            <stories value="Authorize and capture at checkout with virtual product"/>
+            <title value="Authorize and capture flow of Quick Checkout with virtual product"/>
+            <description value="Customer are able to place order with virtual product using Quick Checkout on checkout page, payment action is authorization and capture"/>
+            <severity value="CRITICAL"/>
+            <testCaseId value="authorize-and-capture"/>
+            <group value="quick-checkout"/>
+            <group value="magento-payments-virtual-product"/>
+        </annotations>
+        <before>
+            <createData entity="defaultVirtualProduct" stepKey="createProduct">
+                <requiredEntity createDataKey="createCategory"/>
+            </createData>
+        </before>
+
+        <remove keyForRemoval="selectFreeShippingMethod"/>
+        <remove keyForRemoval="clickNext"/>
+
+        <actionGroup ref="AdminOrderViewCheckStatusActionGroup" stepKey="checkOrderStatus">
+            <argument name="status" value="Complete"/>
+        </actionGroup>
+    </test>
+</tests>

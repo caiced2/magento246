@@ -1,0 +1,22 @@
+<?php
+/**
+ * Copyright © Magento, Inc. All rights reserved.
+ * See COPYING.txt for license details.
+ */
+
+/** @var \Magento\Framework\View\Element\Template $block */
+/** @var \Magento\GoogleTagManager\ViewModel\TagManagerConfig $gtmConfig */
+
+use Magento\GoogleTagManager\Model\Config\TagManagerConfig;
+
+$gtmConfig = $block->getData('view_model');
+$accountType = $gtmConfig->getAccountType();
+$gtmAccountId = $gtmConfig->getContainerId();
+if ($accountType === TagManagerConfig::TYPE_TAG_MANAGER && $gtmAccountId): ?>
+    <!-- GOOGLE TAG MANAGER -->
+    <noscript>
+        <iframe src="https://www.googletagmanager.com/ns.html?id=<?= $block->escapeHtmlAttr($gtmAccountId) ?>"
+                height="0" width="0" style="display:none;visibility:hidden"></iframe>
+    </noscript>
+    <!-- END GOOGLE TAG MANAGER -->
+<?php endif; ?>

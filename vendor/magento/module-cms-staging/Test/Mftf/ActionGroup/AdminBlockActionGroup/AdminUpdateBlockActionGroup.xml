@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+ /**
+  * Copyright © Magento, Inc. All rights reserved.
+  * See COPYING.txt for license details.
+  */
+-->
+<actionGroups xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:noNamespaceSchemaLocation="urn:magento:mftf:Test/etc/actionGroupSchema.xsd">
+    <actionGroup name="AdminUpdateBlockActionGroup">
+        <arguments>
+            <argument name="block" type="string"/>
+        </arguments>
+        <amOnPage url="{{CmsBlocksPage.url}}" stepKey="goBlockPage"/>
+        <conditionalClick selector="{{AdminDataGridHeaderSection.clearFilters}}" dependentSelector="{{AdminDataGridHeaderSection.clearFilters}}" visible="true" stepKey="clearFilters"/>
+        <waitForPageLoad stepKey="waitForClearedFilters"/>
+        <fillField selector="{{AdminBlockGridSection.search}}" userInput="{{block}}" stepKey="serachByTitle"/>
+        <click selector="{{AdminBlockGridSection.searchButton}}" stepKey="search"/>
+        <waitForPageLoad stepKey="waitForElementLoad"/>
+        <click selector="{{AdminBlockGridSection.select}}" stepKey="clickSelect"/>
+        <waitForElement selector="{{AdminBlockGridSection.editInSelect}}" time="30" stepKey="waitForElementEdit"/>
+        <click selector="{{AdminBlockGridSection.editInSelect}}" stepKey="clickEdit"/>
+        <waitForPageLoad stepKey="waitForEditPageLoad"/>
+        <waitForElementVisible selector="{{AdminUpdateBlockSection.scheduleNewUpdate}}" stepKey="waitForUpdateButton"/>
+        <click selector="{{AdminUpdateBlockSection.scheduleNewUpdate}}" stepKey="clickUpdate"/>
+        <waitForPageLoad stepKey="waitForUpdateOpen"/>
+        <waitForElement selector="{{AdminUpdateBlockSection.updateName}}" time="30" stepKey="waitForElement"/>
+        <fillField selector="{{AdminUpdateBlockSection.updateName}}" userInput="testUpdate" stepKey="fillUpdateName"/>
+        <generateDate stepKey="generateDate" date="+485 min" format="m/j/Y G:i A"/>
+        <fillField selector="{{AdminUpdateBlockSection.startDate}}" userInput="$generateDate" stepKey="fillStartDate"/>
+        <click selector="{{AdminUpdateBlockSection.isEnabled}}" stepKey="enableBlock"/>
+        <waitForPageLoad stepKey="waitForPageLoad"/>
+        <click selector="{{AdminUpdateBlockSection.saveUpdate}}" stepKey="saveUpdate"/>
+        <waitForPageLoad stepKey="waitForSave"/>
+    </actionGroup>
+</actionGroups>

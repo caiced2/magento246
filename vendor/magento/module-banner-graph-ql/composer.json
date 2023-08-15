@@ -1,0 +1,31 @@
+{
+    "name": "magento/module-banner-graph-ql",
+    "description": "N/A",
+    "type": "magento2-module",
+    "license": [
+        "proprietary"
+    ],
+    "config": {
+        "sort-packages": true
+    },
+    "version": "100.4.2",
+    "require": {
+        "magento/framework": "103.0.*",
+        "magento/module-banner": "101.2.*",
+        "magento/module-banner-customer-segment": "100.4.*",
+        "magento/module-customer-segment": "102.1.*",
+        "php": "~8.1.0||~8.2.0"
+    },
+    "suggest": {
+        "magento/module-website-restriction": "100.4.*"
+    },
+    "autoload": {
+        "files": [
+            "registration.php"
+        ],
+        "psr-4": {
+            "Magento\\BannerGraphQl\\": ""
+        }
+    }
+}
+

@@ -1,0 +1,27 @@
+<?xml version="1.0"?>
+<!--
+/**
+ * Copyright © Magento, Inc. All rights reserved.
+ * See COPYING.txt for license details.
+ */
+-->
+<config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="urn:magento:framework:Event/etc/events.xsd">
+    <event name="checkout_submit_all_after">
+        <observer name="magento_customersegment" instance="Magento\CustomerSegment\Observer\AdminCreateOrderObserver"/>
+    </event>
+    <event name="salesrule_rule_condition_combine">
+        <observer name="magento_customersegment" instance="Magento\CustomerSegment\Observer\AddSegmentsToSalesRuleCombineObserver"/>
+    </event>
+    <event name="sales_quote_collect_totals_before">
+        <observer name="magento_customersegment" instance="Magento\CustomerSegment\Observer\ProcessQuoteObserver"/>
+    </event>
+    <event name="magento_customercustomattributes_address_attribute_edit_tab_general_prepare_form">
+        <observer name="magento_customersegment" instance="Magento\CustomerSegment\Observer\EnterpiseCustomerAttributeEditPrepareFormObserver"/>
+    </event>
+    <event name="magento_customercustomattributes_attribute_edit_tab_general_prepare_form">
+        <observer name="magento_customersegment" instance="Magento\CustomerSegment\Observer\EnterpiseCustomerAttributeEditPrepareFormObserver"/>
+    </event>
+    <event name="targetrule_edit_tab_main_after_prepare_form">
+        <observer name="magento_customersegment" instance="Magento\CustomerSegment\Observer\AddFieldsToTargetRuleFormObserver"/>
+    </event>
+</config>

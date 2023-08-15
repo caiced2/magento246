@@ -1,0 +1,30 @@
+<?xml version="1.0"?>
+<!--
+/**
+ * Copyright © Magento, Inc. All rights reserved.
+ * See COPYING.txt for license details.
+ */
+-->
+<page xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="urn:magento:framework:View/Layout/etc/page_configuration.xsd">
+    <body>
+        <referenceContainer name="product.review.form.fields.before">
+            <block class="Magento\Reward\Block\Tooltip" name="reward.hint.review" template="Magento_Reward::tooltip.phtml" cacheable="false">
+                <arguments>
+                    <argument name="reward_type" xsi:type="string">Magento\Reward\Model\Action\Review</argument>
+                </arguments>
+                <action method="setWrapperClass">
+                    <argument name="class" xsi:type="string">reward-review</argument>
+                </action>
+                <action method="setRewardMessage">
+                    <argument translate="true" name="message" xsi:type="string">Submit a review now and earn %1 after the review is approved.</argument>
+                </action>
+                <action method="setRewardQtyLimitationMessage">
+                    <argument translate="true" name="message" xsi:type="string">You can reward up to %1 new reviews(s).</argument>
+                </action>
+                <action method="setIsGuestNote">
+                    <argument name="value" xsi:type="string">1</argument>
+                </action>
+            </block>
+        </referenceContainer>
+    </body>
+</page>

@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+ /**
+  * Copyright © Magento, Inc. All rights reserved.
+  * See COPYING.txt for license details.
+  */
+-->
+<sections xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:noNamespaceSchemaLocation="urn:magento:mftf:Page/etc/SectionObject.xsd">
+    <section name="StorefrontAddSenderDataSection">
+        <element name="amount" type="input" selector="#giftcard-amount-input"/>
+        <element name="senderEmail" type="input" selector="#giftcard_sender_email"/>
+        <element name="receiverEmail" type="input" selector="#giftcard_recipient_email"/>
+        <element name="sender" type="input" selector="#giftcard_sender_name"/>
+        <element name="receiver" type="input" selector="#giftcard_recipient_name"/>
+        <element name="add" type="button" selector="#product-addtocart-button"/>
+    </section>
+</sections>

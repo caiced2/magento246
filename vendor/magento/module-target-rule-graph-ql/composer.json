@@ -1,0 +1,26 @@
+{
+    "name": "magento/module-target-rule-graph-ql",
+    "description": "N/A",
+    "type": "magento2-module",
+    "license": [
+        "proprietary"
+    ],
+    "version": "100.4.3",
+    "require": {
+        "php": "~8.1.0||~8.2.0",
+        "magento/framework": "103.0.*",
+        "magento/module-catalog": "104.0.*",
+        "magento/module-catalog-graph-ql": "100.4.*",
+        "magento/module-related-product-graph-ql": "100.4.*",
+        "magento/module-target-rule": "101.2.*"
+    },
+    "autoload": {
+        "files": [
+            "registration.php"
+        ],
+        "psr-4": {
+            "Magento\\TargetRuleGraphQl\\": ""
+        }
+    }
+}
+

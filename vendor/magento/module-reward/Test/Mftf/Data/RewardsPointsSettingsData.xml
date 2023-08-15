@@ -1,0 +1,75 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+ /**
+  * Copyright © Magento, Inc. All rights reserved.
+  * See COPYING.txt for license details.
+  */
+-->
+
+<entities xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+          xsi:noNamespaceSchemaLocation="urn:magento:mftf:DataGenerator/etc/dataProfileSchema.xsd">
+
+    <entity name="SubscribeCustomerByDefault" type="subscribe_by_default">
+        <data key="value">1</data>
+    </entity>
+    <entity name="RewardPointSetting" type="rewords_points_settings">
+        <requiredEntity type="subscribe_by_default">SubscribeCustomerByDefault</requiredEntity>
+    </entity>
+
+    <entity name="DefaultGeneral" type="is_enabled">
+        <data key="value">1</data>
+    </entity>
+
+    <entity name="DefaultOnStoreFront" type="is_enabled_on_front">
+        <data key="value">1</data>
+    </entity>
+
+    <entity name="DefaultPublishHistory" type="publish_history">
+        <data key="value">1</data>
+    </entity>
+
+    <entity name="DisableGeneral" type="is_enabled">
+        <data key="value">0</data>
+    </entity>
+
+    <entity name="DisableOnStoreFront" type="is_enabled_on_front">
+        <data key="value">0</data>
+    </entity>
+
+    <entity name="DisablePublishHistory" type="publish_history">
+        <data key="value">0</data>
+    </entity>
+
+    <entity name="RewardPointDefaultSetting" type="rewords_points_settings">
+        <requiredEntity type="is_enabled">DefaultGeneral</requiredEntity>
+        <requiredEntity type="is_enabled_on_front">DefaultOnStoreFront</requiredEntity>
+        <requiredEntity type="publish_history">DefaultPublishHistory</requiredEntity>
+    </entity>
+
+    <entity name="DisableRewardPointsSettings" type="rewords_points_settings">
+        <requiredEntity type="is_enabled">DisableGeneral</requiredEntity>
+        <requiredEntity type="is_enabled_on_front">DisableOnStoreFront</requiredEntity>
+        <requiredEntity type="publish_history">DisablePublishHistory</requiredEntity>
+    </entity>
+
+    <entity name="RewardsPointsEnable">
+        <data key="path">magento_reward/general/is_enabled</data>
+        <data key="scope_id">1</data>
+        <data key="label">Yes</data>
+        <data key="value">1</data>
+    </entity>
+
+    <entity name="RewardsPointsOnStorefrontEnable">
+        <data key="path">magento_reward/general/is_enabled_on_front</data>
+        <data key="scope_id">1</data>
+        <data key="label">Yes</data>
+        <data key="value">1</data>
+    </entity>
+
+    <entity name="RewardsPointsEmailNotificationSubscribeByDefaultConfigData">
+        <data key="path">magento_reward/notification/subscribe_by_default</data>
+        <data key="scope_id">1</data>
+        <data key="label">Yes</data>
+        <data key="value">1</data>
+    </entity>
+</entities>

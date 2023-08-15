@@ -1,0 +1,79 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+ /**
+  * Copyright © Magento, Inc. All rights reserved.
+  * See COPYING.txt for license details.
+  */
+-->
+
+<tests xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xsi:noNamespaceSchemaLocation="urn:magento:mftf:Test/etc/testSchema.xsd">
+    <test name="AdminVerifyProductCanBeAddedToCartOnStagingPreviewTest">
+        <annotations>
+            <stories value="Product can be added to cart on Staging Preview"/>
+            <title value="[Staging] Verify that product can be added to cart on Staging Preview"/>
+            <description value="[Staging] Verify that product can be added to cart after navigation through breadcrumbs on Staging Preview"/>
+            <severity value="AVERAGE"/>
+            <testCaseId value="AC-6407"/>
+            <useCaseId value="ACP2E-919" />
+            <group value="staging"/>
+        </annotations>
+        <before>
+            <!-- Create category and simple product -->
+            <createData entity="SimpleSubCategory" stepKey="createCategory"/>
+            <createData entity="SimpleProduct" stepKey="createProduct">
+                <requiredEntity createDataKey="createCategory"/>
+            </createData>
+            <!-- Log in as Admin -->
+            <actionGroup ref="AdminLoginActionGroup" stepKey="loginAsAdmin"/>
+            <!-- Open product for edit -->
+            <amOnPage url="{{AdminProductEditPage.url($$createProduct.id$$)}}" stepKey="goToAdminProductEditPage"/>
+            <!-- Create Schedule New Update -->
+            <generateDate date="+7 day" format="m/j/Y g:i A" stepKey="generateStartDate"/>
+            <generateDate date="+10 day" format="m/j/Y g:i A" stepKey="generateEndDate"/>
+            <actionGroup ref="FillScheduleUpdateWithCheckActionGroup" stepKey="fillScheduleUpdateWithoutEnd">
+                <argument name="staging" value="S5UpdateNameStaging"/>
+                <argument name="timeStart" value="{$generateStartDate}"/>
+                <argument name="timeEnd" value="{$generateEndDate}"/>
+                <argument name="productPrice" value="15"/>
+            </actionGroup>
+            <!-- Save product changes -->
+            <actionGroup ref="SaveProductFormActionGroup" stepKey="saveProductForm"/>
+        </before>
+        <after>
+            <!-- Delete category and product -->
+            <deleteData createDataKey="createCategory" stepKey="deleteCategory"/>
+            <deleteData createDataKey="createProduct" stepKey="deleteProduct"/>
+            <!-- Logout as admin -->
+            <actionGroup ref="AdminLogoutActionGroup" stepKey="logout"/>
+        </after>
+
+        <!-- Click preview-->
+        <comment userInput="Click preview" stepKey="openPreviewTab"/>
+        <click selector="{{ScheduleUpdateSection.previewLink}}" stepKey="clickPreview"/>
+        <waitForPageLoad time="30" stepKey="waitForNewTabPageLoad"/>
+        <switchToNextTab stepKey="switchToNextTab"/>
+
+        <!-- Set focus on preview iframe -->
+        <executeJS function="document.querySelector('[data-role=\'preview-iframe\']').id = 'preview-iframe'" stepKey="setStagedPreviewFrameId"/>
+        <switchToIFrame userInput="preview-iframe" stepKey="switchToPreviewFrame"/>
+        <waitForPageLoad time="30" stepKey="waitForIFrameContentLoad"/>
+
+        <!-- Click on Home link from breadcrumbs -->
+        <click selector="{{StorefrontNavigationSection.breadcrumbsHomeLink}}" stepKey="clickHomePageInBreadcrumbs"/>
+
+        <!-- Navigate to the Category page -->
+        <click selector="{{StorefrontHeaderSection.NavigationCategoryByName($$createCategory.name$$)}}" stepKey="navigateToCategory"/>
+        <waitForPageLoad time="30" stepKey="waitForCategoryPageLoad"/>
+
+        <!-- Move to the product inside the category page and press add to cart -->
+        <moveMouseOver selector="{{StorefrontCategoryProductSection.ProductTitleByName($$createProduct.name$$)}}" stepKey="hoverProductInGrid"/>
+        <click selector="{{StorefrontCategoryProductSection.ProductAddToCartByName($$createProduct.name$$)}}" stepKey="tryAddToCartFromCategoryPage"/>
+
+        <!-- Switch back focus from iframe -->
+        <switchToIFrame stepKey="switchBackFromPreview"/>
+
+        <!-- Close Preview tab -->
+        <closeTab stepKey="closePreviewTab"/>
+    </test>
+</tests>

@@ -1,0 +1,40 @@
+<?php
+/**
+ * Copyright © Magento, Inc. All rights reserved.
+ * See COPYING.txt for license details.
+ */
+?>
+<?php
+/**
+ * Create account form template
+ */
+/* @var $block \Magento\CustomAttributeManagement\Block\Form\Renderer\Multiline */
+?>
+<?php
+$fieldCssClass = 'field multiline field-' . $block->getHtmlId();
+$fieldCssClass .= $block->isRequired() ? ' required' : '';
+?>
+<div class="<?= /* @noEscape */ $fieldCssClass ?>">
+    <label class="label" for="<?= $block->getHtmlId(0) ?>"><span><?= $block->escapeHtml($block->getLabel()) ?></span></label>
+    <div class="control">
+        <input type="text" id="<?= $block->escapeHtmlAttr($block->getHtmlId(0)) ?>" name="<?= $block->escapeHtmlAttr($block->getFieldName('')) ?>" value="<?= /* @noEscape */ $block->getEscapedValue(0) ?>" class="input-text<?= $block->getHtmlClass() ?>">
+        <?php $_message = $block->getAdditionalDescription(); ?>
+        <?php if ($block->getLineCount() == 1 && $_message) : ?>
+        <div class="note"><?= /* @noEscape */ $_message ?></div>
+        <?php endif; ?>
+        <?php if ($block->getLineCount() > 1) : ?>
+        <div class="nested">
+            <?php for ($i = 1, $lc = $block->getLineCount(); $i < $lc; $i ++) : ?>
+            <div class="field additional no-label">
+                <div class="control">
+                    <input type="text" id="<?= $block->escapeHtmlAttr($block->getHtmlId($i)) ?>" name="<?= $block->escapeHtmlAttr($block->getFieldName('')) ?>" value="<?= /* @noEscape */ $block->getEscapedValue($i) ?>" class="input-text<?= $block->getLineHtmlClass() ?>">
+                <?php if ($block->getLineCount() == $i+1 && $_message) : ?>
+                    <div class="note"><?= /* @noEscape */ $_message ?></div>
+                <?php endif; ?>
+                </div>
+            </div>
+            <?php endfor; ?>
+        </div>
+        <?php endif;?>
+    </div>
+</div>

@@ -1,0 +1,31 @@
+<?xml version="1.0"?>
+<!--
+/**
+ * Copyright © Magento, Inc. All rights reserved.
+ * See COPYING.txt for license details.
+ */
+-->
+<page xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="urn:magento:framework:View/Layout/etc/page_configuration.xsd">
+    <head>
+        <title>My Wish Lists</title>
+    </head>
+    <body>
+        <referenceBlock name="page.main.title">
+            <action method="setPageTitle" ifconfig="wishlist/general/multiple_enabled">
+                <argument translate="true" name="title" xsi:type="string">My Wish Lists</argument>
+            </action>
+        </referenceBlock>
+        <referenceBlock name="customer.wishlist">
+            <block class="Magento\MultipleWishlist\Block\Customer\Wishlist\Management" name="customer.wishlist.management" as="top" template="Magento_MultipleWishlist::view/management.phtml" cacheable="false"/>
+            <referenceBlock name="customer.wishlist.items">
+                <block class="Magento\MultipleWishlist\Block\Customer\Wishlist\Item\Column\Selector" name="customer.wishlist.item.selector" after="customer.wishlist.item.image" template="Magento_MultipleWishlist::item/column/selector.phtml"/>
+            </referenceBlock>
+            <referenceBlock name="customer.wishlist.item.actions">
+                <block class="Magento\MultipleWishlist\Block\Customer\Wishlist\Item\Column\Management" name="customer.wishlist.item.mananagement" template="Magento_MultipleWishlist::item/column/management.phtml" before="customer.wishlist.item.remove"/>
+            </referenceBlock>
+            <referenceContainer name="customer.wishlist.buttons">
+                <block class="Magento\MultipleWishlist\Block\Customer\Wishlist\Button\Delete" name="customer.wishlist.button.delete" template="Magento_MultipleWishlist::button/delete.phtml"/>
+            </referenceContainer>
+        </referenceBlock>
+    </body>
+</page>

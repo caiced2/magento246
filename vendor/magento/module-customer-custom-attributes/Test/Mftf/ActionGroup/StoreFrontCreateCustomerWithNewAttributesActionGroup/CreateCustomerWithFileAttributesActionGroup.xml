@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+ /**
+  * Copyright © Magento, Inc. All rights reserved.
+  * See COPYING.txt for license details.
+  */
+-->
+<actionGroups xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:noNamespaceSchemaLocation="urn:magento:mftf:Test/etc/actionGroupSchema.xsd">
+    <actionGroup name="CreateCustomerWithFileAttributes">
+        <arguments>
+            <argument name="fileAttribute"/>
+            <argument name="firstName" type="string" defaultValue="John"/>
+            <argument name="lastName" type="string" defaultValue="Doe"/>
+            <argument name="email" type="string" defaultValue="test@test.com"/>
+            <argument name="pass" type="string" defaultValue="123123q!"/>
+        </arguments>
+
+        <amOnPage url="{{StorefrontCustomerCreatePage.url}}" stepKey="gotToCreateCustomerPage"/>
+        <waitForPageLoad stepKey="waitForLoad"/>
+        <fillField selector="{{StorefrontCustomerCreateFormSection.firstnameField}}" userInput="{{firstName}}" stepKey="fillFirstName"/>
+        <fillField selector="{{StorefrontCustomerCreateFormSection.lastnameField}}" userInput="{{lastName}}" stepKey="fillLastName"/>
+        <attachFile selector="{{StoreFrontCustomerAdvancedAttributesSection.textFieldAttribute(fileAttribute.frontend_label)}}" userInput="small.jpg" stepKey="attachLarge"/>
+        <fillField selector="{{StorefrontCustomerCreateFormSection.emailField}}" userInput="{{email}}" stepKey="fillEmail"/>
+        <fillField selector="{{StorefrontCustomerCreateFormSection.passwordField}}" userInput="{{pass}}" stepKey="fillPassword"/>
+        <fillField selector="{{StorefrontCustomerCreateFormSection.confirmPasswordField}}" userInput="{{pass}}" stepKey="fillConfirmPassword"/>
+        <click selector="{{StorefrontCustomerCreateFormSection.createAccountButton}}" stepKey="clickCreateAccount"/>
+        <waitForPageLoad stepKey="waitForLoadPage"/>
+        <waitForText userInput="Thank you for registering" stepKey="seeConfirmationText"/>
+    </actionGroup>
+</actionGroups>

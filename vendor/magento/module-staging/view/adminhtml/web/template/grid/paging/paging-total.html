@@ -1,0 +1,21 @@
+<!--
+/**
+ * Copyright © Magento, Inc. All rights reserved.
+ * See COPYING.txt for license details.
+ */
+-->
+<ul class="admin__control-support-text schedule-summary">
+    <li class="schedule-summary-name">
+        <strong translate="'Selected Update\:'"></strong>
+        <span text="extendedSelections()[0].name" if="extendedSelections()[0]"></span>
+    </li>
+    <li class="schedule-summary-date">
+        <strong translate="'Starting\:'"></strong>
+        <span text="extendedSelections()[0].start_time" if="extendedSelections()[0]"></span>
+    </li>
+    <li class="schedule-summary-date">
+        <strong translate="'Ending\:'"></strong>
+        <span text="extendedSelections()[0].end_time" if="extendedSelections()[0]"></span>
+    </li>
+</ul>
+

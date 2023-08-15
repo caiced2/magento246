@@ -1,0 +1,74 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+ /**
+  * Copyright © Magento, Inc. All rights reserved.
+  * See COPYING.txt for license details.
+  */
+-->
+<tests xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:noNamespaceSchemaLocation="urn:magento:mftf:Test/etc/testSchema.xsd">
+    <test name="StorefrontQuickCheckoutGuestCheckoutLoggedinBoltCustomerTest">
+        <annotations>
+            <features value="MagentoQuickCheckout"/>
+            <stories value="Guest customer can checkout as logged-in Bolt customer"/>
+            <title value="Guest customer can checkout using Quick Checkout as logged-in Bolt customer"/>
+            <description value="Guest customer can checkout using Quick Checkout as logged-in Bolt customer"/>
+            <severity value="CRITICAL"/>
+            <testCaseId value="guest-checkout-logged-in"/>
+            <group value="quick-checkout"/>
+        </annotations>
+
+        <before>
+            <magentoCLI command="config:set {{EnableFreeShippingConfigData.path}} {{EnableFreeShippingConfigData.value}}" stepKey="enableFreeShipping"/>
+            <actionGroup ref="AdminLoginActionGroup" stepKey="login"/>
+            <actionGroup ref="AdminConfigureQuickCheckoutActionGroup" stepKey="configurePaymentMethod">
+                <argument name="methodAction" value="authorize_capture"/>
+            </actionGroup>
+            <createData entity="_defaultCategory" stepKey="createCategory"/>
+            <createData entity="_defaultProduct" stepKey="createProduct">
+                <requiredEntity createDataKey="createCategory"/>
+            </createData>
+        </before>
+
+        <after>
+            <magentoCLI command="config:set {{DisableFreeShippingMethod.path}} {{DisableFreeShippingMethod.value}}" stepKey="disableFreeShipping"/>
+            <actionGroup ref="AdminDisableQuickCheckoutActionGroup" stepKey="disablePaymentMethod" />
+            <!-- Delete product -->
+            <deleteData stepKey="deleteCategory" createDataKey="createCategory"/>
+            <deleteData stepKey="deleteProduct" createDataKey="createProduct"/>
+            <!-- Logout -->
+            <actionGroup ref="AdminLogoutActionGroup" stepKey="logoutFromAdmin"/>
+        </after>
+
+        <!-- Navigate to storefront as a guest -->
+        <amOnPage url="{{StorefrontCategoryPage.url($$createCategory.name$$)}}" stepKey="navigateToCategoryPage"/>
+        <actionGroup ref="StorefrontAddProductToCartFromCategoryActionGroup" stepKey="addProductToCart">
+            <argument name="productName" value="$$createProduct.name$$"/>
+        </actionGroup>
+        <actionGroup ref="GoToCheckoutFromMinicartActionGroup" stepKey="goToCheckoutFromMinicart"/>
+
+        <actionGroup ref="LoginWithEmailAddressAndOtpActionGroup" stepKey="loginWithEmailAddressAndOtp">
+            <argument name="customer" value="BoltCustomerWithTwoCreditCards"/>
+        </actionGroup>
+
+        <waitForElement selector="{{CheckoutPaymentSection.useExistingCardRadio}}" stepKey="waitForUseExistingCardRadio"/>
+        <waitForElementVisible selector="{{CheckoutPaymentSection.MagentoPaymentsHostedFieldsPlaceOrderButton}}" stepKey="waitPlaceOrderButton"/>
+        <dontSeeElement selector="{{CheckoutPaymentSection.boltConsentCheckbox}}" stepKey="assertBoltConsentCheckboxIsNotVisible"/>
+        <click selector="{{CheckoutPaymentSection.MagentoPaymentsHostedFieldsPlaceOrderButton}}" stepKey="clickPlaceOrderButton"/>
+
+        <!-- I see order successful page -->
+        <waitForLoadingMaskToDisappear stepKey="waitForLoadingMaskToDisappear2"/>
+        <waitForElement selector="{{CheckoutSuccessMainSection.successTitle}}" stepKey="waitForLoadSuccessPageTitle"/>
+        <waitForElement selector="{{CheckoutSuccessMainSection.success}}" time="30" stepKey="waitForLoadSuccessPage"/>
+        <see selector="{{CheckoutSuccessMainSection.successTitle}}" userInput="Thank you for your purchase!" stepKey="checkOrderSuccessPageTitle"/>
+        <grabTextFrom selector="{{CheckoutSuccessMainSection.orderNumber}}" stepKey="getOrderNumber"/>
+        <actionGroup ref="OpenOrderByIdActionGroup" stepKey="addFilterToGridAndOpenOrder">
+            <argument name="orderId" value="{$getOrderNumber}"/>
+        </actionGroup>
+        <actionGroup ref="AssertOrderAddressInformationActionGroup" stepKey="verifyOrderAddressInformation">
+            <argument name="customer" value="$createCustomer$"/>
+            <argument name="shippingAddress" value="US_Address_California"/>
+            <argument name="billingAddress" value="US_Address_TX"/>
+        </actionGroup>
+    </test>
+</tests>

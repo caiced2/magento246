@@ -1,0 +1,28 @@
+<?xml version="1.0"?>
+<!--
+/**
+ * Copyright © Magento, Inc. All rights reserved.
+ * See COPYING.txt for license details.
+ */
+-->
+<logging xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:noNamespaceSchemaLocation="urn:magento:module:Magento_Logging:etc/logging.xsd">
+    <groups>
+        <group name="magento_catalogevent">
+            <label translate="true">Catalog Events</label>
+            <expected_models>
+                <expected_model class="Magento\CatalogEvent\Model\Event" />
+            </expected_models>
+            <events>
+                <event controller_action="adminhtml_catalog_event_edit" action_alias="view" />
+                <event controller_action="adminhtml_catalog_event_save" action_alias="save">
+                    <skip_on_back>
+                        <controller_action name="adminhtml_catalog_event_edit" />
+                    </skip_on_back>
+                </event>
+                <event controller_action="adminhtml_catalog_event_delete"
+                       action_alias="delete" />
+            </events>
+        </group>
+    </groups>
+</logging>

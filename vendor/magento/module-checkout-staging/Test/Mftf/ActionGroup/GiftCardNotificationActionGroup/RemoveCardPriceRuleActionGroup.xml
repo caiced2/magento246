@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+ /**
+  * Copyright © Magento, Inc. All rights reserved.
+  * See COPYING.txt for license details.
+  */
+-->
+<actionGroups xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:noNamespaceSchemaLocation="urn:magento:mftf:Test/etc/actionGroupSchema.xsd">
+    <actionGroup name="RemoveCardPriceRule">
+        <click selector="{{CreateCardPriceRuleSection.market}}" stepKey="clickOnMarketing"/>
+        <waitForPageLoad stepKey="waitForPageMarketingIsLoaded"/>
+        <click selector="{{CreateCardPriceRuleSection.discount}}" stepKey="clockToSelectDiscountItem"/>
+        <waitForPageLoad stepKey="waitForPageDiscountIsLoaded"/>
+        <click selector="{{RemoveCardPriceRuleSection.couponCode(cardCode.priceCard)}}" stepKey="clickOnDiscount"/>
+        <waitForPageLoad stepKey="waitForPageDiscountAccountIsLoaded"/>
+        <click selector="{{RemoveCardPriceRuleSection.delete}}" stepKey="ClickToDeleteDiscount"/>
+        <waitForPageLoad stepKey="waitForDeleteConfirmation"/>
+        <click selector="{{RemoveCardPriceRuleSection.confirm}}" stepKey="clickToConfirm"/>
+    </actionGroup>
+</actionGroups>

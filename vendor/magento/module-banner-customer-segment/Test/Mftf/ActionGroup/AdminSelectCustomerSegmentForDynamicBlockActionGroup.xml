@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+ /**
+  * Copyright © Magento, Inc. All rights reserved.
+  * See COPYING.txt for license details.
+  */
+-->
+<actionGroups xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+              xsi:noNamespaceSchemaLocation="urn:magento:mftf:Test/etc/actionGroupSchema.xsd">
+    <actionGroup name="AdminSelectCustomerSegmentForDynamicBlockActionGroup">
+        <annotations>
+            <description>Select customer segment for dynamic block</description>
+        </annotations>
+        <arguments>
+            <argument name="customerSegmentName" type="string" defaultValue="{{CustomerSegmentDefault.name}}"/>
+        </arguments>
+        <click selector="{{SelectCustomerSegmentSection.CustomerSegmentDropdown}}" stepKey="openCustomerSegmentList"/>
+        <waitForElementVisible selector="{{SelectCustomerSegmentSection.CustomerSegmentOption(customerSegmentName)}}" stepKey="waitForCustomerSegmentOption"/>
+        <click selector="{{SelectCustomerSegmentSection.CustomerSegmentOption(customerSegmentName)}}" stepKey="selectCustomerSegmentOption"/>
+        <click selector="{{AdminBannerBasicActionSection.activeDoneButton}}" stepKey="clickDoneBtn"/>
+        <waitForPageLoad stepKey="waitForPageLoad"/>
+    </actionGroup>
+</actionGroups>

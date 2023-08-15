@@ -1,0 +1,137 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+ /**
+  * Copyright © Magento, Inc. All rights reserved.
+  * See COPYING.txt for license details.
+  */
+-->
+<tests xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="urn:magento:mftf:Test/etc/testSchema.xsd">
+    <test name="CheckingReturnReasonReturnItemsGridTest">
+        <annotations>
+            <features value="Rma"/>
+            <stories value="Returns"/>
+            <title value="Checking Return reason in Return Items grid"/>
+            <description value="RMA return reason is clipped in the Sales > Returns > Return Items grid - It looks like a link but does nothing"/>
+            <severity value="AVERAGE"/>
+            <testCaseId value="MAGETWO-96543"/>
+            <useCaseId value="MAGETWO-96426"/>
+            <group value="rma"/>
+        </annotations>
+
+        <before>
+            <magentoCLI command="config:set {{EnableFlatRateConfigData.path}} {{EnableFlatRateConfigData.value}}" stepKey="enableFlatRate"/>
+            <createData entity="EnableRmaOnStorefront" stepKey="enableRmaOnStorefront"/>
+            <createData entity="_defaultCategory" stepKey="defaultCategory"/>
+            <createData entity="SimpleProduct" stepKey="simpleProductOne">
+                <requiredEntity createDataKey="defaultCategory"/>
+            </createData>
+            <createData entity="SimpleProduct" stepKey="simpleProductTwo">
+                <requiredEntity createDataKey="defaultCategory"/>
+            </createData>
+
+            <magentoCLI command="cron:run --group=index" stepKey="runCronIndexer"/>
+
+            <createData entity="Simple_US_Customer" stepKey="customer"/>
+            <actionGroup ref="AdminLoginActionGroup" stepKey="loginAsAdmin"/>
+        </before>
+
+        <after>
+            <deleteData createDataKey="simpleProductOne" stepKey="deleteProduct"/>
+            <deleteData createDataKey="simpleProductTwo" stepKey="deleteSecondProduct"/>
+            <deleteData createDataKey="defaultCategory" stepKey="deleteCategory"/>
+            <deleteData createDataKey="customer" stepKey="deleteCustomer"/>
+            <createData entity="DisableRmaOnStorefront" stepKey="disableRmaOnStorefront"/>
+            <actionGroup ref="AdminLogoutActionGroup" stepKey="logout"/>
+        </after>
+
+        <actionGroup ref="LoginToStorefrontActionGroup" stepKey="signThirdSimpleUsCustomer">
+            <argument name="Customer" value="$$customer$$"/>
+        </actionGroup>
+
+        <actionGroup ref="AddSimpleProductToCartActionGroup" stepKey="addProductToCart">
+            <argument name="product" value="$$simpleProductOne$$"/>
+        </actionGroup>
+
+        <actionGroup ref="AddSimpleProductToCartActionGroup" stepKey="addSecondProductToCart">
+            <argument name="product" value="$$simpleProductTwo$$"/>
+        </actionGroup>
+
+        <actionGroup ref="GoToCheckoutFromMinicartActionGroup" stepKey="checkoutProductFromCart"/>
+
+        <actionGroup ref="StorefrontCheckoutClickNextButtonActionGroup" stepKey="clickNext"/>
+        <actionGroup ref="ClickPlaceOrderActionGroup" stepKey="clickPlaceOrder"/>
+        <comment userInput="BIC workaround" stepKey="waitForPlaceOrder"/>
+        <see stepKey="seeSuccessMessage" userInput="Thank you for your purchase!"/>
+        <grabTextFrom selector="{{CheckoutSuccessMainSection.orderNumber22}}" stepKey="grabOrderIncrementNumber"/>
+
+        <!-- Open Order -->
+        <comment userInput="BIC workaround" stepKey="goToOrdersIndexPage"/>
+        <comment userInput="BIC workaround" stepKey="waitForOrderIndexPage"/>
+        <actionGroup ref="OpenOrderByIdActionGroup" stepKey="openOrder">
+            <argument name="orderId" value="{$grabOrderIncrementNumber}"/>
+        </actionGroup>
+        <comment userInput="BIC workaround" stepKey="filterOrderGridById"/>
+        <comment userInput="BIC workaround" stepKey="clickOrderRow"/>
+        <comment userInput="BIC workaround" stepKey="waitForCreatedOrderPageOpened"/>
+
+        <grabFromCurrentUrl regex="~/order_id/(\d+)/~" stepKey="grabOrderEntityId"/>
+
+        <!--Create Invoice and Shipment for the order-->
+        <actionGroup ref="GoToInvoiceIntoOrderActionGroup" stepKey="goToInvoiceIntoOrderPage"/>
+        <actionGroup ref="SubmitInvoiceActionGroup" stepKey="submitInvoiceIntoOrder"/>
+        <actionGroup ref="GoToShipmentIntoOrderActionGroup" stepKey="goToShipmentIntoOrder"/>
+        <actionGroup ref="SubmitShipmentIntoOrderActionGroup" stepKey="submitShipmentIntoOrder"/>
+
+        <!--Goes to Orders and Returns -->
+        <comment userInput="BIC workaround" stepKey="goToOrderReviewPage"/>
+        <actionGroup ref="StorefrontGoToCustomerOrderDetailsPageActionGroup" stepKey="goToOrder">
+            <argument name="orderId" value="$grabOrderEntityId"/>
+            <argument name="orderNumber" value="$grabOrderIncrementNumber"/>
+        </actionGroup>
+        <comment userInput="BIC workaround" stepKey="waitForOrdersAndReturnsPageLoad"/>
+        <click selector="{{StorefrontCustomerOrderViewSection.return}}" stepKey="clickOnReturn"/>
+        <waitForPageLoad stepKey="waitForReturnsPageLoad"/>
+
+        <!--Fill in the Form and Submit (Other text box with at least 30 Characters)-->
+        <fillField selector="{{StorefrontCustomerReturnSection.quantityToReturn('0')}}" userInput="1" stepKey="fillQuantityToReturn"/>
+        <selectOption selector="{{StorefrontCustomerReturnSection.resolutionItem('0')}}" userInput="Refund" stepKey="selectResolutionItem"/>
+        <selectOption selector="{{StorefrontCustomerReturnSection.conditionItem('0')}}" userInput="Opened" stepKey="selectConditionItem"/>
+        <selectOption selector="{{StorefrontCustomerReturnSection.reasonItem('0')}}" userInput="Other" stepKey="selectReasonItem"/>
+        <fillField selector="{{StorefrontCustomerReturnSection.reasonOtherField('0')}}" userInput="thisTextShouldBeLongerThirtyCharacters" stepKey="setReasonOtherField"/>
+        <fillField selector="{{StorefrontCustomerReturnSection.comments}}" userInput="Test comment" stepKey="fillComments"/>
+        <click selector="{{StorefrontCustomerReturnSection.submit}}" stepKey="clickSubmit"/>
+        <waitForPageLoad stepKey="waitForPageLoad"/>
+
+        <!-- Go to My Account -> My Returns -->
+        <click selector="{{StorefrontCustomerReturnViewSection.viewReturn}}" stepKey="clickReturnViewButton"/>
+        <see selector="{{StorefrontCustomerReturnViewSection.returnComments}}" userInput="$$customer.lastname$$" stepKey="seeUsernameInComments"/>
+
+        <!--Go to Admin -> Sales -> Returns-->
+        <amOnPage stepKey="goToReturnPage" url="{{AdminReturnsPage.url}}"/>
+        <waitForPageLoad stepKey="waitForReturnsPageLoaded"/>
+        <!--Open new created return-->
+        <click selector="{{AdminReturnGridFilterSection.resetFilter}}" stepKey="clearExistingRmaFilters"/>
+        <fillField selector="{{AdminReturnGridFilterSection.orderIdFilter}}" userInput="$grabOrderIncrementNumber" stepKey="fillOrderIdRmaFilter"/>
+        <see selector="{{AdminReturnGridSection.rowOrderId('1')}}" userInput="$grabOrderIncrementNumber" stepKey="seeReturnInGrid"/>
+        <see selector="{{AdminReturnGridSection.rowStatus('1')}}" userInput="Pending" stepKey="seeReturnStatusPending"/>
+        <click selector="{{AdminReturnGridSection.rowViewAction('1')}}" stepKey="clickViewReturnFromGrid"/>
+        <waitForPageLoad stepKey="waitForReturnTicketPageOpened"/>
+
+        <!--Go to return items tab-->
+        <actionGroup ref="goToReturnItemsTab" stepKey="goToReturnItemsTab"/>
+
+        <waitForElementVisible selector="{{AdminReturnItemsSection.returnReasonOtherLink}}" stepKey="waitForReturnItemsOpened"/>
+        <click selector="{{AdminReturnItemsSection.returnReasonOtherLink}}" stepKey="clickReturnReasonOtherLink"/>
+
+        <waitForElementVisible selector="{{AdminReturnPopUpDialogSection.rmaReasonContent}}" stepKey="waitForPopUpDialogOpened"/>
+        <!--Make sure that appropriate message is displayed-->
+        <grabTextFrom selector="{{AdminReturnPopUpDialogSection.rmaReasonContent}}" stepKey="grabMessage"/>
+        <assertEquals stepKey="checkMessageInPopUpDialog">
+            <expectedResult type="string">thisTextShouldBeLongerThirtyCharacters</expectedResult>
+            <actualResult type="variable">$grabMessage</actualResult>
+        </assertEquals>
+        <click selector="{{AdminReturnPopUpDialogSection.okButton}}" stepKey="clickOkButton"/>
+        <waitForElementNotVisible selector="{{AdminReturnPopUpDialogSection.okButton}}" stepKey="waitForPopUpDialogClosed"/>
+        <actionGroup ref="AdminOrdersGridClearFiltersActionGroup" stepKey="clearOrderFilters"/>
+    </test>
+</tests>

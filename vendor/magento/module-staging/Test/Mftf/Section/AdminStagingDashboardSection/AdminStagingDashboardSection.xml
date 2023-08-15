@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+ /**
+  * Copyright © Magento, Inc. All rights reserved.
+  * See COPYING.txt for license details.
+  */
+-->
+<sections xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:noNamespaceSchemaLocation="urn:magento:mftf:Page/etc/SectionObject.xsd">
+    <section name="AdminStagingDashboardSection">
+        <element name="view" type="select" selector=".admin__data-grid-header-row select"/>
+        <element name="nthStagingUpdateRow" type="block" selector=".data-grid .data-row:nth-of-type({{number}})" parameterized="true"/>
+        <element name="nthStagingUpdateCell" type="block" selector=".data-grid .data-row:nth-of-type({{y}}) td:nth-of-type({{x}}) .data-grid-cell-content" parameterized="true"/>
+        <element name="cmsPagesDropDown" type="button" selector="//div[@data-index='cms_page']"/>
+        <element name="cmsPagesDropDownActive" type="button" selector="//div[@data-index='cms_page']//div[@class='fieldset-wrapper-title' and @data-state-collapsible='open']"/>
+        <element name="cmsPagesGridSelect" type="button" selector="//table[@data-role='grid']//button[@class='action-select' and .='Select']"/>
+        <element name="cmsPagesGridViewEdit" type="button" selector="//table[@data-role='grid']//ul[contains(@class,'action-menu')]//a[@data-action='item-edit' and .='View/Edit']"/>
+        <element name="contentHeader" type="button" selector="//div[@data-index='content']"/>
+        <element name="productsPagesDropDown" type="button" selector="//div[@data-index='products']" timeout="30"/>
+        <element name="productsGridCell" type="text" selector="//table[@data-role='grid']//tr[{{row}}]//td[count(//th[contains(., '{{column}}')]/preceding-sibling::th) +1 ]" parameterized="true" timeout="30"/>
+        <element name="cmsBlocksDropDown" type="button" selector="//div[@data-index='cms_block']"/>
+        <element name="cmsBlocksDropDownActive" type="button" selector="//div[@data-index='cms_block']//div[@class='fieldset-wrapper-title' and @data-state-collapsible='open']"/>
+        <element name="cmsBlocksGridSelect" type="button" selector="//table[@data-role='grid']//button[@class='action-select' and .='Select']"/>
+        <element name="cmsBlocksGridViewEdit" type="button" selector="//table[@data-role='grid']//ul[contains(@class,'action-menu')]//a[@data-action='item-edit' and .='View/Edit']"/>
+        <element name="productsDropDown" type="button" selector="//div[@data-index='products']"/>
+        <element name="productsDropDownActive" type="button" selector="//div[@data-index='products']//div[@class='fieldset-wrapper-title' and @data-state-collapsible='open']"/>
+        <element name="productsGridSelect" type="button" selector="//table[@data-role='grid']//button[@class='action-select' and .='Select']"/>
+        <element name="productsGridViewEdit" type="button" selector="//table[@data-role='grid']//ul[contains(@class,'action-menu')]//a[@data-action='item-edit' and .='View/Edit']"/>
+        <element name="categoriesDropDown" type="button" selector="//div[@data-index='catalog_category']"/>
+        <element name="categoriesDropDownActive" type="button" selector="//div[@data-index='catalog_category']//div[@class='fieldset-wrapper-title' and @data-state-collapsible='open']"/>
+        <element name="categoriesGridSelect" type="button" selector="//table[@data-role='grid']//button[@class='action-select' and .='Select']"/>
+        <element name="categoriesGridViewEdit" type="button" selector="//table[@data-role='grid']//ul[contains(@class,'action-menu')]//a[@data-action='item-edit' and .='View/Edit']"/>
+        <element name="contentHeaderActive" type="button" selector="//div[@data-index='content']//div[@class='fieldset-wrapper-title' and @data-state-collapsible='open']"/>
+    </section>
+</sections>

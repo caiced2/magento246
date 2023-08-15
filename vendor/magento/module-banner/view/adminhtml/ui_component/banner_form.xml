@@ -1,0 +1,550 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+/**
+ * Copyright © Magento, Inc. All rights reserved.
+ * See COPYING.txt for license details.
+ */
+-->
+<form xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="urn:magento:module:Magento_Ui:etc/ui_configuration.xsd">
+    <argument name="data" xsi:type="array">
+        <item name="js_config" xsi:type="array">
+            <item name="provider" xsi:type="string">banner_form.banner_form_data_source</item>
+        </item>
+        <item name="label" xsi:type="string" translate="true">General Information</item>
+        <item name="template" xsi:type="string">templates/form/collapsible</item>
+    </argument>
+    <settings>
+        <buttons>
+            <button name="save_and_continue" class="Magento\Banner\Block\Adminhtml\Banner\Edit\SaveAndContinueButton"/>
+            <button name="save" class="Magento\Banner\Block\Adminhtml\Banner\Edit\SaveButton"/>
+            <button name="reset" class="Magento\Banner\Block\Adminhtml\Banner\Edit\ResetButton"/>
+            <button name="delete" class="Magento\Banner\Block\Adminhtml\Banner\Edit\DeleteButton"/>
+            <button name="back">
+                <url path="*/*/"/>
+                <class>back</class>
+                <label translate="true">Back</label>
+            </button>
+        </buttons>
+        <namespace>banner_form</namespace>
+        <dataScope>data</dataScope>
+        <deps>
+            <dep>banner_form.banner_form_data_source</dep>
+        </deps>
+    </settings>
+    <dataSource name="banner_form_data_source">
+        <argument name="data" xsi:type="array">
+            <item name="js_config" xsi:type="array">
+                <item name="component" xsi:type="string">Magento_Ui/js/form/provider</item>
+            </item>
+        </argument>
+        <settings>
+            <submitUrl path="admin/banner/save"/>
+        </settings>
+        <dataProvider class="Magento\Banner\Model\Banner\DataProvider" name="banner_form_data_source">
+            <settings>
+                <requestFieldName>id</requestFieldName>
+                <primaryFieldName>banner_id</primaryFieldName>
+            </settings>
+        </dataProvider>
+    </dataSource>
+    <fieldset name="properties" sortOrder="10">
+        <settings>
+            <label/>
+        </settings>
+        <field name="is_enabled" formElement="checkbox">
+            <argument name="data" xsi:type="array">
+                <item name="config" xsi:type="array">
+                    <item name="default" xsi:type="number">1</item>
+                </item>
+            </argument>
+            <settings>
+                <dataType>boolean</dataType>
+                <label translate="true">Enable Dynamic Block</label>
+                <scopeLabel>[GLOBAL]</scopeLabel>
+                <dataScope>is_enabled</dataScope>
+                <imports>
+                    <link name="disabled">${ $.provider }:data.readonly</link>
+                </imports>
+            </settings>
+            <formElements>
+                <checkbox>
+                    <settings>
+                        <options class="Magento\Config\Model\Config\Source\Yesno"/>
+                        <valueMap>
+                            <map name="false" xsi:type="number">0</map>
+                            <map name="true" xsi:type="number">1</map>
+                        </valueMap>
+                        <prefer>toggle</prefer>
+                    </settings>
+                </checkbox>
+            </formElements>
+        </field>
+        <field name="name" formElement="input">
+            <settings>
+                <validation>
+                    <rule name="required-entry" xsi:type="boolean">true</rule>
+                </validation>
+                <dataType>text</dataType>
+                <label translate="true">Dynamic Block Name</label>
+                <scopeLabel>[GLOBAL]</scopeLabel>
+                <visible>true</visible>
+                <dataScope>name</dataScope>
+                <imports>
+                    <link name="disabled">${ $.provider }:data.readonly</link>
+                </imports>
+            </settings>
+        </field>
+        <field name="types" formElement="select" component="Magento_Ui/js/form/element/ui-select">
+            <argument name="data" xsi:type="array">
+                <item name="config" xsi:type="array">
+                    <item name="disableLabel" xsi:type="boolean">true</item>
+                    <item name="selectedPlaceholders" xsi:type="array">
+                        <item name="defaultPlaceholder" xsi:type="string">Any Dynamic Block Type</item>
+                    </item>
+                </item>
+            </argument>
+            <settings>
+                <elementTmpl>ui/grid/filters/elements/ui-select</elementTmpl>
+                <dataType>text</dataType>
+                <label translate="true">Dynamic Block Type</label>
+                <scopeLabel>[GLOBAL]</scopeLabel>
+                <dataScope>types</dataScope>
+                <imports>
+                    <link name="disabled">${ $.provider }:data.readonly</link>
+                </imports>
+            </settings>
+            <formElements>
+                <select>
+                    <settings>
+                        <options class="Magento\Banner\Model\Config"/>
+                    </settings>
+                </select>
+            </formElements>
+        </field>
+    </fieldset>
+    <fieldset name="content" sortOrder="20">
+        <settings>
+            <opened>true</opened>
+            <collapsible>true</collapsible>
+            <label translate="true">Content</label>
+        </settings>
+        <field name="store_id" sortOrder="10" formElement="hidden">
+            <settings>
+                <dataType>number</dataType>
+            </settings>
+        </field>
+        <field name="use_default_value" sortOrder="20" formElement="checkbox">
+            <settings>
+                <dataType>boolean</dataType>
+                <dataScope>use_default_value</dataScope>
+                <imports>
+                    <link name="disabled">${ $.provider }:data.content_readonly</link>
+                    <link name="visible">${ $.provider }:data.show_use_default_value</link>
+                </imports>
+            </settings>
+            <formElements>
+                <checkbox>
+                    <settings>
+                        <description translate="true">Use Default Value</description>
+                        <valueMap>
+                            <map name="false" xsi:type="boolean">false</map>
+                            <map name="true" xsi:type="boolean">true</map>
+                        </valueMap>
+                    </settings>
+                </checkbox>
+            </formElements>
+        </field>
+        <field name="store_contents" sortOrder="30" formElement="wysiwyg">
+            <settings>
+                <dataType>text</dataType>
+                <dataScope>store_contents</dataScope>
+                <imports>
+                    <link name="disabled">ns = ${ $.ns }, index = use_default_value:checked</link>
+                    <link name="readonly">${ $.provider }:data.content_readonly</link>
+                </imports>
+            </settings>
+            <formElements>
+                <wysiwyg>
+                    <settings>
+                        <wysiwyg>true</wysiwyg>
+                    </settings>
+                </wysiwyg>
+            </formElements>
+        </field>
+    </fieldset>
+    <fieldset name="promotions" sortOrder="30">
+        <settings>
+            <collapsible>true</collapsible>
+            <label translate="true">Related Promotions</label>
+        </settings>
+        <fieldset name="sales_rules">
+            <settings>
+                <label>Related Cart Price Rule</label>
+                <additionalClasses>
+                    <class name="admin__fieldset-section">true</class>
+                </additionalClasses>
+            </settings>
+            <container template="ui/form/components/complex">
+                <argument name="data" xsi:type="array">
+                    <item name="config" xsi:type="array">
+                        <item name="label" xsi:type="string"/>
+                        <item name="content" xsi:type="string" translate="true">Cart price rules allows you to setup promotions for items that are in the shopping cart.</item>
+                    </item>
+                </argument>
+                <button>
+                    <argument name="data" xsi:type="array">
+                        <item name="config" xsi:type="array">
+                            <item name="actions" xsi:type="array">
+                                <item name="0" xsi:type="array">
+                                    <item name="targetName" xsi:type="string">banner_form.banner_form.promotions.sales_rules.sales_rule_modal</item>
+                                    <item name="actionName" xsi:type="string">openModal</item>
+                                </item>
+                                <item name="1" xsi:type="array">
+                                    <item name="targetName" xsi:type="string">banner_form.banner_form.promotions.sales_rules.sales_rule_modal.sales_rule_listing</item>
+                                    <item name="actionName" xsi:type="string">render</item>
+                                </item>
+                            </item>
+                        </item>
+                    </argument>
+                    <settings>
+                        <title translate="true">Add Cart Price Rules</title>
+                    </settings>
+                </button>
+            </container>
+            <modal name="sales_rule_modal">
+                <settings>
+                    <options>
+                        <option name="title" xsi:type="string">Add Related Cart Price Rules</option>
+                        <option name="buttons" xsi:type="array">
+                            <item name="0" xsi:type="array">
+                                <item name="text" xsi:type="string">Cancel</item>
+                                <item name="actions" xsi:type="array">
+                                    <item name="0" xsi:type="string">actionCancel</item>
+                                </item>
+                            </item>
+                            <item name="1" xsi:type="array">
+                                <item name="text" xsi:type="string">Add Selected</item>
+                                <item name="class" xsi:type="string">action-primary</item>
+                                <item name="actions" xsi:type="array">
+                                    <item name="0" xsi:type="array">
+                                        <item name="targetName" xsi:type="string">index = sales_rule_listing</item>
+                                        <item name="actionName" xsi:type="string">save</item>
+                                    </item>
+                                    <item name="1" xsi:type="string">closeModal</item>
+                                </item>
+                            </item>
+                        </option>
+                    </options>
+                </settings>
+                <insertListing name="sales_rule_listing">
+                    <settings>
+                        <autoRender>false</autoRender>
+                        <dataScope>sales_rule_listing</dataScope>
+                        <ns>sales_rule_listing</ns>
+                        <realTimeLink>true</realTimeLink>
+                        <externalProvider>sales_rule_listing.sales_rule_listing_data_source</externalProvider>
+                        <selectionsProvider>sales_rule_listing.sales_rule_listing.sales_rule_listing_columns.ids</selectionsProvider>
+                        <dataLinks>
+                            <imports>false</imports>
+                            <exports>true</exports>
+                        </dataLinks>
+                        <behaviourType>simple</behaviourType>
+                        <externalFilterMode>true</externalFilterMode>
+                        <imports>
+                            <link name="bannerId">${ $.provider }:data.banner_id</link>
+                        </imports>
+                        <exports>
+                            <link name="bannerId">${ $.externalProvider }:params.banner_id</link>
+                        </exports>
+                    </settings>
+                </insertListing>
+            </modal>
+            <dynamicRows name="banner_sales_rules" component="Magento_Ui/js/dynamic-rows/dynamic-rows-grid" template="ui/dynamic-rows/templates/grid">
+                <argument name="data" xsi:type="array">
+                    <item name="config" xsi:type="array">
+                        <item name="columnsHeaderAfterRender" xsi:type="boolean">true</item>
+                        <item name="renderDefaultRecord" xsi:type="boolean">false</item>
+                        <item name="deleteButtonLabel" xsi:type="string">Remove</item>
+                        <item name="dataProvider" xsi:type="string">sales_rule_listing</item>
+                        <item name="identificationDRProperty" xsi:type="string">rule_id</item>
+                        <item name="map" xsi:type="array">
+                            <item name="rule_id" xsi:type="string">rule_id</item>
+                            <item name="name" xsi:type="string">name</item>
+                            <item name="from_date" xsi:type="string">from_date</item>
+                            <item name="to_date" xsi:type="string">to_date</item>
+                            <item name="is_active" xsi:type="string">is_active_label</item>
+                        </item>
+                    </item>
+                </argument>
+                <settings>
+                    <additionalClasses>
+                        <class name="admin__field-wide">true</class>
+                    </additionalClasses>
+                    <columnsHeader>false</columnsHeader>
+                    <recordTemplate>record</recordTemplate>
+                    <links>
+                        <link name="insertData">${ $.provider }:data.${ $.dataProvider }</link>
+                    </links>
+                    <addButton>false</addButton>
+                    <componentType>dynamicRows</componentType>
+                    <dndConfig>
+                        <param name="enabled" xsi:type="boolean">false</param>
+                    </dndConfig>
+                    <identificationProperty>rule_id</identificationProperty>
+                    <deleteProperty>delete</deleteProperty>
+                </settings>
+                <container name="record" component="Magento_Ui/js/dynamic-rows/record">
+                    <argument name="data" xsi:type="array">
+                        <item name="config" xsi:type="array">
+                            <item name="componentType" xsi:type="string">container</item>
+                            <item name="isTemplate" xsi:type="boolean">true</item>
+                            <item name="is_collection" xsi:type="boolean">true</item>
+                        </item>
+                    </argument>
+                    <field name="rule_id" component="Magento_Ui/js/form/element/text" formElement="input" sortOrder="10">
+                        <settings>
+                            <label translate="true">ID</label>
+                            <dataType>text</dataType>
+                            <elementTmpl>ui/dynamic-rows/cells/text</elementTmpl>
+                        </settings>
+                    </field>
+                    <field name="name" component="Magento_Ui/js/form/element/text" formElement="input" sortOrder="20">
+                        <settings>
+                            <label translate="true">Name</label>
+                            <dataType>text</dataType>
+                            <elementTmpl>ui/dynamic-rows/cells/text</elementTmpl>
+                        </settings>
+                    </field>
+                    <field name="from_date" component="Magento_Ui/js/form/element/text" formElement="input" sortOrder="30">
+                        <settings>
+                            <label translate="true">Start Date</label>
+                            <dataType>date</dataType>
+                            <elementTmpl>ui/dynamic-rows/cells/text</elementTmpl>
+                        </settings>
+                    </field>
+                    <field name="to_date" component="Magento_Ui/js/form/element/text" formElement="input" sortOrder="40">
+                        <settings>
+                            <label translate="true">End Date</label>
+                            <dataType>date</dataType>
+                            <elementTmpl>ui/dynamic-rows/cells/text</elementTmpl>
+                        </settings>
+                    </field>
+                    <field name="is_active" component="Magento_Ui/js/form/element/text" formElement="input" sortOrder="50">
+                        <settings>
+                            <label translate="true">Status</label>
+                            <dataType>text</dataType>
+                            <elementTmpl>ui/dynamic-rows/cells/text</elementTmpl>
+                        </settings>
+                    </field>
+                    <actionDelete sortOrder="60">
+                        <argument name="data" xsi:type="array">
+                            <item name="config" xsi:type="array">
+                                <item name="fit" xsi:type="boolean">false</item>
+                            </item>
+                        </argument>
+                        <settings>
+                            <additionalClasses>
+                                <class name="data-grid-actions-cell">true</class>
+                            </additionalClasses>
+                            <dataType>text</dataType>
+                            <label>Actions</label>
+                            <componentType>actionDelete</componentType>
+                        </settings>
+                    </actionDelete>
+                </container>
+            </dynamicRows>
+        </fieldset>
+        <fieldset name="catalog_price_rules" sortOrder="10">
+            <settings>
+                <additionalClasses>
+                    <class name="admin__fieldset-section">true</class>
+                </additionalClasses>
+                <label translate="true">Related Catalog Price Rule</label>
+            </settings>
+            <container name="button_set" template="ui/form/components/complex">
+                <argument name="data" xsi:type="array">
+                    <item name="config" xsi:type="array">
+                        <item name="formElement" xsi:type="string">container</item>
+                        <item name="componentType" xsi:type="string">container</item>
+                        <item name="label" xsi:type="string"/>
+                        <item name="content" xsi:type="string" translate="true">Catalog price rules allows you to setup promotions for an items in catalog.</item>
+                    </item>
+                </argument>
+                <container name="button_related" component="Magento_Ui/js/form/components/button">
+                    <argument name="data" xsi:type="array">
+                        <item name="config" xsi:type="array">
+                            <item name="formElement" xsi:type="string">container</item>
+                            <item name="componentType" xsi:type="string">container</item>
+                            <item name="actions" xsi:type="array">
+                                <item name="0" xsi:type="array">
+                                    <item name="targetName" xsi:type="string">banner_form.banner_form.promotions.catalog_price_rules.modal</item>
+                                    <item name="actionName" xsi:type="string">toggleModal</item>
+                                </item>
+                                <item name="1" xsi:type="array">
+                                    <item name="targetName" xsi:type="string">banner_form.banner_form.promotions.catalog_price_rules.modal.banner_catalog_rule_listing</item>
+                                    <item name="actionName" xsi:type="string">render</item>
+                                </item>
+                            </item>
+                            <item name="title" xsi:type="string">Add Catalog Price Rules</item>
+                        </item>
+                    </argument>
+                </container>
+            </container>
+            <modal name="modal">
+                <settings>
+                    <options>
+                        <option name="title" xsi:type="string">Add Related Catalog Price Rules</option>
+                        <option name="buttons" xsi:type="array">
+                            <item name="0" xsi:type="array">
+                                <item name="text" xsi:type="string" translate="true">Cancel</item>
+                                <item name="actions" xsi:type="array">
+                                    <item name="0" xsi:type="string">closeModal</item>
+                                </item>
+                            </item>
+                            <item name="1" xsi:type="array">
+                                <item name="text" xsi:type="string" translate="true">Add Selected</item>
+                                <item name="class" xsi:type="string">action-primary</item>
+                                <item name="actions" xsi:type="array">
+                                    <item name="0" xsi:type="array">
+                                        <item name="targetName" xsi:type="string">index = banner_catalog_rule_listing</item>
+                                        <item name="actionName" xsi:type="string">save</item>
+                                    </item>
+                                    <item name="1" xsi:type="string">closeModal</item>
+                                </item>
+                            </item>
+                        </option>
+                    </options>
+                </settings>
+                <insertListing name="banner_catalog_rule_listing">
+                    <argument name="data" xsi:type="array">
+                        <item name="config" xsi:type="array">
+                            <item name="externalTransfer" xsi:type="boolean">true</item>
+                        </item>
+                    </argument>
+                <settings>
+                        <autoRender>false</autoRender>
+                        <dataScope>banner_catalog_rule_listing</dataScope>
+                        <externalProvider>banner_catalog_rule_listing.banner_catalog_rule_listing_data_source</externalProvider>
+                        <selectionsProvider>banner_catalog_rule_listing.banner_catalog_rule_listing.banner_catalog_rule_listing_columns.ids</selectionsProvider>
+                        <ns>banner_catalog_rule_listing</ns>
+                        <realTimeLink>false</realTimeLink>
+                        <dataLinks>
+                            <imports>false</imports>
+                            <exports>true</exports>
+                        </dataLinks>
+                        <behaviourType>simple</behaviourType>
+                        <externalFilterMode>true</externalFilterMode>
+                        <imports>
+                            <link name="ruleId">${ $.provider }:data.banner_catalog_rules.rule_id</link>
+                        </imports>
+                        <exports>
+                            <link name="ruleId">${ $.externalProvider }:params.rule_id</link>
+                        </exports>
+                    </settings>
+                </insertListing>
+            </modal>
+            <container name="banner_catalog_rules" component="Magento_Ui/js/dynamic-rows/dynamic-rows-grid" template="ui/dynamic-rows/templates/grid">
+                <argument name="data" xsi:type="array">
+                    <item name="config" xsi:type="array">
+                        <item name="additionalClasses" xsi:type="string">admin__field-wide</item>
+                        <item name="componentType" xsi:type="string">dynamicRows</item>
+                        <item name="label" xsi:type="string"/>
+                        <item name="columnsHeader" xsi:type="boolean">false</item>
+                        <item name="columnsHeaderAfterRender" xsi:type="boolean">true</item>
+                        <item name="renderDefaultRecord" xsi:type="boolean">false</item>
+                        <item name="addButton" xsi:type="boolean">false</item>
+                        <item name="recordTemplate" xsi:type="string">record</item>
+                    <item name="identificationProperty" xsi:type="string">rule_id</item>
+                    <item name="identificationDRProperty" xsi:type="string">rule_id</item>
+                        <item name="deleteButtonLabel" xsi:type="string">Remove</item>
+                        <item name="dataProvider" xsi:type="string">banner_catalog_rule_listing</item>
+                        <item name="dndConfig" xsi:type="array">
+                            <item name="enabled" xsi:type="boolean">false</item>
+                        </item>
+                        <item name="deleteProperty" xsi:type="string">delete</item>
+                        <item name="map" xsi:type="array">
+                            <item name="rule_id" xsi:type="string">rule_id</item>
+                            <item name="name" xsi:type="string">name</item>
+                            <item name="from_date" xsi:type="string">from_date</item>
+                            <item name="to_date" xsi:type="string">to_date</item>
+                            <item name="is_active" xsi:type="string">is_active_label</item>
+                        </item>
+                        <item name="links" xsi:type="array">
+                            <item name="insertData" xsi:type="string">${ $.provider }:data.${ $.dataProvider }</item>
+                        </item>
+                    </item>
+                </argument>
+                <container name="record" component="Magento_Ui/js/dynamic-rows/record">
+                    <argument name="data" xsi:type="array">
+                        <item name="config" xsi:type="array">
+                            <item name="componentType" xsi:type="string">container</item>
+                            <item name="isTemplate" xsi:type="boolean">true</item>
+                            <item name="is_collection" xsi:type="boolean">true</item>
+                        </item>
+                    </argument>
+                    <field name="rule_id" component="Magento_Ui/js/form/element/text" formElement="input" sortOrder="10">
+                        <settings>
+                            <label translate="true">ID</label>
+                            <dataType>text</dataType>
+                            <elementTmpl>ui/dynamic-rows/cells/text</elementTmpl>
+                        </settings>
+                    </field>
+                    <field name="name" component="Magento_Ui/js/form/element/text" formElement="input" sortOrder="20">
+                        <settings>
+                            <label translate="true">Name</label>
+                            <dataType>text</dataType>
+                            <elementTmpl>ui/dynamic-rows/cells/text</elementTmpl>
+                        </settings>
+                    </field>
+                    <field name="from_date" component="Magento_Ui/js/form/element/text" formElement="input" sortOrder="30">
+                        <settings>
+                            <label translate="true">Start Date</label>
+                            <dataType>date</dataType>
+                            <elementTmpl>ui/dynamic-rows/cells/text</elementTmpl>
+                        </settings>
+                    </field>
+                    <field name="to_date" component="Magento_Ui/js/form/element/text" formElement="input" sortOrder="40">
+                        <settings>
+                            <label translate="true">End Date</label>
+                            <dataType>date</dataType>
+                            <elementTmpl>ui/dynamic-rows/cells/text</elementTmpl>
+                        </settings>
+                    </field>
+                    <field name="is_active" component="Magento_Ui/js/form/element/text" formElement="input" sortOrder="50">
+                        <settings>
+                            <label translate="true">Status</label>
+                            <dataType>text</dataType>
+                            <elementTmpl>ui/dynamic-rows/cells/text</elementTmpl>
+                        </settings>
+                    </field>
+                    <actionDelete sortOrder="60">
+                        <argument name="data" xsi:type="array">
+                            <item name="config" xsi:type="array">
+                                <item name="fit" xsi:type="boolean">false</item>
+                            </item>
+                        </argument>
+                        <settings>
+                            <additionalClasses>
+                                <class name="data-grid-actions-cell">true</class>
+                            </additionalClasses>
+                            <dataType>text</dataType>
+                            <label>Actions</label>
+                            <componentType>actionDelete</componentType>
+                        </settings>
+                    </actionDelete>
+                    <field name="position" component="Magento_Catalog/js/form/element/input" formElement="input">
+                        <settings>
+                            <additionalClasses>
+                                <class name="_hidden">true</class>
+                            </additionalClasses>
+                            <visible>false</visible>
+                            <dataType>number</dataType>
+                            <dataScope>position</dataScope>
+                            <componentType>field</componentType>
+                        </settings>
+                    </field>
+                </container>
+            </container>
+        </fieldset>
+    </fieldset>
+</form>

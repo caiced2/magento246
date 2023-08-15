@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+ /**
+  * Copyright © Magento, Inc. All rights reserved.
+  * See COPYING.txt for license details.
+  */
+-->
+<actionGroups xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:noNamespaceSchemaLocation="urn:magento:mftf:Test/etc/actionGroupSchema.xsd">
+    <actionGroup name="AdminFillCustomerCustomAttributeTypeTextActionGroup">
+        <annotations>
+            <description>Add value to customer custom attribute. Starts on customer create/edit page.</description>
+        </annotations>
+
+        <arguments>
+            <argument name="attributeCode" type="string" defaultValue="{{AttributeTextField.attribute_code}}"/>
+            <argument name="attributeValue" type="string" defaultValue=""/>
+        </arguments>
+
+        <waitForElementVisible selector="{{AdminCustomerAccountAttributeSection.customAttributeInput(attributeCode)}}" stepKey="waitForInput"/>
+        <fillField selector="{{AdminCustomerAccountAttributeSection.customAttributeInput(attributeCode)}}" userInput="{{attributeValue}}" stepKey="fillAttributeValue"/>
+    </actionGroup>
+</actionGroups>

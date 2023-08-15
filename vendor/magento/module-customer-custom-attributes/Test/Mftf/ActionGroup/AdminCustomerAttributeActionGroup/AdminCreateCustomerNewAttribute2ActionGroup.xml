@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+ /**
+  * Copyright © Magento, Inc. All rights reserved.
+  * See COPYING.txt for license details.
+  */
+-->
+<actionGroups xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:noNamespaceSchemaLocation="urn:magento:mftf:Test/etc/actionGroupSchema.xsd">
+    <actionGroup name="AdminCreateCustomerNewAttributeActionGroup" extends="AdminCreateCustomerNewAttribute">
+        <arguments>
+            <argument name="defaultLabel" type="string"/>
+            <argument name="attributeCode" type="string"/>
+            <argument name="inputType" type="string" defaultValue="TextField"/>
+            <argument name="valuesRequired" type="string" defaultValue="Yes"/>
+            <argument name="showInSF" type="string" defaultValue="Yes"/>
+            <argument name="sortOrder" type="string" defaultValue="0"/>
+            <argument name="formToUse" type="string" defaultValue="Customer Account Edit"/>
+            <argument name="formToUse1" type="string" defaultValue="Customer Registration"/>
+            <argument name="message" type="string" defaultValue="You saved the customer attribute."/>
+        </arguments>
+        <selectOption selector="{{CustomerAccountSection.valuesRequired}}" userInput="{{valuesRequired}}" stepKey="setValuesRequired"/>
+        <selectOption selector="{{CustomerAccountSection.showInSF}}" userInput="{{showInSF}}" stepKey="setSFOption"/>
+    </actionGroup>
+</actionGroups>

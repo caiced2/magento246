@@ -1,0 +1,21 @@
+<?xml version="1.0"?>
+<!--
+/**
+ * Copyright © Magento, Inc. All rights reserved.
+ * See COPYING.txt for license details.
+ */
+-->
+<config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="urn:magento:framework:Event/etc/events.xsd">
+    <event name="customer_save_commit_after">
+        <observer name="magento_customersegment" instance="Magento\CustomerSegment\Observer\ProcessCustomerEventObserver"/>
+    </event>
+    <event name="customer_address_save_commit_after">
+        <observer name="magento_customersegment" instance="Magento\CustomerSegment\Observer\ProcessCustomerEventObserver"/>
+    </event>
+    <event name="customer_address_delete_commit_after">
+        <observer name="magento_customersegment" instance="Magento\CustomerSegment\Observer\ProcessCustomerEventObserver"/>
+    </event>
+    <event name="customer_balance_save_commit_after">
+        <observer name="magento_customersegment" instance="Magento\CustomerSegment\Observer\ProcessCustomerEventObserver"/>
+    </event>
+</config>

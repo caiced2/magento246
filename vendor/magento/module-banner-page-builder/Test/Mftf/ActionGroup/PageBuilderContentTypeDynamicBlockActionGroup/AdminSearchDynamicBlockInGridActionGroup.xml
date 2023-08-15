@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+ /**
+  * Copyright © Magento, Inc. All rights reserved.
+  * See COPYING.txt for license details.
+  */
+-->
+<actionGroups xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:noNamespaceSchemaLocation="urn:magento:mftf:Test/etc/actionGroupSchema.xsd">
+    <actionGroup name="AdminSearchDynamicBlockInGridActionGroup">
+        <annotations>
+            <description>Searches for the specified Dynamic Block in the grid on the Select Dynamic Block slide out form.</description>
+        </annotations>
+        <arguments>
+            <argument name="block" defaultValue=""/>
+        </arguments>
+        <waitForElementVisible selector="{{DynamicBlockOnGrid.searchBox}}" stepKey="waitForBlockGrid"/>
+        <fillField selector="{{DynamicBlockOnGrid.searchBox}}" userInput="{{block.name}}" stepKey="enterBlockTitle"/>
+        <waitForPageLoad stepKey="waitForPageLoad"/>
+        <click selector="{{DynamicBlockOnGrid.searchBtn}}" stepKey="clickSearchBtn"/>
+        <waitForPageLoad stepKey="waitForPageLoad2"/>
+    </actionGroup>
+</actionGroups>

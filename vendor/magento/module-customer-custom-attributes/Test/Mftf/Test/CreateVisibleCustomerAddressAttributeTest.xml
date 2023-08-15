@@ -1,0 +1,68 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+ /**
+  * Copyright © Magento, Inc. All rights reserved.
+  * See COPYING.txt for license details.
+  */
+-->
+
+<tests xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xsi:noNamespaceSchemaLocation="urn:magento:mftf:Test/etc/testSchema.xsd">
+    <test name="CreateVisibleCustomerAddressAttributeTest">
+        <annotations>
+            <features value="CustomerCustomAttributes"/>
+            <stories value="Customer address attribute visibility in customer account on frontend"/>
+            <title value="Create visible customer address attribute test"/>
+            <description value="Create visible customer address attribute"/>
+            <severity value="MAJOR"/>
+            <testCaseId value="MC-14584"/>
+            <group value="CustomerCustomAttributes"/>
+            <group value="mtf_migrated"/>
+        </annotations>
+        <before>
+            <!-- Login as admin -->
+            <actionGroup ref="AdminLoginActionGroup" stepKey="LoginAsAdmin"/>
+
+            <!-- Create customer -->
+            <createData entity="Simple_Customer_Without_Address" stepKey="createCustomer"/>
+        </before>
+        <after>
+            <!-- Delete created attribute -->
+            <actionGroup ref="AdminDeleteCustomerAttribute" stepKey="deleteCustomerAttribute">
+                <argument name="defaultLabel" value="{{AttributeTextField.attribute_code}}"/>
+            </actionGroup>
+
+            <!-- Log out admin -->
+            <actionGroup ref="AdminLogoutActionGroup" stepKey="logout"/>
+
+            <!-- Logout customer -->
+            <actionGroup ref="StorefrontCustomerLogoutActionGroup" stepKey="customerLogoutStorefront"/>
+
+            <!-- Delete customer -->
+            <deleteData createDataKey="createCustomer" stepKey="deleteCustomer"/>
+        </after>
+
+        <!-- Create new customer address attribute -->
+        <amOnPage url="{{CustomerAddressAttributesPage.url}}" stepKey="navigateToCustomerAddressAttributesPage"/>
+        <waitForPageLoad stepKey="waitForCustomerAddressAttributePageLoad"/>
+        <actionGroup ref="AdminCreateCustomerNewAttribute" stepKey="createTextFieldAttribute">
+            <argument name="defaultLabel" value="{{AttributeTextField.frontend_label}}"/>
+            <argument name="attributeCode" value="{{AttributeTextField.attribute_code}}"/>
+            <argument name="inputType" value="{{AttributeTextField.frontend_input}}"/>
+            <argument name="sortOrder" value="10"/>
+        </actionGroup>
+
+        <!-- Login as customer -->
+        <actionGroup ref="LoginToStorefrontActionGroup" stepKey="loginToStorefrontAccount">
+            <argument name="Customer" value="$$createCustomer$$"/>
+        </actionGroup>
+
+        <!-- Go to Address Book -->
+        <actionGroup ref="StorefrontCustomerGoToSidebarMenu" stepKey="goToAddressBook">
+            <argument name="menu" value="Address Book"/>
+        </actionGroup>
+
+        <!-- Assert customer address attribute on address edit page -->
+        <seeElement selector="{{StoreFrontCustomerAdvancedAttributesSection.textFieldAttribute(AttributeTextField.frontend_label)}}" stepKey="assertNewAttribute"/>
+    </test>
+</tests>

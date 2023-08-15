@@ -1,0 +1,96 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+ /**
+  * Copyright © Magento, Inc. All rights reserved.
+  * See COPYING.txt for license details.
+  */
+-->
+
+<tests xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xsi:noNamespaceSchemaLocation="urn:magento:mftf:Test/etc/testSchema.xsd">
+    <test name="AdminCreateCustomerSegmentEntityWithCustomerConditionsWithoutRealTimeCheckTest">
+        <annotations>
+            <features value="CustomerSegment"/>
+            <stories value="Improve performance of segments validation"/>
+            <title value="Verify customer segment with customer conditions Without Real Time Check"/>
+            <description value="Admin should be able to create customer segment with customer conditions Without Real Time Check"/>
+            <severity value="MAJOR"/>
+            <testCaseId value="ACPT-808"/>
+            <group value="CustomerSegment"/>
+        </annotations>
+        <before>
+            <!--Disable Real-time Check if Customer is Matched by Segment-->
+            <magentoCLI stepKey="DisableRealTimeCheck" command="config:set customer/magento_customersegment/real_time_check_if_customer_is_matched_by_segment 0"/>
+            <magentoCLI stepKey="ClearConfigCache" command="cache:clean config"/>
+            <!--Login to Admin-->
+            <actionGroup ref="AdminLoginActionGroup" stepKey="LoginAsAdmin"/>
+            <!--Test customer is created-->
+            <createData entity="Retailer_Customer" stepKey="createCustomer"/>
+            <!--Test simple product is created-->
+            <createData entity="ApiCategory" stepKey="createCategory"/>
+            <createData entity="SimpleProduct" stepKey="createProduct">
+                <field key="price">10</field>
+                <requiredEntity createDataKey="createCategory"/>
+            </createData>
+        </before>
+        <after>
+            <deleteData createDataKey="createCategory" stepKey="deleteCategory"/>
+            <deleteData createDataKey="createProduct" stepKey="deleteProduct"/>
+            <deleteData createDataKey="createCustomer" stepKey="deleteCustomer"/>
+            <actionGroup ref="AdminDeleteCartPriceRuleActionGroup" stepKey="deleteCartPriceRule">
+                <argument name="ruleName" value="RetailerCartPriceRule" />
+            </actionGroup>
+            <actionGroup ref="FindAndDeleteCustomerSegmentActionGroup" stepKey="deleteSegment">
+                <argument name="segmentName" value="{{CustomerSegmentForRetailer.name}}"/>
+            </actionGroup>
+            <magentoCron groups="index" stepKey="reindex"/>
+            <actionGroup ref="AdminLogoutActionGroup" stepKey="logout"/>
+            <!--Enable Real-time Check if Customer is Matched by Segment-->
+            <magentoCLI stepKey="EnableRealTimeCheck" command="config:set customer/magento_customersegment/real_time_check_if_customer_is_matched_by_segment 1"/>
+        </after>
+
+        <!--Navigate to CUSTOMERS->Segment > Click 'Add Segment' button > Fill all fields according to dataset and click 'Save and Continue Edit' button-->
+        <actionGroup ref="CreateCustomerSegmentWithContinueEditActionGroup" stepKey="createCustomerSegment">
+            <argument name="customerSegment" value="CustomerSegmentForRetailer"/>
+        </actionGroup>
+
+        <!--Navigate to Conditions tab and Add specific test condition according to dataset-->
+        <actionGroup ref="SetCustomerGroupConditionActionGroup" stepKey="setSegmentConditions">
+            <argument name="groupName" value="Retailer"/>
+        </actionGroup>
+        <actionGroup ref="CliConsumerStartActionGroup" stepKey="startMessageQueue">
+            <argument name="consumerName" value="{{AdminCustomerSegmentConsumerData.consumerName}}"/>
+            <argument name="maxMessages" value="{{AdminCustomerSegmentConsumerData.messageLimit}}"/>
+        </actionGroup>
+        <reloadPage stepKey="refreshPage"/>
+        <waitForPageLoad stepKey="waitForPageLoaded"/>
+        <!--Navigate to MARKETING->Cart Price Rule and click "+", then fill all required data according to dataset and save rule-->
+        <actionGroup ref="AdminCreateCartPriceRuleAndStayOnEditActionGroup" stepKey="createCartPriceRule">
+            <argument name="ruleName" value="RetailerCartPriceRule"/>
+        </actionGroup>
+
+        <actionGroup ref="SetCartAttributeConditionWhenMatchForCartPriceRuleActionGroup" stepKey="setConditionsCartPriceRule">
+            <argument name="attributeName" value="Customer Segment"/>
+            <argument name="operatorType" value="is not one of"/>
+            <argument name="value" value="CustomerSegmentForRetailer"/>
+        </actionGroup>
+
+        <!--Perform assertions-->
+        <actionGroup ref="LoginToStorefrontActionGroup" stepKey="loginAsCustomer">
+            <argument name="Customer" value="$$createCustomer$$"/>
+        </actionGroup>
+
+        <amOnPage url="{{StorefrontCategoryPage.url($$createCategory.custom_attributes[url_key]$$)}}" stepKey="onCategoryPage"/>
+        <waitForPageLoad stepKey="waitForCategoryPageLoad"/>
+
+        <actionGroup ref="StorefrontAddSimpleProductToCartActionGroup" stepKey="addProductToCart">
+            <argument name="product" value="$$createProduct$$"/>
+        </actionGroup>
+
+        <actionGroup ref="StorefrontOpenCartFromMinicartActionGroup" stepKey="openCart"/>
+
+        <waitForPageLoad stepKey="waitForPageLoad"/>
+        <waitForLoadingMaskToDisappear stepKey="waitForPrices"/>
+        <see selector="{{CheckoutCartSummarySection.total}}" userInput="$15.00" stepKey="assertTotal"/>
+    </test>
+</tests>

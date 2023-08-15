@@ -1,0 +1,37 @@
+<?php
+/**
+ * Copyright © Magento, Inc. All rights reserved.
+ * See COPYING.txt for license details.
+ */
+
+/** @var \Magento\Framework\View\Helper\SecureHtmlRenderer $secureRenderer */
+?>
+<?php
+$showRegionMessage = $block->escapeJs(__('Show Region'));
+$regionSelectHtml = $block->getRegionShowSelectHtml();
+?>
+<?php $scriptString = <<<script
+require(['prototype'], function(){
+
+//<![CDATA[
+OptionTemplateCountry =
+    '<div class="field field-region">'+
+        '<label class="label" for=""><span>{$showRegionMessage}</label>'+
+        '<div class="control">{$regionSelectHtml}</div>'+
+    '</div>';
+
+selectCountryType = {
+    add : function(data) {
+        if (data.show_region) {
+            \$A($(data.prefix+'_attribute_'+data.id+'_show_region').options).each(function(option){
+                if (option.value==data.show_region) option.selected = true;
+           });
+        }
+    }
+}
+//]]>
+
+});
+script;
+?>
+<?= /* @noEscape */ $secureRenderer->renderTag('script', [], $scriptString, false); ?>

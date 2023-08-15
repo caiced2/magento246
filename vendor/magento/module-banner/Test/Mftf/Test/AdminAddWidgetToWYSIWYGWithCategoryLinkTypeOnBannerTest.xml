@@ -1,0 +1,85 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+ /**
+  * Copyright © Magento, Inc. All rights reserved.
+  * See COPYING.txt for license details.
+  */
+-->
+
+<tests xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xsi:noNamespaceSchemaLocation="urn:magento:mftf:Test/etc/testSchema.xsd">
+    <test name="AdminCreateBannerWithCategoryLinkTest">
+        <annotations>
+            <title value="Admin create banner with widget type catalog category link"/>
+            <description value="Admin create banner with widget type catalog category link"/>
+            <severity value="CRITICAL"/>
+            <testCaseId value="MAGETWO-85882"/>
+            <features value="MAGETWO-36659-[CMS] WYSIWYG update"/>
+            <stories value="MAGETWO-42047-Apply new WYSIWYG to Banner add/edit"/>
+            <group value="Banner"/>
+        </annotations>
+        <before>
+            <createData entity="_defaultCategory" stepKey="createPreReqCategory"/>
+            <actionGroup ref="AdminLoginActionGroup" stepKey="loginGetFromGeneralFile"/>
+            <actionGroup ref="EnabledWYSIWYGActionGroup" stepKey="enableWYSIWYG"/>
+            <actionGroup ref="CliEnableTinyMCEActionGroup" stepKey="enableTinyMCE" />
+            <actionGroup ref="ConfigAdminAccountSharingActionGroup" stepKey="allowAdminShareAccount"/>
+            <amOnPage url="{{AdminNewWidgetPage.url}}" stepKey="amOnAdminNewWidgetPage"/>
+            <selectOption selector="{{AdminNewWidgetSection.widgetType}}" userInput="Dynamic Blocks Rotator" stepKey="setWidgetType"/>
+            <selectOption selector="{{AdminNewWidgetSection.widgetDesignTheme}}" userInput="Magento Luma" stepKey="setWidgetDesignTheme"/>
+            <click selector="{{AdminNewWidgetSection.continue}}" stepKey="clickContinue"/>
+            <grabFromCurrentUrl regex="~/theme_id/(\d+)/~" stepKey="themeId"/>
+            <createData entity="sampleBannerWidget" stepKey="createPreReqWidget">
+                <field key="theme_id">{$themeId}</field>
+            </createData>
+        </before>
+        <after>
+            <actionGroup ref="DeleteWidgetActionGroup" stepKey="deleteWidget"/>
+            <actionGroup ref="DisabledWYSIWYGActionGroup" stepKey="disableWYSIWYG"/>
+            <actionGroup ref="AdminLogoutActionGroup" stepKey="logout"/>
+        </after>
+        <actionGroup ref="CreateBannerActionGroup" stepKey="createPreReqBanner">
+            <argument name="Banner" value="sampleBanner" />
+        </actionGroup>
+        <actionGroup ref="AssignBannerToWidgetActionGroup" stepKey="createPreReqWidget">
+            <argument name="Banner" value="sampleBanner"/>
+            <argument name="Widget" value="$$createPreReqWidget$$"/>
+        </actionGroup>
+        <amOnPage url="{{AdminDynamicBlockGridPage.url}}" stepKey="goToBannerGrid"/>
+        <waitForPageLoad stepKey="waitForPageLoad1"/>
+        <click selector="{{AdminWidgetGridSection.title(sampleBanner.Name)}}" stepKey="navigateToPreReqBanner" />
+        <waitForPageLoad stepKey="waitForPageLoad2"/>
+        <conditionalClick selector="{{AdminBannerBasicActionSection.ContentTab}}" dependentSelector="{{TinyMCESection.checkIfContentTabOpen}}" stepKey="clickIfContentTabCloses" visible="true"/>
+        <waitForElementVisible selector="{{TinyMCESection.TinyMCE}}" stepKey="waitForTinyMCE" />
+        <seeElement selector="{{TinyMCESection.InsertWidgetIcon}}" stepKey="seeWidgetIcon" />
+        <!--Insert Widget in wysiwyg content-->
+        <click selector="{{TinyMCESection.InsertWidgetIcon}}" stepKey="clickInsertWidgetIcon" />
+        <waitForPageLoad stepKey="waitForPageLoad3"/>
+        <see userInput="Inserting a widget does not create a widget instance." stepKey="seeMessage" />
+        <see selector="{{WidgetSection.InsertWidgetBtnDisabled}}" userInput="Insert Widget" stepKey="seeInsertWidgetDisabled" />
+        <see selector="{{WidgetSection.CancelBtnEnabled}}" userInput="Cancel" stepKey="seeCancelBtnEnabled" />
+        <selectOption selector="{{WidgetSection.WidgetType}}" userInput="Catalog Category Link" stepKey="selectCatalogCategoryLink" />
+        <waitForLoadingMaskToDisappear stepKey="waitForLoading1" />
+        <see selector="{{WidgetSection.InsertWidgetBtnEnabled}}" userInput="Insert Widget" stepKey="seeInsertWidgetEnabled" />
+        <selectOption selector="{{WidgetSection.WidgetTemplate}}" userInput="Category Link Block Template" stepKey="selectTemplate" />
+        <click selector="{{WidgetSection.BtnChooser}}" stepKey="clickSelectCategoryBtn" />
+        <waitForPageLoad stepKey="waitForLoading2"/>
+        <waitForElementVisible selector="{{AdminCategorySidebarTreeSection.expandCategoryByName('Default Category')}}" stepKey="waitForDefaultCategory"/>
+        <conditionalClick selector="{{AdminCategorySidebarTreeSection.expandCategoryByName('Default Category')}}" dependentSelector="{{WidgetSection.PreCreateCategory('$$createPreReqCategory.name$$')}}" visible="false" stepKey="expandRootCategory"/>
+        <waitForElementVisible selector="{{WidgetSection.PreCreateCategory('$$createPreReqCategory.name$$')}}" stepKey="expandWait" />
+        <click selector="{{WidgetSection.PreCreateCategory('$$createPreReqCategory.name$$')}}" stepKey="selectPreCreateCategory" />
+        <waitForElementNotVisible selector="{{WidgetSection.SelectCategoryTitle}}" stepKey="waitForSlideoutCloses1" />
+        <click selector="{{WidgetSection.InsertWidget}}" stepKey="clickInsertWidget" />
+        <waitForElementNotVisible selector="{{WidgetSection.InsertWidgetTitle}}" stepKey="waitForSlideOutCloses2" />
+        <scrollTo selector="{{AdminBannerBasicActionSection.RelatedPromotionsTab}}" stepKey="scrollToRelatedPromotions" />
+        <click selector="{{AdminBannerBasicActionSection.RelatedPromotionsTab}}" stepKey="clickExpandRelatedPromotions" />
+        <click selector="{{AdminBannerBasicActionSection.Save}}" stepKey="clickSave"/>
+        <!--Update Banner Widget with new banner-->
+        <waitForPageLoad stepKey="waitForPageLoad7" />
+        <actionGroup ref="ClearCacheActionGroup" stepKey="clearMagentoCache"/>
+        <!-- Go to storefront banner page, assert banner content -->
+        <amOnPage url="/" stepKey="goToBannerFrontPage" />
+        <waitForPageLoad stepKey="waitForPageLoad8"/>
+        <see userInput="$$createPreReqCategory.name$$" stepKey="seeCategoryLink"/>
+    </test>
+</tests>

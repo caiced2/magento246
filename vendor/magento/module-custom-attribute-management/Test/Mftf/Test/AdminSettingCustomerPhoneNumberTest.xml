@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+ /**
+  * Copyright © Magento, Inc. All rights reserved.
+  * See COPYING.txt for license details.
+  */
+-->
+
+<tests xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xsi:noNamespaceSchemaLocation="urn:magento:mftf:Test/etc/testSchema.xsd">
+    <test name="AdminSettingCustomerPhoneNumberTest">
+        <annotations>
+            <features value="CustomAttributeManagement"/>
+            <stories value="MAGETWO-91659: Cannot set Phone Number not required"/>
+            <title value="Settings of customer phone number field (phone number is optional)."/>
+            <description value="When Phone Number field is optional, new customer should be created without phone number"/>
+            <severity value="MAJOR"/>
+            <testCaseId value="MC-6163"/>
+            <group value="Customer"/>
+        </annotations>
+        <before>
+            <!--Set Show Telephone to Optional-->
+            <createData entity="ConfigShowTelephoneOptional" stepKey="setConfigShowTelephoneOptional"/>
+        </before>
+        <after>
+            <!--Set Show Telephone to Required (default)-->
+            <createData entity="DefaultConfigShowTelephoneRequired" stepKey="setDefaultConfigShowTelephone"/>
+            <!--Delete created customer-->
+            <actionGroup ref="CliIndexerReindexActionGroup" stepKey="reindex">
+                <argument name="indices" value="customer_grid"/>
+            </actionGroup>
+            <actionGroup ref="DeleteCustomerByEmailActionGroup" stepKey="deleteCustomer">
+                <argument name="email" value="{{Simple_US_Customer.email}}"/>
+            </actionGroup>
+            <actionGroup ref="AdminResetFilterInCustomerGrid" stepKey="resetFilter"/>
+            <actionGroup ref="AdminLogoutActionGroup" stepKey="logout"/>
+        </after>
+        <actionGroup ref="AdminLoginActionGroup" stepKey="loginAsAdmin"/>
+        <!--Create New Customer Fill in required fields-->
+        <actionGroup ref="AdminCreateCustomerWithDefaultAddressWithoutPhoneActionGroup" stepKey="createCustomerWithoutPhone"/>
+    </test>
+</tests>

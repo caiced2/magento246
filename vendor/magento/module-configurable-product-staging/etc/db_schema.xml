@@ -1,0 +1,29 @@
+<?xml version="1.0"?>
+<!--
+/**
+ * Copyright © Magento, Inc. All rights reserved.
+ * See COPYING.txt for license details.
+ */
+-->
+<schema xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:noNamespaceSchemaLocation="urn:magento:framework:Setup/Declaration/Schema/etc/schema.xsd">
+    <table name="catalog_product_super_link" resource="default" comment="Catalog Product Super Link Table">
+        <constraint xsi:type="foreign" referenceId="CAT_PRD_SPR_LNK_PARENT_ID_CAT_PRD_ENTT_ENTT_ID" disabled="1"/>
+        <constraint xsi:type="foreign" referenceId="CAT_PRD_SPR_LNK_PARENT_ID_CAT_PRD_ENTT_ROW_ID"
+                    table="catalog_product_super_link" column="parent_id" referenceTable="catalog_product_entity"
+                    referenceColumn="row_id" onDelete="CASCADE"/>
+        <constraint xsi:type="foreign" referenceId="CAT_PRD_SPR_LNK_PRD_ID_CAT_PRD_ENTT_ENTT_ID" disabled="1"/>
+        <constraint xsi:type="foreign" referenceId="CAT_PRD_SPR_LNK_PRD_ID_SEQUENCE_PRD_SEQUENCE_VAL"
+                    table="catalog_product_super_link" column="product_id" referenceTable="sequence_product"
+                    referenceColumn="sequence_value" onDelete="CASCADE"/>
+        <index referenceId="CATALOG_PRODUCT_SUPER_LINK_PARENT_ID" indexType="btree">
+            <column name="parent_id"/>
+        </index>
+    </table>
+    <table name="catalog_product_super_attribute" resource="default" comment="Catalog Product Super Attribute Table">
+        <constraint xsi:type="foreign" referenceId="CAT_PRD_SPR_ATTR_PRD_ID_CAT_PRD_ENTT_ENTT_ID" disabled="1"/>
+        <constraint xsi:type="foreign" referenceId="CAT_PRD_SPR_ATTR_PRD_ID_CAT_PRD_ENTT_ROW_ID"
+                    table="catalog_product_super_attribute" column="product_id" referenceTable="catalog_product_entity"
+                    referenceColumn="row_id" onDelete="CASCADE"/>
+    </table>
+</schema>

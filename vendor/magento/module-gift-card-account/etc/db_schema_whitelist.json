@@ -1,0 +1,90 @@
+{
+    "magento_giftcardaccount": {
+        "column": {
+            "giftcardaccount_id": true,
+            "code": true,
+            "status": true,
+            "date_created": true,
+            "date_expires": true,
+            "website_id": true,
+            "balance": true,
+            "state": true,
+            "is_redeemable": true
+        },
+        "index": {
+            "MAGENTO_GIFTCARDACCOUNT_WEBSITE_ID": true,
+            "MAGENTO_GIFTCARDACCOUNT_CODE": true
+        },
+        "constraint": {
+            "PRIMARY": true,
+            "MAGENTO_GIFTCARDACCOUNT_WEBSITE_ID_STORE_WEBSITE_WEBSITE_ID": true
+        }
+    },
+    "magento_giftcardaccount_pool": {
+        "column": {
+            "code": true,
+            "status": true
+        },
+        "constraint": {
+            "PRIMARY": true
+        }
+    },
+    "magento_giftcardaccount_history": {
+        "column": {
+            "history_id": true,
+            "giftcardaccount_id": true,
+            "updated_at": true,
+            "action": true,
+            "balance_amount": true,
+            "balance_delta": true,
+            "additional_info": true
+        },
+        "index": {
+            "MAGENTO_GIFTCARDACCOUNT_HISTORY_GIFTCARDACCOUNT_ID": true
+        },
+        "constraint": {
+            "PRIMARY": true,
+            "FK_245B3CFF19EAF3077D3E0C5416773ECA": true
+        }
+    },
+    "quote": {
+        "column": {
+            "gift_cards": true,
+            "gift_cards_amount": true,
+            "base_gift_cards_amount": true,
+            "gift_cards_amount_used": true,
+            "base_gift_cards_amount_used": true
+        }
+    },
+    "quote_address": {
+        "column": {
+            "gift_cards_amount": true,
+            "base_gift_cards_amount": true,
+            "gift_cards": true,
+            "used_gift_cards": true
+        }
+    },
+    "sales_order": {
+        "column": {
+            "gift_cards": true,
+            "base_gift_cards_amount": true,
+            "gift_cards_amount": true,
+            "base_gift_cards_invoiced": true,
+            "gift_cards_invoiced": true,
+            "base_gift_cards_refunded": true,
+            "gift_cards_refunded": true
+        }
+    },
+    "sales_invoice": {
+        "column": {
+            "base_gift_cards_amount": true,
+            "gift_cards_amount": true
+        }
+    },
+    "sales_creditmemo": {
+        "column": {
+            "base_gift_cards_amount": true,
+            "gift_cards_amount": true
+        }
+    }
+}

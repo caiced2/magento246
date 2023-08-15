@@ -1,0 +1,68 @@
+<?xml version="1.0"?>
+<!--
+/**
+ * Copyright © Magento, Inc. All rights reserved.
+ * See COPYING.txt for license details.
+ */
+-->
+<config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:noNamespaceSchemaLocation="urn:magento:framework:ObjectManager/etc/config.xsd">
+    <type name="Magento\CustomerCustomAttributes\Model\Customer\Attribute\Validator\Option">
+        <arguments>
+            <argument name="multipleAttributeList" xsi:type="array">
+                <item name="select" xsi:type="string">option</item>
+                <item name="multiselect" xsi:type="string">option</item>
+            </argument>
+        </arguments>
+    </type>
+    <type name="Magento\CustomerCustomAttributes\Model\Customer\Attribute\CompositeValidator">
+        <arguments>
+            <argument name="validators" xsi:type="array">
+                <item name="attributeDuplication" xsi:type="object">
+                    Magento\CustomerCustomAttributes\Model\Customer\Attribute\Validator\AttributeDuplication
+                </item>
+                <item name="attributeCodeLength" xsi:type="object">
+                    Magento\CustomerCustomAttributes\Model\Customer\Attribute\Validator\AttributeCodeLength
+                </item>
+                <item name="option" xsi:type="object">
+                    Magento\CustomerCustomAttributes\Model\Customer\Attribute\Validator\Option
+                </item>
+                <item name="fileExtension" xsi:type="object">
+                    Magento\CustomerCustomAttributes\Model\Customer\Attribute\Validator\FileExtension
+                </item>
+            </argument>
+        </arguments>
+    </type>
+    <type name="Magento\Customer\Model\Attribute">
+        <plugin name="validateCustomerAddressAttribute" type="Magento\CustomerCustomAttributes\Model\Plugin\ValidateCustomerAddressAttribute"/>
+    </type>
+    <type name="Magento\CustomerCustomAttributes\Model\Customer\Attribute\Validator\AttributeCodeLength">
+        <arguments>
+            <argument name="codeLengthByEntityType" xsi:type="array">
+                <item name="customer" xsi:type="string">51</item>
+                <item name="customer_address" xsi:type="string">60</item>
+            </argument>
+        </arguments>
+    </type>
+    <type name="Magento\CustomerCustomAttributes\Controller\Adminhtml\Customer\Attribute\Save">
+        <arguments>
+            <argument name="deniedAttributes" xsi:type="array">
+                <item name="attributeId" xsi:type="string">attribute_id</item>
+                <item name="entityTypeId" xsi:type="string">entity_type_id</item>
+                <item name="backendModel" xsi:type="string">backend_model</item>
+            </argument>
+        </arguments>
+    </type>
+    <type name="Magento\CustomerCustomAttributes\Controller\Adminhtml\Customer\Address\Attribute\Save">
+        <arguments>
+            <argument name="deniedAttributes" xsi:type="array">
+                <item name="attributeId" xsi:type="string">attribute_id</item>
+                <item name="entityTypeId" xsi:type="string">entity_type_id</item>
+                <item name="backendModel" xsi:type="string">backend_model</item>
+            </argument>
+        </arguments>
+    </type>
+    <type name="Magento\Catalog\Controller\Adminhtml\Product\Initialization\Helper">
+        <plugin name="update_multiselect_attributes" type="Magento\CustomerCustomAttributes\Plugin\Catalog\UpdateMultiselectAttributes"/>
+    </type>
+</config>

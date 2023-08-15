@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+  /**
+   * Copyright © Magento, Inc. All rights reserved.
+   * See COPYING.txt for license details.
+   */
+ -->
+<actionGroups xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+              xsi:noNamespaceSchemaLocation="urn:magento:mftf:Test/etc/actionGroupSchema.xsd">
+    <actionGroup name="AdminCustomerDropdownAttributeAddOptionActionGroup">
+        <annotations>
+            <description>Add new options with labels for custom customer dropdown attribute on the 'Manage Label / Options' tab.(optionStoreIndex=0 for admin 1 for default storeView, and 2 or more to additional storeViews)</description>
+        </annotations>
+        <arguments>
+            <argument name="adminOptionTitle" type="string" defaultValue="{{AttributeDropdownData.firstOption}}"/>
+            <argument name="storeFrontOptionTitle" type="string" defaultValue="{{AttributeDropdownData.firstOption}}"/>
+            <argument name="optionNumber" type="string" defaultValue="0"/>
+            <argument name="storeIndex" type="string" defaultValue="1"/>
+        </arguments>
+        <waitForElementVisible selector="{{AdminCustomerAddressAttributeSection.addOptionsButton}}" stepKey="waitForButtonIsVisible"/>
+        <click selector="{{AdminCustomerAddressAttributeSection.addOptionsButton}}" stepKey="clickToAddOption"/>
+        <waitForElementVisible selector="{{AdminCustomerAddressAttributeSection.addOptionsField(optionNumber)}}" stepKey="waitForNewOptionInputBeVisible"/>
+        <fillField userInput="{{adminOptionTitle}}" selector="{{AdminCustomerAddressAttributeSection.optionStoreLabelField(optionNumber, '0')}}" stepKey="fillAdminOptionTitle"/>
+        <fillField userInput="{{storeFrontOptionTitle}}" selector="{{AdminCustomerAddressAttributeSection.optionStoreLabelField(optionNumber, storeIndex)}}"  stepKey="fillStoreFrontOptionTitle"/>
+    </actionGroup>
+</actionGroups>

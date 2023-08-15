@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+ /**
+  * Copyright © Magento, Inc. All rights reserved.
+  * See COPYING.txt for license details.
+  */
+-->
+
+<tests xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xsi:noNamespaceSchemaLocation="urn:magento:mftf:Test/etc/testSchema.xsd">
+    <test name="AdminValidateCustomersByNumberOfOrdersTest" extends="AdminFindCustomerByNumberOfOrdersTest">
+        <annotations>
+            <features value="CustomerSegment"/>
+            <stories value="MAGETWO-99584: Can't create an order from admin if CustomerSegment based on 0 orders or more"/>
+            <title value="Finding customers in Customer Segments based on total Number of Orders = 0"/>
+            <description value="Verify that there is matched customer in Customer Segments based on total Number of Orders = 0"/>
+            <severity value="MAJOR"/>
+            <testCaseId value="MAGETWO-99584"/>
+            <group value="CustomerSegment"/>
+        </annotations>
+        <!--Overwrite existing Condition-->
+        <actionGroup ref="EditConditionsInCustomerSegmentForOrdersActionGroup" stepKey="editCondition" after="clickToEditSegment">
+            <argument name="conditionData" value="CustomerSegmentConditionsForOrdersData"/>
+        </actionGroup>
+    </test>
+</tests>

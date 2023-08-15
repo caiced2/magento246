@@ -1,0 +1,82 @@
+<?xml version="1.0"?>
+<!--
+/**
+ * Copyright © Magento, Inc. All rights reserved.
+ * See COPYING.txt for license details.
+ */
+-->
+<schema xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:noNamespaceSchemaLocation="urn:magento:framework:Setup/Declaration/Schema/etc/schema.xsd">
+    <table name="magento_banner" resource="default" engine="innodb" comment="Enterprise Banner">
+        <column xsi:type="int" name="banner_id" unsigned="true" nullable="false" identity="true"
+                comment="Banner Id"/>
+        <column xsi:type="varchar" name="name" nullable="true" length="255" comment="Name"/>
+        <column xsi:type="int" name="is_enabled" unsigned="false" nullable="false" identity="false"
+                comment="Is Enabled"/>
+        <column xsi:type="varchar" name="types" nullable="true" length="255" comment="Types"/>
+        <constraint xsi:type="primary" referenceId="PRIMARY">
+            <column name="banner_id"/>
+        </constraint>
+        <index referenceId="MAGENTO_BANNER_NAME" indexType="fulltext">
+            <column name="name"/>
+        </index>
+    </table>
+    <table name="magento_banner_content" resource="default" engine="innodb" comment="Enterprise Banner Content">
+        <column xsi:type="int" name="banner_id" unsigned="true" nullable="false" identity="false"
+                default="0" comment="Banner Id"/>
+        <column xsi:type="smallint" name="store_id" unsigned="true" nullable="false" identity="false"
+                default="0" comment="Store Id"/>
+        <column xsi:type="mediumtext" name="banner_content" nullable="true" comment="Banner Content"/>
+        <constraint xsi:type="primary" referenceId="PRIMARY">
+            <column name="banner_id"/>
+            <column name="store_id"/>
+        </constraint>
+        <constraint xsi:type="foreign" referenceId="MAGENTO_BANNER_CONTENT_BANNER_ID_MAGENTO_BANNER_BANNER_ID"
+                    table="magento_banner_content" column="banner_id" referenceTable="magento_banner"
+                    referenceColumn="banner_id" onDelete="CASCADE"/>
+        <constraint xsi:type="foreign" referenceId="MAGENTO_BANNER_CONTENT_STORE_ID_STORE_STORE_ID"
+                    table="magento_banner_content" column="store_id" referenceTable="store" referenceColumn="store_id"
+                    onDelete="CASCADE"/>
+        <index referenceId="MAGENTO_BANNER_CONTENT_STORE_ID" indexType="btree">
+            <column name="store_id"/>
+        </index>
+    </table>
+    <table name="magento_banner_catalogrule" resource="default" engine="innodb" comment="Enterprise Banner Catalogrule">
+        <column xsi:type="int" name="banner_id" unsigned="true" nullable="false" identity="false"
+                comment="Banner Id"/>
+        <column xsi:type="int" name="rule_id" unsigned="true" nullable="false" identity="false"
+                comment="Rule Id"/>
+        <constraint xsi:type="primary" referenceId="PRIMARY">
+            <column name="banner_id"/>
+            <column name="rule_id"/>
+        </constraint>
+        <constraint xsi:type="foreign" referenceId="MAGENTO_BANNER_CATALOGRULE_BANNER_ID_MAGENTO_BANNER_BANNER_ID"
+                    table="magento_banner_catalogrule" column="banner_id" referenceTable="magento_banner"
+                    referenceColumn="banner_id" onDelete="CASCADE"/>
+        <constraint xsi:type="foreign" referenceId="MAGENTO_BANNER_CATALOGRULE_RULE_ID_CATALOGRULE_RULE_ID"
+                    table="magento_banner_catalogrule" column="rule_id" referenceTable="catalogrule"
+                    referenceColumn="rule_id" onDelete="CASCADE"/>
+        <index referenceId="MAGENTO_BANNER_CATALOGRULE_RULE_ID" indexType="btree">
+            <column name="rule_id"/>
+        </index>
+    </table>
+    <table name="magento_banner_salesrule" resource="default" engine="innodb" comment="Enterprise Banner Salesrule">
+        <column xsi:type="int" name="banner_id" unsigned="true" nullable="false" identity="false"
+                comment="Banner Id"/>
+        <column xsi:type="int" name="rule_id" unsigned="true" nullable="false" identity="false"
+                comment="Rule Id"/>
+        <constraint xsi:type="primary" referenceId="PRIMARY">
+            <column name="banner_id"/>
+            <column name="rule_id"/>
+        </constraint>
+        <constraint xsi:type="foreign" referenceId="MAGENTO_BANNER_SALESRULE_BANNER_ID_MAGENTO_BANNER_BANNER_ID"
+                    table="magento_banner_salesrule" column="banner_id" referenceTable="magento_banner"
+                    referenceColumn="banner_id" onDelete="CASCADE"/>
+        <constraint xsi:type="foreign" referenceId="MAGENTO_BANNER_SALESRULE_RULE_ID_SALESRULE_RULE_ID"
+                    table="magento_banner_salesrule" column="rule_id" referenceTable="salesrule"
+                    referenceColumn="rule_id" onDelete="CASCADE"/>
+        <index referenceId="MAGENTO_BANNER_SALESRULE_RULE_ID" indexType="btree">
+            <column name="rule_id"/>
+        </index>
+    </table>
+</schema>

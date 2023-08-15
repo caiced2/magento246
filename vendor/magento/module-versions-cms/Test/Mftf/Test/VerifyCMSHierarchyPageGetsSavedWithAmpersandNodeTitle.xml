@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+ /**
+  * Copyright © Magento, Inc. All rights reserved.
+  * See COPYING.txt for license details.
+  */
+-->
+<tests xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xsi:noNamespaceSchemaLocation="urn:magento:mftf:Test/etc/testSchema.xsd">
+    <test name="VerifyCMSHierarchyPageGetsSavedWithAmpersandNodeTitle">
+        <annotations>
+            <features value="VersionsCms"/>
+            <stories value="Incorrect encoding of ampersand character in node names."/>
+            <title value="Verify CMS hierarchy page Node gets saved correct encoding of ampersand character in node title"/>
+            <description value="Verify CMS hierarchy page Node gets saved correct encoding of ampersand character in node title"/>
+            <severity value="MAJOR"/>
+            <testCaseId value="AC-3111"/>
+            <useCaseId value="ACP2E-804"/>
+            <group value="cms"/>
+            <group value="versionsCms"/>
+        </annotations>
+        <before>
+            <actionGroup ref="AdminLoginActionGroup" stepKey="adminLogin"/>
+            <actionGroup ref="AddNewNodeActionGroup" stepKey="createNode">
+                <argument name="NodeTitle" value="{{AmpersandHierarchyNode.name}}"/>
+                <argument name="NodeUrlKey" value="{{AmpersandHierarchyNode.urlKey}}"/>
+            </actionGroup>
+        </before>
+        <after>
+            <actionGroup ref="DeleteCurrentHierarchyActionGroup" stepKey="deleteNode"/>
+            <actionGroup ref="AdminLogoutActionGroup" stepKey="adminLogout"/>
+        </after>
+        <click selector="{{HierarchyPageSection.expandNodeByTitle(AmpersandHierarchyNode.name)}}" stepKey="clickExpandButton"/>
+        <executeJS function="return document.querySelector(&quot;#node_label&quot;).value" stepKey="nodeTitle"/>
+        <assertEquals stepKey="assertHierarchyNodeTitle">
+            <actualResult type="string">{{AmpersandHierarchyNode.name}}</actualResult>
+            <expectedResult type="string">$nodeTitle</expectedResult>
+        </assertEquals>
+    </test>
+</tests>

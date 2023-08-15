@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+ /**
+  * Copyright © Magento, Inc. All rights reserved.
+  * See COPYING.txt for license details.
+  */
+-->
+<actionGroups xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:noNamespaceSchemaLocation="urn:magento:mftf:Test/etc/actionGroupSchema.xsd">
+    <actionGroup name="RemoveFromUpdateActionGroup">
+        <arguments>
+            <argument name="fromStaging"/>
+        </arguments>
+        <click selector="{{AdminScheduledChangesSection.scheduleViewEdit(fromStaging.updateName)}}" stepKey="clickScheduleActions"/>
+        <seeElement selector="{{AdminStagingSlideOutSection.removeFromUpdate}}" stepKey="seeUpdatePopup"/>
+        <click selector="{{AdminStagingSlideOutSection.removeFromUpdate}}" stepKey="clickRemoveFromUpdate"/>
+        <see selector="{{AdminRemoveFromUpdateSection.title}}" userInput="Remove Product from Update" stepKey="seeTitleRemoveSection"/>
+    </actionGroup>
+</actionGroups>

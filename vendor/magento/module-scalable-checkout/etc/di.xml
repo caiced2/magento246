@@ -1,0 +1,139 @@
+<?xml version="1.0"?>
+<!--
+/**
+ * Copyright © Magento, Inc. All rights reserved.
+ * See COPYING.txt for license details.
+ */
+-->
+<config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="urn:magento:framework:ObjectManager/etc/config.xsd">
+    <preference for="Magento\Framework\ForeignKey\ConfigInterface" type="Magento\Framework\ForeignKey\Config" />
+    <preference for="Magento\Framework\ForeignKey\ConstraintInterface" type="Magento\Framework\ForeignKey\Constraint" />
+    <preference for="Magento\Quote\Model\Product\QuoteItemsCleanerInterface" type="Magento\ScalableCheckout\Model\Product\QuoteItemsCleaner" />
+    <type name="Magento\Framework\Setup\Declaration\Schema\Sharding">
+        <arguments>
+            <argument name="resources" xsi:type="array">
+                <item name="default" xsi:type="string">default</item>
+                <item name="checkout" xsi:type="string">checkout</item>
+            </argument>
+        </arguments>
+    </type>
+    <type name="Magento\Framework\ForeignKey\ConstraintProcessor">
+        <arguments>
+            <argument name="strategies" xsi:type="array">
+                <item name="CASCADE" xsi:type="object">Magento\Framework\ForeignKey\Strategy\Cascade</item>
+                <item name="RESTRICT" xsi:type="object">Magento\Framework\ForeignKey\Strategy\Restrict</item>
+                <item name="SET NULL" xsi:type="object">Magento\Framework\ForeignKey\Strategy\SetNull</item>
+                <item name="NO ACTION" xsi:type="object">Magento\Framework\ForeignKey\Strategy\NoAction</item>
+                <item name="DB CASCADE" xsi:type="object">Magento\Framework\ForeignKey\Strategy\DbCascade</item>
+                <item name="DB RESTRICT" xsi:type="object">Magento\Framework\ForeignKey\Strategy\DbIgnore</item>
+                <item name="DB SET NULL" xsi:type="object">Magento\Framework\ForeignKey\Strategy\DbIgnore</item>
+                <item name="DB NO ACTION" xsi:type="object">Magento\Framework\ForeignKey\Strategy\DbIgnore</item>
+            </argument>
+        </arguments>
+    </type>
+    <type name="Magento\Framework\Model\ResourceModel\Db\ObjectRelationProcessor">
+        <plugin name="object_constraints_resolver" type="Magento\Framework\ForeignKey\ObjectRelationProcessor\Plugin" />
+    </type>
+    <type name="Magento\Quote\Model\ResourceModel\Quote\Item">
+        <arguments>
+            <argument name="connectionName" xsi:type="string">checkout</argument>
+        </arguments>
+    </type>
+    <type name="Magento\Quote\Model\ResourceModel\Quote">
+        <arguments>
+            <argument name="connectionName" xsi:type="string">checkout</argument>
+        </arguments>
+    </type>
+    <type name="Magento\Quote\Model\ResourceModel\Quote\Payment">
+        <arguments>
+            <argument name="connectionName" xsi:type="string">checkout</argument>
+        </arguments>
+    </type>
+    <type name="Magento\Quote\Model\ResourceModel\Quote\Address">
+        <arguments>
+            <argument name="connectionName" xsi:type="string">checkout</argument>
+        </arguments>
+    </type>
+    <type name="Magento\Quote\Model\ResourceModel\Quote\Address\Item">
+        <arguments>
+            <argument name="connectionName" xsi:type="string">checkout</argument>
+        </arguments>
+    </type>
+    <type name="Magento\Quote\Model\ResourceModel\Quote\Address\Rate">
+        <arguments>
+            <argument name="connectionName" xsi:type="string">checkout</argument>
+        </arguments>
+    </type>
+    <type name="Magento\Quote\Model\ResourceModel\Quote\Item\Option">
+        <arguments>
+            <argument name="connectionName" xsi:type="string">checkout</argument>
+        </arguments>
+    </type>
+    <type name="Magento\CustomerCustomAttributes\Model\ResourceModel\Sales\Quote\Address">
+        <arguments>
+            <argument name="connectionName" xsi:type="string">checkout</argument>
+        </arguments>
+    </type>
+    <type name="Magento\CustomerCustomAttributes\Model\ResourceModel\Sales\Quote">
+        <arguments>
+            <argument name="connectionName" xsi:type="string">checkout</argument>
+        </arguments>
+    </type>
+    <type name="Magento\Quote\Model\ResourceModel\Quote\QuoteIdMask">
+        <arguments>
+            <argument name="connectionName" xsi:type="string">checkout</argument>
+        </arguments>
+    </type>
+    <type name="Magento\CheckoutStaging\Model\ResourceModel\PreviewQuota">
+        <arguments>
+            <argument name="connectionName" xsi:type="string">checkout</argument>
+        </arguments>
+    </type>
+    <type name="Magento\Framework\Console\CommandListInterface">
+        <arguments>
+            <argument name="commands" xsi:type="array">
+                <item name="split-quote-db" xsi:type="object">Magento\ScalableCheckout\Console\Command\SplitQuote</item>
+            </argument>
+        </arguments>
+    </type>
+    <type name="Magento\ScalableCheckout\Console\Command\SplitQuote">
+        <arguments>
+            <argument name="tables" xsi:type="array">
+                <item name="magento_customercustomattributes_sales_flat_quote" xsi:type="string">magento_customercustomattributes_sales_flat_quote</item>
+                <item name="magento_customercustomattributes_sales_flat_quote_address" xsi:type="string">magento_customercustomattributes_sales_flat_quote_address</item>
+                <item name="quote_shipping_rate" xsi:type="string">quote_shipping_rate</item>
+                <item name="quote_address_item" xsi:type="string">quote_address_item</item>
+                <item name="quote_item_option" xsi:type="string">quote_item_option</item>
+                <item name="quote_payment" xsi:type="string">quote_payment</item>
+                <item name="quote_item" xsi:type="string">quote_item</item>
+                <item name="quote_address" xsi:type="string">quote_address</item>
+                <item name="quote_id_mask" xsi:type="string">quote_id_mask</item>
+                <item name="quote" xsi:type="string">quote</item>
+            </argument>
+        </arguments>
+    </type>
+    <type name="Magento\Framework\MessageQueue\MergerFactory">
+        <arguments>
+            <argument name="mergers" xsi:type="array">
+                <item name="quoteItemCleaner" xsi:type="string">Magento\ScalableCheckout\Model\Merger</item>
+            </argument>
+        </arguments>
+    </type>
+    <type name="Magento\Framework\EntityManager\Operation\ValidatorsPool">
+        <arguments>
+            <argument name="validators" xsi:type="array">
+                <item name="default" xsi:type="array">
+                    <item name="create" xsi:type="string">Magento\Framework\Model\ResourceModel\Db\ValidateDataIntegrity</item>
+                    <item name="update" xsi:type="string">Magento\Framework\Model\ResourceModel\Db\ValidateDataIntegrity</item>
+                </item>
+            </argument>
+        </arguments>
+    </type>
+    <type name="Magento\Framework\ForeignKey\ObjectRelationProcessor\EnvironmentConfig">
+        <arguments>
+            <argument name="connectionNames" xsi:type="array">
+                <item name="checkout" xsi:type="string">checkout</item>
+            </argument>
+        </arguments>
+    </type>
+</config>

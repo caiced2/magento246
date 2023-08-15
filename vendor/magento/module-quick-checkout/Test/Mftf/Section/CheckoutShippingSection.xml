@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+ /**
+  * Copyright © Magento, Inc. All rights reserved.
+  * See COPYING.txt for license details.
+  */
+-->
+
+<sections xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:noNamespaceSchemaLocation="urn:magento:mftf:Page/etc/SectionObject.xsd">
+    <section name="CheckoutShippingSection">
+        <element name="otpInputField" type="input" selector="input[data-tid='verification-code-input']"/>
+        <element name="otpIframe" type="text" selector="#customer-email-fieldset iframe" timeout="30"/>
+        <element name="logoutInfoOtpIframe" type="text" selector=".bolt-logout-info iframe" timeout="30"/>
+        <element name="otpCloseBtn" type="text" selector="div[role='dialog'] div[role='button'][data-tid='close']"/>
+        <element name="secondShippingAddress" type="text" selector=".bolt-shipping-address-item:nth-child(2)"/>
+        <element name="newAddressForm" type="text" selector="#co-shipping-form"/>
+        <element name="selectedShippingAddress" type="text" selector=".shipping-address-item.selected-item"/>
+        <element name="notSelectedShippingAddress" type="text" selector=".shipping-address-item.not-selected-item"/>
+    </section>
+</sections>

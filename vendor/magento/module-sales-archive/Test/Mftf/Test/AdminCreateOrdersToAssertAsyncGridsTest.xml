@@ -1,0 +1,111 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+ /**
+  * Copyright © Magento, Inc. All rights reserved.
+  * See COPYING.txt for license details.
+  */
+-->
+
+<tests xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xsi:noNamespaceSchemaLocation="urn:magento:mftf:Test/etc/testSchema.xsd">
+    <test name="AdminCreateOrdersToAssertAsyncGridsTest">
+        <annotations>
+            <features value="SalesArchive"/>
+            <stories value="Sales Archive"/>
+            <title value="Create several orders to assert presence in grids."/>
+            <description value="Create several orders to assert presence in grids when 'Asynchronous indexing' is enabled."/>
+            <severity value="MINOR"/>
+            <testCaseId value="AC-6835"/>
+            <useCaseId value="ACP2E-1199"/>
+            <group value="salesArchive"/>
+        </annotations>
+        <before>
+            <magentoCLI command="config:set {{enabledCashOnDeliveryPayment.label}} {{enabledCashOnDeliveryPayment.value}}" stepKey="enableBankTransfer"/>
+            <magentoCLI command="config:set {{ArchivingEnable.path}} {{ArchivingEnable.value}}" stepKey="enableArchiving"/>
+            <magentoCLI command="config:set {{OrderStatusesArchived.path}} {{OrderStatusesArchived.allValue}}" stepKey="setAllStatusesArchived"/>
+            <magentoCLI command="config:set {{AsyncGridsIndexingConfigData.enable_option}}" stepKey="enableAsyncGridsIndexing"/>
+            <magentoCLI command="cache:clean" stepKey="cleanCache"/>
+
+            <actionGroup ref="AdminLoginActionGroup" stepKey="LoginAsAdmin"/>
+            <createData entity="ApiCategory" stepKey="createCategory"/>
+            <createData entity="defaultSimpleProduct" stepKey="createSimpleProduct">
+                <requiredEntity createDataKey="createCategory"/>
+            </createData>
+        </before>
+        <after>
+            <magentoCLI command="config:set {{disabledCashOnDeliveryPayment.label}} {{disabledCashOnDeliveryPayment.value}}" stepKey="disableBankTransfer"/>
+            <magentoCLI command="config:set {{ArchivingDisabled.path}} {{ArchivingDisabled.value}}" stepKey="disableArchiving"/>
+            <magentoCLI command="config:set {{OrderStatusesArchived.path}} {{OrderStatusesArchived.defaultValue}}" stepKey="setDefaultStatusesArchived"/>
+            <magentoCLI command="config:set {{AsyncGridsIndexingConfigData.disable_option}}" stepKey="disableAsyncGridsIndexing"/>
+            <magentoCLI command="cache:clean" stepKey="cleanCache"/>
+            <deleteData createDataKey="createCategory" stepKey="deleteCategory"/>
+            <deleteData createDataKey="createSimpleProduct" stepKey="deleteProduct"/>
+            <actionGroup ref="AdminLogoutActionGroup" stepKey="logout"/>
+        </after>
+
+        <createData entity="GuestCart" stepKey="createGuestCartOne"/>
+        <createData entity="SimpleCartItem" stepKey="addCartItemOne">
+            <requiredEntity createDataKey="createGuestCartOne"/>
+            <requiredEntity createDataKey="createSimpleProduct"/>
+        </createData>
+        <createData entity="GuestAddressInformation" stepKey="addGuestOrderAddressOne">
+            <requiredEntity createDataKey="createGuestCartOne"/>
+        </createData>
+        <updateData createDataKey="createGuestCartOne" entity="GuestOrderPaymentMethod" stepKey="sendGuestPaymentInformationOne">
+            <requiredEntity createDataKey="createGuestCartOne"/>
+        </updateData>
+
+        <magentoCLI command="cron:run" stepKey="runCronOne"/>
+
+        <createData entity="Invoice" stepKey="invoiceOrderOne">
+            <requiredEntity createDataKey="createGuestCartOne"/>
+        </createData>
+
+        <createData entity="CreditMemo" stepKey="refundOrderOne">
+            <requiredEntity createDataKey="createGuestCartOne"/>
+        </createData>
+
+        <actionGroup ref="AdminOpenOrderByEntityIdActionGroup" stepKey="openOrderOne">
+            <argument name="entityId" value="$createGuestCartOne.return$"/>
+        </actionGroup>
+
+        <grabTextFrom selector="|Order # (\d+)|" stepKey="orderNumberOne"/>
+
+        <!-- Move the created order to the archive -->
+        <actionGroup ref="FilterOrderGridByIdActionGroup" stepKey="filterOrderGridById">
+            <argument name="orderId" value="{$orderNumberOne}"/>
+        </actionGroup>
+        <actionGroup ref="AdminOrderActionOnGridActionGroup" stepKey="actionMoveToArchive">
+            <argument name="action" value="Move to Archive"/>
+            <argument name="orderId" value="{$orderNumberOne}"/>
+        </actionGroup>
+        <!-- Assert Success Message -->
+        <actionGroup ref="AssertAdminMessageCreateIntegrationEntityActionGroup" stepKey="seeSuccessMessage">
+            <argument name="message" value="We archived 1 order(s)."/>
+        </actionGroup>
+
+        <createData entity="GuestCart" stepKey="createGuestCartTwo"/>
+        <createData entity="SimpleCartItem" stepKey="addCartItemTwo">
+            <requiredEntity createDataKey="createGuestCartTwo"/>
+            <requiredEntity createDataKey="createSimpleProduct"/>
+        </createData>
+        <createData entity="GuestAddressInformation" stepKey="addGuestOrderAddressTwo">
+            <requiredEntity createDataKey="createGuestCartTwo"/>
+        </createData>
+        <updateData createDataKey="createGuestCartTwo" entity="GuestOrderPaymentMethod" stepKey="sendGuestPaymentInformationTwo">
+            <requiredEntity createDataKey="createGuestCartTwo"/>
+        </updateData>
+
+        <createData entity="Shipment" stepKey="shipOrderTwo">
+            <requiredEntity createDataKey="createGuestCartTwo"/>
+        </createData>
+
+        <magentoCLI command="cron:run" stepKey="runCronSecond"/>
+
+        <actionGroup ref="AdminOpenOrderByEntityIdActionGroup" stepKey="openOrderTwo">
+            <argument name="entityId" value="$createGuestCartTwo.return$"/>
+        </actionGroup>
+
+        <actionGroup ref="AdminAssertCreatedShipmentsInShipmentsTabActionGroup" stepKey="assertCreatedShipment"/>
+    </test>
+</tests>

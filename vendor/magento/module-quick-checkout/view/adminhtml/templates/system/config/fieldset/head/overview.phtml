@@ -1,0 +1,31 @@
+<?php
+/**
+ * Copyright © Magento, Inc. All rights reserved.
+ * See COPYING.txt for license details.
+ */
+?>
+
+<?php
+/** @var \Magento\Framework\View\Element\Template $block */
+/** @var \Magento\Framework\Escaper $escaper */
+/** @phpcs:ignoreFile */
+?>
+
+<div class="overview">
+    <div class="logo-img"></div>
+    <div class="heading">
+        <?= str_replace('<a ', '<a target="_blank" ', $escaper->escapeHtml(__('Convert one time guest shoppers into loyal account holders with the Quick Checkout experience. To learn more about Adobe\'s partnership with Bolt, see our <a href="%1">Quick Checkout overview</a>.', 'https://experienceleague.adobe.com/docs/commerce-merchant-services/quick-checkout/overview.html'), ['a'])) ?>
+    </div>
+    <div class="setup-instructions">
+        <p><?= $escaper->escapeHtml(__('Setup instructions')) ?></p>
+        <ul>
+            <li><?= str_replace('<a ', '<a target="_blank" ', $escaper->escapeHtml(__('<b>1.</b> Create a <a href="%1">production</a> or <a href="%2">sandbox</a> merchant account with Bolt. Provide all required information to verify your identity.', 'https://merchant.bolt.com/register?platform=magento2', 'https://merchant-sandbox.bolt.com/register?platform=magento2'), ['a', 'b'])) ?></li>
+            <li><?= $escaper->escapeHtml(__('<b>2.</b> Connect with your supported payment providers.'), ['b']) ?></li>
+            <li><?= $escaper->escapeHtml(__('<b>3.</b> Set Enable dropdown to <b>Yes</b> to activate the extension.'), ['b']) ?></li>
+            <li><?= $escaper->escapeHtml(__('<b>4.</b> Provide the unique API Key, Signing Secret and Publishable Key generated in Bolt, into the <i>Account Credentials</i> section of this page.'), ['i', 'b']) ?></li>
+            <li><?= $escaper->escapeHtml(__('<b>5.</b> Define your <i>Service Settings</i>.'), ['i', 'b']) ?></li>
+            <li><?= $escaper->escapeHtml(__('<b>6.</b> Click the <i>Save Config</i> button.'), ['i', 'b']) ?></li>
+            <li><?= $escaper->escapeHtml(__('<b>7.</b> Switch scope to <i>Main Website</i> and click the <i>Configure Callback URL</i> button.'), ['i', 'b']) ?></li>
+        </ul>
+    </div>
+</div>

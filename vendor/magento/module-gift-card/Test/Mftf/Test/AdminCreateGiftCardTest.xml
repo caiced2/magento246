@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+ /**
+  * Copyright © Magento, Inc. All rights reserved.
+  * See COPYING.txt for license details.
+  */
+-->
+<tests xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="urn:magento:mftf:Test/etc/testSchema.xsd">
+    <test name="AdminCreateGiftCardTest">
+        <annotations>
+            <features value="GiftCard"/>
+            <stories value="GiftCard"/>
+            <title value="Create a gift card"/>
+            <description value="Should be able to create a gift card with fixed amounts available"/>
+            <severity value="AVERAGE"/>
+            <testCaseId value="MAGETWO-89913"/>
+            <group value="GiftCard"/>
+        </annotations>
+
+        <before>
+            <actionGroup ref="AdminLoginActionGroup" stepKey="logIn"/>
+        </before>
+
+        <after>
+            <actionGroup ref="AdminLogoutActionGroup" stepKey="logOut"/>
+        </after>
+
+        <!-- Create a gift card with two amount options -->
+        <amOnPage url="{{AdminProductCreatePage.url(GiftCard.attribute_set_id, GiftCard.type_id)}}" stepKey="gotoCreateGiftCard"/>
+        <waitForPageLoad stepKey="wait1"/>
+        <fillField selector="{{AdminProductFormSection.productName}}" userInput="{{GiftCard.name}}" stepKey="fillName"/>
+        <actionGroup ref="addGiftCardAmount" stepKey="addAmount0">
+            <argument name="giftCardAmount" value="GiftCard.amounts[0]"/>
+        </actionGroup>
+        <actionGroup ref="addGiftCardAmount" stepKey="addAmount1">
+            <argument name="giftCardAmount" value="GiftCard.amounts[1]"/>
+        </actionGroup>
+        <fillField selector="{{AdminProductFormSection.productQuantity}}" userInput="100" stepKey="fillQuantity"/>
+        <selectOption selector="{{AdminProductFormSection.productStockStatus}}" userInput="1" stepKey="selectInStock"/>
+        <click selector="{{AdminProductFormActionSection.saveButton}}" stepKey="clickSave"/>
+
+        <!-- Go to the storefront and verify the gift card -->
+        <amOnPage url="{{StorefrontProductPage.url(GiftCard.urlKey)}}" stepKey="gotoGiftCard"/>
+        <waitForPageLoad stepKey="wait2"/>
+        <seeElement selector="{{StorefrontProductInfoMainSection.giftCardAmountOption(GiftCard.amountsInteger[0])}}" stepKey="seeAmounts0"/>
+        <seeElement selector="{{StorefrontProductInfoMainSection.giftCardAmountOption(GiftCard.amountsInteger[1])}}" stepKey="seeAmounts1"/>
+    </test>
+</tests>

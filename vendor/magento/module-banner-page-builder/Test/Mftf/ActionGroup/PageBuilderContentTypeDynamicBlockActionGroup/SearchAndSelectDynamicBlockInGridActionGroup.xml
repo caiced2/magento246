@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+ /**
+  * Copyright © Magento, Inc. All rights reserved.
+  * See COPYING.txt for license details.
+  */
+-->
+<actionGroups xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:noNamespaceSchemaLocation="urn:magento:mftf:Test/etc/actionGroupSchema.xsd">
+    <actionGroup name="searchAndSelectDynamicBlockInGrid">
+        <arguments>
+            <argument name="block" defaultValue=""/>
+        </arguments>
+        <waitForElementVisible selector="{{DynamicBlockOnForm.selectBlockBtn}}" stepKey="waitForSelectBlockBtn"/>
+        <click selector="{{DynamicBlockOnForm.selectBlockBtn}}" stepKey="clickSelectBlockBtn"/>
+        <waitForPageLoad stepKey="waitForGridSlideOut"/>
+        <waitForElementVisible selector="{{DynamicBlockOnGrid.searchBox}}" stepKey="waitForBlockGrid"/>
+        <fillField selector="{{DynamicBlockOnGrid.searchBox}}" userInput="{{block.name}}" stepKey="enterBlockTitle"/>
+        <waitForPageLoad stepKey="waitForPageLoad"/>
+        <click selector="{{DynamicBlockOnGrid.searchBtn}}" stepKey="clickSearchBtn"/>
+        <waitForPageLoad stepKey="waitForPageLoad2"/>
+        <waitForElementVisible selector="{{DynamicBlockOnGrid.selectBtn(block.name)}}" stepKey="waitForSearchResult"/>
+        <click selector="{{DynamicBlockOnGrid.selectBtn(block.name)}}" stepKey="clickSelectBtn"/>
+        <waitForPageLoad stepKey="waitForPageLoad3"/>
+        <waitForElementVisible selector="{{BlockOnForm.title(block.name)}}" stepKey="waitToSeeBlockTitle"/>
+    </actionGroup>
+</actionGroups>

@@ -1,0 +1,96 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+ /**
+  * Copyright © Magento, Inc. All rights reserved.
+  * See COPYING.txt for license details.
+  */
+-->
+<tests xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:noNamespaceSchemaLocation="urn:magento:mftf:Test/etc/testSchema.xsd">
+    <test name="StorefrontCustomerCustomAttributesTest">
+        <annotations>
+            <features value="Customer"/>
+            <stories value="MAGETWO-91760: Custom address attributes displays with wrong value on checkout"/>
+            <title value="Check customer Custom Attributes displays correctly"/>
+            <description value="Customer Custom Attributes should displays correctly"/>
+            <severity value="MAJOR"/>
+            <testCaseId value="MAGETWO-94831"/>
+            <group value="customer"/>
+            <group value="checkout"/>
+        </annotations>
+
+        <before>
+            <!--Login as admin-->
+            <actionGroup ref="AdminLoginActionGroup" stepKey="LoginAsAdmin"/>
+            <!--Create product-->
+            <createData stepKey="category" entity="SimpleSubCategory"/>
+            <createData stepKey="product" entity="SimpleProduct">
+                <requiredEntity createDataKey="category"/>
+            </createData>
+        </before>
+
+        <!--Create new attribute-->
+        <amOnPage url="{{CustomerAddressAttributesPage.url}}" stepKey="navigateToCustomerAddress"/>
+        <waitForPageLoad stepKey="waitForCustomerAttributePageLoaded"/>
+
+        <actionGroup ref="AdminAddOptionsCustomerAttribute" stepKey="adminCreateCustomerFirstAttribute">
+            <argument name="defaultLabel" value="{{AttributeDropdownData.label}}"/>
+            <argument name="attributeCode" value="{{AttributeDropdownData.code}}"/>
+            <argument name="inputType" value="{{AttributeDropdownData.inputType}}"/>
+            <argument name="sortOrder" value="{{AttributeDropdownData.sortOrder}}"/>
+            <argument name="firstOption" value="{{AttributeDropdownData.firstOption}}"/>
+            <argument name="secondOption" value="{{AttributeDropdownData.secondOption}}"/>
+        </actionGroup>
+
+        <actionGroup ref="AdminAddOptionsCustomerAttribute" stepKey="adminCreateCustomerSecondAttribute">
+            <argument name="defaultLabel" value="{{AttributeMultipleData.label}}"/>
+            <argument name="attributeCode" value="{{AttributeMultipleData.code}}"/>
+            <argument name="inputType" value="{{AttributeMultipleData.inputType}}"/>
+            <argument name="sortOrder" value="{{AttributeMultipleData.sortOrder}}"/>
+            <argument name="firstOption" value="{{AttributeMultipleData.firstOption}}"/>
+            <argument name="secondOption" value="{{AttributeMultipleData.secondOption}}"/>
+        </actionGroup>
+
+        <!--Go to Storefront. Add product to cart-->
+        <amOnPage url="/$$product.custom_attributes[url_key]$$.html" stepKey="GoToProduct"/>
+        <actionGroup ref="StorefrontAddToCartCustomOptionsProductPageActionGroup" stepKey="AddProductToCard">
+            <argument name="productName" value="$$product.name$$"/>
+        </actionGroup>
+        <!--Proceed to checkout-->
+        <click selector="{{StorefrontMinicartSection.showCart}}" stepKey="clickCart"/>
+        <click selector="{{StorefrontMinicartSection.goToCheckout}}" stepKey="goToCheckout"/>
+        <waitForPageLoad stepKey="waitForPageLoad"/>
+
+        <!--Verify that created "Test Dropdown" and "Test Multiple select" options appears on the page, and checks the background image are correct-->
+        <see userInput="{{AttributeDropdownData.label}}" stepKey="seeLabelCreatedDropDownMenu"/>
+        <selectOption selector="{{StorefrontCustomerAddressAttributeSection.dropdownField(AttributeDropdownData.code)}}" userInput="{{AttributeDropdownData.firstOption}}" stepKey="selectFirstOptionFromDropDownMenu"/>
+        <selectOption selector="{{StorefrontCustomerAddressAttributeSection.dropdownField(AttributeDropdownData.code)}}" userInput="{{AttributeDropdownData.secondOption}}" stepKey="selectSecondOptionFromDropDownMenu"/>
+        <executeJS function="return window.getComputedStyle({{StorefrontCustomerAddressAttributeSection.customAttributeJS(AttributeDropdownData.code, '0')}}).getPropertyValue('background-image')" stepKey="getDropdownBackgroundImage"/>
+        <seeNumberOfElements selector="{{CheckoutShippingSection.regionOptions}}" stepKey="regionCount" userInput="{{CustomerAddressSimple.region_qty}}"/>
+        <assertStringContainsString stepKey="assertDropdownBackgroundImage">
+            <expectedResult type="string">images/select-bg.svg</expectedResult>
+            <actualResult type="string">{$getDropdownBackgroundImage}</actualResult>
+        </assertStringContainsString>
+
+        <see userInput="{{AttributeMultipleData.label}}" stepKey="seeLabelCreatedMultipleSelectMenu"/>
+        <seeElement selector="{{StorefrontCustomerAddressAttributeSection.multiselectField(AttributeMultipleData.firstOption)}}" stepKey="seeMultipleSelectFirstOption"/>
+        <seeElement selector="{{StorefrontCustomerAddressAttributeSection.multiselectField(AttributeMultipleData.secondOption)}}" stepKey="seeMultipleSelectSecondOption"/>
+        <executeJS function="return window.getComputedStyle({{StorefrontCustomerAddressAttributeSection.customAttributeJS(AttributeMultipleData.code, '0')}}).getPropertyValue('background-image')" stepKey="getMultipleSelectBackgroundImage"/>
+        <assertEquals stepKey="assertMultipleSelectBackgroundImage">
+            <expectedResult type="string">none</expectedResult>
+            <actualResult type="string">{$getMultipleSelectBackgroundImage}</actualResult>
+        </assertEquals>
+
+        <after>
+            <actionGroup ref="AdminDeleteCustomerAttribute" stepKey="adminDeleteFirstCustomerAttribute">
+                <argument name="defaultLabel" value="{{AttributeDropdownData.label}}"/>
+            </actionGroup>
+            <actionGroup ref="AdminDeleteCustomerAttribute" stepKey="adminDeleteSecondCustomerAttribute">
+                <argument name="defaultLabel" value="{{AttributeMultipleData.label}}"/>
+            </actionGroup>
+            <deleteData stepKey="deleteCategory" createDataKey="category"/>
+            <deleteData stepKey="deleteProduct" createDataKey="product"/>
+            <actionGroup ref="AdminLogoutActionGroup" stepKey="logOut"/>
+        </after>
+    </test>
+</tests>

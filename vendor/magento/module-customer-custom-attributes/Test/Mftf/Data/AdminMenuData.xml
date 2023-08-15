@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+ /**
+  * Copyright © Magento, Inc. All rights reserved.
+  * See COPYING.txt for license details.
+  */
+-->
+
+<entities xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+          xsi:noNamespaceSchemaLocation="urn:magento:mftf:DataGenerator/etc/dataProfileSchema.xsd">
+    <entity name="AdminMenuStoresAttributesCustomerAddress">
+        <data key="pageTitle">Customer Address Attributes</data>
+        <data key="title">Customer Address</data>
+        <data key="dataUiId">magento-customercustomattributes-customer-attributes-customer-address-attributes</data>
+    </entity>
+    <entity name="AdminMenuStoreAttributesCustomer">
+        <data key="pageTitle">Customer Attributes</data>
+        <data key="title">Customer</data>
+        <data key="dataUiId">magento-customercustomattributes-customer-attributes-customer-attributes</data>
+    </entity>
+</entities>

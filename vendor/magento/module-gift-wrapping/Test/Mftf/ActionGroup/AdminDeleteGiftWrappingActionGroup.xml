@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+ /**
+  * Copyright © Magento, Inc. All rights reserved.
+  * See COPYING.txt for license details.
+  */
+-->
+<actionGroups xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+              xsi:noNamespaceSchemaLocation="urn:magento:mftf:Test/etc/actionGroupSchema.xsd">
+    <actionGroup name="AdminDeleteGiftWrappingActionGroup">
+        <arguments>
+            <argument name="giftWrappingDesign" type="string"/>
+        </arguments>
+        <amOnPage url="{{AdminGiftWrappingPage.url}}" stepKey="goToGiftWrapping"/>
+        <waitForPageLoad time="30" stepKey="waitForPageLoad"/>
+        <fillField selector="{{AdminGiftWrappingGridSection.giftWrappingFilterDesign}}" userInput="{{giftWrappingDesign}}" stepKey="fillFieldWrappingDesign"/>
+        <click selector="{{AdminGiftWrappingGridSection.applyFilterButton}}" stepKey="clickApply"/>
+        <click selector="{{AdminGiftWrappingGridSection.clickEditRow('1')}}" stepKey="clickRow"/>
+        <click selector="{{AdminGiftWrappingSection.deleteButton}}" stepKey="clickDeleteButton"/>
+        <click selector="{{AdminConfirmationModalSection.ok}}" stepKey="clickAcceptButton"/>
+        <see selector="{{AdminMessagesSection.success}}" userInput="You deleted the gift wrapping." stepKey="giftWrappingMessage"/>
+    </actionGroup>
+
+</actionGroups>

@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+/**
+   * Copyright © Magento, Inc. All rights reserved.
+   * See COPYING.txt for license details.
+   */
+-->
+<sections xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+          xsi:noNamespaceSchemaLocation="urn:magento:mftf:Page/etc/SectionObject.xsd">
+    <section name="AdminAssignToExistingUpdateSection">
+        <element name="searchStagingName" type="input" selector=".data-grid-search-control-wrap input"/>
+        <element name="submitSearch" type="button" selector=".data-grid-search-control-wrap .action-submit" timeout="20"/>
+        <element name="assignToExistingUpdate" type="input" selector="input[data-index='staging_select_mode']"/>
+        <element name="selectAssignToExistingUpdate" type="button" selector="//div[text()='{{var1}}']/parent::td/../td//button" parameterized="true"/>
+        <element name="assignSection" type="text" selector=".data-grid"/>
+        <element name="enabledSelect" type="button" selector="//tr[not(contains(@class, '_disabled'))]//div[text()='{{updateName}}']/parent::td/../td//button" parameterized="true" timeout="10"/>
+    </section>
+</sections>

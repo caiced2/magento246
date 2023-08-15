@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+ /**
+  * Copyright © Magento, Inc. All rights reserved.
+  * See COPYING.txt for license details.
+  */
+-->
+<actionGroups xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:noNamespaceSchemaLocation="urn:magento:mftf:Test/etc/actionGroupSchema.xsd">
+    <actionGroup name="AdminFillMainCustomerCustomAttributeDataActionGroup">
+        <annotations>
+            <description>Fill main customer custom attribute data. Starts on create new customer custom attribute page.</description>
+        </annotations>
+        <arguments>
+            <argument name="defaultLabel" type="string" defaultValue="{{AttributeTextField.frontend_label}}"/>
+            <argument name="attributeCode" type="string" defaultValue="{{AttributeTextField.attribute_code}}"/>
+            <argument name="inputType" type="string" defaultValue="{{AttributeTextField.frontend_input}}"/>
+            <argument name="valuesRequired" type="string" defaultValue="No"/>
+            <argument name="addToColumnOptions" type="string" defaultValue="No"/>
+            <argument name="usedInFilterOptions" type="string" defaultValue="No"/>
+            <argument name="usedInSearchOptions" type="string" defaultValue="No"/>
+            <argument name="useInCustomerSegment" type="string" defaultValue="No"/>
+            <argument name="sortOrder" type="string" defaultValue="{{AttributeTextField.sort_order}}"/>
+            <argument name="showOnStorefront" type="string" defaultValue="{{AttributeTextField.is_visible}}"/>
+        </arguments>
+
+        <waitForElementVisible selector="{{AdminCustomerAttributeEditSection.label}}" stepKey="waitForInput"/>
+        <fillField selector="{{AdminCustomerAttributeEditSection.label}}" userInput="{{defaultLabel}}" stepKey="fillAttributeLabel"/>
+        <fillField selector="{{AdminCustomerAttributeEditSection.code}}" userInput="{{attributeCode}}" stepKey="fillAttributeCode"/>
+        <selectOption selector="{{AdminCustomerAttributeEditSection.inputType}}" userInput="{{inputType}}" stepKey="selectInputType"/>
+        <selectOption selector="{{AdminCustomerAttributeEditSection.valuesRequired}}" userInput="{{valuesRequired}}" stepKey="setValuesRequired"/>
+        <selectOption selector="{{AdminCustomerAttributeEditSection.showInSF}}" userInput="{{showOnStorefront}}" stepKey="setIsVisibleOnStorefront"/>
+        <selectOption selector="{{AdminCustomerAttributeEditSection.usedInGrid}}" userInput="{{addToColumnOptions}}" stepKey="setAddToColumnOptions"/>
+        <selectOption selector="{{AdminCustomerAttributeEditSection.usedInFilterOptions}}" userInput="{{usedInFilterOptions}}" stepKey="setUsedInFilterOptions"/>
+        <selectOption selector="{{AdminCustomerAttributeEditSection.usedInSearchOptions}}" userInput="{{usedInSearchOptions}}" stepKey="setUsedInSearchOptions"/>
+        <selectOption selector="{{AdminCustomerAttributeEditSection.usedForSegment}}" userInput="{{useInCustomerSegment}}" stepKey="setUseInCustomerSegment"/>
+        <fillField selector="{{AdminCustomerAttributeEditSection.sortOrder}}" userInput="{{sortOrder}}" stepKey="fillSortOrder"/>
+    </actionGroup>
+</actionGroups>

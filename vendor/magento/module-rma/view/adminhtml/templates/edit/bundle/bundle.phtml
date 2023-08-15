@@ -1,0 +1,125 @@
+<?php
+/**
+ * Copyright © Magento, Inc. All rights reserved.
+ * See COPYING.txt for license details.
+ */
+
+/**
+ * @var \Magento\Framework\View\Helper\SecureHtmlRenderer $secureRenderer
+ */
+?>
+<?php /** @var $block \Magento\Rma\Block\Adminhtml\Product\Bundle\Items */ ?>
+<?php $_items = $block->getItems(); ?>
+<?php $_bundle = ''; ?>
+<?php foreach ($_items as $_item) {
+    if ($_item->getId() == $block->getParentId()) {
+        $_bundle = $_item->getName();
+        break;
+    }
+} ?>
+<div id="bundle_div_<?= (int) $block->getParentId() ?>">
+    <div class="popup-window-wrapper">
+        <div class="popup-window-title">
+            <span class="title"><?= $block->escapeHtml($_bundle) ?></span>
+            <div class="form-buttons"></div>
+        </div>
+        <div class="popup-window-content">
+            <fieldset class="admin__fieldset">
+                <div class="admin__field admin__field-option">
+                    <input type="radio"
+                           name="items_selector"
+                           id="all_items_<?= (int) $block->getParentId() ?>"
+                           class="admin__control-radio"/>
+                    <label for="all_items_<?= (int) $block->getParentId() ?>"
+                           class="admin__field-label"><?= $block->escapeHtml(__('All Items')) ?></label>
+                </div>
+                <div class="admin__field admin__field-option">
+                    <input type="radio"
+                           name="items_selector"
+                           id="individual_items_<?= (int) $block->getParentId() ?>"
+                           class="admin__control-radio"/>
+                    <label for="individual_items_<?= (int) $block->getParentId() ?>"
+                           class="admin__field-label"><?= $block->escapeHtml(__('Individual Items')) ?></label>
+                </div>
+            <?php foreach ($_items as $_item): ?>
+                <?php if ($_item->getId() == $block->getParentId()) {
+                    continue;
+                } ?>
+                <div class="admin__field admin__field-option">
+                    <?php
+                    $checkboxItemId = 'checkbox_rma_bundle_item_id_'
+                        . (int) $block->getParentId() . '_'
+                        . (int) $_item->getId();
+                    ?>
+                    <?php if (!$_item->getIsOrdered()): ?>
+                        <?php
+                        $checkboxItemName = 'checkbox_rma_bundle_item_name_'
+                            . (int) $block->getParentId() . '_'
+                            . (int) $_item->getId();
+                        $checkboxItemSku = 'checkbox_rma_bundle_item_sku_'
+                            . (int) $block->getParentId() . '_'
+                            . (int) $_item->getId();
+                        $checkboxItemQty = 'checkbox_rma_bundle_item_qty_'
+                            . (int) $block->getParentId() . '_'
+                            . (int) $_item->getId();
+                        if ($_item->getIsQtyDecimal()) {
+                            $availableQty = sprintf("%01.4f", $_item->getAvailableQty());
+                        } else {
+                            $availableQty =  (int)$_item->getAvailableQty();
+                        }
+                        ?>
+                        <input id="<?= /* @noEscape */ $checkboxItemName ?>"
+                               type="hidden"
+                               value="<?= $block->escapeHtml($_item->getName()) ?>"/>
+                        <input id="<?= /* @noEscape */ $checkboxItemSku ?>"
+                               type="hidden"
+                               value="<?= $block->escapeHtml($_item->getSku()) ?>"/>
+                        <input id="<?= /* @noEscape */ $checkboxItemQty ?>"
+                               type="hidden"
+                               value="<?= /* @noEscape */ $availableQty ?>"/>
+                        <input
+                            id="<?= /* @noEscape */ $checkboxItemId; ?>"
+                            type="checkbox" value="<?= (int) $_item->getId() ?>"
+                            class="admin__control-checkbox checkbox_rma_bundle_item_<?= (int)$block->getParentId() ?>"/>
+                    <?php else: ?>
+                        <input type="checkbox" class="admin__control-checkbox" disabled="disabled" />
+                    <?php endif; ?>
+                    <label
+                        for="<?= /* @noEscape */ $checkboxItemId; ?>"
+                        class="admin__field-label"><?= $block->escapeHtml($_item->getName()) ?></label>
+                    <?php if ($_item->getIsOrdered()): ?>
+                        <?= /* @noEscape */
+                        $secureRenderer->renderTag(
+                            'style',
+                            [],
+                            "label[for='" . $checkboxItemId . "'] { color:#999999; }",
+                            false
+                        );
+                        ?>
+                    <?php endif; ?>
+                </div>
+            <?php endforeach; ?>
+            </fieldset>
+        </div>
+        <div class="popup-window-buttons-set">
+            <button id="rma_bundle_ok_button_<?= (int) $block->getParentId() ?>"
+                    class="action-save action-secondary"
+                    type="button"><span><?= $block->escapeHtml(__('OK')) ?></span></button>
+            <button id="rma_bundle_cancel_button_<?= (int) $block->getParentId() ?>"
+                    class="action-close"
+                    type="button"><span><?= $block->escapeHtml(__('Cancel')) ?></span></button>
+        </div>
+        <?= /* @noEscape */
+        $secureRenderer->renderEventListenerAsTag(
+            'onclick',
+            'rma.hidePopups()',
+            '#rma_bundle_ok_button_' . (int) $block->getParentId()
+        ); ?>
+        <?= /* @noEscape */
+        $secureRenderer->renderEventListenerAsTag(
+            'onclick',
+            'rma.hidePopups()',
+            '#rma_bundle_cancel_button_' . (int) $block->getParentId()
+        ); ?>
+    </div>
+</div>

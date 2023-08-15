@@ -1,0 +1,37 @@
+<?php
+/**
+ * Copyright © Magento, Inc. All rights reserved.
+ * See COPYING.txt for license details.
+ */
+
+/** @var \Magento\Framework\View\Helper\SecureHtmlRenderer $secureRenderer */
+?>
+<?php
+    $dateFormatMessage = $block->escapeJs(__('Date Format'));
+    $dateFormatSelectHtml = $block->getDateFormatSelectHtml();
+?>
+<?php $scriptString = <<<script
+require(['prototype'], function(){
+
+//<![CDATA[
+OptionTemplateDate =
+    '<div class="field field-date">'+
+        '<label class="label" for=""><span>{$dateFormatMessage}</label>'+
+        '<div class="control">{$dateFormatSelectHtml}</div>'+
+    '</div>';
+
+selectDateType = {
+    add : function(data) {
+        if (data.date_format) {
+            \$A($(data.prefix+'_attribute_'+data.id+'_date_format').options).each(function(option){
+                if (option.value==data.date_format) option.selected = true;
+            });
+        }
+    }
+}
+//]]>
+
+});
+script;
+?>
+<?= /* @noEscape */ $secureRenderer->renderTag('script', [], $scriptString, false); ?>

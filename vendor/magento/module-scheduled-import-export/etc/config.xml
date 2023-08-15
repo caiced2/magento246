@@ -1,0 +1,17 @@
+<?xml version="1.0"?>
+<!--
+/**
+ * Copyright © Magento, Inc. All rights reserved.
+ * See COPYING.txt for license details.
+ */
+-->
+<config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="urn:magento:module:Magento_Store:etc/config.xsd">
+    <default>
+        <system>
+            <magento_scheduled_import_export_log>
+                <save_days>5</save_days>
+                <error_email_template>system_magento_scheduled_import_export_log_error_email_template</error_email_template>
+            </magento_scheduled_import_export_log>
+        </system>
+    </default>
+</config>

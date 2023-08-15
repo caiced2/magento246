@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+ /**
+  * Copyright © Magento, Inc. All rights reserved.
+  * See COPYING.txt for license details.
+  */
+-->
+<sections xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+          xsi:noNamespaceSchemaLocation="urn:magento:mftf:Page/etc/SectionObject.xsd">
+  <section name="ContentDashboardPageGridSection">
+    <!-- Header -->
+    <element name="columnHeader" type="text" parameterized="true" selector="//*[contains(@data-role,'grid-wrapper')]//table[@data-role='grid']//thead//span[.='{{columnName}}']"/>
+    <!-- Grid -->
+    <element name="status" type="text" selector="//table[@class='data-grid data-grid-draggable']//span[contains(text(),'Status')]"/>
+    <element name="startTime" type="text" selector="//table[@class='data-grid data-grid-draggable']//span[contains(text(),'Start Time')]"/>
+    <element name="updateName" type="text" selector="//table[@class='data-grid data-grid-draggable']//span[contains(text(),'Update Name')]"/>
+    <element name="endTime" type="text" selector="//table[@class='data-grid data-grid-draggable']//span[contains(text(),'End Time')]"/>
+    <element name="description" type="text" selector="//table[@class='data-grid data-grid-draggable']//span[contains(text(),'Description')]"/>
+  </section>
+</sections>

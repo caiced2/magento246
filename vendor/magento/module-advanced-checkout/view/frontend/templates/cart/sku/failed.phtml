@@ -1,0 +1,53 @@
+<?php
+/**
+ * Copyright © Magento, Inc. All rights reserved.
+ * See COPYING.txt for license details.
+ */
+/**
+ * Order by SKU Failed Items grid
+ *
+ * @var $block \Magento\AdvancedCheckout\Block\Sku\Products
+ */
+// phpcs:disable Magento2.Files.LineLength
+// phpcs:disable Magento2.Templates.ThisInTemplate
+?>
+<div class="block block-cart-failed">
+    <div class="block-title"><strong><?= $block->escapeHtml(__('Products Requiring Attention')) ?></strong></div>
+    <div class="block-content">
+        <form action="<?= $block->escapeUrl($block->getFormActionUrl()) ?>" method="post" data-mage-init='{"validation": {}}' class="form form-cart-failed">
+            <div class="cart table-wrapper">
+                <table id="failed-products-table" class="cart items data failed">
+                    <caption class="table-caption"><?= $block->escapeHtml(__('Products Requiring Attention')) ?></caption>
+                    <?php $mergedCells = ($this->helper(\Magento\Tax\Helper\Data::class)->displayCartBothPrices() ? 2 : 1); ?>
+                    <thead>
+                    <tr>
+                        <th class="col item" scope="col"><span><?= $block->escapeHtml(__('Item')) ?></span></th>
+                        <th class="col price" scope="col"><span><?= $block->escapeHtml(__('Price')) ?></span></th>
+                        <th class="col qty" scope="col"><?= $block->escapeHtml(__('Qty')) ?></th>
+                    </tr>
+                    </thead>
+                    <?php foreach ($block->getItems() as $_item) : ?>
+                        <?= $block->getItemHtml($_item) ?>
+                    <?php endforeach ?>
+                </table>
+            </div>
+            <div class="cart primary actions">
+                <button type="submit"
+                        title="<?= $block->escapeHtml(__('Add to Cart')) ?>"
+                        class="action tocart">
+                    <span><?= $block->escapeHtml(__('Add to Cart')) ?></span>
+                </button>
+            </div>
+        </form>
+        <form action="<?= $block->escapeUrl($block->getDeleteAllItemsUrl()) ?>" method="post" data-mage-init='{"validation": {}}' class="form form-cart-failed">
+            <div class="cart secondary actions">
+                <button id="remove_all_failed_items"
+                        type="submit"
+                        class="action clear"
+                        title="<?= $block->escapeHtml(__('Remove All')) ?>">
+                    <span><?= $block->escapeHtml(__('Remove All')) ?></span>
+                </button>
+            </div>
+        </form>
+    </div>
+</div>

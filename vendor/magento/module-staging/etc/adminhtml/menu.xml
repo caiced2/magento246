@@ -1,0 +1,13 @@
+<?xml version="1.0"?>
+<!--
+/**
+ * Copyright © Magento, Inc. All rights reserved.
+ * See COPYING.txt for license details.
+ */
+-->
+<config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="urn:magento:module:Magento_Backend:etc/menu.xsd">
+    <menu>
+        <add id="Magento_Backend::content_staging" title="Content Staging" module="Magento_Backend" sortOrder="30" parent="Magento_Backend::content" resource="Magento_Staging::staging"/>
+        <add id="Magento_Staging::staging" title="Dashboard" module="Magento_Staging" sortOrder="10" parent="Magento_Backend::content_staging" dependsOnModule="Magento_Staging" action="staging/update/" resource="Magento_Staging::staging"/>
+    </menu>
+</config>

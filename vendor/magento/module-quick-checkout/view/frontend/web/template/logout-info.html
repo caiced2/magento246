@@ -1,0 +1,18 @@
+<!--
+/**
+ * Copyright © Magento, Inc. All rights reserved.
+ * See COPYING.txt for license details.
+ */
+-->
+
+<div class="bolt-logout-info" if="visible">
+    <span class="info" translate="infoMsg"></span>
+    <span class="account-email" html="customerEmail()"></span>
+    <a class="action login-bolt" if="isBoltLoginAvailable" click="loginBolt">
+        <span translate="'Login to Bolt'"></span>
+    </a>
+    <a class="action logout-bolt" if="isLoggedInBolt" click="logoutBolt">
+        <span translate="'Log out'"></span>
+    </a>
+    <div style="clear:both"></div>
+</div>

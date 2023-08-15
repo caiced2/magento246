@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+ /**
+  * Copyright © Magento, Inc. All rights reserved.
+  * See COPYING.txt for license details.
+  */
+-->
+<tests xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:noNamespaceSchemaLocation="urn:magento:mftf:Test/etc/testSchema.xsd">
+    <test name="PageBuilderScheduleUpdateDisablePageBuilderInCatalogProductTest" extends="PageBuilderProductDisablePageBuilderTest">
+        <annotations>
+            <features value="PageBuilder"/>
+            <stories value="Schedule Update - Catalog Product"/>
+            <title value="Verify PageBuilder does not appear when disabled in Schedule Update in Catalog Product"/>
+            <description value="This test is intended to ensure that PageBuilder does not appear when disabled for Schedule Update in Catalog Product."/>
+            <severity value="AVERAGE"/>
+            <useCaseId value="MC-5773"/>
+            <testCaseId value="MC-14963"/>
+            <group value="pagebuilder"/>
+            <group value="pagebuilder-ee"/>
+            <group value="pagebuilder-staging"/>
+            <group value="pagebuilder-catalog-product"/>
+            <group value="pagebuilder-disable"/>
+        </annotations>
+        <before>
+            <actionGroup ref="navigateToStagingSlideout" stepKey="navigateToStagingSlideout" after="navigateToCreatedProductEditPage"/>
+            <actionGroup ref="ExpandAdminProductSectionActionGroup" stepKey="expandAdminProductSection">
+                <argument name="sectionSelector" value="{{AdminStagingSlideOutSection.contentTab}}"/>
+                <argument name="sectionDependentSelector" value="{{AdminStagingSlideOutSection.stagingContentTab}}"/>
+            </actionGroup>
+        </before>
+        <dontSeeElementInDOM selector="{{AdminCatalogProductStagingSlideOutSection.descriptionTextArea}}" stepKey="dontSeeDescriptionAreaInDOM"/>
+        <actionGroup ref="navigateToStagingSlideout" stepKey="navigateToStagingSlideout" after="navigateToCreatedProductEditPage"/>
+        <actionGroup ref="ExpandAdminProductSectionActionGroup" stepKey="expandAdminProductSection">
+            <argument name="sectionSelector" value="{{AdminStagingSlideOutSection.contentTab}}"/>
+            <argument name="sectionDependentSelector" value="{{AdminStagingSlideOutSection.stagingContentTab}}"/>
+        </actionGroup>
+        <seeElementInDOM selector="{{AdminCatalogProductStagingSlideOutSection.descriptionTextArea}}" stepKey="seeDescriptionAreaInDOM"/>
+    </test>
+</tests>

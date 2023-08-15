@@ -1,0 +1,94 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+ /**
+  * Copyright © Magento, Inc. All rights reserved.
+  * See COPYING.txt for license details.
+  */
+-->
+<tests xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="urn:magento:mftf:Test/etc/testSchema.xsd">
+    <test name="RestrictedAdminCreateCMSBlockTest">
+        <annotations>
+            <features value="Cms"/>
+            <stories value="MAGETWO-91616 - Unable edit\create CMS/Block content by restricted admin"/>
+            <title value="Create CMS Block by restricted admin"/>
+            <description value="Create CMS Block by restricted admin"/>
+            <severity value="CRITICAL"/>
+            <testCaseId value="MC-25957"/>
+            <group value="cms"/>
+            <group value="WYSIWYGDisabled"/>
+        </annotations>
+        <after>
+            <!--Log out-->
+            <actionGroup ref="AdminLogoutActionGroup" stepKey="logoutFromRestrictedUser"/>
+            <!--Login as admin-->
+            <actionGroup ref="AdminLoginActionGroup" stepKey="loginAsAdminSecondTime"/>
+            <!--Delete Website, store, store view-->
+            <actionGroup ref="AdminDeleteWebsiteActionGroup" stepKey="AdminDeleteWebsiteActionGroup">
+                <argument name="websiteName" value="{{testData.websiteName}}"/>
+            </actionGroup>
+            <magentoCron groups="index" stepKey="reindex"/>
+            <!-- Delete Admin User -->
+            <actionGroup ref="AdminDeleteCustomUserActionGroup" stepKey="deleteAdminUserActionGroup">
+                <argument name="user" value="newAdmin"/>
+            </actionGroup>
+            <actionGroup ref="ClearFiltersAdminDataGridActionGroup" stepKey="resetAdminUserFilters"/>
+            <!--Delete created role-->
+            <actionGroup ref="AdminDeleteUserRoleActionGroup" stepKey="AdminDeleteRoleActionGroup">
+                <argument name="roleName" value="{{adminRole.name}}"/>
+            </actionGroup>
+            <actionGroup ref="ClearFiltersAdminDataGridActionGroup" stepKey="resetUserRoleFilters"/>
+            <!--Log out-->
+            <actionGroup ref="AdminLogoutActionGroup" stepKey="logoutFromAdminUserAgain"/>
+        </after>
+        <!--Login as admin-->
+        <actionGroup ref="AdminLoginActionGroup" stepKey="loginAsAdmin"/>
+        <!--Create new website-->
+        <actionGroup ref="AdminCreateWebsiteActionGroup" stepKey="createNewWebsite">
+            <argument name="newWebsiteName" value="{{testData.websiteName}}"/>
+            <argument name="websiteCode" value="{{testData.websiteCode}}"/>
+        </actionGroup>
+        <!--Create new store-->
+        <actionGroup ref="AdminCreateNewStore" stepKey="createStore">
+            <argument name="website" value="{{testData.websiteName}}"/>
+            <argument name="storeGroupName" value="{{testData.name}}"/>
+            <argument name="storeGroupCode" value="{{testData.storeCode}}"/>
+        </actionGroup>
+        <!--Create new store view-->
+        <actionGroup ref="AdminCreateStoreViewActionGroup" stepKey="createStoreView">
+            <argument name="StoreGroup" value="testData"/>
+        </actionGroup>
+        <magentoCron groups="index" stepKey="reindex"/>
+        <!--Create restricted roles for this user. Access to Shared Catalog only-->
+        <actionGroup ref="AdminCreateRoleActionGroup" stepKey="createUserRole">
+            <argument name="restrictedRole" value="Blocks"/>
+            <argument name="User" value="adminRole"/>
+        </actionGroup>
+        <!--Create new admin user-->
+        <actionGroup ref="AdminCreateUserActionGroup" stepKey="createAdminUser">
+            <argument name="role" value="adminRole"/>
+        </actionGroup>
+        <!--Log out-->
+        <actionGroup ref="AdminLogoutActionGroup" stepKey="logoutFromAdmin"/>
+        <!--Log in as new user-->
+        <actionGroup ref="AdminLoginActionGroup" stepKey="loginAsRestrictedUser">
+            <argument name="username" value="{{newAdmin.username}}"/>
+            <argument name="password" value="{{newAdmin.password}}"/>
+        </actionGroup>
+        <!--Go to Blocks-->
+        <actionGroup ref="goToBlocks" stepKey="goToBlocksPage"/>
+        <!--Create new Block and verify the message-->
+        <actionGroup ref="RestrictedAdminCreateCMSActionGroup" stepKey="createCMSAsRestrictedUser">
+            <argument name="title" value="{{testData.block}}"/>
+            <argument name="id" value="1"/>
+            <argument name="storeView" value="store"/>
+        </actionGroup>
+        <!--Go to Blocks-->
+        <actionGroup ref="goToBlocks" stepKey="goToBlocksPageSecondTime"/>
+        <!--Delete created block-->
+        <actionGroup ref="RestrictedAdminDeleteCMSActionGroup" stepKey="deleteCMSAsRestrictedUser">
+            <argument name="blockName" value="testData.block"/>
+        </actionGroup>
+        <waitForPageLoad stepKey="waitForCMSBlockDeleted"/>
+        <see selector="{{AdminMessagesSection.success}}" userInput="A total of 1 record(s) have been deleted." stepKey="seeBlockIsDeletedMessage"/>
+    </test>
+</tests>

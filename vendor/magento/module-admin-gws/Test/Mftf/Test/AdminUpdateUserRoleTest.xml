@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+ /**
+  * Copyright © Magento, Inc. All rights reserved.
+  * See COPYING.txt for license details.
+  */
+-->
+
+<tests xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xsi:noNamespaceSchemaLocation="urn:magento:mftf:Test/etc/testSchema.xsd">
+    <test name="AdminUpdateUserRoleTest">
+        <before>
+            <remove keyForRemoval="startCreateUserRole"/>
+            <comment userInput="Comment is added to preserve the step key for backward compatibility" stepKey="startCreateUserSalesRole"/>
+            <actionGroup ref="AdminStartCreateUserRoleGwsActionGroup" after="saveNewUser" stepKey="startCreateUserSalesRoleGws">
+                <argument name="roleName" value="{{roleSales.name}}"/>
+                <argument name="userPassword" value="{{_ENV.MAGENTO_ADMIN_PASSWORD}}"/>
+                <argument name="roleScope" value="Custom"/>
+                <argument name="storeName" value="{{_defaultStoreGroup.name}}"/>
+                <argument name="resourceAccess" value="Custom"/>
+            </actionGroup>
+        </before>
+    </test>
+</tests>

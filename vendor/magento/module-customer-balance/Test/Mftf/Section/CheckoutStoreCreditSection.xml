@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+ /**
+  * Copyright © Magento, Inc. All rights reserved.
+  * See COPYING.txt for license details.
+  */
+-->
+
+<sections xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:noNamespaceSchemaLocation="urn:magento:mftf:Page/etc/SectionObject.xsd">
+    <section name="CheckoutStoreCreditSection">
+        <element name="storeCreditTitle" type="text" selector="#customerbalance-placer .payment-option-title span"/>
+        <element name="storeCreditInformation" type="text" selector="#customerbalance-placer .payment-option-inner"/>
+        <element name="useStoreCredit" type="button" selector="#use-customer-balance" timeout="30"/>
+        <element name="remove" type="button" selector="button#delete-customer-balance" timeout="30"/>
+        <element name="price" type="text" selector="tr.totals.balance span.price"/>
+        <element name="availableAmount" type="text" selector="#customerbalance-available-amount"/>
+    </section>
+</sections>

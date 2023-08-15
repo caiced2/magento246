@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+ /**
+  * Copyright © Magento, Inc. All rights reserved.
+  * See COPYING.txt for license details.
+  */
+-->
+<actionGroups xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+              xsi:noNamespaceSchemaLocation="urn:magento:mftf:Test/etc/actionGroupSchema.xsd">
+    <actionGroup name="AssignRelatedCartPriceRuleToBannerActionGroup">
+        <arguments>
+            <argument name="CartPriceRule" />
+        </arguments>
+        <conditionalClick selector="{{AdminBannerBasicActionSection.RelatedPromotionsTab}}" dependentSelector="{{RelatedPromotionsSection.checkIfPromotionTabOpen}}" stepKey="clickIfPromotionTabClosed" visible="true"/>
+        <waitForElementVisible selector="{{RelatedPromotionsSection.AddRules('Add Cart Price Rules')}}" stepKey="waitForCartRuleButton"/>
+        <click selector="{{RelatedPromotionsSection.AddRules('Add Cart Price Rules')}}" stepKey="clickAddCartPriceRulesButton" />
+        <waitForPageLoad stepKey="waitForPageLoad3" />
+        <click selector="{{RelatedPromotionsSection.RuleCheckbox(CartPriceRule.name)}}" stepKey="selectCartRule" />
+        <click selector="{{RelatedPromotionsSection.AddSelectedRulesButton('Add Related Cart Price Rules')}}" stepKey="clickAddSelectedRulesButton" />
+        <waitForElementNotVisible selector="{{RelatedPromotionsSection.SlideOutTitle('Add Related Cart Price Rules')}}" stepKey="waitForSlideOutClose" />
+        <waitForElementVisible selector="{{AdminBannerBasicActionSection.BannerPromotions('banner_catalog_rules')}}" stepKey="waitForBannerSalesRule"/>
+        <waitForLoadingMaskToDisappear stepKey="waitForSalesRuleLoading" />
+        <click selector="{{AdminBannerBasicActionSection.Save}}" stepKey="clickSaveButton" />
+    </actionGroup>
+</actionGroups>

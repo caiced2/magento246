@@ -1,0 +1,78 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+ /**
+  * Copyright © Magento, Inc. All rights reserved.
+  * See COPYING.txt for license details.
+  */
+-->
+
+<tests xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xsi:noNamespaceSchemaLocation="urn:magento:mftf:Test/etc/testSchema.xsd">
+    <test name="StorefrontVerifyCustomerAddressCustomFileAttributePreviewTest">
+        <annotations>
+            <features value="CustomerCustomAttribute"/>
+            <stories value="Storefront verify that customer can see and download uploaded address file"/>
+            <title value="Storefront verify that customer can see and download uploaded address file"/>
+            <description value="Storefront verify that customer can see and download uploaded address file"/>
+            <severity value="MAJOR"/>
+            <testCaseId value="MC-40390"/>
+            <useCaseId value="MC-40329"/>
+            <group value="customer"/>
+            <group value="CustomerCustomAttributes"/>
+        </annotations>
+        <before>
+            <!--Create a customer-->
+            <createData entity="Simple_US_Customer" stepKey="customer"/>
+            <!--Log in to admin-->
+            <actionGroup ref="AdminLoginActionGroup" stepKey="LoginAsAdmin"/>
+            <!--Create customer address custom file attribute-->
+            <actionGroup ref="AdminNavigateToCustomerAddressAttributesPageActionGroup" stepKey="goToCustomerAddress1"/>
+            <actionGroup ref="AdminCreateCustomerNewAttribute" stepKey="createTextFieldAttribute">
+                <argument name="defaultLabel" value="{{AttributeFile.frontend_label}}"/>
+                <argument name="attributeCode" value="{{AttributeFile.attribute_code}}"/>
+                <argument name="inputType" value="{{AttributeFile.frontend_input}}"/>
+                <argument name="sortOrder" value="{{AttributeFile.sort_order}}"/>
+                <argument name="formToUse" value="Customer Account Address"/>
+                <argument name="formToUse1" value="Customer Address Registration"/>
+                <argument name="message" value="You saved the customer address attribute."/>
+            </actionGroup>
+        </before>
+        <after>
+            <!--Delete previously created custom attribute-->
+            <actionGroup ref="AdminNavigateToCustomerAddressAttributesPageActionGroup" stepKey="goToCustomerAddress2"/>
+            <actionGroup ref="AdminDeleteCustomerAttribute" stepKey="adminDeleteCustomerAttribute">
+                <argument name="defaultLabel" value="{{AttributeFile.frontend_label}}"/>
+            </actionGroup>
+            <!--Delete customer-->
+            <deleteData createDataKey="customer" stepKey="deleteCustomer"/>
+            <!--Log out from admin-->
+            <actionGroup ref="AdminLogoutActionGroup" stepKey="logOut"/>
+        </after>
+        <!--Log in on storefront as customer-->
+        <actionGroup ref="LoginToStorefrontActionGroup" stepKey="loginAsCustomer">
+            <argument name="Customer" value="$$customer$$"/>
+        </actionGroup>
+        <!--Navigate to new customer address page-->
+        <actionGroup ref="StorefrontOpenNewCustomerAddressFormActionGroup" stepKey="openAddressForm"/>
+        <!--Fill the address inputs-->
+        <actionGroup ref="StorefrontFillCustomerAddressFormActionGroup" stepKey="fillAddressForm">
+            <argument name="Address" value="US_Address_CA"/>
+        </actionGroup>
+        <!--Check default shipping address-->
+        <actionGroup ref="StorefrontCustomerAddressFormCheckDefaultShippingActionGroup" stepKey="checkDefaultShipping"/>
+        <!--Attach an image to the file input-->
+        <actionGroup ref="StorefrontAttachFileToFileAttributeActionGroup" stepKey="attachFile">
+            <argument name="attributeCode" value="{{AttributeFile.attribute_code}}"/>
+            <argument name="fileName" value="{{SmallImage.file}}"/>
+        </actionGroup>
+        <!--Verify that the image preview is displayed-->
+        <actionGroup ref="StorefrontAssertFileUploadedActionGroup" stepKey="assertThatFileIsUploaded"/>
+        <actionGroup ref="StorefrontVerifyImageAttributePreviewActionGroup" stepKey="VerifyThatImageIsVisible"/>
+        <!--Save the address form-->
+        <actionGroup ref="AdminSaveCustomerAddressActionGroup" stepKey="saveAddress"/>
+        <!--Click on edit default shipping address-->
+        <actionGroup ref="StoreFrontClickEditDefaultShippingAddressActionGroup" stepKey="clickEditAddress"/>
+        <!--Verify that the image preview is displayed an can be downloaded-->
+        <actionGroup ref="StorefrontVerifyImageAttributePreviewActionGroup" stepKey="VerifyThatImageIsVisible2"/>
+    </test>
+</tests>

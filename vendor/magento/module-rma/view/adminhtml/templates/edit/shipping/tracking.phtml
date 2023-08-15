@@ -1,0 +1,142 @@
+<?php
+/**
+ * Copyright © Magento, Inc. All rights reserved.
+ * See COPYING.txt for license details.
+ */
+
+/** @var \Magento\Framework\View\Helper\SecureHtmlRenderer $secureRenderer */
+
+use Magento\Rma\Block\Adminhtml\Rma\Edit\Tab\General\Shipping\Tracking;
+
+/** @var \Magento\Rma\Helper\Data $rmaHelper */
+$rmaHelper = $block->getData('rmaHelper');
+?>
+<?php /** @var Tracking $block */ ?>
+<div class="admin__control-table-wrapper">
+    <table
+        id="shipment_tracking_info"
+        class="data-table admin__control-table">
+        <thead>
+            <tr class="headings">
+                <th class="col-carrier"><?= $block->escapeHtml(__('Carrier')) ?></th>
+                <th class="col-title"><?= $block->escapeHtml(__('Title')) ?></th>
+                <th class="col-number"><?= $block->escapeHtml(__('Number')) ?></th>
+                <th class="col-delete"><?= $block->escapeHtml(__('Action')) ?></th>
+            </tr>
+        </thead>
+        <tfoot>
+            <tr>
+                <td class="col-carrier">
+                    <select name="carrier"
+                            class="admin__control-select">
+                        <option value="custom"><?= $block->escapeHtml(__('Custom Value')) ?></option>
+                        <?php foreach ($block->getCarriers() as $_code => $_name): ?>
+                        <option value="<?= $block->escapeHtmlAttr($_code) ?>"><?= $block->escapeHtml($_name) ?></option>
+                        <?php endforeach; ?>
+                    </select>
+                    <?= /* @noEscape */
+                    $secureRenderer->renderEventListenerAsTag(
+                        'onchange',
+                        'selectCarrier(this)',
+                        '#shipment_tracking_info tfoot td.col-carrier'
+                    ); ?>
+                </td>
+                <td class="col-title">
+                    <input
+                        id="tracking_title"
+                        class="input-text admin__control-text"
+                        type="text"
+                        name="title"
+                        value="" />
+                </td>
+                <td class="col-number">
+                    <input
+                        id="tracking_number"
+                        class="input-text admin__control-text"
+                        type="text"
+                        name="number"
+                        value="" />
+                </td>
+                <td class="col-delete">
+                    <?= $block->getSaveButtonHtml() ?>
+                </td>
+            </tr>
+        </tfoot>
+    <?php if ($_tracks = $block->getAllTracks()): ?>
+        <tbody>
+        <?php $i = 0; foreach ($_tracks as $_track): $i++ ?>
+            <tr class="<?= /* @noEscape */ ($i%2 == 0) ? 'even' : 'odd' ?>">
+                <td class="col-carrier">
+                    <?= $block->escapeHtml($block->getCarrierTitle($_track->getCarrierCode())) ?>
+                </td>
+                <td class="col-title"><?= $block->escapeHtml($_track->getCarrierTitle()) ?></td>
+                <td class="col-number">
+                    <?php if ($_track->isCustom()): ?>
+                        <?= $block->escapeHtml($_track->getTrackNumber()) ?>
+                    <?php else: ?>
+                        <?php $trackingUrl = $rmaHelper->getTrackingPopupUrlBySalesModel($_track) ?>
+                        <a href="#" id="track-<?= /* @noEscape */ $_track->getId() ?>">
+                            <?= $block->escapeHtml($_track->getTrackNumber()) ?>
+                        </a>
+                        <?= /* @noEscape */
+                        $secureRenderer->renderEventListenerAsTag(
+                            'onclick',
+                            "popWin('" . $block->escapeJs($trackingUrl)
+                                . "', 'trackorder', 'width=800,height=600,resizable=yes,scrollbars=yes')",
+                            '#track-' . $_track->getId()
+                        ); ?>
+                        <div id="shipment_tracking_info_response_<?= (int) $_track->getId() ?>"></div>
+                    <?php endif; ?>
+                </td>
+                <td class="col-delete">
+                    <?php $removeUrl = $block->getRemoveUrl($_track); ?>
+                    <button type="button"
+                            id="track-delete-<?= /* @noEscape */ $_track->getId() ?>"
+                            class="action-delete"
+                            title="<?= $block->escapeHtmlAttr(__('Delete')) ?>">
+                        <span><?= $block->escapeHtml(__('Delete')) ?></span>
+                    </button>
+                    <?= /* @noEscape */
+                    $secureRenderer->renderEventListenerAsTag(
+                        'onclick',
+                        "deleteTrackingNumber('" . $block->escapeJs($removeUrl) . "'); return false",
+                        '#track-delete-' . $_track->getId()
+                    ); ?>
+                </td>
+            </tr>
+        <?php endforeach; ?>
+        </tbody>
+    <?php endif; ?>
+    </table>
+</div>
+<?php
+$confirmationMessage = $block->escapeJs(__('Are you sure?'));
+?>
+<?php $scriptString = <<<script
+require(['prototype','Magento_Ui/js/modal/confirm'], function(prototype, confirm) {
+
+//<![CDATA[
+    selectCarrier = function(elem) {
+        var option = elem.options[elem.selectedIndex];
+        $('tracking_title').value = option.value && option.value != 'custom' ? option.text : '';
+    };
+
+    deleteTrackingNumber = function(url) {
+        confirm({
+            content: '{$confirmationMessage}',
+            actions: {
+                /**
+                 * Confirm action.
+                 */
+                confirm: function () {
+                    submitAndReloadArea($('shipment_tracking_info').parentNode, url)
+                }
+            }
+        });
+    };
+//]]>
+
+});
+script;
+?>
+<?= /* @noEscape */ $secureRenderer->renderTag('script', [], $scriptString, false); ?>

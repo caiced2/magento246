@@ -1,0 +1,18 @@
+<?php
+/**
+ * Copyright © Magento, Inc. All rights reserved.
+ * See COPYING.txt for license details.
+ */
+
+?>
+<?php $_source  = $block->getSource() ?>
+<?php $block->setPriceDataObject($_source) ?>
+
+<?php if ((float) $_source->getCustomerBalanceAmount()) : ?>
+    <tr>
+        <td class="label"><?= $block->escapeHtml(__('Store Credit')) ?></td>
+        <td>
+            <?= /* @noEscape */ $block->displayPrices(-$_source->getBaseCustomerBalanceAmount(), -$_source->getCustomerBalanceAmount()) ?>
+        </td>
+    </tr>
+<?php endif; ?>

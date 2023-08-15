@@ -1,0 +1,19 @@
+<?php
+/**
+ * Copyright © Magento, Inc. All rights reserved.
+ * See COPYING.txt for license details.
+ */
+?>
+<?php
+/**
+ * @see \Magento\CustomerBalance\Block\Adminhtml\Customer\Edit\Tab\Customerbalance\Balance
+ */
+?>
+
+<div class="fieldset-wrapper">
+    <div class="fieldset-wrapper-title">
+        <span class="title"><?= $block->escapeHtml(__('Store Credit Balance')) ?></span>
+    </div>
+    <?= $block->getChildHtml('grid') ?>
+    <?= /* @noEscape */ $block->getDeleteOrphanBalancesButton() ?>
+</div>

@@ -1,0 +1,21 @@
+<?xml version="1.0"?>
+<!--
+/**
+ * Copyright © Magento, Inc. All rights reserved.
+ * See COPYING.txt for license details.
+ */
+-->
+<page xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="urn:magento:framework:View/Layout/etc/page_configuration.xsd">
+    <body>
+        <referenceBlock name="customer_account_navigation">
+            <block class="Magento\Framework\View\Element\Html\Link\Current" name="customer-account-navigation-customer-balance-link"
+                   ifconfig="customer/magento_customerbalance/is_enabled">
+                <arguments>
+                    <argument name="name" xsi:type="string">magento_customerbalance</argument>
+                    <argument name="label" translate="true" xsi:type="string">Store Credit</argument>
+                    <argument name="path" xsi:type="string">magento_customerbalance/info</argument>
+                </arguments>
+            </block>
+        </referenceBlock>
+    </body>
+</page>

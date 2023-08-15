@@ -1,0 +1,40 @@
+<?xml version="1.0"?>
+<!--
+/**
+ * Copyright © Magento, Inc. All rights reserved.
+ * See COPYING.txt for license details.
+ */
+-->
+<config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="urn:magento:framework:ObjectManager/etc/config.xsd">
+    <preference for="Magento\CatalogUrlRewrite\Model\Category\Plugin\Category\Remove"
+                type="Magento\CatalogUrlRewriteStaging\Plugin\Catalog\Model\Category\Remove" />
+    <type name="Magento\Staging\Model\Event\Manager">
+        <arguments>
+            <argument name="bannedObservers" xsi:type="array">
+                <item name="catalog_category_prepare_save" xsi:type="array">
+                    <item name="category_save_rewrites_history_setter" xsi:type="string">category_save_rewrites_history_setter</item>
+                </item>
+                <item name="catalog_category_save_after" xsi:type="array">
+                    <item name="process_url_rewrite_saving" xsi:type="string">process_url_rewrite_saving</item>
+                </item>
+                <item name="catalog_category_save_before" xsi:type="array">
+                    <item name="category_url_path_autogeneration" xsi:type="string">process_url_rewrite_moving</item>
+                </item>
+                <item name="catalog_category_move_after" xsi:type="array">
+                    <item name="process_url_rewrite_moving" xsi:type="string">category_url_path_autogeneration</item>
+                </item>
+            </argument>
+        </arguments>
+    </type>
+    <virtualType name="Magento\CatalogStaging\Ui\DataProvider\Product\Form\Modifier\Pool">
+        <arguments>
+            <argument name="modifiers" xsi:type="array">
+                <item name="ProductUrlRewrite" xsi:type="array">
+                    <item name="class" xsi:type="string">Magento\CatalogUrlRewriteStaging\Ui\DataProvider\Product\Form\Modifier\ProductUrlRewrite</item>
+                    <item name="sortOrder" xsi:type="number">90</item>
+                </item>
+            </argument>
+        </arguments>
+    </virtualType>
+    <virtualType name="Magento\CatalogUrlRewriteStaging\Ui\DataProvider\Product\Form\Modifier\ProductUrlRewrite" type="Magento\CatalogUrlRewrite\Ui\DataProvider\Product\Form\Modifier\ProductUrlRewrite"/>
+</config>

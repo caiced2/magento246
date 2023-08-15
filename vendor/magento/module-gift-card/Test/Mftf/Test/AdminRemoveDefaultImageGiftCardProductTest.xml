@@ -1,0 +1,72 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+ /**
+  * Copyright © Magento, Inc. All rights reserved.
+  * See COPYING.txt for license details.
+  */
+-->
+
+<tests xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:noNamespaceSchemaLocation="urn:magento:mftf:Test/etc/testSchema.xsd">
+    <test name="AdminRemoveDefaultImageGiftCardProductTest">
+        <annotations>
+            <features value="GiftCard"/>
+            <stories value="Add/remove images and videos for all product types and category"/>
+            <title value="Admin should be able to remove default images from a Gift Card Product"/>
+            <description value="Admin should be able to remove default images from a Gift Card Product"/>
+            <severity value="MAJOR"/>
+            <testCaseId value="MC-199"/>
+            <group value="GiftCard"/>
+        </annotations>
+        <before>
+            <actionGroup ref="AdminLoginActionGroup" stepKey="loginAsAdmin"/>
+        </before>
+        <after>
+            <amOnPage url="{{AdminLogoutPage.url}}" stepKey="amOnLogoutPage"/>
+        </after>
+
+        <!-- Create product -->
+        <amOnPage url="{{AdminProductIndexPage.url}}" stepKey="adminProductIndexPageAdd"/>
+        <waitForPageLoad stepKey="waitForProductIndexPageLoad"/>
+        <actionGroup ref="GoToCreateProductPageActionGroup" stepKey="goToCreateProductPage">
+            <argument name="product" value="GiftCard"/>
+        </actionGroup>
+        <fillField selector="{{AdminProductFormSection.productName}}" userInput="{{GiftCard.name}}" stepKey="fillProductSkuGiftCard"/>
+        <fillField selector="{{AdminProductFormSection.productSku}}" userInput="{{GiftCard.sku}}" stepKey="fillProductNameGiftCard"/>
+        <selectOption selector="{{AdminProductFormSection.cardType}}" userInput="{{GiftCard.card_type}}" stepKey="selectGiftCardType"/>
+        <actionGroup ref="addGiftCardAmount" stepKey="fillFirstGiftCardAmount">
+            <argument name="giftCardAmount" value="GiftCard.amounts[0]"/>
+        </actionGroup>
+        <actionGroup ref="addGiftCardAmount" stepKey="fillSecondGiftCardAmount">
+            <argument name="giftCardAmount" value="GiftCard.amounts[1]"/>
+        </actionGroup>
+        <seeInField selector="{{AdminProductFormSection.cardAmount('1')}}" userInput="{{GiftCard.amounts[0]}}" stepKey="checkFirstCardAmountFilled"/>
+        <seeInField selector="{{AdminProductFormSection.cardAmount('2')}}" userInput="{{GiftCard.amounts[1]}}" stepKey="checkSecondCardAmountFilled"/>
+        <fillField selector="{{AdminProductFormSection.productQuantity}}" userInput="{{GiftCard.quantity}}" stepKey="fillGiftCardQuantity"/>
+
+        <!-- Add image to product -->
+        <actionGroup ref="AddProductImageActionGroup" stepKey="addImageForProduct">
+            <argument name="image" value="MagentoLogo"/>
+        </actionGroup>
+
+        <!--Save product-->
+        <actionGroup ref="SaveProductFormActionGroup" stepKey="saveProduct"/>
+
+        <!-- Remove image from product -->
+        <actionGroup ref="RemoveProductImageActionGroup" stepKey="removeProductImage"/>
+
+        <actionGroup ref="SaveProductFormActionGroup" stepKey="saveProductFormAfterRemove"/>
+
+        <!-- Assert product image not in admin product form -->
+        <actionGroup ref="AssertProductImageNotInAdminProductPageActionGroup" stepKey="AssertProductImageNotInAdminProductPageActionGroup"/>
+
+        <!-- Assert product in storefront product page -->
+        <actionGroup ref="AssertProductNameAndSkuInStorefrontProductPageActionGroup" stepKey="AssertProductInStorefrontProductPageAfterRemove">
+            <argument name="product" value="GiftCard"/>
+        </actionGroup>
+        <!-- Assert product image not in storefront product page -->
+        <actionGroup ref="AssertProductImageNotInStorefrontProductPageActionGroup" stepKey="assertProductImageNotInStorefrontProductPage">
+            <argument name="product" value="GiftCard"/>
+        </actionGroup>
+    </test>
+</tests>

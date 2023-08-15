@@ -1,0 +1,88 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+ /**
+  * Copyright © Magento, Inc. All rights reserved.
+  * See COPYING.txt for license details.
+  */
+-->
+
+<tests xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xsi:noNamespaceSchemaLocation="urn:magento:mftf:Test/etc/testSchema.xsd">
+    <test name="AdminCreateCustomerSegmentWithConditionsCustomAttributeTest">
+        <annotations>
+            <stories value="Create Customer Segment Entity With Customer Conditions"/>
+            <title value="Create customer segment entity with customer conditions custom attribute"/>
+            <description value="Admin should be able to create customer segment entity with customer conditions custom attribute"/>
+            <severity value="CRITICAL"/>
+            <testCaseId value="MC-14505"/>
+            <group value="CustomerSegment"/>
+            <group value="mtf_migrated"/>
+        </annotations>
+        <before>
+            <actionGroup ref="AdminLoginActionGroup" stepKey="LoginAsAdmin"/>
+            <!--Test customer is created-->
+            <createData entity="Retailer_Customer" stepKey="createCustomer"/>
+            <!--Add conditions custom attribute -->
+            <actionGroup ref="AdminCreateAndEditCustomerAttributeActionGroup" stepKey="createAttribute">
+                <argument name="customerAttribute" value="AttributeMultiSelectForSegment" />
+            </actionGroup>
+            <!-- Add attribute options -->
+            <scrollToTopOfPage stepKey="scrollToTop"/>
+            <actionGroup ref="AdminAddCustomerAttributeOptionsTwoMultipleActionGroup" stepKey="addOptions">
+                <argument name="customerAttribute" value="AttributeMultiSelectForSegment" />
+            </actionGroup>
+            <magentoCron groups="index" stepKey="reindex"/>
+             <!--Open edit customer page -->
+            <actionGroup ref="OpenEditCustomerFromAdminActionGroup" stepKey="editCustomer">
+                <argument name="customer" value="$createCustomer$"/>
+            </actionGroup>
+            <!--Add condition to customer-->
+            <click selector="{{AdminCustomerAccountInformationSection.accountInformationTab}}" stepKey="clickTabAccountInfo"/>
+            <waitForPageLoad stepKey="waitForCustomerPageLoad1"/>
+            <selectOption selector="{{AdminCustomerAccountInformationSection.customAttribute(AttributeMultiSelectForSegment.attribute_code)}}"  userInput="{{AttributeMultiSelectForSegment.option1}}" stepKey="selectOption"/>
+            <click selector="{{AdminCustomerMainActionsSection.saveButton}}" stepKey="saveChanges"/>
+            <waitForPageLoad stepKey="waitForMessage"/>
+            <see userInput="You saved the customer." stepKey="seeSuccessMessage"/>
+        </before>
+        <after>
+            <deleteData createDataKey="createCustomer" stepKey="deleteCustomer"/>
+            <actionGroup ref="FindAndDeleteCustomerSegmentActionGroup" stepKey="deleteSegment">
+                <argument name="segmentName" value="{{CustomerSegmentRetailer.name}}"/>
+            </actionGroup>
+            <actionGroup ref="AdminDeleteCustomerAttributeActionGroup" stepKey="deleteAttribute">
+                    <argument name="attributeData" value="AttributeMultiSelectForSegment"/>
+            </actionGroup>
+            <magentoCron groups="index" stepKey="reindex"/>
+            <actionGroup ref="AdminLogoutActionGroup" stepKey="logout"/>
+        </after>
+
+        <!--Navigate to CUSTOMERS->Segment > Click 'Add Segment' button-->
+        <actionGroup ref="CreateCustomerSegmentWithContinueEditActionGroup" stepKey="createCustomerSegment">
+            <argument name="customerSegment" value="CustomerSegmentRetailer"/>
+        </actionGroup>
+
+        <!-- Fill all fields according to dataset -->
+        <click selector="{{AdminCustomerSegmentEditSection.conditionsTab}}" stepKey="proceedToConditionsTab"/>
+        <click selector="{{AdminCustomerSegmentConditionsEditSection.addCondition}}" stepKey="clickToAddCondition" />
+        <selectOption userInput="{{AttributeMultiSelectForSegment.frontend_label}}" selector="{{AdminCustomerSegmentConditionsEditSection.conditions}}" stepKey="selectCondition"/>
+        <waitForPageLoad stepKey="waitForConditionsToAppear"/>
+        <doubleClick selector="{{AdminCustomerSegmentConditionsEditSection.conditionValueChooser}}" stepKey="showField"/>
+        <click selector="{{AdminCustomerSegmentConditionsEditSection.conditionValue}}" stepKey="activateField"/>
+        <selectOption userInput="{{AttributeMultiSelectForSegment.option1}}" selector="{{AdminCustomerSegmentConditionsEditSection.conditionValue}}" stepKey="fillField"/>
+
+        <!--click 'Save and Continue Edit' button-->
+        <click selector="{{AdminMainActionsSection.saveAndContinue}}" stepKey="saveSegment"/>
+        <see userInput="You saved the segment." selector="{{AdminMessagesSection.success}}" stepKey="checkSuccessMessage"/>
+        <actionGroup ref="CliConsumerStartActionGroup" stepKey="startMessageQueue">
+            <argument name="consumerName" value="{{AdminCustomerSegmentConsumerData.consumerName}}"/>
+            <argument name="maxMessages" value="{{AdminCustomerSegmentConsumerData.messageLimit}}"/>
+        </actionGroup>
+        <reloadPage stepKey="refreshPage"/>
+        <waitForPageLoad stepKey="waitForPageLoaded"/>
+
+        <!--Check that customer ia matched to segment -->
+        <actionGroup ref="AdminCheckCustomerInSegmentActionGroup" stepKey="checkCustomerInSegment">
+            <argument name="customer" value="$createCustomer$"/>
+        </actionGroup>
+    </test>
+</tests>

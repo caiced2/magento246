@@ -1,0 +1,104 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+/**
+ * Copyright © Magento, Inc. All rights reserved.
+ * See COPYING.txt for license details.
+ */
+-->
+
+<tests xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xsi:noNamespaceSchemaLocation="urn:magento:mftf:Test/etc/testSchema.xsd">
+    <test name="UpdateTextAreaCustomerAttributeTest">
+        <annotations>
+            <features value="CustomerCustomAttributes"/>
+            <stories value="Update Customer Custom Attributes"/>
+            <title value="Update text area customer attribute test"/>
+            <description value="Update text area customer attribute"/>
+            <severity value="MAJOR"/>
+            <testCaseId value="MC-14575"/>
+            <group value="CustomerCustomAttributes"/>
+            <group value="mtf_migrated"/>
+        </annotations>
+        <before>
+            <!-- Login as admin -->
+            <actionGroup ref="AdminLoginActionGroup" stepKey="LoginAsAdmin"/>
+        </before>
+        <after>
+            <magentoCron groups="index" stepKey="reindex"/>
+            <!-- Logout admin -->
+            <actionGroup ref="AdminLogoutActionGroup" stepKey="logout"/>
+        </after>
+
+        <!-- Go to Stores > Customer -->
+        <amOnPage url="{{CustomerAttributesPage.url}}" stepKey="navigateToCustomerAttributes"/>
+        <waitForPageLoad stepKey="waitForAttributePageLoad"/>
+
+        <!-- Create customer attribute -->
+        <actionGroup ref="AdminCreateCustomerAttribute" stepKey="createTextAreaAttribute">
+            <argument name="defaultLabel" value="{{AttributeTextArea.frontend_label}}"/>
+            <argument name="attributeCode" value="{{AttributeTextArea.attribute_code}}"/>
+            <argument name="inputType" value="{{AttributeTextArea.frontend_input}}"/>
+            <argument name="sortOrder" value="{{AttributeTextArea.sort_order}}"/>
+            <argument name="formToUse" value="Customer Registration"/>
+            <argument name="message" value="You saved the customer attribute."/>
+        </actionGroup>
+
+        <!-- Open created customer attribute -->
+        <actionGroup ref="FilterCustomerAttributesByAttributeCodeAndDefaultLabelActionGroup" stepKey="findCreatedAttribute">
+            <argument name="defaultLabel" value="{{AttributeTextArea.frontend_label}}"/>
+            <argument name="attributeCode" value="{{AttributeTextArea.attribute_code}}"/>
+        </actionGroup>
+        <click selector="{{AdminCustomerAttributeSection.firstAttribute}}" stepKey="clickFirstRow"/>
+
+        <!-- Change data according to dataset -->
+        <fillField selector="{{CustomerAccountSection.label}}" userInput="{{AttributeTextAreaUpdate.frontend_label}}" stepKey="typeDefaultLabel"/>
+        <selectOption selector="{{CustomerAccountSection.valuesRequired}}" userInput="Yes" stepKey="setValuesRequired"/>
+        <selectOption selector="{{CustomerAccountSection.usedForSegment}}" userInput="Yes" stepKey="setUseInCustomerSegment"/>
+        <selectOption selector="{{CustomerAccountSection.inputFilter}}" userInput="Strip HTML Tags" stepKey="fillInputFilter"/>
+        <selectOption selector="{{CustomerAccountSection.showInSF}}" userInput="{{AttributeTextAreaUpdate.is_visible}}" stepKey="setSFOption"/>
+        <selectOption selector="{{CustomerAccountSection.selectFormToUse}}" parameterArray="[{{AttributeTextAreaUpdate.used_in_forms}}]" stepKey="setFormsToUse"/>
+        <fillField selector="{{CustomerAccountSection.sortOrder}}" userInput="{{AttributeTextAreaUpdate.sort_order}}" stepKey="typeSortOrder"/>
+        <click selector="{{AttributeEditSection.saveAttribute}}" stepKey="saveAttribute"/>
+        <waitForPageLoad stepKey="WaitForAttributeSaved"/>
+
+        <!-- Assert customer custom attribute success save message -->
+        <see selector="{{AdminMessagesSection.success}}" userInput="You saved the customer attribute." stepKey="verifyAttributeCreated"/>
+
+        <!-- Assert customer custom attribute in grid -->
+        <actionGroup ref="FilterCustomerAttributesByAttributeCodeAndDefaultLabelActionGroup" stepKey="findChangedAttribute">
+            <argument name="defaultLabel" value="{{AttributeTextAreaUpdate.frontend_label}}"/>
+            <argument name="attributeCode" value="{{AttributeTextArea.attribute_code}}"/>
+        </actionGroup>
+        <seeElement selector="{{AdminCustomerAttributeSection.firstAttribute}}" stepKey="seeChangedAttribute"/>
+
+        <!-- Create new segment -->
+        <actionGroup ref="CreateCustomerSegmentActionGroup" stepKey="createCustomerSegment"/>
+
+        <!-- Search and open new Segment -->
+        <actionGroup ref="FindAndOpenCustomerSegmentActionGroup" stepKey="openCustomerSegment">
+            <argument name="segmentName" value="{{CustomerSegmentForNoorders.name}}"/>
+        </actionGroup>
+
+        <!-- Assert customer custom attribute in customer segment -->
+        <actionGroup ref="CreateCustomerSegmentConditionWithCustomerCustomAttributeActionGroup" stepKey="createCustomerSegmentConditions">
+            <argument name="attributeLabel" value="{{AttributeTextAreaUpdate.frontend_label}}"/>
+        </actionGroup>
+
+        <!-- Assert customer custom attribute on customer register -->
+        <amOnPage url="{{StorefrontHomePage.url}}" stepKey="amOnStorefrontPage"/>
+        <click stepKey="clickOnCreateAccountLink" selector="{{StorefrontPanelHeaderSection.createAnAccountLink}}"/>
+        <seeElement selector="{{StoreFrontCustomerAdvancedAttributesSection.attributeLabel(AttributeTextAreaUpdate.frontend_label)}}" stepKey="assertCustomerCustomAttribute"/>
+
+        <!-- Delete created attribute -->
+        <amOnPage url="{{CustomerAttributesPage.url}}" stepKey="navigateToCustomerAttributesPage"/>
+        <waitForPageLoad stepKey="waitForCustomerAttributePageLoad"/>
+        <actionGroup ref="DeleteCustomerAttribute" stepKey="deleteCustomerAttribute">
+            <argument name="defaultLabel" value="{{AttributeTextAreaUpdate.frontend_label}}"/>
+        </actionGroup>
+
+        <!-- Delete customer segment -->
+        <actionGroup ref="FindAndDeleteCustomerSegmentActionGroup" stepKey="deleteCustomerSegment">
+            <argument name="segmentName" value="{{CustomerSegmentForNoorders.name}}"/>
+        </actionGroup>
+    </test>
+</tests>

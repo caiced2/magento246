@@ -1,0 +1,219 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+ /**
+  * Copyright © Magento, Inc. All rights reserved.
+  * See COPYING.txt for license details.
+  */
+-->
+
+<tests xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xsi:noNamespaceSchemaLocation="urn:magento:mftf:Test/etc/testSchema.xsd">
+    <test name="AdminProductChangeImagesBeforeScheduledUpdateTest">
+        <annotations>
+            <stories value="Create scheduled product updates"/>
+            <title value="Admin user should be able to change images before scheduled update start and changes should remain after scheduled update"/>
+            <description value="Admin user should be able to change images before scheduled update start and changes should remain after scheduled update"/>
+            <severity value="MAJOR"/>
+            <useCaseId value="MC-40604"/>
+            <testCaseId value="MC-42500"/>
+            <group value="CatalogStaging"/>
+            <skip>
+              <issueId value="ACQE-3844"/>
+            </skip>
+        </annotations>
+        <before>
+            <createData entity="_defaultCategory" stepKey="createCategory"/>
+            <createData entity="SimpleProduct" stepKey="createProduct">
+                <requiredEntity createDataKey="createCategory"/>
+            </createData>
+            <actionGroup ref="AdminLoginActionGroup" stepKey="loginAsAdmin"/>
+        </before>
+        <after>
+            <deleteData createDataKey="createProduct" stepKey="deleteProduct"/>
+            <deleteData createDataKey="createCategory" stepKey="deleteCategory"/>
+        </after>
+        <!-- Open product edit page -->
+        <actionGroup ref="AdminProductPageOpenByIdActionGroup" stepKey="openProduct1">
+            <argument name="productId" value="$createProduct.id$"/>
+        </actionGroup>
+        <!-- Add first image to main product -->
+        <actionGroup ref="AddProductImageActionGroup" stepKey="addFirstImageToMainProduct1">
+            <argument name="image" value="MagentoLogo"/>
+        </actionGroup>
+        <!-- Add second image to main product -->
+        <actionGroup ref="AddProductImageActionGroup" stepKey="addSecondImageToMainProduct1">
+            <argument name="image" value="TestImageAdobe"/>
+        </actionGroup>
+        <!-- Change first image alt text to "first image alt text 1" -->
+        <actionGroup ref="AdminProductChangeImageAltTextActionGroup" stepKey="changeFirstImageAltTextOnMainProduct1">
+            <argument name="image" value="MagentoLogo"/>
+            <argument name="altText" value="first image alt text 1"/>
+        </actionGroup>
+        <!-- Change second image alt text to "second image alt text 1" -->
+        <actionGroup ref="AdminProductChangeImageAltTextActionGroup" stepKey="changeSecondImageAltTextOnMainProduct1">
+            <argument name="image" value="TestImageAdobe"/>
+            <argument name="altText" value="second image alt text 1"/>
+        </actionGroup>
+        <!-- Save product -->
+        <actionGroup ref="SaveProductFormActionGroup" stepKey="saveSimpleProduct"/>
+        <!-- Verify that first image is present in main product -->
+        <actionGroup ref="AdminAssertProductImageOnProductPageActionGroup" stepKey="assertFirstImageIsPresentOnMainProduct1">
+            <argument name="image" value="{{MagentoLogo.filename}}"/>
+        </actionGroup>
+        <!-- Verify that second image is present in main product -->
+        <actionGroup ref="AdminAssertProductImageOnProductPageActionGroup" stepKey="assertSecondImageIsPresentOnMainProduct1">
+            <argument name="image" value="{{TestImageAdobe.filename}}"/>
+        </actionGroup>
+
+        <!-- PART 2: Create scheduled update and replace the first image with a new image -->
+
+        <!-- Create new scheduled update-->
+        <generateDate date="+2 minute" format="m/d/Y g:i A" stepKey="generateStartDate"/>
+        <generateDate date="+4 minute" format="m/d/Y g:i A" stepKey="generateEndDate"/>
+        <actionGroup ref="AdminFillScheduleUpdateWithoutSaving" stepKey="createNewStagingUpdate">
+            <argument name="staging" value="S5UpdateNameStaging"/>
+            <argument name="timeStart" value="{$generateStartDate}"/>
+            <argument name="timeEnd" value="{$generateEndDate}"/>
+        </actionGroup>
+        <!-- Remove first image from scheduled update -->
+        <actionGroup ref="AdminProductScheduledUpdateRemoveImageActionGroup" stepKey="removeSecondImageFromScheduledUpdate">
+            <argument name="image" value="MagentoLogo"/>
+        </actionGroup>
+        <!-- Replace first image with a new image in scheduled update -->
+        <actionGroup ref="AdminProductScheduledUpdateAddImageActionGroup" stepKey="addSecondImageToScheduledUpdate">
+            <argument name="image" value="AdobeThumbImage"/>
+        </actionGroup>
+        <!-- Change first image alt text to "first image alt text scheduled" -->
+        <actionGroup ref="AdminProductScheduledUpdateChangeImageAltTextActionGroup" stepKey="changeFirstImageAltTextOnScheduledUpdate">
+            <argument name="image" value="TestImageAdobe"/>
+            <argument name="altText" value="first image alt text scheduled"/>
+        </actionGroup>
+        <!-- Change second image alt text to "second image alt text scheduled" -->
+        <actionGroup ref="AdminProductScheduledUpdateChangeImageAltTextActionGroup" stepKey="changeSecondImageAltTextOnScheduledUpdate">
+            <argument name="image" value="AdobeThumbImage"/>
+            <argument name="altText" value="second image alt text scheduled"/>
+        </actionGroup>
+        <!-- Save new scheduled update -->
+        <actionGroup ref="SaveScheduleUpdateForProductActionGroup" stepKey="saveProductScheduleUpdate">
+            <argument name="staging" value="S5UpdateNameStaging"/>
+        </actionGroup>
+
+        <!-- PART 3: Open scheduled update and verify images changes -->
+
+        <!-- Open scheduled update for edit -->
+        <actionGroup ref="AdminScheduledUpdateEditActionGroup" stepKey="OpenScheduledUpdate">
+            <argument name="staging" value="S5UpdateNameStaging"/>
+        </actionGroup>
+        <!-- Verify that first image is present in scheduled update-->
+        <actionGroup ref="AdminProductScheduledUpdateAssertImageIsPresentActionGroup" stepKey="assertFirstImageIsPresentOnScheduledUpdate">
+            <argument name="image" value="TestImageAdobe"/>
+        </actionGroup>
+        <!-- Verify that second image is present in scheduled update-->
+        <actionGroup ref="AdminProductScheduledUpdateAssertImageIsPresentActionGroup" stepKey="assertSecondImageIsPresentOnScheduledUpdate">
+            <argument name="image" value="AdobeThumbImage"/>
+        </actionGroup>
+        <!-- Verify that main product's first image is not present in scheduled update -->
+        <dontSeeElementInDOM selector="{{AdminProductScheduledUpdateImagesSection.imageFile(MagentoLogo.fileName)}}" stepKey="seeProductImageName"/>
+        <!-- Verify that first image alt text is "first image alt text scheduled" -->
+        <actionGroup ref="AdminProductScheduledUpdateAssertImageAltTextActionGroup" stepKey="assertFirstImageAltTextOnScheduledUpdate">
+            <argument name="image" value="TestImageAdobe"/>
+            <argument name="altText" value="first image alt text scheduled"/>
+        </actionGroup>
+        <!-- Verify that second image alt text is "second image alt text scheduled" -->
+        <actionGroup ref="AdminProductScheduledUpdateAssertImageAltTextActionGroup" stepKey="assertSecondImageAltTextOnScheduledUpdate">
+            <argument name="image" value="AdobeThumbImage"/>
+            <argument name="altText" value="second image alt text scheduled"/>
+        </actionGroup>
+
+        <!-- PART 4: Open main product, verify images, change alt text and upload new image -->
+
+        <!-- Open product edit page -->
+        <actionGroup ref="AdminProductPageOpenByIdActionGroup" stepKey="openProduct2">
+            <argument name="productId" value="$createProduct.id$"/>
+        </actionGroup>
+        <!-- Verify that first image is present in main product -->
+        <actionGroup ref="AdminAssertProductImageOnProductPageActionGroup" stepKey="assertFirstImageIsPresentOnMainProduct2">
+            <argument name="image" value="{{MagentoLogo.filename}}"/>
+        </actionGroup>
+        <!-- Verify that second image is present in main product -->
+        <actionGroup ref="AdminAssertProductImageOnProductPageActionGroup" stepKey="assertSecondImageIsPresentOnMainProduct2">
+            <argument name="image" value="{{TestImageAdobe.filename}}"/>
+        </actionGroup>
+        <!-- Verify that first image alt text is "first image alt text 1"-->
+        <actionGroup ref="AdminProductAssertImageAltTextActionGroup" stepKey="assertFirstImageAltTextOnMainProduct2">
+            <argument name="image" value="MagentoLogo"/>
+            <argument name="altText" value="first image alt text 1"/>
+        </actionGroup>
+        <!-- Verify that second image alt text is "second image alt text 1"-->
+        <actionGroup ref="AdminProductAssertImageAltTextActionGroup" stepKey="assertSecondImageAltTextOnMainProduct2">
+            <argument name="image" value="TestImageAdobe"/>
+            <argument name="altText" value="second image alt text 1"/>
+        </actionGroup>
+        <!-- Add third image to main product -->
+        <actionGroup ref="AddProductImageActionGroup" stepKey="addSecondImage">
+            <argument name="image" value="AdobeSmallImage"/>
+        </actionGroup>
+        <!-- Change first image alt text to "first image alt text 2" -->
+        <actionGroup ref="AdminProductChangeImageAltTextActionGroup" stepKey="changeFirstImageAltTextOnMainProduct2">
+            <argument name="image" value="MagentoLogo"/>
+            <argument name="altText" value="first image alt text 2"/>
+        </actionGroup>
+        <!-- Change second image alt text to "second image alt text 2" -->
+        <actionGroup ref="AdminProductChangeImageAltTextActionGroup" stepKey="changeSecondImageAltTextOnMainProduct2">
+            <argument name="image" value="TestImageAdobe"/>
+            <argument name="altText" value="second image alt text 2"/>
+        </actionGroup>
+        <!-- Change third image alt text to "third image alt text 2" -->
+        <actionGroup ref="AdminProductChangeImageAltTextActionGroup" stepKey="changeThirdImageAltTextOnMainProduct2">
+            <argument name="image" value="AdobeSmallImage"/>
+            <argument name="altText" value="third image alt text 2"/>
+        </actionGroup>
+        <!-- Save product -->
+        <actionGroup ref="SaveProductFormActionGroup" stepKey="saveMainProduct"/>
+
+        <!-- PART 5: Wait until the scheduled update ends -->
+
+        <!-- Wait for scheduled update start time -->
+        <wait time="120" stepKey="waitForUpdateToStart"/>
+        <!-- Run cron to activate scheduled update -->
+        <actionGroup ref="ApplyUpdatedRuleStagingByCron" stepKey="runCronToActivateScheduledUpdate"/>
+        <!-- Wait for scheduled update end time -->
+        <wait time="180" stepKey="waitForUpdateToEnd"/>
+        <!-- Run cron to deactivate scheduled update -->
+        <actionGroup ref="ApplyUpdatedRuleStagingByCron" stepKey="runCronToDeactivateScheduledUpdate"/>
+
+        <!-- PART 6: Verify that images changes are the same as before the scheduled update -->
+
+        <!-- Open product edit page -->
+        <actionGroup ref="AdminProductPageOpenByIdActionGroup" stepKey="openProduct3">
+            <argument name="productId" value="$createProduct.id$"/>
+        </actionGroup>
+        <!-- Verify that first image is present in main product -->
+        <actionGroup ref="AdminAssertProductImageOnProductPageActionGroup" stepKey="assertFirstImageIsPresentOnMainProduct3">
+            <argument name="image" value="{{MagentoLogo.filename}}"/>
+        </actionGroup>
+        <!-- Verify that second image is present in main product -->
+        <actionGroup ref="AdminAssertProductImageOnProductPageActionGroup" stepKey="assertSecondImageIsPresentOnMainProduct3">
+            <argument name="image" value="{{TestImageAdobe.filename}}"/>
+        </actionGroup>
+        <!-- Verify that third image is present in main product -->
+        <actionGroup ref="AdminAssertProductImageOnProductPageActionGroup" stepKey="assertThirdImageIsPresentOnMainProduct3">
+            <argument name="image" value="{{AdobeSmallImage.filename}}"/>
+        </actionGroup>
+        <!-- Verify that first image alt text is "first image alt text 2"-->
+        <actionGroup ref="AdminProductAssertImageAltTextActionGroup" stepKey="assertFirstImageAltTextOnMainProduct3">
+            <argument name="image" value="MagentoLogo"/>
+            <argument name="altText" value="first image alt text 2"/>
+        </actionGroup>
+        <!-- Verify that second image alt text is "second image alt text 2"-->
+        <actionGroup ref="AdminProductAssertImageAltTextActionGroup" stepKey="assertSecondImageAltTextOnMainProduct3">
+            <argument name="image" value="TestImageAdobe"/>
+            <argument name="altText" value="second image alt text 2"/>
+        </actionGroup>
+        <!-- Verify that third image alt text is "third image alt text 2"-->
+        <actionGroup ref="AdminProductAssertImageAltTextActionGroup" stepKey="assertThirdImageAltTextOnMainProduct3">
+            <argument name="image" value="AdobeSmallImage"/>
+            <argument name="altText" value="third image alt text 2"/>
+        </actionGroup>
+    </test>
+</tests>

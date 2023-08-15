@@ -1,0 +1,47 @@
+/**
+ * Copyright © Magento, Inc. All rights reserved.
+ * See COPYING.txt for license details.
+ */
+
+//
+//  Common
+//  _____________________________________________
+
+& when (@media-common = true) {
+    .checkout-container {
+        .checkout-payment-method {
+            div.new-address-popup {
+                margin: 0 35px 20px 20px;
+                position: relative;
+            }
+        }
+    }
+
+    //  shipping address search
+    .checkout-shipping-address {
+        .address-sender {
+            position: relative;
+            z-index: 1;
+
+            .radio {
+                position: absolute;
+                top: 9px;
+
+                & ~ .shipping-address-item {
+                    left: 25px;
+                    padding: 0 0 25px 0;
+
+                    &:before {
+                        content: none;
+                    }
+                }
+            }
+        }
+
+        .default-shipping-address.address-sender {
+            & ~ .new-address-popup {
+                margin-left: 25px;
+            }
+        }
+    }
+}

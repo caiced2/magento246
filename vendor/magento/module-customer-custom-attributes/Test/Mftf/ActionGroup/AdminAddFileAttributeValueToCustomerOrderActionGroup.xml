@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+ /**
+  * Copyright © Magento, Inc. All rights reserved.
+  * See COPYING.txt for license details.
+  */
+-->
+
+<actionGroups xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+              xsi:noNamespaceSchemaLocation="urn:magento:mftf:Test/etc/actionGroupSchema.xsd">
+    <actionGroup name="AdminAddFileAttributeValueToCustomerOrderActionGroup">
+        <annotations>
+            <description>Attaches file to a customer custom attribute on the admin create order page.</description>
+        </annotations>
+        <arguments>
+            <argument name="attributeCode" type="string" defaultValue="{{AttributeFile.attribute_code}}"/>
+            <argument name="fileName" type="string" defaultValue="{{SmallImage.file}}"/>
+        </arguments>
+        <waitForElementVisible selector="{{AdminCustomerAccountAttributeSection.customerAttributeInput(attributeCode)}}" stepKey="waitForUploadFileButton"/>
+        <attachFile selector="{{AdminCustomerAccountAttributeSection.customerAttributeInput(attributeCode)}}" userInput="{{fileName}}" stepKey="attachFile"/>
+        <waitForPageLoad stepKey="waitForPageLoad"/>
+    </actionGroup>
+</actionGroups>

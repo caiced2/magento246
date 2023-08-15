@@ -1,0 +1,43 @@
+<?php
+/**
+ * Copyright © Magento, Inc. All rights reserved.
+ * See COPYING.txt for license details.
+ */
+
+/**
+ * Permissions tab template
+ *
+ * @see \Magento\CatalogPermissions\Block\Adminhtml\Catalog\Category\Tab\Permissions
+ *
+ * @var \Magento\Framework\View\Helper\SecureHtmlRenderer $secureRenderer
+ */
+?>
+<div class="entry-edit form-inline permissions-custom-options"
+     id="category_permissions_<?= $block->escapeHtmlAttr($block->getCategoryId()) ?>">
+    <div class="messages">
+        <div class="message notice">
+            <div><?= $block->escapeHtml(__('Permissions do not depend on store views.')) ?></div>
+        </div>
+    </div>
+    <div class="box items"></div>
+    <div class="actions"><?= $block->getAddButtonHtml() ?></div>
+</div>
+
+<?php
+    $escapedCategoryId = $block->escapeJs($block->getCategoryId());
+    $configJson = $block->getConfigJson();
+?>
+<?php $scriptString = <<<script
+require(['Magento_CatalogPermissions/category_edit'], function(){
+
+//<![CDATA[
+window.categoryPermissionsTab = new Enterprise.CatalogPermissions.CategoryTab(
+    'category_permissions_{$escapedCategoryId}',
+    {$configJson}
+);
+//]]>
+
+});
+script;
+?>
+<?= /* @noEscape */ $secureRenderer->renderTag('script', [], $scriptString, false); ?>

@@ -1,0 +1,86 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+ /**
+  * Copyright © Magento, Inc. All rights reserved.
+  * See COPYING.txt for license details.
+  */
+-->
+<tests xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:noNamespaceSchemaLocation="urn:magento:mftf:Test/etc/testSchema.xsd">
+    <test name="AdminConfigurableProductUpdateTestEndDateTest">
+        <annotations>
+            <features value="ConfigurableProductStaging"/>
+            <stories value="Admin manages staging update"/>
+            <title value="Admin should be able to create Single Future Update with end date from Configurable Product Page"/>
+            <description value="Admin should be able to create Single Future Update with end date from Configurable Product Page"/>
+            <severity value="CRITICAL"/>
+            <testCaseId value="MC-3255"/>
+            <group value="ConfigurableProductStaging"/>
+        </annotations>
+        <before>
+            <createData entity="ApiCategory" stepKey="createCategory"/>
+            <actionGroup ref="AdminLoginActionGroup" stepKey="loginAsAdmin"/>
+
+            <!-- Create a configurable product via the UI -->
+            <actionGroup ref="CreateConfigurableProductActionGroup" stepKey="createProduct">
+                <argument name="product" value="_defaultProduct"/>
+                <argument name="category" value="$$createCategory$$"/>
+            </actionGroup>
+        </before>
+
+        <after>
+            <deleteData createDataKey="createCategory" stepKey="deleteCreatedCategory"/>
+            <!-- Delete the product we created in before -->
+            <actionGroup stepKey="deleteConfigurableProduct" ref="DeleteProductBySkuActionGroup">
+                <argument name="sku" value="{{_defaultProduct.sku}}"/>
+            </actionGroup>
+            <actionGroup ref="AdminGridFilterResetActionGroup" stepKey="clearGridFiltersVirtual"/>
+            <actionGroup ref="AdminGridFilterFillInputFieldActionGroup" stepKey="addSkuFilterVirtual">
+                <argument name="filterInputName" value="sku"/>
+                <argument name="filterValue" value="{{_defaultProduct.sku}}"/>
+            </actionGroup>
+            <actionGroup ref="AdminClickSearchInGridActionGroup" stepKey="applyGridFilterVirtual"/>
+            <actionGroup ref="DeleteProductsIfTheyExistActionGroup" stepKey="deleteVirtualProducts">
+                <argument name="sku" value="{{_defaultProduct.sku}}"/>
+            </actionGroup>
+            <actionGroup ref="ResetAdminDataGridToDefaultViewActionGroup" stepKey="clearProductsGridFilters"/>
+            <actionGroup ref="AdminDeleteProductAttributeByLabelActionGroup" stepKey="deleteProductAttribute">
+                <argument name="productAttributeLabel" value="{{colorProductAttribute.default_label}}"/>
+            </actionGroup>
+            <!-- Reindex after deleting product attribute -->
+            <actionGroup ref="CliIndexerReindexActionGroup" stepKey="reindex">
+                <argument name="indices" value=""/>
+            </actionGroup>
+            <amOnPage url="{{AdminStagingDashboardPage.url}}" stepKey="goToStagingDashboard"/>
+            <waitForPageLoad stepKey="waitForPageLoad"/>
+            <actionGroup ref="ClearFiltersAdminDataGridActionGroup" stepKey="clearFilter"/>
+            <actionGroup ref="AdminLogoutActionGroup" stepKey="adminLogout"/>
+            <comment userInput="BIC workaround" stepKey="deleteCategory"/>
+        </after>
+
+        <!-- Create the new staging update -->
+        <generateDate stepKey="generateEndDate" date="+1 week" format="m/d/Y g:i A"/>
+        <actionGroup stepKey="fillOutNewStaging" ref="createEntityNameStagingUpdate">
+            <argument name="stagingUpdate" value="_defaultStaging"/>
+            <argument name="endDate" value="{$generateEndDate}"/>
+        </actionGroup>
+
+        <!-- Go to product storefront page to see the change applied-->
+        <amOnPage stepKey="goToCreatedProductPage" url="{{_defaultProduct.urlKey}}.html"/>
+        <waitForPageLoad stepKey="waitForProductPageLoad2"/>
+        <see stepKey="seeNewTitle" selector="{{StorefrontProductInfoMainSection.productName}}" userInput="{{_defaultStaging.entityName}}"/>
+
+        <actionGroup stepKey="changeDashboardView" ref="changeStagingView">
+            <argument name="view" value="grid"/>
+        </actionGroup>
+
+        <actionGroup stepKey="filterByName" ref="FilterProductGridByName2ActionGroup">
+            <argument name="name" value="{{_defaultStaging.name}}"/>
+        </actionGroup>
+
+        <!-- Active permanent updates are no longer shown on the staging dashboard -->
+        <comment userInput="BIC workaround" stepKey="seeUpdateRow"/>
+        <comment userInput="BIC workaround" stepKey="seeUpcoming"/>
+        <comment userInput="BIC workaround" stepKey="seeUpdateTitle"/>
+    </test>
+</tests>

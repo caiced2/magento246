@@ -1,0 +1,136 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+ /**
+  * Copyright © Magento, Inc. All rights reserved.
+  * See COPYING.txt for license details.
+  */
+-->
+
+<tests xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xsi:noNamespaceSchemaLocation="urn:magento:mftf:Test/etc/testSchema.xsd">
+    <test name="AdminLoginAsCustomerFromRestrictedAdminTest">
+        <annotations>
+            <features value="Login as Customer"/>
+            <stories value="Login as Customer into additional website"/>
+            <title value="Admin user directly login into customer account on custom website from restricted website admin user"/>
+            <description
+                value="Verify restricted admin user can directly login into customer account assigned to custom website"/>
+            <severity value="AVERAGE"/>
+            <group value="login_as_customer_admin_ui"/>
+            <testCaseId value="AC-3767"/>
+            <useCaseId value="ACP2E-375"/>
+        </annotations>
+        <before>
+            <!--Enable Login As Customer Extension -->
+            <magentoCLI command="config:set {{LoginAsCustomerConfigDataEnabled.path}} 1"
+                        stepKey="enableLoginAsCustomer"/>
+
+            <!-- Disable Select Manually Website to Login Customer to -->
+            <magentoCLI command="config:set {{LoginAsCustomerStoreViewLogin.path}} 0"
+                        stepKey="enableLoginAsCustomerAutoDetection"/>
+
+            <!-- Clear config cache -->
+            <magentoCLI command="cache:clean config" stepKey="cacheCleanBefore"/>
+
+            <!-- Login as Admin User -->
+            <actionGroup ref="AdminLoginActionGroup" stepKey="loginToAdminPanelAsGlobalAdminBefore"/>
+
+            <!-- Create New Website -->
+            <actionGroup ref="AdminCreateWebsiteActionGroup" stepKey="createCustomWebsite">
+                <argument name="newWebsiteName" value="{{customWebsite.name}}"/>
+                <argument name="websiteCode" value="{{customWebsite.code}}"/>
+            </actionGroup>
+
+            <!-- Create New Store Group -->
+            <actionGroup ref="CreateCustomStoreActionGroup" stepKey="createCustomStore">
+                <argument name="website" value="{{customWebsite.name}}"/>
+                <argument name="store" value="{{customStoreGroup.name}}"/>
+                <argument name="rootCategory" value="Default Category"/>
+            </actionGroup>
+
+            <!-- Create New Store -->
+            <actionGroup ref="AdminCreateStoreViewActionGroup" stepKey="createCustomStoreView">
+                <argument name="StoreGroup" value="customStoreGroup"/>
+                <argument name="customStore" value="customStoreEN"/>
+            </actionGroup>
+
+            <!-- Create Customer assigned to new website and assistance allowed -->
+            <createData entity="Simple_US_Customer_Assistance_Allowed" stepKey="createCustomer"/>
+
+            <!--Open customer edit page-->
+            <actionGroup ref="AdminOpenCustomerEditPageActionGroup" stepKey="openCustomerEditPage">
+                <argument name="customerId" value="$createCustomer.id$"/>
+            </actionGroup>
+
+            <!--Navigate to "Account Information" tab-->
+            <actionGroup ref="AdminOpenAccountInformationTabFromCustomerEditPageActionGroup" stepKey="openAccountInformationEditPage"/>
+
+            <!--Change customer website to "Second Website"-->
+            <actionGroup ref="AdminUpdateCustomerWebsiteInCustomerInformationPageActionGroup" stepKey="updateCustomerWebsite">
+                <argument name="websiteName" value="{{customWebsite.name}}"/>
+            </actionGroup>
+
+            <!--Verify that changes are saved successfully-->
+            <actionGroup ref="AdminSaveCustomerAndAssertSuccessMessage" stepKey="assertThatChangesAreSavedSuccessfully"/>
+
+            <!-- Create restricted role to new website -->
+            <actionGroup ref="AdminCreateUserRoleWithScopeActionGroup" stepKey="createRestrictedAdminRole">
+                <argument name="role" value="RestrictedAdminRole"/>
+                <argument name="scopeName" value="{{customWebsite.name}}"/>
+            </actionGroup>
+
+            <!-- Create restricted admin used and assign restricted role -->
+            <actionGroup ref="AdminCreateUserWithRoleActionGroup" stepKey="createRestrictedAdmin">
+                <argument name="role" value="RestrictedAdminRole"/>
+                <argument name="user" value="NewAdminUser"/>
+            </actionGroup>
+
+            <!-- Logout as admin user -->
+            <actionGroup ref="AdminLogoutActionGroup" stepKey="logOutFromAdminPanel"/>
+        </before>
+        <after>
+            <!-- Logout as new admin -->
+            <actionGroup ref="AdminLogoutActionGroup" stepKey="logoutNewUserAfter"/>
+
+            <!-- Login as default admin -->
+            <actionGroup ref="AdminLoginActionGroup" stepKey="loginAsDefaultAdminUserAfter"/>
+
+            <!-- Delete Customer -->
+            <deleteData createDataKey="createCustomer" stepKey="deleteCustomer"/>
+
+            <!-- Delete restricted admin user -->
+            <actionGroup ref="AdminDeleteCreatedUserActionGroup" stepKey="deleteAdminUser">
+                <argument name="user" value="NewAdminUser"/>
+            </actionGroup>
+
+            <!-- Delete restricted admin role -->
+            <actionGroup ref="AdminDeleteUserRoleWithSpecifiedPermissionActionGroup" stepKey="deleteRole">
+                <argument name="role" value="RestrictedAdminRole"/>
+            </actionGroup>
+
+            <!-- Delete Website -->
+            <actionGroup ref="AdminDeleteWebsiteActionGroup" stepKey="deleteWebsite">
+                <argument name="websiteName" value="{{customWebsite.name}}"/>
+            </actionGroup>
+
+            <!-- Logout as admin -->
+            <actionGroup ref="AdminLogoutActionGroup" stepKey="logout"/>
+            <magentoCLI command="config:set {{LoginAsCustomerConfigDataEnabled.path}} 0"
+                        stepKey="disableLoginAsCustomer"/>
+            <magentoCLI command="cache:clean config" stepKey="cacheCleanAfter"/>
+        </after>
+
+        <!-- Login as new User -->
+        <actionGroup ref="AdminLoginActionGroup" stepKey="loginAsNewUser">
+            <argument name="username" value="{{NewAdminUser.username}}"/>
+            <argument name="password" value="{{NewAdminUser.password}}"/>
+        </actionGroup>
+
+        <!-- Verify new User has access to 'Login as Customer Button' -->
+        <actionGroup ref="AdminLoginAsCustomerLoginFromCustomerPageActionGroup"
+                     stepKey="verifyLoginAsCustomerWorksOnCustomerPage">
+            <argument name="customerId" value="$$createCustomer.id$$"/>
+        </actionGroup>
+        <actionGroup ref="StorefrontSignOutAndCloseTabActionGroup" stepKey="customerSignOutAndCloseTab"/>
+    </test>
+</tests>

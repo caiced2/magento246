@@ -1,0 +1,80 @@
+<?php
+/**
+ * Copyright © Magento, Inc. All rights reserved.
+ * See COPYING.txt for license details.
+ */
+?>
+<?php
+/* @var $block \Magento\MultipleWishlist\Block\Customer\Wishlist\Item\Column\Management  */
+/* @var $item \Magento\Wishlist\Model\Item  */
+$item = $block->getItem();
+?>
+<div class="wishlist-dropdown move">
+    <span class="action toggle"
+          data-mage-init='{"dropdown":{}}'
+          data-trigger-keypress-button="true"
+          data-toggle="dropdown"
+        <?php if ($block->getDefaultWishlist()->getId() != $block->getCurrentWishlist()->getId()) : ?> data-wishlist-move-item='{"itemId":"<?= $block->escapeHtmlAttr($item->getId()) ?>", "wishlistId":"<?= $block->escapeHtmlAttr($block->getDefaultWishlist()->getId()) ?>"}'<?php endif;?>>
+        <span><?= $block->escapeHtml(__('Move to Wish List')) ?></span>
+    </span>
+    <ul class="items dropdown" data-target="dropdown">
+        <?php foreach ($block->getWishlists() as $wishlist) : ?>
+            <?php if ($wishlist->getId() !== $block->getWishlistInstance()->getId()) : ?>
+                <li class="item">
+                    <span role="button"
+                          tabindex="0"
+                          data-action-keypress="true"
+                          data-wishlist-move-item='{"itemId":"<?= $block->escapeHtmlAttr($item->getId()) ?>", "wishlistId":"<?= $block->escapeHtmlAttr($wishlist->getId()) ?>"}'>
+                        <?= $block->escapeHtml($wishlist->getName()) ?>
+                    </span>
+                </li>
+            <?php endif;?>
+        <?php endforeach;?>
+        <?php if ($block->canCreateWishlists($block->getWishlists())) : ?>
+            <li class="item">
+                <span role="button"
+                      tabindex="0"
+                      class="action new"
+                      data-action-keypress="true"
+                      data-wishlist-move-item='{"itemId":"<?= $block->escapeHtmlAttr($item->getId()) ?>", "new":true}'>
+                    <span><?= $block->escapeHtml(__('Create New Wish List')) ?></span>
+                </span>
+            </li>
+        <?php endif;?>
+    </ul>
+</div>
+<div class="wishlist-dropdown copy">
+    <span class="action toggle"
+          data-mage-init='{"dropdown":{}}'
+          data-trigger-keypress-button="true"
+          data-toggle="dropdown"
+        <?php if ($block->getDefaultWishlist()->getId() != $block->getCurrentWishlist()->getId()) : ?> data-wishlist-copy-item='{"itemId":"<?= $block->escapeHtmlAttr($item->getId()) ?>", "wishlistId":"<?= $block->escapeHtmlAttr($block->getDefaultWishlist()->getId()) ?>"}'<?php endif;?>>
+        <span><?= $block->escapeHtml(__('Copy to Wish List')) ?></span>
+    </span>
+    <ul class="items dropdown" data-target="dropdown">
+        <?php foreach ($block->getWishlists() as $wishlist) : ?>
+            <?php if ($wishlist->getId() !== $block->getWishlistInstance()->getId()) : ?>
+                <li class="item">
+                    <span role="button"
+                          tabindex="0"
+                          data-action-keypress="true"
+                          data-wishlist-copy-item='{"itemId":"<?= $block->escapeHtmlAttr($item->getId()) ?>", "wishlistId":"<?= $block->escapeHtmlAttr($wishlist->getId()) ?>"}'
+                          title="<?= $block->escapeHtml($wishlist->getName()) ?>">
+                        <?= $block->escapeHtml($wishlist->getName()) ?>
+                    </span>
+                </li>
+            <?php endif; ?>
+        <?php endforeach;?>
+        <?php if ($block->canCreateWishlists($block->getWishlists())) : ?>
+            <li class="item">
+                <span role="button"
+                      tabindex="0"
+                      class="action new"
+                      data-action-keypress="true"
+                      data-wishlist-copy-item='{"itemId":"<?= $block->escapeHtmlAttr($item->getId()) ?>", "new":true}'>
+                    <span><?= $block->escapeHtml(__('Create New Wish List')) ?></span>
+                </span>
+            </li>
+        <?php endif;?>
+    </ul>
+</div>

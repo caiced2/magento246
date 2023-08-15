@@ -1,0 +1,23 @@
+<?='<?xml version="1.0"?>' ?>
+
+<!--
+Generated code.  DO NOT EDIT!
+-->
+
+<!--
+/**
+ * Copyright © Magento, Inc. All rights reserved.
+ * See COPYING.txt for license details.
+ */
+-->
+<?php
+/** @var \Magento\AdobeCommerceEventsGenerator\Generator\ModuleBlock $block */
+$plugins = $block->getDiPlugins();
+?>
+<config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="urn:magento:framework:ObjectManager/etc/config.xsd">
+<?php foreach ($plugins as $plugin): ?>
+    <type name="<?= $plugin['interface'] ?>">
+        <plugin name="<?= $plugin['pluginName'] ?>" type="<?= $plugin['class'] ?>" sortOrder="10000" />
+    </type>
+<?php endforeach; ?>
+</config>

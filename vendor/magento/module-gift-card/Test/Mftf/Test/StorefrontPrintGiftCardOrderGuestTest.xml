@@ -1,0 +1,146 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+ /**
+  * Copyright © Magento, Inc. All rights reserved.
+  * See COPYING.txt for license details.
+  */
+-->
+
+<tests xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xsi:noNamespaceSchemaLocation="urn:magento:mftf:Test/etc/testSchema.xsd">
+    <test name="StorefrontPrintGiftCardOrderGuestTest">
+        <annotations>
+            <stories value="Print Order"/>
+            <title value="Print Order from Guest on Frontend with gift card"/>
+            <description value="Print Order from Guest on Frontend with gift card"/>
+            <severity value="CRITICAL"/>
+            <testCaseId value="MC-16226"/>
+            <group value="sales"/>
+            <group value="mtf_migrated"/>
+        </annotations>
+        <before>
+            <actionGroup ref="AdminLoginActionGroup" stepKey="LoginAsAdmin"/>
+            <createData entity="ApiCategory" stepKey="createCategory"/>
+
+            <!-- Create Customer Account -->
+            <createData entity="Simple_US_Customer" stepKey="createCustomer"/>
+
+            <!-- Create Gift Card Account with Balance = 1 -->
+            <amOnPage url="{{AdminStoresConfigurationGiftCardAccountGeneralSettingsPage.url}}" stepKey="amOnGiftCardAccountGeneralSettingsPage"/>
+
+            <!-- Click Generate to generate a new pool of gift card accounts -->
+            <click selector="{{AdminGiftCardAccountGeneralSettingsSection.generate}}" stepKey="clickGenerateNewCodePoolButton"/>
+            <waitForElementVisible selector="{{AdminConfirmationModalSection.ok}}" stepKey="waitPopupAppears"/>
+            <click selector="{{AdminConfirmationModalSection.ok}}" stepKey="acceptPopup"/>
+            <waitForElementVisible selector="{{AdminMessagesSection.success}}" time="60" stepKey="waitCodePoolGeneratedSuccessMessage"/>
+            <see selector="{{AdminMessagesSection.success}}" userInput="New code pool was generated." stepKey="seeSuccessMessage"/>
+
+            <!-- Marketing > Gift Card accounts > Gift Account grid, click Add gift card account -->
+            <actionGroup ref="AddGiftCardAccountActionGroup" stepKey="addGiftCardAccount">
+                <argument name="website" value="Main Website" />
+                <argument name="balanceAmount" value="1" />
+            </actionGroup>
+            <grabTextFrom selector="{{AdminGiftCardAccountGridSection.giftCardCode}}" stepKey="grabGiftCardCode"/>
+            <grabTextFrom selector="{{AdminGiftCardAccountGridSection.giftCardBalance}}" stepKey="grabGiftCardBalance"/>
+
+            <!-- Create Gift Cart Product -->
+            <amOnPage url="{{AdminProductIndexPage.url}}" stepKey="navigateToCatalogProductGrid"/>
+            <waitForPageLoad stepKey="waitForCatalogProductGrid"/>
+            <actionGroup ref="GoToSpecifiedCreateProductPageActionGroup" stepKey="openProductFillForm">
+                <argument name="productType" value="giftcard"/>
+            </actionGroup>
+            <actionGroup ref="AdminFillGiftCardProductFieldsActionGroup" stepKey="fillGiftCardProductFields">
+                <argument name="product" value="VirtualGiftCard120_150"/>
+            </actionGroup>
+            <grabValueFrom selector="{{AdminProductFormSection.productSku}}" stepKey="grabSKU"/>
+            <actionGroup ref="addGiftCardAmount" stepKey="addFirstAmountToGiftCard">
+                <argument name="giftCardAmount" value="VirtualGiftCard120_150.amounts[0]"/>
+            </actionGroup>
+            <actionGroup ref="addGiftCardAmount" stepKey="addSecondAmountToGiftCard">
+                <argument name="giftCardAmount" value="VirtualGiftCard120_150.amounts[1]"/>
+            </actionGroup>
+            <searchAndMultiSelectOption selector="{{AdminProductFormSection.categoriesDropdown}}" parameterArray="[$$createCategory.name$$]" stepKey="fillCategory"/>
+            <actionGroup ref="SaveProductFormActionGroup" stepKey="saveProduct"/>
+
+            <!-- Place order with options according to dataset -->
+            <actionGroup ref="NavigateToNewOrderPageExistingCustomerActionGroup" stepKey="newOrder">
+                <argument name="customer" value="$$createCustomer$$"/>
+            </actionGroup>
+
+            <!-- Add Product -->
+            <actionGroup ref="AdminFilterProductInCreateOrderActionGroup" stepKey="filterProduct">
+                <argument name="productSKU" value="{$grabSKU}"/>
+            </actionGroup>
+            <actionGroup ref="AdminAddGiftCardProductToOrderActionGroup" stepKey="addProduct">
+                <argument name="customer" value="$$createCustomer$$"/>
+                <argument name="orderData" value="GiftCartOrderData"/>
+            </actionGroup>
+
+            <!-- Add Gift Code -->
+            <actionGroup ref="AdminAddToOrderGiftCardCodeActionGroup" stepKey="addGode">
+                <argument name="giftCard" value="{$grabGiftCardCode}"/>
+            </actionGroup>
+
+            <actionGroup ref="FillOrderCustomerInformationActionGroup" stepKey="fillOrder">
+                <argument name="customer" value="$$createCustomer$$"/>
+                <argument name="address" value="US_Address_TX"/>
+            </actionGroup>
+        </before>
+        <after>
+            <deleteData createDataKey="createCategory" stepKey="deleteCategory"/>
+            <deleteData createDataKey="createCustomer" stepKey="deleteCustomer"/>
+            <actionGroup ref="AdminLogoutActionGroup" stepKey="logout"/>
+        </after>
+
+        <actionGroup ref="AdminSubmitOrderActionGroup" stepKey="submitOrder"/>
+
+        <grabFromCurrentUrl regex="~/order_id/(\d+)/~" stepKey="getOrderId"/>
+        <grabTextFrom selector="|Order # (\d+)|" stepKey="orderNumber"/>
+        <assertNotEmpty stepKey="assertOrderIdIsNotEmpty">
+            <actualResult type="const">$orderNumber</actualResult>
+        </assertNotEmpty>
+
+        <!-- Find the Order on frontend > Navigate to: Orders and Returns -->
+        <amOnPage url="{{StorefrontGuestOrderSearchPage.url}}" stepKey="amOnOrdersAndReturns"/>
+        <waitForPageLoad stepKey="waiForStorefrontPage"/>
+
+        <!-- Fill the form with correspondent Order data -->
+        <actionGroup ref="StorefrontFillOrdersAndReturnsFormActionGroup" stepKey="fillOrder">
+            <argument name="orderNumber" value="{$orderNumber}"/>
+            <argument name="customer" value="$$createCustomer$$"/>
+        </actionGroup>
+
+        <!-- Click on the "Continue" button -->
+        <click selector="{{StorefrontGuestOrderSearchSection.continue}}" stepKey="clickContinue"/>
+        <waitForPageLoad stepKey="waitForPageLoad"/>
+
+        <!--  Click on the "Print Order" button -->
+        <click selector="{{StorefrontGuestOrderViewSection.printOrder}}" stepKey="printOrder"/>
+        <comment userInput="Step key preserved for backwards compatibility" stepKey="switchToWindow"/>
+        <comment userInput="Step key preserved for backwards compatibility" stepKey="switchToTab"/>
+        <helper class="Magento\Sales\Test\Mftf\Helper\SalesHelper" method="switchToWindowWithUrlAndClosePrintDialogIfEncountered" stepKey="switchToWindowWithUrlAndClosePrintDialogIfEncountered">
+            <argument name="expectedUrl">sales/guest/print/order_id/</argument>
+            <argument name="expectedUrlComparisonType">COMPARISON_PATH_SUBSET_MATCH</argument>
+        </helper>
+        <comment userInput="Step key preserved for backwards compatibility" stepKey="seePrintPage"/>
+
+        <!-- AssertSalesPrintOrderProducts -->
+        <see userInput="{{VirtualGiftCard120_150.name}}" selector="{{StorefrontOrderDetailsSection.productNameCell}}" stepKey="seeBundleProduct"/>
+
+        <!-- AssertSalesPrintOrderGrandTotal -->
+        <see userInput="$149.00" selector="{{StorefrontOrderDetailsSection.grandTotalPrice}}" stepKey="assertSalesPrintOrderGrandTotal"/>
+
+        <!-- AssertGiftCardAccountOnPrintOrder -->
+        <see userInput="-$1.00" selector="{{StorefrontOrderDetailsSection.discountGiftCard}}" stepKey="assertGiftCardAccountOnPrintOrder"/>
+
+        <!-- AssertSalesPrintOrderBillingAddress -->
+        <scrollTo selector="{{StorefrontOrderDetailsSection.orderDetailsBlock}}" stepKey="scrollToFooter"/>
+        <actionGroup ref="AssertSalesPrintOrderBillingAddress" stepKey="assertSalesPrintOrderBillingAddress">
+            <argument name="address" value="US_Address_TX"/>
+        </actionGroup>
+
+        <!-- AssertSalesPrintOrderPaymentMethod -->
+        <see userInput="Check / Money order" selector="{{StorefrontOrderDetailsSection.paymentMethod}}" stepKey="assertSalesPrintOrderPaymentMethod"/>
+        <switchToPreviousTab stepKey="switchToPreviousTab"/>
+    </test>
+</tests>

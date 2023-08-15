@@ -1,0 +1,86 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+ /**
+  * Copyright © Magento, Inc. All rights reserved.
+  * See COPYING.txt for license details.
+  */
+-->
+
+<tests xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xsi:noNamespaceSchemaLocation="urn:magento:mftf:Test/etc/testSchema.xsd">
+    <test name="AdminCreateCustomerSegmentForCartPriceRule">
+        <annotations>
+            <stories value="Check functionality of the customer segments grid in the cart price rule conditions"/>
+            <title value="Check functionality of the 'Yes/No' filter"/>
+            <description value="Admin should be able filter selected segments"/>
+            <severity value="AVERAGE"/>
+            <testCaseId value="AC-6925"/>
+            <useCaseId value="ACP2E-1185"/>
+            <group value="CustomerSegment"/>
+        </annotations>
+        <before>
+            <actionGroup ref="AdminLoginActionGroup" stepKey="LoginAsAdmin"/>
+        </before>
+        <after>
+            <actionGroup ref="AdminLogoutActionGroup" stepKey="logout"/>
+            <comment userInput="BIC workaround" stepKey="customerLogoutStorefront"/>
+        </after>
+
+        <!-- Create new Customer Segment -->
+        <amOnPage url="{{AdminCustomerSegmentIndexPage.url}}" stepKey="goToCustomerSegments1"/>
+        <click selector="{{AdminMainActionsSection.add}}" stepKey="addNewSegment1"/>
+        <fillField selector="{{AdminCustomerSegmentEditSection.segmentName}}" userInput="{{CustomerSegmentForFreeProduct.name}}" stepKey="inputSegmentName1"/>
+        <selectOption selector="{{AdminCustomerSegmentEditSection.assignToWebsite}}" userInput="{{CustomerSegmentForFreeProduct.assigned_website}}" stepKey="assignToWebsite1"/>
+        <selectOption selector="{{AdminCustomerSegmentEditSection.status}}" userInput="{{CustomerSegmentForFreeProduct.is_active}}" stepKey="setStatusActive1"/>
+        <selectOption selector="{{AdminCustomerSegmentEditSection.applyTo}}" userInput="{{CustomerSegmentForFreeProduct.apply_to}}" stepKey="setApplyTo1"/>
+        <click selector="{{AdminMainActionsSection.save}}" stepKey="saveSegment1"/>
+
+        <waitForPageLoad time="60" stepKey="waitForSaveSegment1"/>
+
+        <!-- Create another Customer Segment -->
+        <amOnPage url="{{AdminCustomerSegmentIndexPage.url}}" stepKey="goToCustomerSegments2"/>
+        <click selector="{{AdminMainActionsSection.add}}" stepKey="addNewSegment2"/>
+        <fillField selector="{{AdminCustomerSegmentEditSection.segmentName}}" userInput="{{CustomerSegmentDefault.name}}" stepKey="inputSegmentName2"/>
+        <selectOption selector="{{AdminCustomerSegmentEditSection.assignToWebsite}}" userInput="{{CustomerSegmentDefault.assigned_website}}" stepKey="assignToWebsite2"/>
+        <selectOption selector="{{AdminCustomerSegmentEditSection.status}}" userInput="{{CustomerSegmentDefault.is_active}}" stepKey="setStatusActive2"/>
+        <selectOption selector="{{AdminCustomerSegmentEditSection.applyTo}}" userInput="{{CustomerSegmentDefault.apply_to}}" stepKey="setApplyTo2"/>
+        <click selector="{{AdminMainActionsSection.save}}" stepKey="saveSegment2"/>
+
+        <waitForPageLoad time="60" stepKey="waitForSaveSegment2"/>
+
+        <!--Create cart price rule as per data-->
+        <actionGroup ref="AdminOpenCartPriceRulesPageActionGroup" stepKey="amOnCartPriceList"/>
+        <click selector="{{AdminCartPriceRulesSection.addNewRuleButton}}" stepKey="clickAddNewRule"/>
+
+        <!--Check yes/no filter-->
+        <scrollTo selector="{{AdminCartPriceRulesFormSection.conditionsHeader}}" stepKey="scrollToConditionsHeader"/>
+        <conditionalClick selector="{{AdminCartPriceRulesFormSection.conditionsHeader}}" dependentSelector="{{AdminCartPriceRulesFormSection.conditionsHeader}}" visible="true" stepKey="clickToExpandConditions"/>
+        <click selector="{{AdminCartPriceRulesFormSection.newCondition}}" stepKey="clickNewCondition"/>
+        <waitForElementVisible selector="{{AdminCartPriceRulesFormSection.conditionSelect}}" time="240" stepKey="waitForSelectOptionVisible"/>
+        <selectOption selector="{{AdminCartPriceRulesFormSection.conditionSelect}}" userInput="Customer Segment" stepKey="selectCondition1"/>
+        <waitForPageLoad stepKey="waitForConditionLoad"/>
+        <click selector="{{AdminCartPriceRulesFormSection.targetEllipsis}}" stepKey="clickEllipsis"/>
+        <waitForPageLoad time="20" stepKey="waitForOperator"/>
+        <click selector="{{AdminCartPriceRulesFormSection.openList}}" stepKey="openList"/>
+        <waitForPageLoad time="60" stepKey="waitForGrid"/>
+        <click selector="{{AdminCartPriceRulesFormSection.segmentRow(CustomerSegmentDefault.name)}}" stepKey="selectCustomerSegment"/>
+        <selectOption selector="{{AdminCartPriceRulesFormSection.inSegments}}" userInput="No" stepKey="selectConditionNoInSegments"/>
+        <click selector="{{AdminCartPriceRulesFormSection.searchButton}}" stepKey="clickSerarchButtonWithNoInSegments"/>
+        <waitForPageLoad time="60" stepKey="waitForFiltereGrid1"/>
+        <dontSeeElementInDOM selector="{{AdminCartPriceRulesFormSection.segmentRow(CustomerSegmentDefault.name)}}" stepKey="dontSeeSelectedSegment"/>
+        <selectOption selector="{{AdminCartPriceRulesFormSection.inSegments}}" userInput="Yes" stepKey="selectConditionYesInSegments"/>
+        <click selector="{{AdminCartPriceRulesFormSection.searchButton}}" stepKey="clickSerarchButtonWithYesInSegments"/>
+        <waitForPageLoad time="60" stepKey="waitForFiltereGrid2"/>
+        <seeElementInDOM selector="{{AdminCartPriceRulesFormSection.segmentRow(CustomerSegmentDefault.name)}}" stepKey="seeSelectedSegment"/>
+
+        <!--Delete Customer Segment-->
+        <actionGroup ref="FindAndDeleteCustomerSegmentActionGroup" stepKey="deleteSegment1">
+            <argument name="segmentName" value="{{CustomerSegmentForFreeProduct.name}}"/>
+        </actionGroup>
+
+        <!--Delete Another Customer Segment-->
+        <actionGroup ref="FindAndDeleteCustomerSegmentActionGroup" stepKey="deleteSegment2">
+            <argument name="segmentName" value="{{CustomerSegmentDefault.name}}"/>
+        </actionGroup>
+    </test>
+</tests>

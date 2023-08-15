@@ -1,0 +1,12 @@
+<?xml version="1.0"?>
+<!--
+/**
+ * Copyright © Magento, Inc. All rights reserved.
+ * See COPYING.txt for license details.
+ */
+-->
+<config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="urn:magento:module:Magento_Backend:etc/menu.xsd">
+    <menu>
+        <add id="Magento_Reminder::promo_reminder" title="Email Reminders" translate="title" module="Magento_Reminder" sortOrder="60" parent="Magento_Backend::marketing_communications" action="adminhtml/reminder" resource="Magento_Reminder::magento_reminder" dependsOnModule="Magento_Reminder" dependsOnConfig="promo/magento_reminder/enabled"/>
+    </menu>
+</config>

@@ -1,0 +1,323 @@
+<?php
+/**
+ * Copyright © Magento, Inc. All rights reserved.
+ * See COPYING.txt for license details.
+ */
+
+/** @var \Magento\Framework\View\Helper\SecureHtmlRenderer $secureRenderer */
+?>
+
+<div class="entry-edit form-inline giftcard-info-container" id="giftcard_info_container">
+    <fieldset class="fieldset">
+        <div class="admin__field field">
+            <label class="label admin__field-label" for="giftcard_is_redeemable">
+                <span><?= $block->escapeHtml(__('Treat Balance as Store Credit')) ?></span>
+            </label>
+            <div class="control">
+                <select
+                    <?php if ($block->isReadonly()): ?>disabled="disabled"<?php endif;?>
+                          id="giftcard_is_redeemable"
+                          name="<?= $block->escapeHtmlAttr($block->getFieldPrefix()) ?>[is_redeemable]"
+                          class="admin__control-select">
+                    <option value="1">
+                        <?= $block->escapeHtml(__('Yes')) ?>
+                    </option>
+                    <option value="0"
+                        <?php if ($block->getFieldValue('is_redeemable') == 0): ?> selected="selected"<?php endif; ?>>
+                        <?= $block->escapeHtml(__('No')) ?>
+                    </option>
+                </select>
+                <input
+                    type="hidden"
+                    id="giftcard_is_redeemable_default"
+                    value="<?= $block->escapeHtmlAttr($block->getConfigValue('is_redeemable')) ?>" />
+            </div>
+            <div class="field-service" <?= $block->escapeHtml($block->getScopeValue('[GLOBAL]')) ?>>
+                <?php $_checked = ($block->getFieldValue('use_config_is_redeemable') || $block->IsNew())
+                    ? 'checked="checked"'
+                    : ''
+                ?>
+                <input
+                    type="hidden"
+                    name="<?= $block->escapeHtmlAttr($block->getFieldPrefix()) ?>[use_config_is_redeemable]"
+                    value="0">
+                <input
+                    <?php if ($block->isReadonly()): ?>disabled="disabled"<?php endif;?>
+                    type="checkbox"
+                    class="checkbox"
+                    id="giftcard_use_config_is_redeemable"
+                    name="<?= $block->escapeHtmlAttr($block->getFieldPrefix()) ?>[use_config_is_redeemable]"
+                    value="1"
+                    <?= /* @noEscape */ $_checked ?>
+                    />
+<?= /* @noEscape */
+    $secureRenderer->renderEventListenerAsTag(
+        'onclick',
+        "toggleValueElements(this, this.up('.field'));toggleDefault('is_redeemable');",
+        '#giftcard_use_config_is_redeemable'
+    );
+?>
+                <label for="giftcard_use_config_is_redeemable" class="normal">
+                    <?= $block->escapeHtml(__('Use Config Settings')) ?>
+                </label>
+                <?php $scriptString = <<<script
+                    require(['prototype'], function(){
+                        toggleValueElements(
+                            $('giftcard_use_config_is_redeemable'),
+                            $('giftcard_use_config_is_redeemable').up('.field')
+                        );
+                    });
+script;
+                ?>
+                <?= /* @noEscape */ $secureRenderer->renderTag('script', [], $scriptString, false); ?>
+            </div>
+        </div>
+
+        <div class="admin__field field">
+            <label class="admin__field-label label" for="giftcard_lifetime">
+                <span><?= $block->escapeHtml(__('Lifetime (days)')) ?></span>
+            </label>
+            <div class="control">
+                <input
+                    type="text"
+                    <?php if ($block->isReadonly()):?>disabled="disabled"<?php endif;?>
+                    class="input-text validate-number"
+                    id="giftcard_lifetime"
+                    name="<?= $block->escapeHtmlAttr($block->getFieldPrefix()) ?>[lifetime]"
+                    value="<?= $block->escapeHtmlAttr($block->getFieldValue('lifetime')*1) ?>"/>
+
+                <input
+                    type="hidden"
+                    id="giftcard_lifetime_default"
+                    value="<?= $block->escapeHtmlAttr($block->getConfigValue('lifetime')) ?>" />
+            </div>
+            <div class="field-service" <?= $block->escapeHtml($block->getScopeValue('[GLOBAL]')) ?>>
+                <?php $_checked = ($block->getFieldValue('use_config_lifetime') || $block->IsNew())
+                    ? 'checked="checked"'
+                    : ''
+                ?>
+                <input
+                    type="hidden"
+                    name="<?= $block->escapeHtmlAttr($block->getFieldPrefix()) ?>[use_config_lifetime]"
+                    value="0">
+                <input
+                    type="checkbox"
+                    <?php if ($block->isReadonly()):?>disabled="disabled"<?php endif;?>
+                    class="checkbox"
+                    id="giftcard_use_config_lifetime"
+                    name="<?= $block->escapeHtmlAttr($block->getFieldPrefix()) ?>[use_config_lifetime]"
+                    value="1"
+                    <?= /* @noEscape */ $_checked ?>
+                    />
+<?= /* @noEscape */
+$secureRenderer->renderEventListenerAsTag(
+    'onclick',
+    "toggleValueElements(this, this.up('.field')); toggleDefault('lifetime');",
+    '#giftcard_use_config_lifetime'
+);
+?>
+                <label for="giftcard_use_config_lifetime" class="normal">
+                    <?= $block->escapeHtml(__('Use Config Settings')) ?>
+                </label>
+                <?php $scriptString = <<<script
+                    require(['prototype'], function(){
+                        toggleValueElements(
+                            $('giftcard_use_config_lifetime'),
+                            $('giftcard_use_config_lifetime').up('.field')
+                        );
+                    });
+script;
+                ?>
+                <?= /* @noEscape */ $secureRenderer->renderTag('script', [], $scriptString, false); ?>
+            </div>
+        </div>
+
+        <div class="admin__field field">
+            <label class="label admin__field-label" for="giftcard_allow_message">
+                <span><?= $block->escapeHtml(__('Allow Message')) ?></span>
+            </label>
+            <div class="control">
+                <select
+                    <?php if ($block->isReadonly()):?>disabled="disabled"<?php endif;?>
+                    id="giftcard_allow_message"
+                    name="<?= $block->escapeHtmlAttr($block->getFieldPrefix()) ?>[allow_message]"
+                    class="admin__control-select">
+                    <option value="1">
+                        <?= $block->escapeHtml(__('Yes')) ?>
+                    </option>
+                    <option value="0"
+                        <?php if ($block->getFieldValue('allow_message') == 0): ?> selected="selected"<?php endif; ?>>
+                        <?= $block->escapeHtml(__('No')) ?>
+                    </option>
+                </select>
+                <input
+                    type="hidden"
+                    id="giftcard_allow_message_default"
+                    value="<?= $block->escapeHtmlAttr($block->getConfigValue('allow_message')) ?>" />
+            </div>
+            <div class="field-service" <?= $block->escapeHtml($block->getScopeValue('[STORE VIEW]')) ?>>
+                <?php $_checked = ($block->getFieldValue('use_config_allow_message') || $block->IsNew())
+                    ? 'checked="checked"'
+                    : ''
+                ?>
+                <input
+                    type="hidden"
+                    name="<?= $block->escapeHtmlAttr($block->getFieldPrefix()) ?>[use_config_allow_message]"
+                    value="0">
+                <input
+                    type="checkbox"
+                    <?php if ($block->isReadonly()):?>disabled="disabled"<?php endif;?>
+                    class="checkbox"
+                    id="giftcard_use_config_allow_message"
+                    name="<?= $block->escapeHtmlAttr($block->getFieldPrefix()) ?>[use_config_allow_message]"
+                    value="1"
+                    <?= /* @noEscape */ $_checked ?>
+                    />
+<?= /* @noEscape */
+    $secureRenderer->renderEventListenerAsTag(
+        'onclick',
+        "toggleValueElements(this, this.up('.field')); toggleDefault('allow_message');",
+        '#giftcard_use_config_allow_message'
+    );
+?>
+                <label for="giftcard_use_config_allow_message" class="normal">
+                    <?= $block->escapeHtml(__('Use Config Settings')) ?>
+                </label>
+                <?php $scriptString = <<<script
+                    require(['prototype'], function(){
+                        toggleValueElements(
+                            $('giftcard_use_config_allow_message'),
+                            $('giftcard_use_config_allow_message').up('.field')
+                            );
+                    });
+script;
+                ?>
+                <?= /* @noEscape */ $secureRenderer->renderTag('script', [], $scriptString, false); ?>
+            </div>
+        </div>
+
+        <div class="admin__field field">
+            <label class="label admin__field-label" for="giftcard_email_template">
+                <span><?= $block->escapeHtml(__('Email Template')) ?></span>
+            </label>
+            <div class="control">
+                <select
+                    <?php if ($block->isReadonly()):?>disabled="disabled"<?php endif;?>
+                    id="giftcard_email_template"
+                    name="<?= $block->escapeHtmlAttr($block->getFieldPrefix()) ?>[email_template]"
+                    class="admin__control-select">
+
+                    <?php foreach ($block->getEmailTemplates() as $_value => $_label): ?>
+                        <?php $_selected = $block->getFieldValue('email_template') == $_value
+                            ? 'selected="selected"'
+                            : ''; ?>
+                    <option value="<?= $block->escapeHtmlAttr($_value) ?>" <?= /* @noEscape */ $_selected ?>>
+                        <?= $block->escapeHtml($_label) ?>
+                    </option>
+                    <?php endforeach; ?>
+                </select>
+                <input
+                    type="hidden"
+                    id="giftcard_email_template_default"
+                    value="<?= $block->escapeHtmlAttr($block->getConfigValue('email_template')) ?>" />
+            </div>
+            <div class="field-service" <?= $block->escapeHtml($block->getScopeValue('[STORE VIEW]')) ?>>
+                <?php $_checked = ($block->getFieldValue('use_config_email_template') || $block->IsNew())
+                    ? 'checked="checked"'
+                    : ''
+                ?>
+                <input
+                    type="hidden"
+                    name="<?= $block->escapeHtmlAttr($block->getFieldPrefix()) ?>[use_config_email_template]"
+                    value="0">
+                <input
+                    type="checkbox" <?php if ($block->isReadonly()):?>
+                    disabled="disabled"<?php endif;?>
+                    class="checkbox"
+                    id="giftcard_use_config_email_template"
+                    name="<?= $block->escapeHtmlAttr($block->getFieldPrefix()) ?>[use_config_email_template]"
+                    value="1" <?=  /* @noEscape */ $_checked ?>
+                    />
+<?= /* @noEscape */
+$secureRenderer->renderEventListenerAsTag(
+    'onclick',
+    "toggleValueElements(this, this.up('.field')); toggleDefault('email_template');",
+    '#giftcard_use_config_email_template'
+);
+?>
+                <label for="giftcard_use_config_email_template" class="normal">
+                    <?= $block->escapeHtml(__('Use Config Settings')) ?>
+                </label>
+                <?php $scriptString = <<<script
+                    require(['prototype'], function(){
+                        toggleValueElements(
+                            $('giftcard_use_config_email_template'),
+                            $('giftcard_use_config_email_template').up('.field')
+                        );
+                    });
+script;
+                ?>
+                <?= /* @noEscape */ $secureRenderer->renderTag('script', [], $scriptString, false); ?>
+            </div>
+        </div>
+    </fieldset>
+</div>
+
+<?php $scriptString = <<<script
+require([
+    'jquery',
+    'Magento_Catalog/js/product/weight-handler'
+], function (jQuery, weightHandle) {
+
+    //<![CDATA[
+jQuery(function($){
+    window.toggleDefault = function (field)
+    {
+        var defaultValue = $('#giftcard_' + field + '_default').val(),
+            checkbox = $('#giftcard_use_config_' + field);
+        if (checkbox.is(':checked')) {
+            $('#giftcard_' + field).val(defaultValue);
+        }
+    };
+
+    var toggleOpenAmount = function () {
+        $('#open_amount_min,#open_amount_max').prop('disabled', !$('#allow_open_amount').is(':checked'));
+    };
+
+    toggleDefault('email_template');
+    toggleDefault('is_redeemable');
+    toggleDefault('lifetime');
+    toggleDefault('allow_message');
+
+    $('#allow_open_amount').on('click', toggleOpenAmount);
+
+    if ($('#allow_open_amount').prop('disabled')) {
+        $('#open_amount_min,#open_amount_max').prop('disabled', true);
+    } else {
+        toggleOpenAmount();
+    }
+
+    /**
+     * Adding event on card type select box of product to set weight to required or not
+     */
+    $('[data-tab-panel=product-details]').on('move.tabs', function () {
+        $('#giftcard_type').on('change', function () {
+            var weight = $('#weight');
+            var isVirtual = $(this).val() == '0';
+            if (weight.length) {
+                weight.prop('disabled', isVirtual);
+            }
+            $.each($('.hidden-for-virtual'), function () {
+                $(this).closest('.field').toggle(!isVirtual);
+            });
+        }).trigger('change');
+
+        weightHandle.hideWeightSwitcher();
+    });
+});
+    //]]>
+
+});
+script;
+?>
+<?= /* @noEscape */ $secureRenderer->renderTag('script', [], $scriptString, false); ?>

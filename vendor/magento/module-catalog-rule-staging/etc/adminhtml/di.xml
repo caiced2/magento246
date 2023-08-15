@@ -1,0 +1,119 @@
+<?xml version="1.0"?>
+<!--
+/**
+ * Copyright © Magento, Inc. All rights reserved.
+ * See COPYING.txt for license details.
+ */
+-->
+<config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="urn:magento:framework:ObjectManager/etc/config.xsd">
+    <preference for="Magento\Staging\Model\Update\Grid\ActionDataProviderInterface" type="Magento\Staging\Model\Update\Grid\ActionsDataProvider" />
+    <virtualType name="Magento\CatalogRuleStaging\Block\Adminhtml\Update\Upcoming" type="Magento\Staging\Block\Adminhtml\Update\Upcoming">
+        <arguments>
+            <argument name="entityProvider" xsi:type="object">Magento\CatalogRuleStaging\Block\Adminhtml\Update\Provider</argument>
+        </arguments>
+    </virtualType>
+    <virtualType name="catalogRuleStagingBlockRemoveUpdateCancelButton" type="Magento\Staging\Block\Adminhtml\Update\Entity\CancelButton">
+        <arguments>
+            <argument name="jsUpdateModal" xsi:type="string">index=catalogrulestaging_update_remove_form_modal</argument>
+        </arguments>
+    </virtualType>
+    <virtualType name="stagingCatalogRuleUpdateCancelButton" type="Magento\Staging\Block\Adminhtml\Update\Entity\CancelButton">
+        <arguments>
+            <argument name="jsUpdateModal" xsi:type="string">index=catalogrulestaging_update_form_modal</argument>
+        </arguments>
+    </virtualType>
+    <virtualType name="stagingCatalogRuleUpdatePreviewButton" type="Magento\Staging\Block\Adminhtml\Update\Entity\PreviewButton">
+        <arguments>
+            <argument name="entityProvider" xsi:type="object">Magento\CatalogRuleStaging\Block\Adminhtml\Update\Provider</argument>
+        </arguments>
+    </virtualType>
+    <virtualType name="stagingCatalogRuleUpdateRemoveButton" type="Magento\Staging\Block\Adminhtml\Update\Entity\RemoveButton">
+        <arguments>
+            <argument name="entityProvider" xsi:type="object">Magento\CatalogRuleStaging\Block\Adminhtml\Update\Provider</argument>
+            <argument name="entityIdentifier" xsi:type="string">id</argument>
+            <argument name="jsRemoveModal" xsi:type="string">catalogrulestaging_update_form.catalogrulestaging_update_form.catalogrulestaging_update_remove_form_modal</argument>
+            <argument name="jsRemoveLoader" xsi:type="string">catalogrulestaging_update_form.catalogrulestaging_update_form.catalogrulestaging_update_remove_form_modal.update_remove_form_loader</argument>
+        </arguments>
+    </virtualType>
+    <type name="Magento\CatalogRule\Model\Rule">
+        <plugin name="catalogConditionFieldsetIdResolver" type="Magento\CatalogRuleStaging\Model\Plugin\ConditionFieldsetIdResolver"/>
+    </type>
+    <virtualType name="catalogRuleStagingUpdateMetadataProvider" type="Magento\Staging\Model\Entity\DataProvider\MetadataProvider">
+        <arguments>
+            <argument name="requestFieldName" xsi:type="string">id</argument>
+        </arguments>
+    </virtualType>
+    <type name="Magento\CatalogRuleStaging\Model\Rule\DataProvider">
+        <plugin name="catalogRuleStagingDataProvider" type="Magento\Staging\Model\Entity\DataProvider\DataProviderPlugin"/>
+        <arguments>
+            <argument name="metaDataProvider" xsi:type="object">catalogRuleStagingUpdateMetadataProvider</argument>
+        </arguments>
+    </type>
+    <type name="Magento\CatalogRuleStaging\Model\Rule\Identifier\DataProvider">
+        <plugin name="catalogRuleStagingPageDataProvider" type="Magento\Staging\Model\Entity\DataProvider\Identifier\DataProviderPlugin"/>
+    </type>
+    <virtualType name="catalogRuleStagingUpcomingGridActions" type="Magento\Staging\Ui\Component\Listing\Column\Entity\Actions">
+        <arguments>
+            <argument name="entityIdentifier" xsi:type="string">id</argument>
+            <argument name="entityColumn" xsi:type="string">rule_id</argument>
+            <argument name="jsModalProvider" xsi:type="string">catalogrulestaging_upcoming_form.catalogrulestaging_upcoming_form.catalogrulestaging_update_form_modal</argument>
+            <argument name="jsLoaderProvider" xsi:type="string">catalogrulestaging_upcoming_form.catalogrulestaging_upcoming_form.catalogrulestaging_update_form_modal.update_form_loader</argument>
+        </arguments>
+    </virtualType>
+    <virtualType name="stagingUpdateCatalogRuleGridActions" type="Magento\Staging\Ui\Component\Listing\Column\Entity\UpdateActions">
+        <arguments>
+            <argument name="actionsList" xsi:type="object">catalogRuleStagingUpdateGridActionProvider</argument>
+        </arguments>
+    </virtualType>
+    <virtualType name="catalogRuleStagingUpdateGridActionProvider" type="Magento\Staging\Model\Update\Grid\ActionsDataProvider">
+        <arguments>
+            <argument name="actionsList" xsi:type="array">
+                <item name="editAction" xsi:type="object">catalogRuleUpdateGridEditAction</item>
+                <item name="deleteAction" xsi:type="object">catalogRuleUpdateGridDeleteAction</item>
+            </argument>
+        </arguments>
+    </virtualType>
+    <virtualType name="catalogRuleUpdateGridEditAction" type="Magento\Staging\Model\Update\Grid\UpdateEditGridActions\EditAction">
+        <arguments>
+            <argument name="entityIdentifier" xsi:type="string">id</argument>
+            <argument name="entityColumn" xsi:type="string">rule_id</argument>
+            <argument name="jsModalProvider" xsi:type="string">staging_update_edit.staging_update_edit.rule_information.catalogrulestaging_update_form_modal</argument>
+            <argument name="jsLoaderProvider" xsi:type="string">staging_update_edit.staging_update_edit.rule_information.catalogrulestaging_update_form_modal.catalogrule_update_form_loader</argument>
+        </arguments>
+    </virtualType>
+    <virtualType name="catalogRuleUpdateGridDeleteAction" type="Magento\Staging\Model\Update\Grid\UpdateEditGridActions\DeleteAction">
+        <arguments>
+            <argument name="entityIdentifier" xsi:type="string">id</argument>
+            <argument name="entityColumn" xsi:type="string">rule_id</argument>
+            <argument name="jsModalProvider" xsi:type="string">staging_update_edit.staging_update_edit.rule_information.catalogrulestaging_update_remove_form_modal</argument>
+            <argument name="jsLoaderProvider" xsi:type="string">staging_update_edit.staging_update_edit.rule_information.catalogrulestaging_update_remove_form_modal.update_remove_form_loader</argument>
+        </arguments>
+    </virtualType>
+    <type name="Magento\CatalogRule\Block\Adminhtml\Promo\Catalog">
+        <plugin name="disable_apply_rules" type="Magento\CatalogRuleStaging\Block\Adminhtml\Promo\Catalog\Plugin" />
+    </type>
+    <type name="Magento\Staging\Model\Entity\Update\Action\Pool">
+        <arguments>
+            <argument name="actions" xsi:type="array">
+                <item name="Magento\CatalogRule\Api\Data\RuleInterface" xsi:type="array">
+                    <item name="save" xsi:type="array">
+                        <item name="save" xsi:type="string">catalogRuleUpdateSaveSaveAction</item>
+                        <item name="assign" xsi:type="string">catalogRuleUpdateSaveAssignAction</item>
+                    </item>
+                    <item name="delete" xsi:type="array">
+                        <item name="save" xsi:type="string">catalogRuleUpdateDeleteSaveAction</item>
+                        <item name="assign" xsi:type="string">catalogRuleUpdateDeleteAssignAction</item>
+                        <item name="remove" xsi:type="string">catalogRuleUpdateDeleteRemoveAction</item>
+                    </item>
+                </item>
+            </argument>
+        </arguments>
+    </type>
+    <type name="Magento\CatalogRuleStaging\Block\Adminhtml\Promo\Catalog\Edit\Tab\Conditions">
+        <arguments>
+            <argument name="ruleRepository" xsi:type="object" shared="false">
+                Magento\CatalogRule\Api\CatalogRuleRepositoryInterface
+            </argument>
+        </arguments>
+    </type>
+</config>

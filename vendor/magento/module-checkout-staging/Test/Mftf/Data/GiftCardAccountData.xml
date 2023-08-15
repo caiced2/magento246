@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+ /**
+  * Copyright © Magento, Inc. All rights reserved.
+  * See COPYING.txt for license details.
+  */
+-->
+
+<entities xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+          xsi:noNamespaceSchemaLocation="urn:magento:mftf:DataGenerator/etc/dataProfileSchema.xsd">
+    <entity name="SimpleProduct5" type="product">
+        <data key="name" unique="suffix">testProduct</data>
+        <data key="sku" unique="suffix">testSku</data>
+        <data key="price">20</data>
+        <data key="quantity">100</data>
+        <data key="urlKey" unique="suffix">testProduct</data>
+
+    </entity>
+    <entity name="cardCode" type="priceCard">
+        <data key="priceCard" unique="suffix">AB</data>
+    </entity>
+
+    <entity name="ShippingFormData" type="shipping">
+        <data key="email" unique="prefix">mail@gmail.com</data>
+        <data key="fname">firstname</data>
+        <data key="lname">lastname</data>
+        <data key="street">BirminghamStreet</data>
+        <data key="city">Birmingham</data>
+        <data key="postcode">35005</data>
+        <data key="telephone">222222222</data>
+    </entity>
+
+
+</entities>

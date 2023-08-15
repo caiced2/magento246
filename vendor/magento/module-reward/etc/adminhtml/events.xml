@@ -1,0 +1,30 @@
+<?xml version="1.0"?>
+<!--
+/**
+ * Copyright © Magento, Inc. All rights reserved.
+ * See COPYING.txt for license details.
+ */
+-->
+<config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="urn:magento:framework:Event/etc/events.xsd">
+    <event name="adminhtml_customer_save_after">
+        <observer name="magento_reward" instance="Magento\Reward\Observer\SaveRewardPoints" />
+    </event>
+    <event name="review_save_commit_after">
+        <observer name="magento_reward" instance="Magento\Reward\Observer\ReviewSubmit" />
+    </event>
+    <event name="adminhtml_sales_order_create_process_data">
+        <observer name="magento_reward" instance="Magento\Reward\Observer\ProcessOrderCreationData" />
+    </event>
+    <event name="adminhtml_sales_order_creditmemo_register_before">
+        <observer name="magento_reward" instance="Magento\Reward\Observer\SetRewardPointsBalanceToRefund" />
+    </event>
+    <event name="website_delete_after">
+        <observer name="magento_reward" instance="Magento\Reward\Observer\PrepareCustomerOrphanPoints" />
+    </event>
+    <event name="order_cancel_after">
+        <observer name="magento_reward" instance="Magento\Reward\Observer\ReturnRewardPoints" />
+    </event>
+    <event name="payment_method_is_active">
+        <observer name="magento_reward" instance="Magento\Reward\Observer\PreparePaymentMethod" />
+    </event>
+</config>

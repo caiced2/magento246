@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+ /**
+  * Copyright © Magento, Inc. All rights reserved.
+  * See COPYING.txt for license details.
+  */
+-->
+
+<sections xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+          xsi:noNamespaceSchemaLocation="urn:magento:mftf:Page/etc/SectionObject.xsd">
+    <section name="CheckoutCartGiftWrappingSection">
+        <element name="cartItemGiftWrapping" type="text" selector=".//tbody[contains(., '{{prodName}}')]//img[contains(@title,'{{design}}')]" parameterized="true"/>
+        <element name="giftWrappingName" type="text" selector=".gift-wrapping-name"/>
+        <element name="giftWrappingReqularPrice" type="text" selector=".gift-wrapping-title .regular-price span"/>
+        <element name="giftRemoveButton" type="button" selector=".gift-wrapping-title .action-remove"/>
+        <element name="clickImage" type="text" selector=".gift-wrapping-preview"/>
+        <element name="clickButtonGiftUpdate" type="button" selector=".cart-gift-item .actions-toolbar button[type='submit']"/>
+        <element name="giftWrapping" type="text" selector="#cart-totals tr.giftwrapping td.amount"/>
+        <element name="giftReceipt" type="text" selector=".gift-receipt label span"/>
+        <element name="giftReceiptCheckbox" type="checkbox" selector=".gift-receipt input"/>
+        <element name="giftPrintedCardCheckbox" type="checkbox" selector=".gift-printed-card input"/>
+        <element name="giftMessageTo" type="input" selector=".cart-gift-item .gift-message .gift-options-content .field-to input"/>
+        <element name="giftMessageFrom" type="input" selector=".cart-gift-item .gift-message .gift-options-content .field-from input"/>
+        <element name="giftMessage" type="textarea" selector=".cart-gift-item .gift-message .gift-options-content .text textarea"/>
+        <element name="giftWrappingNameResult" type="text" selector=".gift-summary .gift-wrapping-summary .gift-wrapping-name"/>
+        <element name="giftWrappingPriceResult" type="text" selector="//*[contains(., '{{var1}}')]/../span[@class='regular-price']//span[contains(., '{{var2}}')]" parameterized="true"/>
+        <element name="giftReceiptResult" type="text" selector=".gift-wrapping-summary span.label"/>
+        <element name="giftMessageResult" type="text" selector=".gift-message-summary"/>
+        <element name="cartItemGiftOption" type="text" selector="//tr[contains(., '{{var1}}')]/following-sibling::*[contains(., '{{var2}}')]" parameterized="true"/>
+        <element name="cartGiftOptionAll" type="text" selector="//div[contains(@class,'cart-gift-item')][contains(., '{{var1}}')]" parameterized="true"/>
+        <element name="clickCartItemGiftOptions" type="button" selector="//table[@id='shopping-cart-table']//tbody[contains(., '{{prodName}}')]//button[contains(., 'Gift options')]" parameterized="true"/>
+        <element name="clickCartGiftOptions" type="button" selector=".cart-gift-item div[data-role='title']"/>
+        <element name="cartVisibleSmallImage" type="text" selector=".gift-item-block .gift-options-content img"/>
+        <element name="cartItemVisibleSmallImage" type="text" selector="#shopping-cart-table .gift-options-content img"/>
+        <element name="cartGiftMessage" type="block" selector=".cart-gift-item .gift-message"/>
+        <element name="cartItemGiftMessage" type="block" selector="#shopping-cart-table .gift-options .gift-message"/>
+        <element name="cartItemClickButtonGiftUpdate" type="button" selector="//tbody[contains(., '{{prodName}}')]//button[@type='submit']" parameterized="true"/>
+        <element name="giftWrappingOrderPrice" type="text" selector="#cart-totals td[data-th='Gift Wrapping for Order']"/>
+        <element name="giftWrappingItemsPrice" type="text" selector="#cart-totals td[data-th='Gift Wrapping for Items']"/>
+        <element name="giftPrintedCardPrice" type="text" selector="#cart-totals td[data-th='Printed Card']"/>
+        <element name="storefrontGiftOption" type="text" selector=".action.action-gift"/>
+        <element name="giftWrappingPaper" type="button" selector=".gift-wrapping-item"/>
+        <element name="update" type="button" selector="//div[@class='secondary']/button[@title='Update']"/>
+        <element name="giftWrappingTitle" type="text" selector=".giftwrapping .mark"/>
+    </section>
+</sections>

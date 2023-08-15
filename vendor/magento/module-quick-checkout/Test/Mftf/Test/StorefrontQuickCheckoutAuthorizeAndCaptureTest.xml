@@ -1,0 +1,88 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+ /**
+  * Copyright © Magento, Inc. All rights reserved.
+  * See COPYING.txt for license details.
+  */
+-->
+
+<tests xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:noNamespaceSchemaLocation="urn:magento:mftf:Test/etc/testSchema.xsd">
+    <test name="StorefrontQuickCheckoutAuthorizeAndCaptureTest">
+        <annotations>
+            <features value="MagentoQuickCheckout"/>
+            <stories value="Authorize and capture"/>
+            <title value="Authorize and capture using Quick Checkout"/>
+            <description value="Customers are able to place order using Quick Checkout, payment action is authorization and capture"/>
+            <severity value="CRITICAL"/>
+            <testCaseId value="authorize-and-capture"/>
+            <group value="quick-checkout"/>
+        </annotations>
+        <before>
+            <magentoCLI command="config:set {{EnableFreeShippingConfigData.path}} {{EnableFreeShippingConfigData.value}}" stepKey="enableFreeShipping"/>
+            <!-- Login -->
+            <actionGroup ref="AdminLoginActionGroup" stepKey="login"/>
+            <actionGroup ref="AdminConfigureQuickCheckoutActionGroup" stepKey="configurePaymentMethod">
+                <argument name="methodAction" value="authorize_capture"/>
+            </actionGroup>
+            <!-- Create Product -->
+            <createData entity="_defaultCategory" stepKey="createCategory"/>
+            <createData entity="_defaultProduct" stepKey="createProduct">
+                <requiredEntity createDataKey="createCategory"/>
+            </createData>
+            <!-- Create Customer -->
+            <createData entity="Simple_US_Customer" stepKey="createCustomer"/>
+        </before>
+        <after>
+            <magentoCLI command="config:set {{DisableFreeShippingMethod.path}} {{DisableFreeShippingMethod.value}}" stepKey="disableFreeShipping"/>
+            <actionGroup ref="AdminDisableQuickCheckoutActionGroup" stepKey="disablePaymentMethod"/>
+            <!-- Delete product -->
+            <deleteData stepKey="deleteCategory" createDataKey="createCategory"/>
+            <deleteData stepKey="deleteProduct" createDataKey="createProduct"/>
+            <!--Delete customer -->
+            <deleteData stepKey="deleteCustomer" createDataKey="createCustomer"/>
+            <!-- Logout -->
+            <actionGroup ref="AdminLogoutActionGroup" stepKey="logoutFromAdmin"/>
+        </after>
+
+        <!-- Login to storefront as previously created customer -->
+        <actionGroup ref="LoginToStorefrontActionGroup" stepKey="loginAsCustomer">
+            <argument name="Customer" value="$$createCustomer$$"/>
+        </actionGroup>
+        <amOnPage url="{{StorefrontCategoryPage.url($$createCategory.name$$)}}" stepKey="navigateToCategoryPage"/>
+        <actionGroup ref="StorefrontAddProductToCartFromCategoryActionGroup" stepKey="addProductToCart">
+            <argument name="productName" value="$$createProduct.name$$"/>
+        </actionGroup>
+        <actionGroup ref="GoToCheckoutFromMinicartActionGroup" stepKey="goToCheckoutFromMinicart"/>
+        <actionGroup ref="StorefrontSetShippingMethodActionGroup" stepKey="selectFreeShippingMethod">
+            <argument name="shippingMethodName" value="{{freeTitleDefault.value}}"/>
+        </actionGroup>
+        <actionGroup ref="StorefrontCheckoutClickNextButtonActionGroup" stepKey="clickNext"/>
+
+        <actionGroup ref="StorefrontSelectPaymentMethodActionGroup" stepKey="selectPaymentMethod"/>
+        <!-- Click on Magento Payments radio button -->
+        <waitForElement selector="{{CheckoutPaymentSection.paymentSectionTitle}}" stepKey="waitForPlaceOrderButton"/>
+        <click selector="{{CheckoutPaymentSection.MagentoPaymentsHostedFieldsRadio}}" stepKey="clickMagentoPaymentsRadio"/>
+
+        <!-- Fill credit card form and submit -->
+        <actionGroup ref="StorefrontFillCreditCardFormActionGroup" stepKey="fillCreditCardForm"/>
+        <waitForElementVisible selector="{{CheckoutPaymentSection.MagentoPaymentsHostedFieldsPlaceOrderButton}}" stepKey="waitPlaceOrderButton"/>
+        <click selector="{{CheckoutPaymentSection.MagentoPaymentsHostedFieldsPlaceOrderButton}}" stepKey="clickPlaceOrderButton"/>
+
+        <!-- I see order successful page -->
+        <waitForLoadingMaskToDisappear stepKey="waitForLoadingMaskToDisappear"/>
+        <actionGroup ref="AssertStorefrontCheckoutSuccessActionGroup" stepKey="assertCheckoutSuccess"/>
+
+        <grabTextFrom selector="{{CheckoutSuccessMainSection.orderNumber22}}" stepKey="getOrderNumber"/>
+        <actionGroup ref="OpenOrderByIdActionGroup" stepKey="addFilterToGridAndOpenOrder">
+            <argument name="orderId" value="{$getOrderNumber}"/>
+        </actionGroup>
+        <actionGroup ref="AdminAssertNoAuthorizeButtonOnOrderPageActionGroup" stepKey="dontSeeOrderWaitingForAuthorize"/>
+        <actionGroup ref="AdminOrderViewCheckStatusActionGroup" stepKey="checkOrderStatus">
+            <argument name="status" value="Processing"/>
+        </actionGroup>
+        <actionGroup ref="AdminOpenInvoiceFromOrderPageActionGroup" stepKey="openInvoiceFromOrder"/>
+
+        <see selector="{{AdminInvoiceTotalSection.grandTotal}}" userInput="$$createProduct.price$$" stepKey="seeCorrectGrandTotal"/>
+    </test>
+</tests>

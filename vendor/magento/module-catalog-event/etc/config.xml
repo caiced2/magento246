@@ -1,0 +1,26 @@
+<?xml version="1.0"?>
+<!--
+/**
+ * Copyright © Magento, Inc. All rights reserved.
+ * See COPYING.txt for license details.
+ */
+-->
+<config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="urn:magento:module:Magento_Store:etc/config.xsd">
+    <default>
+        <catalog>
+            <magento_catalogevent>
+                <enabled>1</enabled>
+                <lister_output>1</lister_output>
+                <lister_widget_limit>5</lister_widget_limit>
+                <lister_widget_scroll>2</lister_widget_scroll>
+            </magento_catalogevent>
+        </catalog>
+        <system>
+            <media_storage_configuration>
+                <allowed_resources>
+                    <enterprise_folder>enterprise</enterprise_folder>
+                </allowed_resources>
+            </media_storage_configuration>
+        </system>
+    </default>
+</config>

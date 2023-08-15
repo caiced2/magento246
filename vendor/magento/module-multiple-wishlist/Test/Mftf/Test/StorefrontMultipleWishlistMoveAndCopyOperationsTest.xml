@@ -1,0 +1,100 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+ /**
+  * Copyright © Magento, Inc. All rights reserved.
+  * See COPYING.txt for license details.
+  */
+-->
+
+<tests xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xsi:noNamespaceSchemaLocation="urn:magento:mftf:Test/etc/testSchema.xsd">
+    <test name="StorefrontMultipleWishlistMoveAndCopyOperationsTest">
+        <annotations>
+            <features value="MultipleWishlist"/>
+            <stories value="Multiple Wishlist operations"/>
+            <title value="Storefront Multiple Wishlist operations"/>
+            <description value="Storefront Multiple Wishlist check move and copy operations"/>
+            <severity value="MAJOR"/>
+            <testCaseId value="MC-38264"/>
+            <useCaseId value="MC-34411"/>
+            <group value="wishlist"/>
+            <group value="multipleWishlist"/>
+        </annotations>
+        <before>
+            <!-- Enable Multiple Wish Lists -->
+            <createData entity="WishlistSetting" stepKey="enableMultipleWishlist"/>
+
+            <!-- Create Category and Product -->
+            <createData entity="SimpleSubCategory" stepKey="createCategory"/>
+            <createData entity="SimpleProduct" stepKey="createProduct">
+                <requiredEntity createDataKey="createCategory"/>
+            </createData>
+
+            <!-- Create Customer -->
+            <createData entity="Simple_US_Customer" stepKey="createCustomer"/>
+        </before>
+        <after>
+            <!-- Set Multiple Wishlist config to default -->
+            <createData entity="DefaultWishlistSetting" stepKey="defaultWishlistConfig"/>
+
+            <!-- Delete Category and Product -->
+            <deleteData createDataKey="createCategory" stepKey="deleteCategory"/>
+            <deleteData createDataKey="createProduct" stepKey="deleteProduct"/>
+
+            <!-- Logout from Storefront -->
+            <actionGroup ref="StorefrontCustomerLogoutActionGroup" stepKey="logoutCustomer"/>
+
+            <!-- Delete Customer -->
+            <deleteData createDataKey="createCustomer" stepKey="deleteCustomer"/>
+        </after>
+
+        <!-- Login to Storefront -->
+        <actionGroup ref="LoginToStorefrontActionGroup" stepKey="loginAsCustomer">
+            <argument name="Customer" value="$createCustomer$"/>
+        </actionGroup>
+
+        <!-- Create new Wishlist and add Product to it -->
+        <actionGroup ref="AddProductToWishlistActionGroup" stepKey="addProductToWishlist">
+            <argument name="name" value="list1"/>
+            <argument name="category" value="$createCategory.name$"/>
+            <argument name="product" value="$createProduct.name$"/>
+        </actionGroup>
+
+        <!-- Check new Wishlist items qty -->
+        <actionGroup ref="StorefrontCustomerCheckProductQtyInWishlistActionGroup" stepKey="verifyProductQtyInWishlist">
+            <argument name="productName" value="$createProduct.name$"/>
+        </actionGroup>
+
+        <!-- Select and copy item to Default Wishlist -->
+        <actionGroup ref="StorefrontCustomerSelectProductInWishlistActionGroup" stepKey="selectProduct">
+            <argument name="productName" value="$createProduct.name$"/>
+        </actionGroup>
+        <actionGroup ref="StorefrontCustomerCopySelectedProductsToWishlistActionGroup" stepKey="copyProductToDefaultWishlist"/>
+
+        <!-- Navigate to Default Wishlist and check items qty -->
+        <actionGroup ref="StorefrontCustomerSwitchToSpecifiedWishlistActionGroup" stepKey="navigateToDefaultWishlist"/>
+        <actionGroup ref="StorefrontCustomerCheckProductQtyInWishlistActionGroup" stepKey="verifyProductQtyInDefaultWishlist">
+            <argument name="productName" value="$createProduct.name$"/>
+        </actionGroup>
+
+        <!-- Select and move item to new Wishlist -->
+        <actionGroup ref="StorefrontCustomerSelectProductInWishlistActionGroup" stepKey="selectProductAgain">
+            <argument name="productName" value="$createProduct.name$"/>
+        </actionGroup>
+        <actionGroup ref="StorefrontCustomerMoveSelectedProductsToWishlistActionGroup" stepKey="moveProductToNewWishlist">
+            <argument name="wishlistName" value="list1"/>
+        </actionGroup>
+
+        <!-- Assert Default Wishlist is empty -->
+        <actionGroup ref="StorefrontAssertCustomerWishlistIsEmptyActionGroup" stepKey="assertDefaultWishlistIsEmpty"/>
+
+        <!-- Navigate to new Wishlist and check qty has been changed -->
+        <actionGroup ref="StorefrontCustomerSwitchToSpecifiedWishlistActionGroup" stepKey="navigateToNewWishlist">
+            <argument name="wishlistName" value="list1"/>
+        </actionGroup>
+        <actionGroup ref="StorefrontCustomerCheckProductQtyInWishlistActionGroup" stepKey="verifyProductQtyInNewWishlist">
+            <argument name="productName" value="$createProduct.name$"/>
+            <argument name="productQty" value="2"/>
+        </actionGroup>
+    </test>
+</tests>

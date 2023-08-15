@@ -1,0 +1,23 @@
+<?php
+/**
+ * Copyright © Magento, Inc. All rights reserved.
+ * See COPYING.txt for license details.
+ */
+
+?>
+
+<input type="hidden" name="creditmemo[refund_customerbalance]" value="0">
+<?php if ($block->canRefundToCustomerBalance()) : ?>
+    <p>
+        <label for="creditmemo_refund_customerbalance"><?= $block->escapeHtml(__('Refund Store Credit to Store Credit')) ?></label>
+        <input type="checkbox" name="creditmemo[refund_customerbalance]" value="1" id="creditmemo_refund_customerbalance">
+    </p>
+<?php endif; ?>
+
+<input type="hidden" name="creditmemo[refund_real_customerbalance]" value="0">
+<?php if ($block->canRefundMoneyToCustomerBalance()) : ?>
+    <p>
+        <label for="creditmemo_refund_real_customerbalance"><?= $block->escapeHtml(__('Refund Money to Store Credit')) ?></label>
+        <input type="checkbox" name="creditmemo[refund_real_customerbalance]" value="1" id="creditmemo_refund_real_customerbalance">
+    </p>
+<?php endif; ?>

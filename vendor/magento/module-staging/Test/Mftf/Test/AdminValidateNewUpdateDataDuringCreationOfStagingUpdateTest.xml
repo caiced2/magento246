@@ -1,0 +1,75 @@
+<?xml version="1.0" encoding="UTF-8"?>
+    <!--
+     /**
+      * Copyright © Magento, Inc. All rights reserved.
+      * See COPYING.txt for license details.
+      */
+    -->
+
+<tests xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xsi:noNamespaceSchemaLocation="urn:magento:mftf:Test/etc/testSchema.xsd">
+    <test name="AdminValidateNewUpdateDataDuringCreationOfStagingUpdateTest">
+        <annotations>
+            <features value="Staging"/>
+            <stories value="Staging updates"/>
+            <title value="Validate new Update data during creation of Staging Update"/>
+            <description value="Validate new Update data during creation of Staging Update"/>
+            <severity value="MAJOR"/>
+            <testCaseId value="AC-4727"/>
+            <group value="staging"/>
+        </annotations>
+        <before>
+            <!-- Login to Admin page -->
+            <actionGroup ref="AdminLoginActionGroup" stepKey="loginAsAdmin"/>
+            <!-- create category, simple product -->
+            <createData entity="SimpleSubCategory" stepKey="createCategory"/>
+            <createData entity="SimpleProduct" stepKey="createSimpleProduct">
+                <requiredEntity createDataKey="createCategory"/>
+            </createData>
+        </before>
+        <after>
+            <!-- delete created data -->
+            <deleteData createDataKey="createCategory" stepKey="deleteCategory"/>
+            <deleteData createDataKey="createSimpleProduct" stepKey="deleteProduct"/>
+            <magentoCron groups="index" stepKey="reindex"/>
+            <actionGroup ref="StagingDashboardClearFiltersActionGroup" stepKey="clearStagingFilters"/>
+            <actionGroup ref="AdminClearFiltersActionGroup" stepKey="clearProductFilters"/>
+            <actionGroup ref="AdminLogoutActionGroup" stepKey="logout"/>
+        </after>
+        <!-- open created product -->
+        <actionGroup ref="AdminProductPageOpenByIdActionGroup" stepKey="openProductForEdit">
+            <argument name="productId" value="$createSimpleProduct.id$"/>
+        </actionGroup>
+        <!-- Create Schedule New Update -->
+        <conditionalClick selector="{{AdminStagingSlideOutSection.scheduleNewUpdateBtn}}" dependentSelector="{{AdminStagingSlideOutSection.updateName}}" visible="false" stepKey="clickNewUpdate"/>
+        <waitForPageLoad stepKey="waitForLoading"/>
+        <generateDate date="+2 day" format="m/d/Y g:i A" stepKey="generateStartDate"/>
+        <generateDate date="+1 day" format="m/d/Y g:i A" stepKey="generateEndDate"/>
+        <generateDate date="-10 minutes" format="m/d/Y g:i A" stepKey="generateAnotherStartDate"/>
+        <generateDate date="+3 day" format="m/d/Y g:i A" stepKey="generateAnotherEndDate"/>
+        <fillField selector="{{AdminStagingSlideOutSection.startDate}}" userInput="{$generateStartDate}" stepKey="StartDate"/>
+        <click selector="{{AdminStagingSlideOutSection.save}}" stepKey="clickSave"/>
+        <see selector="{{AdminStagingSlideOutSection.fieldError('name')}}" userInput="This is a required field." stepKey="seeNameRequired"/>
+        <clearField selector="{{AdminStagingSlideOutSection.startDate}}" stepKey="clearStartField"/>
+        <fillField selector="{{AdminStagingSlideOutSection.updateName}}" userInput="s5UpdateName" stepKey="fillUpdateName"/>
+        <click selector="{{AdminStagingSlideOutSection.save}}" stepKey="SaveName"/>
+        <see selector="{{AdminStagingSlideOutSection.fieldError('start_time')}}" userInput="This is a required field." stepKey="seeStartDateRequired"/>
+        <fillField selector="{{AdminStagingSlideOutSection.startDate}}" userInput="{$generateStartDate}" stepKey="fillStart"/>
+        <fillField selector="{{AdminStagingSlideOutSection.endDate}}" userInput="{$generateEndDate}" stepKey="fillEndDate"/>
+        <click selector="{{AdminStagingSlideOutSection.save}}" stepKey="clickSaveButton"/>
+        <see selector="{{AdminStagingSlideOutSection.scheduleErrorMessage}}" userInput="error: : The Future Update End Time is invalid. It can't be the same time or earlier than the current time." stepKey="ErrorMessage"/>
+        <click selector="{{AdminStagingSlideOutSection.datepickerStartDate}}" stepKey="clickDatePicker"/>
+        <click selector="{{AdminStagingSlideOutSection.datepickerGoToday}}" stepKey="clickGoToday"/>
+        <click selector="{{AdminStagingSlideOutSection.save}}" stepKey="clickAgainSaveButton"/>
+        <see selector="{{AdminStagingSlideOutSection.scheduleErrorMessage}}" userInput="error: : The Future Update Start Time is invalid. It can't be earlier than the current time." stepKey="seeMessage"/>
+        <fillField selector="{{AdminStagingSlideOutSection.startDate}}" userInput="{$generateAnotherStartDate}" stepKey="fillAgainStartDate"/>
+        <click selector="{{AdminStagingSlideOutSection.save}}" stepKey="Save"/>
+        <see selector="{{AdminStagingSlideOutSection.scheduleErrorMessage}}" userInput="error: : The Future Update Start Time is invalid. It can't be earlier than the current time." stepKey="seeErrorMessage"/>
+        <actionGroup ref="FillScheduleUpdateWithCheckEndActionGroup" stepKey="createScheduleUpdate">
+            <argument name="staging" value="S5UpdateNameStaging"/>
+            <argument name="timeStart" value="{$generateStartDate}"/>
+            <argument name="timeEnd" value="{$generateAnotherEndDate}"/>
+            <argument name="productPrice" value="10"/>
+        </actionGroup>
+    </test>
+</tests>

@@ -1,0 +1,20 @@
+<?xml version="1.0"?>
+<!--
+/**
+ * Copyright © Magento, Inc. All rights reserved.
+ * See COPYING.txt for license details.
+ */
+-->
+<page xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" layout="admin-2columns-left" xsi:noNamespaceSchemaLocation="urn:magento:framework:View/Layout/etc/page_configuration.xsd">
+<head>
+    <css src="Magento_AdobeCommerceEventsClient::css/events.css"/>
+</head>
+<body>
+    <referenceContainer name="left">
+        <block name="event_module_list" class="Magento\AdobeCommerceEventsClient\Block\Events\ModuleList" template="Magento_AdobeCommerceEventsClient::events/index.phtml" />
+    </referenceContainer>
+    <referenceContainer name="content">
+        <block name="event_payload" class="Magento\AdobeCommerceEventsClient\Block\Events\EventPayload" template="Magento_AdobeCommerceEventsClient::events/event_payload.phtml" />
+    </referenceContainer>
+</body>
+</page>

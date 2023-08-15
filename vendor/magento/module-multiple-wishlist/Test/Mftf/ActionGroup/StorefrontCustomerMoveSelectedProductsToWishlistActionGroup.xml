@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+ /**
+  * Copyright © Magento, Inc. All rights reserved.
+  * See COPYING.txt for license details.
+  */
+-->
+
+<actionGroups xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+              xsi:noNamespaceSchemaLocation="urn:magento:mftf:Test/etc/actionGroupSchema.xsd">
+    <actionGroup name="StorefrontCustomerMoveSelectedProductsToWishlistActionGroup">
+        <annotations>
+            <description>Move selected products from current wishlist to provided one.</description>
+        </annotations>
+        <arguments>
+            <argument name="wishlistName" type="string" defaultValue="{{DefaultWishlist.name}}"/>
+            <argument name="itemsQty" type="string" defaultValue="{{CONST.one}}"/>
+        </arguments>
+
+        <click selector="{{StorefrontMultipleWishlistManagementSection.moveSelectedDropDown}}" stepKey="openMoveSelectedDropdown"/>
+        <click selector="{{StorefrontMultipleWishlistManagementSection.moveSelectedTo(wishlistName)}}" stepKey="moveSelectedProductsToWishlist"/>
+        <waitForElementVisible selector="{{StorefrontCustomerAccountMainSection.alertMessage}}" stepKey="waitForAlertMessageVisible"/>
+        <grabTextFrom selector="{{StorefrontCustomerAccountMainSection.alertMessage}}" stepKey="grabAlertMessage"/>
+        <assertStringContainsString stepKey="assertAlertMessage">
+            <actualResult type="variable">grabAlertMessage</actualResult>
+            <expectedResult type="string">{{itemsQty}} items were moved to {{wishlistName}}</expectedResult>
+        </assertStringContainsString>
+    </actionGroup>
+</actionGroups>

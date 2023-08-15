@@ -1,0 +1,126 @@
+{
+    "magento_reward": {
+        "column": {
+            "reward_id": true,
+            "customer_id": true,
+            "website_id": true,
+            "points_balance": true,
+            "website_currency_code": true
+        },
+        "index": {
+            "MAGENTO_REWARD_WEBSITE_ID": true
+        },
+        "constraint": {
+            "PRIMARY": true,
+            "MAGENTO_REWARD_CUSTOMER_ID_CUSTOMER_ENTITY_ENTITY_ID": true,
+            "MAGENTO_REWARD_CUSTOMER_ID_WEBSITE_ID": true
+        }
+    },
+    "magento_reward_history": {
+        "column": {
+            "history_id": true,
+            "reward_id": true,
+            "website_id": true,
+            "store_id": true,
+            "action": true,
+            "entity": true,
+            "points_balance": true,
+            "points_delta": true,
+            "points_used": true,
+            "points_voided": true,
+            "currency_amount": true,
+            "currency_delta": true,
+            "base_currency_code": true,
+            "additional_data": true,
+            "comment": true,
+            "created_at": true,
+            "expired_at_static": true,
+            "expired_at_dynamic": true,
+            "is_expired": true,
+            "is_duplicate_of": true,
+            "notification_sent": true
+        },
+        "index": {
+            "MAGENTO_REWARD_HISTORY_REWARD_ID": true,
+            "MAGENTO_REWARD_HISTORY_WEBSITE_ID": true,
+            "MAGENTO_REWARD_HISTORY_STORE_ID": true,
+            "MAGENTO_REWARD_HISTORY_ENTITY": true
+        },
+        "constraint": {
+            "PRIMARY": true,
+            "MAGENTO_REWARD_HISTORY_REWARD_ID_MAGENTO_REWARD_REWARD_ID": true,
+            "MAGENTO_REWARD_HISTORY_STORE_ID_STORE_STORE_ID": true,
+            "MAGENTO_REWARD_HISTORY_WEBSITE_ID_STORE_WEBSITE_WEBSITE_ID": true
+        }
+    },
+    "magento_reward_rate": {
+        "column": {
+            "rate_id": true,
+            "website_id": true,
+            "customer_group_id": true,
+            "direction": true,
+            "points": true,
+            "currency_amount": true
+        },
+        "index": {
+            "MAGENTO_REWARD_RATE_CUSTOMER_GROUP_ID": true
+        },
+        "constraint": {
+            "PRIMARY": true,
+            "MAGENTO_REWARD_RATE_WEBSITE_ID_STORE_WEBSITE_WEBSITE_ID": true,
+            "MAGENTO_REWARD_RATE_WEBSITE_ID_CUSTOMER_GROUP_ID_DIRECTION": true
+        }
+    },
+    "magento_reward_salesrule": {
+        "column": {
+            "rule_id": true,
+            "points_delta": true
+        },
+        "constraint": {
+            "PRIMARY": true,
+            "MAGENTO_REWARD_SALESRULE_RULE_ID": true
+        }
+    },
+    "quote": {
+        "column": {
+            "use_reward_points": true,
+            "reward_points_balance": true,
+            "base_reward_currency_amount": true,
+            "reward_currency_amount": true
+        }
+    },
+    "quote_address": {
+        "column": {
+            "reward_points_balance": true,
+            "base_reward_currency_amount": true,
+            "reward_currency_amount": true
+        }
+    },
+    "sales_order": {
+        "column": {
+            "reward_points_balance": true,
+            "base_reward_currency_amount": true,
+            "reward_currency_amount": true,
+            "base_rwrd_crrncy_amt_invoiced": true,
+            "rwrd_currency_amount_invoiced": true,
+            "base_rwrd_crrncy_amnt_refnded": true,
+            "rwrd_crrncy_amnt_refunded": true,
+            "reward_points_balance_refund": true
+        }
+    },
+    "sales_invoice": {
+        "column": {
+            "base_reward_currency_amount": true,
+            "reward_currency_amount": true,
+            "reward_points_balance": true
+        }
+    },
+    "sales_creditmemo": {
+        "column": {
+            "base_reward_currency_amount": true,
+            "reward_currency_amount": true,
+            "reward_points_balance": true,
+            "reward_points_balance_refund": true
+        }
+    }
+}

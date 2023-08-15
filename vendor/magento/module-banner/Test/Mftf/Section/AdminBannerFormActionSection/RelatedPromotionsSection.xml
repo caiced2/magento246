@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+ /**
+  * Copyright © Magento, Inc. All rights reserved.
+  * See COPYING.txt for license details.
+  */
+-->
+<sections xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:noNamespaceSchemaLocation="urn:magento:mftf:Page/etc/SectionObject.xsd">
+    <section name="RelatedPromotionsSection">
+        <element name="checkIfPromotionTabOpen" type="button" selector="div[data-index='promotions']&gt;div[data-state-collapsible='closed']"/>
+        <element name="AddRules" type="button" selector="//span[text()='{{var1}}']" parameterized="true"/>
+        <element name="AddSelectedRulesButton" type="button" selector="//h1[contains(text(), '{{var1}}')]//following-sibling::div//span[text()='Add Selected']" parameterized="true"/>
+        <element name="Cancel" type="button" selector="//h1[contains(text(),'Add Related Cart Price Rules')]//following-sibling::div//span[text()='Cancel']"/>
+        <element name="SearchBox" type="button" selector="#name"/>
+        <element name="RuleCheckbox" type="text" selector="//div[text()='{{var1}}']//parent::td//preceding-sibling::td//input[starts-with(@id, 'idscheck')]" parameterized="true"/>
+        <element name="SearchBtn" type="button" selector="//button[@class='action-submit']"/>
+        <element name="SlideOutTitle" type="text" selector="//h1[contains(text(), '{{var1}}')]" parameterized="true"/>
+    </section>
+</sections>

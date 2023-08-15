@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+ /**
+  * Copyright © Magento, Inc. All rights reserved.
+  * See COPYING.txt for license details.
+  */
+-->
+<sections xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="urn:magento:mftf:Page/etc/SectionObject.xsd">
+    <section name="AdminCatalogStagingSlideOutSection">
+        <element name="scheduledChangesModalSlide" type="block" selector=".scheduled-changes-modal-slide"/>
+        <element name="contentTab" type="text" selector="aside.modal-slide div[data-index=&quot;content&quot;]" timeout="30"/>
+        <element name="productPrice" type="input" selector=".modal-content input[name='product[price]']"/>
+        <element name="productPriceUseDefault" type="checkbox" selector=".modal-content .admin__field[data-index=price] [name='use_default[price]']"/>
+        <element name="advancedPricingLink" type="button" selector=".modal-slide._show [data-index='advanced_pricing_button']" timeout="30"/>
+        <element name="wysiwygFieldByName" type="textarea" selector=".modal-slide._show fieldset[data-index='container_{{fieldName}}'] textarea" parameterized="true"/>
+        <element name="wysiwygIframeIdByField" type="iframe" selector="catalogstaging_update_form_{{fieldName}}_ifr" parameterized="true"/>
+        <element name="wysiwygIframeContent" type="block" selector="body.mce-content-body"/>
+        <element name="wysiwygIframe" type="iframe" selector=".modal-slide._show fieldset[data-index='container_{{fieldName}}'] iframe" parameterized="true"/>
+        <element name="useDefaultName" type="checkbox" selector=".modal-content input[name='use_default[name]']" timeout="30"/>
+        <element name="categoryName" type="input" selector=".modal-content input[name='name']"/>
+        <element name="relatedDropdown" type="block" selector=".modal-content .admin__collapsible-block-wrapper[data-index='related']" timeout="30"/>
+        <element name="addRelatedProducts" type="button" selector="button[data-index='button_catalogstaging_related']" timeout="30"/>
+        <element name="enableProductLabel" type="checkbox" selector=".modal-content input[name='product[status]']+label" timeout="30"/>
+    </section>
+</sections>

@@ -1,0 +1,168 @@
+<?xml version="1.0"?>
+<!--
+/**
+ * Copyright © Magento, Inc. All rights reserved.
+ * See COPYING.txt for license details.
+ */
+-->
+<config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="urn:magento:framework:ObjectManager/etc/config.xsd">
+    <preference for="Magento\Staging\Model\Update\Grid\ActionDataProviderInterface" type="Magento\Staging\Model\Update\Grid\ActionsDataProvider" />
+    <virtualType name="salesRuleStagingUpdateMetadataProvider" type="Magento\Staging\Model\Entity\DataProvider\MetadataProvider">
+        <arguments>
+            <argument name="requestFieldName" xsi:type="string">id</argument>
+        </arguments>
+    </virtualType>
+    <virtualType name="Magento\SalesRuleStaging\Block\Adminhtml\Update\Upcoming" type="Magento\Staging\Block\Adminhtml\Update\Upcoming">
+        <arguments>
+            <argument name="entityProvider" xsi:type="object">Magento\SalesRuleStaging\Block\Adminhtml\Update\Provider</argument>
+        </arguments>
+    </virtualType>
+    <virtualType name="salesRuleStagingBlockRemoveUpdateCancelButton" type="Magento\Staging\Block\Adminhtml\Update\Entity\CancelButton">
+        <arguments>
+            <argument name="jsUpdateModal" xsi:type="string">index=salesrulestaging_update_remove_form_modal</argument>
+        </arguments>
+    </virtualType>
+    <virtualType name="stagingSalesRuleUpdateCancelButton" type="Magento\Staging\Block\Adminhtml\Update\Entity\CancelButton">
+        <arguments>
+            <argument name="jsUpdateModal" xsi:type="string">index=salesrulestaging_update_form_modal</argument>
+        </arguments>
+    </virtualType>
+    <virtualType name="stagingSalesRuleUpdatePreviewButton" type="Magento\Staging\Block\Adminhtml\Update\Entity\PreviewButton">
+        <arguments>
+            <argument name="entityProvider" xsi:type="object">Magento\SalesRuleStaging\Block\Adminhtml\Update\Provider</argument>
+            <argument name="entityStoreIdProvider" xsi:type="object">Magento\SalesRuleStaging\Block\Adminhtml\Update\StoreIdProvider</argument>
+        </arguments>
+    </virtualType>
+    <virtualType name="stagingSalesRuleUpdateRemoveButton" type="Magento\Staging\Block\Adminhtml\Update\Entity\RemoveButton">
+        <arguments>
+            <argument name="entityProvider" xsi:type="object">Magento\SalesRuleStaging\Block\Adminhtml\Update\Provider</argument>
+            <argument name="entityIdentifier" xsi:type="string">id</argument>
+            <argument name="jsRemoveModal" xsi:type="string">salesrulestaging_update_form.salesrulestaging_update_form.salesrulestaging_update_remove_form_modal</argument>
+            <argument name="jsRemoveLoader" xsi:type="string">salesrulestaging_update_form.salesrulestaging_update_form.salesrulestaging_update_remove_form_modal.update_remove_form_loader</argument>
+        </arguments>
+    </virtualType>
+    <type name="Magento\SalesRuleStaging\Model\Rule\FormDataProvider">
+        <plugin name="salesRuleStagingFormDataProvider" type="Magento\Staging\Model\Entity\DataProvider\DataProviderPlugin"/>
+        <arguments>
+            <argument name="metaDataProvider" xsi:type="object">salesRuleStagingUpdateMetadataProvider</argument>
+        </arguments>
+    </type>
+    <virtualType name="salesRuleStagingUpcomingGridActions" type="Magento\Staging\Ui\Component\Listing\Column\Entity\Actions">
+        <arguments>
+            <argument name="entityIdentifier" xsi:type="string">id</argument>
+            <argument name="entityColumn" xsi:type="string">rule_id</argument>
+            <argument name="jsModalProvider" xsi:type="string">salesrulestaging_upcoming_form.salesrulestaging_upcoming_form.salesrulestaging_update_form_modal</argument>
+            <argument name="jsLoaderProvider" xsi:type="string">salesrulestaging_upcoming_form.salesrulestaging_upcoming_form.salesrulestaging_update_form_modal.update_form_loader</argument>
+        </arguments>
+    </virtualType>
+    <type name="Magento\SalesRuleStaging\Model\Rule\Identifier\DataProvider">
+        <plugin name="salesRuleStagingPageDataProvider" type="Magento\Staging\Model\Entity\DataProvider\Identifier\DataProviderPlugin"/>
+    </type>
+    <virtualType name="stagingUpdateSalesRuleGridActions" type="Magento\Staging\Ui\Component\Listing\Column\Entity\UpdateActions">
+        <arguments>
+            <argument name="actionsList" xsi:type="object">salesRuleStagingUpdateGridActionProvider</argument>
+        </arguments>
+    </virtualType>
+    <virtualType name="salesRuleStagingUpdateGridActionProvider" type="Magento\Staging\Model\Update\Grid\ActionsDataProvider">
+        <arguments>
+            <argument name="actionsList" xsi:type="array">
+                <item name="editAction" xsi:type="object">salesRuleUpdateGridEditAction</item>
+                <item name="deleteAction" xsi:type="object">salesRuleUpdateGridDeleteAction</item>
+            </argument>
+        </arguments>
+    </virtualType>
+    <virtualType name="salesRuleUpdateGridEditAction" type="Magento\Staging\Model\Update\Grid\UpdateEditGridActions\EditAction">
+        <arguments>
+            <argument name="entityIdentifier" xsi:type="string">id</argument>
+            <argument name="entityColumn" xsi:type="string">rule_id</argument>
+            <argument name="jsModalProvider" xsi:type="string">staging_update_edit.staging_update_edit.sales_rule_information.salesrulestaging_update_form_modal</argument>
+            <argument name="jsLoaderProvider" xsi:type="string">staging_update_edit.staging_update_edit.sales_rule_information.salesrulestaging_update_form_modal.salesrule_update_form_loader</argument>
+        </arguments>
+    </virtualType>
+    <virtualType name="salesRuleUpdateGridDeleteAction" type="Magento\Staging\Model\Update\Grid\UpdateEditGridActions\DeleteAction">
+        <arguments>
+            <argument name="entityIdentifier" xsi:type="string">id</argument>
+            <argument name="entityColumn" xsi:type="string">rule_id</argument>
+            <argument name="jsModalProvider" xsi:type="string">staging_update_edit.staging_update_edit.sales_rule_information.salesrulestaging_update_remove_form_modal</argument>
+            <argument name="jsLoaderProvider" xsi:type="string">staging_update_edit.staging_update_edit.sales_rule_information.salesrulestaging_update_remove_form_modal.update_remove_form_loader</argument>
+        </arguments>
+    </virtualType>
+    <type name="Magento\SalesRule\Model\Rule">
+        <plugin name="salesRuleConditionFieldsetIdResolver" type="Magento\SalesRuleStaging\Model\Plugin\ConditionFieldsetIdResolver"/>
+        <plugin name="salesRuleActionFieldsetIdResolver" type="Magento\SalesRuleStaging\Model\Plugin\ActionFieldsetIdResolver"/>
+    </type>
+
+    <!-- Sales Rule save controller -->
+    <virtualType name="ruleHydrator" type="Magento\SalesRuleStaging\Model\Rule\Hydrator">
+        <arguments>
+            <argument name="entityRetriever" xsi:type="object">Magento\SalesRuleStaging\Model\Rule\Retriever</argument>
+        </arguments>
+    </virtualType>
+    <virtualType name="ruleUpdateSaveSaveAction" type="Magento\Staging\Model\Entity\Update\Action\Save\SaveAction">
+        <arguments>
+            <argument name="entityHydrator" xsi:type="object">ruleHydrator</argument>
+        </arguments>
+    </virtualType>
+    <virtualType name="ruleUpdateSaveAssignAction" type="Magento\Staging\Model\Entity\Update\Action\Save\AssignAction">
+        <arguments>
+            <argument name="entityHydrator" xsi:type="object">ruleHydrator</argument>
+        </arguments>
+    </virtualType>
+    <virtualType name="ruleUpdateDeleteSaveAction" type="Magento\Staging\Model\Entity\Update\Action\Delete\SaveAction">
+        <arguments>
+            <argument name="entityRetriever" xsi:type="object">Magento\SalesRuleStaging\Model\Rule\Retriever</argument>
+            <argument name="entityName" xsi:type="string">Magento\SalesRule\Api\Data\RuleInterface</argument>
+        </arguments>
+    </virtualType>
+    <virtualType name="ruleUpdateDeleteAssignAction" type="Magento\Staging\Model\Entity\Update\Action\Delete\AssignAction">
+        <arguments>
+            <argument name="entityRetriever" xsi:type="object">Magento\SalesRuleStaging\Model\Rule\Retriever</argument>
+            <argument name="entityName" xsi:type="string">Magento\SalesRule\Api\Data\RuleInterface</argument>
+        </arguments>
+    </virtualType>
+    <virtualType name="ruleUpdateDeleteRemoveAction" type="Magento\Staging\Model\Entity\Update\Action\Delete\RemoveAction">
+        <arguments>
+            <argument name="entityRetriever" xsi:type="object">Magento\SalesRuleStaging\Model\Rule\Retriever</argument>
+            <argument name="entityName" xsi:type="string">Magento\SalesRule\Api\Data\RuleInterface</argument>
+        </arguments>
+    </virtualType>
+    <type name="Magento\Staging\Model\Entity\Update\Action\Pool">
+        <arguments>
+            <argument name="actions" xsi:type="array">
+                <item name="Magento\SalesRule\Api\Data\RuleInterface" xsi:type="array">
+                    <item name="save" xsi:type="array">
+                        <item name="save" xsi:type="string">ruleUpdateSaveSaveAction</item>
+                        <item name="assign" xsi:type="string">ruleUpdateSaveAssignAction</item>
+                    </item>
+                    <item name="delete" xsi:type="array">
+                        <item name="save" xsi:type="string">ruleUpdateDeleteSaveAction</item>
+                        <item name="assign" xsi:type="string">ruleUpdateDeleteAssignAction</item>
+                        <item name="remove" xsi:type="string">ruleUpdateDeleteRemoveAction</item>
+                    </item>
+                </item>
+            </argument>
+        </arguments>
+    </type>
+    <virtualType name="ruleUpdateSave" type="Magento\Staging\Model\Entity\Update\Save">
+        <arguments>
+            <argument name="entityName" xsi:type="string">Magento\SalesRule\Api\Data\RuleInterface</argument>
+        </arguments>
+    </virtualType>
+    <type name="Magento\SalesRuleStaging\Controller\Adminhtml\Update\Save">
+        <arguments>
+            <argument name="stagingUpdateSave" xsi:type="object">ruleUpdateSave</argument>
+        </arguments>
+    </type>
+
+    <!-- Sales Rule delete controller -->
+    <type name="Magento\SalesRuleStaging\Controller\Adminhtml\Update\Delete">
+        <arguments>
+            <argument name="stagingUpdateDelete" xsi:type="object">ruleUpdateDelete</argument>
+        </arguments>
+    </type>
+    <virtualType name="ruleUpdateDelete" type="Magento\Staging\Model\Entity\Update\Delete">
+        <arguments>
+            <argument name="entityName" xsi:type="string">Magento\SalesRule\Api\Data\RuleInterface</argument>
+        </arguments>
+    </virtualType>
+</config>

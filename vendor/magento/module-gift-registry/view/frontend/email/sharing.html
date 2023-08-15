@@ -1,0 +1,67 @@
+<!--
+/**
+ * Copyright © Magento, Inc. All rights reserved.
+ * See COPYING.txt for license details.
+ */
+-->
+<!--@subject {{trans "Gift Registry shared at %store_name" store_name=$store.frontend_name}} @-->
+<!--@vars {
+"store url=\"customer\/account\/\"":"Customer Account URL",
+"template config_path=\"design\/email\/footer_template\"":"Email Footer Template",
+"template config_path=\"design\/email\/header_template\"":"Email Header Template",
+"var logo_alt":"Email Logo Image Alt",
+"var logo_url":"Email Logo Image URL",
+"var message|escape|nl2br":"Message",
+"var recipient_name|escape":"Recipient Name",
+"var entity.registrants":"Registry Recipients",
+"var entity.title":"Registry Title",
+"var entity.url_key":"Registry URL Key",
+"var store.frontend_name":"Store Name",
+"store url=\"\"":"Store URL",
+"var this.getUrl($store, 'customer/account/',[_nosid:1])":"Account URL",
+"var this.getUrl($store, 'giftregistry/view/', [id:$entity.url_key, _nosid:1])":"Registry URL"
+} @-->
+
+{{template config_path="design/email/header_template"}}
+
+<p class="greeting">{{trans "%name," name=$recipient_name}}</p>
+
+<p>
+    {{trans
+    "You can view and purchase items from this gift registry at <a href='%account_url'>%store_name</a>."
+    account_url="$this.getUrl($store, 'customer/account/',[_nosid:1])"
+    store_name=$store.frontend_name
+    |raw}}
+</p>
+
+{{depend message}}
+<table class="message-info" cellspacing="0" cellpadding="0" border="0">
+    <tr>
+        <td>
+            <h3>{{trans "Message"}}</h3>
+            {{var message|escape|nl2br}}
+        </td>
+    </tr>
+</table>
+<br />
+{{/depend}}
+
+<p>
+    <strong>{{trans "Gift Registry:"}}</strong> {{var entity.title}}
+    <br><strong>{{trans "Created For:"}}</strong> {{var entity.registrants}}
+    <br>{{trans
+            "<strong>Registry Location:</strong> <a href='%registry_url'>%registry_url</a>"
+            registry_url="$this.getUrl($store, 'giftregistry/view/', [id:$entity.url_key, _nosid:1])"
+        |raw}}
+    <br><strong>{{trans "Registry ID:"}}</strong> {{var entity.url_key}}
+</p>
+
+<p>
+    {{trans
+        "You can create your own gift registry on <a href='%account_url'>%store_name</a> and share it with friends and family."
+        account_url="$this.getUrl($store, 'customer/account/',[_nosid:1])"
+        store_name=$store.frontend_name
+    |raw}}
+</p>
+
+{{template config_path="design/email/footer_template"}}

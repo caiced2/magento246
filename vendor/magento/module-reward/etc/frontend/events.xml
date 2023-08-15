@@ -1,0 +1,18 @@
+<?xml version="1.0"?>
+<!--
+/**
+ * Copyright © Magento, Inc. All rights reserved.
+ * See COPYING.txt for license details.
+ */
+-->
+<config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="urn:magento:framework:Event/etc/events.xsd">
+    <event name="customer_session_init">
+        <observer name="magento_reward" instance="Magento\Reward\Observer\CheckRates" />
+    </event>
+    <event name="payment_method_is_active">
+        <observer name="magento_reward" instance="Magento\Reward\Observer\PreparePaymentMethod" />
+    </event>
+    <event name="magento_invitation_save_commit_after">
+        <observer name="magento_reward" instance="Magento\Reward\Observer\InvitationToCustomer" />
+    </event>
+</config>

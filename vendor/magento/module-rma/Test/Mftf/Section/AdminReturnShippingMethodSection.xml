@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+ /**
+  * Copyright © Magento, Inc. All rights reserved.
+  * See COPYING.txt for license details.
+  */
+-->
+
+<sections xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:noNamespaceSchemaLocation="urn:magento:mftf:Page/etc/SectionObject.xsd">
+    <section name="AdminReturnShippingMethodSection">
+        <element name="trackingNumber" type="text" selector="#shipment_tracking_info #tracking_number"/>
+        <element name="trackingTitle" type="text" selector="#shipment_tracking_info #tracking_title"/>
+        <element name="addTrackingNumber" type="button" selector="#shipment_tracking_info button.save"/>
+        <element name="deleteTrackingNumber" type="button" selector="#shipment_tracking_info button.action-delete"/>
+    </section>
+</sections>

@@ -1,0 +1,141 @@
+{
+    "magento_catalogpermissions": {
+        "column": {
+            "permission_id": true,
+            "category_id": true,
+            "website_id": true,
+            "customer_group_id": true,
+            "grant_catalog_category_view": true,
+            "grant_catalog_product_price": true,
+            "grant_checkout_items": true
+        },
+        "index": {
+            "MAGENTO_CATALOGPERMISSIONS_WEBSITE_ID": true,
+            "MAGENTO_CATALOGPERMISSIONS_CUSTOMER_GROUP_ID": true
+        },
+        "constraint": {
+            "PRIMARY": true,
+            "MAGENTO_CATPERMISSIONS_CSTR_GROUP_ID_CSTR_GROUP_CSTR_GROUP_ID": true,
+            "MAGENTO_CATALOGPERMISSIONS_WEBSITE_ID_STORE_WEBSITE_WEBSITE_ID": true,
+            "MAGENTO_CATPERMISSIONS_CTGR_ID_CAT_CTGR_ENTT_ENTT_ID": true,
+            "MAGENTO_CATPERMISSIONS_CTGR_ID_WS_ID_CSTR_GROUP_ID": true
+        }
+    },
+    "magento_catalogpermissions_index": {
+        "column": {
+            "category_id": true,
+            "website_id": true,
+            "customer_group_id": true,
+            "grant_catalog_category_view": true,
+            "grant_catalog_product_price": true,
+            "grant_checkout_items": true
+        },
+        "index": {
+            "MAGENTO_CATALOGPERMISSIONS_INDEX_WEBSITE_ID": true,
+            "MAGENTO_CATALOGPERMISSIONS_INDEX_CUSTOMER_GROUP_ID": true
+        },
+        "constraint": {
+            "PRIMARY": true,
+            "MAGENTO_CATPERMISSIONS_IDX_CTGR_ID_WS_ID_CSTR_GROUP_ID": true
+        }
+    },
+    "magento_catalogpermissions_index_product": {
+        "column": {
+            "product_id": true,
+            "store_id": true,
+            "customer_group_id": true,
+            "grant_catalog_category_view": true,
+            "grant_catalog_product_price": true,
+            "grant_checkout_items": true
+        },
+        "index": {
+            "MAGENTO_CATALOGPERMISSIONS_INDEX_PRODUCT_STORE_ID": true,
+            "MAGENTO_CATALOGPERMISSIONS_INDEX_PRODUCT_CUSTOMER_GROUP_ID": true
+        },
+        "constraint": {
+            "PRIMARY": true,
+            "MAGENTO_CATPERMISSIONS_IDX_PRD_PRD_ID_STORE_ID_CSTR_GROUP_ID": true
+        }
+    },
+    "magento_catalogpermissions_index_tmp": {
+        "column": {
+            "category_id": true,
+            "website_id": true,
+            "customer_group_id": true,
+            "grant_catalog_category_view": true,
+            "grant_catalog_product_price": true,
+            "grant_checkout_items": true
+        },
+        "index": {
+            "MAGENTO_CATALOGPERMISSIONS_INDEX_TMP_WEBSITE_ID": true,
+            "MAGENTO_CATALOGPERMISSIONS_INDEX_WEBSITE_ID": true,
+            "MAGENTO_CATALOGPERMISSIONS_INDEX_TMP_CUSTOMER_GROUP_ID": true,
+            "MAGENTO_CATALOGPERMISSIONS_INDEX_CUSTOMER_GROUP_ID": true
+        },
+        "constraint": {
+            "PRIMARY": true,
+            "MAGENTO_CATPERMISSIONS_IDX_TMP_CTGR_ID_WS_ID_CSTR_GROUP_ID": true,
+            "MAGENTO_CATPERMISSIONS_IDX_CTGR_ID_WS_ID_CSTR_GROUP_ID": true
+        }
+    },
+    "magento_catalogpermissions_index_product_tmp": {
+        "column": {
+            "product_id": true,
+            "store_id": true,
+            "customer_group_id": true,
+            "grant_catalog_category_view": true,
+            "grant_catalog_product_price": true,
+            "grant_checkout_items": true
+        },
+        "index": {
+            "MAGENTO_CATALOGPERMISSIONS_INDEX_PRODUCT_TMP_STORE_ID": true,
+            "MAGENTO_CATALOGPERMISSIONS_INDEX_PRODUCT_TMP_CUSTOMER_GROUP_ID": true
+        },
+        "constraint": {
+            "PRIMARY": true,
+            "MAGENTO_CATPERMISSIONS_IDX_PRD_TMP_PRD_ID_STORE_ID_CSTR_GROUP_ID": true
+        }
+    },
+    "magento_catalogpermissions_index_replica": {
+        "column": {
+            "category_id": true,
+            "website_id": true,
+            "customer_group_id": true,
+            "grant_catalog_category_view": true,
+            "grant_catalog_product_price": true,
+            "grant_checkout_items": true
+        },
+        "index": {
+            "MAGENTO_CATALOGPERMISSIONS_INDEX_WEBSITE_ID": true,
+            "MAGENTO_CATALOGPERMISSIONS_INDEX_REPLICA_WEBSITE_ID": true,
+            "MAGENTO_CATALOGPERMISSIONS_INDEX_CUSTOMER_GROUP_ID": true,
+            "MAGENTO_CATALOGPERMISSIONS_INDEX_REPLICA_CUSTOMER_GROUP_ID": true
+        },
+        "constraint": {
+            "PRIMARY": true,
+            "MAGENTO_CATPERMISSIONS_IDX_CTGR_ID_WS_ID_CSTR_GROUP_ID": true,
+            "MAGENTO_CATPERMISSIONS_IDX_REPLICA_CTGR_ID_WS_ID_CSTR_GROUP_ID": true
+        }
+    },
+    "magento_catalogpermissions_index_product_replica": {
+        "column": {
+            "product_id": true,
+            "store_id": true,
+            "customer_group_id": true,
+            "grant_catalog_category_view": true,
+            "grant_catalog_product_price": true,
+            "grant_checkout_items": true
+        },
+        "index": {
+            "MAGENTO_CATALOGPERMISSIONS_INDEX_PRODUCT_STORE_ID": true,
+            "MAGENTO_CATALOGPERMISSIONS_INDEX_PRODUCT_REPLICA_STORE_ID": true,
+            "MAGENTO_CATALOGPERMISSIONS_INDEX_PRODUCT_CUSTOMER_GROUP_ID": true,
+            "MAGENTO_CATPERMISSIONS_IDX_PRD_REPLICA_CSTR_GROUP_ID": true
+        },
+        "constraint": {
+            "PRIMARY": true,
+            "MAGENTO_CATPERMISSIONS_IDX_PRD_PRD_ID_STORE_ID_CSTR_GROUP_ID": true,
+            "UNQ_0AAC957F8B69BCA7FCD81BEB3630E576": true
+        }
+    }
+}

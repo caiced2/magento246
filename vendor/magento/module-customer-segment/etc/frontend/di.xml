@@ -1,0 +1,20 @@
+<?xml version="1.0"?>
+<!--
+/**
+ * Copyright © Magento, Inc. All rights reserved.
+ * See COPYING.txt for license details.
+ */
+-->
+<config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="urn:magento:framework:ObjectManager/etc/config.xsd">
+    <type name="Magento\Framework\View\Layout">
+        <plugin name="customer-segment-session-depersonalize"
+                type="Magento\CustomerSegment\Model\Layout\DepersonalizePlugin" sortOrder="15"/>
+    </type>
+    <type name="Magento\Framework\App\Action\AbstractAction">
+        <plugin name="customer-segment-app-action-dispatchController-context-plugin"
+                type="Magento\CustomerSegment\Model\App\Action\ContextPlugin" sortOrder="10"/>
+    </type>
+    <type name="Magento\Checkout\Model\Cart\CollectQuote">
+        <plugin name="checkout_cart_collect_totals" type="Magento\CustomerSegment\Model\Checkout\Block\Cart\Shipping\Plugin"/>
+    </type>
+</config>

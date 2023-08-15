@@ -1,0 +1,77 @@
+<?xml version="1.0"?>
+<!--
+/**
+ * Copyright © Magento, Inc. All rights reserved.
+ * See COPYING.txt for license details.
+ */
+-->
+<page xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="urn:magento:framework:View/Layout/etc/page_configuration.xsd">
+    <body>
+        <block class="Magento\VisualMerchandiser\Block\Adminhtml\Category\Merchandiser" name="category.merchandiser.container" template="Magento_VisualMerchandiser::category/merchandiser.phtml">
+            <arguments>
+                <argument name="merchandiser_view_model" xsi:type="object">Magento\VisualMerchandiser\ViewModel\MerchandiserViewModel</argument>
+            </arguments>
+            <block class="Magento\VisualMerchandiser\Block\Adminhtml\Category\Merchandiser\Grid" name="category.merchandiser.grid" as="grid"/>
+            <block class="Magento\VisualMerchandiser\Block\Adminhtml\Category\Merchandiser\Tile" name="category.merchandiser.tile" as="tile">
+                <arguments>
+                    <argument name="merchandiser_view_model" xsi:type="object">Magento\VisualMerchandiser\ViewModel\MerchandiserViewModel</argument>
+                </arguments>
+            </block>
+            <block class="Magento\Backend\Block\Widget\Button" name="category.merchandiser.add_product_button" as="add_products_button">
+                <arguments>
+                    <argument name="id" xsi:type="string">catalog_category_add_product_tabs</argument>
+                    <argument name="label" translate="true" xsi:type="string">Add Products</argument>
+                    <argument name="class" xsi:type="string">secondary add-products</argument>
+                </arguments>
+            </block>
+            <block class="Magento\Backend\Block\Widget\Button" name="category.merchandiser.sort_products_button" as="sort_products_button">
+                <arguments>
+                    <argument name="id" xsi:type="string">catalog_category_sort_products_tabs</argument>
+                    <argument name="label" translate="true" xsi:type="string">Sort</argument>
+                    <argument name="class" xsi:type="string">secondary sort-products</argument>
+                </arguments>
+            </block>
+            <block class="Magento\Framework\View\Element\Template" name="category.merchandiser.smart_category" as="smart_category" template="Magento_VisualMerchandiser::category/smart_category.phtml">
+                <block class="Magento\VisualMerchandiser\Block\Adminhtml\Widget\SmartCategorySwitch" name="category.merchandiser.smart_category.smart_category_onoff" as="smart_category_onoff" template="Magento_VisualMerchandiser::widget/smart_category_switch.phtml">
+                    <arguments>
+                        <argument name="id" xsi:type="string">catalog_category_smart_category_onoff</argument>
+                    </arguments>
+                </block>
+                <block class="Magento\VisualMerchandiser\Block\Adminhtml\Category\SmartCategoryRules" name="category.merchandiser.smart_category.smart_category_rules" as="smart_category_rules" template="Magento_VisualMerchandiser::category/smart_category_rules.phtml">
+                    <block class="Magento\VisualMerchandiser\Block\Adminhtml\Widget\Select\AttributeSelect" name="smart.category.attribute.select" as="smart_category_attribute_select">
+                        <arguments>
+                            <argument name="class" xsi:type="string">smart_category_rule</argument>
+                            <argument name="name" xsi:type="string">attribute_select</argument>
+                        </arguments>
+                    </block>
+                    <block class="Magento\VisualMerchandiser\Block\Adminhtml\Widget\Select\OperatorSelect" name="smart.category.operator.select" as="smart_category_operator_select">
+                        <arguments>
+                            <argument name="class" xsi:type="string">smart_category_rule</argument>
+                            <argument name="name" xsi:type="string">operator_select</argument>
+                        </arguments>
+                    </block>
+                    <block class="Magento\VisualMerchandiser\Block\Adminhtml\Widget\Select\LogicSelect" name="smart.category.logic.select" as="smart_category_logic_select">
+                        <arguments>
+                            <argument name="class" xsi:type="string">smart_category_rule</argument>
+                            <argument name="name" xsi:type="string">logic_select</argument>
+                        </arguments>
+                    </block>
+                    <block class="Magento\VisualMerchandiser\Block\Adminhtml\Widget\Select\AutomaticSortingSelect" name="category.merchandiser.automatic_sorting" as="automatic_sorting">
+                        <arguments>
+                            <argument name="label" translate="true" xsi:type="string">Automatic Sorting</argument>
+                            <argument name="class" xsi:type="string">automatic-sorting</argument>
+                            <argument name="name" xsi:type="string">automatic_sorting</argument>
+                        </arguments>
+                    </block>
+                </block>
+            </block>
+            <block class="Magento\VisualMerchandiser\Block\Adminhtml\Widget\Select\SortOrderSelect" name="category.merchandiser.sort_order" as="sort_order">
+                <arguments>
+                    <argument name="label" translate="true" xsi:type="string">Sort order</argument>
+                    <argument name="class" xsi:type="string">sort_order</argument>
+                    <argument name="name" xsi:type="string">sort_order</argument>
+                </arguments>
+            </block>
+        </block>
+    </body>
+</page>

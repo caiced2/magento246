@@ -1,0 +1,70 @@
+<!--
+/**
+ * Copyright © Magento, Inc. All rights reserved.
+ * See COPYING.txt for license details.
+ */
+-->
+<div tooltip=" trigger: '[data-tooltip-trigger=update-' + $index + ']',
+               action: 'click',
+               delay: 0,
+               position: 'top',
+               step: 30,
+               track: false,
+               strict: false,
+               closeButton: true,
+               parentScope: '[data-tooltip-search-scope=search-scope-' + $index + ']'">
+    <div>
+        <div class="data-tooltip-title" ko-scope="requestChild('name')">
+            <text args="getLabel($row())"></text>
+        </div>
+
+        <div class="data-tooltip-content">
+            <div class="staging-events-actions" ko-scope="requestChild('actions')">
+                <a
+                    class="action-secondary action-edit"
+                    repeat="foreach: getVisibleActions($row()._rowIndex), item: '$action'"
+                    attr="href: $action().href"
+                    click="getActionHandler($action())">
+                    <span text="$action().label"></span>
+                </a>
+            </div>
+
+            <dl class="staging-events-summary">
+                <dt>
+                    <translate args="'Status'"></translate>:
+                </dt>
+                <dd ko-scope="requestChild('status')">
+                    <text args="getLabel($row())"></text>
+                </dd>
+
+                <dt>
+                    <translate args="'Start'"></translate>:
+                </dt>
+                <dd>
+                    <time text="formatDetails(getStartDate($row()))"></time>
+                </dd>
+
+                <ifnot args="isPermanent($row())">
+                    <dt>
+                        <translate args="'End'"></translate>:
+                    </dt>
+                    <dd>
+                        <time text="formatDetails(getEndDate($row()))"></time>
+                    </dd>
+                </ifnot>
+            </dl>
+
+            <div class="staging-events-campaign" ko-scope="requestChild('includes')">
+                <div class="staging-events-campaign-objects">
+                    <translate args="'This update includes'"></translate>
+                    <div class="staging-events-campaign-objects-count" text="countItems($row()) + ' ' + $t('Objects')"></div>
+                </div>
+                <ul class="items">
+                    <li class="item" repeat="foreach: getItems($row()), name: '$item'">
+                        <span text="$item().count + ' ' + getItemLabel($item())"></span>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </div>
+</div>

@@ -1,0 +1,97 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+/**
+ * Copyright © Magento, Inc. All rights reserved.
+ * See COPYING.txt for license details.
+ */
+-->
+
+<tests xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xsi:noNamespaceSchemaLocation="urn:magento:mftf:Test/etc/testSchema.xsd">
+    <test name="AdminCustomersGridCustomerAddressAttributeFullMatchFilterTest">
+        <annotations>
+            <features value="CustomerCustomAttributes"/>
+            <stories value="Customer Custom Attribute"/>
+            <title value="Customer Grid should show only customers that fully match customer address attribute filter if the filter behavior is configured to 'Full Match'"/>
+            <description value="Customer Grid should show only customers that fully match customer address attribute filter if the filter behavior is configured to 'Full Match'"/>
+            <severity value="AVERAGE"/>
+            <testCaseId value="AC-2560"/>
+            <useCaseId value="ACP2E-464"/>
+            <group value="CustomerCustomAttributes"/>
+            <group value="mtf_migrated"/>
+        </annotations>
+        <before>
+            <!-- Create first customer -->
+            <createData entity="Simple_US_Customer_NY" stepKey="createCustomer1"/>
+            <!-- Create second customer -->
+            <createData entity="Simple_US_Customer_CA" stepKey="createCustomer2"/>
+            <!-- Log in to admin -->
+            <actionGroup ref="AdminLoginActionGroup" stepKey="loginAsAdmin"/>
+            <!-- Go to customer address attributes page -->
+            <actionGroup ref="AdminNavigateToCustomerAddressAttributesPageActionGroup" stepKey="navigateToCustomerAttributes"/>
+            <!-- Open "region" attribute -->
+            <actionGroup ref="AdminOpenCustomerAddressAttributeByCodeActionGroup" stepKey="openAttribute">
+                <argument name="attributeCode" value="region"/>
+            </actionGroup>
+            <!-- Set "Grid Filter Condition Type" to "Full Match" -->
+            <dontSeeElement selector="{{AdminCustomerAttributeEditSection.gridFilterConditionType}}" stepKey="dontSeeConditionTypeField"/>
+            <selectOption selector="{{AdminCustomerAttributeEditSection.usedInFilterOptions}}" userInput="Yes" stepKey="selectUseForFiltering"/>
+            <seeElement selector="{{AdminCustomerAttributeEditSection.gridFilterConditionType}}" stepKey="seeConditionTypeField"/>
+            <selectOption selector="{{AdminCustomerAttributeEditSection.gridFilterConditionType}}" userInput="Full Match" stepKey="selectFullMatch"/>
+            <!-- Save the attribute -->
+            <click selector="{{CustomerAccountSection.save}}" stepKey="saveAttribute"/>
+            <waitForPageLoad stepKey="WaitForAttributeSaved"/>
+            <magentoCLI command="indexer:reindex customer_grid" stepKey="reindex"/>
+        </before>
+        <after>
+            <!-- Delete first customer -->
+            <deleteData createDataKey="createCustomer1" stepKey="deleteCustomer1"/>
+            <!-- Delete second customer -->
+            <deleteData createDataKey="createCustomer2" stepKey="deleteCustomer2"/>
+            <!-- Go to customer address attributes page -->
+            <actionGroup ref="AdminNavigateToCustomerAddressAttributesPageActionGroup" stepKey="navigateToCustomerAttributes"/>
+            <!-- Open "region" attribute -->
+            <actionGroup ref="AdminOpenCustomerAddressAttributeByCodeActionGroup" stepKey="openAttribute">
+                <argument name="attributeCode" value="region"/>
+            </actionGroup>
+            <!-- Set "Grid Filter Condition Type" to "Partial Match" -->
+            <selectOption selector="{{AdminCustomerAttributeEditSection.gridFilterConditionType}}" userInput="Partial Match" stepKey="selectPartialMatch"/>
+            <selectOption selector="{{AdminCustomerAttributeEditSection.usedInFilterOptions}}" userInput="No" stepKey="selectNotUseForFiltering"/>
+            <!-- Save the attribute -->
+            <click selector="{{CustomerAccountSection.save}}" stepKey="saveAttribute"/>
+            <waitForPageLoad stepKey="WaitForAttributeSaved"/>
+            <magentoCLI command="indexer:reindex customer_grid" stepKey="reindex"/>
+            <!-- Go to "all customers" page -->
+            <actionGroup ref="AdminOpenCustomersGridActionGroup" stepKey="navigateToCustomersPage"/>
+            <!-- Reset filters -->
+            <actionGroup ref="AdminResetFilterInCustomerGrid" stepKey="clearCustomerGridFilter"/>
+            <!-- Logout from admin -->
+            <actionGroup ref="AdminLogoutActionGroup" stepKey="logoutFromAdmin"/>
+        </after>
+        <!-- Go to "all customers" page -->
+        <actionGroup ref="AdminOpenCustomersGridActionGroup" stepKey="navigateToCustomersPage"/>
+        <!-- Filter by first customer address region -->
+        <actionGroup ref="AdminCustomerGridApplyInputFilterActionGroup" stepKey="filterByFullValue">
+            <argument name="name" value="billing_region"/>
+            <argument name="value" value="{{US_Address_NY.state}}"/>
+        </actionGroup>
+        <!-- Assert that the grid is not empty -->
+        <actionGroup ref="AdminAssertGridNotEmptyActionGroup" stepKey="expectNotEmptyGrid"/>
+        <!-- Assert that the total number of records is 1 -->
+        <actionGroup ref="AdminAssertNumberOfRecordsInUiGridActionGroup" stepKey="assertNumberOfRecordsInShipmentsGrid">
+            <argument name="number" value="1"/>
+        </actionGroup>
+        <!-- Assert that the first customer is in the grid -->
+        <actionGroup ref="AdminAssertCustomerInCustomersGrid" stepKey="assertCustomer1InGrid">
+            <argument name="text" value="$$createCustomer1.email$$"/>
+            <argument name="row" value="1"/>
+        </actionGroup>
+        <!-- Filter by the common part of customers postcode -->
+        <actionGroup ref="AdminCustomerGridApplyInputFilterActionGroup" stepKey="filterByPartialValue">
+            <argument name="name" value="billing_region"/>
+            <argument name="value" value="or"/>
+        </actionGroup>
+        <!-- Assert that the grid is empty -->
+        <actionGroup ref="AdminAssertGridEmptyActionGroup" stepKey="expectEmptyGrid"/>
+    </test>
+</tests>

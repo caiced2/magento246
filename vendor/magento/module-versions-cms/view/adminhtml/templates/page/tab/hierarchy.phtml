@@ -1,0 +1,224 @@
+<?php
+/**
+ * Copyright © Magento, Inc. All rights reserved.
+ * See COPYING.txt for license details.
+ */
+
+/* @var \Magento\VersionsCms\Block\Adminhtml\Cms\Page\Edit\Tab\Hierarchy $block */
+/** @var \Magento\Framework\View\Helper\SecureHtmlRenderer $secureRenderer */
+?>
+<label class="admin__field-label" for="tree-container">
+    <span><?= $block->escapeHtml(__('Parent page')) ?></span>
+</label>
+<div class="admin__field-control">
+    <input type="hidden" name="node_ids" id="node_ids" data-form-part="cms_page_form"
+           value="<?= $block->escapeHtmlAttr($block->getSelectedNodeIds()) ?>"/>
+    <input type="hidden" name="website_root" id="website_root" data-form-part="cms_page_form"
+           value="<?= $block->escapeHtmlAttr($block->getPage()->getWebsiteRoot()) ?>"/>
+    <input type="hidden" name="nodes_data" id="nodes_data" data-form-part="cms_page_form" value=""/>
+    <input type="hidden" name="assign_to_root" id="assign_to_root" data-form-part="cms_page_form" value="">
+    <div id="tree-container" class="cms-tree tree x-tree"></div>
+</div>
+<!--[if IE]>
+<script id="ie-deferred-loader" defer="defer" src="//:"></script>
+<![endif]-->
+<?php
+$nodesJson = $block->getNodesJson();
+$currentPageJson = $block->getCurrentPageJson();
+$isAssignedToWebsiteRoot = $block->getPage()->getWebsiteRoot() ? 1 : 0;
+$websiteRootMessage = $block->escapeJs(__('Website Root'));
+$scriptString = <<<script
+    require(['jquery', 'prototype', 'extjs/ext-tree-checkbox'], function (jQuery) {
+
+        /**
+         * Fix ext compatibility with prototype 1.6
+         */
+        Ext.lib.Event.getTarget = function (e) {
+            var ee = e.browserEvent || e;
+            return ee.target ? Event.element(ee) : null;
+        };
+        hierarchyNodes = {
+            nodes: {$nodesJson},
+            page: {$currentPageJson},
+            initialize: function () {
+                this.increment = 0;
+                this.pageAssignedToWebsiteRoot = {$isAssignedToWebsiteRoot};
+                this.nodeIds = $('node_ids');
+                this.tree = new Ext.tree.TreePanel('tree-container', {
+                    animate: false,
+                    loader: false,
+                    enableDD: true,
+                    containerScroll: true,
+                    rootVisible: true,
+                    lines: true
+                });
+
+                this.treeRoot = new Ext.tree.TreeNode({
+                    id: '_root',
+                    expanded: true,
+                    text: '{$websiteRootMessage}',
+                    cls: 'cms_node_root',
+                    uiProvider: Ext.tree.CheckboxNodeUI,
+                    checked: this.pageAssignedToWebsiteRoot
+                });
+                this.tree.setRootNode(this.treeRoot);
+
+                this.createNodes();
+
+                this.tree.render();
+                this.fixNodes(this.treeRoot);
+                this.tree.addListener('click', this.nodeClicked.bind(this));
+                this.tree.addListener('check', this.nodeChecked.bind(this));
+                this.tree.addListener('nodedragover', this.onDragOver.bind(this));
+                this.tree.addListener('move', this.saveTreeData.bind(this));
+                this.treeRoot.select();
+                this.treeRoot.getUI().removeClass('x-tree-selected');
+                this.saveTreeData();
+            },
+            createNodes: function () {
+                for (var i = 0, l = this.nodes.length; i < l; i++) {
+                    var dd = (this.nodes[i].parent_node_id && this.nodes[i].current_page) ? true : false;
+                    var cls = this.nodes[i].current_page ? 'cms-current' : '';
+                    var label = this.nodes[i].label.escapeHTML().replace('\'', '&#039;').replace('"', '&quot;')
+                        + " <i style='color: grey'>("
+                        + this.nodes[i].store_label.escapeHTML().replace('\'', '&#039;').replace('"', '&quot;')
+                        + ")</i>";
+                    cls += this.nodes[i].page_id ? ' cms_page' : ' cms_node';
+                    var node = new Ext.tree.TreeNode({
+                        id: this.nodes[i].node_id,
+                        text: label,
+                        cls: cls,
+                        expanded: this.nodes[i].page_exists,
+                        allowDrop: true,
+                        allowDrag: dd,
+                        page_id: this.nodes[i].page_id,
+                        uiProvider: (this.nodes[i].current_page || this.nodes[i].append_denied)
+                            ? null
+                            : Ext.tree.CheckboxNodeUI,
+                        checked: this.nodes[i].page_exists,
+                        current_page: this.nodes[i].current_page
+                    });
+
+                    if (parentNode = this.tree.getNodeById(this.nodes[i].parent_node_id)) {
+                        parentNode.appendChild(node);
+                    } else if (!this.nodes[i].parent_node_id) {
+                        this.treeRoot.appendChild(node);
+                    }
+                }
+            },
+            fixNodes: function (node) {
+                var child = this.findCurrentPageChildNode(node);
+                if (node.attributes.checked && !child) {
+                    this.addPageToNode(this.page, node);
+                } else if (!node.attributes.checked && child) {
+                    node.removeChild(child);
+                }
+
+                if (node.attributes.checked) {
+                    node.ensureVisible();
+                }
+
+                var children = node.childNodes;
+                if (children) {
+                    for (var i = 0; i < children.length; i++) {
+                        this.fixNodes(children[i]);
+                    }
+                }
+            },
+            nodeClicked: function (node) {
+                node.getUI().removeClass('x-tree-selected');
+                if (node.attributes.uiProvider) {
+                    node.getUI().check(!node.getUI().checked());
+                }
+            },
+            nodeChecked: function (node) {
+                var child = this.findCurrentPageChildNode(node);
+                if (node.attributes.checked) {
+                    if (child) {
+                        return; //prevent issues with double event fire on checking checkbox without childs
+                    }
+                    this.addPageToNode(this.page, node);
+                } else {
+                    if (child) {
+                        node.removeChild(child);
+                    }
+                }
+                if(node.attributes.id == '_root') {
+                    if($('website_root').value == true) {
+                        $('assign_to_root').value = false;
+                    } else {
+                        $('assign_to_root').value = true;
+                    }
+                }
+                this.saveTreeData();
+            },
+            addPageToNode: function (page, node) {
+                var newNode = new Ext.tree.TreeNode({
+                    id: '_' + this.increment,
+                    text: page.label,
+                    identifier: null,
+                    page_id: page.id,
+                    expanded: false,
+                    current_page: true,
+                    allowDrop: false,
+                    allowDrag: true,
+                    cls: 'cms_page cms-current'
+                });
+                this.increment++;
+                node.appendChild(newNode);
+                node.getUI().addClass('x-tree-node-expanded'); // fix issues with styling for expanded nodes
+            },
+            findCurrentPageChildNode: function (node) {
+                var children = node.childNodes;
+                for (var i = 0; i < children.length; i++) {
+                    if (children[i].attributes.current_page) {
+                        return children[i];
+                    }
+                }
+            },
+            onDragOver: function (dragOverEvent) {
+                if (dragOverEvent.point == 'append') {
+                    if (dragOverEvent.target != dragOverEvent.dropNode.parentNode) {
+                        return false;
+                    }
+                } else {
+                    if (dragOverEvent.target.parentNode != dragOverEvent.dropNode.parentNode) {
+                        return false;
+                    }
+                }
+                return true;
+            },
+            saveTreeData: function () {
+                this.collectChilds(this.treeRoot);
+                $('nodes_data').value = Object.toJSON(this.treeData);
+            },
+            collectChilds: function (node) {
+                if (node.id == '_root') {
+                    this.treeData = new Hash();
+                    if (node.attributes.checked) {
+                        $('website_root').value = 1;
+                    } else {
+                        $('website_root').value = 0;
+                    }
+                } else {
+                    this.treeData.set(node.id, {
+                        node_id: node.id,
+                        page_id: node.attributes.page_id,
+                        parent_node_id: node.parentNode.id == '_root' ? null : node.parentNode.id,
+                        label: node.attributes.text,
+                        sort_order: node.parentNode.indexOf(node),
+                        current_page: node.attributes.current_page,
+                        page_exists: node.attributes.checked
+                    });
+                }
+                if (node.hasChildNodes()) {
+                    node.eachChild(this.collectChilds.bind(this));
+                }
+            }
+        };
+
+        jQuery(hierarchyNodes.initialize.bind(hierarchyNodes));
+    });
+script;
+?>
+<?= /* @noEscape */ $secureRenderer->renderTag('script', [], $scriptString, false); ?>

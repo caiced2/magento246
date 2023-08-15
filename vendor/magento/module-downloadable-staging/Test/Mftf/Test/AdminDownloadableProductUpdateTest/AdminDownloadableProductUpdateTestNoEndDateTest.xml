@@ -1,0 +1,86 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+ /**
+  * Copyright © Magento, Inc. All rights reserved.
+  * See COPYING.txt for license details.
+  */
+-->
+<tests xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:noNamespaceSchemaLocation="urn:magento:mftf:Test/etc/testSchema.xsd">
+    <test name="AdminDownloadableProductUpdateTestNoEndDateTest">
+        <annotations>
+            <features value="DownloadableStaging"/>
+            <stories value="Admin manages staging update"/>
+            <title value="Admin should be able to create Single Future Update with no end date from Downloadable Product Page"/>
+            <description value="Admin should be able to create Single Future Update with no end date from Downloadable Product Page"/>
+            <severity value="CRITICAL"/>
+            <testCaseId value="MC-25511"/>
+            <group value="downloadableStaging"/>
+        </annotations>
+
+        <before>
+            <magentoCLI command="downloadable:domains:add static.magento.com" stepKey="addDownloadableDomain"/>
+            <actionGroup ref="AdminLoginActionGroup" stepKey="loginAsAdmin"/>
+        </before>
+        <after>
+            <magentoCLI command="downloadable:domains:remove static.magento.com" stepKey="removeDownloadableDomain"/>
+
+            <!-- Delete the product and log out -->
+            <actionGroup ref="DeleteProductBySkuActionGroup" stepKey="deleteDownloadableProduct">
+                <argument name="sku" value="{{DownloadableProduct.sku}}"/>
+            </actionGroup>
+            <actionGroup ref="ResetAdminDataGridToDefaultViewActionGroup" stepKey="clearProductFilter"/>
+            <amOnPage url="{{AdminStagingDashboardPage.url}}" stepKey="goToStagingDashboard"/>
+            <waitForPageLoad stepKey="waitForPageLoad"/>
+            <actionGroup ref="ClearFiltersAdminDataGridActionGroup" stepKey="clearFilter"/>
+            <actionGroup ref="AdminLogoutActionGroup" stepKey="amOnLogoutPage"/>
+        </after>
+
+        <!-- Create product -->
+        <amOnPage url="{{AdminProductIndexPage.url}}" stepKey="adminProductIndexPageAdd"/>
+        <waitForPageLoad stepKey="waitForProductIndexPageLoad"/>
+        <actionGroup ref="GoToCreateProductPageActionGroup" stepKey="GoToCreateProductPageActionGroup">
+            <argument name="product" value="DownloadableProduct"/>
+        </actionGroup>
+        <actionGroup ref="FillMainProductFormNoWeightActionGroup" stepKey="fillMainProductForm">
+            <argument name="product" value="DownloadableProduct"/>
+        </actionGroup>
+
+        <!-- Add downloadable links -->
+        <click selector="{{AdminProductDownloadableSection.sectionHeader}}" stepKey="openDownloadableSection"/>
+        <checkOption selector="{{AdminProductDownloadableSection.isDownloadableProduct}}" stepKey="checkIsDownloadable"/>
+        <fillField userInput="{{downloadableData.link_title}}" selector="{{AdminProductDownloadableSection.linksTitleInput}}" stepKey="fillDownloadableLinkTitle"/>
+        <checkOption selector="{{AdminProductDownloadableSection.isLinksPurchasedSeparately}}" stepKey="checkLinksPurchasedSeparately"/>
+        <fillField userInput="{{downloadableData.sample_title}}" selector="{{AdminProductDownloadableSection.samplesTitleInput}}" stepKey="fillDownloadableSampleTitle"/>
+        <actionGroup ref="AddDownloadableProductLinkWithMaxDownloadsActionGroup" stepKey="addDownloadableLinkWithMaxDownloads">
+            <argument name="link" value="downloadableLinkWithMaxDownloads"/>
+        </actionGroup>
+        <actionGroup ref="AddDownloadableProductLinkActionGroup" stepKey="addDownloadableLink">
+            <argument name="link" value="downloadableLink"/>
+        </actionGroup>
+
+        <!--Save product-->
+        <actionGroup ref="SaveProductFormActionGroup" stepKey="saveProduct1"/>
+        <comment userInput="BIC workaround" stepKey="assertSuccess1"/>
+        <!-- Create the new staging update -->
+        <actionGroup ref="createEntityNameStagingUpdate" stepKey="fillOutNewStaging">
+            <argument name="stagingUpdate" value="_defaultStaging"/>
+        </actionGroup>
+
+        <!-- Go to product storefront page to see the change applied-->
+        <amOnPage url="{{StorefrontProductPage.url(DownloadableProduct.urlKey)}}" stepKey="goToCreatedProductPage"/>
+        <waitForPageLoad stepKey="waitForProductPageLoad2"/>
+        <see selector="{{StorefrontProductInfoMainSection.productName}}" userInput="{{_defaultStaging.entityName}}" stepKey="seeNewTitle"/>
+        <actionGroup ref="changeStagingView" stepKey="changeDashboardView">
+            <argument name="view" value="grid"/>
+        </actionGroup>
+        <actionGroup ref="FilterProductGridByName2ActionGroup" stepKey="filterByName">
+            <argument name="name" value="{{_defaultStaging.name}}"/>
+        </actionGroup>
+
+        <!-- Active permanent updates are no longer shown on the staging dashboard -->
+        <comment userInput="BIC workaround" stepKey="seeUpdateRow"/>
+        <comment userInput="BIC workaround" stepKey="seeUpcoming"/>
+        <comment userInput="BIC workaround" stepKey="seeUpdateTitle"/>
+    </test>
+</tests>

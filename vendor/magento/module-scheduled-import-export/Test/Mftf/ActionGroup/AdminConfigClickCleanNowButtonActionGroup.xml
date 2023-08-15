@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+ /**
+  * Copyright © Magento, Inc. All rights reserved.
+  * See COPYING.txt for license details.
+  */
+-->
+
+<actionGroups xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:noNamespaceSchemaLocation="urn:magento:mftf:Test/etc/actionGroupSchema.xsd">
+    <actionGroup name="AdminConfigClickCleanNowButtonActionGroup">
+        <annotations>
+            <description>Clicks the "Clean Now" button in admin on the Stores > Settings > Configuration > Advanced > System page in the "Scheduled Import/Export File History Cleaning" section.</description>
+        </annotations>
+        <arguments>
+            <argument name="messageType" defaultValue="success" type="string"/>
+            <argument name="messageText" defaultValue="You deleted the history files." type="string"/>
+        </arguments>
+        <conditionalClick selector="{{AdminScheduledImportExportConfigSection.sectionHeader}}" dependentSelector="{{AdminScheduledImportExportConfigSection.cleanNowButton}}" visible="false" stepKey="expandConfigSection"/>
+        <waitForElementVisible selector="{{AdminScheduledImportExportConfigSection.cleanNowButton}}" stepKey="waitForCleanNowButton"/>
+        <click selector="{{AdminScheduledImportExportConfigSection.cleanNowButton}}" stepKey="clickCleanNowButton"/>
+        <waitForPageLoad stepKey="waitForPageLoad"/>
+        <waitForText userInput="{{messageText}}" selector="{{AdminMessagesSection.messageByType(messageType)}}" stepKey="waitForMessage"/>
+    </actionGroup>
+</actionGroups>

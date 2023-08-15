@@ -1,0 +1,102 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+ /**
+  * Copyright © Magento, Inc. All rights reserved.
+  * See COPYING.txt for license details.
+  */
+-->
+<tests xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xsi:noNamespaceSchemaLocation="urn:magento:mftf:Test/etc/testSchema.xsd">
+    <test name="DynamicBlockWithCatalogRuleTest">
+        <annotations>
+            <title value="Dynamic Block Displaying Regardless of Catalog Price Rule"/>
+            <description value="Catalog price rules Being ignored. Dynamic block displaying regardless of rule"/>
+            <stories value="MC-37322: [Cloud] Catalog Price Rules Being Ignored - Dynamic Block Displaying Regardless of Rule"/>
+            <severity value="CRITICAL"/>
+            <testCaseId value="MC-37812"/>
+            <useCaseId value="MC-37322"/>
+        </annotations>
+        <before>
+            <createData entity="ApiCategory" stepKey="createCategoryOne"/>
+            <createData entity="ApiSimpleProduct" stepKey="createSimpleProductOne">
+                <requiredEntity createDataKey="createCategoryOne"/>
+            </createData>
+            <createData entity="ApiCategory" stepKey="createCategoryTwo"/>
+            <createData entity="ApiSimpleProduct" stepKey="createSimpleProductTwo">
+                <requiredEntity createDataKey="createCategoryTwo"/>
+            </createData>
+            <!--Create Dynamic block-->
+            <createData entity="_defaultDynamicBlock" stepKey="createDynamicBlock"/>
+            <magentoCron stepKey="runCronIndex" groups="index"/>
+            <actionGroup ref="AdminLoginActionGroup" stepKey="loginGetFromGeneralFile"/>
+            <actionGroup ref="EnabledWYSIWYGActionGroup" stepKey="enableWYSIWYG"/>
+            <!-- Begin creating a new catalog price rule -->
+            <actionGroup ref="NewCatalogPriceRuleByUIWithConditionIsCategoryActionGroup" stepKey="newCatalogPriceRuleByUIWithConditionIsCategory">
+                <argument name ="categoryId" value="$createCategoryOne.id$"/>
+            </actionGroup>
+            <conditionalClick selector="{{AdminNewCatalogPriceRule.active}}" dependentSelector="{{AdminNewCatalogPriceRule.activeIsEnabled}}" visible="false" stepKey="enableActiveBtn"/>
+            <!-- Select not logged in customer group -->
+            <actionGroup ref="SelectNotLoggedInCustomerGroupActionGroup" stepKey="selectNotLoggedInCustomerGroup"/>
+            <!-- Save and apply the new catalog price rule -->
+            <actionGroup ref="SaveAndApplyCatalogPriceRuleActionGroup" stepKey="saveAndApplyCatalogPriceRule"/>
+            <!-- Assign catalog rule to the banner -->
+            <actionGroup ref="AssignRelatedCatalogPriceRuleToBannerActionGroup" stepKey="assignCatalogPriceRuleToBanner">
+                <argument name="CatalogPriceRule" value="_defaultCatalogRule"/>
+                <argument name="Banner" value="_defaultDynamicBlock"/>
+            </actionGroup>
+            <!--Create Widget dynamic block-->
+            <amOnPage url="{{AdminNewWidgetPage.url}}" stepKey="amOnAdminNewWidgetPage"/>
+            <waitForPageLoad stepKey="waitForCreateWidgetPageLoad"/>
+            <actionGroup ref="AdminFillSpecificPageWidgetMainFieldsActionGroup" stepKey="fillWidgetMainFields">
+                <argument name="widget" value="DynamicBlockRotateWidgetWithCatalogRule"/>
+            </actionGroup>
+            <actionGroup ref="AdminConfigureDynamicBlockRotateWidgetOptionsActionGroup" stepKey="configureOptions">
+                <argument name="dynamicBlockOptions" value="DynamicBlockRotateWidgetOptionsWithCatalogRule"/>
+            </actionGroup>
+            <actionGroup ref="ClickSaveButtonActionGroup" stepKey="saveWidget">
+                <argument name="message" value="The widget instance has been saved"/>
+            </actionGroup>
+            <!--Reindex and flush cache-->
+            <actionGroup ref="CliIndexerReindexActionGroup" stepKey="reindex">
+                <argument name="indices" value=""/>
+            </actionGroup>
+            <actionGroup ref="CliCacheFlushActionGroup" stepKey="flushCache">
+                <argument name="tags" value=""/>
+            </actionGroup>
+        </before>
+        <after>
+            <deleteData createDataKey="createCategoryOne" stepKey="deleteCreateCategoryOne" />
+            <deleteData createDataKey="createSimpleProductOne" stepKey="deleteCreateSimpleProductOne" />
+            <deleteData createDataKey="createCategoryTwo" stepKey="deleteCreateCategoryTwo" />
+            <deleteData createDataKey="createSimpleProductTwo" stepKey="deleteCreateSimpleProductTwo" />
+            <actionGroup ref="DisabledWYSIWYGActionGroup" stepKey="disableWYSIWYG"/>
+            <actionGroup ref="DeleteBanner2ActionGroup" stepKey="deleteBanner">
+                <argument name="bannerName" value="{{_defaultDynamicBlock.name}}" />
+            </actionGroup>
+            <!-- Delete catalog price rule -->
+            <actionGroup ref="AdminOpenCatalogPriceRulePageActionGroup" stepKey="goToPriceRulePage"/>
+            <actionGroup ref="deleteEntitySecondaryGrid" stepKey="deletePriceRule">
+                <argument name="name" value="{{_defaultCatalogRule.name}}"/>
+                <argument name="searchInput" value="{{AdminSecondaryGridSection.catalogRuleIdentifierSearch}}"/>
+            </actionGroup>
+            <actionGroup ref="AdminDeleteWidgetActionGroup" stepKey="deleteProductLinkWidget">
+                <argument name="widget" value="DynamicBlockRotateWidgetWithCatalogRule"/>
+            </actionGroup>
+            <!--Reindex and flush cache-->
+            <actionGroup ref="CliIndexerReindexActionGroup" stepKey="reindexAfter">
+                <argument name="indices" value=""/>
+            </actionGroup>
+            <actionGroup ref="CliCacheFlushActionGroup" stepKey="flushCacheAfter">
+                <argument name="tags" value=""/>
+            </actionGroup>
+            <actionGroup ref="AdminLogoutActionGroup" stepKey="logout"/>
+        </after>
+        <!-- Verify product on Product Page -->
+        <amOnPage url="{{StorefrontProductPage.url($$createSimpleProductOne.custom_attributes[url_key]$$)}}" stepKey="amOnProductOnePage"/>
+        <waitForElementVisible selector="{{StorefrontProductPageDynamicBlockSection.dynamicBlockContent}}" stepKey="waitForDynamicBlockbecomeVisible"/>
+        <see selector="{{StorefrontProductPageDynamicBlockSection.dynamicBlockContent}}" userInput="$createDynamicBlock.default_contents$" stepKey="seeDynamicBlockInProductPageView"/>
+        <amOnPage url="{{StorefrontProductPage.url($$createSimpleProductTwo.custom_attributes[url_key]$$)}}" stepKey="amOnProductTwoPage"/>
+        <waitForElementNotVisible selector="{{StorefrontProductPageDynamicBlockSection.dynamicBlockContent}}" stepKey="waitForElementNotVisible"/>
+        <dontSee selector="{{StorefrontProductPageDynamicBlockSection.dynamicBlockContent}}" userInput="$createDynamicBlock.default_contents$" stepKey="dontSeeDynamicBlockInProductPageView"/>
+    </test>
+</tests>

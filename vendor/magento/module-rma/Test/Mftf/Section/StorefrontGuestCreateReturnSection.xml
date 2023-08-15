@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+ /**
+  * Copyright © Magento, Inc. All rights reserved.
+  * See COPYING.txt for license details.
+  */
+-->
+
+<sections xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+          xsi:noNamespaceSchemaLocation="urn:magento:mftf:Page/etc/SectionObject.xsd">
+    <section name="StorefrontGuestCreateReturnSection">
+        <element name="newReturnPage" type="text" selector="//*[@id='maincontent']//span[contains(text(), 'Create New Return')]"/>
+        <element name="item" type="select" selector="[name='items[{{item_by_count}}][order_item_id]']" parameterized="true"/>
+        <element name="quantityToReturn" type="input" selector="[name='items[{{item_by_count}}][qty_requested]']" parameterized="true" timeout="5"/>
+        <element name="resolution" type="select" selector="[name='items[{{item_by_count}}][resolution]']" parameterized="true"/>
+        <element name="itemCondition" type="select" selector="[name='items[{{item_by_count}}][condition]']" parameterized="true"/>
+        <element name="reasonToReturn" type="select" selector="[name='items[{{item_by_count}}][reason]']" parameterized="true"/>
+        <element name="addItemToReturn" type="button" selector="#add-item-to-return"/>
+        <element name="submit" type="button" selector="//*/span[contains(text(), 'Submit')]"/>
+        <element name="resolutionError" type="text" selector="//*[@id='items:resolution0']/following-sibling::div[contains(text(),'Please select an option')]"/>
+        <element name="conditionError" type="text" selector="//*[@id='items:condition0']/following-sibling::div[contains(text(),'Please select an option')]"/>
+        <element name="reasonError" type="text" selector="//*[@id='items:reason0']/following-sibling::div[contains(text(),'Please select an option')]"/>
+    </section>
+</sections>

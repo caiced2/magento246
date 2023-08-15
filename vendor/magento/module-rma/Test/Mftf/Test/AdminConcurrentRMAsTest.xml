@@ -1,0 +1,213 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+ /**
+  * Copyright © Magento, Inc. All rights reserved.
+  * See COPYING.txt for license details.
+  */
+-->
+<tests xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:noNamespaceSchemaLocation="urn:magento:mftf:Test/etc/testSchema.xsd">
+    <test name="AdminConcurrentRMAsTest">
+        <annotations>
+            <features value="Rma"/>
+            <stories value="Create RMA"/>
+            <title value="Concurrent RMAs"/>
+            <description value="Verify that RMAs can be created simultaneously so that none of them deletes info from another one"/>
+            <severity value="CRITICAL"/>
+            <testCaseId value="MC-6426"/>
+            <group value="rma"/>
+        </annotations>
+        <before>
+            <!--Create 2 Simple products-->
+            <createData entity="SimpleProduct2" stepKey="createSimpleProduct1">
+                <field key="price">10.00</field>
+            </createData>
+            <createData entity="SimpleProduct2" stepKey="createSimpleProduct2">
+                <field key="price">10.00</field>
+            </createData>
+        </before>
+        <after>
+            <!-- Delete Products -->
+            <deleteData createDataKey="createSimpleProduct1" stepKey="deleteSimpleProduct1"/>
+            <deleteData createDataKey="createSimpleProduct2" stepKey="deleteSimpleProduct2"/>
+            <!-- Open Order Page and clear filter -->
+            <actionGroup ref="AdminOrdersGridClearFiltersActionGroup" stepKey="resetOrderFilter"/>
+            <!-- Open Return Page and clear filter  -->
+            <actionGroup ref="AdminGoToReturnPage" stepKey="goToReturnIndexPage"/>
+            <actionGroup ref="ClearFiltersAdminDataGridActionGroup" stepKey="resetReturnFilter"/>
+            <!-- Logout from admin -->
+            <actionGroup ref="AdminLogoutActionGroup" stepKey="logout"/>
+        </after>
+        <!-- Preconditions  -->
+        <!-- Add simple product to shopping cart -->
+        <actionGroup ref="AddSimpleProductToCartActionGroup" stepKey="cartAddSimpleProduct1ToCart">
+            <argument name="product" value="$$createSimpleProduct1$$"/>
+        </actionGroup>
+        <actionGroup ref="GoToCheckoutFromMinicartActionGroup" stepKey="goToCheckout"/>
+        <actionGroup ref="GuestCheckoutFillingShippingSectionActionGroup" stepKey="fillShippingAddress">
+            <argument name="customerVar" value="Simple_US_Customer_NY"/>
+            <argument name="customerAddressVar" value="US_Address_NY"/>
+        </actionGroup>
+        <actionGroup ref="CheckoutSelectCheckMoneyOrderPaymentActionGroup" stepKey="clickCheckMoneyOrderPayment"/>
+        <!-- Place Order -->
+        <actionGroup ref="ClickPlaceOrderActionGroup" stepKey="clickPlaceOrder"/>
+        <grabTextFrom selector="{{CheckoutSuccessMainSection.orderNumber}}" stepKey="grabFirstOrderNumber"/>
+        <!-- Add simple products to shopping cart -->
+        <actionGroup ref="AddSimpleProductToCartActionGroup" stepKey="cartAddProduct1ToCart">
+            <argument name="product" value="$$createSimpleProduct1$$"/>
+        </actionGroup>
+        <actionGroup ref="AddSimpleProductToCartActionGroup" stepKey="cartAddProduct2ToCart">
+            <argument name="product" value="$$createSimpleProduct2$$"/>
+        </actionGroup>
+        <actionGroup ref="GoToCheckoutFromMinicartActionGroup" stepKey="goToCheckoutForCreateSecondOrder"/>
+        <actionGroup ref="GuestCheckoutFillingShippingSectionActionGroup" stepKey="fillShippingAddressAgain">
+            <argument name="customerVar" value="Simple_US_Customer_NY"/>
+            <argument name="customerAddressVar" value="US_Address_NY"/>
+        </actionGroup>
+        <actionGroup ref="CheckoutSelectCheckMoneyOrderPaymentActionGroup" stepKey="clickCheckMoneyOrderPaymentForCreateSecondOrder"/>
+        <!-- Place Order -->
+        <actionGroup ref="ClickPlaceOrderActionGroup" stepKey="clickPlaceOrderButton"/>
+        <grabTextFrom selector="{{CheckoutSuccessMainSection.orderNumber}}" stepKey="grabSecondOrderNumber"/>
+        <!-- Login to Admin -->
+        <actionGroup ref="AdminLoginActionGroup" stepKey="loginAsAdmin"/>
+        <!-- Open first create order -->
+        <actionGroup ref="OpenOrderByIdActionGroup" stepKey="openFirstOrder">
+            <argument name="orderId" value="{$grabFirstOrderNumber}"/>
+        </actionGroup>
+        <!--Create Shipment and Invoice for this Order.-->
+        <actionGroup ref="GoToShipmentIntoOrderActionGroup" stepKey="goToShipmentForFirstOrder"/>
+        <actionGroup ref="SubmitShipmentIntoOrderActionGroup" stepKey="submitShipmentForFirstOrder"/>
+        <actionGroup ref="StartCreateInvoiceFromOrderPageActionGroup" stepKey="createInvoiceForFirstOrder"/>
+        <actionGroup ref="SubmitInvoiceActionGroup" stepKey="submitInvoiceForFirstOrder"/>
+        <see selector="{{AdminOrderDetailsInformationSection.orderStatus}}" userInput="Complete" stepKey="seeFirstOrderComplete"/>
+        <!-- Open second create order -->
+        <actionGroup ref="OpenOrderByIdActionGroup" stepKey="openSecondOrder">
+            <argument name="orderId" value="{$grabSecondOrderNumber}"/>
+        </actionGroup>
+        <!--Create Shipment and Invoice for this Order.-->
+        <actionGroup ref="GoToShipmentIntoOrderActionGroup" stepKey="goToShipmentForSecondOrder"/>
+        <actionGroup ref="SubmitShipmentIntoOrderActionGroup" stepKey="submitShipmentForSecondOrder"/>
+        <actionGroup ref="StartCreateInvoiceFromOrderPageActionGroup" stepKey="createInvoiceForSecondOrder"/>
+        <actionGroup ref="SubmitInvoiceActionGroup" stepKey="submitInvoiceForSecondOrder"/>
+        <see selector="{{AdminOrderDetailsInformationSection.orderStatus}}" userInput="Complete" stepKey="seeSecondOrderComplete"/>
+        <!-- Steps -->
+        <!-- 2. Go to *Sales > Orders* page Open *O1* to view, Click *Create Returns* button -->
+        <actionGroup ref="OpenOrderByIdActionGroup" stepKey="openOrder1">
+            <argument name="orderId" value="{$grabFirstOrderNumber}"/>
+        </actionGroup>
+        <actionGroup ref="AdminCreateReturnsForGuest" stepKey="createReturns">
+            <argument name="customer" value="Simple_US_Customer_NY"/>
+        </actionGroup>
+        <!-- 3. Add *P1* to Return -->
+        <actionGroup ref="goToReturnItemsTab" stepKey="goToReturnItemsTab"/>
+        <actionGroup ref="addReturnItem" stepKey="addReturnItem">
+            <argument name="product" value="$$createSimpleProduct1$$"/>
+        </actionGroup>
+        <actionGroup ref="AdminFillReturnItemFields" stepKey="fillReturnItemFields">
+            <argument name="reason" value="Out of Service"/>
+            <argument name="condition" value="Damaged"/>
+            <argument name="resolution" value="Refund"/>
+        </actionGroup>
+        <!-- 4. Click *Submit Returns* button -->
+        <actionGroup ref="AdminClickSubmitReturnsButton" stepKey="submitReturns"/>
+        <!-- 5. Go to *Sales > Orders* page, Open *O2* to view, Click *Create Returns* button -->
+        <actionGroup ref="OpenOrderByIdActionGroup" stepKey="openOrder2">
+            <argument name="orderId" value="{$grabSecondOrderNumber}"/>
+        </actionGroup>
+        <actionGroup ref="AdminCreateReturnsForGuest" stepKey="createSecondReturns">
+            <argument name="customer" value="Simple_US_Customer_NY"/>
+        </actionGroup>
+        <!-- 6. Add *P1* to Return -->
+        <actionGroup ref="goToReturnItemsTab" stepKey="goToReturnItemsTabForCreateSecondReturn"/>
+        <actionGroup ref="addReturnItem" stepKey="addFirstReturnItem">
+            <argument name="product" value="$$createSimpleProduct1$$"/>
+        </actionGroup>
+        <actionGroup ref="AdminFillReturnItemFields" stepKey="fillFirstReturnItemFields">
+            <argument name="reason" value="Wrong Color"/>
+            <argument name="condition" value="Opened"/>
+            <argument name="resolution" value="Exchange"/>
+        </actionGroup>
+        <!-- 7. Add *P2* to Return -->
+        <actionGroup ref="addReturnItem" stepKey="addSecondReturnItem">
+            <argument name="product" value="$$createSimpleProduct2$$"/>
+        </actionGroup>
+        <actionGroup ref="AdminFillReturnItemFields" stepKey="fillSecondReturnItemFields">
+            <argument name="itemIndex" value="2"/>
+            <argument name="reason" value="Wrong Size"/>
+            <argument name="condition" value="Unopened"/>
+            <argument name="resolution" value="Store Credit"/>
+        </actionGroup>
+        <!-- 8. Click *Submit Returns* button -->
+        <actionGroup ref="AdminClickSubmitReturnsButton" stepKey="submitSecondReturns"/>
+        <!-- 9. Go to *Sales > Returns* page, Open *R1* to view -->
+        <actionGroup ref="filterReturnsByOrder" stepKey="openReturn1">
+            <argument name="orderId" value="$grabFirstOrderNumber"/>
+        </actionGroup>
+        <actionGroup ref="goToReturnItemsTab" stepKey="openReturnItemsTab"/>
+        <actionGroup ref="AdminCheckReturnItemFields" stepKey="checkFirstItemFieldsForReturn1">
+            <argument name="productName" value="$$createSimpleProduct1.name$$"/>
+            <argument name="reason" value="Out of Service"/>
+            <argument name="condition" value="Damaged"/>
+            <argument name="resolution" value="Refund"/>
+            <argument name="status" value="Pending"/>
+        </actionGroup>
+        <!-- 10. Go to *Sales > Returns* page, Open *R2* to view -->
+        <actionGroup ref="AdminGoToReturnPage" stepKey="goToReturnIndexPage"/>
+        <actionGroup ref="filterReturnsByOrder" stepKey="openReturn2">
+            <argument name="orderId" value="$grabSecondOrderNumber"/>
+        </actionGroup>
+        <actionGroup ref="goToReturnItemsTab" stepKey="openReturnItemsTabForReturn2"/>
+        <actionGroup ref="AdminCheckReturnItemFields" stepKey="checkFirstItemFieldsForReturn2">
+            <argument name="productName" value="$$createSimpleProduct1.name$$"/>
+            <argument name="reason" value="Wrong Color"/>
+            <argument name="condition" value="Opened"/>
+            <argument name="resolution" value="Exchange"/>
+            <argument name="status" value="Pending"/>
+        </actionGroup>
+        <actionGroup ref="AdminCheckReturnItemFields" stepKey="checkSecondItemFieldsForReturn1">
+            <argument name="itemIndex" value="2"/>
+            <argument name="productName" value="$$createSimpleProduct2.name$$"/>
+            <argument name="reason" value="Wrong Size"/>
+            <argument name="condition" value="Unopened"/>
+            <argument name="resolution" value="Store Credit"/>
+            <argument name="status" value="Pending"/>
+        </actionGroup>
+        <!-- 11. Change Resolution for *P2* -->
+        <selectOption selector="{{AdminReturnItemsTabSection.resolution('2')}}" userInput="Refund" stepKey="selectOtherResolutionForProduct2"/>
+        <!-- 12. Click *Save* button -->
+        <actionGroup ref="AdminReturnClickSaveButton" stepKey="clickSaveButton"/>
+        <!-- 13. Go to *Sales > Returns* page, Open *R1* to view -->
+        <actionGroup ref="filterReturnsByOrder" stepKey="openReturn1SecondTime">
+            <argument name="orderId" value="$grabFirstOrderNumber"/>
+        </actionGroup>
+        <actionGroup ref="goToReturnItemsTab" stepKey="openReturnItemsTabForReturn1"/>
+        <actionGroup ref="AdminCheckReturnItemFields" stepKey="recheckFirstItemFieldsForReturn1">
+            <argument name="productName" value="$$createSimpleProduct1.name$$"/>
+            <argument name="reason" value="Out of Service"/>
+            <argument name="condition" value="Damaged"/>
+            <argument name="resolution" value="Refund"/>
+            <argument name="status" value="Pending"/>
+        </actionGroup>
+        <!-- 14. Go to *Sales > Returns* page, Open *R2* to view -->
+        <actionGroup ref="AdminGoToReturnPage" stepKey="goToReturnPage"/>
+        <actionGroup ref="filterReturnsByOrder" stepKey="openReturn2SecondTime">
+            <argument name="orderId" value="$grabSecondOrderNumber"/>
+        </actionGroup>
+        <actionGroup ref="goToReturnItemsTab" stepKey="openReturnItemsTabForReturn2ForRecheck"/>
+        <actionGroup ref="AdminCheckReturnItemFields" stepKey="recheckFirstItemFieldsForReturn2">
+            <argument name="productName" value="$$createSimpleProduct1.name$$"/>
+            <argument name="reason" value="Wrong Color"/>
+            <argument name="condition" value="Opened"/>
+            <argument name="resolution" value="Exchange"/>
+            <argument name="status" value="Pending"/>
+        </actionGroup>
+        <actionGroup ref="AdminCheckReturnItemFields" stepKey="recheckSecondItemFieldsForReturn2">
+            <argument name="itemIndex" value="2"/>
+            <argument name="productName" value="$$createSimpleProduct2.name$$"/>
+            <argument name="reason" value="Wrong Size"/>
+            <argument name="condition" value="Unopened"/>
+            <argument name="resolution" value="Refund"/>
+            <argument name="status" value="Pending"/>
+        </actionGroup>
+    </test>
+</tests>

@@ -1,0 +1,125 @@
+<?xml version="1.0"?>
+<!--
+/**
+ * Copyright © Magento, Inc. All rights reserved.
+ * See COPYING.txt for license details.
+ */
+-->
+<config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="urn:magento:framework:ObjectManager/etc/config.xsd">
+    <type name="Magento\Catalog\Model\ResourceModel\Category">
+        <plugin name="admingws_category_resource_plugin" type="Magento\AdminGws\Model\Plugin\CategoryResource"/>
+        <plugin name="admin_gws_check_category_can_be_saved"
+                type="Magento\AdminGws\Plugin\Catalog\Model\ResourceModel\Category\CheckCategoryCanBeSaved"/>
+    </type>
+    <type name="Magento\Catalog\Model\Product\Action">
+        <plugin name="admingws_product_action_plugin" type="Magento\AdminGws\Model\Plugin\ProductAction"/>
+    </type>
+    <type name="Magento\Backend\Block\Widget\ContainerInterface">
+        <plugin name="admin_gws" type="Magento\AdminGws\Model\Block\Container\Plugin" />
+    </type>
+    <type name="Magento\Store\Api\WebsiteRepositoryInterface">
+        <plugin name="admin_gws_website_repository_plugin" type="Magento\AdminGws\Model\Plugin\WebsiteRepository" />
+    </type>
+    <type name="Magento\CatalogEvent\Block\Adminhtml\Catalog\Category\Edit\AddEventButton">
+        <plugin name="admin_gws_category_event_buttons_limitation_plugin" type="Magento\AdminGws\Model\Plugin\CategoryEventButton" />
+    </type>
+    <type name="Magento\User\Controller\Adminhtml\User\Role\SaveRole">
+        <plugin name="admin_gws_save_role" type="Magento\AdminGws\Model\Plugin\SaveRole" />
+    </type>
+    <type name="Magento\Catalog\Ui\Component\Product\MassAction">
+        <plugin name="admin_gws_massaction" type="Magento\AdminGws\Ui\Component\Plugin\Catalog\Product\MassAction" />
+    </type>
+    <type name="Magento\Catalog\Block\Adminhtml\Product\Edit\Button\AddAttribute">
+        <plugin name="admin_gws_add_attribute" type="\Magento\AdminGws\Block\Adminhtml\Plugin\Catalog\Product\Edit\Button\AddAttribute" />
+    </type>
+    <type name="Magento\Catalog\Ui\Component\Listing\Columns\ProductActions">
+        <plugin name="admin_gws_product_link" type="Magento\AdminGws\Plugin\ProductLinkUpdater" />
+    </type>
+    <type name="Magento\Catalog\Controller\Adminhtml\Product\Edit">
+        <plugin name="admin_gws_store_switcher" type="Magento\AdminGws\Plugin\ProductStoreSwitcherUpdater" />
+    </type>
+    <type name="Magento\Catalog\Controller\Adminhtml\Category\Edit">
+        <plugin name="admin_gws_category_store_switcher" type="Magento\AdminGws\Plugin\CategoryStoreSwitcherUpdater" />
+        <plugin name="admin_gws_category_store_updater" type="Magento\AdminGws\Plugin\CategoryStoreUpdater" />
+    </type>
+    <type name="Magento\Catalog\Ui\DataProvider\Product\Form\Modifier\Categories">
+        <plugin name="admin_gws_product_categories_role_restrictions" type="Magento\AdminGws\Plugin\Catalog\Ui\DataProvider\Product\Form\Modifier\CategoriesRoleRestrictions" />
+    </type>
+    <type name="Magento\Store\Model\StoreManagerInterface">
+        <plugin name="store_filter" type="Magento\AdminGws\Plugin\StoreFilter" />
+    </type>
+    <type name="Magento\Framework\Model\ResourceModel\Db\Collection\AbstractCollection">
+        <plugin name="collection_filter" type="Magento\AdminGws\Plugin\CollectionFilter"/>
+    </type>
+    <type name="Magento\Catalog\Controller\Adminhtml\Product\Action\Attribute\Edit">
+        <plugin name="admin_gws_store_switcher_updater" type="Magento\AdminGws\Plugin\Catalog\Controller\Adminhtml\Product\Action\Attribute\StoreSwitcherUpdater" />
+    </type>
+    <type name="Magento\Catalog\Controller\Adminhtml\Product\Initialization\Helper">
+        <plugin name="admin_gws_gallery_updater" type="Magento\AdminGws\Plugin\Catalog\Controller\Adminhtml\Product\Initialization\GalleryUpdater" />
+    </type>
+    <type name="Magento\Catalog\Block\Adminhtml\Product\Edit\Action\Attribute">
+        <plugin name="admin_gws_attributes_block" type="Magento\AdminGws\Plugin\Catalog\Block\Adminhtml\Product\Edit\Action\Attribute" />
+    </type>
+    <type name="Magento\SalesRule\Model\ResourceModel\Rule\Quote\Collection">
+        <plugin name="quote_rule_collection_size_limiter" type="Magento\AdminGws\Plugin\CollectionSizeLimiter"/>
+    </type>
+    <type name="Magento\CatalogRule\Model\ResourceModel\Grid\Collection">
+        <plugin name="catalog_rule_collection_size_limiter" type="Magento\AdminGws\Plugin\CollectionSizeLimiter"/>
+    </type>
+    <type name="Magento\CustomerSegment\Model\ResourceModel\Grid\Collection">
+        <plugin name="customer_segment_collection_size_limiter" type="Magento\AdminGws\Plugin\CollectionSizeLimiter"/>
+    </type>
+    <type name="Magento\Reminder\Model\ResourceModel\Reminder\Collection">
+        <plugin name="reminder_collection_size_limiter" type="Magento\AdminGws\Plugin\CollectionSizeLimiter"/>
+    </type>
+    <type name="Magento\Authorization\Model\ResourceModel\Role\Grid\Collection">
+        <plugin name="user_role_collection_size_limiter" type="Magento\AdminGws\Plugin\UserRoleCollectionSizeLimiter"/>
+    </type>
+    <type name="Magento\Review\Model\ResourceModel\Rating\Grid\Collection">
+        <plugin name="rating_collection_size_limiter" type="Magento\AdminGws\Plugin\Review\RatingCollectionSizeLimiter"/>
+    </type>
+    <type name="Magento\VisualMerchandiser\Block\Adminhtml\Category\Merchandiser">
+        <plugin name="admin_gws_category_products_block"
+                type="Magento\AdminGws\Plugin\VisualMerchandiser\Block\Adminhtml\Category\Merchandiser" />
+    </type>
+    <type name="Magento\VisualMerchandiser\Block\Adminhtml\Category\Merchandiser\Grid">
+        <plugin name="admin_gws_category_products_grid"
+                type="Magento\AdminGws\Plugin\VisualMerchandiser\Block\Adminhtml\Category\Merchandiser\Grid" />
+    </type>
+    <type name="Magento\VisualMerchandiser\ViewModel\MerchandiserViewModel">
+        <plugin name="admin_gws_category_products_merchandiser"
+                type="Magento\AdminGws\Plugin\VisualMerchandiser\ViewModel\MerchandiserViewModel" />
+    </type>
+    <type name="Magento\User\Model\ResourceModel\User\Collection">
+        <plugin name="admin_user_collection_size_limiter" type="Magento\AdminGws\Model\Plugin\UserCollection"/>
+    </type>
+    <type name="Magento\Review\Block\Adminhtml\Rating">
+        <plugin name="rating_remove_add_button" type="\Magento\AdminGws\Plugin\Review\RatingRemoveAddButtonPlugin"/>
+    </type>
+    <type name="Magento\Catalog\Block\Adminhtml\Product\Attribute\Set\Main">
+        <plugin name="product_attribute_set_remove_edit_buttons_plugin"
+                type="Magento\AdminGws\Plugin\ProductAttributeSetRemoveEditButtonsPlugin"/>
+    </type>
+    <type name="Magento\Catalog\Block\Adminhtml\Product\Attribute\Set\Toolbar\Main">
+        <plugin name="product_attribute_set_remove_add_button_plugin"
+                type="Magento\AdminGws\Plugin\ProductAttributeSetRemoveAddButtonPlugin"/>
+    </type>
+    <type name="Magento\CustomerCustomAttributes\Block\Adminhtml\Customer\Attribute\Edit">
+        <plugin name="customer_attribute_edit_remove_buttons" type="Magento\AdminGws\Plugin\CustomerCustomAttributes\CustomerAttributeEditRemoveButtonsPlugin"/>
+    </type>
+    <type name="Magento\CustomerCustomAttributes\Block\Adminhtml\Customer\Address\Attribute\Edit">
+        <plugin name="customer_address_attribute_edit_remove_buttons" type="Magento\AdminGws\Plugin\CustomerCustomAttributes\CustomerAddressAttributeEditRemoveButtonsPlugin"/>
+    </type>
+    <type name="Magento\Rma\Block\Adminhtml\Rma\Item\Attribute\Edit">
+        <plugin name="returns_attribute_edit_remove_buttons" type="Magento\AdminGws\Plugin\Rma\ReturnsAttributeEditRemoveButtonsPlugin"/>
+    </type>
+    <type name="Magento\Catalog\Model\Category\Authorization">
+        <plugin name="isCategoryAuthorizedForDifferentStoreUserRole" type="Magento\AdminGws\Model\Plugin\IsCategoryAuthorizedForDifferentStoreUserRole"/>
+    </type>
+    <type name="Magento\ImportExport\Controller\Adminhtml\Export\Export">
+        <plugin name="import_export_export_plugin" type="Magento\AdminGws\Plugin\ImportExport\Controller\Adminhtml\Export\ExportPlugin"/>
+    </type>
+    <type name="Magento\Store\Model\StoreSwitcher\ManageStoreCookie">
+        <plugin name="store_switcher_manage_store_cookie_plugin" type="Magento\AdminGws\Model\Plugin\Store\StoreSwitcher\ManageStoreCookie"/>
+    </type>
+</config>

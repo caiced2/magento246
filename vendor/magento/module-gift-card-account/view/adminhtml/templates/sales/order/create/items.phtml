@@ -1,0 +1,47 @@
+<?php
+/**
+ * Copyright © Magento, Inc. All rights reserved.
+ * See COPYING.txt for license details.
+ */
+
+/**
+ * @var \Magento\GiftCardAccount\Block\Adminhtml\Sales\Order\Create\Payment $block
+ * @var \Magento\Framework\View\Helper\SecureHtmlRenderer $secureRenderer
+ */
+
+?>
+<div class="admin__field field-add-gift-card">
+    <label class="admin__field-label">
+        <span><?= $block->escapeHtml(__('Gift Cards')) ?></span>
+    </label>
+    <div class="admin__field-control">
+        <input id="giftcardaccount_add_input" type="text" class="input-text admin__control-text" />
+        <button id="giftcardaccount_add_button" type="button" value="" class="action-default">
+            <span><?= $block->escapeHtml(__('Add Gift Card')) ?></span>
+        </button>
+                <?= /* @noEscape */
+                $secureRenderer->renderEventListenerAsTag(
+                    'onclick',
+                    "applyGiftCard()",
+                    '#giftcardaccount_add_button'
+                );
+                ?>
+        <?php foreach ($block->getGiftCards() as $card): ?>
+            <p class="added-gift-card" id="card<?= /* @noEscape */ $card; ?>">
+                <span><?= $block->escapeHtml($card) ?></span>
+                <a href="#"
+                   title="<?= $block->escapeHtml(__('Remove')) ?>"
+                   class="action-remove">
+                    <span><?= $block->escapeHtml(__('Remove')) ?></span>\
+                </a>
+            </p>
+            <?= /* @noEscape */
+            $secureRenderer->renderEventListenerAsTag(
+                'onclick',
+                "removeGiftCard('" . $block->escapeJs($card) . "'); return false;",
+                '#card' . $card . ' > a.action-remove'
+            );
+            ?>
+        <?php endforeach; ?>
+    </div>
+</div>

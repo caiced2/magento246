@@ -1,0 +1,88 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+ /**
+  * Copyright © Magento, Inc. All rights reserved.
+  * See COPYING.txt for license details.
+  */
+-->
+
+<tests xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xsi:noNamespaceSchemaLocation="urn:magento:mftf:Test/etc/testSchema.xsd">
+    <test name="RestrictedAdminCatalogMassActionPermissionTest">
+        <annotations>
+            <features value="AdminGws"/>
+            <stories value="Restrict users"/>
+            <title value="Catalog Mass action for users with limited permission"/>
+            <description value="Restricted admin user with access to Products should not have access for Mass action"/>
+            <severity value="CRITICAL"/>
+            <testCaseId value="MAGETWO-92304"/>
+            <group value="userRole"/>
+            <group value="pr_exclude"/>
+        </annotations>
+        <before>
+            <createData entity="adminRestrictedProductRole" stepKey="restrictedAdminRoleCatalog"/>
+            <createData entity="SimpleSubCategory" stepKey="createCategory"/>
+            <createData entity="SimpleProduct" stepKey="createSimpleProduct1">
+                <requiredEntity createDataKey="createCategory"/>
+            </createData>
+            <createData entity="SimpleProduct" stepKey="createSimpleProduct2">
+                <requiredEntity createDataKey="createCategory"/>
+            </createData>
+            <createData entity="SimpleProduct" stepKey="createSimpleProduct3">
+                <requiredEntity createDataKey="createCategory"/>
+            </createData>
+            <createData entity="restrictedCatalogUser" stepKey="createRestrictedAdminUser"/>
+        </before>
+        <after>
+            <deleteData createDataKey="createSimpleProduct1" stepKey="deleteSimpleProduct1"/>
+            <deleteData createDataKey="createSimpleProduct2" stepKey="deleteSimpleProduct2"/>
+            <deleteData createDataKey="createSimpleProduct3" stepKey="deleteSimpleProduct3"/>
+            <deleteData createDataKey="createCategory" stepKey="deleteCategory"/>
+            <actionGroup ref="AdminLoginActionGroup" stepKey="loginAsAdminAllWebAccess"/>
+            <actionGroup ref="AdminDeleteUserRoleActionGroup" stepKey="deleteRestrictedRole">
+                <argument name="roleName" value="$$restrictedAdminRoleCatalog.rolename$$"/>
+            </actionGroup>
+            <actionGroup ref="ClearFiltersAdminDataGridActionGroup" stepKey="resetRoleFilters"/>
+            <actionGroup ref="AdminLogoutActionGroup" stepKey="adminLogout"/>
+        </after>
+        <actionGroup ref="AdminLoginActionGroup" stepKey="amOnLogoutPage"/>
+
+        <amOnPage url="{{AdminUsersPage.url}}" stepKey="amOnAdminUsersPage"/>
+        <fillField stepKey="fillUsernameSearch" selector="{{AdminUserGridSection.usernameFilterTextField}}" userInput="$$createRestrictedAdminUser.username$$"/>
+        <click stepKey="clickSearchButton" selector="{{AdminUserGridSection.searchButton}}"/>
+        <waitForPageLoad stepKey="wait1" time="10"/>
+        <see stepKey="seeFoundUsername" selector="{{AdminUserGridSection.usernameInFirstRow}}" userInput="$$createRestrictedAdminUser.username$$"/>
+        <click stepKey="clickFoundUsername" selector="{{AdminUserGridSection.searchResultFirstRow}}"/>
+        <waitForPageLoad stepKey="wait2" time="30"/>
+        <seeInField stepKey="seeUsernameInField" selector="{{AdminEditUserSection.usernameTextField}}" userInput="$$createRestrictedAdminUser.username$$"/>
+        <fillField stepKey="fillCurrentPassword" selector="{{AdminEditUserSection.currentPasswordField}}" userInput="{{_ENV.MAGENTO_ADMIN_PASSWORD}}"/>
+        <scrollToTopOfPage stepKey="scrollToTopOfPage" />
+        <click stepKey="clickUserRoleTab" selector="{{AdminEditUserSection.userRoleTab}}"/>
+
+        <fillField selector="{{AdminEditUserSection.roleNameFilterTextField}}" userInput="$$restrictedAdminRoleCatalog.rolename$$" stepKey="fillRoleNameSearch"/>
+        <click stepKey="clickSearchButtonUserRole" selector="{{AdminEditUserSection.searchButton}}"/>
+        <waitForPageLoad stepKey="wait3" time="10"/>
+        <see stepKey="seeFoundRoleName" selector="{{AdminEditUserSection.roleNameInFirstRow}}" userInput="$$restrictedAdminRoleCatalog.rolename$$"/>
+        <click stepKey="clickFoundRoleName" selector="{{AdminEditUserSection.searchResultFirstRow}}"/>
+        <click stepKey="clickSaveButton" selector="{{AdminEditUserSection.saveButton}}"/>
+        <waitForPageLoad stepKey="wait4" time="10"/>
+        <see stepKey="saveUserSuccessMessage" selector="{{AdminUserGridSection.successMessage}}" userInput="You saved the user."/>
+        <actionGroup ref="AdminLogoutActionGroup" stepKey="amOnLogoutPage2"/>
+
+        <amOnPage stepKey="adminLoginPage" url="{{AdminLoginPage.url}}"/>
+        <fillField selector="{{AdminLoginFormSection.username}}" userInput="$$createRestrictedAdminUser.username$$" stepKey="fillUsernameRestrictedUser"/>
+        <fillField selector="{{AdminLoginFormSection.password}}" userInput="$$createRestrictedAdminUser.password$$" stepKey="fillPasswordRestricted" />
+        <click selector="{{AdminLoginFormSection.signIn}}" stepKey="clickOnSignIn2"/>
+        <!--<waitForPageLoad time="10" stepKey="wait5"/>-->
+        <amOnPage url="{{AdminProductIndexPage.url}}" stepKey="amOnProductGridPage"/>
+        <waitForPageLoad stepKey="waitForProductIndexPageLoad"/>
+
+        <!-- Verify that the restricted user have access only for Update attributes in Mass action list -->
+        <dontSeeElementInDOM selector="{{AdminProductGridSection.bulkActionOption('Delete')}}" stepKey="dontSeeDeleteMassActionItem1"/>
+        <dontSeeElementInDOM selector="{{AdminProductGridSection.bulkActionOption('Change status')}}" stepKey="dontSeeChangeStatusMassAction"/>
+        <seeElementInDOM selector="{{AdminProductGridSection.bulkActionOption('Update attributes')}}" stepKey="seeUpdateAttributeMassAction"/>
+        <actionGroup ref="AdminLogoutActionGroup" stepKey="amOnLogoutPage3"/>
+        <waitForPageLoad stepKey="waitForLoginPage"/>
+
+    </test>
+</tests>

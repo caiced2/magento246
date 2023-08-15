@@ -1,0 +1,83 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+ /**
+  * Copyright © Magento, Inc. All rights reserved.
+  * See COPYING.txt for license details.
+  */
+-->
+
+<tests xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="urn:magento:mftf:Test/etc/testSchema.xsd">
+    <test name="AdminQuickCheckoutSalesOrderCreateExtensionDisabledTest">
+        <annotations>
+            <features value="MagentoQuickCheckout"/>
+            <stories value="Admin can create order having the Quick Checkout extension disabled"/>
+            <title value="Admin can manually create an order having the Quick Checkout extension disabled"/>
+            <description value="Admin can manually place and order using Admin Portal tool having the Quick Checkout extension disabled"/>
+            <severity value="CRITICAL"/>
+            <testCaseId value="admin-create-order-extension-disabled"/>
+            <group value="quick-checkout"/>
+        </annotations>
+        <before>
+            <!-- Login as admin -->
+            <actionGroup ref="AdminLoginActionGroup" stepKey="loginAsAdmin"/>
+            <!-- Ensure Quick Checkout extension is disabled -->
+            <actionGroup ref="AdminDisableQuickCheckoutActionGroup" stepKey="disableQuickCheckoutExtension" />
+            <amOnPage url="{{AdminQuickCheckoutPage.url}}" stepKey="navigateToSettingsPage"/>
+            <waitForPageLoad stepKey="waitForPagePageLoad"/>
+            <conditionalClick selector="{{AdminQuickCheckoutSettingsSection.quickCheckoutTab}}" dependentSelector="{{AdminQuickCheckoutSettingsSection.quickCheckoutTabOpen}}" visible="false" stepKey="openQuickCheckoutSection"/>
+            <!-- Create Customer -->
+            <createData entity="Customer_With_Existing_Bolt_Account" stepKey="createCustomer"/>
+            <!-- Create product -->
+            <createData entity="_defaultCategory" stepKey="createCategory"/>
+            <createData entity="_defaultProduct" stepKey="createProduct">
+                <requiredEntity createDataKey="createCategory"/>
+            </createData>
+        </before>
+        <after>
+            <!--Delete customer -->
+            <deleteData stepKey="deleteCustomer" createDataKey="createCustomer"/>
+            <!-- Delete created data -->
+            <deleteData createDataKey="createCategory" stepKey="deleteCategory"/>
+            <deleteData createDataKey="createProduct" stepKey="deleteProduct"/>
+            <!-- Logout -->
+            <actionGroup ref="AdminLogoutActionGroup" stepKey="logOut"/>
+        </after>
+
+        <!-- Navigate to Admin order page -->
+        <amOnPage stepKey="navigateToNewOrderPage" url="{{AdminOrderCreatePage.url}}"/>
+        <waitForPageLoad stepKey="waitForNewOrderPageOpened"/>
+
+        <!-- Start creating a new order -->
+        <click stepKey="chooseCustomer" selector="{{AdminOrdersGridSection.customerInOrdersSection($$createCustomer.firstname$$)}}"/>
+        <waitForPageLoad stepKey="waitForStoresPageOpened"/>
+        <click selector="{{OrdersGridSection.addProducts}}" stepKey="clickOnAddProducts"/>
+        <waitForPageLoad stepKey="waitForProductsListForOrder"/>
+        <click selector="{{AdminOrdersGridSection.productForOrder($$createProduct.sku$$)}}" stepKey="chooseTheProduct"/>
+        <waitForPageLoad stepKey="waitForClickProduct"/>
+        <click selector="{{AdminOrderFormItemsSection.addSelected}}" stepKey="addSelectedProductToOrder"/>
+        <waitForPageLoad stepKey="waitForProductAddedInOrder"/>
+        <!-- This is step is not necessary, but it helps when following the test -->
+        <scrollTo selector="{{AdminInvoicePaymentShippingSection.orderMethods}}" stepKey="scrollToOrderMethods"/>
+        <click selector="{{AdminInvoicePaymentShippingSection.getShippingMethodAndRates}}" stepKey="openShippingMethod"/>
+        <waitForPageLoad stepKey="waitForShippingMethods"/>
+        <click selector="{{AdminInvoicePaymentShippingSection.shippingMethod}}" stepKey="chooseShippingMethod"/>
+        <waitForPageLoad stepKey="waitForShippingMethodsThickened"/>
+        <actionGroup ref="SelectCheckMoneyPaymentMethodActionGroup" stepKey="choosePaymentMethod"/>
+
+        <!-- Place order and see order summary successful page -->
+        <click selector="{{OrdersGridSection.submitOrder}}" stepKey="submitOrder"/>
+        <waitForPageLoad stepKey="waitForSubmitOrder"/>
+        <see stepKey="seeSuccessMessageForOrder" userInput="You created the order."/>
+
+        <!-- Check order status -->
+        <actionGroup ref="AdminAssertNoAuthorizeButtonOnOrderPageActionGroup" stepKey="dontSeeOrderWaitingForAuthorize"/>
+        <actionGroup ref="AdminOrderViewCheckStatusActionGroup" stepKey="checkOrderStatus">
+            <argument name="status" value="Pending"/>
+        </actionGroup>
+        <see selector="{{AdminOrderDetailsInformationSection.accountInformation}}" userInput="$$createCustomer.firstname$$ $$createCustomer.lastname$$" stepKey="seeAdminOrderFullname"/>
+        <see selector="{{AdminOrderDetailsInformationSection.accountInformation}}" userInput="$$createCustomer.email$$" stepKey="seeAdminOrderEmail"/>
+        <see selector="{{AdminOrderDetailsInformationSection.billingAddress}}" userInput="{{US_Address_TX.street[0]}}" stepKey="seeAdminOrderBillingAddress"/>
+        <see selector="{{AdminOrderDetailsInformationSection.shippingAddress}}" userInput="{{US_Address_TX.street[0]}}" stepKey="seeAdminOrderShippingAddress"/>
+        <see selector="{{AdminOrderDetailsInformationSection.itemsOrdered}}" userInput="$$createProduct.name$$" stepKey="seeAdminOrderProduct"/>
+    </test>
+</tests>

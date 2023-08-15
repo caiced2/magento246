@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+ /**
+  * Copyright © Magento, Inc. All rights reserved.
+  * See COPYING.txt for license details.
+  */
+-->
+
+<actionGroups xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+              xsi:noNamespaceSchemaLocation="urn:magento:mftf:Test/etc/actionGroupSchema.xsd">
+    <actionGroup name="AdminConfigureQuickCheckoutActionGroup">
+        <annotations>
+            <description>Configure payment method in admin.</description>
+        </annotations>
+        <arguments>
+            <argument name="methodAction" type="string" defaultValue="authorize"/>
+            <argument name="nextStageAfterLoginAction" type="string" defaultValue="payment"/>
+        </arguments>
+        <amOnPage url="{{AdminQuickCheckoutPage.url}}" stepKey="navigateToSettingsPage"/>
+        <waitForPageLoad stepKey="waitForPagePageLoad"/>
+        <conditionalClick selector="{{AdminQuickCheckoutSettingsSection.quickCheckoutTab}}" dependentSelector="{{AdminQuickCheckoutSettingsSection.quickCheckoutTabOpen}}" visible="false" stepKey="openQuickCheckoutSection"/>
+        <selectOption selector="{{AdminQuickCheckoutSettingsSection.active}}" userInput="1" stepKey="enablePaymentMethod" />
+        <fillField selector="{{AdminQuickCheckoutSettingsSection.publishableKey}}" userInput="{{_CREDS.magento/magento_payment_services_bolt_publishable_key}}" stepKey="setPublishableKey" />
+        <fillField selector="{{AdminQuickCheckoutSettingsSection.signingSecret}}" userInput="{{_CREDS.magento/magento_payment_services_bolt_signing_secret}}" stepKey="setSigningSecret" />
+        <fillField selector="{{AdminQuickCheckoutSettingsSection.apiKey}}" userInput="{{_CREDS.magento/magento_payment_services_bolt_api_key}}" stepKey="setApiKey" />
+        <selectOption selector="{{AdminQuickCheckoutSettingsSection.method}}" userInput="sandbox" stepKey="setMethod" />
+        <selectOption selector="{{AdminQuickCheckoutSettingsSection.paymentAction}}" userInput="{{methodAction}}" stepKey="setPaymentAction" />
+        <selectOption selector="{{AdminQuickCheckoutSettingsSection.nextStageAfterLogin}}" userInput="{{nextStageAfterLoginAction}}" stepKey="setNextStageAfterLogin" />
+        <selectOption selector="{{AdminQuickCheckoutSettingsSection.autoLoginEnabled}}" userInput="0" stepKey="enableAutoLogin" />
+        <click selector="{{ContentManagementSection.Save}}" stepKey="saveConfig"/>
+        <waitForPageLoad stepKey="waitForPagePageReload"/>
+    </actionGroup>
+</actionGroups>

@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+ /**
+  * Copyright © Magento, Inc. All rights reserved.
+  * See COPYING.txt for license details.
+  */
+-->
+
+<actionGroups xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+              xsi:noNamespaceSchemaLocation="urn:magento:mftf:Test/etc/actionGroupSchema.xsd">
+    <actionGroup name="StoreFrontRedeemGiftCardActionGroup">
+        <arguments>
+            <argument name="code" type="string"/>
+        </arguments>
+        <amOnPage  url="{{StoreFrontGiftCardPage.url}}" stepKey="goToMyAccountPage"/>
+        <waitForPageLoad stepKey="waitForPGiftCardPage"/>
+        <fillField selector="{{StorefrontGiftCardTab.giftCardCodeField}}" userInput="{{code}}" stepKey="fillGiftCode"/>
+        <click stepKey="redeemGiftCard" selector="{{StorefrontGiftCardTab.redeemGiftCard}}"/>
+        <waitForPageLoad stepKey="waitForRedeem"/>
+        <see stepKey="seeSuccessMessage" userInput="was redeemed."/>
+    </actionGroup>
+</actionGroups>

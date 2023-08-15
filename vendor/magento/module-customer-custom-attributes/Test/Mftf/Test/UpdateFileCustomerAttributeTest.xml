@@ -1,0 +1,77 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+/**
+ * Copyright © Magento, Inc. All rights reserved.
+ * See COPYING.txt for license details.
+ */
+-->
+
+<tests xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xsi:noNamespaceSchemaLocation="urn:magento:mftf:Test/etc/testSchema.xsd">
+    <test name="UpdateFileCustomerAttributeTest">
+        <annotations>
+            <features value="CustomerCustomAttributes"/>
+            <stories value="Update Customer Custom Attributes"/>
+            <title value="Update file customer attribute test"/>
+            <description value="Update file customer attribute"/>
+            <severity value="MAJOR"/>
+            <testCaseId value="MC-14579"/>
+            <group value="CustomerCustomAttributes"/>
+            <group value="mtf_migrated"/>
+            <group value="pr_exclude"/>
+        </annotations>
+        <before>
+            <!-- Login as admin -->
+            <actionGroup ref="AdminLoginActionGroup" stepKey="LoginAsAdmin"/>
+        </before>
+        <after>
+            <!-- Logout admin -->
+            <actionGroup ref="AdminLogoutActionGroup" stepKey="logout"/>
+        </after>
+
+        <!-- Go to Stores > Customer -->
+        <amOnPage url="{{CustomerAttributesPage.url}}" stepKey="navigateToCustomerAttributes"/>
+        <waitForPageLoad stepKey="waitForAttributePageLoad"/>
+
+        <!-- Create customer attribute -->
+        <actionGroup ref="AdminCreateCustomerNewAttribute" stepKey="createTextFieldAttribute">
+            <argument name="defaultLabel" value="{{AttributeFile.frontend_label}}"/>
+            <argument name="attributeCode" value="{{AttributeFile.attribute_code}}"/>
+            <argument name="inputType" value="{{AttributeFile.frontend_input}}"/>
+            <argument name="sortOrder" value="{{AttributeFile.sort_order}}"/>
+            <argument name="formToUse" value="{{AttributeFile.used_in_forms}}"/>
+            <argument name="formToUse1" value="Customer Account Edit"/>
+            <argument name="message" value="You saved the customer attribute."/>
+        </actionGroup>
+
+        <!-- Open created customer attribute -->
+        <actionGroup ref="FilterCustomerAttributesByAttributeCodeAndDefaultLabelActionGroup" stepKey="findCreatedAttribute">
+            <argument name="defaultLabel" value="{{AttributeFile.frontend_label}}"/>
+            <argument name="attributeCode" value="{{AttributeFile.attribute_code}}"/>
+        </actionGroup>
+        <click selector="{{AdminCustomerAttributeSection.firstAttribute}}" stepKey="clickFirstRow"/>
+
+        <!-- Change data according to dataset -->
+        <fillField selector="{{CustomerAccountSection.label}}" userInput="{{AttributeFileUpdate.frontend_label}}" stepKey="typeDefaultLabel"/>
+        <fillField selector="{{CustomerAccountSection.maxFileSize}}" userInput="100000" stepKey="fillMaxFileSize"/>
+        <fillField selector="{{CustomerAccountSection.fileExtensions}}" userInput="jpg,txt" stepKey="fillFileExtensions"/>
+        <fillField selector="{{CustomerAccountSection.sortOrder}}" userInput="{{AttributeFileUpdate.sort_order}}" stepKey="typeSortOrder"/>
+        <click selector="{{AttributeEditSection.saveAttribute}}" stepKey="saveAttribute"/>
+        <waitForPageLoad stepKey="WaitForAttributeSaved"/>
+
+        <!-- Assert customer custom attribute success save message -->
+        <see selector="{{AdminMessagesSection.success}}" userInput="You saved the customer attribute." stepKey="verifyAttributeCreated"/>
+
+        <!-- Assert customer custom attribute in grid -->
+        <actionGroup ref="FilterCustomerAttributesByAttributeCodeAndDefaultLabelActionGroup" stepKey="findChangedAttribute">
+            <argument name="defaultLabel" value="{{AttributeFileUpdate.frontend_label}}"/>
+            <argument name="attributeCode" value="{{AttributeFile.attribute_code}}"/>
+        </actionGroup>
+        <seeElement selector="{{AdminCustomerAttributeSection.firstAttribute}}" stepKey="seeChangedAttribute"/>
+
+        <!-- Delete created attribute -->
+        <actionGroup ref="DeleteCustomerAttribute" stepKey="deleteCustomerAttribute">
+            <argument name="defaultLabel" value="{{AttributeFileUpdate.frontend_label}}"/>
+        </actionGroup>
+    </test>
+</tests>

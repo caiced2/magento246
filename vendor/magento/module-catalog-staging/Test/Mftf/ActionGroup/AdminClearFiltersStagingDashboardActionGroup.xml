@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+ /**
+  * Copyright © Magento, Inc. All rights reserved.
+  * See COPYING.txt for license details.
+  */
+-->
+
+<actionGroups xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+              xsi:noNamespaceSchemaLocation="urn:magento:mftf:Test/etc/actionGroupSchema.xsd">
+
+    <actionGroup name="AdminClearFiltersStagingDashboardActionGroup">
+        <!-- Clear Filters -->
+        <amOnPage url="{{AdminStagingDashboardPage.url}}" stepKey="goOnStagingDashboard"/>
+        <waitForPageLoad stepKey="waitForStagingDashboard"/>
+        <conditionalClick dependentSelector="{{AdminProductFiltersSection.clearFiltersButton}}" visible="true" selector="{{AdminProductFiltersSection.clearFiltersButton}}" stepKey="clearFilter"/>
+        <waitForElementNotVisible selector="{{AdminProductFiltersSection.clearFiltersButton}}" stepKey="waitForFiltersCleared"/>
+    </actionGroup>
+</actionGroups>

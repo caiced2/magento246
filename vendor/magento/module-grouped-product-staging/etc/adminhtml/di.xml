@@ -1,0 +1,32 @@
+<?xml version="1.0"?>
+<!--
+/**
+ * Copyright © Magento, Inc. All rights reserved.
+ * See COPYING.txt for license details.
+ */
+-->
+<config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="urn:magento:framework:ObjectManager/etc/config.xsd">
+    <virtualType name="Magento\CatalogStaging\Ui\DataProvider\Product\Form\Modifier\Pool">
+        <arguments>
+            <argument name="modifiers" xsi:type="array">
+                <item name="grouped" xsi:type="array">
+                    <item name="class" xsi:type="string">Magento\GroupedProductStaging\Ui\DataProvider\Product\Form\Modifier\Grouped</item>
+                    <item name="sortOrder" xsi:type="number">120</item>
+                </item>
+            </argument>
+        </arguments>
+    </virtualType>
+    <virtualType name="Magento\GroupedProductStaging\Ui\DataProvider\Product\Form\Modifier\Grouped" type="Magento\GroupedProduct\Ui\DataProvider\Product\Form\Modifier\Grouped">
+        <arguments>
+            <argument name="uiComponentsConfig" xsi:type="array">
+                <item name="button_set" xsi:type="string">staging_grouped_products_button_set</item>
+                <item name="modal" xsi:type="string">staging_grouped_products_modal</item>
+                <item name="listing" xsi:type="string">staging_grouped_product_listing</item>
+                <item name="form" xsi:type="string">catalogstaging_update_form</item>
+            </argument>
+        </arguments>
+    </virtualType>
+    <type name="Magento\CatalogStaging\Model\Product\Operation\Update\TemporaryUpdateProcessor">
+        <plugin name="flushAssociatedProductCache" type="Magento\GroupedProductStaging\Model\Product\Operation\Update\FlushAssociatedProductCache"/>
+    </type>
+</config>

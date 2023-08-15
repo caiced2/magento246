@@ -1,0 +1,74 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+ /**
+  * Copyright © Magento, Inc. All rights reserved.
+  * See COPYING.txt for license details.
+  */
+-->
+<tests xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xsi:noNamespaceSchemaLocation="urn:magento:mftf:Test/etc/testSchema.xsd">
+    <test name="VerifyCMSPageRedirectUnderHierarchyTest">
+        <annotations>
+            <features value="VersionsCms"/>
+            <stories value="CMS Pages"/>
+            <title value="Verify redirect for CMS page under hierarchy"/>
+            <description value="Verify CMS Page will redirect under hierarchy on frontend"/>
+            <severity value="CRITICAL"/>
+            <testCaseId value="AC-2894"/>
+            <useCaseId value="ACP2E-440"/>
+            <group value="cms"/>
+            <group value="versionsCms"/>
+        </annotations>
+
+        <before>
+            <!-- Create Cms Page -->
+            <createData entity="_defaultCmsPage" stepKey="createCmsPage"/>
+            <actionGroup ref="AdminLoginActionGroup" stepKey="login"/>
+            <!-- Create Hierarchy Node -->
+            <actionGroup ref="AddNewNodeActionGroup" stepKey="createNode">
+                <argument name="NodeTitle" value="{{DefaultHierarchyNode.name}}"/>
+                <argument name="NodeUrlKey" value="{{DefaultHierarchyNode.urlKey}}"/>
+            </actionGroup>
+        </before>
+
+        <after>
+            <!-- Delete CMS Page -->
+            <actionGroup ref="AdminDeleteCMSPageByUrlKeyActionGroup" stepKey="deletePage">
+                <argument name="pageUrlKey" value="$$createCmsPage.identifier$$"/>
+            </actionGroup>
+            <conditionalClick selector="{{CmsPagesPageActionsSection.clearAllButton}}" dependentSelector="{{CmsPagesPageActionsSection.activeFilters}}" visible="true" stepKey="clickToResetFilter"/>
+            <waitForPageLoad stepKey="waitForPageLoadAfterClearFilters"/>
+            <!-- Delete Hierarchy -->
+            <actionGroup ref="DeleteCurrentHierarchyActionGroup" stepKey="deleteNode"/>
+            <actionGroup ref="AdminClearFiltersActionGroup" stepKey="clearFilters"/>
+            <actionGroup ref="AdminLogoutActionGroup" stepKey="adminLogout"/>
+        </after>
+
+        <!-- Open CMS Page and select created hierarchy -->
+        <actionGroup ref="AdminEditCMSPageHierarchyActionGroup" stepKey="AddHierarchyToCMSPage">
+            <argument name="pageId" value="$$createCmsPage.id$$"/>
+            <argument name="selectHierarchyOpt" value="{{DefaultHierarchyNode.name}}"/>
+        </actionGroup>
+        <!-- Open CMS Page and unselect root hierarchy -->
+        <actionGroup ref="AdminEditCMSPageHierarchyActionGroup" stepKey="RemoveRootHierarchyFromCMSPage">
+            <argument name="pageId" value="$$createCmsPage.id$$"/>
+            <argument name="selectHierarchyOpt" value="Website Root"/>
+        </actionGroup>
+        <!-- Navigate to Storefront CMS Page -->
+        <actionGroup ref="NavigateToStorefrontForCreatedPageActionGroup" stepKey="navigateToPageOnStorefront">
+            <argument name="page" value="$$createCmsPage.identifier$$"/>
+        </actionGroup>
+        <!-- Assert CMS page data in Store Front -->
+        <actionGroup ref="AssertStoreFrontCMSPageActionGroup" stepKey="assertCMSPage">
+            <argument name="cmsTitle"  value="$$createCmsPage.title$$"/>
+            <argument name="cmsContent" value="$$createCmsPage.content$$"/>
+            <argument name="cmsContentHeading" value="$$createCmsPage.content_heading$$"/>
+        </actionGroup>
+        <actionGroup ref="AssertStorefrontBreadcrubmsAreShownActionGroup" stepKey="checkBreadcrubmsHierarchyNode">
+            <argument name="breadcrumbs" value="{{DefaultHierarchyNode.name}}"/>
+        </actionGroup>
+        <!-- Check url of CMS page redirected to created hierarchy in Store Front -->
+        <amOnPage url="$$createCmsPage.identifier$$" stepKey="navigateToCMSPageStoreFront"/>
+        <seeCurrentUrlEquals url="{{_ENV.MAGENTO_BASE_URL}}{{DefaultHierarchyNode.urlKey}}/$$createCmsPage.identifier$$" stepKey="seeSecureStoreCreditInfoURL"/>
+    </test>
+</tests>

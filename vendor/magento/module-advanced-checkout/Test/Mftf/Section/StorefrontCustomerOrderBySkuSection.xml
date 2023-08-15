@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+ /**
+  * Copyright © Magento, Inc. All rights reserved.
+  * See COPYING.txt for license details.
+  */
+-->
+
+<sections xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+          xsi:noNamespaceSchemaLocation="urn:magento:mftf:Page/etc/SectionObject.xsd">
+    <section name="StorefrontCustomerOrderBySkuSection">
+        <element name="productSku" type="input" selector="#id-items{{rowNumber}}sku" parameterized="true" timeout="30"/>
+        <element name="productQty" type="input" selector="#id-items{{rowNumber}}qty" parameterized="true" timeout="30"/>
+        <element name="newRow" type="button" selector="[data-role='add']"/>
+        <element name="addToCart" type="button" selector=".form-addbysku .actions-toolbar .primary .tocart"/>
+        <element name="requiredAttentionMessage" type="text" selector="div[data-bind='html: \$parent.prepareMessageForHtml(message.text)']" timeout="30"/>
+        <element name="outOfStockMessage" type="text" selector=".sku-out-of-stock"/>
+        <element name="errorMessage" type="text" selector=".message.error.item"/>
+        <element name="editBtn" type="button" selector=".action-edit"/>
+        <element name="optionsLink" type="button" selector=".action.configure"/>
+        <element name="quantity" type="input" selector="#qty"/>
+        <element name="updateCart" type="button" selector="#product-updatecart-button"/>
+        <element name="tierPriceMessage" type="text" selector=".prices-tier .item"/>
+        <element name="msrp" type="text" selector=".msrp.notice"/>
+        <element name="customGiftCardAmountInput" type="text" selector="#giftcard-amount-input"/>
+        <element name="senderName" type="text" selector="#giftcard_sender_name"/>
+        <element name="recipientName" type="text" selector="#giftcard_recipient_name"/>
+        <element name="giftCardMessage" type="textarea" selector="textarea[name='giftcard_message']"/>
+        <element name="successAddToCardMessage" type="text" selector=".message.message-success.success"/>
+    </section>
+</sections>

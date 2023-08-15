@@ -1,0 +1,72 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+ /**
+  * Copyright © Magento, Inc. All rights reserved.
+  * See COPYING.txt for license details.
+  */
+-->
+<tests xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="urn:magento:mftf:Test/etc/testSchema.xsd">
+    <test name="StoreFrontValidateQuantityToReturnTest">
+        <annotations>
+            <features value="Rma"/>
+            <stories value="ACP2E-70: Add more strict validation for negative values on 'Create new return form'"/>
+            <title value="Validate to restrict the negative values on 'Quantity To Return' field in 'create new return form' page"/>
+            <description value="Validate to restrict the negative values on 'Quantity To Return' field in 'create new return form' page"/>
+            <testCaseId value="AC-1216"/>
+            <useCaseId value="ACP2E-70"/>
+            <severity value="MINOR"/>
+            <group value="Rma"/>
+        </annotations>
+
+        <before>
+            <createData entity="EnableRmaOnStorefront" stepKey="enableRmaOnStorefront"/>
+            <createData entity="SimpleProduct2" stepKey="createProduct"/>
+            <createData entity="Simple_US_Customer" stepKey="createCustomer"/>
+        </before>
+        <after>
+            <deleteData createDataKey="createProduct" stepKey="deleteSimpleProduct1"/>
+            <deleteData createDataKey="createCustomer" stepKey="deleteCustomer"/>
+            <actionGroup ref="AdminLogoutActionGroup" stepKey="logout"/>
+        </after>
+        <!-- Login as customer -->
+        <actionGroup ref="LoginToStorefrontActionGroup" stepKey="loginToStorefrontAccount">
+            <argument name="Customer" value="$$createCustomer$$"/>
+        </actionGroup>
+        <!-- Add product to cart -->
+        <actionGroup ref="StorefrontAddSimpleProductWithQtyActionGroup" stepKey="addSimpleProductToCart">
+            <argument name="product" value="$$createProduct$$"/>
+            <argument name="quantity" value="10"/>
+        </actionGroup>
+        <actionGroup ref="GoToCheckoutFromMinicartActionGroup" stepKey="goToCheckoutFromMinicart"/>
+        <actionGroup ref="CheckoutSelectFlatRateShippingMethodActionGroup" stepKey="selectFlatRate"/>
+        <actionGroup ref="StorefrontCheckoutForwardFromShippingStepActionGroup" stepKey="goToReview"/>
+        <actionGroup ref="CheckoutSelectCheckMoneyOrderPaymentActionGroup" stepKey="selectCheckMoneyOrder"/>
+        <actionGroup ref="CheckoutPlaceOrderActionGroup" stepKey="clickOnPlaceOrder">
+            <argument name="orderNumberMessage" value="CONST.successCheckoutOrderNumberMessage"/>
+            <argument name="emailYouMessage" value="CONST.successCheckoutEmailYouMessage"/>
+        </actionGroup>
+        <grabTextFrom selector="{{CheckoutSuccessMainSection.orderNumber22}}" stepKey="orderNumber"/>
+        <actionGroup ref="StorefrontClickOrderLinkFromCheckoutSuccessPageActionGroup" stepKey="openOrderViewPage"/>
+        <grabFromCurrentUrl regex="~/order_id/(\d+)/~" stepKey="grabOrderId"/>
+
+        <actionGroup ref="AdminLoginActionGroup" stepKey="loginAsAdmin"/>
+
+        <actionGroup ref="OpenOrderByIdActionGroup" stepKey="addFilterToGridAndOpenOrder">
+            <argument name="orderId" value="{$orderNumber}"/>
+        </actionGroup>
+
+        <actionGroup ref="AdminShipThePendingOrderActionGroup" stepKey="createShipmentForOrder"/>
+
+        <actionGroup ref="StorefrontOpenMyAccountPageActionGroup" stepKey="navigateToCustomerDashboardPage"/>
+        <actionGroup ref="StorefrontClickViewOrderLinkOnMyOrdersPageActionGroup" stepKey="clickViewOrder"/>
+        <!--Customer on Return page-->
+        <amOnPage url="{{StorefrontCustomerReturnPage.url({$grabOrderId})}}" stepKey="amOnCustomerOrderPage"/>
+        <waitForPageLoad stepKey="waitForPageLoad"/>
+        <fillField selector="{{StorefrontCustomerReturnSection.quantityToReturn('0')}}" userInput="-1" stepKey="fillFieldQuantityReturn"/>
+        <grabTextFrom selector="{{StorefrontCustomerReturnSection.quantityToReturnError('0')}}" stepKey="grabQuantityToReturnErrorMessage"/>
+        <assertEquals stepKey="assertQuantityToReturnErrorMessage">
+            <expectedResult type="string">Please enter a number greater than 0 in this field.</expectedResult>
+            <actualResult type="variable">$grabQuantityToReturnErrorMessage</actualResult>
+        </assertEquals>
+    </test>
+</tests>

@@ -1,0 +1,144 @@
+<?php
+/**
+ * Copyright © Magento, Inc. All rights reserved.
+ * See COPYING.txt for license details.
+ */
+
+/** @var \Magento\Framework\View\Helper\SecureHtmlRenderer $secureRenderer */
+?>
+<?php
+$uniqueBehaviors = $block->getUniqueBehaviors();
+$entityBehaviors = $block->getEntityBehaviors();
+$filterUrl = $block->escapeJs($block->getUrl('*/*/getFilter'));
+?>
+<?php $scriptString = <<<script
+require(['prototype'], function(){
+
+//<![CDATA[
+    // Temporary Class will be replaced after refactoring of import/export functionality
+    VarienImportExportScheduled = Class.create();
+    VarienImportExportScheduled.prototype = {
+        initialize: function() {
+            /**
+             * Previous selected entity for grid
+             * @type {string}
+             */
+            this.previousGridEntity = '';
+
+            /**
+             * List of existing behavior sets
+             * @type {Array}
+             */
+            this.uniqueBehaviors = {$uniqueBehaviors};
+
+            /**
+             * Behaviour codes for import entities
+             * @type {Array}
+             */
+            this.entityBehaviors = {$entityBehaviors};
+        },
+
+        /**
+         * Show and activate row
+         * @param {string} elementId
+         */
+        activateRow: function(elementId) {
+            $(elementId).up('div.field-' + elementId).show();
+            $(elementId).enable();
+            $(elementId).addClassName('required-entry');
+        },
+
+        /**
+         * Hide and deactivate row
+         * @param {string} elementId
+         */
+        deactivateRow: function(elementId) {
+            $(elementId).up('div.field-' + elementId).hide();
+            $(elementId).selectedIndex = 0;
+            $(elementId).disable();
+            $(elementId).removeClassName('required-entry');
+        },
+
+        /**
+         * Show behavior selector
+         * @param {string|boolean} entity If false, then hide all behavior selectors
+         */
+        showBehavior: function(entity) {
+            var requiredBehavior = this.entityBehaviors[entity];
+            for (i = 0; i < this.uniqueBehaviors.length; i++) {
+                var currentBehavior = this.uniqueBehaviors[i];
+                if (requiredBehavior == currentBehavior) {
+                    this.activateRow(currentBehavior);
+                } else {
+                    this.deactivateRow(currentBehavior);
+                }
+            }
+        },
+
+        /**
+         * Handle value change in entity type selector (only for import)
+         */
+        handleEntityTypeSelector: function() {
+            if ($('entity') && \$F('entity')) {
+                this.showBehavior(\$F('entity'));
+            } else {
+                this.showBehavior(false);
+            }
+        },
+
+        /**
+         *  Handle value change in entity type selector
+         */
+        modifyFilterGrid: function() {
+            if ($('entity') && \$F('entity') && \$F('entity') != 'catalog_product') {
+                if (\$F('entity') == 'customer') {
+                    $$('col:first-child').each(function(el) {
+                        el.show();
+                    });
+                    $$('th.no-link:first-child').each(function(el) {
+                        el.show();
+                    });
+                    $$('td.a-center').each(function(el) {
+                        el.show();
+                    });
+                }
+            }
+        },
+
+        /**
+         * Post form data and process response via AJAX
+         */
+        getFilter: function() {
+            if (\$('entity') && \$F('entity')) {
+                var entity = \$F('entity');
+                if (entity != this.previousGridEntity) {
+                    this.previousGridEntity = entity;
+                    var url = "{$filterUrl}";
+                    url += ((url.slice(-1) != '/') ? '/' : '') + 'entity/' + entity;
+
+                    new Ajax.Request(url, {
+                        method:      'post',
+                        evalScripts: true,
+                        onComplete:  function(transport) {
+                            var responseText = transport.responseText.replace(/>\s+</g, '><');
+                            $('export_filter_grid_container').update(responseText);
+                            this.modifyFilterGrid();
+                            $('export_filter_container').show();
+                        }.bind(this)
+                    });
+                } else {
+                    this.modifyFilterGrid();
+                }
+            } else {
+                $('export_filter_container').hide();
+            }
+        }
+    };
+
+    varienImportExportScheduled = new VarienImportExportScheduled();
+//]]>
+
+});
+script;
+?>
+<?= /* @noEscape */ $secureRenderer->renderTag('script', [], $scriptString, false); ?>

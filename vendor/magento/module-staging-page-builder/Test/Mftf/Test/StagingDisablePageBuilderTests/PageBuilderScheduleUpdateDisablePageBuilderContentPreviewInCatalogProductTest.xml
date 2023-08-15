@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+ /**
+  * Copyright © Magento, Inc. All rights reserved.
+  * See COPYING.txt for license details.
+  */
+-->
+<tests xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="urn:magento:mftf:Test/etc/testSchema.xsd">
+    <test name="PageBuilderScheduleUpdateDisablePageBuilderContentPreviewInCatalogProductTest" extends="PageBuilderProductDisablePageBuilderContentPreviewTest">
+        <annotations>
+            <features value="PageBuilder"/>
+            <stories value="Schedule Update - Catalog Product"/>
+            <title value="Schedule Update (Product) - Validate Toggling Page Builder Content Preview"/>
+            <description value="Ensures that Page Builder content staging can be enabled/disabled for Schedule Update (Product) pages via the Enable Page Builder Content Preview flag."/>
+            <severity value="MAJOR"/>
+            <group value="pagebuilder"/>
+            <group value="pagebuilder-ee"/>
+            <group value="pagebuilder-staging"/>
+            <group value="pagebuilder-catalog-product"/>
+            <group value="pagebuilder-disable"/>
+        </annotations>
+        <before>
+            <actionGroup ref="navigateToStagingSlideout" stepKey="navigateToStagingSlideout" after="navigateToCreatedProductEditPage"/>
+            <actionGroup ref="ExpandAdminProductSectionActionGroup" stepKey="expandContentSection">
+                <argument name="sectionSelector" value="{{AdminStagingSlideOutSection.contentTab}}"/>
+                <argument name="sectionDependentSelector" value="{{AdminStagingSlideOutSection.stagingContentTab}}"/>
+            </actionGroup>
+        </before>
+        <!-- Verify (Enabled) Content Preview -->
+        <actionGroup ref="ValidatePageBuilderPreviewActionGroup" stepKey="ValidatePageBuilderPreview">
+            <argument name="pageBuilderArea" value="{{AdminStagingSlideOutSection.stagingContentTab}}"/>
+        </actionGroup>
+        <!-- Verify (Disabled) Content Preview -->
+        <actionGroup ref="navigateToStagingSlideout" stepKey="navigateToStagingSlideout" after="navigateToCreatedProductEditPage"/>
+        <actionGroup ref="ExpandAdminProductSectionActionGroup" stepKey="expandContentSection">
+            <argument name="sectionSelector" value="{{AdminStagingSlideOutSection.contentTab}}"/>
+            <argument name="sectionDependentSelector" value="{{AdminStagingSlideOutSection.stagingContentTab}}"/>
+        </actionGroup>
+    </test>
+</tests>

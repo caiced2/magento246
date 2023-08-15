@@ -1,0 +1,125 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+ /**
+  * Copyright © Magento, Inc. All rights reserved.
+  * See COPYING.txt for license details.
+  */
+-->
+
+<tests xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xsi:noNamespaceSchemaLocation="urn:magento:mftf:Test/etc/testSchema.xsd">
+    <test name="AdminCreateCustomerSegmentByProductOrderedWithoutRealTimeCheckTest">
+        <annotations>
+            <features value="CustomerSegment"/>
+            <stories value="Improve performance of segments validation"/>
+            <title value="Customer segment with order based condition should automatically match customer after order is placed Without Real Time Check"/>
+            <description value="Customer segment with order based condition should automatically match customer after order is placed Without Real Time Check"/>
+            <severity value="MAJOR"/>
+            <testCaseId value="ACPT-808"/>
+            <group value="CustomerSegment"/>
+        </annotations>
+        <before>
+            <!--Disable Real-time Check if Customer is Matched by Segment-->
+            <magentoCLI stepKey="DisableRealTimeCheck" command="config:set customer/magento_customersegment/real_time_check_if_customer_is_matched_by_segment 0"/>
+            <magentoCLI stepKey="ClearConfigCache" command="cache:clean config "/>
+            <!-- Create customer -->
+            <createData entity="Simple_US_CA_Customer" stepKey="createCustomer"/>
+            <!-- Create second customer -->
+            <createData entity="Simple_US_Customer" stepKey="createCustomer2"/>
+            <!-- Create category -->
+            <createData entity="_defaultCategory" stepKey="createCategory"/>
+            <!-- Create product -->
+            <createData entity="_defaultProduct" stepKey="createProduct">
+                <requiredEntity createDataKey="createCategory"/>
+            </createData>
+            <!-- Login to backend -->
+            <actionGroup ref="AdminLoginActionGroup" stepKey="loginAsAdmin"/>
+            <!-- Navigate to SKU product attribute edit page -->
+            <actionGroup ref="NavigateToEditProductAttributeActionGroup" stepKey="editSkuAttribute">
+                <argument name="ProductAttribute" value="sku" />
+            </actionGroup>
+            <!-- Make Attribute 'sku' accessible for Promo Rule Conditions -->
+            <actionGroup ref="ChangeUseForPromoRuleConditionsProductAttributeActionGroup" stepKey="changeAttributePromoRule">
+                <argument name="option" value="Yes" />
+            </actionGroup>
+        </before>
+        <after>
+            <!-- Delete customer -->
+            <deleteData createDataKey="createCustomer" stepKey="deleteCustomer"/>
+            <!-- Delete second customer -->
+            <deleteData createDataKey="createCustomer2" stepKey="deleteCustomer2"/>
+            <!-- Delete category -->
+            <deleteData createDataKey="createCategory" stepKey="deleteCategory"/>
+            <!-- Delete product -->
+            <deleteData createDataKey="createProduct" stepKey="deleteProduct"/>
+            <!-- Navigate to SKU product attribute edit page -->
+            <actionGroup ref="NavigateToEditProductAttributeActionGroup" stepKey="editSkuAttribute">
+                <argument name="ProductAttribute" value="sku" />
+            </actionGroup>
+            <!-- Revert Attribute 'sku' to it's default value (not accessible for Promo Rule Conditions) -->
+            <actionGroup ref="ChangeUseForPromoRuleConditionsProductAttributeActionGroup" stepKey="changeAttributePromoRule">
+                <argument name="option" value="No" />
+            </actionGroup>
+            <!-- Delete customer segment -->
+            <actionGroup ref="FindAndDeleteCustomerSegmentActionGroup" stepKey="deleteSegment">
+                <argument name="segmentName" value="{{CustomerSegmentForRegistered.name}}"/>
+            </actionGroup>
+            <magentoCron groups="index" stepKey="reindex"/>
+            <!-- Logout from backend -->
+            <actionGroup ref="AdminLogoutActionGroup" stepKey="logout"/>
+            <!--Enable Real-time Check if Customer is Matched by Segment-->
+            <magentoCLI stepKey="EnableRealTimeCheck" command="config:set customer/magento_customersegment/real_time_check_if_customer_is_matched_by_segment 1"/>
+
+        </after>
+        <!-- Create customer segment -->
+        <actionGroup ref="CreateCustomerSegmentWithContinueEditActionGroup" stepKey="createCustomerSegment">
+            <argument name="customerSegment" value="CustomerSegmentForRegistered"/>
+        </actionGroup>
+        <!-- Add "If Product was ordered and matches ALL of these Conditions" condition -->
+        <actionGroup ref="AdminCustomerSegmentAddProductHistoryConditionActionGroup" stepKey="addProductWasOrderedCondition">
+            <argument name="conditionName" value="{{CustomerSegmentProductWasOrderedCondition.name}}"/>
+            <argument name="conditionOperator" value="{{CustomerSegmentProductWasOrderedCondition.operator}}"/>
+            <argument name="conditionOperand" value="{{CustomerSegmentProductWasOrderedCondition.operand}}"/>
+            <argument name="conditionAggregator" value="{{CustomerSegmentProductWasOrderedCondition.aggregator}}"/>
+            <argument name="parentLevel" value="1"/>
+            <argument name="level" value="1--1"/>
+        </actionGroup>
+        <!-- Add "Product SKU is createProduct.sku" condition -->
+        <actionGroup ref="AdminCustomerSegmentAddSKUConditionActionGroup" stepKey="addSkuCondition">
+            <argument name="conditionOperand" value="$createProduct.sku$"/>
+            <argument name="parentLevel" value="1--1"/>
+            <argument name="level" value="1--1--1"/>
+        </actionGroup>
+        <!-- Save customer segment -->
+        <actionGroup ref="AdminCustomerSegmentSaveActionGroup" stepKey="saveCustomerSegment"/>
+        <!-- Login to storefront as customer -->
+        <actionGroup ref="LoginToStorefrontActionGroup" stepKey="customerLogin">
+            <argument name="Customer" value="$createCustomer$"/>
+        </actionGroup>
+        <!-- Open product on storefront -->
+        <actionGroup ref="StorefrontOpenProductEntityPageActionGroup" stepKey="openProductPage">
+            <argument name="product" value="$createProduct$"/>
+        </actionGroup>
+        <!-- Add product to shopping cart -->
+        <actionGroup ref="StorefrontAddProductToCartActionGroup" stepKey="addProductToCart">
+            <argument name="product" value="$createProduct$"/>
+            <argument name="productCount" value="1"/>
+        </actionGroup>
+        <!-- Open shopping cart -->
+        <actionGroup ref="StorefrontCartPageOpenActionGroup" stepKey="openCart"/>
+        <!-- Place the order -->
+        <actionGroup ref="PlaceOrderWithLoggedUserActionGroup" stepKey="placeOrder"/>
+        <!-- Open customer segment in the backend -->
+        <actionGroup ref="FindAndOpenCustomerSegmentActionGroup" stepKey="openSegment">
+            <argument name="segmentName" value="{{CustomerSegmentForRegistered.name}}"/>
+        </actionGroup>
+        <!-- Assert that customer is in "Matched customers" -->
+        <actionGroup ref="AdminCheckCustomerInSegmentActionGroup" stepKey="checkCustomerInSegment">
+            <argument name="customer" value="$createCustomer$"/>
+        </actionGroup>
+        <!-- Assert that second customer is not in "Matched customers" -->
+        <actionGroup ref="AdminCheckCustomerNotMatchedSegmentActionGroup" stepKey="checkCustomerNotInSegment">
+            <argument name="customer" value="$createCustomer2$"/>
+        </actionGroup>
+    </test>
+</tests>

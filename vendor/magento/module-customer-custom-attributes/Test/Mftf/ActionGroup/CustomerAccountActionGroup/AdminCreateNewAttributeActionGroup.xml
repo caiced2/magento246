@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+ /**
+  * Copyright © Magento, Inc. All rights reserved.
+  * See COPYING.txt for license details.
+  */
+-->
+<actionGroups xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:noNamespaceSchemaLocation="urn:magento:mftf:Test/etc/actionGroupSchema.xsd">
+    <actionGroup name="AdminCreateNewAttribute">
+        <arguments>
+            <argument name="values" type="string" defaultValue="Yes"/>
+            <argument name="formToUse" type="string" defaultValue="Customer Account Address"/>
+            <argument name="formToUse1" type="string" defaultValue="Customer Address Registration"/>
+        </arguments>
+        <click selector="{{CustomerAccountSection.newAttribute}}" stepKey="clickToCreateAttribute"/>
+        <fillField selector="{{CustomerAccountSection.label}}" userInput="{{Attribute.label}}" stepKey="TypeDefaultLabel"/>
+        <fillField selector="{{CustomerAccountSection.code}}" userInput="{{Attribute.code}}" stepKey="TypeAttributeCode"/>
+        <click selector="{{CustomerAccountSection.valuesRequired}}" stepKey="setValuesRequired"/>
+        <click selector="{{CustomerAccountSection.value(values)}}" stepKey="setValue"/>
+        <click selector="{{CustomerAccountSection.showInSF}}" stepKey="setSFOption"/>
+        <click selector="{{CustomerAccountSection.showInSFValue(values)}}" stepKey="setShowInSFValue"/>
+        <fillField selector="{{CustomerAccountSection.sortOrder}}" userInput="{{Attribute.sortOrder}}" stepKey="TypeSortOrder"/>
+        <click selector="{{CustomerAccountSection.formToUse(formToUse)}}" stepKey="setFormsToUse"/>
+        <click selector="{{CustomerAccountSection.formToUse(formToUse1)}}" stepKey="setFormsToUse1"/>
+        <click selector="{{CustomerAccountSection.save}}" stepKey="saveAttribute"/>
+        <waitForPageLoad stepKey="WaitForAttributeSaved"/>
+        <see userInput="You saved the customer address attribute." stepKey="verifyAttributeCreated"/>
+    </actionGroup>
+</actionGroups>

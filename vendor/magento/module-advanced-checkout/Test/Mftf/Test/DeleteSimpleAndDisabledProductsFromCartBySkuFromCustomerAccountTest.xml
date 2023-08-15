@@ -1,0 +1,97 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+/**
+ * Copyright © Magento, Inc. All rights reserved.
+ * See COPYING.txt for license details.
+ */
+-->
+
+<tests xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xsi:noNamespaceSchemaLocation="urn:magento:mftf:Test/etc/testSchema.xsd">
+    <test name="DeleteSimpleAndDisabledProductsFromCartBySkuFromCustomerAccountTest">
+        <annotations>
+            <features value="AdvancedCheckout"/>
+            <stories value="Delete Products from Requiring Attention Grid"/>
+            <title value="Delete simple and disabled products from cart by sku from customer account test"/>
+            <description value="Delete simple and disabled products from cart by sku from customer account"/>
+            <severity value="CRITICAL"/>
+            <testCaseId value="MC-14019"/>
+            <group value="AdvancedCheckout"/>
+            <group value="mtf_migrated"/>
+        </annotations>
+        <before>
+            <!-- Create customer -->
+            <createData entity="Simple_US_Customer" stepKey="createCustomer"/>
+
+            <!-- Create offline product -->
+            <createData entity="SimpleProductDisabled" stepKey="createOfflineProduct"/>
+
+            <!-- Create product -->
+            <createData entity="SimpleProduct2" stepKey="createSimpleProduct"/>
+        </before>
+        <after>
+            <!-- Logout customer -->
+            <actionGroup ref="StorefrontCustomerLogoutActionGroup" stepKey="logoutCustomer"/>
+
+            <!-- Delete customer -->
+            <deleteData createDataKey="createCustomer" stepKey="deleteCustomer"/>
+
+            <!-- Delete offline product -->
+            <deleteData createDataKey="createOfflineProduct" stepKey="deleteOfflineProduct"/>
+
+            <!-- Delete simple product -->
+            <deleteData createDataKey="createSimpleProduct" stepKey="deleteSimpleProduct"/>
+        </after>
+
+        <!-- Login to frontend -->
+        <actionGroup ref="LoginToStorefrontActionGroup" stepKey="loginToStorefrontAccount">
+            <argument name="Customer" value="$$createCustomer$$"/>
+        </actionGroup>
+
+        <!-- Open My Account > Order by SKU -->
+        <amOnPage stepKey="goToMyAccountPage" url="{{StorefrontCustomerDashboardPage.url}}"/>
+        <waitForPageLoad stepKey="waitForPageLoad"/>
+        <actionGroup ref="StorefrontCustomerGoToSidebarMenu" stepKey="goToSidebarMenu">
+            <argument name="menu" value="Order by SKU"/>
+        </actionGroup>
+
+        <!-- Fill first product data -->
+        <actionGroup ref="FillProductSkuAndQtyActionGroup" stepKey="fillProductQtyAndSkuForOfflineProduct">
+            <argument name="sku" value="$$createOfflineProduct.sku$$"/>
+            <argument name="quantity" value="{{ApiSimpleSingleQty.quantity}}"/>
+            <argument name="index" value="0"/>
+        </actionGroup>
+
+        <!-- Add new row -->
+        <click selector="{{StorefrontCustomerOrderBySkuSection.newRow}}" stepKey="addNewRow"/>
+
+        <!-- Fill second product data -->
+        <actionGroup ref="FillProductSkuAndQtyActionGroup" stepKey="fillProductQtyAndSkuForSimpleProduct">
+            <argument name="sku" value="$$createSimpleProduct.sku$$"/>
+            <argument name="quantity" value="{{SimpleProductDisabled.quantity}}"/>
+            <argument name="index" value="1"/>
+        </actionGroup>
+
+        <!-- Add product to cart -->
+        <waitForElementClickable selector="{{StorefrontCustomerOrderBySkuSection.addToCart}}" stepKey="waitForAddToCart"/>
+        <click selector="{{StorefrontCustomerOrderBySkuSection.addToCart}}" stepKey="clickAddToCart"/>
+        <waitForPageLoad stepKey="waitForAddingProductToCart"/>
+
+        <!-- Click remove button for first product and assert success message -->
+        <click selector="{{CheckoutCartProductSection.removeProductBySku($$createOfflineProduct.sku$$)}}" stepKey="deleteOfflineProduct"/>
+        <see selector="{{StorefrontMessagesSection.success}}" userInput="You removed the item." stepKey="seeSuccessMessageForOfflineProduct"/>
+
+        <!-- Click remove button for second product and assert success message -->
+        <click selector="{{CheckoutCartProductSection.removeProductBySku($$createSimpleProduct.sku$$)}}" stepKey="deleteSimpleProduct"/>
+        <see selector="{{StorefrontMessagesSection.success}}" userInput="You removed the item." stepKey="seeSuccessMessageForSimpleProduct"/>
+
+        <!-- Assert products absent in requiring attention -->
+        <dontSeeElement selector="{{CheckoutCartProductSection.failedItemBySku($$createOfflineProduct.sku$$)}}" stepKey="dontSeeOfflineProduct"/>
+        <dontSeeElement selector="{{CheckoutCartProductSection.failedItemBySku($$createSimpleProduct.sku$$)}}" stepKey="dontSeeSimpleProduct"/>
+
+        <!-- Assert products absent in shopping cart -->
+        <amOnPage url="{{CheckoutCartPage.url}}" stepKey="goToCartPage"/>
+        <waitForPageLoad stepKey="waitForCartPageLoad"/>
+        <see selector="{{CheckoutCartProductSection.emptyCart}}" userInput="You have no items in your shopping cart." stepKey="seeNoItemsInShoppingCart"/>
+    </test>
+</tests>

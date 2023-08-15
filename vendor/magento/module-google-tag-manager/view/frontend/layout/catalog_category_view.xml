@@ -1,0 +1,21 @@
+<?xml version="1.0"?>
+<!--
+/**
+ * Copyright © Magento, Inc. All rights reserved.
+ * See COPYING.txt for license details.
+ */
+-->
+<page xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="urn:magento:framework:View/Layout/etc/page_configuration.xsd">
+    <body>
+        <referenceContainer name="before.body.end">
+            <block class="Magento\GoogleTagManager\Block\ListJson" name="product_list_impression"
+                   template="Magento_GoogleTagManager::impression.phtml">
+                <arguments>
+                    <argument name="list_type" xsi:type="string">catalog</argument>
+                    <argument name="block_name" xsi:type="string">category.products.list</argument>
+                    <argument name="show_category" xsi:type="boolean">true</argument>
+                </arguments>
+            </block>
+        </referenceContainer>
+    </body>
+</page>

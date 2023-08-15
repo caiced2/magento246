@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+ /**
+  * Copyright © Magento, Inc. All rights reserved.
+  * See COPYING.txt for license details.
+  */
+-->
+<actionGroups xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:noNamespaceSchemaLocation="urn:magento:mftf:Test/etc/actionGroupSchema.xsd">
+    <actionGroup name="AdminValidateEditDynamicBlockSlideOutActionGroup">
+        <annotations>
+            <description>Verifies the Name, Status, and Customer Segment for a Dynamic Block on the Edit Dynamic Block slide out.</description>
+        </annotations>
+        <arguments>
+            <argument name="name" defaultValue="" type="string"/>
+            <argument name="status" defaultValue="Enabled" type="string"/>
+            <argument name="customerSegment" defaultValue="{{_defaultDynamicBlock.CustomerSegment}}" type="string"/>
+        </arguments>
+        <seeElement selector="{{DynamicBlockOnForm.blockTitle(name)}}" stepKey="seeName"/>
+        <seeElement selector="{{DynamicBlockOnForm.status(status)}}" stepKey="seeStatus"/>
+        <seeElement selector="{{DynamicBlockOnForm.blockInfo(customerSegment)}}" stepKey="seeCustomerSegment"/>
+    </actionGroup>
+</actionGroups>

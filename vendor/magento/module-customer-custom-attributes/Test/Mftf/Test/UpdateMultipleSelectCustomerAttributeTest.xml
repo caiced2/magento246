@@ -1,0 +1,79 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+/**
+ * Copyright © Magento, Inc. All rights reserved.
+ * See COPYING.txt for license details.
+ */
+-->
+
+<tests xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xsi:noNamespaceSchemaLocation="urn:magento:mftf:Test/etc/testSchema.xsd">
+    <test name="UpdateMultipleSelectCustomerAttributeTest">
+        <annotations>
+            <features value="CustomerCustomAttributes"/>
+            <stories value="Update Customer Custom Attributes"/>
+            <title value="Update multiple select customer attribute test"/>
+            <description value="Update multiple select customer attribute"/>
+            <severity value="MAJOR"/>
+            <testCaseId value="MC-14577"/>
+            <group value="CustomerCustomAttributes"/>
+            <group value="mtf_migrated"/>
+            <group value="pr_exclude"/>
+        </annotations>
+        <before>
+            <!-- Login as admin -->
+            <actionGroup ref="AdminLoginActionGroup" stepKey="LoginAsAdmin"/>
+        </before>
+        <after>
+            <!-- Logout admin -->
+            <actionGroup ref="AdminLogoutActionGroup" stepKey="logout"/>
+        </after>
+
+        <!-- Go to Stores > Customer -->
+        <amOnPage url="{{CustomerAttributesPage.url}}" stepKey="navigateToCustomerAttributes"/>
+        <waitForPageLoad stepKey="waitForAttributePageLoad"/>
+
+        <!-- Create customer attribute -->
+        <actionGroup ref="AdminCreateCustomerAttributeWithOptions" stepKey="createMultiSelectAttribute">
+            <argument name="customerAttribute" value="AttributeMultiSelect"/>
+            <argument name="defaultLabel" value="{{AttributeMultiSelect.frontend_label}}"/>
+            <argument name="attributeCode" value="{{AttributeMultiSelect.attribute_code}}"/>
+            <argument name="inputType" value="{{AttributeMultiSelect.frontend_input}}"/>
+            <argument name="sortOrder" value="{{AttributeMultiSelect.sort_order}}"/>
+            <argument name="option1" value="{{AttributeMultiSelect.option1}}"/>
+            <argument name="option2" value="{{AttributeMultiSelect.option2}}"/>
+            <argument name="formToUse" value="Customer Registration"/>
+            <argument name="message" value="You saved the customer attribute."/>
+        </actionGroup>
+
+        <!-- Open created customer attribute -->
+        <actionGroup ref="FilterCustomerAttributesByAttributeCodeAndDefaultLabelActionGroup" stepKey="findCreatedAttribute">
+            <argument name="defaultLabel" value="{{AttributeMultiSelect.frontend_label}}"/>
+            <argument name="attributeCode" value="{{AttributeMultiSelect.attribute_code}}"/>
+        </actionGroup>
+        <click selector="{{AdminCustomerAttributeSection.firstAttribute}}" stepKey="clickFirstRow"/>
+
+        <!-- Change data according to dataset -->
+        <fillField selector="{{CustomerAccountSection.label}}" userInput="{{AttributeMultiSelectUpdate.frontend_label}}" stepKey="typeDefaultLabel"/>
+        <selectOption selector="{{CustomerAccountSection.valuesRequired}}" userInput="Yes" stepKey="setValuesRequired"/>
+        <selectOption selector="{{CustomerAccountSection.showInSF}}" userInput="{{AttributeMultiSelectUpdate.is_visible}}" stepKey="setSFOption"/>
+        <fillField selector="{{CustomerAccountSection.sortOrder}}" userInput="{{AttributeMultiSelectUpdate.sort_order}}" stepKey="typeSortOrder"/>
+        <click selector="{{AttributeEditSection.saveAttribute}}" stepKey="saveAttribute"/>
+        <waitForPageLoad stepKey="WaitForAttributeSaved"/>
+
+        <!-- Assert customer custom attribute success save message -->
+        <see selector="{{AdminMessagesSection.success}}" userInput="You saved the customer attribute." stepKey="verifyAttributeCreated"/>
+
+        <!-- Assert customer custom attribute in grid -->
+        <actionGroup ref="FilterCustomerAttributesByAttributeCodeAndDefaultLabelActionGroup" stepKey="findChangedAttribute">
+            <argument name="defaultLabel" value="{{AttributeMultiSelectUpdate.frontend_label}}"/>
+            <argument name="attributeCode" value="{{AttributeMultiSelect.attribute_code}}"/>
+        </actionGroup>
+        <seeElement selector="{{AdminCustomerAttributeSection.firstAttribute}}" stepKey="seeChangedAttribute"/>
+
+        <!-- Delete created attribute -->
+        <actionGroup ref="DeleteCustomerAttribute" stepKey="deleteCustomerAttribute">
+            <argument name="defaultLabel" value="{{AttributeMultiSelectUpdate.frontend_label}}"/>
+        </actionGroup>
+    </test>
+</tests>

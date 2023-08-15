@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+ /**
+  * Copyright © Magento, Inc. All rights reserved.
+  * See COPYING.txt for license details.
+  */
+-->
+<actionGroups xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:noNamespaceSchemaLocation="urn:magento:mftf:Test/etc/actionGroupSchema.xsd">
+    <actionGroup name="AdminProductScheduleUpdateWithSpecialPrice">
+        <arguments>
+            <argument name="startDate"/>
+            <argument name="endDate"/>
+            <argument name="specialPrice" type="string"/>
+        </arguments>
+        <conditionalClick selector="{{AdminProductScheduleUpdateSection.scheduleNewUpdateBtn}}" dependentSelector="{{AdminStagingSlideOutSection.updateName}}" visible="false" stepKey="clickNewUpdate"/>
+        <waitForLoadingMaskToDisappear stepKey="waitForLoadingMask"/>
+        <fillField selector="{{AdminProductScheduleUpdateSection.updateName}}" userInput="$$createProduct.name$$" stepKey="fillUpdateName"/>
+        <fillField selector="{{AdminProductScheduleUpdateSection.updateDescription}}" userInput="$$createProduct.name$$" stepKey="fillDescription"/>
+        <fillField selector="{{AdminProductScheduleUpdateSection.startDate}}" userInput="{{startDate}}" stepKey="fillStartDate"/>
+        <fillField selector="{{AdminProductScheduleUpdateSection.endDate}}" userInput="{{endDate}}" stepKey="fillEndDate"/>
+        <click selector="{{AdminProductScheduleUpdateSection.advancedPricing}}" stepKey="clickAdvancedPricingLinkInUpdate"/>
+        <waitForElementVisible selector="{{AdminProductFormAdvancedPricingSection.specialPrice}}" stepKey="waitSpecialPriceInUpdate"/>
+        <fillField userInput="{{specialPrice}}" selector="{{AdminProductFormAdvancedPricingSection.specialPrice}}" stepKey="fillSpecialPriceInUpdate"/>
+        <click selector="{{AdminProductScheduleUpdateSection.doneButton}}" stepKey="clickDoneInUpdate"/>
+        <waitForElementNotVisible selector="{{AdminProductFormAdvancedPricingSection.specialPrice}}" stepKey="waitForCloseModalWindowInUpdate"/>
+        <click selector="{{AdminProductScheduleUpdateSection.save}}" stepKey="clickSave"/>
+    </actionGroup>
+</actionGroups>

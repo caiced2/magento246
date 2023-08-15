@@ -1,0 +1,23 @@
+<?xml version="1.0"?>
+<!--
+/**
+ * Copyright © Magento, Inc. All rights reserved.
+ * See COPYING.txt for license details.
+ */
+-->
+<config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="urn:magento:module:Magento_Config:etc/system_file.xsd">
+    <system>
+        <section id="catalog">
+            <group id="price">
+                <field id="default_product_price" translate="label comment" sortOrder="2" showInDefault="1" showInWebsite="0" showInStore="0">
+                    <label>Default Product Price</label>
+                    <comment>
+                        <![CDATA[Defines the default product price]]>
+                    </comment>
+                    <backend_model>Magento\PricePermissions\Model\System\Config\Backend\Catalog\Product\Price\DefaultPrice</backend_model>
+                    <frontend_model>Magento\PricePermissions\Block\Adminhtml\Catalog\Product\Price\DefaultPrice</frontend_model>
+                </field>
+            </group>
+        </section>
+    </system>
+</config>

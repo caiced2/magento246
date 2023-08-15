@@ -1,0 +1,20 @@
+<?php
+/**
+ * Copyright © Magento, Inc. All rights reserved.
+ * See COPYING.txt for license details.
+ */
+?>
+
+<?php
+/** @var \Magento\QuickCheckout\Block\Adminhtml\Payment\Form $block */
+/** @var \Magento\Framework\Escaper $escaper */
+
+$creditCardFormConfigJson = $block->getCreditCardFormConfigJson();
+?>
+
+<fieldset class="admin__fieldset"
+          id="payment_form_<?= $escaper->escapeHtml($block->getMethodCode()) ?>"
+          data-mage-init='{"Magento_QuickCheckout/js/credit-card": <?= /* @noEscape */ $creditCardFormConfigJson ?>}'>
+    <div id="bolt-credit-card-form" class="bolt-credit-card-form"></div>
+    <input type="hidden" name="payment[card]" id="quick-checkout-additional-data"/>
+</fieldset>

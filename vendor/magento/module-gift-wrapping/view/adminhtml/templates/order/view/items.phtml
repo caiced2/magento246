@@ -1,0 +1,98 @@
+<?php
+/**
+ * Copyright © Magento, Inc. All rights reserved.
+ * See COPYING.txt for license details.
+ */
+
+/** @var $block \Magento\GiftWrapping\Block\Adminhtml\Order\View\Items */
+/** @var \Magento\Framework\View\Helper\SecureHtmlRenderer $secureRenderer */
+?>
+
+<?php if ($block->canDisplayGiftWrappingForItems()): ?>
+<div id="wrapping-item-container">
+    <h4><?= $block->escapeHtml(__('Gift Wrapping')) ?></h4>
+    <div class="gift-wrapping-form">
+        <div class="gift-wrapping-design">
+            <img class="image-box no-display"
+                 id="item-image-box"
+                 alt="<?= $block->escapeHtml(__('Gift Wrapping Design')) ?>"
+                 src=""/>
+            <?= $block->escapeHtml(__('Gift Wrapping Design')) ?>: <span id="item-design"></span>
+            <div id="item-price-box">
+            <?php if ($block->getDisplayWrappingBothPrices()): ?>
+            <div>
+                <span class="label"><?= $block->escapeHtml(__('Price Excl. Tax')) ?>:</span>
+                <span class="price" id="item-price-excl-tax"></span>
+            </div>
+            <div>
+                <span class="label"><?= $block->escapeHtml(__('Price Incl. Tax')) ?>:</span>
+                <span class="price" id="item-price-incl-tax"></span>
+            </div>
+            <?php else: ?>
+            <div>
+                <span class="label"><?= $block->escapeHtml(__('Price')) ?>:</span>
+                <span class="price" id="item-price"></span>
+            </div>
+            <?php endif; ?>
+            </div>
+        </div>
+    </div>
+</div>
+    <?php
+    $itemsInfo = $block->getItemsInfo()->toJson();
+    $designInfo = $block->getDesignsInfo()->toJson();
+    ?>
+    <?php $scriptString = <<<script
+require(['prototype'], function(){
+
+//<![CDATA[
+giftWrappingItem = {
+    itemsInfo : {$itemsInfo},
+    designsInfo : {$designInfo},
+    init : function() {
+        $$('.action-link').each(function (el) {
+            Event.observe(el, 'click', this.setData.bind(this));
+        }, this);
+    },
+    setData : function(event){
+        var element = Event.element(event).id;
+        var id = element.sub('gift_options_link_','');
+        var value = this.itemsInfo[id].design;
+
+        if (value) {
+            $$('.gift-wrapping-design')[0].addClassName('_active');
+        } else {
+            $$('.gift-wrapping-design')[0].removeClassName('_active');
+        }
+        if (this.itemsInfo[id]) {
+            if (this.itemsInfo[id].price_incl_tax) {
+                $('item-price-incl-tax').update(this.itemsInfo[id].price_incl_tax);
+            }
+            if (this.itemsInfo[id].price_excl_tax) {
+                $('item-price-excl-tax').update(this.itemsInfo[id].price_excl_tax);
+            }
+            if (this.itemsInfo[id].price) {
+                $('item-price').update(this.itemsInfo[id].price);
+            }
+            $('item-price-box').addClassName('_active');
+        }
+        if (this.designsInfo[value]) {
+            if (this.designsInfo[value].path) {
+                $('item-image-box').src = this.designsInfo[value].path;
+                $('item-image-box').addClassName('_active');
+            }
+            if (this.designsInfo[value].design) {
+                $('item-design').update(this.designsInfo[value].design);
+            }
+        }
+        Event.stop(event);
+    }
+}
+giftWrappingItem.init();
+//]]>
+
+});
+script;
+    ?>
+    <?= /* @noEscape */ $secureRenderer->renderTag('script', [], $scriptString, false); ?>
+<?php endif; ?>

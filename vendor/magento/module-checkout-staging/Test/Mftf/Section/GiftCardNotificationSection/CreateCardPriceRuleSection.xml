@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+ /**
+  * Copyright © Magento, Inc. All rights reserved.
+  * See COPYING.txt for license details.
+  */
+-->
+<sections xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:noNamespaceSchemaLocation="urn:magento:mftf:Page/etc/SectionObject.xsd">
+    <section name="CreateCardPriceRuleSection">
+        <!--Go to Market/Cart Price Rules-->
+        <element name="market" type="button" selector="#menu-magento-backend-marketing"/>
+        <element name="discount" type="button" selector="//span[contains(text(), 'Cart Price Rules')]"/>
+        <!--Click to add Cart Price Rule -->
+        <element name="add" type="button" selector="#add"/>
+        <!--Fill required fields-->
+        <element name="ruleName" type="input" selector="//input[@name='name']"/>
+        <element name="selectWebSite" type="button" selector="//*[contains(text(), 'Main Website')]"/>
+        <element name="customerGroup" type="button" selector="//*[text()='NOT LOGGED IN']"/>
+        <element name="coupon" type="button" selector="//*[@name='coupon_type']"/>
+        <element name="specificCoupon" type="button" selector="//*[text()='Specific Coupon']"/>
+        <element name="code" type="input" selector="//*[@name='coupon_code']"/>
+        <element name="priority" type="input" selector="//*[@name='sort_order']"/>
+        <element name="actions" type="button" selector="//*[text()='Actions']"/>
+        <element name="amount" type="input" selector="//*[@name='discount_amount']"/>
+        <!--Save cart price rule-->
+        <element name="save" type="button" selector="#save"/>
+    </section>
+</sections>

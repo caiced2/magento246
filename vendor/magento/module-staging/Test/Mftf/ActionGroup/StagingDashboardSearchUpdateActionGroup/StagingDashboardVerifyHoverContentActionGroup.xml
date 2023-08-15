@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+ /**
+  * Copyright © Magento, Inc. All rights reserved.
+  * See COPYING.txt for license details.
+  */
+-->
+<actionGroups xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:noNamespaceSchemaLocation="urn:magento:mftf:Test/etc/actionGroupSchema.xsd">
+    <actionGroup name="StagingDashboardVerifyHoverContentActionGroup" extends="StagingDashboardSearchUpdateActionGroup">
+        <arguments>
+            <argument name="objectsQty" defaultValue="1" type="string"/>
+            <argument name="productsQty" defaultValue="1" type="string"/>
+        </arguments>
+        <click selector="{{AdminContentStagingDashboardSection.timeLineEventParameterized(staging.updateName)}}" stepKey="clickTimelineEvent"/>
+        <see selector="{{AdminContentStagingDashboardSection.title(staging.updateName)}}" userInput="{{staging.updateName}}" stepKey="seeTitle"/>
+        <see selector="{{AdminContentStagingDashboardSection.stagingEventsViewEdit(staging.updateName)}}" userInput="View/Edit" stepKey="seeUpdateViewAneEdit"/>
+        <see selector="{{AdminContentStagingDashboardSection.stagingEventsActions(staging.updateName, 'Preview')}}" userInput="Preview" stepKey="seePreview"/>
+        <see selector="{{AdminContentStagingDashboardSection.stagingEventsStatus(staging.updateName, 'Upcoming')}}" userInput="Upcoming" stepKey="seeStatus"/>
+        <see selector="{{AdminContentStagingDashboardSection.tooltipWrapper}}" userInput="{{objectsQty}} Objects" stepKey="seeObjectsQty"/>
+        <see selector="{{AdminContentStagingDashboardSection.tooltipWrapper}}" userInput="{{productsQty}} Products" stepKey="seeProductsQty"/>
+    </actionGroup>
+</actionGroups>

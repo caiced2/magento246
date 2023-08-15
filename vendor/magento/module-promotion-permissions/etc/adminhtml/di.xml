@@ -1,0 +1,27 @@
+<?xml version="1.0"?>
+<!--
+/**
+ * Copyright © Magento, Inc. All rights reserved.
+ * See COPYING.txt for license details.
+ */
+-->
+<config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="urn:magento:framework:ObjectManager/etc/config.xsd">
+    <type name="Magento\CatalogRule\Block\Adminhtml\Promo\Catalog">
+        <plugin name="promotion_permission" type="Magento\PromotionPermissions\Block\Adminhtml\Promo\Catalog\Plugin" />
+    </type>
+    <type name="Magento\CatalogRule\Block\Adminhtml\Edit\GenericButton">
+        <plugin name="promotion_permission" type="Magento\PromotionPermissions\Block\Adminhtml\Promo\Catalog\Edit\GenericButton\Plugin" />
+    </type>
+    <type name="Magento\SalesRule\Block\Adminhtml\Promo\Quote">
+        <plugin name="promotion_permission" type="Magento\PromotionPermissions\Block\Adminhtml\Promo\Quote\Plugin" />
+    </type>
+    <type name="Magento\SalesRule\Block\Adminhtml\Promo\Quote\Edit\GenericButton">
+        <plugin name="promotion_permission" type="Magento\PromotionPermissions\Block\Adminhtml\Promo\Quote\Edit\GenericButton\Plugin" />
+    </type>
+    <type name="Magento\Reminder\Block\Adminhtml\Reminder">
+        <plugin name="promotion_permission" type="Magento\PromotionPermissions\Block\Adminhtml\Reminder\Plugin" />
+    </type>
+    <type name="Magento\Reminder\Block\Adminhtml\Reminder\Edit">
+        <plugin name="promotion_permission" type="Magento\PromotionPermissions\Block\Adminhtml\Reminder\Edit\Plugin" />
+    </type>
+</config>

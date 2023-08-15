@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+ /**
+  * Copyright © Magento, Inc. All rights reserved.
+  * See COPYING.txt for license details.
+  */
+-->
+
+<actionGroups xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+              xsi:noNamespaceSchemaLocation="urn:magento:mftf:Test/etc/actionGroupSchema.xsd">
+    <actionGroup name="AssertStorefrontGiftCardFieldValidationActionGroup">
+        <annotations>
+            <description>Assert correct validation message appears for specified field on storefront GiftCard product page when adding to cart.</description>
+        </annotations>
+        <arguments>
+            <argument name="fieldSelector" type="string" defaultValue="{{StorefrontProductInfoMainSection.giftCardAmountInput}}"/>
+            <argument name="fieldValidationSelector" type="string" defaultValue="{{StorefrontProductInfoMainSection.giftCardAmountInputError}}"/>
+            <argument name="fieldValue" type="string" defaultValue="-1"/>
+            <argument name="validationMessage" type="string" defaultValue="Please enter a value greater than or equal to 1."/>
+        </arguments>
+
+        <fillField selector="{{fieldSelector}}" userInput="{{fieldValue}}" stepKey="fillField"/>
+        <pressKey selector="{{fieldSelector}}" parameterArray="[\Facebook\WebDriver\WebDriverKeys::TAB]" stepKey="pressTabKey"/>
+        <scrollTo selector="{{StorefrontProductInfoMainSection.AddToCart}}" y="50" stepKey="scrollToAddToCartButton" />
+        <waitForElementVisible selector="{{StorefrontProductInfoMainSection.AddToCart}}" stepKey="waitForAddToCartButton"/>
+        <scrollTo selector="{{StorefrontProductInfoMainSection.AddToCart}}" stepKey="scrollToCartToValidationTriggered"/>
+        <waitForElementVisible selector="{{StorefrontProductInfoMainSection.addToCartEnabled}}" stepKey="waitAddToCartButtonAppearAndEnabled"/>
+        <click selector="{{StorefrontProductInfoMainSection.AddToCart}}" stepKey="clickAddToCartToValidationTriggered"/>
+        <wait time="1" stepKey="waitValidationMessageFullyShown"/>
+        <waitForElementVisible selector="{{fieldValidationSelector}}" stepKey="waitFieldValidationMessageAppears"/>
+        <waitForText selector="{{fieldValidationSelector}}" userInput="{{validationMessage}}" stepKey="waitForCorrectFieldValidationMessage"/>
+    </actionGroup>
+</actionGroups>
+
+
+
+

@@ -1,0 +1,119 @@
+<?php
+/**
+ * Copyright © Magento, Inc. All rights reserved.
+ * See COPYING.txt for license details.
+ */
+?>
+<div class="widget block block-wishlist-search">
+    <div class="block-title">
+        <strong role="heading" aria-level="2"><?= $block->escapeHtml(__('Wish List Search')) ?></strong>
+    </div>
+    <div class="block-content">
+        <?php if ($block->useSearchFormSelect()): ?>
+        <fieldset class="fieldset">
+            <div class="field required find">
+                <label for="<?= $block->escapeHtmlAttr($block->getBlockId()) ?>-search_by" class="label">
+                    <span><?= $block->escapeHtml(__('Search By')) ?></span>
+                </label>
+                <div class="control">
+                    <?= /* @noEscape */ $block->getSearchFormSelect() ?>
+                </div>
+            </div>
+        </fieldset>
+        <?php endif;?>
+    <?php if ($block->useNameForm()): ?>
+        <form id="<?= $block->escapeHtmlAttr($block->getBlockId()) ?>-wishlist-quick-search-widget-name-form"
+              action="<?= $block->escapeUrl($block->getActionUrl()) ?>"
+              method="get"
+              class="form form-wishlist-search <?php if ($block->useSearchFormSelect()): ?>no-display<?php endif;?>"
+              data-hasrequired="* <?= $block->escapeHtmlAttr(__('Please enter at least two letters.')) ?>"
+              data-mage-init='{"validation":{}}'>
+            <fieldset class="fieldset">
+                <div class="field required name">
+                    <label for="<?= $block->escapeHtmlAttr($block->getBlockId()) ?>-quick_search_firstname"
+                           class="label">
+                        <span><?= $block->escapeHtml(__('First Name')) ?></span>
+                    </label>
+                    <div class="control">
+                        <input type="text"
+                               class="input-text"
+                               data-validate="{required : true, minlength : 2}"
+                               id="<?= $block->escapeHtmlAttr($block->getBlockId()) ?>-quick_search_firstname"
+                               name="params[firstname]">
+                    </div>
+                </div>
+                <div class="field required lastname">
+                    <label for="<?= $block->escapeHtmlAttr($block->getBlockId()) ?>-quick_search_lastname"
+                           class="label">
+                        <span><?= $block->escapeHtml(__('Last Name')) ?></span>
+                    </label>
+                    <div class="control">
+                        <input type="text"
+                               class="input-text"
+                               data-validate="{required : true, minlength : 2}"
+                               id="<?= $block->escapeHtmlAttr($block->getBlockId()) ?>-quick_search_lastname"
+                               name="params[lastname]">
+                    </div>
+                </div>
+                <div class="actions-toolbar">
+                    <div class="primary">
+                        <input type="hidden" name="params[search]" value="type">
+                        <button type="submit"
+                                title="<?= $block->escapeHtml(__('Search')) ?>"
+                                class="action search">
+                            <span><?= $block->escapeHtml(__('Search')) ?></span>
+                        </button>
+                    </div>
+                </div>
+            </fieldset>
+        </form>
+    <?php endif; ?>
+
+    <?php if ($block->useEmailForm()): ?>
+        <form id="<?= $block->escapeHtmlAttr($block->getBlockId()) ?>-wishlist-quick-search-widget-email-form"
+              action="<?= $block->escapeUrl($block->getActionUrl()) ?>"
+              method="get"
+              class="form form-wishlist-search <?php if ($block->useSearchFormSelect()): ?>no-display<?php endif;?>"
+              data-mage-init='{"validation":{}}'>
+            <fieldset class="fieldset">
+                <div class="field required email">
+                    <label for="<?= $block->escapeHtmlAttr($block->getBlockId()) ?>-quick_search_email" class="label">
+                        <span><?= $block->escapeHtml(__('Owner Email')) ?></span>
+                    </label>
+                    <div class="control">
+                        <input type="text"
+                               class="input-text required-entry validate-email"
+                               id="<?= $block->escapeHtmlAttr($block->getBlockId()) ?>-quick_search_email"
+                               name="params[email]">
+                    </div>
+                </div>
+                <div class="actions-toolbar">
+                    <div class="primary">
+                        <input type="hidden" name="params[search]" value="email">
+                        <button type="submit"
+                                title="<?= $block->escapeHtml(__('Search')) ?>"
+                                class="action search">
+                            <span><?= $block->escapeHtml(__('Search')) ?></span>
+                        </button>
+                    </div>
+                </div>
+            </fieldset>
+        </form>
+    <?php endif; ?>
+    </div>
+</div>
+<?php
+$escapedBlockId = $block->escapeJs($block->getBlockId());
+$nameFormSelector = '#' . $escapedBlockId . '-wishlist-quick-search-widget-name-form';
+$emailFormSelector = '#' . $escapedBlockId . '-wishlist-quick-search-widget-email-form';
+?>
+<script type="text/x-magento-init">
+    {
+        "[id='<?= $block->escapeHtml($block->getBlockId()) ?>-search_by']": {
+                "wishlistSearch": {
+                    "nameFormSelector": "<?= /* @noEscape */ $nameFormSelector ?>",
+                    "emailFormSelector": "<?= /* @noEscape */ $emailFormSelector ?>"
+                }
+        }
+    }
+</script>

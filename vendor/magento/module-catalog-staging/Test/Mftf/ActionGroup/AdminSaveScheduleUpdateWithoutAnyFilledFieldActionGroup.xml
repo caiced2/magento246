@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+ /**
+  * Copyright © Magento, Inc. All rights reserved.
+  * See COPYING.txt for license details.
+  */
+-->
+<actionGroups xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:noNamespaceSchemaLocation="urn:magento:mftf:Test/etc/actionGroupSchema.xsd">
+    <actionGroup name="AdminSaveScheduleUpdateWithoutAnyFilledFieldActionGroup">
+        <annotations>
+            <description>Click the save button without filling in any fields and see if there is an error</description>
+        </annotations>
+        <waitForElementVisible selector="{{AdminCatalogStagingSlideOutSection.scheduledChangesModalSlide}}" stepKey="waitScheduledChangesModalSlideBlock"/>
+        <scrollToTopOfPage stepKey="scrollToTopOfPage"/>
+        <click selector="{{AdminStagingSlideOutSection.save}}" stepKey="clickSave"/>
+        <see selector="{{AdminCategoryBasicFieldSection.FieldError('uid')}}" userInput="This is a required field." stepKey="seeErrorMessage"/>
+    </actionGroup>
+</actionGroups>

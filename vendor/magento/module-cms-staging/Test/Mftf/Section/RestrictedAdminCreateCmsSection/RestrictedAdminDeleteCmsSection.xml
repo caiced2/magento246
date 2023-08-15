@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+ /**
+  * Copyright © Magento, Inc. All rights reserved.
+  * See COPYING.txt for license details.
+  */
+-->
+<sections xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:noNamespaceSchemaLocation="urn:magento:mftf:Page/etc/SectionObject.xsd">
+    <section name="RestrictedAdminDeleteCmsSection">
+        <element name="block" parameterized="true" selector="//div[contains(text(), '{{arg1}}')]/parent::td/preceding-sibling::td/label" type="checkbox"/>
+        <element name="action" selector="//div[@class='col-xs-2']//button[text()='Actions']" type="button"/>
+        <element name="delete" selector="//div[@class='col-xs-2']//span[text()='Delete']" type="button"/>
+        <element name="confirm" selector=".action-primary.action-accept" type="button"/>
+    </section>
+</sections>

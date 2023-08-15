@@ -1,0 +1,16 @@
+<?xml version="1.0"?>
+<!--
+/**
+ * Copyright © Magento, Inc. All rights reserved.
+ * See COPYING.txt for license details.
+ */
+-->
+<config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="urn:magento:module:Magento_Backend:etc/menu.xsd">
+    <menu>
+        <add id="Magento_Swat::system_insights" title="System Insights" translate="title" module="Magento_Swat"
+             sortOrder="45" parent="Magento_Reports::report" resource="Magento_Swat::system_insights" />
+        <add id="Magento_Swat::swat" title="Site-Wide Analysis Tool" translate="title" module="Magento_Swat"
+             sortOrder="10" parent="Magento_Swat::system_insights" action="swat/dashboard/launch"
+             target="_blank" resource="Magento_Swat::swat" />
+    </menu>
+</config>

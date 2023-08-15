@@ -1,0 +1,92 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+ /**
+  * Copyright © Magento, Inc. All rights reserved.
+  * See COPYING.txt for license details.
+  */
+-->
+<tests xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="urn:magento:mftf:Test/etc/testSchema.xsd">
+    <test name="AdminNewReturnRequestByRestrictedAdminTest">
+        <annotations>
+            <features value="AdminGws"/>
+            <stories value="Create returns"/>
+            <title value="Ability to create a return by restricted admin"/>
+            <description value="Validate that restricted admin can create a return"/>
+            <severity value="AVERAGE"/>
+            <testCaseId value="MC-42956"/>
+            <useCaseId value="MC-42239"/>
+            <group value="userRole"/>
+        </annotations>
+
+        <before>
+            <actionGroup ref="AdminLoginActionGroup" stepKey="loginAsAdminBefore"/>
+            <createData entity="SimpleProduct2" stepKey="simpleProduct"/>
+            <createData entity="CustomerEntityOne" stepKey="newCustomer"/>
+            <actionGroup ref="AdminAddNewUserRoleWithCustomRoleScopesActionGroup" stepKey="restrictedRole">
+                <argument name="role" value="limitedRole"/>
+                <argument name="customWebsiteName" value="Main Website"/>
+            </actionGroup>
+            <actionGroup ref="AdminCreateUserActionGroup" stepKey="restrictedAdmin">
+                <argument name="role" value="limitedRole"/>
+                <argument name="User" value="NewAdminUser"/>
+            </actionGroup>
+            <actionGroup ref="AdminLogoutActionGroup" stepKey="logoutAdminBefore"/>
+        </before>
+
+        <after>
+            <actionGroup ref="AdminLoginActionGroup" stepKey="loginAsAdminAfter"/>
+            <actionGroup ref="AdminDeleteUserActionGroup" stepKey="deleteRestrictedAdmin">
+                <argument name="user" value="NewAdminUser"/>
+            </actionGroup>
+            <actionGroup ref="AdminDeleteCreatedRoleActionGroup" stepKey="deleteRestrictedRole">
+                <argument name="role" value="limitedRole"/>
+            </actionGroup>
+            <deleteData createDataKey="newCustomer" stepKey="deleteCustomer"/>
+            <deleteData createDataKey="simpleProduct" stepKey="deleteProduct"/>
+            <actionGroup ref="AdminLogoutActionGroup" stepKey="logoutAdminAfter"/>
+        </after>
+
+        <actionGroup ref="AdminLoginActionGroup" stepKey="loginAsRestrictedAdmin">
+            <argument name="username" value="{{NewAdminUser.username}}"/>
+            <argument name="password" value="{{NewAdminUser.password}}"/>
+        </actionGroup>
+        <actionGroup ref="NavigateToNewOrderPageExistingCustomerActionGroup" stepKey="goToCreateOrderPage">
+            <argument name="customer" value="$$newCustomer$$"/>
+        </actionGroup>
+        <actionGroup ref="AddSimpleProductToOrderActionGroup" stepKey="addProductToOrder">
+            <argument name="product" value="$$simpleProduct$$"/>
+        </actionGroup>
+        <actionGroup ref="OrderSelectFlatRateShippingActionGroup" stepKey="selectFlatRateShippingOption"/>
+        <actionGroup ref="AdminOrderClickSubmitOrderActionGroup" stepKey="clickSubmitOrder"/>
+        <grabFromCurrentUrl regex="~/order_id/(\d+)/~" stepKey="getOrderId"/>
+        <grabTextFrom selector="|Order # (\d+)|" stepKey="orderNumber" after="getOrderId"/>
+        <actionGroup ref="AdminCreateShipmentFromOrderPage" stepKey="createNewShipment">
+            <argument name="Title" value="Title"/>
+            <argument name="Number" value="99"/>
+            <argument name="Qty" value="1"/>
+            <argument name="Comment" value="comments for shipment"/>
+        </actionGroup>
+
+        <amOnPage url="{{AdminReturnsPage.url}}" stepKey="navigateToReturnPage"/>
+        <waitForPageLoad stepKey="waitForReturnsPageLoaded"/>
+        <click selector="{{AdminNewReturnOrderInformationSection.addNewReturns}}" stepKey="clickCreateReturns" before="waitForReturnsPageLoaded"/>
+        <seeInCurrentUrl url="{{AdminReturnChooseOrderPage.url}}" stepKey="seeNewReturnPage" after="clickCreateReturns"/>
+        <fillField selector="{{AdminNewReturnOrderInformationSection.searchOrder}}" userInput="{$orderNumber}" stepKey="fillOrderNum"/>
+        <click selector="{{AdminNewReturnOrderInformationSection.searchButton}}" stepKey="submitSearchOrderNum"/>
+        <waitForLoadingMaskToDisappear stepKey="waitForLoadingMaskToDisappearOnSearch"/>
+        <click selector="{{AdminNewReturnOrderInformationSection.firstRow}}" stepKey="clickOrderRow"/>
+        <waitForPageLoad stepKey="waitForOrderOpened"/>
+        <click selector="{{AdminReturnInformationSection.returnItems}}" stepKey="clickReturnItemsTab" after="waitForOrderOpened"/>
+        <click selector="{{AdminReturnItemsSection.addProducts}}" stepKey="clickAddReturnProducts" after="clickReturnItemsTab"/>
+        <checkOption selector="{{AdminReturnItemsSection.selectRow('1')}}" stepKey="selectSimpleProductReturn" after="clickAddReturnProducts"/>
+        <click selector="{{AdminReturnItemsSection.addSelectedProducts}}" stepKey="clickAddSelectedProductsToReturn" after="selectSimpleProductReturn"/>
+        <fillField selector="{{AdminReturnItemsSection.requested('1')}}" userInput="{{SampleReturnItem.qty_requested}}" stepKey="fillRequestedReturnQty" after="clickAddSelectedProductsToReturn"/>
+        <selectOption selector="{{AdminReturnItemsSection.returnReason('1')}}" userInput="{{SampleReturnItem.reason}}" stepKey="selectReturnReason" after="fillRequestedReturnQty"/>
+        <selectOption selector="{{AdminReturnItemsSection.itemCondition('1')}}" userInput="{{SampleReturnItem.condition}}" stepKey="selectReturnItemCondition" after="selectReturnReason"/>
+        <selectOption selector="{{AdminReturnItemsSection.resolution('1')}}" userInput="{{SampleReturnItem.resolution}}" stepKey="selectReturnResolution" after="selectReturnItemCondition"/>
+        <click selector="{{AdminNewReturnMainActionsSection.submitReturns}}" stepKey="clickSubmitReturns" after="selectReturnResolution"/>
+        <waitForPageLoad stepKey="waitForSubmit"/>
+        <see userInput="You submitted the RMA request." stepKey="seeSuccessMessageReturnOrder"/>
+        <actionGroup ref="AdminLogoutActionGroup" stepKey="logoutRestrictedAdmin"/>
+    </test>
+</tests>

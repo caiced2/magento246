@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+ /**
+  * Copyright © Magento, Inc. All rights reserved.
+  * See COPYING.txt for license details.
+  */
+-->
+<sections xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:noNamespaceSchemaLocation="urn:magento:mftf:Page/etc/SectionObject.xsd">
+    <section name="WidgetOptions">
+        <element name="WidgetOptionsTab" type="button" selector="//a[@title='Widget Options']"/>
+        <element name="displayMode" type="select" selector="select[name='parameters[display_mode]']"/>
+        <element name="restrictByTypes" type="select" selector="select[name='parameters[types][]']"/>
+        <element name="rotateMode" type="select" selector="select[name='parameters[rotate]']"/>
+        <element name="BannerToDisplay" type="button" selector="//span[text()='Banners to Display']"/>
+        <element name="BannerGrid" type="select" selector="#bannerGrid_banner_filter_in_banners"/>
+        <element name="Search" type="button" selector="div[class='admin__filter-actions'] &gt; button[title='Search']"/>
+        <element name="ResetFilter" type="button" selector="div[class='admin__filter-actions'] &gt; button[title='Reset Filter']"/>
+        <element name="BannerName" type="text" selector="//td[contains(text(),'{{var1}}')]" parameterized="true"/>
+    </section>
+</sections>

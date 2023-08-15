@@ -1,0 +1,48 @@
+<?xml version="1.0"?>
+<!--
+/**
+ * Copyright © Magento, Inc. All rights reserved.
+ * See COPYING.txt for license details.
+ */
+-->
+<config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="urn:magento:module:Magento_Store:etc/config.xsd">
+    <default>
+        <sales>
+            <magento_rma>
+                <use_store_address>1</use_store_address>
+                <country_id>US</country_id>
+                <enabled_on_product>1</enabled_on_product>
+            </magento_rma>
+        </sales>
+        <sales_email>
+            <magento_rma>
+                <enabled>1</enabled>
+                <template>sales_email_magento_rma_template</template>
+                <guest_template>sales_email_magento_rma_guest_template</guest_template>
+                <identity>sales</identity>
+                <copy_method>bcc</copy_method>
+            </magento_rma>
+            <magento_rma_auth>
+                <enabled>1</enabled>
+                <template>sales_email_magento_rma_auth_template</template>
+                <guest_template>sales_email_magento_rma_auth_guest_template</guest_template>
+                <identity>sales</identity>
+                <copy_method>bcc</copy_method>
+            </magento_rma_auth>
+            <magento_rma_comment>
+                <enabled>1</enabled>
+                <template>sales_email_magento_rma_comment_template</template>
+                <guest_template>sales_email_magento_rma_comment_guest_template</guest_template>
+                <identity>sales</identity>
+                <copy_method>bcc</copy_method>
+            </magento_rma_comment>
+            <magento_rma_customer_comment>
+                <enabled>1</enabled>
+                <template>sales_email_magento_rma_customer_comment_template</template>
+                <identity>support</identity>
+                <recipient>sales</recipient>
+                <copy_method>bcc</copy_method>
+            </magento_rma_customer_comment>
+        </sales_email>
+    </default>
+</config>

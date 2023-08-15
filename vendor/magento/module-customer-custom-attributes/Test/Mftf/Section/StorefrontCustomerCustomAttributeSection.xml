@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+ /**
+  * Copyright © Magento, Inc. All rights reserved.
+  * See COPYING.txt for license details.
+  */
+-->
+
+<sections xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+          xsi:noNamespaceSchemaLocation="urn:magento:mftf:Page/etc/SectionObject.xsd">
+    <section name="StorefrontCustomerCustomAttributeSection">
+        <element name="attributeLabel" type="text" selector="//div//span[contains(.,'{{attributeLabel}}')]" parameterized="true"/>
+        <element name="defaultAttributeValue" type="text" selector="//*[@name= '{{attributeCode}}']" parameterized="true"/>
+        <element name="calendarBtn" type="button" selector="//div[contains(@class, '{{attributeCode}}')]//button[@class='ui-datepicker-trigger v-middle']" parameterized="true"/>
+        <element name="customAttributeText" type="text" selector="//label[@for='{{attribute_code}}']/span" parameterized="true"/>
+    </section>
+</sections>

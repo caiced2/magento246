@@ -1,0 +1,79 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+/**
+ * Copyright © Magento, Inc. All rights reserved.
+ * See COPYING.txt for license details.
+ */
+-->
+<form xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="urn:magento:module:Magento_Ui:etc/ui_configuration.xsd">
+    <fieldset name="rule_information" class="Magento\Staging\Ui\Component\Form\Fieldset" sortOrder="20">
+        <settings>
+            <collapsible>true</collapsible>
+            <label translate="true">Catalog Price Rules</label>
+        </settings>
+        <insertListing name="staging_update_catalogrule_grid">
+            <settings>
+                <externalProvider>staging_update_catalogrule_grid.staging_update_catalogrule_grid_data_source</externalProvider>
+                <selectionsProvider>staging_update_catalogrule_grid.staging_update_catalogrule_grid.staging_update_catalogrule_grid_columns.ids</selectionsProvider>
+                <autoRender>true</autoRender>
+                <dataScope>staging_update_catalogrule_grid</dataScope>
+                <ns>staging_update_catalogrule_grid</ns>
+                <exports>
+                    <link name="updateId">${ $.externalProvider }:params.update_id</link>
+                </exports>
+                <imports>
+                    <link name="updateId">${ $.provider }:data.general.id</link>
+                </imports>
+            </settings>
+        </insertListing>
+        <modal name="catalogrulestaging_update_form_modal">
+            <insertForm name="catalogrule_update_form_loader" component="Magento_Staging/js/form/components/insert-form">
+                <argument name="data" xsi:type="array">
+                    <item name="config" xsi:type="array">
+                        <item name="upcomingListingProvider" xsi:type="string">staging_update_catalogrule_grid</item>
+                        <item name="removeModalProvider" xsi:type="string">${ $.ns}.${ $.ns}.catalogrulestaging_update_remove_form_modal</item>
+                        <item name="removeResponseProvider" xsi:type="string">${ $.removeModalProvider }.update_remove_form_loader:responseData</item>
+                        <item name="modalSubTitleProvider" xsi:type="string">${ $.externalProvider }:data.staging.name</item>
+                        <item name="modalTitleProvider" xsi:type="string">${ $.externalProvider }:data.name</item>
+                    </item>
+                </argument>
+                <settings>
+                    <formSubmitType>ajax</formSubmitType>
+                    <renderUrl path="mui/index/render_handle">
+                        <param name="handle">catalogrulestaging_update</param>
+                        <param name="buttons">1</param>
+                    </renderUrl>
+                    <loading>false</loading>
+                    <toolbarContainer>${ $.parentName }</toolbarContainer>
+                    <externalProvider>${ $.ns }.catalogrulestaging_update_form_data_source</externalProvider>
+                    <ns>catalogrulestaging_update_form</ns>
+                </settings>
+            </insertForm>
+        </modal>
+        <modal name="catalogrulestaging_update_remove_form_modal">
+            <settings>
+                <options>
+                    <option name="title" translate="true" xsi:type="string">Remove Catalog Price Rule from Campaign</option>
+                </options>
+            </settings>
+            <insertForm name="update_remove_form_loader" component="Magento_Staging/js/form/components/insert-form">
+                <argument name="data" xsi:type="array">
+                    <item name="config" xsi:type="array">
+                        <item name="source" xsi:type="string">staging</item>
+                        <item name="upcomingListingProvider" xsi:type="string">staging_update_catalogrule_grid</item>
+                    </item>
+                </argument>
+                <settings>
+                    <formSubmitType>ajax</formSubmitType>
+                    <renderUrl path="mui/index/render_handle">
+                        <param name="handle">catalogrulestaging_update_remove</param>
+                        <param name="buttons">1</param>
+                    </renderUrl>
+                    <toolbarContainer>${ $.parentName }</toolbarContainer>
+                    <externalProvider>${ $.ns }.catalogrulestaging_update_remove_form_data_source</externalProvider>
+                    <ns>catalogrulestaging_update_remove_form</ns>
+                </settings>
+            </insertForm>
+        </modal>
+    </fieldset>
+</form>

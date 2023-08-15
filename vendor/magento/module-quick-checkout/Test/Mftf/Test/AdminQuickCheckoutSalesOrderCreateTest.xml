@@ -1,0 +1,66 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+ /**
+  * Copyright © Magento, Inc. All rights reserved.
+  * See COPYING.txt for license details.
+  */
+-->
+<tests xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="urn:magento:mftf:Test/etc/testSchema.xsd">
+    <test name="AdminQuickCheckoutSalesOrderCreateTest">
+        <annotations>
+            <features value="MagentoQuickCheckout"/>
+            <stories value="Admin Create Quick Checkout Order"/>
+            <title value="Admin can manually create an order using quick checkout"/>
+            <description value="Merchant can manually place and order using Quick Checkout"/>
+            <severity value="CRITICAL"/>
+            <testCaseId value="admin-create-quick-checkout-order"/>
+            <group value="quick-checkout"/>
+        </annotations>
+        <before>
+            <!-- Login as admin -->
+            <actionGroup ref="AdminLoginActionGroup" stepKey="loginAsAdmin"/>
+            <!-- Configure quick checkout -->
+            <actionGroup ref="AdminConfigureQuickCheckoutActionGroup" stepKey="configureQuickCheckout"/>
+            <!-- Create Customer -->
+            <createData entity="Customer_With_Existing_Bolt_Account" stepKey="createCustomer"/>
+            <!-- Create product -->
+            <createData entity="_defaultCategory" stepKey="createCategory"/>
+            <createData entity="_defaultProduct" stepKey="createProduct">
+                <requiredEntity createDataKey="createCategory"/>
+            </createData>
+        </before>
+        <after>
+            <!-- Disable quick checkout -->
+            <actionGroup ref="AdminDisableQuickCheckoutActionGroup" stepKey="disablePaymentMethod"/>
+            <!--Delete customer -->
+            <deleteData stepKey="deleteCustomer" createDataKey="createCustomer"/>
+            <!-- Delete created data -->
+            <deleteData createDataKey="createCategory" stepKey="deleteCategory"/>
+            <deleteData createDataKey="createProduct" stepKey="deleteProduct"/>
+            <!-- Logout -->
+            <actionGroup ref="AdminLogoutActionGroup" stepKey="logOut"/>
+        </after>
+        <amOnPage stepKey="navigateToNewOrderPage" url="{{AdminOrderCreatePage.url}}"/>
+        <waitForPageLoad stepKey="waitForNewOrderPageOpened"/>
+        <click stepKey="chooseCustomer" selector="{{AdminOrdersGridSection.customerInOrdersSection($$createCustomer.firstname$$)}}"/>
+        <waitForPageLoad stepKey="waitForStoresPageOpened"/>
+        <click selector="{{OrdersGridSection.addProducts}}" stepKey="clickOnAddProducts"/>
+        <waitForPageLoad stepKey="waitForProductsListForOrder"/>
+        <click selector="{{AdminOrdersGridSection.productForOrder($$createProduct.sku$$)}}" stepKey="chooseTheProduct"/>
+        <waitForPageLoad stepKey="waitForClickProduct"/>
+        <click selector="{{AdminOrderFormItemsSection.addSelected}}" stepKey="addSelectedProductToOrder"/>
+        <waitForPageLoad stepKey="waitForProductAddedInOrder"/>
+        <!-- This is step is not necessary, but it helps when following the test -->
+        <scrollTo selector="{{AdminInvoicePaymentShippingSection.orderMethods}}" stepKey="scrollToOrderMethods"/>
+        <click selector="{{AdminInvoicePaymentShippingSection.getShippingMethodAndRates}}" stepKey="openShippingMethod"/>
+        <waitForPageLoad stepKey="waitForShippingMethods"/>
+        <click selector="{{AdminInvoicePaymentShippingSection.shippingMethod}}" stepKey="chooseShippingMethod"/>
+        <waitForPageLoad stepKey="waitForShippingMethodsThickened"/>
+        <click selector="{{AdminInvoicePaymentShippingSection.pQuickCheckout}}" stepKey="chooseQuickCheckout"/>
+        <waitForPageLoad stepKey="waitForCardForm"/>
+        <actionGroup ref="StorefrontFillCreditCardFormActionGroup" stepKey="fillCreditCardForm"/>
+        <click selector="{{OrdersGridSection.submitOrder}}" stepKey="submitOrder"/>
+        <waitForPageLoad stepKey="waitForSubmitOrder"/>
+        <see stepKey="seeSuccessMessageForOrder" userInput="You created the order."/>
+    </test>
+</tests>

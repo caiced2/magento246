@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+ /**
+  * Copyright © Magento, Inc. All rights reserved.
+  * See COPYING.txt for license details.
+  */
+-->
+
+<tests xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="urn:magento:mftf:Test/etc/testSchema.xsd">
+    <test name="StorefrontValidateWishlistCreationTest">
+        <annotations>
+            <features value="Wishlist"/>
+            <stories value="The wishlist name should be validated before saving attempt"/>
+            <group value="wishlist"/>
+            <title value="Validating the wishlist name before saving attempt"/>
+            <description value="The wishlist should be validated while trying to be created."/>
+            <severity value="MINOR"/>
+        </annotations>
+        <before>
+            <createData entity="SimpleSubCategory" stepKey="createCategory"/>
+            <createData entity="SimpleProduct" stepKey="createProduct">
+                <requiredEntity createDataKey="createCategory"/>
+            </createData>
+            <createData entity="Simple_US_Customer" stepKey="createCustomer"/>
+            <createData entity="WishlistSetting" stepKey="enablingMultipleWishlists"/>
+        </before>
+        <after>
+            <deleteData createDataKey="createProduct" stepKey="deleteProduct"/>
+            <deleteData createDataKey="createCategory" stepKey="deleteCategory"/>
+            <deleteData createDataKey="createCustomer" stepKey="deleteCustomer"/>
+            <createData entity="DefaultWishlistSetting" stepKey="restoreWishlishSetting"/>
+        </after>
+        <actionGroup ref="LoginToStorefrontActionGroup" stepKey="customerLogin">
+            <argument name="Customer" value="$$createCustomer$$" />
+        </actionGroup>
+        <actionGroup ref="AddSimpleProductToCartActionGroup" stepKey="addProductToCart">
+            <argument name="product" value="$$createProduct$$"/>
+        </actionGroup>
+        <actionGroup ref="ClickViewAndEditCartFromMiniCartActionGroup" stepKey="goToShoppingCartFromMinicart"/>
+        <actionGroup ref="StorefrontOpenCreateWishlistPopupFromCartActionGroup" stepKey="openNewWishlistPopup"/>
+        <actionGroup ref="StorefrontClickWishlistSaveButtonActionGroup" stepKey="clickOnSaveWishlistButton"/>
+        <actionGroup ref="AssertStorefrontSeeWishlistValidationErrorActionGroup" stepKey="seeValidationError">
+            <argument name="inputName" value="wishlist-name" />
+        </actionGroup>
+    </test>
+</tests>

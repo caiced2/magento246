@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+ /**
+  * Copyright © Magento, Inc. All rights reserved.
+  * See COPYING.txt for license details.
+  */
+-->
+<actionGroups xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:noNamespaceSchemaLocation="urn:magento:mftf:Test/etc/actionGroupSchema.xsd">
+    <actionGroup name="addGiftCardAmount">
+        <arguments>
+            <argument name="giftCardAmount"/>
+        </arguments>
+        <click selector="body" stepKey="clickBodyToFixFocus"/>
+        <scrollTo selector="{{AdminProductFormSection.addCardAmount}}" x="0" y="-100" stepKey="scrollToAddAmount"/>
+        <click selector="{{AdminProductFormSection.addCardAmount}}" stepKey="clickAddAmount"/>
+        <wait time="1" stepKey="waitForInputToAppear"/>
+        <fillField selector="{{AdminProductFormSection.lastCardAmountInput}}" userInput="{{giftCardAmount}}" stepKey="fillGiftCardAmount"/>
+    </actionGroup>
+</actionGroups>

@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+/**
+ * Copyright © Magento, Inc. All rights reserved.
+ * See COPYING.txt for license details.
+ */
+-->
+<form xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="urn:magento:module:Magento_Ui:etc/ui_configuration.xsd">
+    <htmlContent name="salesrule.related.banners.content" sortOrder="100">
+        <argument name="data" xsi:type="array">
+            <item name="wrapper" xsi:type="array">
+                <item name="label" xsi:type="string" translate="true">Related Dynamic Blocks</item>
+                <item name="collapsible" xsi:type="boolean">true</item>
+                <item name="opened" xsi:type="boolean">false</item>
+            </item>
+        </argument>
+        <settings>
+            <wrapper>
+                <canShow>true</canShow>
+                <componentType>fieldset</componentType>
+            </wrapper>
+        </settings>
+        <block class="Magento\Banner\Block\Adminhtml\Promo\Salesrule\Edit\Tab\Banners" name="salesrule.related.banners">
+            <arguments>
+                <argument name="config" xsi:type="array">
+                    <item name="label" xsi:type="string" translate="true">Related Dynamic Blocks</item>
+                    <item name="collapsible" xsi:type="boolean">true</item>
+                    <item name="opened" xsi:type="boolean">false</item>
+                    <item name="sortOrder" xsi:type="string">100</item>
+                    <item name="canShow" xsi:type="boolean">true</item>
+                    <item name="componentType" xsi:type="string">fieldset</item>
+                </argument>
+            </arguments>
+            <block class="Magento\Banner\Block\Adminhtml\Promo\Salesrule\Edit\Tab\Banners\Grid" name="related_salesrule_banners_grid"/>
+            <block class="Magento\Banner\Block\Adminhtml\Promo\Salesrule\Widget\Grid\Serializer" name="banners_grid_serializer">
+                <arguments>
+                    <argument name="grid_block" xsi:type="string">related_salesrule_banners_grid</argument>
+                    <argument name="callback" xsi:type="string">getRelatedBannersByRule</argument>
+                    <argument name="input_element_name" xsi:type="string">related_banners</argument>
+                    <argument name="reload_param_name" xsi:type="string">selected_salesrule_banners</argument>
+                </arguments>
+            </block>
+        </block>
+    </htmlContent>
+</form>

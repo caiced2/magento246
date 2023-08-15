@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+ /**
+  * Copyright © Magento, Inc. All rights reserved.
+  * See COPYING.txt for license details.
+  */
+-->
+
+<actionGroups xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+              xsi:noNamespaceSchemaLocation="urn:magento:mftf:Test/etc/actionGroupSchema.xsd">
+    <actionGroup name="StorefrontCheckStatusAndBalanceOfGiftCardActionGroup">
+        <annotations>
+            <description>Clicks the 'Check status and balance' button on the the Gift Card page in a customer's account
+                on the storefront and asserts against the resulting number and balance.</description>
+        </annotations>
+        <arguments>
+            <argument name="giftCardNumber" type="string"/>
+            <argument name="giftCardAmount" type="string"/>
+        </arguments>
+        <waitForElementVisible selector="{{StorefrontGiftCardPageSection.giftCardCodeInput}}" stepKey="waitForGiftCardNumberInput"/>
+        <fillField userInput="{{giftCardNumber}}" selector="{{StorefrontGiftCardPageSection.giftCardCodeInput}}" stepKey="fillGiftCardNumber"/>
+        <click selector="{{StorefrontGiftCardPageSection.checkStatusAndBalanceButton}}" stepKey="clickCheckStatusAndBalanceButton"/>
+        <waitForPageLoad stepKey="waitForPageLoad"/>
+        <waitForText userInput="{{giftCardNumber}}" selector="{{StorefrontGiftCardPageSection.giftCardNumber}}" stepKey="waitForGiftCardNumber"/>
+        <waitForText userInput="{{giftCardAmount}}" selector="{{StorefrontGiftCardPageSection.currentBalance}}" stepKey="waitForGiftCardBalance"/>
+    </actionGroup>
+</actionGroups>

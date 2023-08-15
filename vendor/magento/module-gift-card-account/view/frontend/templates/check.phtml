@@ -1,0 +1,42 @@
+<?php
+/**
+ * Copyright © Magento, Inc. All rights reserved.
+ * See COPYING.txt for license details.
+ */
+
+/**
+ * @var \Magento\GiftCardAccount\Block\Check $block
+ * @see \Magento\GiftCardAccount\Block\Check
+ */
+$card = $block->getCard();
+?>
+<?php if ($card && $card->getId()) : ?>
+    <div class="giftcard info">
+        <p><?= $block->escapeHtml(__('Gift Card: ')) ?>
+            <strong class="giftcard number"><?= $block->escapeHtml($card->getCode()) ?></strong>
+        </p>
+        <p><?= $block->escapeHtml(__('Current Balance: ')) ?>
+            <strong>
+                <?= /* @noEscape */ $this->helper(\Magento\Framework\Pricing\Helper\Data::class)
+                    ->currency($card->getBalance()) ?>
+            </strong>
+        </p>
+        <?php if ($card->getDateExpires()) : ?>
+            <p><?= $block->escapeHtml(__('Expires: ')) ?>
+                <strong><?= $block->escapeHtml($block->getExpirationDate()) ?></strong>
+            </p>
+        <?php endif; ?>
+    </div>
+<?php else : ?>
+    <div role="alert" class="message error">
+        <span>
+            <?php
+            $message = $block->getErrorMessage();
+            if (!$message) {
+                $message = __('Please enter a valid gift card code.');
+            }
+            echo $block->escapeHtml($message);
+            ?>
+        </span>
+    </div>
+<?php endif; ?>

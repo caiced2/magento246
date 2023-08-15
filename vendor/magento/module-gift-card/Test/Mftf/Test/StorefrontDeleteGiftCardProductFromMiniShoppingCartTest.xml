@@ -1,0 +1,57 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+ /**
+  * Copyright © Magento, Inc. All rights reserved.
+  * See COPYING.txt for license details.
+  */
+-->
+<tests xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:noNamespaceSchemaLocation="urn:magento:mftf:Test/etc/testSchema.xsd">
+    <test name="StorefrontDeleteGiftCardProductFromMiniShoppingCartTest">
+        <annotations>
+            <stories value="DeleteGiftCardProduct"/>
+            <title value="Storefront Delete Gift Card Product From Mini Shopping Cart Test"/>
+            <description value="Test log in to GiftCard and  Delete Gift Card Product From Mini Shopping Cart Test"/>
+            <testCaseId value="MC-14684"/>
+            <severity value="CRITICAL"/>
+            <group value="targetRule"/>
+            <group value="mtf_migrated"/>
+        </annotations>
+
+        <before>
+            <actionGroup ref="AdminLoginActionGroup" stepKey="LoginAsAdmin"/>
+            <!-- Create gift card product -->
+            <createData entity="ApiGiftCard" stepKey="createProduct"/>
+        </before>
+        <after>
+            <!-- Delete gift card product -->
+            <deleteData createDataKey="createProduct" stepKey="deleteProduct"/>
+            <actionGroup ref="AdminLogoutActionGroup" stepKey="logout"/>
+        </after>
+
+        <!-- Add gift card product to the cart -->
+        <amOnPage url="{{StorefrontProductPage.url($$createProduct.custom_attributes[url_key]$$)}}" stepKey="navigateToGiftCardProductPage"/>
+        <waitForPageLoad stepKey="waitForGiftCardProductPageLoad"/>
+        <fillField selector="{{StorefrontAddSenderDataSection.amount}}" userInput="10" stepKey="fillFieldAmount" after="navigateToGiftCardProductPage"/>
+        <fillField selector="{{StorefrontAddSenderDataSection.sender}}" userInput="Test" stepKey="fillFieldSenderName" after="fillFieldAmount"/>
+        <fillField selector="{{StorefrontAddSenderDataSection.receiver}}" userInput="Test" stepKey="fillFieldRecipientName" after="fillFieldSenderName"/>
+        <actionGroup ref="AddToCartFromStorefrontProductPageActionGroup" stepKey="addToCartGiftCardFromStorefrontProductPage" after="fillFieldRecipientName">
+            <argument name="productName" value="$$createProduct.name$$"/>
+        </actionGroup>
+
+        <!--Verify created gift card product name in minicart-->
+        <actionGroup ref="AssertOneProductNameInMiniCartActionGroup" stepKey="verifyAssertGiftCardNameInMiniCart">
+            <argument name="productName" value="$$createProduct.name$$"/>
+        </actionGroup>
+
+        <!--Remove an item from the cart using minicart-->
+        <actionGroup ref="RemoveProductFromMiniCartActionGroup" stepKey="removeCreatedGiftCardProductInMiniCart">
+            <argument name="productName" value="$$createProduct.name$$"/>
+        </actionGroup>
+        <reloadPage stepKey="reloadPage"/>
+
+        <!--Check the minicart is empty and verify AssertMiniCartEmptyMessage and AssertProductAbsentInMiniShoppingCart-->
+        <actionGroup ref="AssertMiniCartEmptyActionGroup" stepKey="verifyAssertMiniCartEmptyMessage"/>
+        <dontSee selector="{{StorefrontMinicartSection.productLinkByName($$createProduct.name$$)}}" stepKey="verifyAssertProductAbsentInMiniShoppingCart"/>
+    </test>
+</tests>

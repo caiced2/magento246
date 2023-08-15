@@ -1,0 +1,131 @@
+<?xml version="1.0"?>
+<!--
+/**
+ * Copyright © Magento, Inc. All rights reserved.
+ * See COPYING.txt for license details.
+ */
+-->
+<page xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="urn:magento:framework:View/Layout/etc/page_configuration.xsd">
+    <body>
+        <referenceBlock name="checkout.cart.item.renderers.simple.actions.gift_options">
+            <arguments>
+                <argument name="jsLayout" xsi:type="array">
+                    <item name="types" xsi:type="array"/>
+                    <item name="components" xsi:type="array">
+                        <item name="giftOptionsCartItem" xsi:type="array">
+                            <item name="children" xsi:type="array">
+                                <item name="giftWrapping" xsi:type="array">
+                                    <item name="component" xsi:type="string">Magento_GiftWrapping/js/view/gift-wrapping</item>
+                                    <item name="config" xsi:type="array">
+                                        <item name="template" xsi:type="string">Magento_GiftWrapping/gift-wrapping</item>
+                                        <item name="appliedTemplate" xsi:type="string">Magento_GiftWrapping/applied</item>
+                                    </item>
+                                </item>
+                            </item>
+                        </item>
+                    </item>
+                </argument>
+            </arguments>
+        </referenceBlock>
+        <referenceBlock name="checkout.cart.item.renderers.default.actions.gift_options">
+            <arguments>
+                <argument name="jsLayout" xsi:type="array">
+                    <item name="types" xsi:type="array"/>
+                    <item name="components" xsi:type="array">
+                        <item name="giftOptionsCartItem" xsi:type="array">
+                            <item name="children" xsi:type="array">
+                                <item name="giftWrapping" xsi:type="array">
+                                    <item name="component" xsi:type="string">Magento_GiftWrapping/js/view/gift-wrapping</item>
+                                    <item name="config" xsi:type="array">
+                                        <item name="template" xsi:type="string">Magento_GiftWrapping/gift-wrapping</item>
+                                        <item name="appliedTemplate" xsi:type="string">Magento_GiftWrapping/applied</item>
+                                    </item>
+                                </item>
+                            </item>
+                        </item>
+                    </item>
+                </argument>
+            </arguments>
+        </referenceBlock>
+        <referenceBlock name="checkout.cart.item.renderers.bundle.actions.gift_options">
+            <arguments>
+                <argument name="jsLayout" xsi:type="array">
+                    <item name="types" xsi:type="array"/>
+                    <item name="components" xsi:type="array">
+                        <item name="giftOptionsCartItem" xsi:type="array">
+                            <item name="children" xsi:type="array">
+                                <item name="giftWrapping" xsi:type="array">
+                                    <item name="component" xsi:type="string">Magento_GiftWrapping/js/view/gift-wrapping</item>
+                                    <item name="config" xsi:type="array">
+                                        <item name="template" xsi:type="string">Magento_GiftWrapping/gift-wrapping</item>
+                                        <item name="appliedTemplate" xsi:type="string">Magento_GiftWrapping/applied</item>
+                                    </item>
+                                </item>
+                            </item>
+                        </item>
+                    </item>
+                </argument>
+            </arguments>
+        </referenceBlock>
+        <referenceBlock name="checkout.cart.item.renderers.configurable.actions.gift_options">
+            <arguments>
+                <argument name="jsLayout" xsi:type="array">
+                    <item name="types" xsi:type="array"/>
+                    <item name="components" xsi:type="array">
+                        <item name="giftOptionsCartItem" xsi:type="array">
+                            <item name="children" xsi:type="array">
+                                <item name="giftWrapping" xsi:type="array">
+                                    <item name="component" xsi:type="string">Magento_GiftWrapping/js/view/gift-wrapping</item>
+                                    <item name="config" xsi:type="array">
+                                        <item name="template" xsi:type="string">Magento_GiftWrapping/gift-wrapping</item>
+                                        <item name="appliedTemplate" xsi:type="string">Magento_GiftWrapping/applied</item>
+                                    </item>
+                                </item>
+                            </item>
+                        </item>
+                    </item>
+                </argument>
+            </arguments>
+        </referenceBlock>
+        <referenceBlock name="checkout.cart.item.renderers.giftcard.actions.gift_options">
+            <arguments>
+                <argument name="jsLayout" xsi:type="array">
+                    <item name="types" xsi:type="array"/>
+                    <item name="components" xsi:type="array">
+                        <item name="giftOptionsCartItem" xsi:type="array">
+                            <item name="children" xsi:type="array">
+                                <item name="giftWrapping" xsi:type="array">
+                                    <item name="component" xsi:type="string">Magento_GiftWrapping/js/view/gift-wrapping</item>
+                                    <item name="config" xsi:type="array">
+                                        <item name="template" xsi:type="string">Magento_GiftWrapping/gift-wrapping</item>
+                                        <item name="appliedTemplate" xsi:type="string">Magento_GiftWrapping/applied</item>
+                                    </item>
+                                </item>
+                            </item>
+                        </item>
+                    </item>
+                </argument>
+            </arguments>
+        </referenceBlock>
+        <referenceBlock name="checkout.cart.item.renderers.grouped.actions.gift_options">
+            <arguments>
+                <argument name="jsLayout" xsi:type="array">
+                    <item name="types" xsi:type="array"/>
+                    <item name="components" xsi:type="array">
+                        <item name="giftOptionsCartItem" xsi:type="array">
+                            <item name="children" xsi:type="array">
+                                <item name="giftWrapping" xsi:type="array">
+                                    <item name="component" xsi:type="string">Magento_GiftWrapping/js/view/gift-wrapping</item>
+                                    <item name="config" xsi:type="array">
+                                        <item name="template" xsi:type="string">Magento_GiftWrapping/gift-wrapping</item>
+                                        <item name="appliedTemplate" xsi:type="string">Magento_GiftWrapping/applied</item>
+                                    </item>
+                                </item>
+                            </item>
+                        </item>
+                    </item>
+                </argument>
+            </arguments>
+        </referenceBlock>
+    </body>
+</page>

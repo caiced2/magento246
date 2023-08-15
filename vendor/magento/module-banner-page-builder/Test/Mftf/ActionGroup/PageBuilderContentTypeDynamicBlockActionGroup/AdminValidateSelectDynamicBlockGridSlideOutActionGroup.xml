@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+ /**
+  * Copyright © Magento, Inc. All rights reserved.
+  * See COPYING.txt for license details.
+  */
+-->
+<actionGroups xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:noNamespaceSchemaLocation="urn:magento:mftf:Test/etc/actionGroupSchema.xsd">
+    <actionGroup name="AdminValidateSelectDynamicBlockGridSlideOutActionGroup">
+        <annotations>
+            <description>Verifies the Name, Type, Customer Segments, Visibility, and Status of a Dynamic Block on the Select Dynamic Block slide out.</description>
+        </annotations>
+        <arguments>
+            <argument name="name" defaultValue="" type="string"/>
+            <argument name="type" defaultValue="" type="string"/>
+            <argument name="customerSegment" defaultValue="{{_defaultDynamicBlock.CustomerSegment}}" type="string"/>
+            <argument name="visibility" defaultValue="{{DefaultAllStoreView.name}}" type="string"/>
+            <argument name="status" defaultValue="Enabled" type="string"/>
+        </arguments>
+        <seeElement selector="{{DynamicBlockOnGrid.rowData(name, type)}}" stepKey="seeType"/>
+        <seeElement selector="{{DynamicBlockOnGrid.rowData(name, customerSegment)}}" stepKey="seeCustomerSegment"/>
+        <seeElement selector="{{DynamicBlockOnGrid.rowData(name, visibility)}}" stepKey="seeVisibility"/>
+        <seeElement selector="{{DynamicBlockOnGrid.rowData(name, status)}}" stepKey="seeStatus"/>
+    </actionGroup>
+</actionGroups>

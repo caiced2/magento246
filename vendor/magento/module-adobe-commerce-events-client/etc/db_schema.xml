@@ -1,0 +1,36 @@
+<?xml version="1.0"?>
+<!--
+/**
+ * Copyright © Magento, Inc. All rights reserved.
+ * See COPYING.txt for license details.
+ */
+-->
+<schema xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:noNamespaceSchemaLocation="urn:magento:framework:Setup/Declaration/Schema/etc/schema.xsd">
+    <table name="event_data" resource="default" engine="innodb" comment="Event Data">
+        <column xsi:type="int" name="event_id" unsigned="true" nullable="false" identity="true"
+                comment="Event ID"/>
+        <column xsi:type="varchar" name="event_code" nullable="false" length="128"
+                comment="Event code"/>
+        <column xsi:type="text" name="event_data" nullable="false"
+                comment="Event data"/>
+        <column xsi:type="text" name="metadata" nullable="false" comment="Metadata to send to the pipeline"/>
+        <column xsi:type="timestamp" name="created_at" on_update="false" nullable="false" default="CURRENT_TIMESTAMP"
+                comment="Created At"/>
+        <column xsi:type="timestamp" name="updated_at" on_update="true" nullable="false" default="CURRENT_TIMESTAMP"
+                comment="Updated At"/>
+        <column xsi:type="int" name="retries_count" unsigned="true" nullable="false" default="0"
+                comment="Retry count for sending event data"/>
+        <column xsi:type="tinyint" name="status" unsigned="true" nullable="false" default="0"
+                comment="Status of sending event data"/>
+        <column xsi:type="text" name="info" nullable="false" comment="Additional information about event status"/>
+        <column xsi:type="tinyint" name="priority" unsigned="true" nullable="false" default="0"
+                comment="Priority of sending event data"/>
+        <constraint xsi:type="primary" referenceId="PRIMARY">
+            <column name="event_id"/>
+        </constraint>
+        <index referenceId="EVENT_DATA_STATUS" indexType="btree">
+            <column name="status"/>
+        </index>
+    </table>
+</schema>

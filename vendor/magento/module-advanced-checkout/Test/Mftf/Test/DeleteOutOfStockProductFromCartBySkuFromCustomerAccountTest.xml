@@ -1,0 +1,82 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+/**
+ * Copyright © Magento, Inc. All rights reserved.
+ * See COPYING.txt for license details.
+ */
+-->
+
+<tests xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xsi:noNamespaceSchemaLocation="urn:magento:mftf:Test/etc/testSchema.xsd">
+    <test name="DeleteOutOfStockProductFromCartBySkuFromCustomerAccountTest">
+        <annotations>
+            <features value="AdvancedCheckout"/>
+            <stories value="Delete Products from Requiring Attention Grid"/>
+            <title value="Delete out of stock product from cart by sku from customer account test"/>
+            <description value="Delete out of stock product from cart by sku from customer account"/>
+            <severity value="CRITICAL"/>
+            <testCaseId value="MC-14020"/>
+            <group value="AdvancedCheckout"/>
+            <group value="mtf_migrated"/>
+        </annotations>
+        <before>
+            <!-- Create customer -->
+            <createData entity="Simple_US_Customer" stepKey="createCustomer"/>
+
+            <!-- Create product -->
+            <createData entity="_defaultCategory" stepKey="createCategory"/>
+            <createData entity="SimpleOutOfStockProduct" stepKey="createProduct">
+                <requiredEntity createDataKey="createCategory"/>
+            </createData>
+        </before>
+        <after>
+            <!-- Logout customer -->
+            <actionGroup ref="StorefrontCustomerLogoutActionGroup" stepKey="logoutCustomer"/>
+
+            <!-- Delete customer -->
+            <deleteData createDataKey="createCustomer" stepKey="deleteCustomer"/>
+
+            <!-- Delete product -->
+            <deleteData createDataKey="createProduct" stepKey="deleteProduct"/>
+
+            <!-- Delete category -->
+            <deleteData createDataKey="createCategory" stepKey="deleteCategory"/>
+        </after>
+
+        <!-- Login to frontend -->
+        <actionGroup ref="LoginToStorefrontActionGroup" stepKey="loginToStorefrontAccount">
+            <argument name="Customer" value="$$createCustomer$$"/>
+        </actionGroup>
+
+        <!-- Open My Account > Order by SKU -->
+        <amOnPage stepKey="goToMyAccountPage" url="{{StorefrontCustomerDashboardPage.url}}"/>
+        <waitForPageLoad stepKey="waitForPageLoad"/>
+        <actionGroup ref="StorefrontCustomerGoToSidebarMenu" stepKey="goToSidebarMenu">
+            <argument name="menu" value="Order by SKU"/>
+        </actionGroup>
+
+        <!-- Fill first product data -->
+        <actionGroup ref="FillProductSkuAndQtyActionGroup" stepKey="fillProductQtyAndSkuForProduct">
+            <argument name="sku" value="$$createProduct.sku$$"/>
+            <argument name="quantity" value="{{ApiSimpleSingleQty.quantity}}"/>
+            <argument name="index" value="0"/>
+        </actionGroup>
+
+        <!-- Add product to cart -->
+        <waitForElementClickable selector="{{StorefrontCustomerOrderBySkuSection.addToCart}}" stepKey="waitForAddToCart"/>
+        <click selector="{{StorefrontCustomerOrderBySkuSection.addToCart}}" stepKey="clickAddToCart"/>
+        <waitForPageLoad stepKey="waitForAddingProductToCart"/>
+
+        <!-- Click remove button for first product and assert success message -->
+        <click selector="{{CheckoutCartProductSection.removeProductBySku($$createProduct.sku$$)}}" stepKey="removeProduct"/>
+        <see selector="{{StorefrontMessagesSection.success}}" userInput="You removed the item." stepKey="seeSuccessMessage"/>
+
+        <!-- Assert products absent in requiring attention -->
+        <dontSeeElement selector="{{CheckoutCartProductSection.failedItemBySku($$createProduct.sku$$)}}" stepKey="dontSeeProduct"/>
+
+        <!-- Assert products absent in shopping cart -->
+        <amOnPage url="{{CheckoutCartPage.url}}" stepKey="goToCartPage"/>
+        <waitForPageLoad stepKey="waitForCartPageLoad"/>
+        <see selector="{{CheckoutCartProductSection.emptyCart}}" userInput="You have no items in your shopping cart." stepKey="seeNoItemsInShoppingCart"/>
+    </test>
+</tests>

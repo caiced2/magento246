@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+ /**
+  * Copyright © Magento, Inc. All rights reserved.
+  * See COPYING.txt for license details.
+  */
+-->
+<sections xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:noNamespaceSchemaLocation="urn:magento:mftf:Page/etc/SectionObject.xsd">
+    <section name="AdminReturnAttributeOptionSection">
+        <element name="manageOptions" type="button" selector="#rma_item_attribute_tabs_options" timeout="30"/>
+        <element name="addOption" type="button" selector="#add_new_option_button" timeout="30"/>
+        <element name="deleteOption" type="button" selector="#delete_button_option_{{value}}" parameterized="true"/>
+        <element name="optionName" type="input" selector="input[name='option[value][option_{{value1}}][{{value2}}]']" timeout="30" parameterized="true"/>
+        <element name="isDefault" type="radio" selector="input[value='option_{{value}}']" parameterized="true"/>
+    </section>
+</sections>

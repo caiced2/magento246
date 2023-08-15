@@ -1,0 +1,16 @@
+<?xml version="1.0"?>
+<!--
+/**
+ * Copyright © Magento, Inc. All rights reserved.
+ * See COPYING.txt for license details.
+ */
+-->
+<config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="urn:magento:module:Magento_Email:etc/email_templates.xsd">
+    <template id="sales_email_magento_rma_template" label="New RMA" file="new.html" type="html" module="Magento_Rma" area="frontend"/>
+    <template id="sales_email_magento_rma_guest_template" label="New RMA for Guest" file="new_guest.html" type="html" module="Magento_Rma" area="frontend"/>
+    <template id="sales_email_magento_rma_auth_template" label="RMA Authorization" file="auth.html" type="html" module="Magento_Rma" area="frontend"/>
+    <template id="sales_email_magento_rma_auth_guest_template" label="RMA Authorization for Guest" file="auth_guest.html" type="html" module="Magento_Rma" area="frontend"/>
+    <template id="sales_email_magento_rma_comment_template" label="RMA Admin Comments" file="comment.html" type="html" module="Magento_Rma" area="frontend"/>
+    <template id="sales_email_magento_rma_comment_guest_template" label="RMA Admin Comments for Guest" file="comment_guest.html" type="html" module="Magento_Rma" area="frontend"/>
+    <template id="sales_email_magento_rma_customer_comment_template" label="RMA Customer Comments" file="customer_comment.html" type="html" module="Magento_Rma" area="adminhtml"/>
+</config>

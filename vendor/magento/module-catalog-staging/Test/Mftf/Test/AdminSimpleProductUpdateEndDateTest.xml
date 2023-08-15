@@ -1,0 +1,67 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+ /**
+  * Copyright © Magento, Inc. All rights reserved.
+  * See COPYING.txt for license details.
+  */
+-->
+<tests xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xsi:noNamespaceSchemaLocation="urn:magento:mftf:Test/etc/testSchema.xsd">
+  <test name="AdminSimpleProductUpdateEndDateTest">
+    <annotations>
+      <features value="CatalogStaging"/>
+      <stories value="Admin manages staging update"/>
+      <title value="Disable product option is applicable for Simple product if create new Update"/>
+      <description value="Admin should be able to create Single Future Update with end date from Simple Product Page"/>
+      <severity value="MAJOR"/>
+      <testCaseId value="AC-4059"/>
+      <group value="CatalogStaging"/>
+    </annotations>
+    <before>
+      <actionGroup ref="AdminLoginActionGroup" stepKey="loginAsAdmin"/>
+      <!-- create simple product -->
+      <createData entity="SimpleProduct2" stepKey="createSimpleProduct"/>
+      <magentoCLI command="cron:run --group=index" stepKey="runCronIndexer"/>
+    </before>
+    <after>
+      <actionGroup ref="ClearFiltersAdminDataGridActionGroup" stepKey="clearFilter"/>
+      <amOnPage url="{{AdminLogoutPage.url}}" stepKey="amOnLogoutPage"/>
+      <!-- delete simple product -->
+      <deleteData createDataKey="createSimpleProduct" stepKey="deleteSimpleProduct1"/>
+    </after>
+
+    <!-- Go to the edit page of the simple product we just created -->
+    <amOnPage stepKey="visitAdminProductPage" url="{{AdminProductEditPage.url($$createSimpleProduct.id$$)}}"/>
+    <waitForPageLoad stepKey="waitForProductPageLoad1"/>
+
+    <!-- Create the new staging update -->
+    <generateDate stepKey="generateEndDate" before="fillOutNewStaging" date="+1 week" format="m/d/Y g:i A"/>
+    <actionGroup stepKey="fillOutNewStaging" ref="CreateEntityNameStagingActionGroup">
+      <argument name="stagingUpdate" value="_defaultStaging"/>
+      <argument name="endDate" value="{$generateEndDate}"/>
+    </actionGroup>
+
+    <!-- Wait for page reload -->
+    <waitForPageLoad stepKey="waitForPageLoad"/>
+
+    <!--Click Edit/View for created update-->
+    <click selector="{{AdminStagingSlideOutSection.viewEdit}}" stepKey="clickViewEdit"/>
+    <waitForPageLoad stepKey="waitForViewAndEditSlideOut"/>
+
+    <!--Assert that active toggle is OFF position-->
+    <grabAttributeFrom  userInput="value" selector="{{AdminStagingSlideOutSection.assertAnchor}}" stepKey="grabAttributeFromDiv"/>
+    <assertEquals stepKey="assertThatActiveIsOffPosition" after="grabAttributeFromDiv">
+      <actualResult type="const">$grabAttributeFromDiv</actualResult>
+      <expectedResult type="const">'2'</expectedResult>
+    </assertEquals>
+
+    <!--Click preview button-->
+    <click selector="{{ScheduleUpdateSection.preview}}" stepKey="clickPreview"/>
+    <waitForPageLoad time="30" stepKey="waitForNewTabPageLoadSecond"/>
+    <switchToNextTab stepKey="switchToNextTabSecond"/>
+
+    <!--Assert page content-->
+    <actionGroup ref="WaitForStagingPreviewLoadedAndAssertProductNameActionGroup" stepKey="waitForStagingPreviewFrameLoadedAndAssertProductName"/>
+
+  </test>
+</tests>

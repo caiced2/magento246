@@ -1,0 +1,111 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+/**
+ * Copyright © Magento, Inc. All rights reserved.
+ * See COPYING.txt for license details.
+ */
+-->
+
+<tests xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xsi:noNamespaceSchemaLocation="urn:magento:mftf:Test/etc/testSchema.xsd">
+    <test name="AdminCustomerRequiredAttributeWebsiteScopeTest">
+        <annotations>
+            <features value="CustomerCustomAttributes"/>
+            <stories value="Customer Attributes"/>
+            <title value="Customer attribute 'Values Required' validation should work according to the scope in the admin panel"/>
+            <description value="Customer attribute 'Values Required' validation should work according to the scope in the admin panel"/>
+            <severity value="AVERAGE"/>
+            <testCaseId value="AC-6523"/>
+            <useCaseId value="ACP2E-961"/>
+            <group value="CustomerCustomAttributes"/>
+        </annotations>
+        <before>
+            <!-- Login to admin -->
+            <actionGroup ref="AdminLoginActionGroup" stepKey="LoginAsAdmin"/>
+            <!-- Create a second website -->
+            <actionGroup ref="AdminCreateWebsiteActionGroup" stepKey="createWebsite">
+                <argument name="newWebsiteName" value="{{customWebsite.name}}"/>
+                <argument name="websiteCode" value="{{customWebsite.code}}"/>
+            </actionGroup>
+            <!-- Create a store group and assign to second website -->
+            <actionGroup ref="AdminCreateNewStoreGroupActionGroup" stepKey="createNewStore">
+                <argument name="website" value="{{customWebsite.name}}"/>
+                <argument name="storeGroupName" value="{{customStoreGroup.name}}"/>
+                <argument name="storeGroupCode" value="{{customStoreGroup.code}}"/>
+            </actionGroup>
+            <!-- Create a store view and assign to new store group -->
+            <actionGroup ref="AdminCreateStoreViewActionGroup" stepKey="createCustomStoreView">
+                <argument name="StoreGroup" value="customStoreGroup"/>
+                <argument name="customStore" value="customStore"/>
+            </actionGroup>
+
+            <!-- Go to Stores > Customer -->
+            <amOnPage url="{{CustomerAttributesPage.url}}" stepKey="navigateToCustomerAttributes"/>
+            <waitForPageLoad stepKey="waitForAttributePageLoad"/>
+
+            <!--Create new Attribute -->
+            <actionGroup ref="AdminCreateCustomerNewAttributeActionGroup" stepKey="createTextFieldAttribute">
+                <argument name="defaultLabel" value="{{AttributeTextField.frontend_label}}"/>
+                <argument name="attributeCode" value="{{AttributeTextField.attribute_code}}"/>
+                <argument name="inputType" value="{{AttributeTextField.frontend_input}}"/>
+                <argument name="sortOrder" value="{{AttributeTextField.sort_order}}"/>
+            </actionGroup>
+
+            <!-- Open created attribute -->
+            <actionGroup ref="FilterCustomerAttributesByAttributeCodeActionGroup" stepKey="findNewAttribute">
+                <argument name="attributeCode" value="{{AttributeTextField.attribute_code}}"/>
+            </actionGroup>
+            <click selector="{{AdminCustomerAttributeSection.firstAttribute}}" stepKey="clickOnUpdatedAtAttribute"/>
+            <waitForPageLoad stepKey="waitForNewAttributePageLoad"/>
+
+            <!-- Change attribute scope to Custom Website -->
+            <click selector="{{AttributeEditSection.storeView}}" stepKey="AdminClickStoreView"/>
+            <click selector="{{AttributeEditSection.mainWebsiteStoreView(customWebsite.name)}}" stepKey="AdminChangeStoreView"/>
+            <waitForElementVisible selector="{{CustomerAccountSection.confirm}}" stepKey="waitForConfirm"/>
+            <click selector="{{CustomerAccountSection.confirm}}" stepKey="clickToConfirm"/>
+            <waitForPageLoad stepKey="waitForPageLoad"/>
+
+            <!-- Change attribute "Values Required" and Save -->
+            <click selector="{{AttributeEditSection.useDefaultForRequiredValues}}" stepKey="useDefaultValueForRequiredValues"/>
+            <click stepKey="RequiredValues" selector="{{CustomerAccountSection.valuesRequired}}"/>
+            <selectOption selector="{{CustomerAccountSection.valuesRequired}}" userInput="No" stepKey="selectValuesRequired"/>
+            <click selector="{{CustomerAccountSection.save}}" stepKey="saveAttribute"/>
+            <waitForPageLoad stepKey="waitForPageLoad1"/>
+        </before>
+        <after>
+            <!-- Delete website -->
+            <actionGroup ref="AdminDeleteWebsiteActionGroup" stepKey="DeleteWebsite">
+                <argument name="websiteName" value="{{customWebsite.name}}"/>
+            </actionGroup>
+            <!-- Delete custom attribute -->
+            <amOnPage url="{{CustomerAttributesPage.url}}" stepKey="navigateToCustomerAttributes1"/>
+            <waitForPageLoad stepKey="waitForAttributePageLoad1"/>
+            <actionGroup ref="DeleteCustomerAttribute" stepKey="deleteCustomerAttribute">
+                <argument name="defaultLabel" value="{{AttributeTextField.attribute_code}}"/>
+            </actionGroup>
+            <!-- Delete customer -->
+            <actionGroup ref="DeleteCustomerByEmailActionGroup" stepKey="deleteCustomer">
+                <argument name="email" value="{{CustomerEntityOne.email}}"/>
+            </actionGroup>
+            <!-- Logout admin -->
+            <actionGroup ref="AdminLogoutActionGroup" stepKey="logout"/>
+        </after>
+        <!--Open New Customer Page -->
+        <actionGroup ref="AdminNavigateNewCustomerActionGroup" stepKey="waitToCustomerPageLoad"/>
+
+        <!-- Change customer website to "Second Website" -->
+        <actionGroup ref="AdminUpdateCustomerWebsiteInCustomerInformationPageActionGroup" stepKey="updateCustomerWebsite">
+            <argument name="websiteName" value="{{customWebsite.name}}"/>
+        </actionGroup>
+
+        <!-- Verify that "Second Website" is selected in website selector -->
+        <seeOptionIsSelected selector="{{AdminCustomerAccountInformationSection.associateToWebsite}}" userInput="{{customWebsite.name}}" stepKey="assertThatCustomWebsiteIsSelected"/>
+
+        <!-- Verify that it's possible to save customer with empty custom attribute, which is required on default scope -->
+        <fillField userInput="{{CustomerEntityOne.firstname}}" selector="{{AdminCustomerAccountInformationSection.firstName}}" stepKey="fillFirstName"/>
+        <fillField userInput="{{CustomerEntityOne.lastname}}" selector="{{AdminCustomerAccountInformationSection.lastName}}" stepKey="fillLastName"/>
+        <fillField userInput="{{CustomerEntityOne.email}}" selector="{{AdminCustomerAccountInformationSection.email}}" stepKey="fillEmail"/>
+        <click selector="{{AdminCustomerMainActionsSection.saveButton}}" stepKey="saveCustomer"/>
+        <seeElement selector="{{AdminCustomerMessagesSection.successMessage}}" stepKey="assertSuccessMessage"/>
+    </test>
+</tests>

@@ -1,0 +1,58 @@
+<?xml version="1.0"?>
+<!--
+/**
+ * Copyright © Magento, Inc. All rights reserved.
+ * See COPYING.txt for license details.
+ */
+-->
+<config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="urn:magento:module:Magento_Config:etc/system_file.xsd">
+    <system>
+        <section id="magento_invitation" translate="label" sortOrder="200" showInDefault="1" showInWebsite="1" showInStore="1">
+            <label>Invitations</label>
+            <class>separator-top</class>
+            <tab>customer</tab>
+            <resource>Magento_Invitation::config_magento_invitation</resource>
+            <group id="email" translate="label" type="text" sortOrder="100" showInDefault="1" showInWebsite="1" showInStore="1">
+                <label>Email</label>
+                <field id="identity" translate="label" type="select" sortOrder="1" showInDefault="1" showInWebsite="1" showInStore="1">
+                    <label>Customer Invitation Email Sender</label>
+                    <source_model>Magento\Config\Model\Config\Source\Email\Identity</source_model>
+                </field>
+                <field id="template" translate="label" type="select" sortOrder="2" showInDefault="1" showInWebsite="1" showInStore="1">
+                    <label>Customer Invitation Email Template</label>
+                    <source_model>Magento\Config\Model\Config\Source\Email\Template</source_model>
+                </field>
+            </group>
+            <group id="general" translate="label" type="text" sortOrder="20" showInDefault="1" showInWebsite="1" showInStore="1">
+                <label>General</label>
+                <field id="enabled" translate="label" type="select" sortOrder="0" showInDefault="1" showInWebsite="0" showInStore="0">
+                    <label>Enable Invitations Functionality</label>
+                    <source_model>Magento\Config\Model\Config\Source\Yesno</source_model>
+                    <backend_model>Magento\Invitation\Model\Adminhtml\System\Config\Backend\Cache</backend_model>
+                </field>
+                <field id="enabled_on_front" translate="label" type="select" sortOrder="5" showInDefault="1" showInWebsite="1" showInStore="0">
+                    <label>Enable Invitations on Storefront</label>
+                    <source_model>Magento\Config\Model\Config\Source\Yesno</source_model>
+                    <backend_model>Magento\Invitation\Model\Adminhtml\System\Config\Backend\Cache</backend_model>
+                </field>
+                <field id="registration_use_inviter_group" translate="label" type="select" sortOrder="10" showInDefault="1" showInWebsite="1" showInStore="1">
+                    <label>Referred Customer Group</label>
+                    <source_model>Magento\Invitation\Model\Adminhtml\System\Config\Source\Boolean\Group</source_model>
+                </field>
+                <field id="registration_required_invitation" translate="label" type="select" sortOrder="15" showInDefault="1" showInWebsite="1" showInStore="1">
+                    <label>New Accounts Registration</label>
+                    <source_model>Magento\Invitation\Model\Adminhtml\System\Config\Source\Boolean\Registration</source_model>
+                </field>
+                <field id="allow_customer_message" translate="label" type="select" sortOrder="20" showInDefault="1" showInWebsite="1" showInStore="1">
+                    <label>Allow Customers to Add Custom Message to Invitation Email</label>
+                    <source_model>Magento\Config\Model\Config\Source\Yesno</source_model>
+                </field>
+                <field id="max_invitation_amount_per_send" translate="label" type="text" sortOrder="25" showInDefault="1" showInWebsite="1" showInStore="1">
+                    <label>Max Invitations Allowed to be Sent at One Time</label>
+                    <validate>validate-zero-or-greater validate-digits</validate>
+                    <backend_model>Magento\Invitation\Model\Adminhtml\System\Config\Backend\Limited</backend_model>
+                </field>
+            </group>
+        </section>
+    </system>
+</config>

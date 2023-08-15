@@ -1,0 +1,45 @@
+<?php
+/**
+ * Copyright © Magento, Inc. All rights reserved.
+ * See COPYING.txt for license details.
+ */
+?>
+
+<?php
+/** @var \Magento\Framework\View\Helper\SecureHtmlRenderer $secureRenderer */
+
+/** @var \Magento\GoogleTagManager\Block\ListJson $block */
+$bannerCollection =  $block->getBannerCollection();
+$position = $block->getBannerPosition();
+$escapedPosition = $block->escapeJs($position);
+?>
+
+<?php if ($bannerCollection != null && $bannerCollection->count()) {
+    $varName = $block->escapeJs($block->getVariableName());
+
+    $scriptString = <<<script
+        var {$varName} = {$varName} || [];
+        {$varName} = [
+script;
+
+    foreach ($bannerCollection as $banner) {
+        $bannerId = $block->escapeJs($banner->getBannerId());
+        $bannerName = $block->escapeJs($banner->getName());
+        $gaCreative = $block->escapeJs($banner->getGaCreative());
+        $isGaEnabled = $block->escapeJs($banner->getIsGaEnabled());
+
+        $scriptString .= <<<script
+            {
+                'id': '{$bannerId}',
+                'name': '{$bannerName}',
+                'creative': '{$gaCreative}',
+                'position': '{$escapedPosition}',
+                'activated': '{$isGaEnabled}'
+            },
+script;
+    }
+    $scriptString .= '];';
+    ?>
+    <?= /* @noEscape */ $secureRenderer->renderTag('script', [], $scriptString, false); ?>
+    <?php
+}

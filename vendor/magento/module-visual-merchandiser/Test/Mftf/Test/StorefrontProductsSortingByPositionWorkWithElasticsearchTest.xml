@@ -1,0 +1,94 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+ /**
+  * Copyright © Magento, Inc. All rights reserved.
+  * See COPYING.txt for license details.
+  */
+-->
+
+<tests xmlns:xsi="http://www.w3.org/2001/XMLSchemainstance"
+       xsi:noNamespaceSchemaLocation="urn:magento:mftf:Test/etc/testSchema.xsd">
+    <test name="StorefrontProductsSortingByPositionWorkWithElasticsearchTest">
+        <annotations>
+            <features value="Catalog"/>
+            <stories value="Sorting by position product with Elasticsearch"/>
+            <title value="Products sorting by position work with Elasticsearch"/>
+            <description value="Products sorting by position work with Elasticsearch"/>
+            <severity value="CRITICAL"/>
+            <testCaseId value="MC-31744"/>
+            <group value="catalog"/>
+            <group value="SearchEngine"/>
+            <group value="catalog_search"/>
+            <group value="pr_exclude"/>
+        </annotations>
+        <before>
+            <!--Create Category -->
+            <createData entity="ApiCategory" stepKey="createParentCategory"/>
+            <createData entity="NewSubCategoryWithParent" stepKey="createSubCategory">
+                <requiredEntity createDataKey="createParentCategory"/>
+            </createData>
+            <createData entity="NewSubCategoryWithParent" stepKey="createSecondSubCategory">
+                <requiredEntity createDataKey="createSubCategory"/>
+            </createData>
+            <!-- Create Product -->
+            <createData entity="ApiSimpleProduct" stepKey="createProduct">
+                <requiredEntity createDataKey="createSecondSubCategory"/>
+            </createData>
+            <createData entity="ApiSimpleProduct" stepKey="createSecondProduct">
+                <requiredEntity createDataKey="createSecondSubCategory"/>
+            </createData>
+            <createData entity="ApiSimpleProduct" stepKey="createThirdProduct">
+                <requiredEntity createDataKey="createSecondSubCategory"/>
+            </createData>
+            <!-- Login to Admin -->
+            <actionGroup ref="AdminLoginActionGroup" stepKey="loginAsAdmin"/>
+        </before>
+        <after>
+            <!-- Delete Category -->
+            <deleteData createDataKey="createSecondSubCategory" stepKey="deleteSecondSubCategory"/>
+            <deleteData createDataKey="createSubCategory" stepKey="deleteSubCategory"/>
+            <deleteData createDataKey="createParentCategory" stepKey="deleteParentCategory"/>
+            <!-- Delete Product -->
+            <deleteData createDataKey="createProduct" stepKey="deleteProduct"/>
+            <deleteData createDataKey="createSecondProduct" stepKey="deleteSecondProduct"/>
+            <deleteData createDataKey="createThirdProduct" stepKey="deleteThirdProduct"/>
+            <!--Login as restricted user-->
+            <actionGroup ref="AdminLogoutActionGroup" stepKey="logoutFromAdmin"/>
+        </after>
+        <!-- Open Category Page on Admin Panel -->
+        <actionGroup ref="GoToAdminCategoryPageByIdActionGroup" stepKey="openSecondSubCategoryPageAdmin">
+            <argument name="id" value="$createSecondSubCategory.id$"/>
+        </actionGroup>
+        <!-- Open Products in category tab and move product up -->
+        <actionGroup ref="AdminCategoryPageOpenProductsInCategorySectionActionGroup" stepKey="openProductsInCategoryTab"/>
+        <click selector="{{AdminCategoryProductsGridSection.rowPositionUp('3')}}" stepKey="moveProductUp"/>
+        <!-- Save Category -->
+        <actionGroup ref="AdminSaveCategoryFormActionGroup" stepKey="saveCategory"/>
+        <!-- Reindex and Cache flush -->
+        <actionGroup ref="CliIndexerReindexActionGroup" stepKey="reindex">
+            <argument name="indices" value="catalog_category_product"/>
+        </actionGroup>
+        <actionGroup ref="CliCacheFlushActionGroup" stepKey="flushCache">
+            <argument name="tags" value="full_page"/>
+        </actionGroup>
+        <!-- Open Category Page on Storefront -->
+        <actionGroup ref="GoToStorefrontCategoryPageByParametersActionGroup" stepKey="goToStorefrontCategoryPage">
+            <argument name="category" value="$createSecondSubCategory.custom_attributes[url_path]$"/>
+            <argument name="mode" value="grid"/>
+            <argument name="numOfProductsPerPage" value="5"/>
+        </actionGroup>
+        <!-- Check product position -->
+        <actionGroup ref="StorefrontCheckProductPositionActionGroup" stepKey="checkProductPositionOnCategoryPage">
+            <argument name="position" value="1"/>
+            <argument name="productName" value="$createProduct.name$"/>
+        </actionGroup>
+        <actionGroup ref="StorefrontCheckProductPositionActionGroup" stepKey="checkSecondProductPositionOnCategoryPage">
+            <argument name="position" value="3"/>
+            <argument name="productName" value="$createSecondProduct.name$"/>
+        </actionGroup>
+        <actionGroup ref="StorefrontCheckProductPositionActionGroup" stepKey="checkThirdProductPositionOnCategoryPage">
+            <argument name="position" value="2"/>
+            <argument name="productName" value="$createThirdProduct.name$"/>
+        </actionGroup>
+    </test>
+</tests>

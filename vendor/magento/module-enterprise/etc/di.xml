@@ -1,0 +1,21 @@
+<?xml version="1.0"?>
+<!--
+/**
+ * Copyright © Magento, Inc. All rights reserved.
+ * See COPYING.txt for license details.
+ */
+-->
+<config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="urn:magento:framework:ObjectManager/etc/config.xsd">
+    <type name="Magento\Theme\Model\View\Design">
+        <arguments>
+            <argument name="themes" xsi:type="array">
+                <item name="frontend" xsi:type="string">Magento/luma</item>
+                <item name="adminhtml" xsi:type="string">Magento/spectrum</item>
+            </argument>
+        </arguments>
+    </type>
+    <type name="Magento\Theme\Model\Favicon\Favicon">
+        <plugin name="enterprise_favicon" type="Magento\Enterprise\Model\Plugin\Favicon"/>
+    </type>
+    <preference for="Magento\Framework\App\ProductMetadataInterface" type="Magento\Enterprise\Model\ProductMetadata"/>
+</config>

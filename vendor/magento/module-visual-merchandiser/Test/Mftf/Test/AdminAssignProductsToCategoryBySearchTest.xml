@@ -1,0 +1,138 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+ /**
+  * Copyright © Magento, Inc. All rights reserved.
+  * See COPYING.txt for license details.
+  */
+-->
+
+<tests xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xsi:noNamespaceSchemaLocation="urn:magento:mftf:Test/etc/testSchema.xsd">
+    <test name="AdminAssignProductsToCategoryBySearchTest">
+        <annotations>
+            <features value="VisualMerchandiser"/>
+            <stories value="[Visual Merchandiser] Assign/Unassign products to/from a category"/>
+            <title value="[Visual Merchandiser] Admin should be able to assign products to category by search"/>
+            <description value="[Visual Merchandiser] Admin should be able to assign products to category by search"/>
+            <severity value="CRITICAL"/>
+            <testCaseId value="MC-173"/>
+            <group value="VisualMerchandiser"/>
+        </annotations>
+        <before>
+            <!-- Create simple products -->
+            <createData entity="SimpleProduct2" stepKey="createFirstProduct"/>
+            <createData entity="SimpleProduct2" stepKey="createSecondProduct"/>
+            <createData entity="SimpleProduct2" stepKey="createThirdProduct"/>
+            <createData entity="SimpleProduct2" stepKey="createFourthProduct"/>
+            <createData entity="SimpleProduct2" stepKey="createFifthProduct"/>
+
+            <!-- Create category -->
+            <createData entity="_defaultCategory" stepKey="createCategory"/>
+
+            <!-- Login as admin -->
+            <actionGroup ref="AdminLoginActionGroup" stepKey="loginAsAdmin"/>
+            <!-- Clear page cache -->
+            <actionGroup ref="CliCacheFlushActionGroup" stepKey="flushCache">
+                <argument name="tags" value="full_page"/>
+            </actionGroup>
+        </before>
+        <after>
+            <!-- Delete all created data -->
+            <deleteData createDataKey="createFirstProduct" stepKey="deleteFirstProduct"/>
+            <deleteData createDataKey="createSecondProduct" stepKey="deleteSecondProduct"/>
+            <deleteData createDataKey="createThirdProduct" stepKey="deleteThirdProduct"/>
+            <deleteData createDataKey="createFourthProduct" stepKey="deleteFourthProduct"/>
+            <deleteData createDataKey="createFifthProduct" stepKey="deleteFifthProduct"/>
+            <deleteData createDataKey="createCategory" stepKey="deleteCategory"/>
+
+            <!-- Admin logout -->
+            <actionGroup ref="AdminLogoutActionGroup" stepKey="adminLogout"/>
+        </after>
+
+        <!-- Go to admin category page -->
+        <actionGroup ref="GoToAdminCategoryPageByIdActionGroup" stepKey="goToAdminCategoryPage">
+            <argument name="id" value="$$createCategory.id$$"/>
+        </actionGroup>
+
+        <!-- Open Products in Category section -->
+        <actionGroup ref="OpenProductsInCategorySectionActionGroup" stepKey="openProductsInCategorySection"/>
+
+        <!-- Go to add product by search -->
+        <actionGroup ref="GoToAddProductsBySearchActionGroup" stepKey="goToAddProductsBySearch"/>
+
+        <!-- Search and assign first product to category -->
+        <actionGroup ref="SearchAProductForCategoryByKeywordActionGroup" stepKey="searchFirstProductForCategoryByKeyword">
+            <argument name="keyword" value="$$createFirstProduct.sku$$"/>
+        </actionGroup>
+        <checkOption selector="{{AdminCategoryAddProductsModalSection.gridRowAssignToggle('1')}}" stepKey="clickToAssignFirstProduct"/>
+
+        <!-- Search and assign second product to category -->
+        <actionGroup ref="SearchAProductForCategoryByKeywordActionGroup" stepKey="searchSecondProductForCategoryByKeyword">
+            <argument name="keyword" value="$$createSecondProduct.sku$$"/>
+        </actionGroup>
+        <checkOption selector="{{AdminCategoryAddProductsModalSection.gridRowAssignToggle('1')}}" stepKey="clickToAssignSecondProduct"/>
+
+        <!-- Search and assign third product to category -->
+        <actionGroup ref="SearchAProductForCategoryByKeywordActionGroup" stepKey="searchThirdProductForCategoryByKeyword">
+            <argument name="keyword" value="$$createThirdProduct.sku$$"/>
+        </actionGroup>
+        <checkOption selector="{{AdminCategoryAddProductsModalSection.gridRowAssignToggle('1')}}" stepKey="clickToAssignThirdProduct"/>
+
+        <!-- Search and assign fourth product to category -->
+        <actionGroup ref="SearchAProductForCategoryByKeywordActionGroup" stepKey="searchFourthProductForCategoryByKeyword">
+            <argument name="keyword" value="$$createFourthProduct.sku$$"/>
+        </actionGroup>
+        <checkOption selector="{{AdminCategoryAddProductsModalSection.gridRowAssignToggle('1')}}" stepKey="clickToAssignFourthProduct"/>
+
+        <!-- Search and assign fifth product to category -->
+        <actionGroup ref="SearchAProductForCategoryByKeywordActionGroup" stepKey="searchFifthProductForCategoryByKeyword">
+            <argument name="keyword" value="$$createFifthProduct.sku$$"/>
+        </actionGroup>
+        <checkOption selector="{{AdminCategoryAddProductsModalSection.gridRowAssignToggle('1')}}" stepKey="clickToAssignFifthProduct"/>
+
+        <!-- Click save and close -->
+        <click selector="{{AdminCategoryAddProductsModalSection.saveClose}}" stepKey="clickSaveClose"/>
+
+        <!-- See products in category product grid -->
+        <actionGroup ref="SeeProductInProductCategoryGridForCurrentCategoryActionGroup" stepKey="seeFirstProduct">
+            <argument name="product" value="$$createFirstProduct$$"/>
+        </actionGroup>
+        <actionGroup ref="SeeProductInProductCategoryGridForCurrentCategoryActionGroup" stepKey="seeSecondProduct">
+            <argument name="product" value="$$createSecondProduct$$"/>
+        </actionGroup>
+        <actionGroup ref="SeeProductInProductCategoryGridForCurrentCategoryActionGroup" stepKey="seeThirdProduct">
+            <argument name="product" value="$$createThirdProduct$$"/>
+        </actionGroup>
+        <actionGroup ref="SeeProductInProductCategoryGridForCurrentCategoryActionGroup" stepKey="seeFourthProduct">
+            <argument name="product" value="$$createFourthProduct$$"/>
+        </actionGroup>
+        <actionGroup ref="SeeProductInProductCategoryGridForCurrentCategoryActionGroup" stepKey="seeFifthProduct">
+            <argument name="product" value="$$createFifthProduct$$"/>
+        </actionGroup>
+
+        <!-- Save category and assert success message -->
+        <actionGroup ref="AdminSaveCategoryFormActionGroup" stepKey="saveCategory"/>
+        <magentoCLI command="cron:run --group=index" stepKey="runCronReindex"/>
+        <!-- Go to storefront category page -->
+        <actionGroup ref="StorefrontGoToCategoryPageActionGroup" stepKey="openStorefrontCategoryPage">
+            <argument name="categoryName" value="$$createCategory.name$$"/>
+        </actionGroup>
+
+        <!-- Verify products in category on storefront -->
+        <actionGroup ref="AssertStorefrontSeeElementActionGroup" stepKey="seeFirstProductInCategory">
+            <argument name="selector" value="{{StorefrontCategoryProductSection.ProductTitleByName('$$createFirstProduct.name$$')}}"/>
+        </actionGroup>
+        <actionGroup ref="AssertStorefrontSeeElementActionGroup" stepKey="seeSecondProductInCategory">
+            <argument name="selector" value="{{StorefrontCategoryProductSection.ProductTitleByName('$$createSecondProduct.name$$')}}"/>
+        </actionGroup>
+        <actionGroup ref="AssertStorefrontSeeElementActionGroup" stepKey="seeThirdProductInCategory">
+            <argument name="selector" value="{{StorefrontCategoryProductSection.ProductTitleByName('$$createThirdProduct.name$$')}}"/>
+        </actionGroup>
+        <actionGroup ref="AssertStorefrontSeeElementActionGroup" stepKey="seeFourthProductInCategory">
+            <argument name="selector" value="{{StorefrontCategoryProductSection.ProductTitleByName('$$createFourthProduct.name$$')}}"/>
+        </actionGroup>
+        <actionGroup ref="AssertStorefrontSeeElementActionGroup" stepKey="seeFifthProductInCategory">
+            <argument name="selector" value="{{StorefrontCategoryProductSection.ProductTitleByName('$$createFifthProduct.name$$')}}"/>
+        </actionGroup>
+    </test>
+</tests>

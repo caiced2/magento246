@@ -1,0 +1,21 @@
+<?xml version="1.0"?>
+<!--
+/**
+ * Copyright © Magento, Inc. All rights reserved.
+ * See COPYING.txt for license details.
+ */
+-->
+<config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="urn:magento:framework:Event/etc/events.xsd">
+    <event name="checkout_controller_multishipping_shipping_post">
+        <observer name="magento_giftwrapping" instance="Magento\GiftWrapping\Observer\CheckoutProcessWrappingInfo" />
+    </event>
+    <event name="gift_options_prepare">
+        <observer name="magento_giftwrapping" instance="Magento\GiftWrapping\Observer\PrepareGiftOptions" />
+    </event>
+    <event name="gift_options_prepare_items">
+        <observer name="magento_giftwrapping" instance="Magento\GiftWrapping\Observer\PrepareGiftOptionsItems" />
+    </event>
+    <event name="checkout_type_multishipping_create_orders_single">
+        <observer name="addGiftWrappingToMultishipping" instance="Magento\GiftWrapping\Observer\MultishippingAddGiftWrappingToOrdersObserver"/>
+    </event>
+</config>

@@ -1,0 +1,87 @@
+<?php
+/**
+ * Copyright © Magento, Inc. All rights reserved.
+ * See COPYING.txt for license details.
+ */
+//phpcs:disable Magento2.Files.LineLength.MaxExceeded
+/** @var $block \Magento\Rma\Block\Adminhtml\Rma\Edit\Tab\General\History" */
+?>
+<div class="admin__page-section-item order-comments-history rma-comments-history" id="rma-history-block">
+    <div class="admin__page-section-item-title">
+        <span class="title"><?= $block->escapeHtml(__('RMA History')) ?></span>
+    </div>
+    <div class="admin__page-section-item-content">
+        <div id="history_form" class="rma-history-form edit-order-comments">
+            <div class="order-history-block">
+                <div class="admin__field">
+                    <label class="admin__field-label"
+                           for="history_comment"><?= $block->escapeHtml(__('Comment Text')) ?></label>
+                    <div class="admin__field-control">
+                        <textarea
+                            class="admin__control-textarea"
+                            name="comment[comment]"
+                            rows="3"
+                            cols="5"
+                            id="history_comment"></textarea>
+                    </div>
+                </div>
+
+                <div class="admin__field">
+                    <div class="order-history-comments-options">
+                        <?php if ($block->canSendCommentEmail()) : ?>
+                            <div class="admin__field admin__field-option">
+                                <input name="comment[is_customer_notified]"
+                                       class="admin__control-checkbox"
+                                       type="checkbox"
+                                       id="history_notify"
+                                       value="1"/>
+                                <label class="admin__field-label"
+                                       for="history_notify">
+                                    <?= $block->escapeHtml(__('Notify Customer by Email')) ?></label>
+                            </div>
+                        <?php endif; ?>
+                        <div class="admin__field admin__field-option">
+                            <input name="comment[is_visible_on_front]"
+                                   class="admin__control-checkbox"
+                                   type="checkbox"
+                                   id="history_visible"
+                                   value="1"/>
+                            <label class="admin__field-label"
+                                   for="history_visible"> <?= $block->escapeHtml(__('Visible on Storefront')) ?></label>
+                        </div>
+                    </div>
+                    <div class="order-history-comments-actions">
+                        <?= $block->getChildHtml('submit_button') ?>
+                    </div>
+                </div>
+            </div>
+
+            <?php if ($block->getComments()) : ?>
+                <ul class="note-list">
+                    <?php foreach ($block->getComments() as $_item) : ?>
+                        <li>
+                            <span class="note-list-date"><?= $block->escapeHtml($block->formatDate($_item->getCreatedAt(), \IntlDateFormatter::MEDIUM)) ?></span>
+                            <span class="note-list-time"><?= $block->escapeHtml($block->formatTime($_item->getCreatedAt(), \IntlDateFormatter::MEDIUM)) ?></span>
+                            <?php if ($_item->getIsAdmin()) : ?>
+                                <span class="note-list-status"><?= $block->escapeHtml(__('Customer Service')) ?></span>
+                            <?php else : ?>
+                                <span class="note-list-status"><?= $block->escapeHtml($block->getCustomerName()) ?></span>
+                            <?php endif; ?>
+                            <span class="note-list-customer">
+                                <?= $block->escapeHtml(__('Customer')) ?>
+                                <?php if ($_item->getIsCustomerNotified()) : ?>
+                                    <span class="note-list-customer-notified"><?= $block->escapeHtml(__('Notified')) ?></span>
+                                <?php else : ?>
+                                    <span class="note-list-customer-not-notified"><?= $block->escapeHtml(__('Not Notified')) ?></span>
+                                <?php endif; ?>
+                            </span>
+                            <?php if ($_item->getComment()) : ?>
+                                <div class="note-list-comment"><?= $block->escapeHtml($_item->getComment(), ['b', 'br', 'strong', 'i', 'u']) ?></div>
+                            <?php endif; ?>
+                        </li>
+                    <?php endforeach; ?>
+                </ul>
+            <?php endif ?>
+        </div>
+    </div>
+</div>

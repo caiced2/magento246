@@ -1,0 +1,27 @@
+<?xml version="1.0"?>
+<!--
+/**
+ * Copyright © Magento, Inc. All rights reserved.
+ * See COPYING.txt for license details.
+ */
+-->
+<config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="urn:magento:module:Magento_Config:etc/system_file.xsd">
+    <system>
+        <section id="checkout">
+            <group id="options">
+                <field id="enable_address_search" translate="label" type="select" sortOrder="100" showInDefault="1" showInWebsite="1" showInStore="0">
+                    <label>Enable Address Search</label>
+                    <comment>Choose to enable address search instead of address grid on checkout.</comment>
+                    <source_model>Magento\Config\Model\Config\Source\Yesno</source_model>
+                </field>
+                <field id="customer_address_limit" translate="label" type="text" sortOrder="110" showInDefault="1" showInWebsite="1" showInStore="0" canRestore="1">
+                    <label>Number of Customer Addresses Limit</label>
+                    <comment>Choose the limit of customer addresses from which to display address search instead of address grid.</comment>
+                    <depends>
+                        <field id="enable_address_search">1</field>
+                    </depends>
+                </field>
+            </group>
+        </section>
+    </system>
+</config>

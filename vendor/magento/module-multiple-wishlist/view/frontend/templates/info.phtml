@@ -1,0 +1,90 @@
+<?php
+/**
+ * Copyright © Magento, Inc. All rights reserved.
+ * See COPYING.txt for license details.
+ */
+
+/**
+ * @var \Magento\MultipleWishlist\Block\Info $block
+ * @var \Magento\Wishlist\Model\ResourceModel\Item\Collection $wishlistItems
+ */
+$wishlistItems = $block->getWishlistItems();
+?>
+
+<div class="block block-wishlist-info">
+    <div class="actions">
+        <?= ($block->getChildHtml('wishlist.rss.link')) ?>
+    </div>
+    <div class="block-content">
+        <dl class="items">
+            <dt class="item-title">
+                <?= $block->escapeHtml(__('Owner')) ?>
+            </dt>
+            <dd class="item-content">
+                <?= $block->escapeHtml($block->getWishlistOwner()->getName()) ?>
+            </dd>
+            <dt class="item-title">
+                <?= $block->escapeHtml(__('Name')) ?>
+            </dt>
+            <dd class="item-content">
+                <?= $block->escapeHtml($block->getWishlistInstance()->getName()) ?>
+            </dd>
+            <dt class="item-title">
+                <?= $block->escapeHtml(__('Updated')) ?>
+            </dt>
+            <dd class="item-content">
+                <?= /* @noEscape */ $block->formatDate(
+                    $block->getWishlistInstance()->getUpdatedAt(),
+                    \IntlDateFormatter::MEDIUM
+                ) ?>
+            </dd>
+        </dl>
+    </div>
+</div>
+
+<div class="block block-wishlist-info-items">
+    <div class="block-title">
+        <strong><?= $block->escapeHtml(__('Wish List Items')) ?></strong>
+    </div>
+    <div class="block-content">
+        <?php
+            $formId = 'wishlist-info-form';
+            $validationMessage = __('You must select items to add to the cart.');
+        ?>
+        <form
+            method="post"
+            action="<?= $block->escapeUrl($block->getToCartUrl()) ?>"
+            id="<?= /* @noEscape */ $formId ?>"
+            class="form wishlist"
+            data-mage-init='{
+                "Magento_MultipleWishlist/js/search/view/multiple-wishlist": {
+                    "id":"<?= /* @noEscape */ $formId ?>",
+                    "checkBoxValidationMessage":"<?= $block->escapeJs($validationMessage) ?>"
+                }
+            }'>
+            <?= $block->getBlockHtml('formkey') ?>
+            <?php $block->getChildBlock('items')->setItems($wishlistItems); ?>
+            <?= $block->getChildHtml('items') ?>
+            <?php if (count($wishlistItems) && $block->isSaleable()): ?>
+                <div class="actions-toolbar">
+                    <div class="primary">
+                        <button
+                            type="submit"
+                            title="<?= $block->escapeHtmlAttr(__('Add to Cart')) ?>"
+                            class="action tocart">
+                            <span><?= $block->escapeHtml(__('Add to Cart')) ?></span>
+                        </button>
+                    </div>
+                    <div class="secondary">
+                        <a
+                            href="<?= $block->escapeUrl($block->getBackUrl()) ?>"
+                            class="action back"
+                            title="<?= $block->escapeHtmlAttr(__('Back')) ?>">
+                            <span><?= $block->escapeHtml(__('Back')) ?></span>
+                        </a>
+                    </div>
+                </div>
+            <?php endif; ?>
+        </form>
+    </div>
+</div>

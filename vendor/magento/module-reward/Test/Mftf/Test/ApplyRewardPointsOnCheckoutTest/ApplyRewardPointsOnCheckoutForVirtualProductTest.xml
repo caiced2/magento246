@@ -1,0 +1,105 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+ /**
+  * Copyright © Magento, Inc. All rights reserved.
+  * See COPYING.txt for license details.
+  */
+-->
+<tests xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:noNamespaceSchemaLocation="urn:magento:mftf:Test/etc/testSchema.xsd">
+    <test name="ApplyRewardPointsOnCheckoutForVirtualProductTest">
+        <annotations>
+            <features value="Reward"/>
+            <stories value="Customer Creation, Virtual Product Creation"/>
+            <title value="You should be able to Apply Reward Points during Checkout for virtual product."/>
+            <description value="You should be able to Apply Reward Points during Checkout for virtual product."/>
+            <severity value="CRITICAL"/>
+            <testCaseId value="MAGETWO-42688"/>
+            <group value="reward"/>
+        </annotations>
+        <before>
+            <!-- Creating Virtual Product-->
+            <createData entity="VirtualProduct" stepKey="createPreReqProduct">
+                <field key="price">40.00</field>
+            </createData>
+
+            <magentoCLI stepKey="runCronIndex" command="cron:run --group=index"/>
+
+            <!-- Creating Customer with default shipping/billing addresses -->
+            <createData entity="Simple_US_Customer" stepKey="createPreReqCustomer">
+                <field key="group_id">1</field>
+            </createData>
+
+            <!--Adding reward points to previously created Customer -->
+            <actionGroup ref="AdminLoginActionGroup" stepKey="loginAsAdmin1"/>
+            <actionGroup ref="AdminApplyRewardPointsActionGroup" stepKey="applyRewardPointsToCustomer">
+                <argument name="customerId" value="$$createPreReqCustomer.id$$"/>
+                <argument name="rewards" value="5"/>
+            </actionGroup>
+
+            <!--Creating exchange rate - Points to Currency -->
+            <actionGroup ref="AdminCreatePointsToCurrencyRateActionGroup" stepKey="createPointsToCurrencyRateActionGroup">
+                <argument name="rate1" value="1"/>
+                <argument name="rate2" value="1"/>
+            </actionGroup>
+
+            <!--Creating exchange rate - Currency to Points -->
+            <actionGroup ref="AdminCreateCurrencyToPointsRateActionGroup" stepKey="createCurrencyToPointsRateActionGroup">
+                <argument name="rate1" value="1"/>
+                <argument name="rate2" value="1"/>
+            </actionGroup>
+        </before>
+
+        <after>
+            <!-- Deleting previously created Category, Product, Customer -->
+            <deleteData createDataKey="createPreReqProduct" stepKey="deletePreReqProduct"/>
+            <deleteData createDataKey="createPreReqCustomer" stepKey="deletePreReqCustomer"/>
+            <actionGroup ref="AdminDeleteRewardExchangeRateActionGroup" stepKey="deleteRewardExchangeRate1"/>
+            <actionGroup ref="AdminDeleteRewardExchangeRateActionGroup" stepKey="deleteRewardExchangeRate2"/>
+            <actionGroup ref="AdminLogoutActionGroup" stepKey="adminLogout"/>
+        </after>
+
+        <!--Login to storefront as previously created customer-->
+        <actionGroup ref="LoginToStorefrontActionGroup" stepKey="loginAsCustomer">
+            <argument name="Customer" value="$$createPreReqCustomer$$"/>
+        </actionGroup>
+
+        <!--Open the Product Page and Add the product to Cart-->
+        <amOnPage url="{{StorefrontProductPage.url($$createPreReqProduct.custom_attributes[url_key]$$)}}" stepKey="openRewardExchangeRatesPage"/>
+        <actionGroup ref="AddToCartFromStorefrontProductPageActionGroup" stepKey="addToCartFromStorefrontProductPage">
+            <argument name="productName" value="$$createPreReqProduct.name$$"/>
+        </actionGroup>
+
+        <!--Go to Checkout-->
+        <actionGroup ref="GoToCheckoutFromMinicartActionGroup" stepKey="goToCheckoutFromMinicart2"/>
+        <!-- Checkout select Check/Money Order payment -->
+        <actionGroup ref="CheckoutSelectCheckMoneyOrderPaymentActionGroup" stepKey="selectCheckMoneyPayment"/>
+        <actionGroup ref="StorefrontCheckoutUsingRewardPointsActionGroup" stepKey="checkoutUseRewardPoints">
+            <argument name="rewards" value="5"/>
+            <argument name="rewardsUsing" value="5"/>
+        </actionGroup>
+
+        <!--Click Place Order button-->
+        <comment userInput="BIC workaround" stepKey="waitForLoadingMaskAfterUsingPoints"/>
+        <actionGroup ref="ClickPlaceOrderActionGroup" stepKey="clickPlaceOrder"/>
+        <waitForElement selector="{{CheckoutSuccessMainSection.success}}" time="30" stepKey="waitForLoadSuccessPage"/>
+        <grabTextFrom selector="{{CheckoutSuccessMainSection.orderLink}}" stepKey="grabOrderNumber"/>
+
+        <!--Check order rewardPoint information from StoreFront-->
+        <click selector="{{CheckoutSuccessMainSection.orderLink}}" stepKey="clickOrderLink"/>
+        <waitForElement selector="{{StorefrontCustomerOrderViewSection.orderTitle}}" time="30" stepKey="waitForLoadStoreFrontOrderPage"/>
+        <see selector="{{StorefrontCustomerOrderViewSection.rewardPoints}}" userInput="5 Reward points -$5.00" stepKey="seeRewardPoint"/>
+
+        <!--Check order rewardPoint information from Admin-->
+        <actionGroup ref="CheckOrderRewardPointFromAdminActionGroup" stepKey="checkOrderRewardPointFromAdmin">
+            <argument name="rewardPointUsed" value="5"/>
+            <argument name="orderNumber" value="$grabOrderNumber"/>
+        </actionGroup>
+
+        <!--Verify Customer Reward Points Balance-->
+        <actionGroup ref="AdminVerifyCustomerRewardPointsAmountActionGroup" stepKey="verifyCustomerRewardPointsAmountActionGroup">
+            <argument name="customerId" value="$$createPreReqCustomer.id$$"/>
+            <argument name="rewards" value="0"/>
+        </actionGroup>
+     </test>
+</tests>

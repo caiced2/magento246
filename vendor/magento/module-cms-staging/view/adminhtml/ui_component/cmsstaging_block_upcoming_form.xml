@@ -1,0 +1,73 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+/**
+ * Copyright © Magento, Inc. All rights reserved.
+ * See COPYING.txt for license details.
+ */
+-->
+<form xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="urn:magento:module:Magento_Ui:etc/ui_configuration.xsd">
+    <argument name="data" xsi:type="array">
+        <item name="js_config" xsi:type="array">
+            <item name="provider" xsi:type="string">cmsstaging_block_upcoming_form.cmsstaging_block_upcoming_form_data_source</item>
+        </item>
+        <item name="label" xsi:type="string" translate="true">Scheduled Changes</item>
+        <item name="template" xsi:type="string">templates/form/collapsible</item>
+    </argument>
+    <settings>
+        <selectorPrefix>.block-schedule</selectorPrefix>
+        <deps>
+            <dep>cmsstaging_block_upcoming_form.cmsstaging_block_upcoming_form_data_source</dep>
+        </deps>
+    </settings>
+    <dataSource name="cmsstaging_block_upcoming_form_data_source">
+        <argument name="data" xsi:type="array">
+            <item name="js_config" xsi:type="array">
+                <item name="component" xsi:type="string">Magento_Ui/js/form/provider</item>
+            </item>
+        </argument>
+        <dataProvider class="Magento\CmsStaging\Model\Block\Identifier\DataProvider" name="cmsstaging_block_upcoming_form_data_source">
+            <settings>
+                <requestFieldName>block_id</requestFieldName>
+                <primaryFieldName>block_id</primaryFieldName>
+            </settings>
+        </dataProvider>
+    </dataSource>
+    <modal name="update_cms_block_form_modal">
+        <insertForm name="update_cms_block_form_loader" component="Magento_Staging/js/form/components/insert-form">
+            <argument name="data" xsi:type="array">
+                <item name="config" xsi:type="array">
+                    <item name="upcomingListingProvider" xsi:type="string">upcoming_grid</item>
+                    <item name="removeModalProvider" xsi:type="string">${ $.ns}.${ $.ns}.update_remove_cms_block_form_modal</item>
+                    <item name="removeResponseProvider" xsi:type="string">${ $.removeModalProvider }.update_remove_cms_block_form_loader:responseData</item>
+                    <item name="modalSubTitleProvider" xsi:type="string">${ $.externalProvider }:data.staging.name</item>
+                    <item name="modalTitleProvider" xsi:type="string">${ $.externalProvider }:data.title</item>
+                </item>
+            </argument>
+            <settings>
+                <formSubmitType>ajax</formSubmitType>
+                <renderUrl path="mui/index/render_handle">
+                    <param name="handle">cmsstaging_block_update</param>
+                    <param name="buttons">1</param>
+                </renderUrl>
+                <loading>false</loading>
+                <toolbarContainer>${ $.parentName }</toolbarContainer>
+                <externalProvider>${ $.ns }.cmsstaging_block_update_form_data_source</externalProvider>
+                <ns>cmsstaging_block_update_form</ns>
+            </settings>
+        </insertForm>
+    </modal>
+    <insertListing name="upcoming_grid">
+        <settings>
+            <externalProvider>${ $.ns }.cmsstaging_block_upcoming_grid_data_source</externalProvider>
+            <loading>false</loading>
+            <autoRender>true</autoRender>
+            <ns>cmsstaging_block_upcoming_grid</ns>
+            <exports>
+                <link name="blockId">${ $.externalProvider }:params.block_id</link>
+            </exports>
+            <imports>
+                <link name="blockId">${ $.provider }:data.block_id</link>
+            </imports>
+        </settings>
+    </insertListing>
+</form>

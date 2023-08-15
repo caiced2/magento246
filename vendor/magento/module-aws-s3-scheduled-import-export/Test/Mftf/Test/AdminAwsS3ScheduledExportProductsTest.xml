@@ -1,0 +1,81 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+ /**
+  * Copyright © Magento, Inc. All rights reserved.
+  * See COPYING.txt for license details.
+  */
+-->
+
+<tests xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xsi:noNamespaceSchemaLocation="urn:magento:mftf:Test/etc/testSchema.xsd">
+    <test name="AdminAwsS3ScheduledExportProductsTest" extends="AdminScheduledExportProductsTest">
+        <annotations>
+            <features value="ScheduledImportExport"/>
+            <stories value="Export Products"/>
+            <title value="S3 - Schedule Export for Simple Product"/>
+            <description value="Exports 2 simple products from admin System > Data Transfer > Scheduled Imports/Exports
+            page, verifies that an export history file is generated and verifies that the actual export file is
+            generated and contains the 2 expected products."/>
+            <severity value="MAJOR"/>
+            <testCaseId value="MC-38948"/>
+            <group value="importExport"/>
+            <group value="scheduledImportExport"/>
+            <group value="remote_storage_aws_s3"/>
+            <group value="skip_in_cloud_native_s3"/>
+            <group value="pr_exclude"/>
+        </annotations>
+
+        <before>
+            <comment userInput="BIC workaround" stepKey="enableRemoteStorage"/>
+        </before>
+
+        <after>
+            <!-- Delete S3 Data -->
+            <helper class="Magento\AwsS3\Test\Mftf\Helper\S3FileAssertions" method="assertDirectoryEmpty" stepKey="assertExportHistoryFileDeleted">
+                <argument name="path">import_export/import_export/history/{$currentYear}/{$currentMonth}/</argument>
+            </helper>
+            <helper class="Magento\AwsS3\Test\Mftf\Helper\S3FileAssertions" method="deleteDirectory" stepKey="deleteExportFileDirectory">
+                <argument name="path">import_export/export/{{ScheduleExport1.name}}/</argument>
+            </helper>
+            <comment userInput="BIC workaround" stepKey="disableRemoteStorage"/>
+        </after>
+
+        <!-- Create Scheduled Import for Simple Product -->
+        <actionGroup ref="AdminFillScheduledExportFormActionGroup" stepKey="fillScheduledExportForm">
+            <argument name="name" value="{{ScheduleExport1.name}}"/>
+            <argument name="entityType" value="Products"/>
+            <argument name="fileFormat" value="CSV"/>
+            <argument name="serverType" value="Remote Storage"/>
+            <argument name="fileDirectory" value="import_export/export/{{ScheduleExport1.name}}"/>
+        </actionGroup>
+
+        <!-- Verify Export History File -->
+        <helper class="Magento\AwsS3\Test\Mftf\Helper\S3FileAssertions" method="assertFileExists" stepKey="assertExportHistoryFileExists">
+            <argument name="filePath">import_export/import_export/history/{$currentYear}/{$currentMonth}/{$currentDay}/{$currentHour}-{$currentMinute}_export_catalog_product.csv</argument>
+        </helper>
+        <helper class="Magento\AwsS3\Test\Mftf\Helper\S3FileAssertions" method="assertFileContainsString" stepKey="assertExportHistoryFileContainsSimpleProduct1">
+            <argument name="filePath">import_export/import_export/history/{$currentYear}/{$currentMonth}/{$currentDay}/{$currentHour}-{$currentMinute}_export_catalog_product.csv</argument>
+            <argument name="text">$$simpleProduct1.sku$$</argument>
+        </helper>
+        <helper class="Magento\AwsS3\Test\Mftf\Helper\S3FileAssertions" method="assertFileContainsString" stepKey="assertExportHistoryFileContainsSimpleProduct2">
+            <argument name="filePath">import_export/import_export/history/{$currentYear}/{$currentMonth}/{$currentDay}/{$currentHour}-{$currentMinute}_export_catalog_product.csv</argument>
+            <argument name="text">$$simpleProduct2.sku$$</argument>
+        </helper>
+
+        <!-- Verify Exported File -->
+        <helper class="Magento\AwsS3\Test\Mftf\Helper\S3FileAssertions" method="assertGlobbedFileExists" stepKey="assertExportFileExists">
+            <argument name="path">import_export/export/{{ScheduleExport1.name}}/</argument>
+            <argument name="pattern">{$currentYear}-{$currentMonth}-{$currentDay}_{$currentHour}-{$currentMinute}-??_export_catalog_product.csv</argument>
+        </helper>
+        <helper class="Magento\AwsS3\Test\Mftf\Helper\S3FileAssertions" method="assertGlobbedFileContainsString" stepKey="assertExportFileContainsSimpleProduct1">
+            <argument name="path">import_export/export/{{ScheduleExport1.name}}/</argument>
+            <argument name="pattern">{$currentYear}-{$currentMonth}-{$currentDay}_{$currentHour}-{$currentMinute}-??_export_catalog_product.csv</argument>
+            <argument name="text">$$simpleProduct1.sku$$</argument>
+        </helper>
+        <helper class="Magento\AwsS3\Test\Mftf\Helper\S3FileAssertions" method="assertGlobbedFileContainsString" stepKey="assertExportFileContainsSimpleProduct2">
+            <argument name="path">import_export/export/{{ScheduleExport1.name}}/</argument>
+            <argument name="pattern">{$currentYear}-{$currentMonth}-{$currentDay}_{$currentHour}-{$currentMinute}-??_export_catalog_product.csv</argument>
+            <argument name="text">$$simpleProduct2.sku$$</argument>
+        </helper>
+    </test>
+</tests>

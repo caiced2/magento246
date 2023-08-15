@@ -1,0 +1,17 @@
+<?php
+/**
+ * Copyright © Magento, Inc. All rights reserved.
+ * See COPYING.txt for license details.
+ */
+?>
+<?php if ($block->getEnabled()) :?>
+<div class="gift-registry-name">
+    <span class="gift-registry-name-label">Gift Registry</span>
+    <a href="<?= $block->escapeUrl($block->getGiftregistryUrl()) ?>"
+       title="<?= $block->escapeHtmlAttr($block->getGiftregistryTitle()) ?>"
+       class="action gift registry">
+        <span><?= $block->escapeHtml($block->truncateString($block->getGiftregistryTitle(), 50)) ?>
+        </span>
+    </a>
+</div>
+<?php endif; ?>

@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+ /**
+  * Copyright © Magento, Inc. All rights reserved.
+  * See COPYING.txt for license details.
+  */
+-->
+
+<actionGroups xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+              xsi:noNamespaceSchemaLocation="urn:magento:mftf:Test/etc/actionGroupSchema.xsd">
+    <actionGroup name="StorefrontAddGiftOptionsActionGroup">
+        <arguments>
+            <argument name="productName" type="string"/>
+            <argument name="giftItemMessage" type="string" defaultValue="Message for the item"/>
+            <argument name="giftItemWrappingDesign" type="string" defaultValue="Test Design"/>
+        </arguments>
+        <comment userInput="Add gift message and gift wrapping for the item" stepKey="commentAddFMessageAndWrapping"/>
+        <waitForPageLoad stepKey="waitForCheckoutCartPageLoad"/>
+        <click selector="{{CheckoutCartGiftWrappingSection.clickCartItemGiftOptions(productName)}}" stepKey="clickGiftOption"/>
+        <waitForElementVisible selector="{{CheckoutCartGiftWrappingSection.cartItemGiftWrapping(productName, giftItemWrappingDesign)}}" stepKey="waitVisibleImage"/>
+        <click selector="{{CheckoutCartGiftWrappingSection.cartItemGiftWrapping(productName, giftItemWrappingDesign)}}" stepKey="clickSmallImage"/>
+        <waitForElementVisible selector="{{CheckoutCartGiftWrappingSection.giftRemoveButton}}" stepKey="waitVisibleGiftRemoveButton"/>
+        <click selector="{{CheckoutCartGiftWrappingSection.clickImage}}" stepKey="clickImage"/>
+        <waitForElementVisible selector="{{StorefrontCheckoutCartGiftSection.cartItemGiftMessage(productName)}}" stepKey="waitVisibleFieldGiftMessage"/>
+        <fillField selector="{{StorefrontCheckoutCartGiftSection.cartItemGiftMessage(productName)}}" userInput="{{giftItemMessage}}" stepKey="fillFieldGiftMessage" />
+        <click selector="{{CheckoutCartGiftWrappingSection.cartItemClickButtonGiftUpdate(productName)}}" stepKey="clickButtonGiftUpdate"/>
+        <waitForPageLoad stepKey="waitForCheckoutCartPageReload"/>
+    </actionGroup>
+</actionGroups>

@@ -1,0 +1,18 @@
+<?xml version="1.0"?>
+<!--
+/**
+ * Copyright © Magento, Inc. All rights reserved.
+ * See COPYING.txt for license details.
+ */
+-->
+<page_types xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="urn:magento:framework:View/Layout/etc/page_types.xsd">
+    <type id="magento_giftregistry_index_addselect" label="Customer My Account GiftRegistry Add"/>
+    <type id="magento_giftregistry_index_edit" label="Customer My Account GiftRegistry Edit"/>
+    <type id="magento_giftregistry_index_index" label="Customer GiftRegistry"/>
+    <type id="magento_giftregistry_index_items" label="Customer GiftRegistry Items List"/>
+    <type id="magento_giftregistry_index_share" label="Customer GiftRegistry Share"/>
+    <type id="magento_giftregistry_search_advanced" label="Customer GiftRegistry Advanced Search Form"/>
+    <type id="magento_giftregistry_search_index" label="Customer GiftRegistry Search Form"/>
+    <type id="magento_giftregistry_search_results" label="Customer GiftRegistry Search Results List"/>
+    <type id="magento_giftregistry_view_index" label="Customer GiftRegistry Gift View"/>
+</page_types>

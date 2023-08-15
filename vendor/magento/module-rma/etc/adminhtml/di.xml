@@ -1,0 +1,28 @@
+<?xml version="1.0"?>
+<!--
+/**
+ * Copyright © Magento, Inc. All rights reserved.
+ * See COPYING.txt for license details.
+ */
+-->
+<config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="urn:magento:framework:ObjectManager/etc/config.xsd">
+    <type name="Magento\Catalog\Controller\Adminhtml\Product\Initialization\Helper">
+        <plugin name="Rma" type="Magento\Rma\Plugin\Catalog\Controller\Adminhtml\Product\Initialization\HelperPlugin" sortOrder="70" />
+    </type>
+    <virtualType name="Magento\Catalog\Ui\DataProvider\Product\Form\Modifier\Pool">
+        <arguments>
+            <argument name="modifiers" xsi:type="array">
+                <item name="rma" xsi:type="array">
+                    <item name="class" xsi:type="string">Magento\Rma\Ui\DataProvider\Product\Form\Modifier\Rma</item>
+                    <item name="sortOrder" xsi:type="number">20</item>
+                </item>
+            </argument>
+        </arguments>
+    </virtualType>
+
+    <type name="Magento\Rma\Block\Adminhtml\Rma\Edit\Tab\General\Shipping\Packaging">
+        <arguments>
+            <argument name="sourceSizeModel" xsi:type="object">Magento\Usps\Model\Source\Size</argument>
+        </arguments>
+    </type>
+</config>

@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+ /**
+  * Copyright © Magento, Inc. All rights reserved.
+  * See COPYING.txt for license details.
+  */
+-->
+
+<sections xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+          xsi:noNamespaceSchemaLocation="urn:magento:mftf:Page/etc/SectionObject.xsd">
+    <section name="AdminCustomerAttributeEditSection">
+        <element name="label" type="input" selector="#attribute_label"/>
+        <element name="code" type="input" selector="#attribute_code"/>
+        <element name="inputType" type="select" selector="#frontend_input"/>
+        <element name="valuesRequired" type="select" selector="#is_required"/>
+        <element name="defaultValueText" type="textarea" selector="#default_value_text"/>
+        <element name="inputValidation" type="select" selector="#input_validation"/>
+        <element name="inputOutputFilter" type="select" selector="#input_filter"/>
+        <element name="usedInGrid" type="select" selector="#is_used_in_grid"/>
+        <element name="usedInFilterOptions" type="select" selector="#is_filterable_in_grid"/>
+        <element name="usedInSearchOptions" type="select" selector="#is_searchable_in_grid"/>
+        <element name="usedForSegment" type="select" selector="#is_used_for_customer_segment"/>
+        <element name="showInSF" type="select" selector="#is_visible"/>
+        <element name="sortOrder" type="input" selector="#sort_order"/>
+        <element name="selectFormToUse" type="multiselect" selector="select#used_in_forms"/>
+        <element name="gridFilterConditionType" type="select" selector="#grid_filter_condition_type"/>
+        <element name="streetAddress" type="input" selector="//input[@id='multiline_count']"/>
+    </section>
+</sections>

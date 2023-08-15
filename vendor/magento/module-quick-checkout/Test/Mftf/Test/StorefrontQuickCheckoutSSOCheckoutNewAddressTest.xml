@@ -1,0 +1,105 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+ /**
+  * Copyright © Magento, Inc. All rights reserved.
+  * See COPYING.txt for license details.
+  */
+-->
+<tests xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xsi:noNamespaceSchemaLocation="urn:magento:mftf:Test/etc/testSchema.xsd">
+    <test name="StorefrontQuickCheckoutSSOCheckoutNewAddressTest">
+        <annotations>
+            <features value="MagentoQuickCheckout"/>
+            <stories value="Customer with Magento and Bolt account can place an order and add new address"/>
+            <title value="Customer with Magento and Bolt account can place an order and add new address"/>
+            <description value="Customer with Magento and Bolt account can place an order and add new address"/>
+            <severity value="CRITICAL"/>
+            <testCaseId value="sso-checkout-add-address"/>
+            <group value="quick-checkout"/>
+        </annotations>
+
+        <before>
+            <magentoCLI command="config:set {{EnableFreeShippingConfigData.path}} {{EnableFreeShippingConfigData.value}}" stepKey="enableFreeShipping"/>
+            <!-- Login -->
+            <actionGroup ref="AdminLoginActionGroup" stepKey="login"/>
+            <actionGroup ref="AdminConfigureQuickCheckoutActionGroup" stepKey="configurePaymentMethod"/>
+            <!-- Create Product -->
+            <createData entity="_defaultCategory" stepKey="createCategory"/>
+            <createData entity="_defaultProduct" stepKey="createProduct">
+                <requiredEntity createDataKey="createCategory"/>
+            </createData>
+            <!-- Create Customer -->
+            <createData entity="Customer_With_Existing_Bolt_Account" stepKey="createCustomer"/>
+        </before>
+
+        <after>
+            <magentoCLI command="config:set {{DisableFreeShippingMethod.path}} {{DisableFreeShippingMethod.value}}" stepKey="disableFreeShipping"/>
+            <actionGroup ref="AdminDisableQuickCheckoutActionGroup" stepKey="disablePaymentMethod"/>
+            <!-- Delete Product -->
+            <deleteData stepKey="deleteCategory" createDataKey="createCategory"/>
+            <deleteData stepKey="deleteProduct" createDataKey="createProduct"/>
+            <!-- Delete Customer -->
+            <deleteData stepKey="deleteCustomer" createDataKey="createCustomer"/>
+            <!-- Logout -->
+            <actionGroup ref="AdminLogoutActionGroup" stepKey="logoutFromAdmin"/>
+        </after>
+
+        <!-- Navigate to storefront as a guest -->
+        <amOnPage url="{{StorefrontCategoryPage.url($createCategory.name$)}}" stepKey="navigateToCategoryPage"/>
+        <actionGroup ref="StorefrontAddProductToCartFromCategoryActionGroup" stepKey="addProductToCart">
+            <argument name="productName" value="$createProduct.name$"/>
+        </actionGroup>
+        <actionGroup ref="GoToCheckoutFromMinicartActionGroup" stepKey="goToCheckoutFromMinicart"/>
+
+        <!-- Login as Bolt customer using the OTP -->
+        <actionGroup ref="LoginWithEmailAddressAndOtpActionGroup" stepKey="loginWithEmailAddressAndOtp">
+            <argument name="customer" value="ExistingCustomerWithBoltAccount"/>
+        </actionGroup>
+
+        <waitForElement selector="{{CheckoutPaymentSection.paymentSectionTitle}}" stepKey="waitForPaymentSectionTitle"/>
+
+        <actionGroup ref="OpenStoreFrontCheckoutShippingPageActionGroup" stepKey="openStoreFrontCheckoutShippingPageActionGroup1"/>
+
+        <waitForElementVisible selector="{{CheckoutShippingSection.newAddressButton}}" stepKey="waitForAddNewAddressButton1"/>
+
+        <actionGroup ref="StorefrontVerifyCustomerShippingAddressActionGroup" stepKey="verifyCustomerShippingAddress1">
+            <argument name="selector" value="CheckoutShippingSection.selectedShippingAddress"/>
+            <argument name="address" value="US_Address_NY"/>
+        </actionGroup>
+
+        <actionGroup ref="StorefrontVerifyCustomerShippingAddressActionGroup" stepKey="verifyCustomerShippingAddress2">
+            <argument name="selector" value="CheckoutShippingSection.notSelectedShippingAddress"/>
+            <argument name="address" value="US_Address_TX"/>
+        </actionGroup>
+
+        <!-- Add new shipping address -->
+        <actionGroup ref="OpenStoreFrontCheckoutShippingPageActionGroup" stepKey="openStoreFrontCheckoutShippingPageActionGroup2"/>
+        <waitForElementVisible selector="{{CheckoutShippingSection.newAddressButton}}" stepKey="waitForAddNewAddressButton2"/>
+        <click selector="{{CheckoutShippingSection.newAddressButton}}" stepKey="clickAddNewAddressButton"/>
+        <waitForPageLoad stepKey="waitForPageToLoad2"/>
+        <actionGroup ref="StorefrontFillNewShippingAddressFormInCheckoutActionGroup" stepKey="fillAddressForm">
+            <argument name="address" value="US_Address_California"/>
+            <argument name="section" value="CheckoutShippingNewBoltAddressModalSection"/>
+        </actionGroup>
+        <click selector="{{CheckoutShippingNewBoltAddressModalSection.saveAddressToBolt}}" stepKey="uncheckSaveAddressToBolt"/>
+        <actionGroup ref="StorefrontCheckoutClickSaveAddressButtonActionGroup" stepKey="clickOnSaveNewAddress"/>
+        <actionGroup ref="StorefrontSetShippingMethodActionGroup" stepKey="selectFirstShippingMethod"/>
+
+        <actionGroup ref="StorefrontCheckoutClickNextOnShippingStepActionGroup" stepKey="clickNextOnShippingStep"/>
+
+        <!-- Pay with existing credit card -->
+        <waitForElement selector="{{CheckoutPaymentSection.useExistingCardRadio}}" stepKey="waitForUseExistingCardRadio"/>
+        <waitForElementVisible selector="{{CheckoutPaymentSection.MagentoPaymentsHostedFieldsPlaceOrderButton}}" stepKey="waitPlaceOrderButton"/>
+
+        <actionGroup ref="CheckoutPlaceOrderActionGroup" stepKey="clickPlaceOrder">
+            <argument name="orderNumberMessage" value="CONST.successCheckoutOrderNumberMessage"/>
+            <argument name="emailYouMessage" value="CONST.successCheckoutEmailYouMessage"/>
+        </actionGroup>
+
+        <amOnPage url="customer/address/" stepKey="goToAddressPage"/>
+        <waitForPageLoad stepKey="waitForAddressPageLoad"/>
+        <actionGroup ref="StorefrontCustomerAddressBookNumberOfAddresses" stepKey="verifyAddressesCount">
+            <argument name="number" value="1"/>
+        </actionGroup>
+    </test>
+</tests>

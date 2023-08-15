@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+ /**
+  * Copyright © Magento, Inc. All rights reserved.
+  * See COPYING.txt for license details.
+  */
+-->
+<actionGroups xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:noNamespaceSchemaLocation="urn:magento:mftf:Test/etc/actionGroupSchema.xsd">
+    <actionGroup name="AdminFillUseInFormsCustomerCustomAttributeActionGroup">
+        <annotations>
+            <description>Fill customer custom attribute used in forms data. Starts on create new customer custom attribute page.</description>
+        </annotations>
+        <arguments>
+            <argument name="formToUse" type="string" defaultValue="{{AttributeTextField.used_in_forms}}"/>
+        </arguments>
+
+        <waitForElementVisible selector="{{AdminCustomerAttributeEditSection.selectFormToUse}}" stepKey="waitForInput"/>
+        <selectOption selector="{{AdminCustomerAttributeEditSection.selectFormToUse}}" userInput="{{formToUse}}" stepKey="selectFormToUse"/>
+    </actionGroup>
+</actionGroups>

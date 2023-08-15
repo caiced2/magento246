@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+ /**
+  * Copyright © Magento, Inc. All rights reserved.
+  * See COPYING.txt for license details.
+  */
+-->
+<tests xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:noNamespaceSchemaLocation="urn:magento:mftf:Test/etc/testSchema.xsd">
+    <test name="PageBuilderScheduleUpdateDisablePageBuilderInCMSPageTest" extends="PageBuilderCmsPageDisablePageBuilderTest">
+        <annotations>
+            <features value="PageBuilder"/>
+            <stories value="Schedule Update - CMS Page"/>
+            <title value="Verify PageBuilder does not appear when disabled in Schedule Update in CMS Page"/>
+            <description value="This test is intended to ensure that PageBuilder does not appear when disabled for Schedule Update in CMS Page."/>
+            <severity value="AVERAGE"/>
+            <useCaseId value="MC-5773"/>
+            <testCaseId value="MC-14864"/>
+            <group value="pagebuilder"/>
+            <group value="pagebuilder-ee"/>
+            <group value="pagebuilder-staging"/>
+            <group value="pagebuilder-cms-page"/>
+            <group value="pagebuilder-disable"/>
+        </annotations>
+        <before>
+            <actionGroup ref="navigateToStagingSlideout" stepKey="navigateToStagingSlideout" after="navigateToCMSPage"/>
+            <actionGroup ref="switchToPageBuilderStage" stepKey="switchToPageBuilderStage">
+                <argument name="sectionSelector" value="{{AdminStagingSlideOutSection.contentTab}}"/>
+                <argument name="sectionDependentSelector" value="{{AdminStagingSlideOutSection.stagingContentTab}}"/>
+            </actionGroup>
+        </before>
+        <dontSeeElementInDOM selector="{{AdminCMSPageStagingSlideOutSection.contentArea}}" stepKey="dontSeeContentAreaInDOM"/>
+        <actionGroup ref="navigateToStagingSlideout" stepKey="navigateToStagingSlideout" after="navigateToCMSPage"/>
+        <conditionalClick selector="{{AdminStagingSlideOutSection.contentTab}}" dependentSelector="{{AdminStagingSlideOutSection.stagingContentTab}}" visible="false" stepKey="expandSection"/>
+        <seeElementInDOM selector="{{AdminCMSPageStagingSlideOutSection.contentArea}}" stepKey="seeContentAreaInDOM"/>
+    </test>
+</tests>

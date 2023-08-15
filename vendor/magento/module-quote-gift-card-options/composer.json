@@ -1,0 +1,27 @@
+{
+    "name": "magento/module-quote-gift-card-options",
+    "description": "Magento module provides data provider for creating buy request for gift card products",
+    "type": "magento2-module",
+    "license": [
+        "proprietary"
+    ],
+    "config": {
+        "sort-packages": true
+    },
+    "version": "100.4.3",
+    "require": {
+        "magento/framework": "103.0.*",
+        "magento/module-quote": "101.2.*",
+        "magento/module-gift-card": "101.3.*",
+        "php": "~8.1.0||~8.2.0"
+    },
+    "autoload": {
+        "files": [
+            "registration.php"
+        ],
+        "psr-4": {
+            "Magento\\QuoteGiftCardOptions\\": ""
+        }
+    }
+}
+

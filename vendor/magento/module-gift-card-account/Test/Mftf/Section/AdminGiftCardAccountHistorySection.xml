@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+ /**
+  * Copyright © Magento, Inc. All rights reserved.
+  * See COPYING.txt for license details.
+  */
+-->
+
+<sections xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+          xsi:noNamespaceSchemaLocation="urn:magento:mftf:Page/etc/SectionObject.xsd">
+    <section name="AdminGiftCardAccountHistoryGridSection">
+        <element name="rowAction" type="text" selector="#historyGrid_table tbody tr:nth-of-type({{row}}) td.col-action" parameterized="true"/>
+        <element name="rowBalanceChange" type="text" selector="#historyGrid_table tbody tr:nth-of-type({{row}}) td.col-balance_delta" parameterized="true"/>
+        <element name="rowBalance" type="text" selector="#historyGrid_table tbody tr:nth-of-type({{row}}) td.col-balance_amount" parameterized="true"/>
+    </section>
+</sections>

@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+ /**
+  * Copyright © Magento, Inc. All rights reserved.
+  * See COPYING.txt for license details.
+  */
+-->
+<actionGroups xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:noNamespaceSchemaLocation="urn:magento:mftf:Test/etc/actionGroupSchema.xsd">
+    <actionGroup name="FocusOnStagingPreviewIframe">
+        <!--Set frame id because switchToIFrame requires ID as parameter-->
+        <executeJS function="document.querySelector('[data-role=\'preview-iframe\']').id = 'preview-iframe'" stepKey="setStagedPreviewFrameId"/>
+        <switchToIFrame userInput="preview-iframe" stepKey="switchToStagedPreviewFrame"/>
+        <waitForPageLoad time="30" stepKey="waitForIFrameContentLoad"/>
+    </actionGroup>
+</actionGroups>

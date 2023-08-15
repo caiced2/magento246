@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+ /**
+  * Copyright © Magento, Inc. All rights reserved.
+  * See COPYING.txt for license details.
+  */
+-->
+
+<tests xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xsi:noNamespaceSchemaLocation="urn:magento:mftf:Test/etc/testSchema.xsd">
+    <test name="AdminCheckProductUpdateFormPriceScopeWebsiteTest" extends="AdminCheckProductUpdateFormTest">
+        <annotations>
+            <features value="CatalogStaging"/>
+            <stories value="Product staging update form"/>
+            <title value="Check the fields in the product staging update modal form when price scope = Website"/>
+            <description value="Check the fields in the product staging update modal form when price scope = Website"/>
+            <severity value="MAJOR"/>
+            <testCaseId value="MC-15258"/>
+            <group value="CatalogStaging"/>
+        </annotations>
+
+        <before>
+            <magentoCLI command="config:set catalog/price/scope 1" stepKey="setPriceScopeWebsite"/>
+        </before>
+
+        <after>
+            <magentoCLI command="config:set catalog/price/scope 0" stepKey="resetPriceScopeWebsite"/>
+        </after>
+
+        <amOnPage url="{{AdminProductEditPage.url($$simpleProduct.id$$)}}" stepKey="goToEditProductPage" />
+        <waitForPageLoad stepKey="waitForProductPageLoad"/>
+
+        <click selector="{{AdminStagingSlideOutSection.scheduleNewUpdateBtn}}" stepKey="clickNewUpdate"/>
+        <waitForLoadingMaskToDisappear stepKey="waitForLoadingMask"/>
+        <actionGroup ref="AdminSwitchStoreViewModalActionGroup" stepKey="switchStoreView" before="checkProductStagingUpdateForm">
+            <argument name="storeView" value="_defaultStore.name"/>
+        </actionGroup>
+
+        <actionGroup ref="verifyProductUpdateFormSpecificStoreViewPriceScopeWebsite" stepKey="checkProductStagingUpdateForm"/>
+    </test>
+</tests>

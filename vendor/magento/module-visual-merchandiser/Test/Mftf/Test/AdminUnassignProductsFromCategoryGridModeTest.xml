@@ -1,0 +1,95 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+ /**
+  * Copyright © Magento, Inc. All rights reserved.
+  * See COPYING.txt for license details.
+  */
+-->
+
+<tests xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xsi:noNamespaceSchemaLocation="urn:magento:mftf:Test/etc/testSchema.xsd">
+    <test name="AdminUnassignProductsFromCategoryGridModeTest">
+        <annotations>
+            <features value="VisualMerchandiser"/>
+            <stories value="Assign/Unassign products to/from a category"/>
+            <title value="Admin should be able to unassign products from category by clicking unassign link"/>
+            <description value="Admin should be able to unassign products from category by clicking unassign link"/>
+            <severity value="CRITICAL"/>
+            <useCaseId value="MAGETWO-81958"/>
+            <testCaseId value="MC-25471"/>
+            <group value="visualMerchandiser"/>
+        </annotations>
+
+        <before>
+            <createData entity="_defaultCategory" stepKey="category"/>
+            <createData entity="ApiSimpleProduct" stepKey="product1">
+                <requiredEntity createDataKey="category"/>
+            </createData>
+            <createData entity="ApiSimpleProduct" stepKey="product2">
+                <requiredEntity createDataKey="category"/>
+            </createData>
+            <createData entity="ApiSimpleProduct" stepKey="product3">
+                <requiredEntity createDataKey="category"/>
+            </createData>
+            <actionGroup ref="AdminLoginActionGroup" stepKey="loginToAdmin"/>
+        </before>
+
+        <after>
+            <deleteData createDataKey="product1" stepKey="deleteProduct1"/>
+            <deleteData createDataKey="product2" stepKey="deleteProduct2"/>
+            <deleteData createDataKey="product3" stepKey="deleteProduct3"/>
+            <deleteData createDataKey="category" stepKey="deleteCategory"/>
+            <actionGroup ref="AdminLogoutActionGroup" stepKey="logoutFromAdmin"/>
+        </after>
+
+        <!-- Prepare grid for testing -->
+
+        <actionGroup ref="GoToAdminCategoryPageByIdActionGroup" stepKey="openAdminCategoryPageFirst">
+            <argument name="id" value="$category.id$"/>
+        </actionGroup>
+        <actionGroup ref="AdminCategoryPageOpenProductsInCategorySectionActionGroup" stepKey="openProductsInCategorySectionFirst"/>
+        <actionGroup ref="DisableMatchProductsByRuleActionGroup" stepKey="disableMatchProductsByRule"/>
+        <actionGroup ref="SortProductsByCriteriaInCategoryActionGroup" stepKey="setSortOrderInProductInCategory">
+            <argument name="criteria" value="Newest products first"/>
+        </actionGroup>
+        <actionGroup ref="SwitchToGridModeProductInCategoryActionGroup" stepKey="switchToGridMode"/>
+        <actionGroup ref="AdminSaveCategoryFormActionGroup" stepKey="saveCategoryWithProductsFirst"/>
+
+        <!-- Remove without saving -->
+
+        <actionGroup ref="AdminCategoryPageOpenProductsInCategorySectionActionGroup" stepKey="openProductsInCategorySectionSecond"/>
+        <!-- See total count 3 -->
+        <actionGroup ref="AssertAdminProductsInCategoryGridModeTotalCountActionGroup" stepKey="seeTotalCountOfProductsEquals3">
+            <argument name="amount" value="3"/>
+        </actionGroup>
+        <!-- Remove the 2nd product item -->
+        <click selector="{{AdminCategoryProductsGridSection.rowUnassign('2')}}" stepKey="removeSecondProductItem"/>
+        <!-- See total count 2 -->
+        <actionGroup ref="AssertAdminProductsInCategoryGridModeTotalCountActionGroup" stepKey="seeTotalCountOfProductsEquals2AfterRemoving"/>
+        <actionGroup ref="GoToAdminCategoryPageByIdActionGroup" stepKey="openAdminCategoryPageSecond">
+            <argument name="id" value="$category.id$"/>
+        </actionGroup>
+        <actionGroup ref="AdminCategoryPageOpenProductsInCategorySectionActionGroup" stepKey="openProductsInCategorySectionThird"/>
+        <!-- See total count 3 after reload -->
+        <actionGroup ref="AssertAdminProductsInCategoryGridModeTotalCountActionGroup" stepKey="seeTotalCountOfProductsEquals3IfWeDidntSaveChanges">
+            <argument name="amount" value="3"/>
+        </actionGroup>
+
+        <!-- Remove with saving -->
+
+        <!-- Remove the 2nd product item -->
+        <click selector="{{AdminCategoryProductsGridSection.rowUnassign('2')}}" stepKey="removeSecondProductItemAgain"/>
+        <!-- See total count 2 -->
+        <actionGroup ref="AssertAdminProductsInCategoryGridModeTotalCountActionGroup" stepKey="seeTotalCountOfProductsEquals2AfterRemovingAgain"/>
+        <actionGroup ref="AdminSaveCategoryFormActionGroup" stepKey="saveCategoryWithProductsSecond"/>
+        <actionGroup ref="AdminCategoryPageOpenProductsInCategorySectionActionGroup" stepKey="openProductsInCategorySectionForth"/>
+        <actionGroup ref="AssertAdminProductsInCategoryGridModeTotalCountActionGroup" stepKey="seeTotalCountOfProductsEquals2AfterSave"/>
+        <dontSee selector="{{AdminCategoryProductsGridSection.nameColumn}}" userInput="$product2.name$" stepKey="dontSeeProduct2InGrid"/>
+
+        <!-- Don't see product2 in storefront category -->
+        <actionGroup ref="AssertStorefrontProductAbsentOnCategoryPageActionGroup" stepKey="dontSeeProduct2OnStorefrontCategoryPage">
+            <argument name="categoryUrlKey" value="$category.custom_attributes[url_key]$"/>
+            <argument name="productName" value="$product2.name$"/>
+        </actionGroup>
+    </test>
+</tests>

@@ -1,0 +1,22 @@
+{
+    "magento_giftcard_amount": {
+        "column": {
+            "value_id": true,
+            "website_id": true,
+            "value": true,
+            "entity_id": true,
+            "attribute_id": true
+        },
+        "index": {
+            "MAGENTO_GIFTCARD_AMOUNT_ENTITY_ID": true,
+            "MAGENTO_GIFTCARD_AMOUNT_WEBSITE_ID": true,
+            "MAGENTO_GIFTCARD_AMOUNT_ATTRIBUTE_ID": true
+        },
+        "constraint": {
+            "PRIMARY": true,
+            "MAGENTO_GIFTCARD_AMOUNT_ENTT_ID_CAT_PRD_ENTT_ENTT_ID": true,
+            "MAGENTO_GIFTCARD_AMOUNT_WEBSITE_ID_STORE_WEBSITE_WEBSITE_ID": true,
+            "MAGENTO_GIFTCARD_AMOUNT_ATTRIBUTE_ID_EAV_ATTRIBUTE_ATTRIBUTE_ID": true
+        }
+    }
+}

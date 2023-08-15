@@ -1,0 +1,119 @@
+<?xml version="1.0"?>
+<!--
+/**
+ * Copyright © Magento, Inc. All rights reserved.
+ * See COPYING.txt for license details.
+ */
+-->
+<schema xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:noNamespaceSchemaLocation="urn:magento:framework:Setup/Declaration/Schema/etc/schema.xsd">
+    <table name="magento_customerbalance" resource="default" engine="innodb" comment="Enterprise Customerbalance">
+        <column xsi:type="int" name="balance_id" unsigned="true" nullable="false" identity="true"
+                comment="Balance Id"/>
+        <column xsi:type="int" name="customer_id" unsigned="true" nullable="false" identity="false"
+                default="0" comment="Customer Id"/>
+        <column xsi:type="smallint" name="website_id" unsigned="true" nullable="true" identity="false"
+                comment="Website Id"/>
+        <column xsi:type="decimal" name="amount" scale="4" precision="20" unsigned="false" nullable="false" default="0"
+                comment="Balance Amount"/>
+        <column xsi:type="varchar" name="base_currency_code" nullable="true" length="3" comment="Base Currency Code"/>
+        <constraint xsi:type="primary" referenceId="PRIMARY">
+            <column name="balance_id"/>
+        </constraint>
+        <constraint xsi:type="foreign" referenceId="MAGENTO_CUSTOMERBALANCE_WEBSITE_ID_STORE_WEBSITE_WEBSITE_ID"
+                    table="magento_customerbalance" column="website_id" referenceTable="store_website"
+                    referenceColumn="website_id" onDelete="SET NULL"/>
+        <constraint xsi:type="foreign" referenceId="MAGENTO_CUSTOMERBALANCE_CUSTOMER_ID_CUSTOMER_ENTITY_ENTITY_ID"
+                    table="magento_customerbalance" column="customer_id" referenceTable="customer_entity"
+                    referenceColumn="entity_id" onDelete="CASCADE"/>
+        <constraint xsi:type="unique" referenceId="MAGENTO_CUSTOMERBALANCE_CUSTOMER_ID_WEBSITE_ID">
+            <column name="customer_id"/>
+            <column name="website_id"/>
+        </constraint>
+        <index referenceId="MAGENTO_CUSTOMERBALANCE_WEBSITE_ID" indexType="btree">
+            <column name="website_id"/>
+        </index>
+    </table>
+    <table name="magento_customerbalance_history" resource="default" engine="innodb"
+           comment="Enterprise Customerbalance History">
+        <column xsi:type="int" name="history_id" unsigned="true" nullable="false" identity="true"
+                comment="History Id"/>
+        <column xsi:type="int" name="balance_id" unsigned="true" nullable="false" identity="false"
+                default="0" comment="Balance Id"/>
+        <column xsi:type="timestamp" name="updated_at" on_update="false" nullable="true" comment="Updated At"/>
+        <column xsi:type="smallint" name="action" unsigned="true" nullable="false" identity="false"
+                default="0" comment="Action"/>
+        <column xsi:type="decimal" name="balance_amount" scale="4" precision="20" unsigned="false" nullable="false"
+                default="0" comment="Balance Amount"/>
+        <column xsi:type="decimal" name="balance_delta" scale="4" precision="20" unsigned="false" nullable="false"
+                default="0" comment="Balance Delta"/>
+        <column xsi:type="varchar" name="additional_info" nullable="true" length="255" comment="Additional Info"/>
+        <column xsi:type="smallint" name="is_customer_notified" unsigned="true" nullable="false"
+                identity="false" default="0" comment="Is Customer Notified"/>
+        <constraint xsi:type="primary" referenceId="PRIMARY">
+            <column name="history_id"/>
+        </constraint>
+        <constraint xsi:type="foreign" referenceId="FK_2F00673A61BFB69DB9566CB6D775C80B"
+                    table="magento_customerbalance_history" column="balance_id" referenceTable="magento_customerbalance"
+                    referenceColumn="balance_id" onDelete="CASCADE"/>
+        <index referenceId="MAGENTO_CUSTOMERBALANCE_HISTORY_BALANCE_ID" indexType="btree">
+            <column name="balance_id"/>
+        </index>
+    </table>
+    <table name="quote" resource="checkout" comment="Sales Flat Quote">
+        <column xsi:type="decimal" name="customer_balance_amount_used" scale="4" precision="20" unsigned="false"
+                nullable="true" comment="Customer Balance Amount Used"/>
+        <column xsi:type="decimal" name="base_customer_bal_amount_used" scale="4" precision="20" unsigned="false"
+                nullable="true" comment="Base Customer Bal Amount Used"/>
+        <column xsi:type="int" name="use_customer_balance" unsigned="false" nullable="true"
+                identity="false" comment="Use Customer Balance"/>
+    </table>
+    <table name="quote_address" resource="checkout" comment="Sales Flat Quote Address">
+        <column xsi:type="decimal" name="base_customer_balance_amount" scale="4" precision="20" unsigned="false"
+                nullable="true" comment="Base Customer Balance Amount"/>
+        <column xsi:type="decimal" name="customer_balance_amount" scale="4" precision="20" unsigned="false"
+                nullable="true" comment="Customer Balance Amount"/>
+    </table>
+    <table name="sales_order" resource="sales" comment="Sales Flat Order">
+        <column xsi:type="decimal" name="base_customer_balance_amount" scale="4" precision="20" unsigned="false"
+                nullable="true" comment="Base Customer Balance Amount"/>
+        <column xsi:type="decimal" name="customer_balance_amount" scale="4" precision="20" unsigned="false"
+                nullable="true" comment="Customer Balance Amount"/>
+        <column xsi:type="decimal" name="base_customer_balance_invoiced" scale="4" precision="20" unsigned="false"
+                nullable="true" comment="Base Customer Balance Invoiced"/>
+        <column xsi:type="decimal" name="customer_balance_invoiced" scale="4" precision="20" unsigned="false"
+                nullable="true" comment="Customer Balance Invoiced"/>
+        <column xsi:type="decimal" name="base_customer_balance_refunded" scale="4" precision="20" unsigned="false"
+                nullable="true" comment="Base Customer Balance Refunded"/>
+        <column xsi:type="decimal" name="customer_balance_refunded" scale="4" precision="20" unsigned="false"
+                nullable="true" comment="Customer Balance Refunded"/>
+        <column xsi:type="decimal" name="bs_customer_bal_total_refunded" scale="4" precision="20" unsigned="false"
+                nullable="true" comment="Bs Customer Bal Total Refunded"/>
+        <column xsi:type="decimal" name="customer_bal_total_refunded" scale="4" precision="20" unsigned="false"
+                nullable="true" comment="Customer Bal Total Refunded"/>
+    </table>
+    <table name="sales_invoice" resource="sales" comment="Sales Flat Invoice">
+        <column xsi:type="decimal" name="base_customer_balance_amount" scale="4" precision="20" unsigned="false"
+                nullable="true" comment="Base Customer Balance Amount"/>
+        <column xsi:type="decimal" name="customer_balance_amount" scale="4" precision="20" unsigned="false"
+                nullable="true" comment="Customer Balance Amount"/>
+    </table>
+    <table name="sales_creditmemo" resource="sales" comment="Sales Flat Creditmemo">
+        <column xsi:type="decimal" name="base_customer_balance_amount" scale="4" precision="20" unsigned="false"
+                nullable="true" comment="Base Customer Balance Amount"/>
+        <column xsi:type="decimal" name="customer_balance_amount" scale="4" precision="20" unsigned="false"
+                nullable="true" comment="Customer Balance Amount"/>
+        <column xsi:type="decimal" name="bs_customer_bal_total_refunded" scale="4" precision="20" unsigned="false"
+                nullable="true" comment="Bs Customer Bal Total Refunded"/>
+        <column xsi:type="decimal" name="customer_bal_total_refunded" scale="4" precision="20" unsigned="false"
+                nullable="true" comment="Customer Bal Total Refunded"/>
+    </table>
+    <table name="sales_order_grid" resource="sales" comment="Sales Flat Order Grid">
+        <column xsi:type="decimal" name="refunded_to_store_credit" scale="4" precision="20" unsigned="false"
+                nullable="true"/>
+    </table>
+    <table name="magento_sales_order_grid_archive" resource="sales">
+        <column xsi:type="decimal" name="refunded_to_store_credit" scale="4" precision="20" unsigned="false"
+                nullable="true" comment="Refunded To Store Credit"/>
+    </table>
+</schema>

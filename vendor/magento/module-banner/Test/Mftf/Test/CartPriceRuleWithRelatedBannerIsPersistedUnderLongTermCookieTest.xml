@@ -1,0 +1,198 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+ /**
+  * Copyright © Magento, Inc. All rights reserved.
+  * See COPYING.txt for license details.
+  */
+-->
+
+<tests xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xsi:noNamespaceSchemaLocation="urn:magento:mftf:Test/etc/testSchema.xsd">
+    <test name="CartPriceRuleWithRelatedBannerIsPersistedUnderLongTermCookieTest">
+        <annotations>
+            <features value="Persistent"/>
+            <stories value="Cart Price Rule with related Banner for specific Customer Segment is persisted under long-term cookie"/>
+            <title value="Cart Price Rule with related Banner for specific Customer Segment is persisted under long-term cookie"/>
+            <description value="Verify that Cart Price Rule is persisted under long-term cookie. Verify Customer Group Membership and Segmentation persistence under long-term cookie. Verify related Banners persistence under long-term cookie"/>
+            <severity value="BLOCKER"/>
+            <testCaseId value="MC-16583"/>
+            <group value="persistent"/>
+            <group value="WYSIWYGDisabled"/>
+        </annotations>
+        <before>
+            <!--Enabled The Persistent Shopping Cart feature -->
+            <createData entity="PersistentConfigEnabled" stepKey="enablePersistent"/>
+            <createData entity="PersistentLogoutClearDisable" stepKey="persistentLogoutClearDisable"/>
+            <!--Create simple product-->
+            <createData entity="SimpleProduct2" stepKey="createProduct">
+                <field key="price">150</field>
+            </createData>
+            <!--Create Cart Price Rule with specific coupon and add condition-->
+            <createData entity="SalesRuleSpecificCouponWithPercentDiscount" stepKey="createCartPriceRule"/>
+            <createData entity="SimpleSalesRuleCoupon" stepKey="createCouponForCartPriceRule">
+                <requiredEntity createDataKey="createCartPriceRule"/>
+            </createData>
+            <!--Create customer-->
+            <actionGroup ref="StorefrontCreateNewAccountNewsletterCheckedActionGroup" stepKey="createCustomer"/>
+            <!-- Login to Admin -->
+            <actionGroup ref="AdminLoginActionGroup" stepKey="loginAsAdmin"/>
+            <!--Create customer segment width two conditions-->
+            <actionGroup ref="AdminMediaGalleryEnhancedEnableActionGroup" stepKey="enableOldMediaGallery">
+                <argument name="enabled" value="0"/>
+            </actionGroup>
+            <actionGroup ref="CreateCustomerSegmentActionGroup" stepKey="createCustomerSegment"/>
+            <actionGroup ref="FindAndOpenCustomerSegmentActionGroup" stepKey="openCustomerSegment">
+                <argument name="segmentName" value="{{CustomerSegmentForNoorders.name}}"/>
+            </actionGroup>
+            <actionGroup ref="SetSubscribedConditionActionGroup" stepKey="setSubscribedCondition"/>
+            <actionGroup ref="SetCustomerGroupConditionActionGroup" stepKey="setCustomerGroupCondition"/>
+            <!-- Run cron for start matchCustomerSegmentProcessor -->
+            <actionGroup ref="CliConsumerStartActionGroup" stepKey="startMessageQueue">
+                <argument name="consumerName" value="{{AdminCustomerSegmentConsumerData.consumerName}}"/>
+                <argument name="maxMessages" value="{{AdminCustomerSegmentConsumerData.messageLimit}}"/>
+            </actionGroup>
+            <reloadPage stepKey="refreshPage"/>
+            <waitForPageLoad stepKey="waitForPageLoaded"/>
+            <!-- Cart Price add condition -->
+            <amOnPage url="{{AdminCartPriceRuleEditPage.url($$createCartPriceRule.rule_id$$)}}" stepKey="openEditRule"/>
+            <actionGroup ref="SetCartAttributeConditionForCartPriceRuleActionGroup" stepKey="setCartAttributeConditionForCartPriceRule">
+                <argument name="attributeName" value="{{SalesRuleAddressConditions.subtotal}}"/>
+                <argument name="operatorType" value="greater than"/>
+                <argument name="value" value="100"/>
+            </actionGroup>
+            <!--Create new dynamic block-->
+            <actionGroup ref="NavigateToCreateDynamicBlockPageActionGroup" stepKey="navigateToCreatedDynamicBlock"/>
+            <actionGroup ref="FillDynamicBlockActionGroup" stepKey="fillDynamicBlock">
+                <argument name="bannerData" value="sampleBanner"/>
+                <argument name="customerSegmentName" value="{{CustomerSegmentForNoorders.name}}"/>
+            </actionGroup>
+            <actionGroup ref="InsertImageToDynamicBlockActionGroup" stepKey="insertImageToDynamicBlockActionGroup">
+                <argument name="imageFileName" value="{{ImageUpload1.value}}"/>
+            </actionGroup>
+            <actionGroup ref="SaveAndContinueDynamicBlockActionGroup" stepKey="clickSaveAndContinue"/>
+            <!-- Go to Assign Cart Rule To Banner -->
+            <actionGroup ref="AssignRelatedCartPriceRuleToBannerActionGroup" stepKey="assignCartPriceRuleToBanner">
+                <argument name="CartPriceRule" value="$$createCartPriceRule$$"/>
+            </actionGroup>
+
+            <actionGroup ref="AdminCreateDynamicBlocksRotatorWidgetActionGroup" stepKey="createDynamicBlocksRotatorWidget">
+                <argument name="widget" value="DynamicBlocksRotatorWidget"/>
+            </actionGroup>
+        </before>
+        <after>
+            <!--Revert persistent configuration to default-->
+            <createData entity="PersistentConfigDefault" stepKey="setDefaultPersistentState"/>
+            <!-- Delete product -->
+            <deleteData createDataKey="createProduct" stepKey="deleteProduct"/>
+            <!-- Delete Cart Price Rule -->
+            <deleteData createDataKey="createCartPriceRule" stepKey="deleteCartPriceRule"/>
+            <!-- Delete Customer and clear filter -->
+            <actionGroup ref="DeleteCustomerFromAdminActionGroup" stepKey="deleteCustomerFromAdmin"/>
+            <actionGroup ref="AdminClearCustomersFiltersActionGroup" stepKey="clearCustomersFilters"/>
+            <!--Delete customer segment-->
+            <actionGroup ref="FindAndDeleteCustomerSegmentActionGroup" stepKey="deleteCustomerSegment">
+                <argument name="segmentName" value="{{CustomerSegmentForNoorders.name}}"/>
+            </actionGroup>
+            <!-- Delete Banner and clear filter -->
+            <actionGroup ref="DeleteBannerActionGroup" stepKey="deleteBanner">
+                <argument name="bannerName" value="{{sampleBanner.Name}}"/>
+            </actionGroup>
+            <actionGroup ref="ClearFiltersAdminDataGridActionGroup" stepKey="clearBannerFilter"/>
+            <!-- Delete Widget and clear filter -->
+            <actionGroup ref="AdminDeleteWidgetActionGroup" stepKey="deleteWidget">
+                <argument name="widget" value="DynamicBlocksRotatorWidget"/>
+            </actionGroup>
+            <actionGroup ref="ClearFiltersAdminDataGridActionGroup" stepKey="clearWidgetFilter"/>
+            <actionGroup ref="AdminMediaGalleryEnhancedEnableActionGroup" stepKey="disableOldMediaGallery">
+                <argument name="enabled" value="1"/>
+            </actionGroup>
+            <!-- Logout Admin -->
+            <actionGroup ref="AdminLogoutActionGroup" stepKey="logout"/>
+            <magentoCron groups="index" stepKey="reindex"/>
+        </after>
+        <!--Check that Customer is subscribed to general subscription-->
+        <actionGroup ref="CheckSubscribedNewsletterActionGroup" stepKey="checkSubscribedNewsletter"/>
+        <!--Open the Product Page and Add the product to Cart-->
+        <amOnPage url="{{StorefrontProductPage.url($$createProduct.custom_attributes[url_key]$$)}}" stepKey="navigateToSimpleProductPage"/>
+        <actionGroup ref="AddToCartFromStorefrontProductPageActionGroup" stepKey="addToCartFromStorefrontProductPage">
+            <argument name="productName" value="$$createProduct.name$$"/>
+        </actionGroup>
+        <!--Go to Checkout-->
+        <actionGroup ref="ClickViewAndEditCartFromMiniCartActionGroup" stepKey="goToCheckoutFromMinicart"/>
+        <!--Check order summary in checkout-->
+        <actionGroup ref="AssertStorefrontCheckoutPaymentSummarySubtotalActionGroup" stepKey="assertTotal">
+            <argument name="orderSubtotal" value="$150"/>
+        </actionGroup>
+        <!--Apply coupon code-->
+        <actionGroup ref="StorefrontApplyCouponActionGroup" stepKey="couponApplyCoupon">
+            <argument name="coupon" value="$$createCouponForCartPriceRule$$"/>
+        </actionGroup>
+        <!--Check whether the coupon has been used.-->
+        <wait time="30" stepKey="waitForBanners"/>
+        <reloadPage stepKey="reloadPage"/>
+        <waitForElementVisible selector="{{StorefrontBannerSection.bannerImage}}" stepKey="waitImageBanner"/>
+        <seeElement selector="{{StorefrontCMSPageSection.imageSource(ImageUpload1.value)}}" stepKey="seeImageBanner"/>
+        <actionGroup ref="StorefrontCheckCouponAppliedActionGroup" stepKey="couponCheckAppliedDiscount">
+            <argument name="rule" value="$$createCouponForCartPriceRule$$"/>
+            <argument name="discount" value="$$createCouponForCartPriceRule.discount_amount$$"/>
+        </actionGroup>
+        <!--Check order summary in checkout-->
+        <actionGroup ref="AssertStorefrontCheckoutPaymentSummaryTotalActionGroup" stepKey="assertSummaryTotalAfterApplyCoupon">
+            <argument name="orderTotal" value="$135"/>
+        </actionGroup>
+        <!--Click Sign Out and check welcome message-->
+        <actionGroup ref="StorefrontCustomerLogoutActionGroup" stepKey="logoutInStorefront"/>
+        <waitForElementVisible selector="{{StorefrontPanelHeaderSection.welcomeMessage}}" stepKey="waitWelcomeMessage"/>
+        <actionGroup ref="StorefrontAssertPersistentCustomerWelcomeMessageActionGroup" stepKey="seeWelcomeMessage">
+            <argument name="customerFullName" value="{{CustomerEntityOne.fullname}}"/>
+        </actionGroup>
+        <!--Go to the shopping cart page-->
+        <amOnPage url="{{CheckoutCartPage.url}}" stepKey="goToCheckout"/>
+        <!--Check whether the coupon has been used.-->
+        <wait time="30" stepKey="waitForBannersAfterUpdate"/>
+        <reloadPage stepKey="reloadPageAfterUpdate"/>
+        <waitForElementVisible selector="{{StorefrontBannerSection.bannerImage}}" stepKey="waitImageBannerAfterApplyCoupon"/>
+        <seeElement selector="{{StorefrontCMSPageSection.imageSource(ImageUpload1.value)}}" stepKey="seeImageBannerAfterApplyCoupon"/>
+        <actionGroup ref="StorefrontCheckCouponAppliedActionGroup" stepKey="checkAppliedDiscount">
+            <argument name="rule" value="$$createCouponForCartPriceRule$$"/>
+            <argument name="discount" value="$$createCouponForCartPriceRule.discount_amount$$"/>
+        </actionGroup>
+        <!--Check order summary in checkout-->
+        <actionGroup ref="AssertStorefrontCheckoutPaymentSummaryTotalActionGroup" stepKey="assertSummaryTotalAfterApplyCouponAgain">
+            <argument name="orderTotal" value="$135"/>
+        </actionGroup>
+        <!--Delete coupon and applied it again-->
+        <actionGroup ref="StorefrontCancelCouponActionGroup" stepKey="clickCancelCoupon"/>
+        <actionGroup ref="StorefrontApplyCouponActionGroup" stepKey="couponApplyCouponAgain">
+            <argument name="coupon" value="$$createCouponForCartPriceRule$$"/>
+        </actionGroup>
+        <!--Click the Not you? link. And check welcome message-->
+        <click selector="{{StorefrontPanelHeaderSection.notYouLink}}" stepKey="clickNotYou"/>
+        <waitForPageLoad stepKey="waitForPageLoad"/>
+        <actionGroup ref="StorefrontAssertPersistentCustomerWelcomeMessageNotPresentActionGroup" stepKey="customerNotYouNotPresent">
+            <argument name="customerFullName" value="{{CustomerEntityOne.fullname}}"/>
+        </actionGroup>
+        <!--See the Cart from Minicart no items-->
+        <actionGroup ref="AssertMiniCartEmptyActionGroup" stepKey="assertMiniCartEmpty"/>
+        <!--Go to the shopping cart page-->
+        <amOnPage url="{{CheckoutCartPage.url}}" stepKey="goToCheckoutPage"/>
+        <wait time="30" stepKey="waitForBannersAfterCouponApply"/>
+        <reloadPage stepKey="reloadPageOnCheckout"/>
+        <actionGroup ref="AssertStorefrontCheckoutPaymentSummaryTotalMissingActionGroup" stepKey="dontSeeSummaryTotal"/>
+        <dontSeeElement selector="{{StorefrontCMSPageSection.imageSource(ImageUpload1.value)}}" stepKey="dontSeeImageBanner"/>
+        <!--Open the Product Page and Add the product to Cart-->
+        <amOnPage url="{{StorefrontProductPage.url($$createProduct.custom_attributes[url_key]$$)}}" stepKey="goToProductPage"/>
+        <actionGroup ref="AddToCartFromStorefrontProductPageActionGroup" stepKey="addToCartFromStorefrontProductPageAgain">
+            <argument name="productName" value="$$createProduct.name$$"/>
+        </actionGroup>
+        <!--Go to Checkout-->
+        <actionGroup ref="ClickViewAndEditCartFromMiniCartActionGroup" stepKey="goToCheckoutFromMinicartAgain"/>
+        <!--Try to apply the coupon code from preconditions-->
+        <actionGroup ref="StorefrontApplyCouponActionGroup" stepKey="applyCouponCodeFromPreconditions">
+            <argument name="coupon" value="$$createCouponForCartPriceRule$$"/>
+        </actionGroup>
+        <waitForElementVisible selector="{{StorefrontMessagesSection.error}}" stepKey="waitError"/>
+        <see selector="{{StorefrontMessagesSection.error}}" userInput='The coupon code "$$createCouponForCartPriceRule.code$$" is not valid.'
+             stepKey="seeErrorMessages"/>
+    </test>
+</tests>

@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+ /**
+  * Copyright © Magento, Inc. All rights reserved.
+  * See COPYING.txt for license details.
+  */
+-->
+<actionGroups xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+              xsi:noNamespaceSchemaLocation="urn:magento:mftf:Test/etc/actionGroupSchema.xsd">
+    <actionGroup name="DeleteTargetRuleByNameActionGroup">
+        <arguments>
+            <argument name="ruleName" type="entity"/>
+        </arguments>
+        <amOnPage url="{{AdminTargetRuleConfigurationPage.url}}" stepKey="goToAdminTargetRulePage"/>
+        <waitForPageLoad stepKey="waitForPageLoad"/>
+        <conditionalClick selector="{{AdminDataGridHeaderSection.clearFilters}}" dependentSelector="{{AdminDataGridHeaderSection.clearFilters}}" visible="true" stepKey="clickClearFilters"/>
+        <fillField selector="{{AdminTargetRuleGridFilterSection.filterByNameInput}}" userInput="{{ruleName}}" stepKey="filterByName"/>
+        <click selector="{{AdminTargetRuleGridFilterSection.searchButton}}" stepKey="doFilter"/>
+        <click selector="{{AdminTargetRuleGridFilterSection.rowByIndex('1')}}" stepKey="goToEditRulePage"/>
+        <waitForPageLoad stepKey="waitForAdminTargetRuleSeactionLoad"/>
+        <click selector="{{AdminTargetRuleSection.delete}}" stepKey="clickDeleteButton"/>
+        <click selector="{{AdminTargetRuleSection.modalAcceptButton}}" stepKey="confirmDelete"/>
+    </actionGroup>
+</actionGroups>

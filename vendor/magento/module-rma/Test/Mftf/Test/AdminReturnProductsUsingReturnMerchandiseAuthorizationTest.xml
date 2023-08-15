@@ -1,0 +1,194 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+ /**
+  * Copyright © Magento, Inc. All rights reserved.
+  * See COPYING.txt for license details.
+  */
+-->
+<tests xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:noNamespaceSchemaLocation="urn:magento:mftf:Test/etc/testSchema.xsd">
+    <test name="AdminReturnProductsUsingReturnMerchandiseAuthorizationTest">
+        <annotations>
+            <features value="Return Merchandise Authorization"/>
+            <stories value="Return Products Using Return Merchandise Authorization"/>
+            <title value="Return Products Using Return Merchandise Authorization"/>
+            <description value="Return Products Using Return Merchandise Authorization"/>
+            <severity value="CRITICAL"/>
+            <testCaseId value="MAGETWO-12432"/>
+            <group value="rma"/>
+            <group value="cloud_smoke"/>
+        </annotations>
+        <!-- Preconditions  -->
+        <before>
+            <createData entity="RmaSettingsConfig" stepKey="returnConfiguration"/>
+            <!--Create Simple product-->
+            <createData entity="_defaultCategory" stepKey="createCategory"/>
+            <createData entity="SimpleProduct" stepKey="createSimpleProduct">
+                <field key="price">10.00</field>
+                <requiredEntity createDataKey="createCategory"/>
+            </createData>
+            <!--Create Configurable product-->
+            <actionGroup ref="AdminCreateApiConfigurableProductActionGroup" stepKey="createConfigProduct">
+                <argument name="productName" value="Config123"/>
+            </actionGroup>
+        </before>
+        <after>
+            <deleteData createDataKey="createSimpleProduct" stepKey="deleteSimpleProduct"/>
+            <deleteData createDataKey="createConfigProductCreateConfigProduct" stepKey="deleteConfigProduct"/>
+            <deleteData createDataKey="createConfigProductAttributeCreateConfigProduct" stepKey="deleteConfigProductAttribute"/>
+            <deleteData createDataKey="createConfigChildProduct1CreateConfigProduct" stepKey="deleteConfigChildProduct1"/>
+            <deleteData createDataKey="createConfigChildProduct2CreateConfigProduct" stepKey="deleteConfigChildProduct2"/>
+            <deleteData createDataKey="createCategory" stepKey="deleteCategory"/>
+            <createData entity="RestoreDefaultRmaSettingsConfig" stepKey="returnDefaultsConfiguration"/>
+            <!-- Open Order Page and clear filter -->
+            <amOnPage url="{{AdminOrdersPage.url}}" stepKey="onOrdersPage"/>
+            <actionGroup ref="ClearFiltersAdminDataGridActionGroup" stepKey="resetOrderFilter"/>
+            <!-- Open Return Page and clear filter  -->
+            <amOnPage url="{{AdminReturnsPage.url}}" stepKey="goToReturnPage" />
+            <actionGroup ref="ClearFiltersAdminDataGridActionGroup" stepKey="resetReturnFilter"/>
+            <actionGroup ref="AdminLogoutActionGroup" stepKey="logout"/>
+            <magentoCron groups="index" stepKey="reindexInvalidatedIndices"/>
+        </after>
+        <!-- Add simple and configurable products to shopping cart -->
+        <amOnPage url="{{StorefrontProductPage.url($$createSimpleProduct.custom_attributes[url_key]$$)}}" stepKey="amOnSimpleProductPage"/>
+        <actionGroup ref="StorefrontAddProductToCartActionGroup" stepKey="cartAddSimpleProductToCart">
+            <argument name="product" value="$$createSimpleProduct$$"/>
+            <argument name="productCount" value="1"/>
+        </actionGroup>
+        <amOnPage url="{{StorefrontProductPage.url($$createConfigProductCreateConfigProduct.custom_attributes[url_key]$$)}}" stepKey="amOnConfigurableProductPage"/>
+        <selectOption selector="{{StorefrontProductInfoMainSection.productOptionSelect('$$createConfigProductAttributeCreateConfigProduct.attribute[frontend_labels][0][label]$$')}}"  userInput="$$createConfigProductAttributeOption1CreateConfigProduct.option[store_labels][0][label]$$" stepKey="selectOption"/>
+        <waitForPageLoad stepKey="waitForOptionLoad"/>
+        <actionGroup ref="StorefrontAddProductToCartActionGroup" stepKey="cartAddConfigurableProductToCart">
+            <argument name="product" value="$$createConfigProductCreateConfigProduct$$"/>
+            <argument name="productCount" value="2"/>
+        </actionGroup>
+        <actionGroup ref="GoToCheckoutFromMinicartActionGroup" stepKey="goToCheckout"/>
+        <actionGroup ref="GuestCheckoutFillingShippingSectionActionGroup" stepKey="addAddress">
+            <argument name="customerVar" value="Simple_US_Customer_NY"/>
+            <argument name="customerAddressVar" value="US_Address_NY"/>
+        </actionGroup>
+        <actionGroup ref="CheckoutSelectCheckMoneyOrderPaymentActionGroup" stepKey="clickCheckMoneyOrderPayment"/>
+        <!-- Place Order -->
+        <actionGroup ref="ClickPlaceOrderActionGroup" stepKey="clickPlaceOrder"/>
+        <seeElement selector="{{CheckoutSuccessMainSection.success}}"   stepKey="orderIsSuccessfullyPlaced" />
+        <grabTextFrom selector="{{CheckoutSuccessMainSection.orderNumber}}" stepKey="grabOrderNumber"/>
+        <actionGroup ref="AdminLoginActionGroup" stepKey="loginAsAdmin"/>
+        <actionGroup ref="FilterOrderGridByIdActionGroup" stepKey="filterOrderGrid">
+            <argument name="orderId" value="{$grabOrderNumber}"/>
+        </actionGroup>
+        <click selector="{{AdminOrdersGridSection.firstRow}}" stepKey="clickOrderRow"/>
+        <waitForPageLoad stepKey="waitForOrderPageIsLoaded"/>
+        <!--Create Invoice and Shipment for this Order.-->
+        <click selector="{{AdminOrderDetailsMainActionsSection.invoice}}" stepKey="clickInvoiceButton"/>
+        <see selector="{{AdminHeaderSection.pageTitle}}" userInput="New Invoice" stepKey="seeNewInvoiceInPageTitle" after="clickInvoiceButton"/>
+        <waitForPageLoad stepKey="waitForInvoicePageOpened"/>
+        <click selector="{{AdminInvoiceMainActionsSection.submitInvoice}}" stepKey="clickSubmitInvoice"/>
+        <click selector="{{AdminOrderDetailsMainActionsSection.ship}}" stepKey="clickShipAction"/>
+        <seeInCurrentUrl url="{{AdminShipmentNewPage.url}}" stepKey="seeOrderShipmentUrl" after="clickShipAction"/>
+        <click selector="{{AdminShipmentMainActionsSection.submitShipment}}" stepKey="clickSubmitShipment" after="seeOrderShipmentUrl"/>
+        <waitForPageLoad stepKey="waitForShipmentSaved"/>
+        <!-- Steps -->
+        <!-- Steps 1: Go to frontend -->
+        <amOnPage url="{{StorefrontHomePage.url}}" stepKey="goToFrontend"/>
+        <!-- Steps 2: Click on "Orders and Returns" link in the footer -->
+        <scrollTo selector="{{StorefrontFooterSection.ordersAndReturnsLink}}" stepKey="scrollToOrdersAndReturnsLink"/>
+        <click selector="{{StorefrontFooterSection.ordersAndReturnsLink}}" stepKey="clickOrdersAndReturnsLink"/>
+        <waitForPageLoad stepKey="waitForReturnPageLoad"/>
+        <!-- Steps 3: Fill Order and Returns form with Test Data -->
+        <fillField selector="{{StorefrontGuestOrderSearchSection.orderId}}" userInput="{$grabOrderNumber}" stepKey="inputOrderId"/>
+        <fillField selector="{{StorefrontGuestOrderSearchSection.billingLastName}}" userInput="{{Simple_US_Customer_NY.lastname}}" stepKey="inputBillingLastName"/>
+        <selectOption selector="{{StorefrontGuestOrderSearchSection.findOrderBy}}" userInput="email" stepKey="selectFindOrderByEmail"/>
+        <fillField selector="{{StorefrontGuestOrderSearchSection.email}}" userInput="{{Simple_US_Customer_NY.email}}" stepKey="inputEmail"/>
+        <!-- Steps 4: Click "Continue" -->
+        <scrollTo selector="{{StorefrontGuestOrderSearchSection.continue}}" stepKey="scrollToContinueButton"/>
+        <click selector="{{StorefrontGuestOrderSearchSection.continue}}" stepKey="clickContinueButton"/>
+        <waitForPageLoad stepKey="waitForPageLoad2"/>
+        <seeElement selector="{{StorefrontGuestOrderViewSection.orderInformationTab}}" stepKey="orderInformationTabVisible"/>
+        <!-- Steps 5: Click 'Return' link -->
+        <click selector="{{StorefrontGuestOrderViewSection.returnLink}}" stepKey="clickReturnLink"/>
+        <waitForPageLoad stepKey="waitForPageLoad3"/>
+        <seeElement selector="{{StorefrontGuestCreateReturnSection.newReturnPage}}" stepKey="newReturnPageOpened"/>
+        <!-- Steps 6: Fill form 'Return Items Information': -->
+        <scrollTo selector="{{StorefrontGuestCreateReturnSection.item('0')}}" stepKey="scrollToFirstItem"/>
+        <selectOption selector="{{StorefrontGuestCreateReturnSection.item('0')}}"  userInput="$$createSimpleProduct.name$$" stepKey="selectSimpleProduct"/>
+        <fillField selector="{{StorefrontGuestCreateReturnSection.quantityToReturn('0')}}"  userInput="1" stepKey="quantityToReturn1"/>
+        <selectOption selector="{{StorefrontGuestCreateReturnSection.resolution('0')}}"  userInput="Refund" stepKey="refundResolution"/>
+        <selectOption selector="{{StorefrontGuestCreateReturnSection.itemCondition('0')}}"  userInput="Opened" stepKey="openedItemCondition"/>
+        <selectOption selector="{{StorefrontGuestCreateReturnSection.reasonToReturn('0')}}"  userInput="Wrong Size" stepKey="wrongSizereasonToReturn"/>
+        <!-- Steps 7: Click "Add Item to Return" -->
+        <click selector="{{StorefrontGuestCreateReturnSection.addItemToReturn}}" stepKey="clickAddItemToReturnButton"/>
+        <!-- Steps 8: Fill form 'Return Items Information': -->
+        <scrollTo selector="{{StorefrontGuestCreateReturnSection.item('1')}}" stepKey="scrollToSecondItem"/>
+        <selectOption selector="{{StorefrontGuestCreateReturnSection.item('1')}}"  userInput="$$createConfigProductCreateConfigProduct.name$$ ($$createConfigProductAttributeOption1CreateConfigProduct.option[store_labels][0][label]$$)" stepKey="selectConfigurableProduct"/>
+        <fillField selector="{{StorefrontGuestCreateReturnSection.quantityToReturn('1')}}"  userInput="1" stepKey="quantityToReturn2"/>
+        <selectOption selector="{{StorefrontGuestCreateReturnSection.resolution('1')}}"  userInput="Refund" stepKey="refundResolution2"/>
+        <selectOption selector="{{StorefrontGuestCreateReturnSection.itemCondition('1')}}"  userInput="Opened" stepKey="openedItemCondition2"/>
+        <selectOption selector="{{StorefrontGuestCreateReturnSection.reasonToReturn('1')}}"  userInput="Wrong Size" stepKey="wrongSizereasonToReturn2"/>
+        <!-- Steps 9: Click 'Submit'-->
+        <click selector="{{StorefrontGuestCreateReturnSection.submit}}" stepKey="clickSubmitButton"/>
+        <waitForPageLoad stepKey="waitForPageLoad4"/>
+        <see selector="{{StorefrontMessagesSection.success}}" userInput="You submitted Return #" stepKey="seeSuccessMessage"/>
+        <seeElement selector="{{StorefrontGuestReturnGridSection.returnGrid}}" stepKey="seeReturnGrid"/>
+        <seeElement selector="{{StorefrontGuestReturnGridSection.returnItemId}}" stepKey="seeReturn"/>
+        <grabTextFrom selector="{{StorefrontGuestReturnGridSection.returnItemId}}" stepKey="grabReturnId"/>
+        <!-- Steps 10: Go to admin as Admin User -->
+        <amOnPage url="{{AdminLoginPage.url}}" stepKey="navigateToAdmin"/>
+        <!-- Steps 11: Go to Sales > Orders Open the order created Go to its 'Returns' tab -->
+        <amOnPage url="{{AdminOrdersPage.url}}" stepKey="onOrdersPage2"/>
+        <click selector="{{AdminOrdersGridSection.firstRow}}" stepKey="clickOrderRow2"/>
+        <waitForPageLoad stepKey="waitForOrderPageIsLoaded2"/>
+        <click selector="{{AdminOrderDetailsMainActionsSection.returnsTab}}" stepKey="goToReturnsTab"/>
+        <seeElement selector="{{AdminOrderReturnsTabSection.orderReturnGrid}}" stepKey="seeOrderReturnGrid"/>
+        <fillField selector="{{AdminOrderReturnsTabSection.returnSearchFilter}}" userInput="{$grabReturnId}" stepKey="inputReturnId"/>
+        <click selector="{{AdminOrderReturnsTabSection.search}}" stepKey="clickReturnSearchButton"/>
+        <see selector="{{AdminOrderReturnsTabSection.returnIdRow}}" userInput="{$grabReturnId}" stepKey="seeReturnId"/>
+        <!-- Steps 12: Open the Return Go to 'Return Items' tab and verify return info -->
+        <click selector="{{AdminOrderReturnsTabSection.firstRow}}" stepKey="clickToReturn"/>
+        <waitForPageLoad stepKey="waitForPageLoad5"/>
+        <click selector="{{AdminReturnInformationSection.returnItems}}" stepKey="clickToReturnItemsTab"/>
+        <seeElement selector="{{AdminReturnItemsTabSection.returnItemsGrid}}" stepKey="seeReturnItemsGrid"/>
+        <!-- Simple product-->
+        <see selector="{{AdminReturnItemsTabSection.productName('1')}}" userInput="$$createSimpleProduct.name$$" stepKey="seeSimpleProductName"/>
+        <see selector="{{AdminReturnItemsTabSection.requested('1')}}" userInput="1" stepKey="seeRequested"/>
+        <see selector="{{AdminReturnItemsTabSection.returnReason('1')}}" userInput="Wrong Size" stepKey="seeReturnReason"/>
+        <see selector="{{AdminReturnItemsTabSection.itemCondition('1')}}" userInput="Opened" stepKey="seeItemCondition"/>
+        <see selector="{{AdminReturnItemsTabSection.resolution('1')}}" userInput="Refund" stepKey="seeResolution"/>
+        <!-- Configurable product-->
+        <see selector="{{AdminReturnItemsTabSection.productName('2')}}" userInput="$$createConfigProductCreateConfigProduct.name$$ ($$createConfigProductAttributeOption1CreateConfigProduct.option[store_labels][0][label]$$)" stepKey="seeConfigurableProductName"/>
+        <see selector="{{AdminReturnItemsTabSection.requested('2')}}" userInput="1" stepKey="seeRequested2"/>
+        <see selector="{{AdminReturnItemsTabSection.returnReason('2')}}" userInput="Wrong Size" stepKey="seeReturnReason2"/>
+        <see selector="{{AdminReturnItemsTabSection.itemCondition('2')}}" userInput="Opened" stepKey="seeItemCondition2"/>
+        <see selector="{{AdminReturnItemsTabSection.resolution('2')}}" userInput="Refund" stepKey="seeResolution2"/>
+        <!-- Steps 13: Authorize Simple and Configurable products -->
+        <fillField selector="{{AdminReturnItemsTabSection.authorized('1')}}" userInput="1" stepKey="setAuthorizedQtyForSimple"/>
+        <fillField selector="{{AdminReturnItemsTabSection.authorized('2')}}" userInput="1" stepKey="setAuthorizedQtyForConfigurable"/>
+        <selectOption selector="{{AdminReturnItemsTabSection.status('1')}}" userInput="Authorized" stepKey="setStatusForSimple"/>
+        <selectOption selector="{{AdminReturnItemsTabSection.status('2')}}" userInput="Authorized" stepKey="setStatusForConfigurable"/>
+        <click selector="{{AdminEditReturnMainActionsSection.save}}" stepKey="clickSaveButton"/>
+        <see selector="{{AdminMessagesSection.success}}" userInput="You saved the RMA request." stepKey="seeSuccessMessage2"/>
+        <fillField selector="{{AdminReturnGridFilterSection.returnIdFilter}}" userInput="{$grabReturnId}" stepKey="inputOrderId2"/>
+        <click selector="{{AdminReturnGridFilterSection.search}}" stepKey="clickApplyFilter"/>
+        <see selector="{{AdminReturnGridSection.rowStatus('1')}}" userInput="Authorized" stepKey="checkAuthorizedStatus"/>
+        <click selector="{{AdminReturnGridSection.rowViewAction('1')}}" stepKey="clickView"/>
+        <click selector="{{AdminReturnInformationSection.returnItems}}" stepKey="clickToReturnItemsTab2"/>
+
+        <!-- Steps 14: Process returns for simple and configurable Save Return -->
+        <fillField selector="{{AdminReturnItemsTabSection.returned('1')}}" userInput="1" stepKey="setReturnedQtyForSimple"/>
+        <fillField selector="{{AdminReturnItemsTabSection.returned('2')}}" userInput="1" stepKey="setReturnedQtyForConfigurable"/>
+        <selectOption selector="{{AdminReturnItemsTabSection.status('1')}}" userInput="Return Received" stepKey="setStatusForSimple2"/>
+        <selectOption selector="{{AdminReturnItemsTabSection.status('2')}}" userInput="Return Received" stepKey="setStatusForConfigurable2"/>
+        <click selector="{{AdminEditReturnMainActionsSection.save}}" stepKey="clickSaveButton2"/>
+        <see selector="{{AdminMessagesSection.success}}" userInput="You saved the RMA request." stepKey="seeSuccessMessage3"/>
+        <see selector="{{AdminReturnGridSection.rowStatus('1')}}" userInput="Return Received" stepKey="checkReturnReceivedStatus"/>
+        <click selector="{{AdminReturnGridSection.rowViewAction('1')}}" stepKey="clickView2"/>
+        <click selector="{{AdminReturnInformationSection.returnItems}}" stepKey="clickToReturnItemsTab3"/>
+        <!-- Steps 15: Approve return for simple and configurable Save Return -->
+        <fillField selector="{{AdminReturnItemsTabSection.approved('1')}}" userInput="1" stepKey="setApprovedQtyForSimple"/>
+        <fillField selector="{{AdminReturnItemsTabSection.approved('2')}}" userInput="1" stepKey="setApprovedQtyForConfigurable"/>
+        <selectOption selector="{{AdminReturnItemsTabSection.status('1')}}" userInput="Approved" stepKey="setStatusForSimple3"/>
+        <selectOption selector="{{AdminReturnItemsTabSection.status('2')}}" userInput="Approved" stepKey="setStatusForConfigurable3"/>
+        <click selector="{{AdminEditReturnMainActionsSection.save}}" stepKey="clickSaveButton3"/>
+        <see selector="{{AdminMessagesSection.success}}" userInput="You saved the RMA request." stepKey="seeSuccessMessage4"/>
+        <see selector="{{AdminReturnGridSection.rowStatus('1')}}" userInput="Processed and Closed" stepKey="checkProcessedAndClosedStatus"/>
+    </test>
+</tests>

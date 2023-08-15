@@ -1,0 +1,23 @@
+{
+    "staging_update": {
+        "column": {
+            "id": true,
+            "start_time": true,
+            "name": true,
+            "description": true,
+            "rollback_id": true,
+            "is_campaign": true,
+            "is_rollback": true,
+            "moved_to": true
+        },
+        "index": {
+            "STAGING_UPDATE_IS_CAMPAIGN": true,
+            "STAGING_UPDATE_NAME_DESCRIPTION": true,
+            "STAGING_UPDATE_GRID_NAME_DESCRIPTION": true,
+            "STAGING_UPDATE_START_TIME": true
+        },
+        "constraint": {
+            "PRIMARY": true
+        }
+    }
+}

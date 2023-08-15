@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+ /**
+  * Copyright © Magento, Inc. All rights reserved.
+  * See COPYING.txt for license details.
+  */
+-->
+<tests xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:noNamespaceSchemaLocation="urn:magento:mftf:Test/etc/testSchema.xsd">
+    <test name="CustomerCustomAddressAttributeDefaultFormVisibilityTest">
+        <annotations>
+            <features value="CustomerCustomAttributes"/>
+            <stories value="MAGETWO-95316: Exception is thrown when Customer Address attribute with unique admin options is saved"/>
+            <title value="Check default customer address custom attribute visibility on forms"/>
+            <description value="Check that attribute appears in the appropriate forms when Use in Forms is left empty"/>
+            <severity value="CRITICAL"/>
+            <testCaseId value="MC-6189"/>
+            <group value="customer"/>
+        </annotations>
+        <before>
+            <!--Login as admin-->
+            <actionGroup ref="AdminLoginActionGroup" stepKey="LoginAsAdmin"/>
+        </before>
+        <after>
+            <amOnPage url="{{CustomerAddressAttributesPage.url}}" stepKey="navigateToCustomerAddress"/>
+            <actionGroup ref="AdminDeleteCustomerAttribute" stepKey="adminDeleteCustomerAttribute">
+                <argument name="defaultLabel" value="{{AttributeDropdownData.label}}"/>
+            </actionGroup>
+            <actionGroup ref="AdminLogoutActionGroup" stepKey="logOut"/>
+        </after>
+        <!--Create new Customer attribute-->
+        <amOnPage url="{{CustomerAddressAttributesPage.url}}" stepKey="navigateToCustomerAddress"/>
+        <waitForPageLoad stepKey="waitForCustomerAttributePageLoaded"/>
+        <actionGroup ref="AdminCreateCustomerNewAttributeWithoutFormsSelected" stepKey="adminCreateCustomerAttribute">
+            <argument name="defaultLabel" value="{{AttributeDropdownData.label}}"/>
+            <argument name="attributeCode" value="{{AttributeDropdownData.code}}"/>
+            <argument name="inputType" value="{{AttributeDropdownData.inputType}}"/>
+            <argument name="sortOrder" value="{{AttributeDropdownData.sortOrder}}"/>
+            <argument name="message" value="You saved the customer address attribute."/>
+        </actionGroup>
+
+        <amOnPage url="{{AdminOrdersPage.url}}" stepKey="navigateToOrderIndexPage"/>
+        <waitForPageLoad stepKey="waitForIndexPageLoad"/>
+        <click selector="{{AdminOrdersGridSection.createNewOrder}}" stepKey="clickCreateNewOrder"/>
+        <click selector="{{AdminOrderFormActionSection.CreateNewCustomer}}" stepKey="clickCreateCustomer"/>
+        <waitForElementVisible selector="#order-billing_address_{{AttributeDropdownData.code}}" stepKey="seeBillingFieldInForm"/>
+        <waitForElementVisible selector="#order-shipping_address_{{AttributeDropdownData.code}}" stepKey="seeShippingFieldInForm"/>
+    </test>
+</tests>

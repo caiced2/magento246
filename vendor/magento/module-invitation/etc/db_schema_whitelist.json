@@ -1,0 +1,61 @@
+{
+    "magento_invitation": {
+        "column": {
+            "invitation_id": true,
+            "customer_id": true,
+            "invitation_date": true,
+            "email": true,
+            "referral_id": true,
+            "protection_code": true,
+            "signup_date": true,
+            "store_id": true,
+            "group_id": true,
+            "message": true,
+            "status": true
+        },
+        "index": {
+            "MAGENTO_INVITATION_CUSTOMER_ID": true,
+            "MAGENTO_INVITATION_REFERRAL_ID": true,
+            "MAGENTO_INVITATION_STORE_ID": true,
+            "MAGENTO_INVITATION_GROUP_ID": true
+        },
+        "constraint": {
+            "PRIMARY": true,
+            "MAGENTO_INVITATION_GROUP_ID_CUSTOMER_GROUP_CUSTOMER_GROUP_ID": true,
+            "MAGENTO_INVITATION_CUSTOMER_ID_CUSTOMER_ENTITY_ENTITY_ID": true,
+            "MAGENTO_INVITATION_REFERRAL_ID_CUSTOMER_ENTITY_ENTITY_ID": true,
+            "MAGENTO_INVITATION_STORE_ID_STORE_STORE_ID": true
+        }
+    },
+    "magento_invitation_status_history": {
+        "column": {
+            "history_id": true,
+            "invitation_id": true,
+            "invitation_date": true,
+            "status": true
+        },
+        "index": {
+            "MAGENTO_INVITATION_STATUS_HISTORY_INVITATION_ID": true
+        },
+        "constraint": {
+            "PRIMARY": true,
+            "FK_9221D90F23B9A75B6A9E48D763D01D02": true
+        }
+    },
+    "magento_invitation_track": {
+        "column": {
+            "track_id": true,
+            "inviter_id": true,
+            "referral_id": true
+        },
+        "index": {
+            "MAGENTO_INVITATION_TRACK_REFERRAL_ID": true
+        },
+        "constraint": {
+            "PRIMARY": true,
+            "MAGENTO_INVITATION_TRACK_INVITER_ID_CUSTOMER_ENTITY_ENTITY_ID": true,
+            "MAGENTO_INVITATION_TRACK_REFERRAL_ID_CUSTOMER_ENTITY_ENTITY_ID": true,
+            "MAGENTO_INVITATION_TRACK_INVITER_ID_REFERRAL_ID": true
+        }
+    }
+}

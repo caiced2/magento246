@@ -1,0 +1,55 @@
+<?='<?php';?>
+
+<?php
+/** @var \Magento\AdobeCommerceEventsGenerator\Generator\ModuleBlock $block */
+/** @var string $name */
+/** @var array $plugins */
+/** @var array $observers */
+?>
+# Generated code. DO NOT EDIT!
+
+/**
+ * Copyright © Magento, Inc. All rights reserved.
+ * See COPYING.txt for license details.
+ */
+namespace <?= $block->getNamespace(); ?>\EventCode;
+
+/**
+ * Auto generated class with list of available event codes for <?= strtolower($name) ?>
+
+ */
+class <?= $name; ?>
+
+{
+    private array $eventCodes = [
+<?php
+    if (isset($plugins)) {
+        foreach ($plugins as $plugin) {
+            foreach ($plugin['methods'] as $method) {
+                echo sprintf(
+                        "        '%s' => '%s %s',\n",
+                        $method['eventCode'],
+                        $plugin['interfaceShort'],
+                        $method['nameLower']
+                );
+            }
+        }
+    }
+    if (isset($observers)) {
+        foreach ($observers as $class => $observer) {
+            echo sprintf("        '%s' => '%s',\n", $class, $observer);
+        }
+    }
+?>
+    ];
+
+    /**
+     * Returns list of available event codes
+     *
+     * @return array
+     */
+    public function getCodes(): array
+    {
+        return $this->eventCodes;
+    }
+}

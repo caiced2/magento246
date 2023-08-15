@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+ /**
+  * Copyright © Magento, Inc. All rights reserved.
+  * See COPYING.txt for license details.
+  */
+-->
+
+<actionGroups xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:noNamespaceSchemaLocation="urn:magento:mftf:Test/etc/actionGroupSchema.xsd">
+    <actionGroup name="AdminSelectDynamicBlockCustomerSegmentActionGroup">
+        <annotations>
+            <description>Selects the specified Customer Segment on the New/Edit Dynamic Block Page</description>
+        </annotations>
+        <arguments>
+            <argument name="customerSegment" defaultValue="{{sampleBanner.CustomerSegment}}" type="string"/>
+        </arguments>
+        <waitForElementVisible selector="{{SelectCustomerSegmentSection.CustomerSegmentDropdown}}" stepKey="waitForCustomerSegmentDropdown"/>
+        <click selector="{{SelectCustomerSegmentSection.CustomerSegmentDropdown}}" stepKey="openCustomerSegmentDropdown"/>
+        <click selector="{{SelectCustomerSegmentSection.CustomerSegmentOption(customerSegment)}}" stepKey="clickCustomerSegmentCheckbox"/>
+        <click selector="{{AdminBannerBasicActionSection.activeDoneButton}}" stepKey="clickDone"/>
+        <waitForElementNotVisible selector="{{AdminBannerBasicActionSection.activeDoneButton}}" stepKey="waitForCustomerSegmentDropdownClosed"/>
+    </actionGroup>
+</actionGroups>

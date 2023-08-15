@@ -1,0 +1,22 @@
+<?xml version="1.0"?>
+<!--
+/**
+ * Copyright © Magento, Inc. All rights reserved.
+ * See COPYING.txt for license details.
+ */
+-->
+<config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="urn:magento:module:Magento_Config:etc/system_file.xsd">
+    <system>
+        <section id="cataloginventory">
+            <group id="item_options" >
+                <field id="use_deferred_stock_update" translate="label" type="select" sortOrder="3.1" showInDefault="1" showInWebsite="0" showInStore="0">
+                    <label>Use deferred Stock update</label>
+                    <source_model>Magento\Config\Model\Config\Source\Yesno</source_model>
+                    <depends>
+                        <field id="backorders" separator=",">1,2</field>
+                    </depends>
+                </field>
+            </group>
+        </section>
+    </system>
+</config>

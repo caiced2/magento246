@@ -1,0 +1,58 @@
+<!--
+/**
+ * Copyright © Magento, Inc. All rights reserved.
+ * See COPYING.txt for license details.
+ */
+-->
+<div>
+    <div class="block-schedule-table"
+         resizable="handles: 's', maxHeight: '.schedule-table-wrapper'"
+         if="hasData()">
+        <div class="block-content">
+            <div class="schedule-table-wrapper" data-role="grid-wrapper">
+                <table class="schedule-table" data-role="grid">
+                    <tbody class="schedule-item" repeat="foreach: rows, item: '$row'">
+                    <tr class="schedule-start">
+                        <td class="schedule-date"
+                            outerfasteach="data: getRegion('start-datetime-area'), as: '$col'"
+                            css="getFieldClass()"
+                            click="getFieldHandler($row())"
+                            template="{name:getBody(), data:getLabel($row())}"></td>
+                        <td class="schedule-time"
+                            outerfasteach="data: getRegion('start-datetime-area'), as: '$col'"
+                            click="getFieldHandler($row())"
+                            template="{name:getBody(), data: getLabel($row(), timeFormat)}"></td>
+                        <td class="schedule-label" data-bind="i18n: 'Start'"></td>
+                        <td rowspan="2" class="schedule-details">
+                            <div outerfasteach="data: getRegion('details-area'), as: '$col'"
+                                 css="getFieldClass()"
+                                 click="getFieldHandler($row())"
+                                 template="getBody()"></div>
+                        </td>
+                        <td rowspan="2"
+                            class="schedule-actions"
+                            outerfasteach="data: getRegion('actions-area'), as: '$col'"
+                            css="getFieldClass()"
+                            click="getFieldHandler($row())"
+                            template="getBody()" ></td>
+                    </tr>
+                    <tr class="schedule-end"
+                        if="$row().end_time">
+                        <td class="schedule-date"
+                            outerfasteach="data: getRegion('end-datetime-area'), as: '$col'"
+                            css="getFieldClass()"
+                            click="getFieldHandler($row())"
+                            template="{name:getBody(), data: getLabel($row())}"></td>
+                        <td class="schedule-time"
+                            outerfasteach="data: getRegion('end-datetime-area'), as: '$col'"
+                            css="getFieldClass()"
+                            click="getFieldHandler($row())"
+                            template="{name:getBody(), data: getLabel($row(), timeFormat)}"></td>
+                        <td class="schedule-label" data-bind="i18n: 'End'"></td>
+                    </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>

@@ -1,0 +1,149 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+ /**
+  * Copyright © Magento, Inc. All rights reserved.
+  * See COPYING.txt for license details.
+  */
+-->
+
+<tests xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xsi:noNamespaceSchemaLocation="urn:magento:mftf:Test/etc/testSchema.xsd">
+  <test name="VerifiesProductPriceIsSameWhenPriceScopeIsGlobalTest">
+    <annotations>
+      <features value="Staging"/>
+      <stories value="Staging updates"/>
+      <title value="Verifies Product Price Is Same When Price Scope Is Set To Be Global"/>
+      <description value="Verifies Product Price Is Same When Price Scope Is Set To Be Global"/>
+      <severity value="MAJOR"/>
+      <testCaseId value="AC-4026"/>
+      <group value="staging"/>
+    </annotations>
+    <before>
+
+      <!-- Login as Admin -->
+      <actionGroup ref="AdminLoginActionGroup" stepKey="loginAsAdmin"/>
+
+      <!-- Set in Stores > Configuration > Catalog > Catalog > Price - Catalog Price Scope = “Global” -->
+      <magentoCLI command="config:set {{GlobalCatalogPriceScopeConfigData.path}} {{GlobalCatalogPriceScopeConfigData.value}}" stepKey="setPriceScopeGlobal"/>
+
+      <!--Create First website -->
+      <actionGroup ref="AdminCreateWebsiteActionGroup" stepKey="createFirstWebsite">
+        <argument name="newWebsiteName" value="{{NewWebSiteData.name}}"/>
+        <argument name="websiteCode" value="{{NewWebSiteData.code}}"/>
+      </actionGroup>
+      <!-- Create First Store -->
+      <actionGroup ref="AdminCreateNewStoreGroupActionGroup" stepKey="adminCreateNewStore">
+        <argument name="website" value="{{NewWebSiteData.name}}"/>
+        <argument name="storeGroupName" value="{{NewStoreData.name}}"/>
+        <argument name="storeGroupCode" value="{{NewStoreData.code}}"/>
+      </actionGroup>
+      <!-- Create First Store View -->
+      <actionGroup ref="AdminCreateStoreViewActionGroup" stepKey="createStoreView">
+        <argument name="StoreGroup" value="NewStoreData"/>
+        <argument name="customStore" value="storeViewData1"/>
+      </actionGroup>
+      <magentoCron groups="index" stepKey="reindex"/>
+
+      <!--Create Second website-->
+      <actionGroup ref="AdminCreateWebsiteActionGroup" stepKey="createSecondWebsite" >
+        <argument name="newWebsiteName" value="{{customWebsite.name}}"/>
+        <argument name="websiteCode" value="{{customWebsite.code}}"/>
+      </actionGroup>
+      <!-- Create Second Store -->
+      <actionGroup ref="AdminCreateNewStoreGroupActionGroup" stepKey="createStore" >
+        <argument name="website" value="{{customWebsite.name}}"/>
+        <argument name="storeGroupName" value="{{customStoreGroup.name}}"/>
+        <argument name="storeGroupCode" value="{{customStoreGroup.code}}"/>
+      </actionGroup>
+      <!-- Create Second Store View-->
+      <actionGroup ref="AdminCreateStoreViewActionGroup" stepKey="createFirstStoreView">
+        <argument name="StoreGroup" value="customStoreGroup"/>
+        <argument name="customStore" value="storeViewData3"/>
+      </actionGroup>
+
+      <!-- create category, simple product(keeping price as 10) -->
+      <createData entity="SimpleSubCategory" stepKey="createCategory"/>
+      <createData entity="SimpleProduct" stepKey="createSimpleProduct">
+        <field key="price">10</field>
+        <requiredEntity createDataKey="createCategory"/>
+      </createData>
+    </before>
+
+    <after>
+      <!--Delete Category, Product -->
+      <deleteData createDataKey="createSimpleProduct" stepKey="deleteProduct"/>
+      <deleteData createDataKey="createCategory" stepKey="deleteCategory"/>
+
+      <!-- Delete First Website -->
+      <actionGroup ref="AdminDeleteWebsiteActionGroup" stepKey="deleteFirstWebsite">
+        <argument name="websiteName" value="{{NewWebSiteData.name}}"/>
+      </actionGroup>
+      <!-- Delete Second Website -->
+      <actionGroup ref="AdminDeleteWebsiteActionGroup" stepKey="deleteSecondWebsite">
+        <argument name="websiteName" value="{{customWebsite.name}}"/>
+      </actionGroup>
+      <magentoCron groups="index" stepKey="reindex"/>
+    </after>
+
+    <!-- Open Product Edit Page -->
+    <amOnPage url="{{AdminProductEditPage.url($$createSimpleProduct.id$$)}}" stepKey="openEditProductPage"/>
+
+    <!--"Product in Websites": select both Websites-->
+    <actionGroup ref="ProductSetWebsiteActionGroup" stepKey="ProductSetWebsiteFirst">
+      <argument name="website" value="{{NewWebSiteData.name}}"/>
+    </actionGroup>
+    <actionGroup ref="ProductSetWebsiteActionGroup" stepKey="ProductSetWebsiteSecond">
+      <argument name="website" value="{{customWebsite.name}}"/>
+    </actionGroup>
+
+    <!-- Click on Schedule New Update Button -->
+    <click stepKey="scheduleNewUpdateBtn" selector="{{AdminStagingSlideOutSection.scheduleNewUpdateBtn}}"/>
+
+    <!--Switch to Store view 1-->
+    <actionGroup ref="AdminSwitchStoreViewModalActionGroup" stepKey="switchStoreFirst">
+      <argument name="storeView" value="storeViewData1.name"/>
+    </actionGroup>
+
+    <!-- Create the new staging update -->
+    <generateDate stepKey="generateEndDate" before="fillOutNewStaging" date="+1 week" format="m/d/Y g:i A"/>
+    <actionGroup stepKey="fillOutNewStaging" ref="CreateProductPriceStagingActionGroup">
+      <argument name="stagingUpdate" value="_defaultStaging"/>
+      <argument name="endDate" value="{$generateEndDate}"/>
+    </actionGroup>
+
+    <!--Click Edit/View for created update-->
+    <click selector="{{AdminStagingSlideOutSection.viewEdit}}" stepKey="clickViewEdit"/>
+    <waitForPageLoad stepKey="waitForViewAndEditSlideOut"/>
+
+    <!-- Assert the price to $5 in All Store view mode -->
+    <grabValueFrom selector="{{AdminStagingSlideOutSection.priceInStagingPage}}" stepKey="grabPrice"/>
+    <assertEquals  message="Price is matching" stepKey="assertFieldPriceInAllStoreView">
+      <expectedResult type="string">5.00</expectedResult>
+      <actualResult type="variable">grabPrice</actualResult>
+    </assertEquals>
+
+    <!--Switch to Store view 1-->
+    <actionGroup ref="AdminSwitchStoreViewModalActionGroup" stepKey="switchStoreToFirstStoreView">
+      <argument name="storeView" value="storeViewData1.name"/>
+    </actionGroup>
+
+    <!-- Assert the price to $5 in Store View 1 -->
+    <grabValueFrom selector="{{AdminStagingSlideOutSection.priceInStagingPage}}" stepKey="grabPriceFromFirstStoreView"/>
+    <assertEquals  message="Price is matching" stepKey="assertFieldPriceFromFirstStoreView">
+      <expectedResult type="string">5.00</expectedResult>
+      <actualResult type="variable">grabPrice</actualResult>
+    </assertEquals>
+
+    <!--Switch to Store view 2-->
+    <actionGroup ref="AdminSwitchStoreViewModalActionGroup" stepKey="switchStoreToSecondStoreView">
+      <argument name="storeView" value="storeViewData3.name"/>
+    </actionGroup>
+
+    <!-- Assert the price to $5 in Store View 2 -->
+    <grabValueFrom selector="{{AdminStagingSlideOutSection.priceInStagingPage}}" stepKey="grabPriceFromSecondStoreView"/>
+    <assertEquals  message="Price is matching" stepKey="assertFieldInSecondStoreView">
+      <expectedResult type="string">5.00</expectedResult>
+      <actualResult type="variable">grabPrice</actualResult>
+    </assertEquals>
+  </test>
+</tests>

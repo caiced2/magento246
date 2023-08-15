@@ -1,0 +1,151 @@
+<?xml version="1.0"?>
+<!--
+/**
+ * Copyright © Magento, Inc. All rights reserved.
+ * See COPYING.txt for license details.
+ */
+-->
+<page xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="urn:magento:framework:View/Layout/etc/page_configuration.xsd">
+    <body>
+        <referenceBlock name="adminhtml.logging.grid.container">
+            <block class="Magento\Backend\Block\Widget\Grid" name="logging.grid" as="grid">
+                <arguments>
+                    <argument name="id" xsi:type="string">loggingLogGrid</argument>
+                    <argument name="dataSource" xsi:type="object" shared="false">Magento\Logging\Model\ResourceModel\Event\Collection</argument>
+                    <argument name="default_sort" xsi:type="string">time</argument>
+                    <argument name="default_dir" xsi:type="string">DESC</argument>
+                    <argument name="save_parameters_in_session" xsi:type="string">1</argument>
+                    <argument name="use_ajax" xsi:type="string">1</argument>
+                    <argument name="grid_url" xsi:type="url" path="*/*/grid">
+                        <param name="_current">1</param>
+                    </argument>
+                </arguments>
+                <block class="Magento\Backend\Block\Widget\Grid\Export" name="logging.grid.export" as="grid.export">
+                    <arguments>
+                        <argument name="exportTypes" xsi:type="array">
+                            <item name="csv" xsi:type="array">
+                                <item name="urlPath" xsi:type="string">*/*/exportCsv</item>
+                                <item name="label" xsi:type="string" translate="true">CSV</item>
+                            </item>
+                            <item name="excel" xsi:type="array">
+                                <item name="urlPath" xsi:type="string">*/*/exportXml</item>
+                                <item name="label" xsi:type="string" translate="true">Excel XML</item>
+                            </item>
+                        </argument>
+                    </arguments>
+                </block>
+                <block class="Magento\Backend\Block\Widget\Grid\ColumnSet" name="adminhtml.logging.archive.grid.columnSet" as="grid.columnSet">
+                    <arguments>
+                        <argument name="rowUrl" xsi:type="array">
+                            <item name="path" xsi:type="string">*/*/details</item>
+                            <item name="extraParamsTemplate" xsi:type="array">
+                                <item name="event_id" xsi:type="string">getId</item>
+                            </item>
+                        </argument>
+                    </arguments>
+                    <block class="Magento\Backend\Block\Widget\Grid\Column" name="adminhtml.logging.archive.grid.columnSet.time" as="time">
+                        <arguments>
+                            <argument name="header" xsi:type="string" translate="true">Time</argument>
+                            <argument name="index" xsi:type="string">time</argument>
+                            <argument name="type" xsi:type="string">datetime</argument>
+                            <argument name="wwidth" xsi:type="string">160</argument>
+                        </arguments>
+                    </block>
+                    <block class="Magento\Backend\Block\Widget\Grid\Column" name="adminhtml.logging.archive.grid.columnSet.event" as="event">
+                        <arguments>
+                            <argument name="header" xsi:type="string" translate="true">Action Group</argument>
+                            <argument name="index" xsi:type="string">event_code</argument>
+                            <argument name="type" xsi:type="string">options</argument>
+                            <argument name="sortable" xsi:type="string">0</argument>
+                            <argument name="options" xsi:type="options" model="Magento\Logging\Model\ResourceModel\Grid\ActionsGroup"/>
+                        </arguments>
+                    </block>
+                    <block class="Magento\Backend\Block\Widget\Grid\Column" name="adminhtml.logging.archive.grid.columnSet.action" as="action">
+                        <arguments>
+                            <argument name="header" xsi:type="string" translate="true">Action</argument>
+                            <argument name="index" xsi:type="string">action</argument>
+                            <argument name="type" xsi:type="string">options</argument>
+                            <argument name="sortable" xsi:type="string">0</argument>
+                            <argument name="options" xsi:type="options" model="Magento\Logging\Model\ResourceModel\Grid\Actions"/>
+                        </arguments>
+                    </block>
+                    <block class="Magento\Backend\Block\Widget\Grid\Column" name="adminhtml.logging.archive.grid.columnSet.ip" as="ip">
+                        <arguments>
+                            <argument name="header" xsi:type="string" translate="true">IP Address</argument>
+                            <argument name="index" xsi:type="string">ip</argument>
+                            <argument name="type" xsi:type="string">text</argument>
+                            <argument name="filter" xsi:type="string">Magento\Logging\Block\Adminhtml\Grid\Filter\Ip</argument>
+                            <argument name="renderer" xsi:type="string">Magento\Backend\Block\Widget\Grid\Column\Renderer\Text</argument>
+                            <argument name="sortable" xsi:type="string">0</argument>
+                            <argument name="width" xsi:type="string">125</argument>
+                            <argument name="filter_condition_callback" xsi:type="array">
+                                <item name="object" xsi:type="object">Magento\Logging\Helper\Data</item>
+                                <item name="method" xsi:type="string">filterIPv6</item>
+                            </argument>
+                        </arguments>
+                    </block>
+                    <block class="Magento\Backend\Block\Widget\Grid\Column" name="adminhtml.logging.archive.grid.columnSet.user" as="user">
+                        <arguments>
+                            <argument name="header" xsi:type="string" translate="true">Username</argument>
+                            <argument name="index" xsi:type="string">user</argument>
+                            <argument name="type" xsi:type="string">text</argument>
+                            <argument name="escape" xsi:type="string">1</argument>
+                            <argument name="filter" xsi:type="string">Magento\Logging\Block\Adminhtml\Grid\Filter\User</argument>
+                            <argument name="sortable" xsi:type="string">0</argument>
+                            <argument name="width" xsi:type="string">150</argument>
+                        </arguments>
+                    </block>
+                    <block class="Magento\Backend\Block\Widget\Grid\Column" name="adminhtml.logging.archive.grid.columnSet.status" as="status">
+                        <arguments>
+                            <argument name="header" xsi:type="string" translate="true">Result</argument>
+                            <argument name="index" xsi:type="string">status</argument>
+                            <argument name="type" xsi:type="string">options</argument>
+                            <argument name="options" xsi:type="options" model="Magento\Logging\Model\ResourceModel\Grid\Statuses"/>
+                            <argument name="sortable" xsi:type="string">0</argument>
+                            <argument name="width" xsi:type="string">100</argument>
+                        </arguments>
+                    </block>
+                    <block class="Magento\Backend\Block\Widget\Grid\Column" name="adminhtml.logging.archive.grid.columnSet.fullaction" as="fullaction">
+                        <arguments>
+                            <argument name="header" xsi:type="string" translate="true">Full Action Name</argument>
+                            <argument name="index" xsi:type="string">fullaction</argument>
+                            <argument name="type" xsi:type="string">text</argument>
+                            <argument name="sortable" xsi:type="string">0</argument>
+                        </arguments>
+                    </block>
+                    <block class="Magento\Backend\Block\Widget\Grid\Column" name="adminhtml.logging.archive.grid.columnSet.info" as="info">
+                        <arguments>
+                            <argument name="header" xsi:type="string" translate="true">Details</argument>
+                            <argument name="index" xsi:type="string">info</argument>
+                            <argument name="type" xsi:type="string">text</argument>
+                            <argument name="sortable" xsi:type="string">0</argument>
+                            <argument name="filter" xsi:type="string">Magento\Backend\Block\Widget\Grid\Column\Filter\Text</argument>
+                            <argument name="renderer" xsi:type="string">Magento\Logging\Block\Adminhtml\Grid\Renderer\Details</argument>
+                            <argument name="width" xsi:type="string">100</argument>
+                        </arguments>
+                    </block>
+                    <block class="Magento\Backend\Block\Widget\Grid\Column" name="adminhtml.logging.archive.grid.columnSet.view" as="view">
+                        <arguments>
+                            <argument name="header" xsi:type="string" translate="true">Full Details</argument>
+                            <argument name="index" xsi:type="string">info</argument>
+                            <argument name="sortable" xsi:type="string">0</argument>
+                            <argument name="width" xsi:type="string">50</argument>
+                            <argument name="type" xsi:type="string">action</argument>
+                            <argument name="getter" xsi:type="string">getId</argument>
+                            <argument name="actions" xsi:type="array">
+                                <item name="view_action" xsi:type="array">
+                                    <item name="caption" xsi:type="string" translate="true">View</item>
+                                    <item name="url" xsi:type="array">
+                                        <item name="base" xsi:type="string">*/*/details</item>
+                                    </item>
+                                    <item name="field" xsi:type="string">event_id</item>
+                                </item>
+                            </argument>
+                            <argument name="filter" xsi:type="string">0</argument>
+                        </arguments>
+                    </block>
+                </block>
+            </block>
+        </referenceBlock>
+    </body>
+</page>

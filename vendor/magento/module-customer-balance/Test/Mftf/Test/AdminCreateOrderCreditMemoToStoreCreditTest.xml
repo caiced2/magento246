@@ -1,0 +1,101 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+ /**
+  * Copyright © Magento, Inc. All rights reserved.
+  * See COPYING.txt for license details.
+  */
+-->
+
+<tests xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xsi:noNamespaceSchemaLocation="urn:magento:mftf:Test/etc/testSchema.xsd">
+    <test name="AdminCreateOrderCreditMemoToStoreCreditTest">
+        <annotations>
+            <stories value="Credit memo entity"/>
+            <features value="Sales"/>
+            <title value="Admin can create credit memo to store credit."/>
+            <description value="Logged in customer places order and pays with reward points. Admin invoices and creates credit memo for order. Reward points are refunded."/>
+            <severity value="MAJOR"/>
+            <testCaseId value="MC-25634"/>
+            <group value="customerBalance"/>
+            <group value="sales"/>
+        </annotations>
+
+        <before>
+            <!--Set default flat rate shipping method settings-->
+            <magentoCLI command="config:set {{EnableFlatRateConfigData.path}} {{EnableFlatRateConfigData.value}}" stepKey="enableFlatRate"/>
+            <!--Create Product-->
+            <createData entity="SimpleProduct2" stepKey="createProduct">
+                <field key="price">100</field>
+            </createData>
+            <!--Create customer-->
+            <createData entity="Simple_US_Customer" stepKey="createCustomer"/>
+
+            <actionGroup ref="StorefrontCustomerLogoutActionGroup" stepKey="logoutCustomerFromStorefront"/>
+            <actionGroup ref="AdminLoginActionGroup" stepKey="loginAsAdmin"/>
+        </before>
+
+        <after>
+            <actionGroup ref="StorefrontCustomerLogoutActionGroup" stepKey="logoutStorefront"/>
+            <!--Delete product-->
+            <deleteData createDataKey="createProduct" stepKey="deleteProduct"/>
+            <!--Delete customer-->
+            <deleteData createDataKey="createCustomer" stepKey="deleteCustomer"/>
+            <!--Clear filters on orders grid-->
+            <actionGroup ref="AdminOrdersGridClearFiltersActionGroup" stepKey="clearOrdersFilters"/>
+            <comment userInput="BIC workaround" stepKey="logoutCustomerFromStorefront"/>
+            <actionGroup ref="AdminLogoutActionGroup" stepKey="logoutFromAdmin"/>
+        </after>
+
+        <!--Login to storefront as previously created customer-->
+        <actionGroup ref="LoginToStorefrontActionGroup" stepKey="loginAsCustomer">
+            <argument name="Customer" value="$$createCustomer$$"/>
+        </actionGroup>
+        <!-- Add simple product to cart -->
+        <actionGroup ref="AddSimpleProductToCartActionGroup" stepKey="addProductToCart">
+            <argument name="product" value="$$createProduct$$"/>
+        </actionGroup>
+        <!--Go to Checkout-->
+        <actionGroup ref="GoToCheckoutFromMinicartActionGroup" stepKey="goToCheckoutFromMinicart"/>
+        <waitForElement selector="{{CheckoutShippingSection.isShippingStep}}" stepKey="waitForShippingSectionLoaded"/>
+        <seeElement selector="{{CheckoutShippingSection.selectedShippingAddress}}" stepKey="seeSavedAddressSelected"/>
+        <waitForElementVisible selector="{{CheckoutShippingMethodsSection.shippingMethodFlatRate}}" stepKey="waitForShippingMethodIsVisible"/>
+        <actionGroup ref="CheckoutSelectFlatRateShippingMethodActionGroup" stepKey="selectFlatRateShippingMethod"/>
+        <actionGroup ref="StorefrontCheckoutForwardFromShippingStepActionGroup" stepKey="clickNextButton"/>
+
+        <!--Place order-->
+        <actionGroup ref="CheckoutSelectCheckMoneyOrderPaymentActionGroup" stepKey="customerSelectCheckMoneyOrderPayment"/>
+        <actionGroup ref="CheckoutPlaceOrderActionGroup" stepKey="placeOrder">
+            <argument name="orderNumberMessage" value="CONST.successCheckoutOrderNumberMessage"/>
+            <argument name="emailYouMessage" value="CONST.successCheckoutEmailYouMessage"/>
+        </actionGroup>
+        <grabTextFrom selector="{{CheckoutSuccessMainSection.orderNumber22}}" stepKey="grabOrderNumber"/>
+
+        <!-- Search for Order in the order grid -->
+        <actionGroup ref="OpenOrderByIdActionGroup" stepKey="openOrderById">
+            <argument name="orderId" value="{$grabOrderNumber}"/>
+        </actionGroup>
+
+        <!-- Create invoice -->
+        <actionGroup ref="StartCreateInvoiceFromOrderPageActionGroup" stepKey="startCreateInvoiceFromOrderPage"/>
+        <actionGroup ref="SubmitInvoiceActionGroup" stepKey="submitInvoice"/>
+        <see selector="{{AdminOrderDetailsInformationSection.orderStatus}}" userInput="Processing" stepKey="seeOrderProcessing"/>
+
+        <!-- Create shipment -->
+        <actionGroup ref="GoToShipmentIntoOrderActionGroup" stepKey="goToShipmentIntoOrder"/>
+        <actionGroup ref="SubmitShipmentIntoOrderActionGroup" stepKey="submitShipment"/>
+        <see selector="{{AdminOrderDetailsInformationSection.orderStatus}}" userInput="Complete" stepKey="seeOrderComplete"/>
+
+        <!--Create credit memo-->
+        <actionGroup ref="AdminStartCreateCreditMemoFromOrderPageActionGroup" stepKey="startToCreateCreditMemo"/>
+        <!--Submit credit memo with full refund to store credit-->
+        <waitForElementVisible selector="{{AdminCreditMemoTotalSection.refundStoreCredit}}" stepKey="waitForRefundStoreCreditElement"/>
+        <checkOption selector="{{AdminCreditMemoTotalSection.refundStoreCredit}}" stepKey="selectRefundToCredit"/>
+        <fillField selector="{{AdminCreditMemoTotalSection.refundStoreCreditAmount}}" userInput="105" stepKey="fillRefundStoreCreditAmount"/>
+        <seeInField selector="{{AdminCreditMemoTotalSection.refundStoreCreditAmount}}" userInput="105" stepKey="seeCorrectPrefillInRefundStoreCreditAmount"/>
+        <actionGroup ref="UpdateCreditMemoTotalsActionGroup" stepKey="updateCreditMemoTotals"/>
+        <actionGroup ref="SubmitCreditMemoActionGroup" stepKey="submitCreditMemo"/>
+        <see selector="{{AdminOrderDetailsInformationSection.orderStatus}}" userInput="Closed" stepKey="seeOrderClosed"/>
+        <!--Credit memo action is not available after full refund-->
+        <dontSeeElement selector="{{AdminOrderDetailsMainActionsSection.creditMemo}}" stepKey="creditMemoActionNotAvailable"/>
+    </test>
+</tests>

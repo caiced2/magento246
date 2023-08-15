@@ -1,0 +1,33 @@
+<!--
+/**
+ * Copyright © Magento, Inc. All rights reserved.
+ * See COPYING.txt for license details.
+ */
+-->
+<!--@subject {{trans "Store Credit update"}} @-->
+<!--@vars {
+"var store.frontend_name":"Store Name",
+"var name|escape":"Customer Name",
+"var balance":"Customer Store Credit Balance",
+"template config_path=\"design\/email\/footer_template\"":"Email Footer Template",
+"template config_path=\"design\/email\/header_template\"":"Email Header Template",
+"var logo_alt":"Email Logo Image Alt",
+"var logo_url":"Email Logo Image URL",
+"store url=\"\"":"Store URL",
+"var this.getUrl($store, '',[_nosid:1])":"Current Store URL"
+} @-->
+
+{{template config_path="design/email/header_template"}}
+
+<p class="greeting">{{trans "%name," name=$name}}</p>
+<p>
+    {{trans
+        'We have updated your <a href="%store_url">%store_name</a> account and you have credit that you can use for future purchases.'
+
+        store_url="$this.getUrl($store, '',[_nosid:1])"
+        store_name="$store.frontend_name"
+    |raw}}
+</p>
+<p><strong>{{trans "Your Store Credit balance is now %balance." balance=$balance}}</strong></p>
+
+{{template config_path="design/email/footer_template"}}

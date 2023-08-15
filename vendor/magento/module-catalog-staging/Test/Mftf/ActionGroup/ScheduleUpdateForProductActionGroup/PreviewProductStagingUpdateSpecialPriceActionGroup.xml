@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+ /**
+  * Copyright © Magento, Inc. All rights reserved.
+  * See COPYING.txt for license details.
+  */
+-->
+<actionGroups xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:noNamespaceSchemaLocation="urn:magento:mftf:Test/etc/actionGroupSchema.xsd">
+    <actionGroup name="PreviewProductStagingUpdateSpecialPrice">
+        <arguments>
+            <argument name="staging"/>
+            <argument name="productPrice" type="string"/>
+        </arguments>
+        <click selector="{{AdminScheduledChangesSection.scheduleActions(staging.updateName, 'Preview')}}" stepKey="clickPreview"/>
+        <switchToNextTab stepKey="switchToNextTab"/>
+        <waitForPageLoad time="30" stepKey="waitForPageLoad"/>
+        <!--Set frame id because switchToIFrame requires ID as parameter-->
+        <executeJS function="jQuery('[data-role=\'preview-iframe\']').attr('id', 'preview-iframe')" stepKey="setPreviewFrameId"/>
+        <switchToIFrame userInput="preview-iframe" stepKey="switchToPreviewFrame"/>
+        <waitForPageLoad time="30" stepKey="waitForPageLoad2"/>
+        <see selector="{{StorefrontProductInfoMainSection.specialPrice}}" userInput="{{productPrice}}" stepKey="seeProductPrice"/>
+        <closeTab stepKey="closeTab"/>
+    </actionGroup>
+</actionGroups>

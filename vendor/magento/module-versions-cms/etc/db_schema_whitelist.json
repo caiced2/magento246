@@ -1,0 +1,140 @@
+{
+    "magento_versionscms_increment": {
+        "column": {
+            "increment_id": true,
+            "increment_type": true,
+            "increment_node": true,
+            "increment_level": true,
+            "last_id": true
+        },
+        "constraint": {
+            "PRIMARY": true,
+            "UNQ_BE1CCB76CE284DD3ED440DB79C46FF2F": true
+        }
+    },
+    "magento_versionscms_hierarchy_node": {
+        "column": {
+            "node_id": true,
+            "parent_node_id": true,
+            "page_id": true,
+            "identifier": true,
+            "label": true,
+            "level": true,
+            "sort_order": true,
+            "request_url": true,
+            "xpath": true,
+            "scope": true,
+            "scope_id": true
+        },
+        "index": {
+            "MAGENTO_VERSIONSCMS_HIERARCHY_NODE_PARENT_NODE_ID": true,
+            "MAGENTO_VERSIONSCMS_HIERARCHY_NODE_PAGE_ID": true
+        },
+        "constraint": {
+            "PRIMARY": true,
+            "FK_A3B35A9AC57609C4C249DF3969C40F6F": true,
+            "MAGENTO_VERSIONSCMS_HIERARCHY_NODE_PAGE_ID_CMS_PAGE_PAGE_ID": true,
+            "MAGENTO_VERSIONSCMS_HIERARCHY_NODE_REQUEST_URL_SCOPE_SCOPE_ID": true
+        }
+    },
+    "magento_versionscms_hierarchy_metadata": {
+        "column": {
+            "node_id": true,
+            "meta_first_last": true,
+            "meta_next_previous": true,
+            "meta_chapter": true,
+            "meta_section": true,
+            "meta_cs_enabled": true,
+            "pager_visibility": true,
+            "pager_frame": true,
+            "pager_jump": true,
+            "menu_visibility": true,
+            "menu_excluded": true,
+            "menu_layout": true,
+            "menu_brief": true,
+            "menu_levels_down": true,
+            "menu_ordered": true,
+            "menu_list_type": true,
+            "top_menu_visibility": true,
+            "top_menu_excluded": true
+        },
+        "constraint": {
+            "PRIMARY": true,
+            "FK_84B971B6459D9D0BADDD779EBDDFD6A3": true
+        }
+    },
+    "magento_versionscms_hierarchy_lock": {
+        "column": {
+            "lock_id": true,
+            "user_id": true,
+            "user_name": true,
+            "session_id": true,
+            "started_at": true
+        },
+        "constraint": {
+            "PRIMARY": true
+        }
+    },
+    "cms_page": {
+        "column": {
+            "published_revision_id": true,
+            "website_root": true,
+            "under_version_control": true
+        }
+    },
+    "magento_versionscms_page_version": {
+        "constraint": {
+            "PRIMARY": true,
+            "MAGENTO_VERSIONSCMS_PAGE_VERSION_PAGE_ID_CMS_PAGE_PAGE_ID": true,
+            "MAGENTO_VERSIONSCMS_PAGE_VERSION_USER_ID_ADMIN_USER_USER_ID": true
+        },
+        "column": {
+            "version_id": true,
+            "label": true,
+            "access_level": true,
+            "page_id": true,
+            "user_id": true,
+            "revisions_count": true,
+            "version_number": true,
+            "created_at": true
+        },
+        "index": {
+            "MAGENTO_VERSIONSCMS_PAGE_VERSION_PAGE_ID": true,
+            "MAGENTO_VERSIONSCMS_PAGE_VERSION_USER_ID": true,
+            "MAGENTO_VERSIONSCMS_PAGE_VERSION_VERSION_NUMBER": true
+        }
+    },
+    "magento_versionscms_page_revision": {
+        "constraint": {
+            "PRIMARY": true,
+            "MAGENTO_VERSIONSCMS_PAGE_REVISION_PAGE_ID_CMS_PAGE_PAGE_ID": true,
+            "MAGENTO_VERSIONSCMS_PAGE_REVISION_USER_ID_ADMIN_USER_USER_ID": true,
+            "FK_15EC6EEEE0B447F40908232734FF4BF1": true
+        },
+        "column": {
+            "revision_id": true,
+            "version_id": true,
+            "page_id": true,
+            "page_layout": true,
+            "meta_keywords": true,
+            "meta_description": true,
+            "content_heading": true,
+            "content": true,
+            "created_at": true,
+            "layout_update_xml": true,
+            "custom_theme": true,
+            "custom_page_layout": true,
+            "custom_layout_update_xml": true,
+            "custom_theme_from": true,
+            "custom_theme_to": true,
+            "user_id": true,
+            "revision_number": true
+        },
+        "index": {
+            "MAGENTO_VERSIONSCMS_PAGE_REVISION_VERSION_ID": true,
+            "MAGENTO_VERSIONSCMS_PAGE_REVISION_PAGE_ID": true,
+            "MAGENTO_VERSIONSCMS_PAGE_REVISION_USER_ID": true,
+            "MAGENTO_VERSIONSCMS_PAGE_REVISION_REVISION_NUMBER": true
+        }
+    }
+}

@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+ /**
+  * Copyright © Magento, Inc. All rights reserved.
+  * See COPYING.txt for license details.
+  */
+-->
+<sections xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+          xsi:noNamespaceSchemaLocation="urn:magento:mftf:Page/etc/SectionObject.xsd">
+    <section name="AdminActionLogReportDetailsSection">
+        <element name="parametersList" type="block" selector="dl.list-parameters"/>
+        <element name="aggregatedInformationValue" type="text" selector="//tr/th[contains(text(),'Aggregated Information')]/parent::tr//td" timeout="30"/>
+        <element name="adminUserIdValue" type="text" selector="//tr/th[contains(text(),'Admin User ID')]/parent::tr//td" timeout="30"/>
+        <element name="adminUserNameValue" type="text" selector="//tr/th[contains(text(),'Admin User Name')]/parent::tr//a" timeout="30"/>
+        <element name="ipAddressValue" type="text" selector="//tr/th[contains(text(),'IP-Address')]/parent::tr//td" timeout="30"/>
+    </section>
+</sections>

@@ -1,0 +1,112 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+ /**
+  * Copyright © Magento, Inc. All rights reserved.
+  * See COPYING.txt for license details.
+  */
+-->
+<tests xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="urn:magento:mftf:Test/etc/testSchema.xsd">
+    <test name="StorefrontGiftCardProductAmountInPaypalBannerTest">
+        <annotations>
+            <features value="GiftCard"/>
+            <stories value="GiftCard"/>
+            <title value="Storefront Virtual GiftCard multiple Amount and open amount information in paypal banner Pay In 4 distribution amount"/>
+            <description value="should validate pay in 4 message info in paypal banner message when multiple amount is activated for gift card"/>
+            <severity value="AVERAGE"/>
+            <testCaseId value="AC-344"/>
+            <group value="catalog"/>
+            <group value="giftCard"/>
+        </annotations>
+
+        <before>
+            <!-- Login as admin -->
+            <actionGroup ref="AdminLoginActionGroup" stepKey="loginAsAdmin"/>
+
+            <!-- Paypal express checkout configuration -->
+            <actionGroup ref="ConfigPayPalExpressCheckoutActionGroup" stepKey="activePaypal">
+                <argument name="credentials" value="_CREDS"/>
+                <argument name="countryCode" value="us"/>
+            </actionGroup>
+
+            <!-- Paypal express checkout Pay Later Configuration -->
+            <actionGroup ref="AdminPayPalExpressCheckoutPayLaterEnableActionGroup" stepKey="activePayLater">
+                <argument name="countryCode" value="us"/>
+            </actionGroup>
+
+            <!-- Paypal billing agreement settings to activate pay in 4 amount at storefront -->
+            <actionGroup ref="AdminPayPalExpressCheckoutDisableBillingAgreementActionGroup" stepKey="disableBillingAgreement">
+                <argument name="countryCode" value="us"/>
+            </actionGroup>
+            <actionGroup ref="CliCacheCleanActionGroup" stepKey="cleanCache">
+                <argument name="tags" value="config full_page"/>
+            </actionGroup>
+        </before>
+
+        <after>
+            <!-- Paypal billing agreement settings to activate pay in 4 amount at storefront -->
+            <actionGroup ref="AdminPayPalExpressCheckoutEnableBillingAgreementActionGroup" stepKey="enableBillingAgreement">
+                <argument name="countryCode" value="us"/>
+            </actionGroup>
+            <!-- PayPal express checkout configuration -->
+            <actionGroup ref="AdminPayPalExpressCheckoutPayLaterDisableActionGroup" stepKey="deactivatePayLater">
+                <argument name="countryCode" value="us"/>
+            </actionGroup>
+
+            <!-- Paypal express checkout Pay Later Configuration -->
+            <actionGroup ref="AdminPayPalExpressCheckoutDisableActionGroup" stepKey="deactivatePaypal">
+                <argument name="countryCode" value="us"/>
+            </actionGroup>
+
+            <!-- Delete product -->
+            <actionGroup ref="DeleteProductBySkuActionGroup" stepKey="deleteProduct">
+                <argument name="sku" value="{{OpenMultipleVirtualGiftCard.sku}}"/>
+            </actionGroup>
+            <actionGroup ref="ResetAdminDataGridToDefaultViewActionGroup" stepKey="clearFilters"/>
+
+            <!--Admin Logout -->
+            <actionGroup ref="AdminLogoutActionGroup" stepKey="adminLogout"/>
+
+            <actionGroup ref="CliCacheCleanActionGroup" stepKey="cleanCache">
+                <argument name="tags" value="config full_page"/>
+            </actionGroup>
+        </after>
+
+        <!-- Create a gift card with multiple and open amount -->
+        <amOnPage url="{{AdminProductCreatePage.url(OpenMultipleVirtualGiftCard.attribute_set_id, OpenMultipleVirtualGiftCard.type_id)}}" stepKey="gotoCreateGiftCard"/>
+        <waitForPageLoad stepKey="wait1"/>
+        <fillField selector="{{AdminProductFormSection.productName}}" userInput="{{OpenMultipleVirtualGiftCard.name}}" stepKey="fillName"/>
+        <scrollTo selector="{{AdminProductFormSection.addCardAmount}}" x="0" y="-100" stepKey="scrollToAddAmount"/>
+        <click selector="{{AdminProductFormSection.addCardAmount}}" stepKey="clickAddAmount"/>
+        <wait time="1" stepKey="waitForInputToAppear"/>
+        <fillField selector="{{AdminProductFormSection.lastCardAmountInput}}" userInput="100" stepKey="fillGiftCardAmount"/>
+        <scrollTo selector="{{AdminProductFormSection.addCardAmount}}" x="0" y="-100" stepKey="scrollToAddAmount2"/>
+        <click selector="{{AdminProductFormSection.addCardAmount}}" stepKey="clickAddAmount2"/>
+        <wait time="1" stepKey="waitForInputToAppear2"/>
+        <fillField selector="{{AdminProductFormSection.lastCardAmountInput}}" userInput="200" stepKey="fillGiftCardAmount2"/>
+
+        <click selector="{{AdminProductFormSection.openAmountToggle}}" stepKey="clickOpenAmountToggle"/>
+        <fillField selector="{{AdminProductFormSection.openAmountMin}}" userInput="1" stepKey="fillOpenAmountFrom"/>
+        <fillField selector="{{AdminProductFormSection.openAmountMax}}" userInput="999" stepKey="fillOpenAmountTo"/>
+        <fillField selector="{{AdminProductFormSection.productQuantity}}" userInput="100" stepKey="fillQuantity"/>
+        <selectOption selector="{{AdminProductFormSection.productStockStatus}}" userInput="1" stepKey="selectInStock"/>
+        <click selector="{{AdminProductFormActionSection.saveButton}}" stepKey="clickSave"/>
+        <waitForPageLoad stepKey="wait2"/>
+
+        <!-- Storefront validate selected amount in paypal banner -->
+        <amOnPage url="{{StorefrontProductPage.url(OpenMultipleVirtualGiftCard.name)}}" stepKey="goToGiftCardProductPageOnStorefront"/>
+        <waitForPageLoad stepKey="wait3" time="30" />
+        <selectOption selector="{{StorefrontProductInfoMainSection.giftCardAmountSelect}}" userInput="100" stepKey="selectCardAmount" />
+        <waitForPageLoad stepKey="wait4" time="30"/>
+        <waitForElementVisible selector="#pay-later span iframe" stepKey="waitForIframe"/>
+        <executeJS function="document.querySelector('#pay-later span iframe').id = 'paylater-iframe'" stepKey="setPayLaterFrameId"/>
+        <switchToIFrame userInput="paylater-iframe" stepKey="switchToPayLaterFrame"/>
+        <waitForPageLoad time="30" stepKey="waitForIFrameContentLoad"/>
+        <grabTextFrom selector=".message__headline span.tag--medium span span:nth-child(2)" stepKey="grabAmount"></grabTextFrom>
+        <switchToIFrame stepKey="switchBackFromPayLater" />
+        <assertEquals message="ExpectedPrice" stepKey="assertGiftProductPrice">
+            <actualResult type="variable">grabAmount</actualResult>
+            <expectedResult type="string">of $25.00</expectedResult>
+        </assertEquals>
+
+    </test>
+</tests>

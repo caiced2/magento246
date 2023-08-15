@@ -1,0 +1,117 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+ /**
+  * Copyright © Magento, Inc. All rights reserved.
+  * See COPYING.txt for license details.
+  */
+-->
+
+<tests xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xsi:noNamespaceSchemaLocation="urn:magento:mftf:Test/etc/testSchema.xsd">
+    <test name="AdminCreateCustomerWithCustomImageAttributeValidationFailTest">
+        <annotations>
+            <features value="CustomerCustomAttribute"/>
+            <stories value="Create Customer With Custom Attributes."/>
+            <title value="Create Customer With Custom Attribute Type Image File."/>
+            <description value="Verify customer could be saved with custom attribute type image file after validation failed."/>
+            <severity value="MAJOR"/>
+            <testCaseId value="MC-39284"/>
+            <useCaseId value="MC-33687"/>
+            <group value="customer"/>
+            <group value="customerCustomAttributes"/>
+        </annotations>
+        <before>
+            <!--Create test data.-->
+            <actionGroup ref="AdminLoginActionGroup" stepKey="LoginAsAdmin"/>
+            <amOnPage url="{{AdminNewCustomerCustomAttributePage.url}}" stepKey="navigateToNewCustomerCustomAttributePage"/>
+            <actionGroup ref="AdminFillMainCustomerCustomAttributeDataActionGroup" stepKey="fillAttributeMainData">
+                <argument name="valuesRequired" value="Yes"/>
+                <argument name="showOnStorefront" value="Yes"/>
+            </actionGroup>
+            <actionGroup ref="AdminFillUseInFormsCustomerCustomAttributeActionGroup" stepKey="selectFormToUse"/>
+            <actionGroup ref="AdminFillSpecificCustomerCustomTextAttributeDataActionGroup" stepKey="fillSpecificAttributeData">
+                <argument name="inputValidation" value="URL"/>
+                <argument name="defaultValue" value="www.google.com"/>
+            </actionGroup>
+            <actionGroup ref="AdminSaveCustomerCustomAttributeEditFormActionGroup" stepKey="saveTextAttribute"/>
+            <actionGroup ref="AdminCreateCustomerNewAttribute" stepKey="createImageFileAttribute">
+                <argument name="defaultLabel" value="{{AttributeImageFileData.label}}"/>
+                <argument name="attributeCode" value="{{AttributeImageFileData.code}}"/>
+                <argument name="inputType" value="{{AttributeImageFileData.inputType}}"/>
+                <argument name="sortOrder" value="{{AttributeImageFileData.sortOrder}}"/>
+                <argument name="formToUse" value="{{AttributeImageFileData.used_in_forms}}"/>
+                <argument name="formToUse1" value="Customer Account Edit"/>
+                <argument name="message" value="You saved the customer attribute."/>
+            </actionGroup>
+        </before>
+        <after>
+            <!-- Delete customer attributes -->
+            <amOnPage url="{{CustomerAttributesPage.url}}" stepKey="navigateToCustomerAttributePage"/>
+            <actionGroup ref="DeleteCustomerAttribute" stepKey="deleteImageFileAttribute">
+                <argument name="defaultLabel" value="{{AttributeImageFileData.label}}"/>
+            </actionGroup>
+            <actionGroup ref="DeleteCustomerAttribute" stepKey="deleteTextAttribute">
+                <argument name="defaultLabel" value="{{AttributeTextField.frontend_label}}"/>
+            </actionGroup>
+            <!--Delete customer.-->
+            <actionGroup ref="DeleteCustomerByEmailActionGroup" stepKey="deleteCustomer">
+                <argument name="email" value="{{Simple_US_Customer.email}}"/>
+            </actionGroup>
+            <actionGroup ref="AdminResetFilterInCustomerGrid" stepKey="resetFilter"/>
+            <actionGroup ref="AdminLogoutActionGroup" stepKey="logOut"/>
+        </after>
+
+        <!--Try to create customer with invalid text attribute value.-->
+        <actionGroup ref="AdminNavigateNewCustomerActionGroup" stepKey="navigateToNewCustomerPage"/>
+        <actionGroup ref="AdminFillCustomerMainDataActionGroup" stepKey="fillCustomerMainData"/>
+        <actionGroup ref="AdminCustomerFormSelectFileTypeAttributeValueActionGroup" stepKey="addImageToCustomer">
+            <argument name="attributeCode" value="{{AttributeImageFileData.code}}"/>
+        </actionGroup>
+        <actionGroup ref="AdminCustomerSaveAndContinue" stepKey="saveCustomer"/>
+        <!--Verify customer form after validation fail.-->
+        <actionGroup ref="AssertMessageInAdminPanelActionGroup" stepKey="verifyErrorMessage">
+            <argument name="message" value="&quot;{{AttributeTextField.attribute_code}}&quot; is not a valid URL."/>
+            <argument name="messageType" value="error"/>
+        </actionGroup>
+        <actionGroup ref="AssertAdminCustomerImageFileAttributeActionGroup" stepKey="verifyImageIsPresentOnCustomerCreatePage"/>
+        <actionGroup ref="AdminAssertCustomerAccountInformation" stepKey="verifyCustomerData">
+            <argument name="firstName" value="{{Simple_US_Customer.firstname}}"/>
+            <argument name="lastName" value="{{Simple_US_Customer.lastname}}"/>
+            <argument name="email" value="{{Simple_US_Customer.email}}"/>
+        </actionGroup>
+        <!--Try to save customer with invalid data once again.-->
+        <actionGroup ref="AdminCustomerSaveAndContinue" stepKey="saveCustomerOnceAgain"/>
+        <!--Verify customer form after second validation fail.-->
+        <actionGroup ref="AssertMessageInAdminPanelActionGroup" stepKey="verifyErrorMessageOnceAgain">
+            <argument name="message" value="&quot;{{AttributeTextField.attribute_code}}&quot; is not a valid URL."/>
+            <argument name="messageType" value="error"/>
+        </actionGroup>
+        <actionGroup ref="AssertAdminCustomerImageFileAttributeActionGroup" stepKey="verifyImageIsStillPresentOnCustomerCreatePage"/>
+        <actionGroup ref="AdminAssertCustomerAccountInformation" stepKey="verifyCustomerDataAgain">
+            <argument name="firstName" value="{{Simple_US_Customer.firstname}}"/>
+            <argument name="lastName" value="{{Simple_US_Customer.lastname}}"/>
+            <argument name="email" value="{{Simple_US_Customer.email}}"/>
+        </actionGroup>
+        <!--Try to save customer with correct data.-->
+        <actionGroup ref="AdminFillCustomerCustomAttributeTypeTextActionGroup" stepKey="fillCorrectDataToTextCustomAttribute">
+            <argument name="attributeCode" value="{{AttributeTextField.attribute_code}}"/>
+            <argument name="attributeValue" value="http://google.com"/>
+        </actionGroup>
+        <actionGroup ref="AdminSaveCustomerAndAssertSuccessMessage" stepKey="saveCustomerWithCorrectData"/>
+        <actionGroup ref="CliIndexerReindexActionGroup" stepKey="reindex">
+            <argument name="indices" value="customer_grid"/>
+        </actionGroup>
+        <actionGroup ref="ReloadPageActionGroup" stepKey="reloadPage"/>
+        <!--Verify customer form after customer successfully saved.-->
+        <actionGroup ref="AdminFilterCustomerGridByEmail" stepKey="filterCustomer">
+            <argument name="email" value="{{Simple_US_Customer.email}}"/>
+        </actionGroup>
+        <actionGroup ref="AdminClickFirstRowEditLinkOnCustomerGridActionGroup" stepKey="openCustomerEditPage"/>
+        <actionGroup ref="AdminAssertCustomerAccountInformation" stepKey="verifyCustomerDataAfterSuccessfulSave">
+            <argument name="firstName" value="{{Simple_US_Customer.firstname}}"/>
+            <argument name="lastName" value="{{Simple_US_Customer.lastname}}"/>
+            <argument name="email" value="{{Simple_US_Customer.email}}"/>
+        </actionGroup>
+        <actionGroup ref="AssertAdminCustomerImageFileAttributeActionGroup" stepKey="verifyImageIsPresentOnCustomerPage"/>
+    </test>
+</tests>

@@ -1,0 +1,22 @@
+{
+    "magento_salesrule_filter": {
+        "column": {
+            "rule_filter_id": true,
+            "rule_id": true,
+            "group_id": true,
+            "weight": true,
+            "filter_text": true,
+            "filter_text_generator_class": true,
+            "filter_text_generator_arguments": true
+        },
+        "index": {
+            "IDX_0270DA9E161D3DE2428F005FE39B89C8": true,
+            "MAGENTO_SALESRULE_FILTER_RULE_ID": true,
+            "MAGENTO_SALESRULE_FILTER_FILTER_TEXT_RULE_ID_GROUP_ID": true
+        },
+        "constraint": {
+            "PRIMARY": true,
+            "MAGENTO_SALESRULE_FILTER_RULE_ID_SALESRULE_RULE_ID": true
+        }
+    }
+}

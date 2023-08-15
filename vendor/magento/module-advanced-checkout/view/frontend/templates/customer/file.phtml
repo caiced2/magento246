@@ -1,0 +1,24 @@
+<?php
+/**
+ * Copyright © Magento, Inc. All rights reserved.
+ * See COPYING.txt for license details.
+ */
+// phpcs:disable Magento2.Files.LineLength
+?>
+<div class="field upload skus">
+    <label class="label" for="customer_sku_csv"><span><?= $block->escapeHtml(__('File')) ?></span></label>
+    <div class="control" data-mage-init='{"fieldsetControls": {}, "fileChooser": {
+            "fileNameSelector": "[name=<?= /* @noEscape */ \Magento\AdvancedCheckout\Model\Import::FIELD_NAME_SOURCE_FILE ?>]",
+            "fileNameIndicatorSelector": "[name=<?= /* @noEscape */ \Magento\AdvancedCheckout\Helper\Data::REQUEST_PARAMETER_SKU_FILE_IMPORTED_FLAG ?>]"
+            }}'>
+        <input id="customer_sku_csv" type="file" data-reset="true"
+            name="<?= /* @noEscape */ \Magento\AdvancedCheckout\Model\Import::FIELD_NAME_SOURCE_FILE ?>"/>
+        <button type="button" class="action reset" data-mage-init='{"fieldsetResetControl":{}}'><span><?=  $block->escapeHtml(__('Reset')) ?></span></button>
+        <input type="hidden" value="0" data-reset="true"
+            name="<?= /* @noEscape */ \Magento\AdvancedCheckout\Helper\Data::REQUEST_PARAMETER_SKU_FILE_IMPORTED_FLAG ?>" />
+        <div class="note">
+            <p><?= $block->escapeHtml(__('File extensions allowed: .csv')) ?></p>
+            <p><?= $block->escapeHtml(__('Your csv file must include "sku" and "qty" columns.')) ?></p>
+        </div>
+    </div>
+</div>

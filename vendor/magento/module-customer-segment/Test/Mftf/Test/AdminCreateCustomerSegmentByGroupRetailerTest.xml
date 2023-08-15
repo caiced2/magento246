@@ -1,0 +1,96 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+ /**
+  * Copyright © Magento, Inc. All rights reserved.
+  * See COPYING.txt for license details.
+  */
+-->
+
+<tests xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xsi:noNamespaceSchemaLocation="urn:magento:mftf:Test/etc/testSchema.xsd">
+    <test name="AdminCreateCustomerSegmentByGroupRetailerTest">
+        <annotations>
+            <stories value="Create Customer Segment Entity With Customer Conditions"/>
+            <title value="Use Customer Segmentation to Apply Shopping Cart Promotion"/>
+            <description value="Use Customer Segmentation to Apply Shopping Cart Promotion"/>
+            <severity value="CRITICAL"/>
+            <testCaseId value="MC-14530"/>
+            <group value="CustomerSegment"/>
+            <group value="mtf_migrated"/>
+        </annotations>
+        <before>
+            <actionGroup ref="AdminLoginActionGroup" stepKey="LoginAsAdmin"/>
+            <!--Test customer is created-->
+            <createData entity="Simple_US_Customer" stepKey="createCustomer">
+                <field key="group_id">3</field>
+            </createData>
+            <!--Test simple product is created-->
+            <createData entity="_defaultCategory" stepKey="createCategory"/>
+            <createData entity="_defaultProduct" stepKey="createProduct">
+                <field key="price">10</field>
+                <field key="quantity">1000</field>
+                <requiredEntity createDataKey="createCategory"/>
+            </createData>
+        </before>
+        <after>
+            <deleteData createDataKey="createCategory" stepKey="deleteCategory"/>
+            <deleteData createDataKey="createProduct" stepKey="deleteProduct"/>
+            <deleteData createDataKey="createCustomer" stepKey="deleteCustomer"/>
+            <actionGroup ref="AdminDeleteCartPriceRuleActionGroup" stepKey="deleteCartPriceRule">
+                <argument name="ruleName" value="RetailerCartPriceRule" />
+            </actionGroup>
+            <actionGroup ref="FindAndDeleteCustomerSegmentActionGroup" stepKey="deleteSegment">
+                <argument name="segmentName" value="{{CustomerSegmentDefault.name}}"/>
+            </actionGroup>
+            <magentoCron groups="index" stepKey="reindex"/>
+            <actionGroup ref="AdminLogoutActionGroup" stepKey="logout"/>
+        </after>
+
+        <!--Navigate to CUSTOMERS->Segment > Click 'Add Segment' button > Fill all fields according to dataset and click 'Save and Continue Edit' button-->
+        <actionGroup ref="CreateCustomerSegmentWithContinueEditActionGroup" stepKey="createCustomerSegment">
+            <argument name="customerSegment" value="CustomerSegmentDefault"/>
+        </actionGroup>
+
+        <!--Navigate to Conditions tab and Add specific test condition according to dataset-->
+        <actionGroup ref="SetCustomerGroupConditionActionGroup" stepKey="setSegmentConditions">
+            <argument name="groupName" value="Retailer"/>
+        </actionGroup>
+
+        <actionGroup ref="CliConsumerStartActionGroup" stepKey="startMessageQueue">
+            <argument name="consumerName" value="{{AdminCustomerSegmentConsumerData.consumerName}}"/>
+            <argument name="maxMessages" value="{{AdminCustomerSegmentConsumerData.messageLimit}}"/>
+        </actionGroup>
+        <reloadPage stepKey="refreshPage"/>
+        <waitForPageLoad stepKey="waitForPageLoaded"/>
+
+        <!--Navigate to MARKETING->Cart Price Rule and click "+", then fill all required data according to dataset and save rule-->
+        <actionGroup ref="AdminCreateCartPriceRuleAndStayOnEditActionGroup" stepKey="createCartPriceRule">
+            <argument name="ruleName" value="RetailerCartPriceRule"/>
+        </actionGroup>
+
+        <actionGroup ref="SetCartAttributeConditionWithSegmentForCartPriceRuleActionGroup" stepKey="setSegment">
+            <argument name="attributeName" value="Customer Segment"/>
+            <argument name="value" value="CustomerSegmentDefault"/>
+        </actionGroup>
+
+        <!--Perform assertions-->
+        <actionGroup ref="LoginToStorefrontActionGroup" stepKey="loginAsCustomer">
+            <argument name="Customer" value="$$createCustomer$$"/>
+        </actionGroup>
+
+        <amOnPage url="{{StorefrontCategoryPage.url($$createCategory.custom_attributes[url_key]$$)}}" stepKey="onCategoryPage"/>
+        <waitForPageLoad stepKey="waitForCategoryPageLoad"/>
+
+        <actionGroup ref="StorefrontAddSimpleProductToCartActionGroup" stepKey="addProductToCart">
+            <argument name="product" value="$$createProduct$$"/>
+        </actionGroup>
+
+        <actionGroup ref="StorefrontOpenCartFromMinicartActionGroup" stepKey="openCart"/>
+        <actionGroup ref="StorefrontCheckCartDiscountAndSummaryActionGroup" stepKey="checkTotalPrice">
+            <argument name="product" value="$$createProduct$$"/>
+            <argument name="total" value="10.00"/>
+            <argument name="discount" value="5.00"/>
+        </actionGroup>
+
+    </test>
+</tests>

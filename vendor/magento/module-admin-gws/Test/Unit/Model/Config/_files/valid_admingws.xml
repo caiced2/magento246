@@ -1,0 +1,19 @@
+<?xml version="1.0"?>
+<!--
+/**
+ * Copyright © Magento, Inc. All rights reserved.
+ * See COPYING.txt for license details.
+ */
+-->
+<config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="urn:magento:module:Magento_AdminGws:etc/admingws.xsd">
+    <group name="group_one" processor="class_processor">
+        <callback class="class_one" method="MethodOne" />
+        <callback class="class_two" method="MethodTwo" />
+    </group>
+    <aclDeny>
+        <level name="level_one">
+            <rule name="rule_one" resource="resource_one" />
+            <rule name="rule_two" resource="resource_two" />
+        </level>
+    </aclDeny>
+</config>

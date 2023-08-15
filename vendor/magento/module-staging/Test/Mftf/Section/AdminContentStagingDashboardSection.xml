@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+/**
+   * Copyright © Magento, Inc. All rights reserved.
+   * See COPYING.txt for license details.
+   */
+-->
+<sections xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+          xsi:noNamespaceSchemaLocation="urn:magento:mftf:Page/etc/SectionObject.xsd">
+    <section name="AdminContentStagingDashboardSection">
+        <element name="timeLineGrid" type="block" selector=".timeline"/>
+        <element name="timeLineEvent" type="input" selector=".timeline-event"/>
+        <element name="timeLineEventParameterized" type="text" selector="//div[@class='timeline-event']//*[@class='timeline-event-title' and text()='{{var1}}']" parameterized="true"/>
+        <element name="stagingViewTypeSelect" type="select" selector=".admin__action-dropdown-wrap.admin__action-grid-select select"/>
+        <element name="stagingUpdatePopupTitle" type="text" selector="//div[@class='data-tooltip-content']//div[@class='data-tooltip-title' and text()='{{var1}}']" parameterized="true" timeout="30"/>
+        <element name="stagingEventsActions" type="text" selector="//div[text()='{{var1}}']/parent::div//div[@class='staging-events-actions']//span[text()='{{var2}}']" parameterized="true" timeout="30"/>
+        <element name="title" type="text" selector="//div[@class='data-tooltip-content']//div[text()='{{var1}}']" parameterized="true"/>
+        <element name="stagingEventsViewEdit" type="text" selector="//div[text()='{{var1}}']/parent::div//div[@class='staging-events-actions']//span[text()='View/Edit']" parameterized="true"/>
+        <element name="stagingEventsStatus" type="text" selector="//div[text()='{{var1}}']/parent::div//dl[@class='staging-events-summary']//dd[text()='{{var2}}']" parameterized="true"/>
+        <element name="stagingDate" type="text" selector="//div[text()='{{date}}']/parent::div//dl[@class='staging-events-summary']//time" parameterized="true"/>
+        <element name="tooltipWrapper" type="text" selector=".data-tooltip-wrapper"/>
+        <element name="editEvent" type="button" selector="//a[contains(@href, 'update/edit')]"/>
+    </section>
+</sections>
